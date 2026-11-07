@@ -65,16 +65,7 @@ A **free and open-source** leveling guide for World of Warcraft: Forever, **leve
 (Skyborne included) and both factions. Questify plans your whole route, follows your quest log on its own and
 always shows you the next thing to do.
 
-## New in 0.4.0
-- **Routes now go all the way to 60**: 44 new chapters from level 30 to 60 (22 Alliance, 22 Horde) — Ashenvale,
-  Stranglethorn, Desolace, Tanaris, Feralas, Un'Goro, the Plaguelands, Winterspring, Silithus and more.
-- **Dungeons up to Stratholme**, with their quests offered on the way.
-- **Pick your next zone** from large cards showing each option's levels, quests, simulated time and XP per hour.
-- **Class quests offered in town** when your route passes their giver.
-- **Outpost alert**: bags nearly full, no food or drink, gear to repair.
-- Talent builds and the "Spells to learn" tab are **removed for now**.
-
-## Features
+## What Questify does
 - **Optimised 1-60 routes.** Every chapter is built from QuestieDB and measured with a route simulator: all of a
   hub's quests picked up at once, one pass per objective area, grouped turn-ins, smart hearthstone use, minimal
   grinding, one continent at a time. About 85 to 88 hours of simulated play from 1 to 60, depending on your race.
@@ -117,17 +108,7 @@ Guide de leveling **gratuit et open source** pour World of Warcraft: Forever, **
 (Skyborne compris) et les deux factions. Questify prévoit toute ta route, suit ton journal de quêtes tout seul et
 t'indique toujours quoi faire ensuite.
 
-## Nouveautés de la 0.4.0
-- **Les routes vont maintenant jusqu'au niveau 60** : 44 nouveaux chapitres du niveau 30 au niveau 60 (22 Alliance,
-  22 Horde) — Orneval, Strangleronce, Désolace, Tanaris, Féralas, Un'Goro, Maleterres, Berceau-de-l'Hiver,
-  Silithus et d'autres.
-- **Donjons jusqu'à Stratholme**, leurs quêtes proposées en chemin.
-- **Choix de la zone suivante** sur de grandes cartes : niveaux, quêtes, durée et XP/h simulées de chaque option.
-- **Quêtes de classe proposées en ville** quand ta route passe chez le donneur.
-- **Alerte d'avant-poste** : sacs presque pleins, plus de nourriture ou de boisson, équipement à réparer.
-- Les builds de talents et l'onglet « Sorts à apprendre » sont **retirés pour le moment**.
-
-## Fonctions
+## Ce que fait Questify
 - **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB et mesuré au simulateur ; toutes
   les quêtes d'un avant-poste prises d'un coup, un seul passage par zone d'objectifs, rendus groupés, pierre de
   foyer bien utilisée, farm minimal, un continent à la fois. Environ 85 à 88 h de jeu simulé de 1 à 60 selon la
