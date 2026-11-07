@@ -9,7 +9,7 @@ l'envoi automatique des versions.
 |---|---|
 | **Project name** | `Questify` |
 | **Logo** | [`docs/curseforge/logo-400.png`](curseforge/logo-400.png) (400 × 400). Grande version : [`logo-1024.png`](curseforge/logo-1024.png), source : [`logo.svg`](curseforge/logo.svg). Dessin original : un « Q » en boussole dont la queue mène à un repère ; ni logo du jeu, ni élément de Blizzard. |
-| **Summary** (anglais, une ligne, 256 caractères au plus) | `Free, open-source 1-60 leveling guide for WoW: Forever — optimised routes, automatic quest tracking, navigation, class quests and dungeons.` |
+| **Summary** (anglais, une ligne, 256 caractères au plus) | `Free, open-source leveling guide for WoW: Forever. Levels 1 to 60, every race, both factions: step-by-step routes that follow your quest log, waypoints, class quests and dungeons.` |
 | **Class** | Addons |
 | **Main category** | Quests & Leveling |
 | **Additional categories** | Map & Minimap ; Class (si la catégorie est proposée) |
