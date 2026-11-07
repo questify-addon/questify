@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 55 étapes, niveau final 33.00, ~31794 xp/h, 103 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 55 étapes, niveau final 33.00, ~31788 xp/h, 103 min.
 Q:RegisterGuide({
   id = "A_07",
   title = "Duskwood",
   faction = "Alliance",
   minLevel = 32, maxLevel = 33,
   next = "A_09",
-  sim = { steps = 55, endLevel = 33.00, xpPerHour = 31794, minutes = 103 },
+  sim = { steps = 55, endLevel = 33.00, xpPerHour = 31788, minutes = 103 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Highland Hides", optional = true, dungeon = "Excavation Site: Wetlands" },
     { "hearth", 1431 }, -- pierre de foyer
@@ -65,6 +65,6 @@ Q:RegisterGuide({
     { "turnin", 223, xp = 3150 }, -- Worgen in the Woods (lvl 31, ~3150 xp, sim lvl 32)
     { "turnin", 231, xp = 1350 }, -- A Daughter's Love (lvl 35, ~1350 xp, sim lvl 32)
     { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 32)
-    { "level", 33, at = { 1431, 72.52, 71.17 }, note = "About 117 more mobs near the last objective" }, -- farm de niveau
+    { "level", 33, at = { 1431, 72.52, 71.17 }, note = "About 116 more mobs near the last objective" }, -- farm de niveau
   },
 })

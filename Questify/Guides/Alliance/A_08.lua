@@ -1,16 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 62 étapes, niveau final 32.00, ~29970 xp/h, 197 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 63 étapes, niveau final 32.00, ~30141 xp/h, 194 min.
 Q:RegisterGuide({
   id = "A_08",
   title = "Ashenvale",
   faction = "Alliance",
   minLevel = 30, maxLevel = 32,
   next = "A_07",
-  sim = { steps = 62, endLevel = 32.00, xpPerHour = 29970, minutes = 197 },
+  sim = { steps = 63, endLevel = 32.00, xpPerHour = 30141, minutes = 194 },
   steps = {
+    { "note", "Not running Blackfathom Deeps? Abandon Researching the Corruption", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running The Deadmines? Abandon Oh Brother. . ., Collecting Memories, Underground Assault", optional = true, dungeon = "The Deadmines" },
     { "note", "Not running The Hall of Thanes? Abandon Old Ironforge Incursion", optional = true, dungeon = "The Hall of Thanes" },
     { "note", "Not running The Stockade? Abandon Crime and Punishment, What Comes Around...", optional = true, dungeon = "The Stockade" },
@@ -62,16 +63,16 @@ Q:RegisterGuide({
     { "turnin", 98418, xp = 2450 }, -- Shared Fury (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 1032, at = { 1440, 81.02, 49.88 } }, -- Satyr Slaying! (lvl 32, ~2550 xp, sim lvl 30)
     { "complete", 1035, at = { 1440, 66.66, 82.17 } }, -- Fallen Sky Lake (lvl 30, ~3050 xp, sim lvl 30)
-    { "accept", 98027 }, -- Gleaming Crescent Necklace (lvl 29, ~590 xp, sim lvl 30)
+    { "accept", 98027 }, -- Gleaming Crescent Necklace (lvl 26, ~1050 xp, sim lvl 30)
     { "turnin", 1030, xp = 1700 }, -- Raene's Cleansing (lvl 28, ~1700 xp, sim lvl 30)
     { "accept", 1045 }, -- Raene's Cleansing (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 1045, at = { 1440, 54.75, 79.62 } }, -- Raene's Cleansing (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 1045, xp = 2450 }, -- Raene's Cleansing (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 86757, xp = 2450 }, -- Slowing the Orc Advance (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 1035, xp = 3050 }, -- Fallen Sky Lake (lvl 30, ~3050 xp, sim lvl 30)
-    { "turnin", 98027, xp = 590 }, -- Gleaming Crescent Necklace (lvl 29, ~590 xp, sim lvl 30)
+    { "turnin", 98027, xp = 1050 }, -- Gleaming Crescent Necklace (lvl 26, ~1050 xp, sim lvl 30)
     { "turnin", 1022, xp = 2450 }, -- The Howling Vale (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 1032, xp = 2550 }, -- Satyr Slaying! (lvl 32, ~2550 xp, sim lvl 31)
-    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 264 more mobs near the last objective" }, -- farm de niveau
+    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 257 more mobs near the last objective" }, -- farm de niveau
   },
 })

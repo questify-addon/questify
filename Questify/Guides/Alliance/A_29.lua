@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 52 étapes, niveau final 59.00, ~58827 xp/h, 206 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 52 étapes, niveau final 59.00, ~58820 xp/h, 206 min.
 Q:RegisterGuide({
   id = "A_29",
   title = "Eastern Plaguelands",
   faction = "Alliance",
   minLevel = 58, maxLevel = 59,
   next = "A_30",
-  sim = { steps = 52, endLevel = 59.00, xpPerHour = 58827, minutes = 206 },
+  sim = { steps = 52, endLevel = 59.00, xpPerHour = 58820, minutes = 206 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1417, node = 16, note = "Refuge Pointe, Arathi" }, -- vol
@@ -62,6 +62,6 @@ Q:RegisterGuide({
     { "accept", 5243, optional = true, dungeon = "Stratholme" }, -- Houses of the Holy (lvl 60, ~0 xp, sim lvl 58)
     { "turnin", 6021, xp = 4200 }, -- Zaeldarr the Outcast (lvl 55, ~4200 xp, sim lvl 58)
     { "turnin", 5845, xp = 6200 }, -- Of Lost Honor (lvl 58, ~6200 xp, sim lvl 58)
-    { "level", 59, at = { 1423, 11.11, 20.9 }, note = "About 303 more mobs here (Terrordale Spirit, level 59)" }, -- farm de niveau
+    { "level", 59, at = { 1423, 11.11, 20.9 }, note = "About 302 more mobs here (Terrordale Spirit, level 59)" }, -- farm de niveau
   },
 })

@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/classquests.lua (via build.lua). Ne pas modifier à la main.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
 -- Chaînes de quêtes de classe jusqu'au niveau 60 : IDs de quêtes, ordre, niveaux, IDs des objets de récompense.
 Q.ClassQuestData = {
   DRUID = {
@@ -232,9 +232,9 @@ Q.ClassQuestData = {
     { key = "PRIEST_5641", title = "A Lack of Fear", faction = "Alliance", races = 4, level = 20, quests = { 5641 }, exclusive = { "PRIEST_5645", "PRIEST_5647" }, rewards = { [5641] = { items = {  } } } },
     { key = "PRIEST_5642", title = "Shadowguard", faction = "Horde", races = 128, level = 20, quests = { 5642 }, exclusive = { "PRIEST_5643", "PRIEST_5680" }, rewards = { [5642] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5643", title = "Shadowguard", faction = "Horde", races = 128, level = 20, quests = { 5643 }, exclusive = { "PRIEST_5642", "PRIEST_5680" }, rewards = { [5643] = { items = {  }, xp = 390 } } },
-    { key = "PRIEST_5644", title = "Devouring Plague", faction = "Horde", races = 16, level = 20, quests = { 5644 }, exclusive = { "PRIEST_5646", "PRIEST_5679" }, rewards = { [5644] = { items = {  }, xp = 390 } } },
+    { key = "PRIEST_5644", title = "Dark Sacrifice", faction = "Horde", races = 16, level = 20, quests = { 5644 }, exclusive = { "PRIEST_5646", "PRIEST_5679" }, rewards = { [5644] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5645", title = "A Lack of Fear", faction = "Alliance", races = 4, level = 20, quests = { 5645 }, exclusive = { "PRIEST_5641", "PRIEST_5647" }, rewards = { [5645] = { items = {  }, xp = 390 } } },
-    { key = "PRIEST_5646", title = "Devouring Plague", faction = "Horde", races = 16, level = 20, quests = { 5646 }, exclusive = { "PRIEST_5644", "PRIEST_5679" }, rewards = { [5646] = { items = {  }, xp = 390 } } },
+    { key = "PRIEST_5646", title = "Dark Sacrifice", faction = "Horde", races = 16, level = 20, quests = { 5646 }, exclusive = { "PRIEST_5644", "PRIEST_5679" }, rewards = { [5646] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5647", title = "A Lack of Fear", faction = "Alliance", races = 4, level = 20, quests = { 5647 }, exclusive = { "PRIEST_5641", "PRIEST_5645" }, rewards = { [5647] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5672", title = "Elune's Grace", faction = "Alliance", races = 8, level = 20, quests = { 5672 }, exclusive = { "PRIEST_5673", "PRIEST_5674", "PRIEST_5675" }, rewards = { [5672] = { items = {  } } } },
     { key = "PRIEST_5673", title = "Elune's Grace", faction = "Alliance", races = 8, level = 20, quests = { 5673 }, exclusive = { "PRIEST_5672", "PRIEST_5674", "PRIEST_5675" }, rewards = { [5673] = { items = {  }, xp = 390 } } },
@@ -243,7 +243,7 @@ Q.ClassQuestData = {
     { key = "PRIEST_5676", title = "Arcane Feedback", faction = "Alliance", races = 1, level = 20, quests = { 5676 }, exclusive = { "PRIEST_5677", "PRIEST_5678" }, rewards = { [5676] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5677", title = "Arcane Feedback", faction = "Alliance", races = 1, level = 20, quests = { 5677 }, exclusive = { "PRIEST_5676", "PRIEST_5678" }, rewards = { [5677] = { items = {  }, xp = 390 } } },
     { key = "PRIEST_5678", title = "Arcane Feedback", faction = "Alliance", races = 1, level = 20, quests = { 5678 }, exclusive = { "PRIEST_5676", "PRIEST_5677" }, rewards = { [5678] = { items = {  } } } },
-    { key = "PRIEST_5679", title = "Devouring Plague", faction = "Horde", races = 16, level = 20, quests = { 5679 }, exclusive = { "PRIEST_5644", "PRIEST_5646" }, rewards = { [5679] = { items = {  } } } },
+    { key = "PRIEST_5679", title = "Dark Sacrifice", faction = "Horde", races = 16, level = 20, quests = { 5679 }, exclusive = { "PRIEST_5644", "PRIEST_5646" }, rewards = { [5679] = { items = {  } } } },
     { key = "PRIEST_5680", title = "Shadowguard", faction = "Horde", races = 128, level = 20, quests = { 5680 }, exclusive = { "PRIEST_5642", "PRIEST_5643" }, rewards = { [5680] = { items = {  } } } },
     { key = "PRIEST_94818", title = "Contingency Plan", faction = "Alliance", races = 64, level = 20, quests = { 94818, 94819, 94820 }, rewards = { [94818] = { items = {  } }, [94819] = { items = {  } }, [94820] = { items = {  } } } },
     { key = "PRIEST_5704", title = "<NYI> <TXT> Undead Priest Robe", faction = "Horde", races = 16, level = 25, quests = { 5704 }, rewards = { [5704] = { items = {  } } } },

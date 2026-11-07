@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 44 étapes, niveau final 17.07, ~18059 xp/h, 78 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 44 étapes, niveau final 17.06, ~18072 xp/h, 78 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_04",
   title = "Westfall",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 14, maxLevel = 16,
   next = "A_01",
-  sim = { steps = 44, endLevel = 17.07, xpPerHour = 18059, minutes = 78 },
+  sim = { steps = 44, endLevel = 17.06, xpPerHour = 18072, minutes = 78 },
   steps = {
     { "accept", 64 }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 151 }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 15)
@@ -33,7 +33,7 @@ Q:RegisterGuide({
     { "turnin", 138, xp = 580 }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 15)
     { "accept", 139 }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 15)
     { "complete", 12, obj = 2, at = { 1436, 44.8, 25.95 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 15)
-    { "complete", 92745, at = { 1436, 45.29, 20.05 } }, -- The State of the Mines (lvl 14, ~980 xp, sim lvl 16)
+    { "complete", 92745, at = { 1436, 45.29, 20.05 } }, -- The State of the Mines (lvl 14, ~980 xp, sim lvl 15)
     { "turnin", 139, xp = 580 }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 16)
     { "accept", 140 }, -- Captain Sander's Hidden Treasure (lvl 16, ~1150 xp, sim lvl 16)
     { "turnin", 140, xp = 1150 }, -- Captain Sander's Hidden Treasure (lvl 16, ~1150 xp, sim lvl 16)

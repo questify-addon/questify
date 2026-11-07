@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeons.lua. Ne pas modifier à la main.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-06.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
 -- Donjons de WoW: Forever : zone, niveaux conseillés, factions autorisées, entrée (uiMapID, x, y en 0-100,
 -- entranceSource = questiedb ou manual), quêtes par faction : IDs, PNJ (giver) ou objet (obj) de départ et
 -- position (at), PNJ de fin (ender, endAt), niveaux, masques de races et de classes, préquêtes (pre = au
@@ -26,24 +26,25 @@ Q.DungeonData = {
     quests = {
       Alliance = {
         { id = 96393, giver = 264936, at = { 1426, 64.87, 58.47 }, ender = 2784, endAt = { 1455, 39.09, 56.2 }, level = 16, reqLevel = 9, races = 4294967373, pre = { 96391 } }, -- Old Ironforge Incursion
-        { id = 96394, giver = 264943, at = { 1455, 33.2, 47.93 }, ender = 264943, endAt = { 1455, 33.2, 47.93 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
+        { id = 96394, giver = 264943, at = { 1455, 33.23, 48 }, ender = 264943, endAt = { 1455, 33.23, 48 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
         { id = 96403, giver = 265003, at = { 1455, 32.18, 44.5 }, ender = 265003, endAt = { 1455, 32.18, 44.5 }, level = 15, reqLevel = 10, races = 4294967373 }, -- Important Heirlooms
       },
     },
   },
   { key = "LORDAERON", name = "Ruins of Lordaeron", areaId = 16611, minLevel = 15, maxLevel = 22,
-    factions = { "Horde" }, entrance = { 1458, 72.48, 11.33 }, entranceSource = "questiedb",
+    factions = { "Horde" }, entrance = { 1458, 72.41, 11.37 }, entranceSource = "questiedb",
     quests = {
       Horde = {
         { id = 92401, giver = 250686, at = { 1421, 44.52, 43.02 }, ender = 250686, endAt = { 1421, 44.52, 43.02 }, level = 22, reqLevel = 15, races = 8589934770 }, -- A Frightened Request
         { id = 92421, giver = 266484, at = { 1458, 58.08, 89.51 }, ender = 266484, endAt = { 1458, 58.08, 89.51 }, level = 22, reqLevel = 15, races = 8589934770 }, -- Light's Justice
-        { id = 92422, giver = 251001, at = { 1420, 65.25, 60.2 }, ender = 251001, endAt = { 1420, 65.25, 60.2 }, level = 22, reqLevel = 15, races = 8589934770 }, -- The Wrath of Rath'mael
-        { id = 95204, inside = true, item = 275521, ender = 7825, endAt = { 1458, 73.06, 32.85 }, level = 22, reqLevel = 16, races = 8589934770 }, -- Crest of Lordaeron
-        { id = 95216, giver = 11835, at = { 1458, 46.31, 71.91 }, ender = 11835, endAt = { 1458, 46.31, 71.91 }, level = 22, reqLevel = 16, races = 8589934770 }, -- The New Plague
-        { id = 97288, inside = true, item = 280438, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 16, races = 8589934770 }, -- Unending Torment
-        { id = 97289, talk = true, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 271613, endAt = { 1458, 45.88, 61.7 }, level = 21, reqLevel = 16, races = 8589934770 }, -- Unending Torment
-        { id = 97291, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 16, races = 8589934770 }, -- Unending Torment
-        { id = 97292, talk = true, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 16, races = 8589934770 }, -- Unending Torment
+        { id = 92422, giver = 251001, at = { 1420, 65.25, 60.2 }, ender = 251001, endAt = { 1420, 65.25, 60.2 }, level = 22, reqLevel = 15, races = 8589934770, pre = { 99156 } }, -- The Wrath of Rath'mael
+        { id = 95204, inside = true, item = 275521, ender = 7825, endAt = { 1458, 73.06, 32.85 }, level = 22, reqLevel = 15, races = 8589934770 }, -- Crest of Lordaeron
+        { id = 95216, giver = 11835, at = { 1458, 46.31, 71.91 }, ender = 11835, endAt = { 1458, 46.31, 71.91 }, level = 22, reqLevel = 15, races = 8589934770, pre = { 451 } }, -- The New Plague
+        { id = 97288, inside = true, item = 280438, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 15, races = 8589934770 }, -- Unending Torment
+        { id = 97289, talk = true, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 271613, endAt = { 1458, 45.88, 61.7 }, level = 21, reqLevel = 15, races = 8589934770, pre = { 97288 } }, -- Unending Torment
+        { id = 97291, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 15, races = 8589934770, pre = { 97290 } }, -- Unending Torment
+        { id = 97292, giver = 2055, at = { 1458, 48.82, 69.28 }, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 15, races = 8589934770, pre = { 97291 } }, -- Unending Torment
+        { id = 97290, bc = true, giver = 271613, at = { 1458, 45.88, 61.7 }, ender = 2055, endAt = { 1458, 48.82, 69.28 }, level = 21, reqLevel = 15, races = 8589934770, pre = { 97289 } }, -- Unending Torment
       },
     },
   },

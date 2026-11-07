@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 65 étapes, niveau final 44.00, ~47235 xp/h, 263 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 65 étapes, niveau final 44.00, ~47239 xp/h, 263 min.
 Q:RegisterGuide({
   id = "A_17",
   title = "Stranglethorn Vale",
   faction = "Alliance",
   minLevel = 42, maxLevel = 44,
   next = "A_18",
-  sim = { steps = 65, endLevel = 44.00, xpPerHour = 47235, minutes = 263 },
+  sim = { steps = 65, endLevel = 44.00, xpPerHour = 47239, minutes = 263 },
   steps = {
     { "note", "Not running Scarlet Monastery? Abandon Past Due", optional = true, dungeon = "Scarlet Monastery" },
     { "note", "Not running Uldaman? Abandon A Sign of Hope, Power Stones", optional = true, dungeon = "Uldaman" },
