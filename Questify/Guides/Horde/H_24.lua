@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 72 étapes, niveau final 53.00, ~55772 xp/h, 172 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 72 étapes, niveau final 53.00, ~55805 xp/h, 172 min.
 Q:RegisterGuide({
   id = "H_24",
   title = "Searing Gorge and Burning Steppes",
   faction = "Horde",
   minLevel = 52, maxLevel = 53,
   next = "H_25",
-  sim = { steps = 72, endLevel = 53.00, xpPerHour = 55772, minutes = 172 },
+  sim = { steps = 72, endLevel = 53.00, xpPerHour = 55805, minutes = 172 },
   steps = {
     { "accept", 81953 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "complete", 81953, at = { 1428, 28.96, 28.93 } }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
@@ -82,6 +82,6 @@ Q:RegisterGuide({
     { "turnin", 81953, xp = 585 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81955, xp = 585 }, -- A Mind of Metal (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81956, xp = 585 }, -- Conjurer's Codex (lvl 45, ~585 xp, sim lvl 52)
-    { "level", 53, at = { 1458, 47.96, 78.93 }, note = "About 80 more mobs here (Anya Rince, level 52)" }, -- farm de niveau
+    { "level", 53, at = { 1458, 50.24, 73 }, note = "About 80 more mobs here (Anya Rince, level 52)" }, -- farm de niveau
   },
 })

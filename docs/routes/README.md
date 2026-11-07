@@ -452,3 +452,63 @@ APR-COMPARE: APR clearly ahead on 42 chapters, Questify on 3, close on 27 (same 
 XP: 38 / 3 / 31). The quest XP compared there is lower in A_20, H_21 (forcings removed), H_02 and H_03 (route
 reshuffled) and A_NightElf_03; H_29 is no longer behind. Still heavy: A_20 (727 mobs), A_21 (708), A_26 (633),
 H_18 (525), H_21 (417).
+
+## QuestieDB v1.0.12 (2026-11-07)
+
+The routes are generated from QuestieDB v1.0.12 (commit `4d31c10`, the latest release; `master` after it only
+changes the release workflow) and the Questie blacklist of 2026-11-07 (commit `749cf70`). Full regeneration:
+`--jit --faction all --date 2026-11-07`. Before the update, a build on v1.0.11 gave the shipped guides again, byte
+for byte (outside the commit line of the header): every route change below comes from the data.
+
+What changed in the data that the routes use:
+
+- NPC, object, item and quest traces of Forever (`src/corrections/Forever/traces/*`): many spawns moved, so
+  objective sites and walking legs change in most 1-30 chapters.
+- `foreverQuestFixes.lua`: exploration point of Frostmane Hold (287) at 21.2, 54 (the `complete` step stays at
+  23.55, 51.57: the Frostmane Headhunter site, merged with the exploration within 150 yd; to check in game);
+  required level 15 and chains for the Ruins of Lordaeron quests (95189, 95195, 95204, 95216, 95250, Unending
+  Torment 97288-97292); prerequisites of The Wrath of Rath'mael (92422 after 99156) and Watching the Roads (95981
+  after 482); names of Dark Sacrifice (5644 / 5646 / 5679) and Your Reward has Arrived! (60860).
+- Questie blacklist: the `<NYI>` Undead priest quests 5691-5693 and 5704-5706 leave `ClassQuestData.lua` (no
+  route used them).
+- `DungeonData.lua`: Ruins of Lordaeron entrance and quests (level 15, prerequisites, Othmar's Head).
+  `Questify/Data/ClassTrainers.lua`: mage trainer 252373 is also listed for the Horde.
+
+Totals per race path, simulated (minutes / quests / grind mobs):
+
+| Path 1-60 | v1.0.11 | v1.0.12, plans unchanged | v1.0.12, plans adjusted |
+|---|---|---|---|
+| Human | 5 204 / 647 / 4 538 | 5 186 / 649 / 4 500 | 5 186 / 649 / 4 500 |
+| Dwarf / Gnome | 5 255 / 653 / 4 621 | 5 241 / 654 / 4 579 | 5 241 / 654 / 4 579 |
+| Night Elf | 5 220 / 634 / 4 733 | 5 188 / 633 / 4 670 | 5 188 / 633 / 4 670 |
+| Skyborne (Alliance) | 5 154 / 633 / 4 621 | 5 127 / 634 / 4 565 | 5 127 / 634 / 4 565 |
+| Orc / Troll | 5 113 / 611 / 2 904 | 5 138 / 610 / 2 972 | 5 134 / 614 / 2 902 |
+| Tauren | 5 133 / 608 / 2 931 | 5 130 / 606 / 2 937 | 5 130 / 607 / 2 926 |
+| Undead | 5 165 / 632 / 2 905 | 5 197 / 629 / 2 940 | 5 172 / 631 / 2 904 |
+| Skyborne (Horde) | 5 159 / 631 / 2 961 | 5 159 / 629 / 2 991 | 5 159 / 630 / 2 980 |
+
+Trunk 30-60: Alliance 4 134 → 4 131 min, Horde 3 989 → 4 000 min (H_07 +8 min: other hearthstone and flights
+after the 1-30 changes).
+
+- Alliance: -14 to -32 min per path with the plans unchanged (A_03 -15, A_02 -8, A_NightElf_02 and A_Skyborne_01
+  -6; A_01 +6 with 36 mobs of grinding). Measured and rejected on A_01: `strictLevel` (+5 min on the Human, Dwarf
+  and Skyborne paths), `strictLevel` with `levelSlack = 2` (+37 min).
+- Horde, plans unchanged: Durotar (H_OrcTroll_02) +25 min (59 mobs of grinding, band widened), Silverpine
+  (H_Undead_03) +27 min (25 mobs of grinding), H_01 -31 min (the trunk starts at the lowest join level, now 13
+  instead of 12), H_02 to H_05 +20 min (quests moved between chapters by the higher start).
+- Plan changes kept (`plans.lua`):
+  - H_OrcTroll_02: `strictLevel` and `levelSlack = 2`. Without them, Stormy Potential and Encroachment are done at
+    level 9 (59 mobs); with them, no grinding, 42 quests, 186 min, end at 13.21, so the trunk still starts at 13.
+    Orc / Troll -4 min. `strictLevel` alone ends Durotar at 12.79 (172 min) and the trunk starts at 12 again:
+    +10 min on the Orc path, +24 on the other Horde paths (rejected).
+  - H_Undead_03: 460, 461, 491 and 79096 forced. The first pass now plans 25 mobs of grinding (26 on v1.0.11), not
+    above `WIDEN_GRIND`, so the band was no longer widened; forced, they give the v1.0.11 chapter again (35 min,
+    no grinding). Undead -25 min. `strictLevel` instead: -2 min.
+  - H_04: Egg Hunt (868) forced. Its objective is farther (1 543 s isolated instead of 982) and it was dropped as
+    "low ratio", which left the four `precede` pairs of the plan without their task. Same time on every Horde
+    path, +1 quest, -11 mobs.
+- Rejected on the Horde trunk: Enraged Thunder Lizards and Cry of the Thunderhawk (907 / 913, in H_02 on v1.0.11)
+  forced in H_02: +14 min per path.
+
+APR-COMPARE (same APR commit `c5960471`, v7.5.5): APR clearly ahead on 41 chapters, Questify on 3, close on 28 (42 /
+3 / 27 before).

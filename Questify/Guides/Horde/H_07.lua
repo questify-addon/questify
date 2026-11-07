@@ -1,27 +1,26 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 50 étapes, niveau final 33.04, ~28645 xp/h, 111 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 49 étapes, niveau final 33.04, ~26751 xp/h, 119 min.
 Q:RegisterGuide({
   id = "H_07",
   title = "Thousand Needles",
   faction = "Horde",
   minLevel = 32, maxLevel = 33,
   next = "H_08",
-  sim = { steps = 50, endLevel = 33.04, xpPerHour = 28645, minutes = 111 },
+  sim = { steps = 49, endLevel = 33.04, xpPerHour = 26751, minutes = 119 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Amongst the Ruins", optional = true, dungeon = "Blackfathom Deeps" },
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
-    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
     { "fly", 1441, node = 30, note = "Freewind Post, Thousand Needles" }, -- vol
     { "accept", 5361 }, -- Family Tree (lvl 35, ~2050 xp, sim lvl 32)
     { "goto", 1441, 45.14, 49.11, note = "Flight master" }, -- déplacement
     { "fly", 1413, node = 25, note = "Crossroads, The Barrens" }, -- vol
     { "accept", 1145 }, -- The Swarm Grows (lvl 33, ~1300 xp, sim lvl 32)
     { "sethearth", 1413, 51.99, 29.89 }, -- lier la pierre de foyer
-    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
-    { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
+    { "fp", 1454, 45.12, 63.89 }, -- point de vol
     { "turnin", 1145, xp = 1300 }, -- The Swarm Grows (lvl 33, ~1300 xp, sim lvl 32)
     { "accept", 1146 }, -- The Swarm Grows (lvl 33, ~1950 xp, sim lvl 32)
     { "hearth", 1413 }, -- pierre de foyer

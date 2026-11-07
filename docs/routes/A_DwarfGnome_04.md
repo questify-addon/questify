@@ -1,14 +1,14 @@
 # A_DwarfGnome_04 — Westfall
 
-Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d306458a95` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-07 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
 | Level band | 14-16 |
-| Simulated level | 15.00 -> 17.07 |
+| Simulated level | 15.00 -> 17.06 |
 | Time | 78 min |
-| XP gained | 23361 |
-| XP/h | 18059 |
+| XP gained | 23378 |
+| XP/h | 18072 |
 | Steps | 44 |
 | Quests turned in | 14 |
 | Hubs | 8 |

@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 67 étapes, niveau final 37.00, ~39634 xp/h, 210 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 67 étapes, niveau final 37.00, ~39639 xp/h, 210 min.
 Q:RegisterGuide({
   id = "A_11",
   title = "Desolace",
   faction = "Alliance",
   minLevel = 35, maxLevel = 37,
   next = "A_12",
-  sim = { steps = 67, endLevel = 37.00, xpPerHour = 39634, minutes = 210 },
+  sim = { steps = 67, endLevel = 37.00, xpPerHour = 39639, minutes = 210 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Horrors in the Highland, Lost in the Thicket Things, Prehistoric Prism", optional = true, dungeon = "Excavation Site: Wetlands" },
     { "hearth", 1431 }, -- pierre de foyer

@@ -426,7 +426,11 @@ plans.Horde = {
   {
     id = "H_OrcTroll_02", title = "Durotar", faction = "Horde", races = { "Orc", "Troll" },
     zones = { DUROTAR, ORGRIMMAR }, endZones = { BARRENS },
-    minLevel = 6, maxLevel = 12, entry = { DUROTAR, 52.0, 43.0 },
+    -- strictLevel + levelSlack = 2 (QuestieDB v1.0.12) : sans eux, l'ordre fait Stormy Potential et
+    -- Encroachment au niveau 9 (59 mobs de farm, tranche élargie), 190 min, fin à 13.14. Avec eux, aucun farm,
+    -- 42 quêtes, 186 min, fin à 13.21 : le tronc (H_01) part toujours du niveau 13. strictLevel seul finit à
+    -- 12.79 (172 min) mais le tronc repart du niveau 12 : Orc 1-60 +10 min. Mesuré : Orc / Troll 1-60 -4 min.
+    minLevel = 6, maxLevel = 12, levelSlack = 2, strictLevel = true, entry = { DUROTAR, 52.0, 43.0 },
     flightPaths = { "Orgrimmar, Durotar" },
     nextByRace = { Orc = "H_01", Troll = "H_01" },
   },
@@ -470,6 +474,10 @@ plans.Horde = {
     minLevel = 12, maxLevel = 14, levelSlack = 0, entry = { SILVERPINE, 43.0, 41.0 }, nextByRace = { Undead = "H_01" },
     flightPaths = { "The Sepulcher, Silverpine Forest" },
     dungeons = { "Ruins of Lordaeron" },
+    -- Quêtes hautes de la tranche élargie (QuestieDB v1.0.12) : le premier passage prévoit 25 mobs de farm
+    -- (26 en v1.0.11), sous le seuil d'élargissement (WIDEN_GRIND) ; sans élargissement, 60 min et 25 mobs de
+    -- farm. Forcées, elles redonnent le chapitre v1.0.11 : 35 min, aucun farm. Mesuré : Undead 1-60 -25 min.
+    force = { [460] = true, [461] = true, [491] = true, [79096] = true },
   },
   -- Skyborne (Horde)
   {
@@ -505,6 +513,10 @@ plans.Horde = {
     minLevel = 25, maxLevel = 28, levelSlack = 0, levelBelow = 6, far = 1600, entry = { BARRENS, 44.5, 59.1 }, next = "H_05",
     -- Egg Hunt (868) faite dans le sud des Tarides avant Mille pointes, sans y revenir. Mesuré : Horde -11 min.
     precede = { { "O868", "O1153" }, { "O868", "A1149" }, { "O868", "A5147" }, { "O868", "A4821" } },
+    -- QuestieDB v1.0.12 : son objectif est plus loin (1 543 s isolée au lieu de 982), écartée pour « low ratio »
+    -- et les précédences ci-dessus visaient une tâche absente. Forcée : même durée sur les quatre parcours
+    -- Horde, +1 quête, -11 mobs de farm.
+    force = { [868] = true },
     flightPaths = { "Freewind Post, Thousand Needles" },
   },
   {

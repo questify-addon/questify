@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 35 étapes, niveau final 6.02, ~10280 xp/h, 45 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 35 étapes, niveau final 6.02, ~10281 xp/h, 45 min.
 Q:RegisterGuide({
   id = "H_Undead_01",
   title = "Deathknell",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Undead" },
   minLevel = 1, maxLevel = 6,
   next = "H_Undead_02",
-  sim = { steps = 35, endLevel = 6.02, xpPerHour = 10280, minutes = 45 },
+  sim = { steps = 35, endLevel = 6.02, xpPerHour = 10281, minutes = 45 },
   steps = {
     { "accept", 363 }, -- Rude Awakening (lvl 1, ~40 xp, sim lvl 1)
     { "turnin", 363, xp = 40 }, -- Rude Awakening (lvl 1, ~40 xp, sim lvl 1)
@@ -31,7 +31,7 @@ Q:RegisterGuide({
     { "turnin", 6395, xp = 450 }, -- Marla's Last Wish (lvl 5, ~450 xp, sim lvl 4)
     { "complete", 3902, at = { 1420, 33.04, 64.29 } }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 4)
     { "turnin", 3902, xp = 315 }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 4)
-    { "complete", 98389, at = { 1420, 26.81, 59.63 } }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
+    { "complete", 98389, at = { 1420, 26.82, 59.56 } }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
     { "complete", 380, at = { 1420, 28.4, 58.08 } }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 98389, xp = 355 }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 380, xp = 355 }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 5)

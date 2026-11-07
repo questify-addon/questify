@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 67 étapes, niveau final 57.00, ~69091 xp/h, 163 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 67 étapes, niveau final 57.00, ~69061 xp/h, 163 min.
 Q:RegisterGuide({
   id = "A_27",
   title = "Felwood and Winterspring",
   faction = "Alliance",
   minLevel = 56, maxLevel = 57,
   next = "A_23",
-  sim = { steps = 67, endLevel = 57.00, xpPerHour = 69091, minutes = 163 },
+  sim = { steps = 67, endLevel = 57.00, xpPerHour = 69061, minutes = 163 },
   steps = {
     { "accept", 969 }, -- Luck Be With You (lvl 60, ~6600 xp, sim lvl 56)
     { "accept", 4809 }, -- Chillwind Horns (lvl 54, ~5450 xp, sim lvl 56)
@@ -77,6 +77,6 @@ Q:RegisterGuide({
     { "turnin", 8464, xp = 6200 }, -- Winterfall Activity (lvl 58, ~6200 xp, sim lvl 56)
     { "accept", 84397 }, -- Northern Kalimdor - A Comprehensive Guide (lvl 60, ~0 xp, sim lvl 56)
     { "complete", 84397, at = { 1448, 65.2, 3.3 } }, -- Northern Kalimdor - A Comprehensive Guide (lvl 60, ~0 xp, sim lvl 56)
-    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 73 more mobs near the last objective" }, -- farm de niveau
+    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 74 more mobs near the last objective" }, -- farm de niveau
   },
 })

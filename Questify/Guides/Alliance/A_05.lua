@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 24 étapes, niveau final 30.00, ~33028 xp/h, 66 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 23 étapes, niveau final 30.02, ~33476 xp/h, 62 min.
 Q:RegisterGuide({
   id = "A_05",
   title = "Hillsbrad Foothills",
   faction = "Alliance",
   minLevel = 29, maxLevel = 30,
   next = "A_08",
-  sim = { steps = 24, endLevel = 30.00, xpPerHour = 33028, minutes = 66 },
+  sim = { steps = 23, endLevel = 30.02, xpPerHour = 33476, minutes = 62 },
   steps = {
     { "boat", 1437, 4.9, 57.3, note = "Take the boat to Southshore" }, -- bateau
     { "fp", 1424, 49.34, 52.27 }, -- point de vol
@@ -33,7 +33,6 @@ Q:RegisterGuide({
     { "complete", 562, at = { 1424, 58.14, 71.42 } }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 29)
     { "turnin", 555, xp = 2500 }, -- Soothing Turtle Bisque (lvl 31, ~2500 xp, sim lvl 29)
     { "turnin", 562, xp = 1950 }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 29)
-    { "accept", 563 }, -- Reassignment (lvl 32, ~0 xp, sim lvl 29)
-    { "level", 30, at = { 1424, 59.96, 74.99 }, note = "About 8 more mobs here (Daggerspine Shorehunter, level 30)" }, -- farm de niveau
+    { "accept", 563 }, -- Reassignment (lvl 32, ~0 xp, sim lvl 30)
   },
 })

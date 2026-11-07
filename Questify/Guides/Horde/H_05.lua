@@ -1,18 +1,16 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 53 étapes, niveau final 30.10, ~30945 xp/h, 175 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 51 étapes, niveau final 30.10, ~30402 xp/h, 178 min.
 Q:RegisterGuide({
   id = "H_05",
   title = "Hillsbrad Foothills",
   faction = "Horde",
   minLevel = 28, maxLevel = 30,
   next = "H_06",
-  sim = { steps = 53, endLevel = 30.10, xpPerHour = 30945, minutes = 175 },
+  sim = { steps = 51, endLevel = 30.10, xpPerHour = 30402, minutes = 178 },
   steps = {
-    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
-    { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
     { "fp", 1458, 63.25, 48.56 }, -- point de vol
     { "fp", 1424, 60.14, 18.62 }, -- point de vol

@@ -1,6 +1,6 @@
 # H_OrcTroll_01 — Valley of Trials
 
-Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d306458a95` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-07 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
@@ -8,7 +8,7 @@ Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d30
 | Simulated level | 1.00 -> 6.08 |
 | Time | 38 min |
 | XP gained | 7893 |
-| XP/h | 12347 |
+| XP/h | 12346 |
 | Steps | 40 |
 | Quests turned in | 15 |
 | Hubs | 2 |
@@ -87,7 +87,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 5441 | Lazy Peons | 4 | 445 | 0 | 155 | 90 | 2.60 | 5.42 | 1 |  |
 | 6394 | Thazz'ril's Pick | 4 | 445 | 0 | 193 | 70 | 2.30 | 6.29 | 1 |  |
 | 96652 | The Adventurer | 6 | 442 | 307 | 143 | 16 | 3.09 | 27.26 | 0 |  |
-| 96876 | Ukor's Lost Pack | 8 | 1020 | 155 | 263 | 181 | 3.87 | 5.64 | 0 |  |
+| 96876 | Ukor's Lost Pack | 8 | 1015 | 150 | 259 | 178 | 3.91 | 5.70 | 0 |  |
 | 97279 | Wayward Weapons | 2 | 170 | 0 | 191 | 129 | 0.89 | 1.31 | 1 |  |
 | 99123 | Lost in the Shadows | 8 | 879 | 179 | 158 | 158 | 5.55 | 5.55 | 1 |  |
 
@@ -134,13 +134,13 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 33 | T | 6394 | Thazz'ril's Pick | 1411 | 44.6, 68.7 | 98 |  |
 | 34 | A | 99123 | Lost in the Shadows | 1411 | 46.3, 78.6 | 363 |  |
 | 35 | O | 99123 | Lost in the Shadows | 1411 | 51.4, 79.3 | 271 |  |
-| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.2, 55.3 | 847 |  |
-| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 285 |  |
+| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.0, 55.7 | 831 |  |
+| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 302 |  |
 | 38 | T | 96876 | Ukor's Lost Pack | 1411 | 52.1, 68.3 | 741 |  |
 | 39 | T | 99123 | Lost in the Shadows | 1411 | 55.9, 74.4 | 296 |  |
 | 40 | T | 805 | Report to Sen'jin Village | 1411 | 56.0, 74.7 | 11 |  |
 
-Walking between tasks: 6630 yd (~16 min at 7 yd/s).
+Walking between tasks: 6631 yd (~16 min at 7 yd/s).
 
 ## Qualité
 

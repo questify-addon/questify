@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 48 étapes, niveau final 55.00, ~65599 xp/h, 159 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 48 étapes, niveau final 55.00, ~65604 xp/h, 159 min.
 Q:RegisterGuide({
   id = "H_26",
   title = "Felwood",
   faction = "Horde",
   minLevel = 54, maxLevel = 55,
   next = "H_27",
-  sim = { steps = 48, endLevel = 55.00, xpPerHour = 65599, minutes = 159 },
+  sim = { steps = 48, endLevel = 55.00, xpPerHour = 65604, minutes = 159 },
   steps = {
     { "hearth", 1447 }, -- pierre de foyer
     { "accept", 4102 }, -- Cleansing Felwood (lvl 55, ~5650 xp, sim lvl 54)

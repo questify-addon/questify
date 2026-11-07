@@ -1,14 +1,14 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 53 étapes, niveau final 60.00, ~72228 xp/h, 174 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 53 étapes, niveau final 60.00, ~72224 xp/h, 174 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 53, endLevel = 60.00, xpPerHour = 72228, minutes = 174 },
+  sim = { steps = 53, endLevel = 60.00, xpPerHour = 72224, minutes = 174 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer

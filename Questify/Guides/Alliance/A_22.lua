@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 106 étapes, niveau final 52.00, ~60526 xp/h, 299 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 106 étapes, niveau final 52.00, ~60514 xp/h, 299 min.
 Q:RegisterGuide({
   id = "A_22",
   title = "Searing Gorge and Blasted Lands",
   faction = "Alliance",
   minLevel = 50, maxLevel = 52,
   next = "A_28",
-  sim = { steps = 106, endLevel = 52.00, xpPerHour = 60526, minutes = 299 },
+  sim = { steps = 106, endLevel = 52.00, xpPerHour = 60514, minutes = 299 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Scarab Shells, Troll Temper", optional = true, dungeon = "Zul'Farrak" },
     { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
@@ -116,6 +116,6 @@ Q:RegisterGuide({
     { "goto", 1432, 33.94, 50.95, note = "Flight master" }, -- déplacement
     { "fly", 1455, node = 6, note = "Ironforge, Dun Morogh" }, -- vol
     { "turnin", 3368, xp = 4400 }, -- Suntara Stones (lvl 48, ~4400 xp, sim lvl 51)
-    { "level", 52, at = { 1427, 48.4, 24.03 }, note = "About 162 more mobs near the last objective" }, -- farm de niveau
+    { "level", 52, at = { 1427, 48.4, 24.03 }, note = "About 163 more mobs near the last objective" }, -- farm de niveau
   },
 })

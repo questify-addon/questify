@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 62 étapes, niveau final 45.00, ~54167 xp/h, 124 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 62 étapes, niveau final 45.00, ~54127 xp/h, 124 min.
 Q:RegisterGuide({
   id = "H_16",
   title = "Tanaris",
   faction = "Horde",
   minLevel = 44, maxLevel = 45,
   next = "H_17",
-  sim = { steps = 62, endLevel = 45.00, xpPerHour = 54167, minutes = 124 },
+  sim = { steps = 62, endLevel = 45.00, xpPerHour = 54127, minutes = 124 },
   steps = {
     { "note", "Not running Uldaman? Abandon Solution to Doom", optional = true, dungeon = "Uldaman" },
     { "goto", 1456, 47, 49.83, note = "Flight master" }, -- déplacement

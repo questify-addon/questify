@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 77 étapes, niveau final 57.03, ~65286 xp/h, 177 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 77 étapes, niveau final 57.03, ~65284 xp/h, 177 min.
 Q:RegisterGuide({
   id = "H_28",
   title = "Felwood and Winterspring",
   faction = "Horde",
   minLevel = 56, maxLevel = 57,
   next = "H_29",
-  sim = { steps = 77, endLevel = 57.03, xpPerHour = 65286, minutes = 177 },
+  sim = { steps = 77, endLevel = 57.03, xpPerHour = 65284, minutes = 177 },
   steps = {
     { "hearth", 1447 }, -- pierre de foyer
     { "goto", 1447, 21.96, 49.62, note = "Flight master" }, -- déplacement

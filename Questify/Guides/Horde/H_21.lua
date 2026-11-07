@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 75 étapes, niveau final 51.00, ~58681 xp/h, 295 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Simulation : 75 étapes, niveau final 51.00, ~58677 xp/h, 295 min.
 Q:RegisterGuide({
   id = "H_21",
   title = "The Hinterlands",
   faction = "Horde",
   minLevel = 49, maxLevel = 51,
   next = "H_23",
-  sim = { steps = 75, endLevel = 51.00, xpPerHour = 58681, minutes = 295 },
+  sim = { steps = 75, endLevel = 51.00, xpPerHour = 58677, minutes = 295 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Scarab Shells, Troll Temper", optional = true, dungeon = "Zul'Farrak" },
     { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
