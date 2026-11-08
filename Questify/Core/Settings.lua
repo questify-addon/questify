@@ -29,6 +29,7 @@ Settings.defaults = {
   -- Donjons selon le niveau et la faction (alerte du suivi)
   dungeonSuggest = true,    -- Engine/Dungeons.lua
   classQuestOffer = true,   -- Engine/ClassQuestOffer.lua
+  bagQuestOffer = true,     -- Engine/BagQuestOffer.lua
   -- Repères des étapes sur la carte du monde et la minicarte
   mapPins = true,           -- UI/MapPins.lua
   -- Objectifs proches de plusieurs quêtes regroupés en une seule visite

@@ -4,6 +4,8 @@ local addonName, Q = ...
 -- titre, niveau, PNJ de départ et zone, objectifs de la première quête à faire (QuestieDB),
 -- récompenses (boutons d'objets avec infobulle), XP de la chaîne, puis deux choix :
 -- « Ajouter à la route » et « Ignorer ». Les deux marquent la chaîne comme vue.
+-- Mode « bag » (Show(entry, nil, nil, "bag"), offre de Engine/BagQuestOffer.lua) : même fenêtre pour une quête qui
+-- donne un sac (Q.BagQuests), avec le titre de la quête à sac, la taille du sac et les sacs portés.
 Q.UI = Q.UI or {}
 local Popup = { items = {} }
 Q.UI.ClassQuestPopup = Popup
@@ -21,9 +23,10 @@ local FALLBACK_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 -- Données de la chaîne
 ---------------------------------------------------------------------------
 -- Titre dans la langue du client : nom de la première quête (QuestieDB, puis le client),
--- sinon le titre anglais des données générées.
+-- sinon le titre anglais des données générées. Quête à sac : nom de la quête qui donne le sac.
 function Popup.ChainTitle(chain)
   if type(chain) ~= "table" then return "?" end
+  if type(chain.bag) == "number" and Q.BagQuests then return Q.BagQuests:Title(chain) end
   local id = type(chain.quests) == "table" and chain.quests[1] or nil
   if id then
     local name = Q.QDB:QuestName(id)
@@ -193,6 +196,11 @@ function Popup:Create()
   local level = c:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   level:SetJustifyH("LEFT")
   self.level = level
+  local bagInfo = c:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  bagInfo:SetJustifyH("LEFT")
+  bagInfo:SetWidth(INNER)
+  bagInfo:SetWordWrap(true)
+  self.bagInfo = bagInfo
   local start = c:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   start:SetJustifyH("LEFT")
   start:SetWidth(INNER)
@@ -240,13 +248,35 @@ end
 ---------------------------------------------------------------------------
 -- Affichage
 ---------------------------------------------------------------------------
--- Show(chain, index, total) : accepte aussi une ligne { chain, state } de Q.ClassQuests:List().
--- index/total (facultatifs) : position parmi les alertes, affichée « 1 sur 3 ».
-function Popup:Show(chain, index, total)
+-- Sacs portés en texte : « 6, 8, vide ».
+local function bagsText(eq)
+  local parts = {}
+  for _, n in ipairs(eq.sizes or {}) do parts[#parts + 1] = tostring(n) end
+  for _ = 1, eq.empty or 0 do parts[#parts + 1] = L.UI_BAG_EMPTY end
+  return table.concat(parts, ", ")
+end
+
+-- Titre et portrait de la fenêtre selon le mode (quête de classe ou quête à sac).
+local function setHeader(f, kind)
+  if f.SetTitle then f:SetTitle(kind == "bag" and L.UI_BAG_QUESTS or L.UI_TAB_CLASS) end
+  if kind == "bag" then
+    if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Bag_08") end
+  elseif f.SetPortraitToClassIcon and Q.Player and Q.Player.classFile then
+    pcall(f.SetPortraitToClassIcon, f, Q.Player.classFile)
+  end
+end
+
+-- Show(chain, index, total, kind) : accepte aussi une ligne { chain, state } de Q.ClassQuests:List()
+-- (ou { entry, state } de Q.BagQuests:List()). index/total (facultatifs) : position parmi les alertes,
+-- affichée « 1 sur 3 ». kind : nil (quête de classe) ou "bag" (quête à sac).
+function Popup:Show(chain, index, total, kind)
   if type(chain) == "table" and type(chain.chain) == "table" then chain = chain.chain end
+  if type(chain) == "table" and type(chain.entry) == "table" then chain = chain.entry end
   if type(chain) ~= "table" then return end
   self:Create()
   self.chain = chain
+  self.kind = kind == "bag" and "bag" or nil
+  setHeader(self.frame, self.kind)
   self.demo = chain.demo == true   -- scène /qf demo : les boutons ferment sans agir (UI/Demo.lua)
   local y = 0
 
@@ -263,6 +293,20 @@ function Popup:Show(chain, index, total)
   self.level:SetFormattedText(L.UI_POPUP_LEVEL, tonumber(chain.level) or 1)
   place(self.level, y)
   y = y + 18
+
+  if self.kind == "bag" and Q.BagQuests then
+    local BQ = Q.BagQuests
+    local name = Q.QDB:ItemName(chain.bag) or ("#" .. tostring(chain.bag))
+    local slots = BQ:BagSlots(chain.bag)
+    local line = slots and L.UI_POPUP_BAG:format(name, slots) or L.UI_POPUP_BAG_NOSIZE:format(name)
+    self.bagInfo:SetText(line .. "\n" .. L.UI_POPUP_YOUR_BAGS:format(bagsText(BQ:Equipped())))
+    place(self.bagInfo, y)
+    self.bagInfo:Show()
+    y = y + (self.bagInfo:GetStringHeight() or 28) + 8
+  else
+    self.bagInfo:SetText("")
+    self.bagInfo:Hide()
+  end
 
   local qid = firstQuest(chain)
   local who, zone = starterOf(qid)
@@ -341,12 +385,15 @@ end
 function Popup:Choose(action)
   if self.demo then return self:Hide() end   -- démo : rien n'est marqué ni ajouté
   local chain = self.chain
-  local cq = Q.ClassQuests
+  local bag = self.kind == "bag"
+  local cq = bag and Q.BagQuests or Q.ClassQuests
   if chain and cq then
     if cq.MarkSeen then cq:MarkSeen(chain.key) end
     if cq[action] then
       local done = cq[action](cq, chain.key)
-      if action == "Add" and done ~= false then Q:Print(L.UI_CQ_ADDED_MSG, Popup.ChainTitle(chain)) end
+      if action == "Add" and done ~= false then
+        Q:Print(bag and L.UI_BQ_ADDED_MSG or L.UI_CQ_ADDED_MSG, Popup.ChainTitle(chain))
+      end
     end
   end
   self:Hide()

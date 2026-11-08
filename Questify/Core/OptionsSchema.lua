@@ -256,6 +256,9 @@ add({ id = "dungeonQuests", section = "class", category = "dungeons", type = "to
 add({ id = "classQuestOffer", section = "class", category = "dungeons", type = "toggle", path = "classQuestOffer",
   label = "UI_OPT_CLASSQUEST_OFFER", tip = "OPT_TIP_CLASSQUEST_OFFER",
   keywords = "quetes de classe proposer donneur etape passage class quests offer giver step" })
+add({ id = "bagQuestOffer", section = "class", category = "dungeons", type = "toggle", path = "bagQuestOffer",
+  label = "UI_OPT_BAGQUEST_OFFER", tip = "OPT_TIP_BAGQUEST_OFFER",
+  keywords = "sac sacs quete proposer emplacements donneur bag bags quest offer slots giver" })
 add({ id = "openClassQuests", section = "class", category = "dungeons", type = "action",
   label = "OPT_OPEN_CLASS", tip = "OPT_TIP_OPEN_CLASS",
   keywords = "quetes de classe donjons journal class quests dungeons",

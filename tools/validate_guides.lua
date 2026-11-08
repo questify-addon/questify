@@ -188,6 +188,29 @@ function M.run(argv)
       bad(path, 0, "load error: " .. tostring(err))
     elseif rel:match("ClassQuestData%.lua$") then
       if type(Q.ClassQuestData) ~= "table" then bad(path, 0, "ClassQuestData missing") end
+    elseif rel:match("BagQuestData%.lua$") then
+      -- quêtes à sac (tools/routebuilder/bagquests.lua) : forme des entrées et quêtes connues de QuestieDB
+      if type(Q.BagQuestData) ~= "table" then
+        bad(path, 0, "BagQuestData missing")
+      else
+        local keys = {}
+        for i, e in ipairs(Q.BagQuestData) do
+          if type(e) ~= "table" or type(e.key) ~= "string" then
+            bad(path, 0, ("bag quest %d: no key"):format(i))
+          elseif keys[e.key] then
+            bad(path, 0, "duplicate bag quest key " .. e.key)
+          else
+            keys[e.key] = true
+            if type(e.bag) ~= "number" or type(e.level) ~= "number" or type(e.quests) ~= "table" or #e.quests == 0 then
+              bad(path, 0, e.key .. ": needs bag, level and quests")
+            else
+              for _, qid in ipairs(e.quests) do
+                if not D(e.faction).quests[qid] then bad(path, 0, ("%s: unknown quest %s"):format(e.key, tostring(qid))) end
+              end
+            end
+          end
+        end
+      end
     else
       if #defs ~= 1 then bad(path, 0, ("expected one RegisterGuide call, got %d"):format(#defs)) end
       for _, def in ipairs(defs) do

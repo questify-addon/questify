@@ -181,6 +181,11 @@ local function onCurrentClick(button)
     local P = Q.UI and Q.UI.ClassQuestPopup
     local chain = Q.ClassQuests and Q.ClassQuests:FindChain(cur.step.key)
     if P and chain then P:Show(chain) end
+  elseif button == "LeftButton" and cur and cur.step.action == "bagquest" then
+    -- offre de quête à sac : même fenêtre, en mode « sac » (taille du sac, sacs portés)
+    local P = Q.UI and Q.UI.ClassQuestPopup
+    local entry = Q.BagQuests and Q.BagQuests:Find(cur.step.key)
+    if P and entry then P:Show(entry, nil, nil, "bag") end
   elseif button == "LeftButton" and cur and MANUAL_DONE[cur.step.action] then
     Q.Progress:MarkDone(cur.key)
   end
@@ -192,7 +197,7 @@ local function currentTooltip(owner)
   if cur then
     lines[#lines + 1] = Q.Format:StepTitle(cur)
     if MANUAL_DONE[cur.step.action] then lines[#lines + 1] = L.UI_TRACKER_HINT_DONE end
-    if cur.step.action == "classquest" then lines[#lines + 1] = L.STEP_CLASSQUEST_HINT end
+    if cur.step.action == "classquest" or cur.step.action == "bagquest" then lines[#lines + 1] = L.STEP_CLASSQUEST_HINT end
   end
   lines[#lines + 1] = L.UI_TRACKER_HINT_SKIP
   lines[#lines + 1] = L.UI_TRACKER_HINT_BACK
@@ -1299,6 +1304,7 @@ Q:On("PROGRESS_UPDATED", refresh)
 Q:On("STEP_CHANGED", refresh)
 Q:On("GUIDE_CHANGED", refresh)
 Q:On("CLASSQUESTS_CHANGED", refresh)
+Q:On("BAGQUESTS_CHANGED", refresh)
 Q:On("DUNGEONS_CHANGED", refresh)
 Q:On("TRAINER_CHANGED", refresh)
 -- Mode zone : entrée ou sortie, objectif en tête changé : nouvelle cible, nouvelle liste.

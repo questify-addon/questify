@@ -66,6 +66,7 @@ other chapters from the XML.
 | `plans.lua` | Chapter plans per faction (spec § 6), `plans.validate` (successors and `choices`). |
 | `emit.lua` | Guide file writer (spec § 5.2 format, one step per line with a comment). |
 | `classquests.lua` | Class quest chains (level ≤ 60) for `ClassQuestData.lua`. |
+| `bagquests.lua` | Quests that reward a bag, with their prerequisite chain, for `BagQuestData.lua` (see "Bag quests"). |
 | `overrides.lua` | Hand fixes applied at build time. |
 | `build.lua` | CLI. |
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
@@ -669,6 +670,30 @@ After these changes, the forcings of `plans.lua` were measured again one by one 
   per Horde path (Orc +29). The trunk guides are shared by every race path, so a per-race simulation could only
   change the measure, not the routes. `grindCost` (mobs of the character's
   level, 20 s each, as `sim.grindTo`) is unchanged.
+
+## Bag quests (`bagquests.lua`, 2026-11-08)
+
+`build.lua` writes `Questify/Guides/BagQuestData.lua` after `ClassQuestData.lua` (both listed last in `Guides.xml`):
+one entry per quest whose reward items include a regular bag (item class 1, subclass 0: no soul bag, quiver or
+profession bag), `{ key, title, faction, races, level, bag, quests, rewards }`.
+
+- `quests` is the chain to do: required prerequisites first, depth first (`preQuestSingle`: the first one, by id,
+  that the faction can do; `preQuestGroup`: all), the bag quest last; at most 8 quests. Breadcrumbs are not
+  required and are left out.
+- Left out, with the reason in the second result of `bq.build`: class quests, dungeon quests (QuestieDB zone in an
+  instance), reputation, profession or spell requirements, repeatable quests, blacklisted quests, quests of level 60
+  (reputation rewards, Darkmoon tickets), quests without a giver, and any chain whose required prerequisite is in
+  one of these cases.
+- `key` is `BAG_<questId>`, with `_A` or `_H` when the chain is limited to one faction (The Problem With Prideclaws
+  92515 has a different prerequisite per faction: two entries).
+- QuestieDB has no bag size; the game reads it from the item tooltip (`Engine/BagQuests.lua`). The game offers an
+  entry only when the bag beats the smallest regular bag worn (or a bag slot is empty), and never when the route
+  already turns in every remaining quest of the chain (`Q.Progress:RouteTurnins`).
+- `tools/validate_guides.lua` checks the shape of the entries (unique keys, bag, level, quests) and that every quest
+  is known to QuestieDB.
+
+On QuestieDB v1.0.12: 18 entries (12 for the Alliance, 9 for the Horde, 3 of them shared). Turned in by a chapter
+of the routes, so never offered on the race paths that do them: 791, 86784, 97277, 151, 97253, 140, 1003, 58.
 
 ## Known limits
 

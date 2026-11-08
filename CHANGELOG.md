@@ -11,6 +11,15 @@
 - Durotar no longer ends with a grind (59 mobs before the fix), Silverpine keeps its higher quests instead of a
   grind, and Egg Hunt is back in the Southern Barrens.
 - Dungeons window: Ruins of Lordaeron quests need level 15 and follow their chain.
+
+**Bag quests**
+- Near the giver of a quest that rewards a bag bigger than your smallest bag (or when a bag slot is empty), the
+  route offers a "Bag quest" step, like class quests: one click adds the quest to the route, with its
+  prerequisites, or ignores it. Quests the route already does are never offered. 18 quests (Carry Your Weight,
+  Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's Riddle…). The bag size is read
+  from the item tooltip in game.
+- Option "Offer quests that reward a bigger bag" (on by default); `/qf bags` lists them with their state,
+  `/qf bags reset` offers the ignored ones again.
 - Class quests: the unfinished Undead priest quests (`<NYI>`) are gone.
 
 ### Français
@@ -23,6 +32,15 @@
 - Durotar ne finit plus par du farm (59 mobs sans la correction), la Forêt des Pins-Argentés garde ses quêtes
   plus hautes au lieu de farmer, et Egg Hunt revient dans le sud des Tarides.
 - Fenêtre des donjons : les quêtes des Ruines de Lordaeron demandent le niveau 15 et suivent leur chaîne.
+
+**Quêtes de sac**
+- Près du donneur d'une quête qui donne un sac plus grand que ton plus petit sac (ou s'il te reste un emplacement
+  de sac vide), la route propose une étape « Quête de sac », comme pour les quêtes de classe : un clic pour
+  l'ajouter à la route, prérequis compris, ou l'ignorer. Une quête que la route fait déjà n'est jamais proposée.
+  18 quêtes (Carry Your Weight, Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's
+  Riddle…). La taille du sac est lue dans l'infobulle de l'objet, en jeu.
+- Option « Proposer les quêtes qui donnent un sac plus grand » (activée par défaut) ; `/qf sacs` les liste avec
+  leur état, `/qf sacs reset` repropose celles qui ont été ignorées.
 - Quêtes de classe : les quêtes de prêtre mort-vivant inachevées (`<NYI>`) disparaissent.
 
 ## 0.4.0 (2026-11-07)
