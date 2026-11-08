@@ -1,18 +1,22 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 55 étapes, niveau final 33.00, ~31788 xp/h, 103 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 59 étapes, niveau final 33.00, ~29301 xp/h, 112 min.
 Q:RegisterGuide({
   id = "A_07",
   title = "Duskwood",
   faction = "Alliance",
   minLevel = 32, maxLevel = 33,
   next = "A_09",
-  sim = { steps = 55, endLevel = 33.00, xpPerHour = 31788, minutes = 103 },
+  sim = { steps = 59, endLevel = 33.00, xpPerHour = 29301, minutes = 112 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Highland Hides", optional = true, dungeon = "Excavation Site: Wetlands" },
-    { "hearth", 1431 }, -- pierre de foyer
+    { "hearth", 1437 }, -- pierre de foyer
+    { "fp", 1455, 55.5, 47.74 }, -- point de vol
+    { "boat", 1455, 78, 51.4, note = "Take the Deeprun Tram to Stormwind" }, -- bateau
+    { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
+    { "fly", 1431, node = 12, note = "Darkshire, Duskwood" }, -- vol
     { "accept", 173 }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
     { "complete", 173, at = { 1431, 64.98, 68.93 } }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
@@ -65,6 +69,6 @@ Q:RegisterGuide({
     { "turnin", 223, xp = 3150 }, -- Worgen in the Woods (lvl 31, ~3150 xp, sim lvl 32)
     { "turnin", 231, xp = 1350 }, -- A Daughter's Love (lvl 35, ~1350 xp, sim lvl 32)
     { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 32)
-    { "level", 33, at = { 1431, 72.52, 71.17 }, note = "About 116 more mobs near the last objective" }, -- farm de niveau
+    { "level", 33, at = { 1431, 72.52, 71.17 }, note = "About 117 more mobs near the last objective" }, -- farm de niveau
   },
 })

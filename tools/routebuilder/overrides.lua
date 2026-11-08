@@ -7,6 +7,8 @@
 --   insertAfter = { [planId] = { { afterQuestTurnin = questId, step = { "note", "..." } }, ... } }
 --                                                      -- étape ajoutée après le rendu d'une quête
 --                                                      -- (afterQuestTurnin = 0 : en tête du chapitre)
+--   pre         = { [questId] = { prérequis } }         -- prérequis absents de QuestieDB (un au choix, comme
+--                                                      -- preQuestSingle) ; build.lua et validate_guides.lua
 -- Les textes des étapes `note` sont en anglais, comme toutes les notes générées (affichées telles quelles).
 -- Les notes de donjon sont `optional` : masquées quand les quêtes de donjon sont désactivées.
 return {
@@ -23,6 +25,16 @@ return {
     [98071] = { 1424, 70.0, 79.0 }, -- Brewer's Trade : Dun Garok (aucune donnée d'objectif)
     [98059] = { 1424, 29.7, 41.6 }, -- Hillsbrad's Hoard : table de l'hôtel de ville de Hillsbrad
     [11] = { 1429, 26.46, 86.65 }, -- Riverpaw Gnoll Bounty : groupe ouest (apparition de Riverpaw Runt 97), près de Westbrook
+  },
+  -- Chasse au trésor du Cozy Sleeping Bag (Forever, niveau requis 14, toutes races) : QuestieDB n'a aucun lien entre
+  -- les cinq quêtes, chacune commence à l'objet où la précédente se rend (planche des Tarides ou de la Marche de
+  -- l'Ouest -> Pocket Litter et Mound of Dirt aux Serres-Rocheuses -> Carved Figurine au barrage du Loch Modan ->
+  -- Messenger Bag en Arathi, qui donne le sac). Sans ces liens, H_02 faisait prendre Scramble seule.
+  pre = {
+    [79980] = { 79192 }, -- Scramble après Stepping Stones
+    [79974] = { 79980 }, -- Wet Job après Scramble
+    [79975] = { 79974 }, -- Eagle's Fist après Wet Job
+    [79976] = { 79975 }, -- This Must Be The Place après Eagle's Fist (récompense : Cozy Sleeping Bag 211527)
   },
   insertAfter = {
     A_DwarfGnome_03 = {

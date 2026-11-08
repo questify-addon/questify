@@ -104,6 +104,25 @@ return {
     t.ok(#report.quests >= 6, "kept quests listed")
   end,
 
+  widen_true_always_widens_the_band = function(t)
+    local W = F.W()
+    local plan = F.plan()
+    local threshold = sim.CONST.WIDEN_GRIND
+    sim.CONST.WIDEN_GRIND = 100000   -- le chapitre de test ne franchit plus le seuil
+    local ok, err = pcall(function()
+      local _, base = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(base.widened, nil, "below the threshold: not widened")
+      plan.widen = true
+      local _, report = sim.chapter(F.D(), W, plan, F.state())
+      t.ok(report.widened and report.widened:find("band widened", 1, true), tostring(report.widened))
+      plan.widen = false
+      local _, never = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(never.widened, nil, "widen = false: never")
+    end)
+    sim.CONST.WIDEN_GRIND = threshold
+    if not ok then error(err, 0) end
+  end,
+
   accept_waits_for_required_level = function(t)
     local D, W = F.D(), F.W()
     D.quests[104].reqLevel = 5

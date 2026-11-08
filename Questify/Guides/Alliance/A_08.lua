@@ -1,17 +1,16 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 63 étapes, niveau final 32.00, ~30141 xp/h, 194 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 62 étapes, niveau final 32.00, ~30098 xp/h, 196 min.
 Q:RegisterGuide({
   id = "A_08",
   title = "Ashenvale",
   faction = "Alliance",
   minLevel = 30, maxLevel = 32,
   next = "A_07",
-  sim = { steps = 63, endLevel = 32.00, xpPerHour = 30141, minutes = 194 },
+  sim = { steps = 62, endLevel = 32.00, xpPerHour = 30098, minutes = 196 },
   steps = {
-    { "note", "Not running Blackfathom Deeps? Abandon Researching the Corruption", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running The Deadmines? Abandon Oh Brother. . ., Collecting Memories, Underground Assault", optional = true, dungeon = "The Deadmines" },
     { "note", "Not running The Hall of Thanes? Abandon Old Ironforge Incursion", optional = true, dungeon = "The Hall of Thanes" },
     { "note", "Not running The Stockade? Abandon Crime and Punishment, What Comes Around...", optional = true, dungeon = "The Stockade" },
@@ -73,6 +72,6 @@ Q:RegisterGuide({
     { "turnin", 98027, xp = 1050 }, -- Gleaming Crescent Necklace (lvl 26, ~1050 xp, sim lvl 30)
     { "turnin", 1022, xp = 2450 }, -- The Howling Vale (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 1032, xp = 2550 }, -- Satyr Slaying! (lvl 32, ~2550 xp, sim lvl 31)
-    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 257 more mobs near the last objective" }, -- farm de niveau
+    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 261 more mobs near the last objective" }, -- farm de niveau
   },
 })

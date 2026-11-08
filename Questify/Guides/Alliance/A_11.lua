@@ -1,18 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 67 étapes, niveau final 37.00, ~39639 xp/h, 210 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 66 étapes, niveau final 37.00, ~38910 xp/h, 214 min.
 Q:RegisterGuide({
   id = "A_11",
   title = "Desolace",
   faction = "Alliance",
   minLevel = 35, maxLevel = 37,
   next = "A_12",
-  sim = { steps = 67, endLevel = 37.00, xpPerHour = 39639, minutes = 210 },
+  sim = { steps = 66, endLevel = 37.00, xpPerHour = 38910, minutes = 214 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Horrors in the Highland, Lost in the Thicket Things, Prehistoric Prism", optional = true, dungeon = "Excavation Site: Wetlands" },
-    { "hearth", 1431 }, -- pierre de foyer
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "boat", 1453, 24.1, 55.4, note = "Take the boat to Auberdine (Stormwind Harbor)" }, -- bateau
@@ -73,8 +72,8 @@ Q:RegisterGuide({
     { "turnin", 93224, xp = 3150 }, -- Carved Centaur Totems (lvl 40, ~3150 xp, sim lvl 36)
     { "turnin", 1387, xp = 3750 }, -- Centaur Bounty (lvl 31, ~3750 xp, sim lvl 36)
     { "turnin", 261, xp = 3000 }, -- Down the Scarlet Path (lvl 39, ~3000 xp, sim lvl 36)
-    { "hearth", 1431 }, -- pierre de foyer
-    { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
+    { "hearth", 1437 }, -- pierre de foyer
+    { "goto", 1437, 9.49, 59.69, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 79950, xp = 2750 }, -- Demons and You (lvl 35, ~2750 xp, sim lvl 36)
     { "level", 37, at = { 1443, 28.24, 6.67 }, note = "About 176 more mobs near the last objective" }, -- farm de niveau

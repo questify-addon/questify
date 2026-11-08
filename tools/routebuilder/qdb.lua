@@ -651,6 +651,27 @@ function qdb.classList(mask)
   return out
 end
 
+-- Prérequis ajoutés à la main (champ `pre` de overrides.lua) : chaînes que QuestieDB ne relie pas encore, comme la
+-- chasse au trésor du Cozy Sleeping Bag (79192 -> 79980 -> 79974 -> 79975 -> 79976). pre = { [quête] = { prérequis } }
+-- remplace le preQuestSingle de la quête (un prérequis au choix) et met D.unlocks à jour. Même règle dans
+-- tools/validate_guides.lua : l'ordre de ces chaînes y est contrôlé.
+function qdb.addPrereqs(D, pre)
+  for _, qid in ipairs(qdb.sortedKeys(pre or {})) do
+    local q = D.quests[qid]
+    if q then
+      q.preSingle = {}
+      for _, p in ipairs(pre[qid]) do
+        q.preSingle[#q.preSingle + 1] = p
+        D.unlocks[p] = D.unlocks[p] or {}
+        local seen = false
+        for _, x in ipairs(D.unlocks[p]) do if x == qid then seen = true end end
+        if not seen then table.insert(D.unlocks[p], qid) end
+      end
+    end
+  end
+  return D
+end
+
 -- Quête de classe : masque limité à une ou deux classes. Un masque plus large (ex. « toutes sauf
 -- Démoniste ») désigne une quête générale réservée à certaines classes.
 function qdb.isClassQuest(q)

@@ -512,3 +512,49 @@ after the 1-30 changes).
 
 APR-COMPARE (same APR commit `c5960471`, v7.5.5): APR clearly ahead on 41 chapters, Questify on 3, close on 28 (42 /
 3 / 27 before).
+
+## Cozy Sleeping Bag (2026-11-08)
+
+The treasure hunt that rewards the Cozy Sleeping Bag (item 211527: an experience bonus according to players; QuestieDB
+has no data on its effect) is woven
+into the routes from the first chapter where it can start (required level 14, all races):
+
+| Quest | Starts at | Turned in at | Alliance (Human, Dwarf, Gnome) | Horde (every race) |
+|---|---|---|---|---|
+| 79192 Stepping Stones | Nailed Plank, Westfall 37.4, 50.7 or Southern Barrens 46.4, 73.9 | Pocket Litter, Stonetalon 40.8, 52.6 | A_Human_03 / A_DwarfGnome_04 → A_02 | H_01 → H_02 |
+| 79980 Scramble | Pocket Litter | Mound of Dirt, Stonetalon 39.6, 49.9 | A_02 | H_02 |
+| 79974 Wet Job | Mound of Dirt | Carved Figurine, Stonewrought Dam (Loch Modan 49.4, 12.9) | A_02 → A_04 | H_03 → H_05 |
+| 79975 Eagle's Fist | Carved Figurine | Messenger Bag, north-west Arathi 22.5, 24.2 | A_04 → A_05 | H_05 |
+| 79976 This Must Be The Place | Messenger Bag | Hastily Rolled-Up Satchel (same place): the bag | A_05 (level 29-30) | H_05 (level 29-30) |
+
+- QuestieDB has no link between these quests (each starts at the object where the previous one ends): the links are
+  added in `tools/routebuilder/overrides.lua` (`pre`), read by `build.lua` and `tools/validate_guides.lua`. Without
+  them, H_02 had Scramble accepted without Stepping Stones.
+- Plans: Stepping Stones forced in the Westfall chapters and H_01 (Human: after Captain Sander's Hidden Treasure 140,
+  at level 14); Scramble and Wet Job forced in A_02, Scramble in H_02, Wet Job in H_03 (from H_02 its turn-in would be
+  three chapters away); A_04 and H_05 reach the dam (Loch Modan limited to it by `bounds`), A_05 and H_05 north-west
+  Arathi (also limited by `bounds`).
+- Night Elf and Skyborne (Alliance) paths do not pass a Nailed Plank before Stonetalon: their steps are filtered by
+  race; they do not get the bag on the default route.
+- A_03 gets `widen = true`: carrying Wet Job through it put its first pass at 25 mobs of grinding instead of 52, under
+  the `WIDEN_GRIND` threshold, and the chapter lost 9 quests of level 30 (A_04 then +50 min).
+
+Totals per race path, simulated (minutes / quests / grind mobs), before → after:
+
+| Path 1-60 | Before | With the Cozy Sleeping Bag |
+|---|---|---|
+| Human | 5 186 / 649 / 4 500 | 5 212 / 651 / 4 546 |
+| Dwarf / Gnome | 5 241 / 654 / 4 579 | 5 277 / 657 / 4 615 |
+| Night Elf | 5 188 / 633 / 4 670 | 5 218 / 636 / 4 684 |
+| Skyborne (Alliance) | 5 127 / 634 / 4 565 | 5 163 / 637 / 4 601 |
+| Orc / Troll | 5 134 / 614 / 2 902 | 5 158 / 617 / 2 920 |
+| Tauren | 5 130 / 607 / 2 926 | 5 154 / 610 / 2 944 |
+| Undead | 5 172 / 631 / 2 904 | 5 196 / 634 / 2 922 |
+| Skyborne (Horde) | 5 159 / 630 / 2 980 | 5 183 / 633 / 2 998 |
+
+The bag costs 24 min on every Horde path (H_01 +10 for the plank, H_05 +16 for the dam and Arathi) and 26 to 36 min on
+the Alliance paths (A_05 +15, knock-on changes of 3 to 9 min in A_07 to A_13). The Night Elf and Skyborne (Alliance)
+totals count the trunk detours that their filtered steps skip in game. The simulator does not value the experience
+bonus of the bag; the XP of the five quests is an estimate (new Forever quests). The dam is reached in a straight
+line inside the northern Eastern Kingdoms walk region (no pathing around the mountains): to check in game.
+APR-COMPARE: APR clearly ahead on 41 chapters, Questify on 4, close on 27.

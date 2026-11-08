@@ -135,6 +135,8 @@ return {
   pin = { [questId] = { mapId, x, y } },    -- force the objective site
   insertAfter = { [planId] = { { afterQuestTurnin = questId, step = { "note", "..." } } } },
                                             -- step inserted after that turn-in (0 = at the start)
+  pre = { [questId] = { prerequisiteId, ... } }, -- prerequisites missing from QuestieDB (one of them, like
+                                            -- preQuestSingle); also read by tools/validate_guides.lua
 }
 ```
 
@@ -339,7 +341,7 @@ guide with an invalid step is refused in game with one `Invalid guide <id>: step
 | `arrive.via` | Point reached by computed travel before the fixed `arrive` steps. |
 | `precede` | Pairs `{ first, second }` of task ids (`A`, `T`, `C` + quest id, `O` + quest id = all its objective sites): extra precedence. |
 | `safeLevel` | `{ [questId] = level }`: level from which the objectives of that quest are done (replaces the computed safe level). |
-| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). |
+| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). `true`: always widened (a chapter that flips on the `WIDEN_GRIND` threshold for a few mobs, A_03). |
 
 ### Reports
 

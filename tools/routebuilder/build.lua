@@ -52,13 +52,14 @@ end
 -- Fichier de corrections manuelles : données pures, environnement vide.
 function build.loadOverrides(path)
   local f = io.open(path, "rb")
-  if not f then return { force = {}, drop = {}, pin = {}, insertAfter = {} } end
+  if not f then return { force = {}, drop = {}, pin = {}, insertAfter = {}, pre = {} } end
   local text = f:read("*a"); f:close()
   assert(text:byte(1) ~= 27, "bytecode refused: " .. path)
   local fn = assert(loadstring(text, "@" .. path))
   setfenv(fn, {})
   local ov = fn() or {}
   ov.force, ov.drop, ov.pin, ov.insertAfter = ov.force or {}, ov.drop or {}, ov.pin or {}, ov.insertAfter or {}
+  ov.pre = ov.pre or {}
   return ov
 end
 
@@ -568,7 +569,7 @@ function build.main(argv)
   local W = world.load(here .. "/data")
   local Ds = {}
   local function D(f)
-    if not Ds[f] then Ds[f] = qdb.load({ db = o.db, questie = o.questie, faction = f }) end
+    if not Ds[f] then Ds[f] = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = f }), ov.pre) end
     return Ds[f]
   end
   mkdir(o.out)

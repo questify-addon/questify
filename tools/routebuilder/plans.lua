@@ -93,7 +93,9 @@ plans.Alliance = {
     flightPaths = { "Stormwind, Elwynn", "Sentinel Hill, Westfall" },
     dungeons = { "The Deadmines" },
     -- Poor Old Blanchy (151) : écartée par le budget d'XP (« level band reached ») ; +1 085 XP pour +3 min
-    force = { [151] = true },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche de la Marche de l'Ouest,
+    -- niveau requis 14), rendue aux Serres-Rocheuses (A_02) ; suite en A_02, A_04 et A_05.
+    force = { [151] = true, [79192] = true },
   },
   -- Humain : Northshire, Elwynn, Marche de l'Ouest
   {
@@ -115,7 +117,11 @@ plans.Alliance = {
     dungeons = { "The Deadmines" },
     -- Rumi of Gnomeregan (79093, niveau 20) : écartée « au-dessus de la tranche » ; rendue à Stormwind en fin
     -- de chapitre. Forcée ici seulement : un forçage global la placerait plus tôt (Elwynn + Stormwind).
-    force = { [79093] = true },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag, comme en A_DwarfGnome_04. Prise
+    -- après Captain Sander's Hidden Treasure (140), quand le niveau requis 14 est atteint : sans cette précédence,
+    -- l'ordre passe à la planche au niveau 13 et la quête est écartée (~71 mobs à farmer).
+    force = { [79093] = true, [79192] = true },
+    precede = { { "T140", "A79192" } },
   },
   -- Elfe de la nuit : Shadowglen, Teldrassil, Sombrivage (toute la zone), puis tronc commun aux Carmines
   {
@@ -170,10 +176,17 @@ plans.Alliance = {
     dungeons = { "Blackfathom Deeps" },
     -- rendus à Stormwind au passage vers les Carmines (A Scroll from Mauren 1075) : 1-30 -7 min par parcours
     endZones = { STORMWIND },
+    -- Cozy Sleeping Bag : Stepping Stones rendue, Scramble, puis Wet Job prise au Mound of Dirt et rendue au barrage
+    -- du Loch Modan (A_04). Parcours Elfe de la nuit et Skyborne : sans le départ de la Marche de l'Ouest, étapes
+    -- filtrées par race au rejeu.
+    force = { [79980] = true, [79974] = true },
   },
   {
     id = "A_03", title = "Redridge Mountains and Duskwood", faction = "Alliance", zones = { REDRIDGE, DUSKWOOD },
     minLevel = 22, maxLevel = 26, levelSlack = 1, far = 1600, entry = { REDRIDGE, 30.6, 59.4 }, next = "A_04",
+    -- widen = true (2026-11-08) : la tranche s'élargissait à 52 mobs de farm prévus, mais Wet Job portée au journal
+    -- (Cozy Sleeping Bag) la faisait passer sous le seuil de 25 : 9 quêtes de niveau 30 perdues, A_04 +50 min.
+    widen = true,
     flightPaths = { "Lakeshire, Redridge", "Darkshire, Duskwood" },
     dungeons = { "The Stockade" },
     optional = { [253] = "Group quest: Eliza, level 31 elite" },
@@ -185,7 +198,10 @@ plans.Alliance = {
     endZones = { STORMWIND, ELWYNN, WESTFALL },
   },
   {
-    id = "A_04", title = "Wetlands", faction = "Alliance", zones = { WETLANDS },
+    id = "A_04", title = "Wetlands", faction = "Alliance", zones = { WETLANDS, LOCH_MODAN },
+    -- Loch Modan limité au barrage de Thelsamar (Stonewrought Dam) : Wet Job rendue et Eagle's Fist prise à la
+    -- Carved Figurine (chasse au trésor du Cozy Sleeping Bag), rendue en Arathi (A_05).
+    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 } }, force = { [79975] = true },
     minLevel = 26, maxLevel = 29, levelSlack = 0, entry = { WETLANDS, 9.5, 59.7 }, next = "A_05",
     flightPaths = { "Menethil Harbor, Wetlands" },
     dungeons = { "Excavation Site: Wetlands" },
@@ -200,7 +216,10 @@ plans.Alliance = {
     }, time = 720 },
   },
   {
-    id = "A_05", title = "Hillsbrad Foothills", faction = "Alliance", zones = { HILLSBRAD },
+    id = "A_05", title = "Hillsbrad Foothills", faction = "Alliance", zones = { HILLSBRAD, ARATHI },
+    -- Arathi limité au nord-ouest (Messenger Bag, près de la frontière d'Hautebrande) : Eagle's Fist rendue, puis This
+    -- Must Be The Place, qui donne le Cozy Sleeping Bag.
+    bounds = { [ARATHI] = { 17, 18, 28, 30 } }, force = { [79976] = true },
     minLevel = 29, maxLevel = 30, levelSlack = 0, entry = { HILLSBRAD, 49.3, 52.3 }, next = "A_08",
     flightPaths = { "Southshore, Hillsbrad" },
     -- bateau Menethil -> Southshore (sinon ligne droite par-dessus la mer)
@@ -494,6 +513,9 @@ plans.Horde = {
     minLevel = 12, maxLevel = 17, entry = { BARRENS, 52.0, 30.0 }, next = "H_02",
     flightPaths = { "Crossroads, The Barrens", "Ratchet, The Barrens", "Camp Taurajo, The Barrens" },
     dungeons = { "Wailing Caverns", "Ragefire Chasm" },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche du sud des Tarides, niveau
+    -- requis 14), rendue aux Serres-Rocheuses (H_02) ; suite en H_02, H_03 et H_05.
+    force = { [79192] = true },
   },
   {
     id = "H_02", title = "Stonetalon Mountains and The Barrens", faction = "Horde",
@@ -501,12 +523,18 @@ plans.Horde = {
     entry = { BARRENS, 52.0, 30.0 }, next = "H_03",
     flightPaths = { "Sun Rock Retreat, Stonetalon Mountains" },
     dungeons = { "Wailing Caverns" },
+    -- Cozy Sleeping Bag : Stepping Stones rendue au Pocket Litter, puis Scramble (déjà gardée avant les liens de la
+    -- chaîne, mais prise sans Stepping Stones).
+    force = { [79980] = true },
   },
   {
     id = "H_03", title = "Ashenvale and Stonetalon Mountains", faction = "Horde", zones = { ASHENVALE, STONETALON },
     minLevel = 21, maxLevel = 25, levelSlack = 0, levelBelow = 6, far = 1600, entry = { ASHENVALE, 73.0, 61.0 }, next = "H_04",
     flightPaths = { "Splintertree Post, Ashenvale", "Zoram'gar Outpost, Ashenvale" },
     dungeons = { "Blackfathom Deeps" },
+    -- Wet Job (79974) prise au Mound of Dirt des Serres-Rocheuses et rendue au barrage du Loch Modan en H_05 : de H_02,
+    -- le rendu serait trois chapitres plus loin (hors des deux chapitres du report).
+    force = { [79974] = true },
   },
   {
     id = "H_04", title = "Southern Barrens and Thousand Needles", faction = "Horde", zones = { BARRENS, NEEDLES },
@@ -520,7 +548,11 @@ plans.Horde = {
     flightPaths = { "Freewind Post, Thousand Needles" },
   },
   {
-    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD },
+    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD, LOCH_MODAN, ARATHI },
+    -- Fin de la chasse au trésor du Cozy Sleeping Bag : Wet Job rendue et Eagle's Fist prise au barrage du Loch Modan,
+    -- rendue au nord-ouest d'Arathi, puis This Must Be The Place, qui donne le sac.
+    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 }, [ARATHI] = { 17, 18, 28, 30 } },
+    force = { [79975] = true, [79976] = true },
     minLevel = 28, maxLevel = 30, levelSlack = 0, levelBelow = 6, far = 1600, entry = { HILLSBRAD, 62.0, 20.0 }, endZones = { UNDERCITY },
     next = "H_06",
     -- strictLevel (QuestieDB v1.0.11) : sans lui, tranche élargie (147 mobs à farmer), 44 mobs de farm final,

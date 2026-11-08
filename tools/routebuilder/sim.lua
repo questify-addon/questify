@@ -839,12 +839,13 @@ function sim.chapter(D, W, plan, state, opts)
     o2._noWiden = true
     local steps, report = sim.chapter(D, W, plan, state, o2)
     local widened
-    -- plan.widen = false : jamais (zone revisitée plus tard : ses quêtes hautes restent au chapitre suivant)
-    if (report.grindMobs or 0) > C.WIDEN_GRIND and plan.widen ~= false then
+    -- plan.widen = false : jamais (zone revisitée plus tard : ses quêtes hautes restent au chapitre suivant) ;
+    -- plan.widen = true : toujours (le seuil WIDEN_GRIND fait basculer le chapitre sur une différence de quelques mobs)
+    if plan.widen == true or ((report.grindMobs or 0) > C.WIDEN_GRIND and plan.widen ~= false) then
       restore(state, snap)
       o2.levelHigh = C.LEVEL_WIDE
       widened = ("grinding %d mobs with quests up to level %d: band widened to level %d"):format(
-        report.grindMobs, plan.maxLevel + C.LEVEL_RANGE, plan.maxLevel + C.LEVEL_WIDE)
+        report.grindMobs or 0, plan.maxLevel + C.LEVEL_RANGE, plan.maxLevel + C.LEVEL_WIDE)
       steps, report = sim.chapter(D, W, plan, state, o2)
     end
     -- Quêtes sautées faute de niveau : écartées d'emblée et chapitre refait, pour que le budget d'XP

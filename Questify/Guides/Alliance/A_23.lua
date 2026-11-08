@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 95 étapes, niveau final 58.00, ~81513 xp/h, 144 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 95 étapes, niveau final 58.00, ~81558 xp/h, 143 min.
 Q:RegisterGuide({
   id = "A_23",
   title = "Western Plaguelands",
   faction = "Alliance",
   minLevel = 57, maxLevel = 58,
   next = "A_29",
-  sim = { steps = 95, endLevel = 58.00, xpPerHour = 81513, minutes = 144 },
+  sim = { steps = 95, endLevel = 58.00, xpPerHour = 81558, minutes = 143 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
     { "goto", 1448, 62.49, 24.24, note = "Flight master" }, -- déplacement
@@ -105,6 +105,6 @@ Q:RegisterGuide({
     { "turnin", 84395, xp = 1650 }, -- Undead Potatoes (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 84399, xp = 1650 }, -- Ka-Boom! (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 84397, xp = 1650 }, -- Northern Kalimdor - A Comprehensive Guide (lvl 60, ~1650 xp, sim lvl 57)
-    { "level", 58, at = { 1422, 62.18, 59.06 }, note = "About 103 more mobs near the last objective" }, -- farm de niveau
+    { "level", 58, at = { 1422, 62.18, 59.06 }, note = "About 102 more mobs near the last objective" }, -- farm de niveau
   },
 })

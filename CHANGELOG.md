@@ -12,6 +12,14 @@
   grind, and Egg Hunt is back in the Southern Barrens.
 - Dungeons window: Ruins of Lordaeron quests need level 15 and follow their chain.
 
+**Cozy Sleeping Bag**
+- The treasure hunt that rewards the Cozy Sleeping Bag is in the routes from level 14: Stepping Stones from the
+  Nailed Plank (Westfall or Southern Barrens), Scramble and Wet Job in Stonetalon, Eagle's Fist at Stonewrought Dam
+  (Loch Modan), This Must Be The Place in north-west Arathi, where the bag is handed over (around level 29-30, in
+  Hillsbrad). Horde: every race. Alliance: Human, Dwarf and Gnome (Night Elf and Skyborne routes do not pass a
+  plank in time). About 25-35 more simulated minutes over 1-60.
+- Fix: the Horde route no longer has you accept Scramble without Stepping Stones.
+
 **Bag quests**
 - Near the giver of a quest that rewards a bag bigger than your smallest bag (or when a bag slot is empty), the
   route offers a "Bag quest" step, like class quests: one click adds the quest to the route, with its
@@ -32,6 +40,15 @@
 - Durotar ne finit plus par du farm (59 mobs sans la correction), la Forêt des Pins-Argentés garde ses quêtes
   plus hautes au lieu de farmer, et Egg Hunt revient dans le sud des Tarides.
 - Fenêtre des donjons : les quêtes des Ruines de Lordaeron demandent le niveau 15 et suivent leur chaîne.
+
+**Cozy Sleeping Bag**
+- La chasse au trésor qui donne le Cozy Sleeping Bag est dans les routes dès le niveau 14 : Stepping Stones à la
+  planche clouée (Marche de l'Ouest ou sud des Tarides), Scramble et Wet Job aux Serres-Rocheuses, Eagle's Fist au
+  barrage de Thelsamar (Loch Modan), This Must Be The Place au nord-ouest d'Arathi, où le sac est remis (vers le
+  niveau 29-30, depuis les Contreforts d'Hautebrande). Horde : toutes les races. Alliance : Humain, Nain et Gnome
+  (les routes Elfe de la nuit et Skyborne ne passent pas à temps par une planche). Environ 25 à 35 minutes simulées
+  de plus sur 1-60.
+- Correctif : la route Horde ne fait plus prendre Scramble sans Stepping Stones.
 
 **Quêtes de sac**
 - Près du donneur d'une quête qui donne un sac plus grand que ton plus petit sac (ou s'il te reste un emplacement

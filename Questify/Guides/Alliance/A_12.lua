@@ -1,17 +1,16 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 105 étapes, niveau final 39.28, ~41221 xp/h, 263 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 104 étapes, niveau final 39.28, ~40806 xp/h, 266 min.
 Q:RegisterGuide({
   id = "A_12",
   title = "Stranglethorn Vale and Swamp of Sorrows",
   faction = "Alliance",
   minLevel = 37, maxLevel = 39,
   next = "A_13",
-  sim = { steps = 105, endLevel = 39.28, xpPerHour = 41221, minutes = 263 },
+  sim = { steps = 104, endLevel = 39.28, xpPerHour = 40806, minutes = 266 },
   steps = {
-    { "hearth", 1431 }, -- pierre de foyer
     { "accept", 205 }, -- Troll Witchery (lvl 40, ~3150 xp, sim lvl 37)
     { "turnin", 1180, xp = 710 }, -- Goblin Sponsorship (lvl 37, ~710 xp, sim lvl 37)
     { "accept", 1181 }, -- Goblin Sponsorship (lvl 37, ~285 xp, sim lvl 37)

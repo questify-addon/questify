@@ -173,9 +173,25 @@ function M.run(argv)
 
   local W = world.load(here .. "/routebuilder/data")
   local Ds = {}
+  -- prérequis ajoutés à la main (champ `pre` de routebuilder/overrides.lua, mêmes données que build.lua)
+  local pre = {}
+  do
+    local f = io.open(here .. "/routebuilder/overrides.lua", "rb")
+    if f then
+      local text = f:read("*a"); f:close()
+      local fn = text:byte(1) ~= 27 and loadstring(text, "@overrides.lua")
+      if fn then
+        setfenv(fn, {})
+        local ok, ov = pcall(fn)
+        if ok and type(ov) == "table" and type(ov.pre) == "table" then pre = ov.pre end
+      end
+    end
+  end
   local function D(faction)
     faction = faction or "Alliance"
-    if not Ds[faction] then Ds[faction] = qdb.load({ db = opts.db, questie = opts.questie, faction = faction }) end
+    if not Ds[faction] then
+      Ds[faction] = qdb.addPrereqs(qdb.load({ db = opts.db, questie = opts.questie, faction = faction }), pre)
+    end
     return Ds[faction]
   end
 

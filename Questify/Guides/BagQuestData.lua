@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/bagquests.lua (via build.lua). Ne pas modifier à la main.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
 -- Quêtes qui donnent un sac : chaîne à faire (prérequis puis quête), niveau requis, ID du sac et des récompenses.
 Q.BagQuestData = {
   { key = "BAG_91775_A", title = "Book Return", faction = "Alliance", races = 4294967373, level = 1, bag = 279936, quests = { 91741, 92124, 91743, 91745, 91752, 91758, 91772, 91775 }, rewards = { [91741] = { items = {  } }, [92124] = { items = {  } }, [91743] = { items = { 247840, 247841, 247846 } }, [91745] = { items = {  } }, [91752] = { items = {  } }, [91758] = { items = {  } }, [91772] = { items = {  } }, [91775] = { items = { 279936 } } } },

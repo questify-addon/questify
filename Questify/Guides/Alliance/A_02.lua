@@ -1,17 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 67 étapes, niveau final 22.37, ~28792 xp/h, 123 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 71 étapes, niveau final 22.46, ~28974 xp/h, 126 min.
 Q:RegisterGuide({
   id = "A_02",
   title = "Ashenvale and Stonetalon Mountains",
   faction = "Alliance",
   minLevel = 20, maxLevel = 22,
   next = "A_03",
-  sim = { steps = 67, endLevel = 22.37, xpPerHour = 28792, minutes = 123 },
+  sim = { steps = 71, endLevel = 22.46, xpPerHour = 28974, minutes = 126 },
   steps = {
-    { "turnin", 967, xp = 1000 }, -- The Tower of Althalaxx (lvl 18, ~1000 xp, sim lvl 19)
+    { "turnin", 967, xp = 1000 }, -- The Tower of Althalaxx (lvl 18, ~1000 xp, sim lvl 20)
     { "accept", 1010 }, -- Bathran's Hair (lvl 20, ~780 xp, sim lvl 20)
     { "fp", 1440, 34.41, 47.99 }, -- point de vol
     { "accept", 1008 }, -- The Zoram Strand (lvl 19, ~1450 xp, sim lvl 20)
@@ -60,12 +60,16 @@ Q:RegisterGuide({
     { "accept", 1085 }, -- On Guard in Stonetalon (lvl 21, ~165 xp, sim lvl 21)
     { "turnin", 1085, xp = 165 }, -- On Guard in Stonetalon (lvl 21, ~165 xp, sim lvl 21)
     { "accept", 1071 }, -- A Gnome's Respite (lvl 21, ~1650 xp, sim lvl 21)
-    { "complete", 1071, at = { 1442, 66.63, 51.24 } }, -- A Gnome's Respite (lvl 21, ~1650 xp, sim lvl 21)
-    { "turnin", 1071, xp = 1650 }, -- A Gnome's Respite (lvl 21, ~1650 xp, sim lvl 21)
-    { "accept", 1075 }, -- A Scroll from Mauren (lvl 21, ~830 xp, sim lvl 21)
     { "turnin", 1092, xp = 1300 }, -- Gerenzo's Orders (lvl 22, ~1300 xp, sim lvl 21)
     { "accept", 78270 }, -- Goblin Lockpicks (lvl 23, ~1400 xp, sim lvl 21)
     { "turnin", 78270, xp = 1400 }, -- Goblin Lockpicks (lvl 23, ~1400 xp, sim lvl 21)
+    { "complete", 1071, at = { 1442, 66.63, 51.24 } }, -- A Gnome's Respite (lvl 21, ~1650 xp, sim lvl 21)
+    { "turnin", 1071, xp = 1650 }, -- A Gnome's Respite (lvl 21, ~1650 xp, sim lvl 21)
+    { "accept", 1075 }, -- A Scroll from Mauren (lvl 21, ~830 xp, sim lvl 21)
+    { "turnin", 79192, xp = 970, race = { "Dwarf", "Gnome", "Human" } }, -- Stepping Stones (lvl 24, ~970 xp, sim lvl 21)
+    { "accept", 79980, race = { "Dwarf", "Gnome", "Human" } }, -- Scramble (lvl 24, ~970 xp, sim lvl 21)
+    { "turnin", 79980, xp = 970, race = { "Dwarf", "Gnome", "Human" } }, -- Scramble (lvl 24, ~970 xp, sim lvl 21)
+    { "accept", 79974, race = { "Dwarf", "Gnome", "Human" } }, -- Wet Job (lvl 32, ~0 xp, sim lvl 21)
     { "complete", 1134, at = { 1442, 53.55, 37.28 } }, -- Pridewings of Stonetalon (lvl 21, ~1650 xp, sim lvl 21)
     { "hearth", 1440 }, -- pierre de foyer
     { "turnin", 1134, xp = 1650 }, -- Pridewings of Stonetalon (lvl 21, ~1650 xp, sim lvl 22)

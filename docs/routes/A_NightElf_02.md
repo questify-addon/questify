@@ -1,6 +1,6 @@
 # A_NightElf_02 — Teldrassil
 
-Generated on 2026-11-07 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
+Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
 
 | Item | Value |
 |---|---|

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 44 étapes, niveau final 17.06, ~18072 xp/h, 78 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 45 étapes, niveau final 17.06, ~18052 xp/h, 78 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_04",
   title = "Westfall",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 14, maxLevel = 16,
   next = "A_01",
-  sim = { steps = 44, endLevel = 17.06, xpPerHour = 18072, minutes = 78 },
+  sim = { steps = 45, endLevel = 17.06, xpPerHour = 18052, minutes = 78 },
   steps = {
     { "accept", 64 }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 151 }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 15)
@@ -18,15 +18,16 @@ Q:RegisterGuide({
     { "accept", 12 }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 92744 }, -- Murloc Gills (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 92742 }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
-    { "complete", 92742, obj = 2, at = { 1436, 46.08, 38.14 } }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
+    { "complete", 151, at = { 1436, 57.27, 18.31 } }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 15)
+    { "complete", 92742, obj = 1, at = { 1436, 56.62, 18.69 } }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
+    { "complete", 64, at = { 1436, 49.33, 19.28 } }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 15)
     { "complete", 92744, at = { 1436, 34.53, 17 } }, -- Murloc Gills (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 136, at = { 1436, 34.53, 17 }, note = "Loot Captain Sander's Treasure Map to start the quest" }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 15)
-    { "complete", 64, at = { 1436, 49.33, 19.28 } }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 15)
-    { "complete", 92742, at = { 1436, 56.62, 18.69 } }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
-    { "complete", 151, at = { 1436, 57.27, 18.31 } }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 15)
+    { "complete", 92742, at = { 1436, 46.08, 38.14 } }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
     { "turnin", 92744, xp = 910 }, -- Murloc Gills (lvl 12, ~910 xp, sim lvl 15)
     { "turnin", 92742, xp = 910 }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 15)
     { "accept", 92745 }, -- The State of the Mines (lvl 14, ~980 xp, sim lvl 15)
+    { "accept", 79192 }, -- Stepping Stones (lvl 24, ~0 xp, sim lvl 15)
     { "turnin", 136, xp = 580 }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 15)
     { "accept", 138 }, -- Captain Sander's Hidden Treasure (lvl 16, ~580 xp, sim lvl 15)
     { "complete", 92745, obj = 2, at = { 1436, 29.98, 47.26 } }, -- The State of the Mines (lvl 14, ~980 xp, sim lvl 15)
@@ -52,8 +53,8 @@ Q:RegisterGuide({
     { "turnin", 14, xp = 1600 }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
     { "turnin", 151, xp = 1250 }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 16)
     { "turnin", 64, xp = 910 }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 16)
-    { "accept", 168, optional = true, dungeon = "The Deadmines" }, -- Collecting Memories (lvl 18, ~0 xp, sim lvl 17)
     { "accept", 167, optional = true, dungeon = "The Deadmines" }, -- Oh Brother. . . (lvl 20, ~0 xp, sim lvl 17)
+    { "accept", 168, optional = true, dungeon = "The Deadmines" }, -- Collecting Memories (lvl 18, ~0 xp, sim lvl 17)
     { "accept", 2040, optional = true, dungeon = "The Deadmines" }, -- Underground Assault (lvl 20, ~0 xp, sim lvl 17)
     { "turnin", 92748, xp = 580 }, -- Explosive Consultation (lvl 16, ~580 xp, sim lvl 17)
   },

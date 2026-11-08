@@ -1,20 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 51 étapes, niveau final 32.07, ~37784 xp/h, 155 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 50 étapes, niveau final 32.07, ~38180 xp/h, 150 min.
 Q:RegisterGuide({
   id = "H_06",
   title = "Alterac Mountains and Arathi Highlands",
   faction = "Horde",
   minLevel = 30, maxLevel = 32,
   next = "H_07",
-  sim = { steps = 51, endLevel = 32.07, xpPerHour = 37784, minutes = 155 },
+  sim = { steps = 50, endLevel = 32.07, xpPerHour = 38180, minutes = 150 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Trouble in the Deeps, The Essence of Aku'Mai", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running Wailing Caverns? Abandon Trouble at the Docks, Deviate Hides, Deviate Eradication, Hamuul Runetotem", optional = true, dungeon = "Wailing Caverns" },
-    { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
-    { "fly", 1424, node = 13, note = "Tarren Mill, Hillsbrad" }, -- vol
+    { "hearth", 1424 }, -- pierre de foyer
     { "accept", 535 }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
     { "accept", 676 }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 30)
     { "accept", 556 }, -- Stone Tokens (lvl 32, ~2550 xp, sim lvl 30)
@@ -27,7 +26,7 @@ Q:RegisterGuide({
     { "complete", 533, at = { 1416, 58.3, 67.96 } }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
     { "complete", 535, at = { 1416, 58.98, 68.49 } }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
     { "turnin", 535, xp = 270 }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
-    { "level", 31, at = { 1416, 13.86, 58.64 }, note = "About 11 mobs here (High Order Mage, level 30)" }, -- farm de niveau
+    { "level", 31, at = { 1416, 13.86, 58.64 }, note = "About 2 mobs here (High Order Mage, level 30)" }, -- farm de niveau
     { "complete", 556, at = { 1416, 19.4, 84.93 } }, -- Stone Tokens (lvl 32, ~2550 xp, sim lvl 31)
     { "complete", 544, at = { 1416, 19.91, 85.97 } }, -- Prison Break In (lvl 34, ~3350 xp, sim lvl 31)
     { "hearth", 1424 }, -- pierre de foyer

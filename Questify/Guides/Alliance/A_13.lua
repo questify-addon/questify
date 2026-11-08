@@ -1,18 +1,18 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-07.
--- Simulation : 50 étapes, niveau final 40.00, ~33831 xp/h, 110 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
+-- Simulation : 50 étapes, niveau final 40.00, ~34728 xp/h, 107 min.
 Q:RegisterGuide({
   id = "A_13",
   title = "Arathi Highlands",
   faction = "Alliance",
   minLevel = 39, maxLevel = 40,
   next = "A_15",
-  sim = { steps = 50, endLevel = 40.00, xpPerHour = 33831, minutes = 110 },
+  sim = { steps = 50, endLevel = 40.00, xpPerHour = 34728, minutes = 107 },
   steps = {
-    { "boat", 1453, 69.6, 30.3, note = "Take the Deeprun Tram to Ironforge" }, -- bateau
-    { "fp", 1455, 55.5, 47.74 }, -- point de vol
+    { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
+    { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "fp", 1417, 45.73, 46.1 }, -- point de vol
     { "accept", 691 }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
     { "accept", 684 }, -- WANTED: Marez Cowl (lvl 39, ~3750 xp, sim lvl 39)
