@@ -12,6 +12,7 @@ local qdb = require("qdb")
 local quality = require("quality")
 local transport = require("transport")
 local pathsm = require("paths")
+local catalog = require("dungeon_catalog")
 
 local sim = {}
 
@@ -99,6 +100,7 @@ sim.CONST = {
   -- valeurs que paths.replay (validateur)
   DUNGEON_RELEASE_FROM = pathsm.DUNGEON_RELEASE_FROM,
   DUNGEON_RELEASE_GAP = pathsm.DUNGEON_RELEASE_GAP,
+  DUNGEON_CHAIN = 3,      -- niveaux de pré-requis d'une quête de donjon gardés hors rendement et hors budget
 }
 local C = sim.CONST
 
@@ -203,7 +205,8 @@ local function makeCtx(D, W, plan, state, opts)
   for q, r in pairs(plan.drop or {}) do ctx.drop[q] = r end
   for q, r in pairs(ov.drop or {}) do ctx.drop[q] = r end
   ctx.pin = ov.pin or {}
-  ctx.dungeonNames = asSet(plan.dungeons)
+  ctx.dungeons = catalog.byName(D)
+  ctx.dungeonPre = catalog.prerequisites(D, C.DUNGEON_CHAIN)
   ctx.logCap = ctx.opts.logCap or plan.logCap or C.LOG_CAP
   -- cartes des chapitres suivants du parcours (build.lua) : rendus reportés possibles
   if ctx.opts.carryZones then ctx.carrySet = asSet(ctx.opts.carryZones) end
@@ -657,6 +660,20 @@ local function isDungeonQuest(ctx, q)
   return z > 0 and ctx.D.dungeonAreas[z] or nil
 end
 
+-- Donjon du catalogue ouvert à la faction du chapitre et pas encore dépassé à son début : nil, ou la raison.
+local function dungeonClosed(ctx, name)
+  local def = ctx.dungeons[name]
+  if not def then return ("%s outside the dungeon catalogue"):format(name) end
+  if def.only and def.only ~= ctx.plan.faction then return ("%s closed to the %s"):format(name, ctx.plan.faction) end
+  if def.max < ctx.plan.minLevel then return ("%s outleveled: up to level %d"):format(name, def.max) end
+end
+
+-- Pré-requis d'une quête de donjon ouverte (DUNGEON_CHAIN niveaux au plus) : nom du donjon, ou nil.
+local function dungeonPrereqOf(ctx, q)
+  local name = ctx.dungeonPre[q.id]
+  if name and not dungeonClosed(ctx, name) then return name end
+end
+
 -- Catégories de quêtes (zoneOrSort négatif) d'évènements saisonniers ou temporaires : jamais dans la
 -- route (Fête des lanternes, Sanssaint, invasion du Fléau, champs de bataille...). Valeurs de
 -- QuestieDB/src/corrections/enum/quests.lua (sortKeys).
@@ -742,9 +759,11 @@ local function analyse(ctx, q, classMode)
   -- tranche de niveaux
   if not forced then
     if q.level <= 0 or q.level < plan.minLevel - (plan.levelBelow or C.LEVEL_RANGE) then return nil, ("quest level %d below the band"):format(q.level) end
+    -- quête de donjon : faite plus tard, dans l'instance ; seul son niveau requis compte ici
     local high = ctx.opts.levelHigh or C.LEVEL_RANGE
-    if plan.dungeonLevelHigh and isDungeonQuest(ctx, q) then high = math.max(high, plan.dungeonLevelHigh) end
-    if q.level > plan.maxLevel + high then return nil, ("quest level %d above the band"):format(q.level) end
+    if q.level > plan.maxLevel + high and not isDungeonQuest(ctx, q) and not dungeonPrereqOf(ctx, q) then
+      return nil, ("quest level %d above the band"):format(q.level)
+    end
     local reqMax = plan.maxLevel
     if isDungeonQuest(ctx, q) then reqMax = reqMax + (plan.dungeonReqSlack or 0) end
     -- niveau requis 60 : aucune XP de quête au niveau maximal (le personnage farmerait jusqu'à 60 pour rien)
@@ -754,8 +773,11 @@ local function analyse(ctx, q, classMode)
   -- filtres de données et de règles
   local dungeon = isDungeonQuest(ctx, q)
   if classMode and dungeon then return nil end
-  if dungeon and not ctx.dungeonNames[dungeon] and not ctx.optional[q.id] then
-    return nil, ("dungeon quest (%s not picked up in this chapter)"):format(dungeon)
+  -- quête de donjon prise au passage : donjon du catalogue (dungeon_catalog.lua) ouvert à la faction et pas
+  -- encore dépassé au début du chapitre ; plan.optional force une quête hors de ces règles
+  if dungeon and not ctx.optional[q.id] then
+    local closed = dungeonClosed(ctx, dungeon)
+    if closed then return nil, ("dungeon quest (%s)"):format(closed) end
   end
   if q.requiredSkill then return nil, "requires a profession" end
   if q.requiredSpell or q.requiredSpecialization then return nil, "requires a spell or specialization" end
@@ -774,6 +796,8 @@ local function analyse(ctx, q, classMode)
   if q.next and state.done[q.next] then return nil, "follow-up already done" end
 
   local info = { q = q, races = races, itemStart = itemStart, forced = forced, optional = ctx.optional[q.id] }
+  -- pré-requis d'une quête de donjon ouverte (même donnée dans un autre chapitre) : gardé comme la chaîne
+  if not dungeon then info.forDungeon = dungeonPrereqOf(ctx, q) end
   if (q.classes or 0) ~= 0 then info.classes = qdb.classList(q.classes) end
   -- quête chronométrée (« within 15 minutes », « before it gets cold in five minutes ») : faite d'une traite
   info.timed = table.concat(q.objectivesText or {}, " "):lower():find("minute", 1, true) ~= nil
@@ -1337,6 +1361,34 @@ function sim.chapter(D, W, plan, state, opts)
     for _, x in ipairs(q.exclusiveTo) do if state.done[x] or state.log[x] then return false end end
     return true
   end
+  -- Pré-requis d'une quête de donjon prise au passage (chaîne faite dans la région, au plus DUNGEON_CHAIN
+  -- niveaux) : gardés même au rendement faible et hors budget d'XP (info.forDungeon), sinon la quête de
+  -- donjon tombe avec eux. Une préquête au choix (preSingle) : la première candidate.
+  do
+    local function mark(q, name, depth)
+      if depth > C.DUNGEON_CHAIN then return end
+      local pres = {}
+      for _, p in ipairs(q.preGroup) do pres[#pres + 1] = p end
+      local single = false
+      for _, p in ipairs(q.preSingle) do if state.done[p] or state.log[p] then single = true end end
+      if not single then
+        for _, p in ipairs(q.preSingle) do
+          if byId[p] and not byId[p].dungeonOnly then pres[#pres + 1] = p; break end
+        end
+      end
+      for _, p in ipairs(pres) do
+        local b = byId[p]
+        if b and not b.dungeonOnly and not b.forDungeon then
+          b.forDungeon = name
+          mark(b.q, name, depth + 1)
+        end
+      end
+    end
+    for _, info in ipairs(infos) do
+      if info.dungeonOnly then mark(info.q, info.dungeonOnly, 1) end
+    end
+  end
+
   -- Objets de départ à faible taux : le farm de niveau du chapitre (opts.grindBudget, mobs estimés au premier
   -- passage) se fait sur les mobs qui les lâchent quand leur niveau rapporte de l'XP ; ces tués-là ne coûtent
   -- rien de plus. Budget réparti par XP de quête décroissante. Au-delà de STARTER_MAX_KILLS tués restants, la
@@ -1523,7 +1575,9 @@ function sim.chapter(D, W, plan, state, opts)
       -- écartée si le rendement isolé ET le rendement marginal sont sous 0.35 × la médiane
       if far then dropInfo(info, "far")
       elseif info.ratio < C.LOW_RATIO * med and info.marginalRatio < C.LOW_RATIO * med then
-        dropInfo(info, "low ratio")
+        -- pré-requis d'une quête de donjon : gardé, ses étapes en optional + dungeon (masquées avec l'option
+        -- des quêtes de donjon coupée, comme la prise elle-même)
+        if info.forDungeon then info.keptForDungeon = true else dropInfo(info, "low ratio") end
       end
     end
   end
@@ -1546,7 +1600,8 @@ function sim.chapter(D, W, plan, state, opts)
     local order = {}
     for _, info in ipairs(live) do if not info.dropped then order[#order + 1] = info end end
     table.sort(order, function(a, b)
-      local fa, fb = (a.forced or a.optional) and 1 or 0, (b.forced or b.optional) and 1 or 0
+      local fa = (a.forced or a.optional or a.forDungeon) and 1 or 0
+      local fb = (b.forced or b.optional or b.forDungeon) and 1 or 0
       if fa ~= fb then return fa > fb end
       -- rang : rendement marginal (ce que l'on gagne vraiment à garder la quête sur la route)
       if a.marginalRatio ~= b.marginalRatio then return a.marginalRatio > b.marginalRatio end
@@ -1613,7 +1668,7 @@ function sim.chapter(D, W, plan, state, opts)
     for _ = 1, 6 do
       acc, kept = 0, {}
       for _, info in ipairs(order) do
-        if acc < need + extra or info.forced or info.optional then keep(info, 0) end
+        if acc < need + extra or info.forced or info.optional or info.forDungeon then keep(info, 0) end
       end
       local alive = survivingXP()
       if alive >= need or acc < need + extra then break end
@@ -1966,6 +2021,12 @@ function sim.chapter(D, W, plan, state, opts)
         if byId[c] and not byId[c].dropped then opensMore = true end
       end
       if q.next and byId[q.next] and not byId[q.next].dropped then opensMore = true end
+      if not skip and t.kind == "A" and t.info.dungeonOnly and t.reqLevel and state.level < t.reqLevel then
+        -- prise d'une quête de donjon : jamais de farm pour son niveau requis ; reprise dès qu'il est atteint
+        report.deferred = (report.deferred or 0) + 1
+        defer(t, t.reqLevel)
+        break
+      end
       if not skip and t.safeLevel and t.reqLevel and state.level < t.reqLevel then
         -- niveau « sûr » trop loin (plus de SAFE_GATE_GRIND mobs à farmer) : la quête est écartée, ses étapes déjà
         -- écrites retirées, et le chapitre refait sans elle ; une quête forcée est faite quand même
@@ -2024,6 +2085,7 @@ function sim.chapter(D, W, plan, state, opts)
         if info.classes then step.class = info.classes end
         if info.optional then step.optional = true; step.dungeon = info.optional end
         if info.dungeonOnly then step.optional = true; step.dungeon = info.dungeonOnly end
+        if info.keptForDungeon then step.optional = true; step.dungeon = info.forDungeon end
         step._c = { name = q.name, level = q.level, simLevel = state.level }
         step._pos = t.pos -- lieu de l'étape (quêtes de classe tissées : sim.weaveClassQuests)
         return step
@@ -2120,11 +2182,16 @@ function sim.chapter(D, W, plan, state, opts)
     for qid in pairs(g.quests) do
       if not skipQ[qid] and byId[qid] then
         local why = ("objective too dangerous before level %d (not reached in this chapter)"):format(g.need)
+        -- quête de donjon prise au passage : rien à refaire (aucune XP dans le budget du chapitre)
+        local dungeonOnly = byId[qid].dungeonOnly
+        if dungeonOnly then why = ("dungeon quest: required level %d not reached in this chapter"):format(g.need) end
         skipQ[qid] = true
         report.dropped[#report.dropped + 1] = { qid, why, id = qid, reason = why }
-        report.levelSkipped = report.levelSkipped or {}
-        report.levelSkipped[qid] = why
-        report.unsafeSkipped = true
+        if not dungeonOnly then
+          report.levelSkipped = report.levelSkipped or {}
+          report.levelSkipped[qid] = why
+          report.unsafeSkipped = true
+        end
         state.log[qid] = nil
         for i = #steps, 1, -1 do
           local s = steps[i]
@@ -2140,6 +2207,10 @@ function sim.chapter(D, W, plan, state, opts)
     local mobLevel = state.level
     if lastSite and lastSite.kills[1] then mobLevel = lastSite.kills[1][1] end
     local grind = sim.grindSite(ctx, cur, state.level)
+    -- fin de chapitre en capitale : lieu de farm cherché près du dernier site d'objectif
+    if not grind and lastSite and cur and sim.CAPITAL_MAPS[cur.m] then
+      grind = sim.grindSite(ctx, lastSite.pos, state.level)
+    end
     if grind then
       cur = sim.travel(ctx, steps, cur, grind.pos, fms)
       lastSite = { pos = grind.pos, kills = { { grind.level, 0 } } }
@@ -2310,10 +2381,14 @@ local function uniqueTargets(D)
   return set
 end
 
+-- Capitales (uiMapID) : jamais de farm. Forever y place des foules de PNJ sans faction ni drapeau dans
+-- QuestieDB (Malus 29 et Anya Rince 52 à Fossoyeuse, Gevreka 42 aux Pitons-du-Tonnerre), pris pour des mobs.
+sim.CAPITAL_MAPS = { [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true }
+
 -- Lieu de farm : le groupe de mobs hostiles de niveau adapté le plus dense à moins de 600 yd
--- (ni PNJ de quête, ni mob nommé cible unique d'une quête).
+-- (ni PNJ de quête, ni mob nommé cible unique d'une quête), hors capitale.
 function sim.grindSite(ctx, pos, level)
-  if not pos then return nil end
+  if not pos or sim.CAPITAL_MAPS[pos.m] then return nil end
   local D = ctx.D
   local unique = uniqueTargets(D)
   local pts = {}

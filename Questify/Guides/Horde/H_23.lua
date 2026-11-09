@@ -11,7 +11,7 @@ Q:RegisterGuide({
   next = "H_24",
   sim = { steps = 26, endLevel = 52.00, xpPerHour = 57417, minutes = 161 },
   steps = {
-    { "note", "Not running Zul'Farrak? Abandon Divino-matic Rod", optional = true, dungeon = "Zul'Farrak" },
+    { "note", "Not running Zul'Farrak? Abandon Divino-matic Rod, Tiara of the Deep", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1434 }, -- pierre de foyer
     { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
     { "fly", 1435, node = 56, note = "Stonard, Swamp of Sorrows" }, -- vol

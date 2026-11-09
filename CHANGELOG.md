@@ -40,6 +40,19 @@
   `/qf bags reset` offers the ignored ones again.
 - Class quests: the unfinished Undead priest quests (`<NYI>`) are gone.
 
+**Dungeon quests**
+- Every chapter picks up the dungeon quests given along its way, with the quests that lead to them, and keeps them in
+  your log until you run the dungeon: 41 dungeon quests on the Alliance routes (31 before), 44 on the Horde routes
+  (28 before). Picking one up never makes you grind for its level. Hidden with the dungeon quests option off.
+- Adding a dungeon from the Dungeons window now also does the zone quests that unlock its quests (up to 5 in a row),
+  then the dungeon and every turn-in, and a last step takes you back to where your route was.
+
+**Class quests and quest items**
+- Class quests whose giver, objectives and turn-in sit along the route are now steps of the route, for your class
+  only. The others stay in the class quest window.
+- Quests started by a looted item use real drop rates (Wowhead): very rare items are no longer on the route unless
+  their mobs are farmed anyway, and the step tells the drop rate.
+
 **Navigation**
 - The waypoint no longer keeps moving while you kill monsters: it stays on the monster (or object) it
   points to until you reach it, unless another one is at least 60 yards closer. With WaypointUI, every
@@ -88,6 +101,19 @@
 - Option « Proposer les quêtes qui donnent un sac plus grand » (activée par défaut) ; `/qf sacs` les liste avec
   leur état, `/qf sacs reset` repropose celles qui ont été ignorées.
 - Quêtes de classe : les quêtes de prêtre mort-vivant inachevées (`<NYI>`) disparaissent.
+
+**Quêtes de donjon**
+- Chaque chapitre prend les quêtes de donjon données sur son chemin, avec les quêtes qui y mènent, et les garde dans
+  ton journal jusqu'au donjon : 41 quêtes de donjon sur les routes Alliance (31 avant), 44 sur les routes Horde
+  (28 avant). Leur prise ne fait jamais farmer pour leur niveau. Masquées avec l'option des quêtes de donjon coupée.
+- Ajouter un donjon depuis la fenêtre des donjons fait aussi les quêtes de zone qui débloquent ses quêtes (jusqu'à 5
+  à la suite), puis le donjon et tous les rendus, et une dernière étape te ramène là où en était ta route.
+
+**Quêtes de classe et objets de quête**
+- Les quêtes de classe dont le donneur, les objectifs et le rendu sont sur le chemin deviennent des étapes de la
+  route, pour ta classe seulement. Les autres restent dans la fenêtre des quêtes de classe.
+- Les quêtes démarrées par un objet ramassé utilisent les vrais taux de butin (Wowhead) : les objets très rares ne
+  sont plus sur la route sauf si leurs monstres sont farmés de toute façon, et l'étape indique le taux.
 
 **Navigation**
 - Le repère ne bouge plus sans arrêt pendant qu'on tue des monstres : il reste sur le monstre (ou

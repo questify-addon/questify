@@ -54,7 +54,9 @@ function cq.build(D)
     local set = {}
     for _, id in ipairs(qdb.sortedKeys(D.quests)) do
       local q = D.quests[id]
+      -- (titre <NYI> : quête jamais implémentée, absente du jeu même sans liste noire de Questie)
       if qdb.isClassQuest(q) and qdb.hasBit(q.classes, bit) and not q.blacklisted
+         and not (q.name or ""):find("^<NYI>")
          and questLevel(q) <= cq.MAX_LEVEL and questLevel(q) > 0 and q.name
          and qdb.hasBit(q.specialFlags or 0, 1) == false then
         set[id] = q

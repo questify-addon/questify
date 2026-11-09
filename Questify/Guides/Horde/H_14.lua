@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 27 étapes, niveau final 43.05, ~51042 xp/h, 70 min.
+-- Simulation : 27 étapes, niveau final 43.05, ~51027 xp/h, 70 min.
 Q:RegisterGuide({
   id = "H_14",
   title = "Swamp of Sorrows",
   faction = "Horde",
   minLevel = 42, maxLevel = 43,
   next = "H_15",
-  sim = { steps = 27, endLevel = 43.05, xpPerHour = 51042, minutes = 70 },
+  sim = { steps = 27, endLevel = 43.05, xpPerHour = 51027, minutes = 70 },
   steps = {
     { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
     { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 42)

@@ -2,15 +2,16 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 23 étapes, niveau final 40.00, ~39701 xp/h, 130 min.
+-- Simulation : 24 étapes, niveau final 40.00, ~39701 xp/h, 130 min.
 Q:RegisterGuide({
   id = "H_12",
   title = "Badlands",
   faction = "Horde",
   minLevel = 39, maxLevel = 40,
   next = "H_13",
-  sim = { steps = 23, endLevel = 40.00, xpPerHour = 39701, minutes = 130 },
+  sim = { steps = 24, endLevel = 40.00, xpPerHour = 39701, minutes = 130 },
   steps = {
+    { "note", "Not running Gnomeregan? Abandon Rig Wars, Chief Engineer Scooty", optional = true, dungeon = "Gnomeregan" },
     { "accept", 703 }, -- Barbecued Buzzard Wings (lvl 40, ~2350 xp, sim lvl 39)
     { "accept", 2418, optional = true, dungeon = "Uldaman" }, -- Power Stones (lvl 36, ~0 xp, sim lvl 39)
     { "accept", 710 }, -- Study of the Elements: Rock (lvl 37, ~2850 xp, sim lvl 39)

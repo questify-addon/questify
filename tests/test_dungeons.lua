@@ -214,21 +214,24 @@ return {
     local cur = Q.Progress:Current()
     t.eq(cur.key, "i:dg:DM:1", "dungeon steps come first")
     -- accept ... goto ... complete ... turnin
-    local phase, gotoStep = 1, nil
+    local phase, gotoStep, backIndex = 1, nil, nil
     local order = { accept = 1, ["goto"] = 2, complete = 3, turnin = 4 }
     local accepted, turned = {}, {}
-    for _, e in ipairs(steps) do
+    for i, e in ipairs(steps) do
       local a = e.step.action
       local p = order[a]
       -- les préquêtes de passage se rendent avant l'entrée
       if a == "turnin" and phase == 1 then p = 1 end
+      -- retour à la route : « goto » marqué du donjon, en dernier
+      if a == "goto" and e.step.dungeon then p, backIndex = 5, i end
       t.ok(p and p >= phase, "step order: " .. tostring(a))
       phase = p
-      if a == "goto" then gotoStep = e.step end
+      if a == "goto" and not e.step.dungeon then gotoStep = e.step end
       if a == "accept" then accepted[e.step.questId] = true end
       if a == "turnin" and phase == 4 then turned[e.step.questId] = true end
     end
     t.ok(gotoStep, "goto step")
+    t.eq(backIndex, #steps, "back to the route last")
     t.eq({ gotoStep.mapId, gotoStep.x, gotoStep.y }, { 1436, 42.5, 71.7 })
     t.eq(gotoStep.note, string.format(Q.L.DUNGEON_GOTO_NOTE, "The Deadmines"))
     for _, id in ipairs({ 167, 168, 2040, 92752, 92753 }) do t.ok(accepted[id], "accept " .. id) end
@@ -302,12 +305,83 @@ return {
     for _, id in ipairs({ 167, 168, 2040, 92752, 92753 }) do accept(id, true) end
     t.eq(#Q.char.inserted, 1, "still quests to turn in")
     for _, id in ipairs({ 167, 168, 2040, 92752, 92753 }) do turnIn(id) end
-    t.eq(#Q.char.inserted, 0, "removed once every quest step is done or skipped")
+    t.eq(#Q.char.inserted, 1, "the way back to the route is still to do")
+    local back = tagged(Q, "dg:DM")
+    back = back[#back]
+    t.eq(back.step.action, "goto")
+    Q.Progress:Skip(back.key)
+    t.eq(#Q.char.inserted, 0, "removed once every quest step and the way back are done or skipped")
     t.eq(Q.char.dungeons.added.DM, nil)
     -- 166 reste à faire mais sa préquête manque : rien à prendre pour l'instant
     t.eq(stateOf(Q, "DM"), "upcoming", "166 is still to do (its pre-quest is missing)")
     turnIn(166)
     t.eq(stateOf(Q, "DM"), "done")
+    noErrors(t)
+  end,
+
+  -- Préquête de zone avec objectifs (QuestieDB) : prise, faite et rendue avant la quête du donjon ; hors
+  -- niveau, la quête du donjon reste verrouillée.
+  dungeon_chains_a_zone_quest_with_objectives = function(t)
+    local function qdb(reqLevel)
+      local extra = { quests = {}, npcs = {}, zones = QDB_EXTRA.zones }
+      for k, v in pairs(QDB_EXTRA.quests) do extra.quests[k] = v end
+      for k, v in pairs(QDB_EXTRA.npcs) do extra.npcs[k] = v end
+      extra.quests[155] = { name = "The Defias Brotherhood", startedBy = { { 234 } }, finishedBy = { { 234 } },
+        requiredLevel = reqLevel, questLevel = 18, requiredRaces = ALLIANCE, zoneOrSort = 40,
+        objectives = { { { 1500, "Defias Messenger slain" } } } }
+      extra.npcs[1500] = { name = "Defias Messenger", spawns = { [40] = { { 44.0, 70.0 } } } }
+      return extra
+    end
+    alliance(17)
+    local Q = load({ qdb = qdb(14) })
+    t.eq(Q.Dungeons:Add("DM"), true)
+    local idx = {}
+    for i, e in ipairs(tagged(Q, "dg:DM")) do
+      local k = e.step.action .. tostring(e.step.questId)
+      idx[k] = idx[k] or i
+    end
+    t.ok(idx.accept155 and idx.complete155 and idx.turnin155, "zone quest chained: accept, complete, turn in")
+    t.ok(idx.turnin155 < idx.accept166, "turned in before the dungeon quest it opens")
+    noErrors(t)
+
+    Mock.reset()
+    alliance(17)
+    Q = load({ qdb = qdb(20) })
+    Q.Dungeons:Add("DM")
+    for _, e in ipairs(tagged(Q, "dg:DM")) do
+      t.ok(e.step.questId ~= 155 and e.step.questId ~= 166 or e.step.action ~= "accept", "level 20 pre-quest not chained")
+    end
+    noErrors(t)
+  end,
+
+  -- Après les rendus : retour au point de la route (cible de l'étape courante, sinon position du joueur) ;
+  -- le groupe se retire une fois ce point atteint.
+  dungeon_ends_with_the_way_back_to_the_route = function(t)
+    alliance(17)
+    local Q = load()
+    local route = Q.Targets:ForEntry(Q.Progress:Current())
+    t.ok(route and route.mapId, "the current route step has a target")
+    Q.Dungeons:Add("DM")
+    local steps = tagged(Q, "dg:DM")
+    local back = steps[#steps].step
+    t.eq(back.action, "goto")
+    t.eq(back.dungeon, "The Deadmines")
+    t.ok(back.mapId == route.mapId and math.abs(back.x - route.x) < 0.01 and math.abs(back.y - route.y) < 0.01,
+      "back to the current route step: " .. tostring(back.mapId) .. " " .. tostring(back.x) .. " " .. tostring(back.y))
+    t.eq(back.note, string.format(Q.L.DUNGEON_BACK_NOTE, route.title))
+    for _, id in ipairs({ 167, 168, 2040, 92752, 92753 }) do accept(id, true) end
+    for _, id in ipairs({ 167, 168, 2040, 92752, 92753 }) do turnIn(id) end
+    for _, e in ipairs(tagged(Q, "dg:DM")) do
+      if e.step.action ~= "goto" or not e.step.dungeon then
+        local st = Q.Progress:State(e)
+        t.ok(st ~= "active" and st ~= "blocked", "only the way back left: " .. e.step.action)
+      end
+    end
+    t.eq(#Q.char.inserted, 1)
+    -- le joueur revient sur place : l'étape se valide, le donjon quitte la route
+    Mock.player.map, Mock.player.x, Mock.player.y = route.mapId, route.x, route.y
+    Q.Progress:Update()
+    t.eq(#Q.char.inserted, 0, "removed once back on the route")
     noErrors(t)
   end,
 

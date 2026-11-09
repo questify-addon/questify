@@ -5,15 +5,15 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 6-12 |
-| Simulated level | 7.00 -> 12.84 |
-| Time | 150 min |
-| XP gained | 39291 |
-| XP/h | 15676 |
+| Simulated level | 7.00 -> 12.85 |
+| Time | 148 min |
+| XP gained | 39381 |
+| XP/h | 15945 |
 | Steps | 121 |
 | Quests turned in | 35 |
 | Hubs | 8 |
 | Median ratio (XP/s) | 4.21 |
-| Hearthstone | bound to Innkeeper Pala after task 42; 1 return(s) planned, 0 bundle(s) |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
 
@@ -21,38 +21,38 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
-| 1 | 767 | Rite of Vision | 6 | 55 | 7 |
-| 2 | 96659 | The Adventurer | 6 | 135 est. | 7 |
-| 3 | 96605 | The Great Outdoors | 6 | 540 est. | 8 |
-| 4 | 748 | Poison Water | 5 | 450 | 8 |
-| 5 | 761 | Swoop Hunting | 6 | 680 | 8 |
-| 6 | 99108 | Sparring Match | 6 | 540 est. | 8 |
-| 7 | 751 | The Ravaged Caravan | 8 | 530 | 8 |
-| 8 | 754 | Winterhoof Cleansing | 6 | 540 | 8 |
-| 9 | 771 | Rite of Vision | 7 | 630 | 8 |
-| 10 | 772 | Rite of Vision | 7 | 475 | 9 |
-| 11 | 744 | Preparation for Ceremony | 11 | 880 | 10 |
-| 12 | 773 | Rite of Wisdom | 10 | 840 | 10 |
-| 13 | 833 | A Sacred Burial | 10 | 630 | 10 |
-| 14 | 756 | Thunderhorn Totem | 7 | 630 | 10 |
-| 15 | 99080 | Drive Them Out | 11 | 770 est. | 10 |
-| 16 | 770 | The Demon Scarred Cloak | 12 | 910 | 11 |
-| 17 | 743 | Dangers of the Windfury | 8 | 700 | 11 |
-| 18 | 96661 | Camping 101: Cooking | 6 | 540 est. | 11 |
-| 19 | 99411 | Kyle's Gone Missing! | 7 | 630 est. | 11 |
-| 20 | 758 | Thunderhorn Cleansing | 8 | 700 | 11 |
-| 21 | 764 | The Venture Co. | 10 | 630 | 11 |
-| 22 | 765 | Supervisor Fizsprocket | 12 | 910 | 11 |
-| 23 | 98424 | Fizsprocket's Notes | 10 | 840 est. | 11 |
-| 24 | 759 | Wildmane Totem | 10 | 840 | 12 |
-| 25 | 98430 | The Longwalkers | 8 | 700 est. | 12 |
-| 26 | 775 | Journey into Thunder Bluff | 10 | 420 | 12 |
-| 27 | 99082 | The High Chieftain | 11 | 660 est. | 12 |
-| 28 | 776 | Rites of the Earthmother | 14 | 1250 | 12 |
-| 29 | 76156 | Stalk With The Earthmother | 10 | 840 est. | 12 |
-| 30 | 861 | The Hunter's Way | 10 | 840 | 12 |
-| 31 | 760 | Wildmane Cleansing | 10 | 1050 | 12 |
-| 32 | 98427 | Ceasing Operations | 12 | 910 est. | 12 |
+| 1 | 96659 | The Adventurer | 6 | 135 est. | 7 |
+| 2 | 96605 | The Great Outdoors | 6 | 540 est. | 8 |
+| 3 | 748 | Poison Water | 5 | 450 | 8 |
+| 4 | 761 | Swoop Hunting | 6 | 680 | 8 |
+| 5 | 754 | Winterhoof Cleansing | 6 | 540 | 8 |
+| 6 | 756 | Thunderhorn Totem | 7 | 630 | 9 |
+| 7 | 767 | Rite of Vision | 6 | 55 | 9 |
+| 8 | 758 | Thunderhorn Cleansing | 8 | 700 | 9 |
+| 9 | 751 | The Ravaged Caravan | 8 | 530 | 9 |
+| 10 | 98424 | Fizsprocket's Notes | 10 | 840 est. | 10 |
+| 11 | 764 | The Venture Co. | 10 | 630 | 10 |
+| 12 | 765 | Supervisor Fizsprocket | 12 | 910 | 10 |
+| 13 | 759 | Wildmane Totem | 10 | 840 | 10 |
+| 14 | 99080 | Drive Them Out | 11 | 770 est. | 10 |
+| 15 | 770 | The Demon Scarred Cloak | 12 | 910 | 10 |
+| 16 | 771 | Rite of Vision | 7 | 630 | 11 |
+| 17 | 96661 | Camping 101: Cooking | 6 | 540 est. | 11 |
+| 18 | 772 | Rite of Vision | 7 | 475 | 11 |
+| 19 | 744 | Preparation for Ceremony | 11 | 880 | 11 |
+| 20 | 76156 | Stalk With The Earthmother | 10 | 840 est. | 11 |
+| 21 | 773 | Rite of Wisdom | 10 | 840 | 11 |
+| 22 | 98430 | The Longwalkers | 8 | 700 est. | 12 |
+| 23 | 775 | Journey into Thunder Bluff | 10 | 420 | 12 |
+| 24 | 99082 | The High Chieftain | 11 | 660 est. | 12 |
+| 25 | 833 | A Sacred Burial | 10 | 630 | 12 |
+| 26 | 98427 | Ceasing Operations | 12 | 910 est. | 12 |
+| 27 | 99108 | Sparring Match | 6 | 430 est. | 12 |
+| 28 | 760 | Wildmane Cleansing | 10 | 1050 | 12 |
+| 29 | 743 | Dangers of the Windfury | 8 | 700 | 12 |
+| 30 | 99411 | Kyle's Gone Missing! | 7 | 630 est. | 12 |
+| 31 | 861 | The Hunter's Way | 10 | 840 | 12 |
+| 32 | 776 | Rites of the Earthmother | 14 | 1250 | 12 |
 | 33 | 98435 | Thunderhorn's Report | 10 | 210 est. | 12 |
 | 34 | 886 | The Barrens Oases | 10 | 85 | 12 |
 | 35 | 860 | Sergra Darkthorn | 10 | 85 | 12 |
@@ -66,14 +66,13 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 742 | The Ashenvale Hunt | 20 | quest level 20 above the band |
 | 768 | Gathering Leather | 8 | requires a profession |
 | 769 | Kodo Hide Bag | 10 | requires a profession |
-| 914 | Leaders of the Fang | 22 | quest level 22 above the band |
-| 962 | Serpentbloom | 18 | quest level 18 above the band |
+| 962 | Serpentbloom | 18 | required level 14 above the band |
 | 1000 | The New Frontier | 55 | quest level 55 above the band |
-| 1049 | Compendium of the Fallen | 38 | quest level 38 above the band |
+| 1049 | Compendium of the Fallen | 38 | required level 28 above the band |
 | 1064 | Forsaken Aid | 18 | quest level 18 above the band |
 | 1065 | Journey to Tarren Mill | 18 | quest level 18 above the band |
 | 1086 | The Flying Machine Airport | 23 | quest level 23 above the band |
-| 1102 | A Vengeful Fate | 34 | quest level 34 above the band |
+| 1102 | A Vengeful Fate | 34 | required level 29 above the band |
 | 1123 | Rabine Saturna | 55 | quest level 55 above the band |
 | 1131 | Steelsnap | 30 | quest level 30 above the band |
 | 1136 | Frostmaw | 37 | quest level 37 above the band |
@@ -81,7 +80,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1196 | The Sacred Flame | 29 | quest level 29 above the band |
 | 1205 | Deadmire | 45 | quest level 45 above the band |
 | 1462 | Earth Sapta | 4 | class quest (ClassQuestData.lua) |
-| 1490 | Nara Wildmane | 16 | quest level 16 above the band |
 | 1505 | Veteran Uzzek | 10 | class quest (ClassQuestData.lua) |
 | 1518 | Call of Earth | 4 | class quest (ClassQuestData.lua) |
 | 1519 | Call of Earth | 4 | class quest (ClassQuestData.lua) |
@@ -115,8 +113,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3804 | Morrowgrain to Thunder Bluff | 55 | quest level 55 above the band |
 | 5088 | Arikara | 28 | quest level 28 above the band |
 | 5095 | A Call to Arms: The Plaguelands! | 50 | quest level 50 above the band |
-| 5722 | Searching for the Lost Satchel | 16 | quest level 16 above the band |
-| 5723 | Testing an Enemy's Strength | 15 | dungeon quest (Ragefire Chasm not picked up in this chapter) |
 | 5922 | Moonglade | 10 | class quest (ClassQuestData.lua) |
 | 5926 | Heeding the Call | 10 | class quest (ClassQuestData.lua) |
 | 5928 | Heeding the Call | 10 | class quest (ClassQuestData.lua) |
@@ -128,7 +124,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6089 | Training the Beast | 10 | class quest (ClassQuestData.lua) |
 | 6126 | Lessons Anew | 14 | class quest (ClassQuestData.lua) |
 | 7021 | Great-father Winter is Here! | 60 | Questie blacklist |
-| 7492 | Camp Mojache | 57 | quest level 57 above the band |
+| 7492 | Camp Mojache | 57 | required level 54 above the band |
 | 7662 | New Kodo - Teal | 1 | Questie blacklist |
 | 7663 | New Kodo - Green | 1 | Questie blacklist |
 | 7820 | A Donation of Wool | 60 | quest level 60 above the band |
@@ -177,33 +173,33 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8254 | Cenarion Aid | 52 | class quest (ClassQuestData.lua) |
 | 8360 | Dancing for Marzipan | 60 | Questie blacklist |
 | 8367 | For Great Honor | 60 | quest level 60 above the band |
-| 8368 | Battle of Warsong Gulch | 19 | quest level 19 above the band |
-| 8369 | Invaders of Alterac Valley | 60 | quest level 60 above the band |
-| 8370 | Conquering Arathi Basin | 29 | quest level 29 above the band |
-| 8387 | Invaders of Alterac Valley | 60 | quest level 60 above the band |
+| 8368 | Battle of Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8369 | Invaders of Alterac Valley | 60 | required level 51 above the band |
+| 8370 | Conquering Arathi Basin | 29 | required level 20 above the band |
+| 8387 | Invaders of Alterac Valley | 60 | required level 51 above the band |
 | 8388 | For Great Honor | 60 | quest level 60 above the band |
-| 8389 | Battle of Warsong Gulch | 19 | quest level 19 above the band |
-| 8390 | Conquering Arathi Basin | 29 | quest level 29 above the band |
+| 8389 | Battle of Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8390 | Conquering Arathi Basin | 29 | required level 20 above the band |
 | 8410 | Elemental Mastery | 50 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
-| 8426 | Battle of Warsong Gulch | 29 | quest level 29 above the band |
-| 8427 | Battle of Warsong Gulch | 39 | quest level 39 above the band |
-| 8428 | Battle of Warsong Gulch | 49 | quest level 49 above the band |
-| 8429 | Battle of Warsong Gulch | 59 | quest level 59 above the band |
-| 8430 | Battle of Warsong Gulch | 60 | quest level 60 above the band |
-| 8431 | Battle of Warsong Gulch | 29 | quest level 29 above the band |
-| 8432 | Battle of Warsong Gulch | 39 | quest level 39 above the band |
-| 8433 | Battle of Warsong Gulch | 49 | quest level 49 above the band |
-| 8434 | Battle of Warsong Gulch | 59 | quest level 59 above the band |
-| 8435 | Battle of Warsong Gulch | 60 | quest level 60 above the band |
-| 8436 | Conquering Arathi Basin | 39 | quest level 39 above the band |
-| 8437 | Conquering Arathi Basin | 49 | quest level 49 above the band |
-| 8438 | Conquering Arathi Basin | 59 | quest level 59 above the band |
-| 8439 | Conquering Arathi Basin | 60 | quest level 60 above the band |
-| 8440 | Conquering Arathi Basin | 39 | quest level 39 above the band |
-| 8441 | Conquering Arathi Basin | 49 | quest level 49 above the band |
-| 8442 | Conquering Arathi Basin | 59 | quest level 59 above the band |
-| 8443 | Conquering Arathi Basin | 60 | quest level 60 above the band |
+| 8426 | Battle of Warsong Gulch | 29 | required level 20 above the band |
+| 8427 | Battle of Warsong Gulch | 39 | required level 30 above the band |
+| 8428 | Battle of Warsong Gulch | 49 | required level 40 above the band |
+| 8429 | Battle of Warsong Gulch | 59 | required level 50 above the band |
+| 8430 | Battle of Warsong Gulch | 60 | required level 60 above the band |
+| 8431 | Battle of Warsong Gulch | 29 | required level 20 above the band |
+| 8432 | Battle of Warsong Gulch | 39 | required level 30 above the band |
+| 8433 | Battle of Warsong Gulch | 49 | required level 40 above the band |
+| 8434 | Battle of Warsong Gulch | 59 | required level 50 above the band |
+| 8435 | Battle of Warsong Gulch | 60 | required level 60 above the band |
+| 8436 | Conquering Arathi Basin | 39 | required level 30 above the band |
+| 8437 | Conquering Arathi Basin | 49 | required level 40 above the band |
+| 8438 | Conquering Arathi Basin | 59 | required level 50 above the band |
+| 8439 | Conquering Arathi Basin | 60 | required level 60 above the band |
+| 8440 | Conquering Arathi Basin | 39 | required level 30 above the band |
+| 8441 | Conquering Arathi Basin | 49 | required level 40 above the band |
+| 8442 | Conquering Arathi Basin | 59 | required level 50 above the band |
+| 8443 | Conquering Arathi Basin | 60 | required level 60 above the band |
 | 8673 | Bloodhoof the Elder | 60 | Questie blacklist |
 | 8678 | Proudhorn the Elder | 60 | Questie blacklist |
 | 8792 | The Horde Needs Your Help! | 60 | seasonal or event quest |
@@ -256,11 +252,13 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 97936 | Camping 101: Skinning | 6 | requires a profession |
 | 97937 | Camping 101: Tailoring | 6 | requires a profession |
 | 98340 | The Great Cat Spirit | 20 | class quest (ClassQuestData.lua) |
-| 98823 | Earthen Echo | 31 | quest level 31 above the band |
+| 98823 | Earthen Echo | 31 | required level 24 above the band |
 | 98887 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
 | 98888 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
 | 99196 | A Donation of Wool | 60 | quest level 60 above the band |
 | 99197 | A Donation of Silk | 60 | quest level 60 above the band |
+| 914 | Leaders of the Fang | 22 | prerequisite unavailable |
+| 1490 | Nara Wildmane | 16 | prerequisite unavailable |
 | 6363 | Tal the Wind Rider Master | 10 | prerequisite unavailable |
 | 6364 | Return to Jahan | 10 | prerequisite unavailable |
 | 1656 | A Task Unfinished | 5 | low ratio |
@@ -278,11 +276,11 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 1505 | Veteran Uzzek | 10 | WARRIOR | woven, detour 337 s |
 | 1523 | Call of Fire | 10 | SHAMAN | woven, detour 328 s |
 | 5926 | Heeding the Call | 10 | DRUID | woven, detour 36 s |
-| 6061 | Taming the Beast | 10 | HUNTER | woven, detour 294 s |
-| 6065 | The Hunter's Path | 10 | HUNTER | woven, detour 75 s |
-| 6087 | Taming the Beast | 10 | HUNTER | woven, detour 213 s |
-| 6088 | Taming the Beast | 10 | HUNTER | woven, detour 304 s |
-| 6089 | Training the Beast | 10 | HUNTER | woven, detour 195 s |
+| 6061 | Taming the Beast | 10 | HUNTER | woven, detour 332 s |
+| 6065 | The Hunter's Path | 10 | HUNTER | woven, detour 261 s |
+| 6087 | Taming the Beast | 10 | HUNTER | woven, detour 308 s |
+| 6088 | Taming the Beast | 10 | HUNTER | woven, detour 490 s |
+| 6089 | Training the Beast | 10 | HUNTER | woven, detour 265 s |
 | 27 | A Lesson to Learn | 16 | DRUID | quest level 16 above the band |
 | 1462 | Earth Sapta | 4 | SHAMAN | repeatable |
 | 1529 | Call of Water | 20 | SHAMAN | quest level 20 above the band |
@@ -375,102 +373,104 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 3 | A | 748 | Poison Water | 1412 | 47.5, 63.6 | 38 |  |
 | 4 | A | 99080 | Drive Them Out | 1412 | 46.7, 63.4 | 52 |  |
 | 5 | A | 767 | Rite of Vision | 1412 | 46.7, 63.4 | 0 |  |
-| 6 | T | 767 | Rite of Vision | 1412 | 46.9, 61.2 | 90 |  |
-| 7 | A | 771 | Rite of Vision | 1412 | 46.9, 61.2 | 0 |  |
-| 8 | O | 761 | Swoop Hunting | 1412 | 40.3, 61.8 | 404 |  |
-| 9 | O | 748 | Poison Water | 1412 | 39.5, 59.8 | 96 |  |
-| 10 | A | 98430 | The Longwalkers | 1412 | 33.1, 66.0 | 469 |  |
-| 11 | O | 98430 | The Longwalkers | 1412 | 37.2, 64.6 | 256 |  |
-| 12 | A | 96659 | The Adventurer | 1412 | 43.9, 76.7 | 643 |  |
-| 13 | O | 748 | Poison Water | 1412 | 46.2, 76.1 | 143 |  |
-| 14 | T | 96659 | The Adventurer | 1412 | 46.2, 67.3 | 359 |  |
-| 15 | A | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 0 |  |
-| 16 | O | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 3 |  |
-| 17 | T | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 3 |  |
-| 18 | A | 96661 | Camping 101: Cooking | 1412 | 46.2, 67.3 | 0 |  |
-| 19 | A | 743 | Dangers of the Windfury | 1412 | 46.5, 64.9 | 99 |  |
-| 20 | T | 748 | Poison Water | 1412 | 47.5, 63.6 | 82 | near #7 (went 892 yd away) |
-| 21 | A | 754 | Winterhoof Cleansing | 1412 | 47.5, 63.6 | 0 |  |
-| 22 | T | 761 | Swoop Hunting | 1412 | 47.7, 62.7 | 38 |  |
-| 23 | A | 99108 | Sparring Match | 1412 | 48.4, 63.7 | 60 |  |
-| 24 | O | 771 | Rite of Vision | 1412 | 50.3, 65.1 | 130 |  |
-| 25 | O | 99108 | Sparring Match | 1412 | 48.7, 63.7 | 114 |  |
-| 26 | T | 99108 | Sparring Match | 1412 | 48.4, 63.7 | 19 |  |
-| 27 | O | 754 | Winterhoof Cleansing | 1412 | 51.8, 68.4 | 284 |  |
-| 28 | O | 771 | Rite of Vision | 1412 | 51.8, 68.6 | 6 |  |
-| 29 | T | 751 | The Ravaged Caravan | 1412 | 54.8, 64.3 | 254 |  |
-| 30 | A | 765 | Supervisor Fizsprocket | 1412 | 54.8, 64.3 | 0 |  |
-| 31 | A | 764 | The Venture Co. | 1412 | 54.8, 64.3 | 0 |  |
-| 32 | T | 754 | Winterhoof Cleansing | 1412 | 47.5, 63.6 | 446 |  |
-| 33 | A | 756 | Thunderhorn Totem | 1412 | 47.5, 63.6 | 0 |  |
-| 34 | T | 771 | Rite of Vision | 1412 | 46.9, 61.2 | 105 |  |
-| 35 | A | 772 | Rite of Vision | 1412 | 46.9, 61.2 | 0 |  |
-| 36 | A | 99411 | Kyle's Gone Missing! | 1412 | 47.3, 57.6 | 148 |  |
-| 37 | O | 756 | Thunderhorn Totem | 1412 | 49.8, 51.0 | 311 |  |
-| 38 | A | 770 | The Demon Scarred Cloak | 1412 | 47.1, 47.8 | 212 |  |
-| 39 | O | 743 | Dangers of the Windfury | 1412 | 34.6, 48.3 | 768 |  |
-| 40 | T | 772 | Rite of Vision | 1412 | 34.3, 43.3 | 205 |  |
-| 41 | A | 773 | Rite of Wisdom | 1412 | 34.3, 43.3 | 0 |  |
-| 42 | A | 76156 | Stalk With The Earthmother | 1456 | 39.4, 65.8 | 330 |  |
-| 43 | A | 744 | Preparation for Ceremony | 1456 | 37.8, 59.6 | 91 |  |
-| 44 | O | 744 | Preparation for Ceremony | 1412 | 32.6, 34.4 | 369 |  |
-| 45 | T | 744 | Preparation for Ceremony | 1456 | 37.8, 59.6 | 369 |  |
-| 46 | F |  | flight path | 1456 | 47.0, 49.8 | 117 |  |
-| 47 | A | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 1054 |  |
-| 48 | T | 773 | Rite of Wisdom | 1412 | 58.3, 30.7 | 177 |  |
-| 49 | A | 775 | Journey into Thunder Bluff | 1412 | 58.3, 30.7 | 0 |  |
-| 50 | O | 833 | A Sacred Burial | 1412 | 58.1, 30.8 | 11 |  |
-| 51 | T | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 168 |  |
-| 52 | O | 764 | The Venture Co. | 1412 | 60.2, 46.8 | 540 |  |
-| 53 | A | 98424 | Fizsprocket's Notes | 1412 | 61.2, 49.3 | 120 |  |
-| 54 | O | 98424 | Fizsprocket's Notes | 1412 | 61.7, 47.3 | 87 |  |
-| 55 | O | 765 | Supervisor Fizsprocket | 1412 | 61.2, 49.3 | 87 |  |
-| 56 | O | 98424 | Fizsprocket's Notes | 1412 | 58.6, 47.3 | 177 |  |
-| 57 | O | 76156 | Stalk With The Earthmother | 1412 | 58.4, 48.3 | 41 |  |
-| 58 | O | 99080 | Drive Them Out | 1412 | 63.4, 61.2 | 614 |  |
-| 59 | O | 99080 | Drive Them Out | 1412 | 60.7, 61.0 | 171 |  |
-| 60 | T | 756 | Thunderhorn Totem | 1412 | 47.5, 63.6 | 815 | near #35 (went 1507 yd away) |
-| 61 | A | 758 | Thunderhorn Cleansing | 1412 | 47.5, 63.6 | 0 | near #35 (went 1507 yd away) |
-| 62 | T | 99080 | Drive Them Out | 1412 | 46.7, 63.4 | 52 |  |
-| 63 | A | 99082 | The High Chieftain | 1412 | 46.7, 63.4 | 0 |  |
-| 64 | T | 770 | The Demon Scarred Cloak | 1412 | 46.0, 63.4 | 39 |  |
-| 65 | A | 861 | The Hunter's Way | 1412 | 46.0, 63.4 | 0 |  |
-| 66 | T | 743 | Dangers of the Windfury | 1412 | 46.5, 64.9 | 69 |  |
-| 67 | O | 96661 | Camping 101: Cooking | 1412 | 44.9, 61.7 | 167 |  |
-| 68 | O | 99411 | Kyle's Gone Missing! | 1412 | 46.3, 62.3 | 88 |  |
-| 69 | T | 96661 | Camping 101: Cooking | 1412 | 44.9, 61.7 | 88 |  |
-| 70 | O | 758 | Thunderhorn Cleansing | 1412 | 44.2, 51.1 | 435 |  |
-| 71 | T | 99411 | Kyle's Gone Missing! | 1412 | 47.3, 57.6 | 328 | near #36 (went 1312 yd away) |
-| 72 | T | 758 | Thunderhorn Cleansing | 1412 | 47.5, 63.6 | 244 |  |
-| 73 | A | 759 | Wildmane Totem | 1412 | 47.5, 63.6 | 0 |  |
-| 74 | T | 764 | The Venture Co. | 1412 | 54.8, 64.3 | 446 | near #31 (went 1832 yd away) |
-| 75 | T | 765 | Supervisor Fizsprocket | 1412 | 54.8, 64.3 | 0 | near #31 (went 1832 yd away) |
-| 76 | T | 98424 | Fizsprocket's Notes | 1412 | 54.8, 64.3 | 0 |  |
-| 77 | A | 98427 | Ceasing Operations | 1412 | 54.8, 64.3 | 0 |  |
-| 78 | O | 759 | Wildmane Totem | 1412 | 59.3, 62.9 | 287 | near #59 (went 1050 yd away) |
-| 79 | T | 759 | Wildmane Totem | 1412 | 47.5, 63.6 | 727 | near #73 (went 727 yd away) |
-| 80 | A | 760 | Wildmane Cleansing | 1412 | 47.5, 63.6 | 0 | near #73 (went 727 yd away) |
-| 81 | O | 98427 | Ceasing Operations | 1412 | 56.8, 42.8 | 1026 |  |
-| 82 | O | 861 | The Hunter's Way | 1412 | 52.6, 32.2 | 504 |  |
-| 83 | T | 98430 | The Longwalkers | 1456 | 60.3, 51.7 | 662 | near #46 (went 1670 yd away) |
-| 84 | T | 775 | Journey into Thunder Bluff | 1456 | 60.3, 51.7 | 0 | near #46 (went 1670 yd away) |
-| 85 | T | 99082 | The High Chieftain | 1456 | 60.3, 51.7 | 0 |  |
-| 86 | A | 776 | Rites of the Earthmother | 1456 | 60.3, 51.7 | 0 |  |
-| 87 | O | 760 | Wildmane Cleansing | 1412 | 42.7, 25.0 | 453 |  |
-| 88 | O | 776 | Rites of the Earthmother | 1412 | 51.2, 24.8 | 526 |  |
-| 89 | A | 886 | The Barrens Oases | 1456 | 78.6, 28.6 | 475 |  |
-| 90 | T | 776 | Rites of the Earthmother | 1456 | 60.3, 51.7 | 249 | near #86 (went 725 yd away) |
-| 91 | T | 76156 | Stalk With The Earthmother | 1456 | 39.4, 65.8 | 238 | near #46 (went 1793 yd away) |
-| 92 | T | 861 | The Hunter's Way | 1456 | 61.5, 80.9 | 253 |  |
-| 93 | A | 860 | Sergra Darkthorn | 1456 | 61.5, 80.9 | 0 |  |
-| 94 | T | 760 | Wildmane Cleansing | 1412 | 47.5, 63.6 | 981 | near #80 (went 1610 yd away) |
-| 95 | A | 98435 | Thunderhorn's Report | 1412 | 47.5, 63.6 | 0 | near #80 (went 1610 yd away) |
-| 96 | T | 98427 | Ceasing Operations | 1412 | 54.8, 64.3 | 446 | near #77 (went 1774 yd away) |
-| 97 | T | 98435 | Thunderhorn's Report | 1456 | 78.6, 28.6 | 1445 | near #89 (went 1445 yd away) |
-| 98 | T | 886 | The Barrens Oases | 1413 | 52.3, 31.9 | 2421 |  |
-| 99 | T | 860 | Sergra Darkthorn | 1413 | 52.2, 31.0 | 62 |  |
+| 6 | O | 761 | Swoop Hunting | 1412 | 40.3, 61.8 | 395 |  |
+| 7 | O | 748 | Poison Water | 1412 | 39.5, 59.8 | 96 |  |
+| 8 | A | 98430 | The Longwalkers | 1412 | 33.1, 66.0 | 469 |  |
+| 9 | O | 98430 | The Longwalkers | 1412 | 37.2, 64.6 | 256 |  |
+| 10 | A | 96659 | The Adventurer | 1412 | 43.9, 76.7 | 643 |  |
+| 11 | O | 748 | Poison Water | 1412 | 46.2, 76.1 | 143 |  |
+| 12 | T | 96659 | The Adventurer | 1412 | 46.2, 67.3 | 359 |  |
+| 13 | A | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 0 |  |
+| 14 | O | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 3 |  |
+| 15 | T | 96605 | The Great Outdoors | 1412 | 46.2, 67.3 | 3 |  |
+| 16 | A | 96661 | Camping 101: Cooking | 1412 | 46.2, 67.3 | 0 |  |
+| 17 | A | 743 | Dangers of the Windfury | 1412 | 46.5, 64.9 | 99 |  |
+| 18 | T | 748 | Poison Water | 1412 | 47.5, 63.6 | 82 | near #5 (went 892 yd away) |
+| 19 | A | 754 | Winterhoof Cleansing | 1412 | 47.5, 63.6 | 0 |  |
+| 20 | T | 761 | Swoop Hunting | 1412 | 47.7, 62.7 | 38 |  |
+| 21 | O | 754 | Winterhoof Cleansing | 1412 | 51.8, 68.4 | 344 |  |
+| 22 | T | 754 | Winterhoof Cleansing | 1412 | 47.5, 63.6 | 328 |  |
+| 23 | A | 756 | Thunderhorn Totem | 1412 | 47.5, 63.6 | 0 |  |
+| 24 | O | 756 | Thunderhorn Totem | 1412 | 49.8, 51.0 | 533 |  |
+| 25 | T | 756 | Thunderhorn Totem | 1412 | 47.5, 63.6 | 533 |  |
+| 26 | A | 758 | Thunderhorn Cleansing | 1412 | 47.5, 63.6 | 0 |  |
+| 27 | T | 767 | Rite of Vision | 1412 | 46.9, 61.2 | 105 |  |
+| 28 | A | 771 | Rite of Vision | 1412 | 46.9, 61.2 | 0 |  |
+| 29 | O | 758 | Thunderhorn Cleansing | 1412 | 44.2, 51.1 | 445 |  |
+| 30 | A | 76156 | Stalk With The Earthmother | 1456 | 39.4, 65.8 | 625 |  |
+| 31 | A | 744 | Preparation for Ceremony | 1456 | 37.8, 59.6 | 46 |  |
+| 32 | A | 770 | The Demon Scarred Cloak | 1412 | 47.1, 47.8 | 690 |  |
+| 33 | A | 99411 | Kyle's Gone Missing! | 1412 | 47.3, 57.6 | 405 | near #28 (went 999 yd away) |
+| 34 | T | 758 | Thunderhorn Cleansing | 1412 | 47.5, 63.6 | 244 | near #28 (went 1217 yd away) |
+| 35 | A | 759 | Wildmane Totem | 1412 | 47.5, 63.6 | 0 | near #28 (went 1217 yd away) |
+| 36 | O | 771 | Rite of Vision | 1412 | 51.8, 68.6 | 333 | near #21 (went 1527 yd away) |
+| 37 | T | 751 | The Ravaged Caravan | 1412 | 54.8, 64.3 | 254 |  |
+| 38 | A | 764 | The Venture Co. | 1412 | 54.8, 64.3 | 0 |  |
+| 39 | A | 765 | Supervisor Fizsprocket | 1412 | 54.8, 64.3 | 0 |  |
+| 40 | O | 759 | Wildmane Totem | 1412 | 59.3, 62.9 | 287 |  |
+| 41 | O | 99080 | Drive Them Out | 1412 | 60.7, 61.0 | 111 |  |
+| 42 | O | 99080 | Drive Them Out | 1412 | 63.4, 61.2 | 171 |  |
+| 43 | A | 98424 | Fizsprocket's Notes | 1412 | 61.2, 49.3 | 506 |  |
+| 44 | O | 98424 | Fizsprocket's Notes | 1412 | 61.7, 47.3 | 87 |  |
+| 45 | O | 765 | Supervisor Fizsprocket | 1412 | 61.2, 49.3 | 87 |  |
+| 46 | O | 98424 | Fizsprocket's Notes | 1412 | 58.6, 47.3 | 177 |  |
+| 47 | O | 764 | The Venture Co. | 1412 | 60.2, 46.8 | 96 |  |
+| 48 | O | 76156 | Stalk With The Earthmother | 1412 | 58.4, 48.3 | 123 |  |
+| 49 | T | 98424 | Fizsprocket's Notes | 1412 | 54.8, 64.3 | 693 | near #39 (went 815 yd away) |
+| 50 | T | 764 | The Venture Co. | 1412 | 54.8, 64.3 | 0 | near #39 (went 815 yd away) |
+| 51 | A | 98427 | Ceasing Operations | 1412 | 54.8, 64.3 | 0 |  |
+| 52 | T | 765 | Supervisor Fizsprocket | 1412 | 54.8, 64.3 | 0 |  |
+| 53 | O | 771 | Rite of Vision | 1412 | 50.3, 65.1 | 279 |  |
+| 54 | A | 99108 | Sparring Match | 1412 | 48.4, 63.7 | 130 | near #35 (went 1061 yd away) |
+| 55 | T | 759 | Wildmane Totem | 1412 | 47.5, 63.6 | 51 | near #35 (went 1097 yd away) |
+| 56 | A | 760 | Wildmane Cleansing | 1412 | 47.5, 63.6 | 0 |  |
+| 57 | T | 99080 | Drive Them Out | 1412 | 46.7, 63.4 | 52 |  |
+| 58 | T | 770 | The Demon Scarred Cloak | 1412 | 46.0, 63.4 | 39 |  |
+| 59 | A | 861 | The Hunter's Way | 1412 | 46.0, 63.4 | 0 |  |
+| 60 | A | 99082 | The High Chieftain | 1412 | 46.7, 63.4 | 39 |  |
+| 61 | O | 99411 | Kyle's Gone Missing! | 1412 | 46.3, 62.3 | 48 |  |
+| 62 | T | 771 | Rite of Vision | 1412 | 46.9, 61.2 | 59 |  |
+| 63 | A | 772 | Rite of Vision | 1412 | 46.9, 61.2 | 0 |  |
+| 64 | O | 96661 | Camping 101: Cooking | 1412 | 44.9, 61.7 | 122 |  |
+| 65 | T | 96661 | Camping 101: Cooking | 1412 | 44.9, 61.7 | 0 |  |
+| 66 | O | 743 | Dangers of the Windfury | 1412 | 34.6, 48.3 | 838 |  |
+| 67 | T | 772 | Rite of Vision | 1412 | 34.3, 43.3 | 205 |  |
+| 68 | A | 773 | Rite of Wisdom | 1412 | 34.3, 43.3 | 0 |  |
+| 69 | O | 744 | Preparation for Ceremony | 1412 | 32.6, 34.4 | 378 |  |
+| 70 | T | 744 | Preparation for Ceremony | 1456 | 37.8, 59.6 | 369 | near #31 (went 1831 yd away) |
+| 71 | T | 76156 | Stalk With The Earthmother | 1456 | 39.4, 65.8 | 46 | near #31 (went 1793 yd away) |
+| 72 | F |  | flight path | 1456 | 47.0, 49.8 | 136 |  |
+| 73 | A | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 1054 |  |
+| 74 | T | 773 | Rite of Wisdom | 1412 | 58.3, 30.7 | 177 |  |
+| 75 | A | 775 | Journey into Thunder Bluff | 1412 | 58.3, 30.7 | 0 |  |
+| 76 | O | 833 | A Sacred Burial | 1412 | 58.1, 30.8 | 11 |  |
+| 77 | O | 861 | The Hunter's Way | 1412 | 52.6, 32.2 | 347 |  |
+| 78 | T | 98430 | The Longwalkers | 1456 | 60.3, 51.7 | 662 | near #72 (went 1019 yd away) |
+| 79 | T | 775 | Journey into Thunder Bluff | 1456 | 60.3, 51.7 | 0 | near #72 (went 1019 yd away) |
+| 80 | A | 776 | Rites of the Earthmother | 1456 | 60.3, 51.7 | 0 |  |
+| 81 | T | 99082 | The High Chieftain | 1456 | 60.3, 51.7 | 0 |  |
+| 82 | O | 760 | Wildmane Cleansing | 1412 | 42.7, 25.0 | 453 |  |
+| 83 | O | 776 | Rites of the Earthmother | 1412 | 51.2, 24.8 | 526 |  |
+| 84 | T | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 532 | near #73 (went 962 yd away) |
+| 85 | O | 98427 | Ceasing Operations | 1412 | 56.8, 42.8 | 336 |  |
+| 86 | T | 98427 | Ceasing Operations | 1412 | 54.8, 64.3 | 891 | near #52 (went 1832 yd away) |
+| 87 | O | 99108 | Sparring Match | 1412 | 48.7, 63.7 | 375 | near #60 (went 1629 yd away) |
+| 88 | T | 99108 | Sparring Match | 1412 | 48.4, 63.7 | 19 | near #63 (went 1627 yd away) |
+| 89 | T | 760 | Wildmane Cleansing | 1412 | 47.5, 63.6 | 51 |  |
+| 90 | A | 98435 | Thunderhorn's Report | 1412 | 47.5, 63.6 | 0 |  |
+| 91 | T | 743 | Dangers of the Windfury | 1412 | 46.5, 64.9 | 82 |  |
+| 92 | T | 99411 | Kyle's Gone Missing! | 1412 | 47.3, 57.6 | 303 | near #63 (went 1368 yd away) |
+| 93 | T | 861 | The Hunter's Way | 1456 | 61.5, 80.9 | 749 |  |
+| 94 | A | 860 | Sergra Darkthorn | 1456 | 61.5, 80.9 | 0 |  |
+| 95 | T | 776 | Rites of the Earthmother | 1456 | 60.3, 51.7 | 203 | near #81 (went 1396 yd away) |
+| 96 | A | 5723 | Testing an Enemy's Strength | 1456 | 70.1, 29.5 | 185 |  |
+| 97 | A | 5722 | Searching for the Lost Satchel | 1456 | 70.1, 29.5 | 0 |  |
+| 98 | A | 886 | The Barrens Oases | 1456 | 78.6, 28.6 | 88 |  |
+| 99 | T | 98435 | Thunderhorn's Report | 1456 | 78.6, 28.6 | 0 |  |
+| 100 | T | 886 | The Barrens Oases | 1413 | 52.3, 31.9 | 2421 |  |
+| 101 | T | 860 | Sergra Darkthorn | 1413 | 52.2, 31.0 | 62 |  |
 
-Walking between tasks: 24382 yd (~58 min at 7 yd/s).
+Walking between tasks: 22715 yd (~54 min at 7 yd/s).
 
 ## Qualité
 
@@ -490,9 +490,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 48: `fp 1456 47 49.83`
-- step 51: `sethearth 1456 45.81 64.71`
-- step 114: `hearth 1456`
+- step 31: `fp 1456 47 49.83`
 - step 117: `fp 1413 51.5 30.34`
 
 ## Warnings

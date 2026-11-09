@@ -5,11 +5,11 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 6-11 |
-| Simulated level | 6.00 -> 12.02 |
-| Time | 112 min |
-| XP gained | 36497 |
-| XP/h | 19551 |
-| Steps | 134 |
+| Simulated level | 6.00 -> 12.01 |
+| Time | 111 min |
+| XP gained | 36429 |
+| XP/h | 19634 |
+| Steps | 137 |
 | Quests turned in | 37 |
 | Hubs | 11 |
 | Median ratio (XP/s) | 4.80 |
@@ -29,25 +29,25 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6 | 318 | Evershine | 7 | 160 | 7 |
 | 7 | 315 | The Perfect Stout | 9 | 780 | 8 |
 | 8 | 319 | A Favor for Evershine | 8 | 530 | 8 |
-| 9 | 98319 | Secure the Mountain | 8 | 700 est. | 8 |
-| 10 | 98323 | Secure the Mountain | 8 | 530 est. | 8 |
-| 11 | 310 | Bitter Rivals | 6 | 135 | 8 |
-| 12 | 312 | Tundra MacGrann's Stolen Stash | 12 | 910 | 8 |
-| 13 | 415 | Rejold's New Brew | 10 | 85 | 8 |
-| 14 | 311 | Return to Marleth | 7 | 630 | 8 |
-| 15 | 98326 | Frosthowl | 9 | 780 est. | 9 |
-| 16 | 287 | Frostmane Hold | 9 | 590 | 9 |
+| 9 | 310 | Bitter Rivals | 6 | 135 | 8 |
+| 10 | 98326 | Frosthowl | 9 | 780 est. | 8 |
+| 11 | 311 | Return to Marleth | 7 | 630 | 8 |
+| 12 | 415 | Rejold's New Brew | 10 | 85 | 8 |
+| 13 | 312 | Tundra MacGrann's Stolen Stash | 12 | 910 | 8 |
+| 14 | 98319 | Secure the Mountain | 8 | 700 est. | 8 |
+| 15 | 287 | Frostmane Hold | 9 | 590 | 9 |
+| 16 | 98323 | Secure the Mountain | 8 | 530 est. | 9 |
 | 17 | 320 | Return to Bellowfiz | 8 | 880 | 9 |
 | 18 | 313 | The Grizzled Den | 7 | 630 | 9 |
 | 19 | 99158 | Dawn in the Mountains | 8 | 530 est. | 9 |
-| 20 | 95213 | Stolen Blasting Powder | 10 | 840 est. | 10 |
+| 20 | 95213 | Stolen Blasting Powder | 10 | 840 est. | 9 |
 | 21 | 433 | The Public Servant | 11 | 660 | 10 |
 | 22 | 96408 | A Visitor to Dun Morogh | 13 | 455 est. | 10 |
-| 23 | 96391 | Underground Map | 15 | 405 est. | 10 |
-| 24 | 96392 | Farsen's Watch | 13 | 680 est. | 10 |
-| 25 | 95214 | Stolen Blasting Powder | 10 | 840 est. | 11 |
-| 26 | 432 | Those Blasted Troggs! | 9 | 590 | 11 |
-| 27 | 96390 | Nip 'Em in the Bud | 13 | 680 est. | 11 |
+| 23 | 96392 | Farsen's Watch | 13 | 680 est. | 10 |
+| 24 | 95214 | Stolen Blasting Powder | 10 | 840 est. | 11 |
+| 25 | 432 | Those Blasted Troggs! | 9 | 590 | 11 |
+| 26 | 96390 | Nip 'Em in the Bud | 13 | 680 est. | 11 |
+| 27 | 96391 | Underground Map | 15 | 405 est. | 11 |
 | 28 | 95212 | Never Saddle on Quality | 10 | 840 est. | 11 |
 | 29 | 314 | Protecting the Herd | 12 | 910 | 11 |
 | 30 | 99159 | Finding Warmth | 8 | 700 est. | 11 |
@@ -75,19 +75,18 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 689 | A King's Tribute | 31 | quest level 31 above the band |
 | 700 | A King's Tribute | 31 | quest level 31 above the band |
 | 707 | Ironband Wants You! | 37 | quest level 37 above the band |
-| 725 | Passing Word of a Threat | 40 | quest level 40 above the band |
-| 726 | Passing Word of a Threat | 40 | quest level 40 above the band |
+| 725 | Passing Word of a Threat | 40 | required level 35 above the band |
+| 726 | Passing Word of a Threat | 40 | required level 35 above the band |
 | 735 | The Star, the Hand and the Heart | 44 | quest level 44 above the band |
 | 737 | Forbidden Knowledge | 40 | quest level 40 above the band |
-| 762 | An Ambassador of Evil | 44 | quest level 44 above the band |
-| 971 | Knowledge in the Deeps | 23 | quest level 23 above the band |
+| 762 | An Ambassador of Evil | 44 | required level 35 above the band |
 | 1019 | The New Frontier | 55 | quest level 55 above the band |
-| 1050 | Mythology of the Titans | 38 | quest level 38 above the band |
+| 1050 | Mythology of the Titans | 38 | required level 28 above the band |
 | 1073 | Ineptitude + Chemicals = Fun | 21 | quest level 21 above the band |
 | 1074 | Ineptitude + Chemicals = Fun | 21 | quest level 21 above the band |
-| 1139 | The Lost Tablets of Will | 45 | quest level 45 above the band |
+| 1139 | The Lost Tablets of Will | 45 | required level 35 above the band |
 | 1179 | The Brassbolts Brothers | 30 | quest level 30 above the band |
-| 1360 | Reclaimed Treasures | 43 | quest level 43 above the band |
+| 1360 | Reclaimed Treasures | 43 | required level 33 above the band |
 | 1453 | Reclaimers' Business in Desolace | 33 | quest level 33 above the band |
 | 1578 | Supplying the Front | 12 | requires a profession |
 | 1599 | Beginnings | 4 | class quest (ClassQuestData.lua) |
@@ -126,27 +125,27 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1953 | Return to the Marsh | 40 | class quest (ClassQuestData.lua) |
 | 2039 | Find Bingles | 15 | quest level 15 above the band |
 | 2041 | Speak with Shoni | 15 | quest level 15 above the band |
-| 2199 | Lore for a Price | 41 | quest level 41 above the band |
-| 2200 | Back to Uldaman | 42 | quest level 42 above the band |
+| 2199 | Lore for a Price | 41 | required level 37 above the band |
+| 2200 | Back to Uldaman | 42 | required level 37 above the band |
 | 2218 | Road to Salvation | 10 | class quest (ClassQuestData.lua) |
 | 2238 | Simple Subterfugin' | 10 | class quest (ClassQuestData.lua) |
 | 2239 | Onin's Report | 10 | class quest (ClassQuestData.lua) |
 | 2298 | Kingly Shakedown | 16 | class quest (ClassQuestData.lua) |
 | 2299 | To Hulfdan! | 16 | class quest (ClassQuestData.lua) |
-| 2361 | Restoring the Necklace | 44 | quest level 44 above the band |
-| 2398 | The Lost Dwarves | 40 | quest level 40 above the band |
+| 2361 | Restoring the Necklace | 44 | required level 37 above the band |
+| 2398 | The Lost Dwarves | 40 | required level 35 above the band |
 | 2439 | The Platinum Discs | 47 | quest level 47 above the band |
 | 2769 | The Brassbolts Brothers | 46 | quest level 46 above the band |
-| 2861 | Tabetha's Task | 46 | quest level 46 above the band |
-| 2922 | Save Techbot's Brain! | 26 | quest level 26 above the band |
-| 2924 | Essential Artificials | 30 | quest level 30 above the band |
-| 2926 | Gnogaine | 27 | quest level 27 above the band |
-| 2927 | The Day After | 27 | quest level 27 above the band |
-| 2929 | The Grand Betrayal | 35 | quest level 35 above the band |
-| 2930 | Data Rescue | 30 | quest level 30 above the band |
+| 2861 | Tabetha's Task | 46 | required level 40 above the band |
+| 2922 | Save Techbot's Brain! | 26 | required level 20 above the band |
+| 2924 | Essential Artificials | 30 | required level 24 above the band |
+| 2926 | Gnogaine | 27 | required level 20 above the band |
+| 2927 | The Day After | 27 | required level 20 above the band |
+| 2929 | The Grand Betrayal | 35 | required level 25 above the band |
+| 2930 | Data Rescue | 30 | required level 25 above the band |
 | 2946 | Seeing What Happens | 50 | quest level 50 above the band |
 | 2948 | Gnome Improvement | 35 | quest level 35 above the band |
-| 2962 | The Only Cure is More Green Glow | 30 | quest level 30 above the band |
+| 2962 | The Only Cure is More Green Glow | 30 | required level 20 above the band |
 | 2963 | Portents of Uldum | 50 | quest level 50 above the band |
 | 2964 | A Future Task | 50 | quest level 50 above the band |
 | 2997 | Tome of Divinity | 12 | class quest (ClassQuestData.lua) |
@@ -162,7 +161,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3115 | Tainted Memorandum | 1 | class quest (ClassQuestData.lua) |
 | 3201 | At Last! | 48 | quest level 48 above the band |
 | 3371 | Dwarven Justice | 55 | quest level 55 above the band |
-| 3375 | Replacement Phial | 42 | quest level 42 above the band |
+| 3375 | Replacement Phial | 42 | required level 37 above the band |
 | 3448 | Passing the Burden | 52 | quest level 52 above the band |
 | 3449 | Arcane Runes | 52 | quest level 52 above the band |
 | 3450 | An Easy Pickup | 52 | quest level 52 above the band |
@@ -173,13 +172,13 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3640 | The Pledge of Secrecy | 47 | quest level 47 above the band |
 | 3641 | Show Your Work | 47 | quest level 47 above the band |
 | 3647 | Membership Card Renewal | 47 | quest level 47 above the band |
-| 3701 | The Smoldering Ruins of Thaurissan | 54 | quest level 54 above the band |
-| 3702 | The Smoldering Ruins of Thaurissan | 54 | quest level 54 above the band |
+| 3701 | The Smoldering Ruins of Thaurissan | 54 | required level 50 above the band |
+| 3702 | The Smoldering Ruins of Thaurissan | 54 | required level 50 above the band |
 | 3790 | Assisting Arch Druid Staghelm | 50 | quest level 50 above the band |
 | 3861 | CLUCK! | 1 | quest level 1 below the band |
-| 4126 | Hurley Blackbreath | 55 | quest level 55 above the band |
-| 4341 | Kharan Mighthammer | 59 | quest level 59 above the band |
-| 4362 | The Fate of the Kingdom | 59 | quest level 59 above the band |
+| 4126 | Hurley Blackbreath | 55 | required level 50 above the band |
+| 4341 | Kharan Mighthammer | 59 | required level 50 above the band |
+| 4362 | The Fate of the Kingdom | 59 | required level 50 above the band |
 | 4485 | The Tome of Nobility | 40 | class quest (ClassQuestData.lua) |
 | 4486 | The Tome of Nobility | 40 | class quest (ClassQuestData.lua) |
 | 4487 | Summon Felsteed | 40 | class quest (ClassQuestData.lua) |
@@ -211,9 +210,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7045 | A Smokywood Pastures' Thank You! | 60 | Questie blacklist |
 | 7062 | The Reason for the Season | 60 | Questie blacklist |
 | 7063 | The Feast of Winter Veil | 60 | Questie blacklist |
-| 7261 | The Sovereign Imperative | 60 | quest level 60 above the band |
+| 7261 | The Sovereign Imperative | 60 | required level 51 above the band |
 | 7342 | Arrows Are For Sissies | 60 | quest level 60 above the band |
-| 7494 | Feathermoon Stronghold | 57 | quest level 57 above the band |
+| 7494 | Feathermoon Stronghold | 57 | required level 54 above the band |
 | 7562 | Mor'zul Bloodbringer | 58 | class quest (ClassQuestData.lua) |
 | 7639 | To Show Due Judgment | 60 | class quest (ClassQuestData.lua) |
 | 7670 | Lord Grayson Shadowbreaker | 60 | class quest (ClassQuestData.lua) |
@@ -242,31 +241,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8353 | Chicken Clucking for a Mint | 60 | Questie blacklist |
 | 8355 | Incoming Gumdrop | 60 | Questie blacklist |
 | 8371 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8372 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8374 | Claiming Arathi Basin | 29 | quest level 29 above the band |
-| 8375 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8383 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8384 | Claiming Arathi Basin | 29 | quest level 29 above the band |
+| 8372 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8374 | Claiming Arathi Basin | 29 | required level 20 above the band |
+| 8375 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8383 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8384 | Claiming Arathi Basin | 29 | required level 20 above the band |
 | 8385 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8386 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8391 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8392 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8393 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8394 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8395 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8396 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8397 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8398 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8399 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8400 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8401 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8402 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8403 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
-| 8404 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8405 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8406 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8407 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8408 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
+| 8386 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8391 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8392 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8393 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8394 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8395 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8396 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8397 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8398 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8399 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8400 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8401 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8402 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8403 | Fight for Warsong Gulch | 60 | required level 60 above the band |
+| 8404 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8405 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8406 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8407 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8408 | Fight for Warsong Gulch | 60 | required level 60 above the band |
 | 8415 | Chillwind Point | 52 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8419 | An Imp's Request | 52 | class quest (ClassQuestData.lua) |
@@ -344,7 +343,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8912 | An Earnest Proposition | 60 | class quest (ClassQuestData.lua) |
 | 8922 | A Supernatural Device | 60 | quest level 60 above the band |
 | 8926 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
-| 8929 | In Search of Anthion | 60 | quest level 60 above the band |
+| 8929 | In Search of Anthion | 60 | required level 58 above the band |
 | 8931 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8932 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8933 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
@@ -352,7 +351,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8935 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8936 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8937 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
-| 8960 | Bodley's Unfortunate Fate | 60 | quest level 60 above the band |
+| 8960 | Bodley's Unfortunate Fate | 60 | required level 58 above the band |
 | 8993 | Gift Giving | 60 | Questie blacklist |
 | 8999 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
 | 9000 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
@@ -403,8 +402,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 96058 | Camping 101: Engineering | 6 | requires a profession |
 | 96059 | Camping 101: Enchanting | 6 | requires a profession |
 | 96243 | Call of Earth | 4 | class quest (ClassQuestData.lua) |
-| 96394 | The Restless Dead | 15 | quest level 15 above the band |
-| 96403 | Important Heirlooms | 15 | quest level 15 above the band |
 | 97263 | Your Package Has Arrived | 2 | quest level 2 below the band |
 | 98574 | Hallowed Memorandum | 1 | class quest (ClassQuestData.lua) |
 | 98581 | Archaic Rune | 1 | class quest (ClassQuestData.lua) |
@@ -428,16 +425,16 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 5625 | Garments of the Light | 4 | PRIEST | woven, detour 42 s |
 | 96243 | Call of Earth | 4 | SHAMAN | woven, detour 169 s |
 | 1679 | Muren Stormpike | 10 | WARRIOR | woven, detour 98 s |
-| 1879 | Speak with Bink | 10 | MAGE | woven, detour 92 s |
-| 1880 | Mage-tastic Gizmonitor | 10 | MAGE | woven, detour 596 s |
-| 2218 | Road to Salvation | 10 | ROGUE | woven, detour 83 s |
-| 2238 | Simple Subterfugin' | 10 | ROGUE | woven, detour 553 s |
-| 2239 | Onin's Report | 10 | ROGUE | woven, detour 553 s |
+| 1879 | Speak with Bink | 10 | MAGE | woven, detour 66 s |
+| 1880 | Mage-tastic Gizmonitor | 10 | MAGE | woven, detour 587 s |
+| 2218 | Road to Salvation | 10 | ROGUE | woven, detour 27 s |
+| 2238 | Simple Subterfugin' | 10 | ROGUE | woven, detour 548 s |
+| 2239 | Onin's Report | 10 | ROGUE | woven, detour 548 s |
 | 6064 | Taming the Beast | 10 | HUNTER | woven, detour 211 s |
 | 6074 | The Hunter's Path | 10 | HUNTER | woven, detour 360 s |
 | 6084 | Taming the Beast | 10 | HUNTER | woven, detour 395 s |
 | 94449 | Call of Fire | 10 | SHAMAN | woven, detour 58 s |
-| 94817 | Confounding Flash | 10 | PRIEST | woven, detour 168 s |
+| 94817 | Confounding Flash | 10 | PRIEST | woven, detour 120 s |
 | 94465 | Call of Fire | 11 | SHAMAN | woven, detour 140 s |
 | 1645 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
 | 1647 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
@@ -500,14 +497,14 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 8910 | An Earnest Proposition | 60 | ROGUE | quest level 60 above the band |
 | 8911 | An Earnest Proposition | 60 | WARLOCK | quest level 60 above the band |
 | 8912 | An Earnest Proposition | 60 | WARRIOR | quest level 60 above the band |
-| 8926 | Just Compensation | 60 | DRUID | quest level 60 above the band |
-| 8931 | Just Compensation | 60 | HUNTER | quest level 60 above the band |
-| 8932 | Just Compensation | 60 | MAGE | quest level 60 above the band |
-| 8933 | Just Compensation | 60 | PALADIN | quest level 60 above the band |
-| 8934 | Just Compensation | 60 | PRIEST | quest level 60 above the band |
-| 8935 | Just Compensation | 60 | ROGUE | quest level 60 above the band |
-| 8936 | Just Compensation | 60 | WARLOCK | quest level 60 above the band |
-| 8937 | Just Compensation | 60 | WARRIOR | quest level 60 above the band |
+| 8926 | Just Compensation | 60 | DRUID | required level 58 above the band |
+| 8931 | Just Compensation | 60 | HUNTER | required level 58 above the band |
+| 8932 | Just Compensation | 60 | MAGE | required level 58 above the band |
+| 8933 | Just Compensation | 60 | PALADIN | required level 58 above the band |
+| 8934 | Just Compensation | 60 | PRIEST | required level 58 above the band |
+| 8935 | Just Compensation | 60 | ROGUE | required level 58 above the band |
+| 8936 | Just Compensation | 60 | WARLOCK | required level 58 above the band |
+| 8937 | Just Compensation | 60 | WARRIOR | required level 58 above the band |
 | 8999 | Saving the Best for Last | 60 | DRUID | quest level 60 above the band |
 | 9000 | Saving the Best for Last | 60 | HUNTER | quest level 60 above the band |
 | 9001 | Saving the Best for Last | 60 | MAGE | quest level 60 above the band |
@@ -598,8 +595,8 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 1 | A | 317 | Stocking Jetsteam | 1426 | 49.4, 48.4 | 369 |  |
 | 2 | A | 313 | The Grizzled Den | 1426 | 49.6, 48.6 | 11 |  |
 | 3 | A | 5541 | Ammo for Rumbleshot | 1426 | 50.1, 49.4 | 34 |  |
-| 4 | A | 98322 | Secure the Mountain | 1426 | 46.7, 53.8 | 219 |  |
-| 5 | A | 96608 | The Great Outdoors | 1426 | 46.7, 53.8 | 0 |  |
+| 4 | A | 96608 | The Great Outdoors | 1426 | 46.7, 53.8 | 219 |  |
+| 5 | A | 98322 | Secure the Mountain | 1426 | 46.7, 53.8 | 0 |  |
 | 6 | O | 96608 | The Great Outdoors | 1426 | 46.7, 53.8 | 2 |  |
 | 7 | T | 96608 | The Great Outdoors | 1426 | 46.6, 53.9 | 1 |  |
 | 8 | A | 96629 | Camping 101: Cooking | 1426 | 46.6, 53.9 | 0 |  |
@@ -609,72 +606,72 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 12 | O | 5541 | Ammo for Rumbleshot | 1426 | 44.1, 57.0 | 231 |  |
 | 13 | T | 98322 | Secure the Mountain | 1426 | 44.1, 57.1 | 4 |  |
 | 14 | A | 98319 | Secure the Mountain | 1426 | 44.1, 57.1 | 0 |  |
-| 15 | O | 317 | Stocking Jetsteam | 1426 | 45.9, 63.6 | 232 |  |
-| 16 | T | 5541 | Ammo for Rumbleshot | 1426 | 40.7, 65.1 | 259 |  |
-| 17 | O | 317 | Stocking Jetsteam | 1426 | 42.3, 59.9 | 188 |  |
-| 18 | T | 317 | Stocking Jetsteam | 1426 | 49.4, 48.4 | 517 | near #3 (went 697 yd away) |
+| 15 | O | 317 | Stocking Jetsteam | 1426 | 42.3, 59.9 | 130 |  |
+| 16 | T | 5541 | Ammo for Rumbleshot | 1426 | 40.7, 65.1 | 188 |  |
+| 17 | O | 317 | Stocking Jetsteam | 1426 | 45.9, 63.6 | 259 |  |
+| 18 | T | 317 | Stocking Jetsteam | 1426 | 49.4, 48.4 | 529 | near #3 (went 697 yd away) |
 | 19 | A | 318 | Evershine | 1426 | 49.4, 48.4 | 0 | near #3 (went 697 yd away) |
-| 20 | O | 98319 | Secure the Mountain | 1426 | 43.0, 49.6 | 317 |  |
-| 21 | O | 313 | The Grizzled Den | 1426 | 41.0, 47.6 | 120 |  |
-| 22 | T | 318 | Evershine | 1426 | 30.2, 45.7 | 534 |  |
-| 23 | A | 319 | A Favor for Evershine | 1426 | 30.2, 45.7 | 0 |  |
-| 24 | A | 315 | The Perfect Stout | 1426 | 30.2, 45.7 | 0 |  |
-| 25 | A | 310 | Bitter Rivals | 1426 | 30.2, 45.5 | 6 |  |
-| 26 | O | 319 | A Favor for Evershine | 1426 | 36.6, 35.8 | 448 |  |
-| 27 | O | 315 | The Perfect Stout | 1426 | 41.8, 35.4 | 256 |  |
-| 28 | O | 319 | A Favor for Evershine | 1426 | 38.1, 42.4 | 295 |  |
-| 29 | A | 98326 | Frosthowl | 1426 | 31.5, 44.6 | 330 |  |
-| 30 | T | 315 | The Perfect Stout | 1426 | 30.2, 45.7 | 74 | near #25 (went 664 yd away) |
-| 31 | T | 319 | A Favor for Evershine | 1426 | 30.2, 45.7 | 0 |  |
-| 32 | A | 320 | Return to Bellowfiz | 1426 | 30.2, 45.7 | 0 |  |
-| 33 | A | 312 | Tundra MacGrann's Stolen Stash | 1426 | 34.6, 51.6 | 290 |  |
-| 34 | O | 312 | Tundra MacGrann's Stolen Stash | 1426 | 38.5, 53.9 | 207 |  |
-| 35 | T | 98319 | Secure the Mountain | 1426 | 44.1, 57.1 | 293 | near #17 (went 789 yd away) |
-| 36 | A | 98323 | Secure the Mountain | 1426 | 44.1, 57.1 | 0 | near #17 (went 789 yd away) |
-| 37 | A | 287 | Frostmane Hold | 1426 | 46.7, 53.8 | 167 | near #11 (went 858 yd away) |
-| 38 | T | 98323 | Secure the Mountain | 1426 | 46.7, 53.8 | 0 | near #11 (went 858 yd away) |
-| 39 | T | 310 | Bitter Rivals | 1426 | 47.7, 52.7 | 61 |  |
-| 40 | A | 311 | Return to Marleth | 1426 | 47.7, 52.7 | 0 |  |
-| 41 | A | 415 | Rejold's New Brew | 1426 | 46.0, 51.7 | 90 |  |
-| 42 | O | 98326 | Frosthowl | 1426 | 39.3, 48.8 | 342 |  |
-| 43 | T | 312 | Tundra MacGrann's Stolen Stash | 1426 | 34.6, 51.6 | 252 | near #33 (went 648 yd away) |
-| 44 | O | 287 | Frostmane Hold | 1426 | 23.5, 51.6 | 542 |  |
-| 45 | T | 415 | Rejold's New Brew | 1426 | 30.2, 45.7 | 379 | near #32 (went 893 yd away) |
-| 46 | A | 413 | Shimmer Stout | 1426 | 30.2, 45.7 | 0 | near #32 (went 893 yd away) |
-| 47 | T | 311 | Return to Marleth | 1426 | 30.2, 45.5 | 6 |  |
-| 48 | T | 98326 | Frosthowl | 1426 | 31.5, 44.6 | 72 |  |
-| 49 | T | 287 | Frostmane Hold | 1426 | 46.7, 53.8 | 807 | near #41 (went 1144 yd away) |
-| 50 | A | 291 | The Reports | 1426 | 46.7, 53.8 | 0 | near #41 (went 1144 yd away) |
+| 20 | O | 313 | The Grizzled Den | 1426 | 41.0, 47.6 | 416 |  |
+| 21 | T | 318 | Evershine | 1426 | 30.2, 45.7 | 534 |  |
+| 22 | A | 319 | A Favor for Evershine | 1426 | 30.2, 45.7 | 0 |  |
+| 23 | A | 315 | The Perfect Stout | 1426 | 30.2, 45.7 | 0 |  |
+| 24 | A | 310 | Bitter Rivals | 1426 | 30.2, 45.5 | 6 |  |
+| 25 | O | 319 | A Favor for Evershine | 1426 | 36.6, 35.8 | 448 |  |
+| 26 | O | 315 | The Perfect Stout | 1426 | 41.8, 35.4 | 256 |  |
+| 27 | O | 319 | A Favor for Evershine | 1426 | 38.1, 42.4 | 295 |  |
+| 28 | A | 98326 | Frosthowl | 1426 | 31.5, 44.6 | 330 |  |
+| 29 | T | 315 | The Perfect Stout | 1426 | 30.2, 45.7 | 74 | near #24 (went 664 yd away) |
+| 30 | T | 319 | A Favor for Evershine | 1426 | 30.2, 45.7 | 0 |  |
+| 31 | A | 320 | Return to Bellowfiz | 1426 | 30.2, 45.7 | 0 |  |
+| 32 | A | 312 | Tundra MacGrann's Stolen Stash | 1426 | 34.6, 51.6 | 290 |  |
+| 33 | O | 312 | Tundra MacGrann's Stolen Stash | 1426 | 38.5, 53.9 | 207 |  |
+| 34 | A | 287 | Frostmane Hold | 1426 | 46.7, 53.8 | 404 | near #11 (went 858 yd away) |
+| 35 | T | 310 | Bitter Rivals | 1426 | 47.7, 52.7 | 61 | near #11 (went 894 yd away) |
+| 36 | A | 311 | Return to Marleth | 1426 | 47.7, 52.7 | 0 |  |
+| 37 | A | 415 | Rejold's New Brew | 1426 | 46.0, 51.7 | 90 |  |
+| 38 | O | 98319 | Secure the Mountain | 1426 | 43.0, 49.6 | 162 | near #20 (went 646 yd away) |
+| 39 | O | 98326 | Frosthowl | 1426 | 39.3, 48.8 | 184 |  |
+| 40 | T | 98326 | Frosthowl | 1426 | 31.5, 44.6 | 407 | near #31 (went 840 yd away) |
+| 41 | T | 311 | Return to Marleth | 1426 | 30.2, 45.5 | 72 | near #31 (went 894 yd away) |
+| 42 | T | 415 | Rejold's New Brew | 1426 | 30.2, 45.7 | 6 |  |
+| 43 | A | 413 | Shimmer Stout | 1426 | 30.2, 45.7 | 0 |  |
+| 44 | O | 287 | Frostmane Hold | 1426 | 23.5, 51.6 | 379 |  |
+| 45 | T | 312 | Tundra MacGrann's Stolen Stash | 1426 | 34.6, 51.6 | 542 | near #32 (went 648 yd away) |
+| 46 | T | 98319 | Secure the Mountain | 1426 | 44.1, 57.1 | 501 | near #15 (went 1028 yd away) |
+| 47 | A | 98323 | Secure the Mountain | 1426 | 44.1, 57.1 | 0 | near #15 (went 1028 yd away) |
+| 48 | T | 287 | Frostmane Hold | 1426 | 46.7, 53.8 | 167 | near #37 (went 1144 yd away) |
+| 49 | T | 98323 | Secure the Mountain | 1426 | 46.7, 53.8 | 0 | near #37 (went 1144 yd away) |
+| 50 | A | 291 | The Reports | 1426 | 46.7, 53.8 | 0 |  |
 | 51 | T | 320 | Return to Bellowfiz | 1426 | 49.4, 48.4 | 222 | near #19 (went 1278 yd away) |
 | 52 | T | 313 | The Grizzled Den | 1426 | 49.6, 48.6 | 11 | near #19 (went 1287 yd away) |
 | 53 | A | 96408 | A Visitor to Dun Morogh | 1426 | 50.4, 49.1 | 43 |  |
 | 54 | T | 99158 | Dawn in the Mountains | 1426 | 57.7, 44.9 | 384 |  |
 | 55 | A | 99159 | Finding Warmth | 1426 | 57.7, 44.9 | 0 |  |
-| 56 | A | 95212 | Never Saddle on Quality | 1426 | 63.1, 49.9 | 309 |  |
-| 57 | A | 314 | Protecting the Herd | 1426 | 63.1, 49.9 | 0 |  |
+| 56 | A | 314 | Protecting the Herd | 1426 | 63.1, 49.9 | 309 |  |
+| 57 | A | 95212 | Never Saddle on Quality | 1426 | 63.1, 49.9 | 0 |  |
 | 58 | A | 433 | The Public Servant | 1426 | 68.7, 56.0 | 340 |  |
 | 59 | A | 432 | Those Blasted Troggs! | 1426 | 69.1, 56.3 | 23 |  |
-| 60 | A | 96391 | Underground Map | 1426 | 77.6, 61.5 | 454 |  |
-| 61 | O | 95212 | Never Saddle on Quality | 1426 | 73.7, 54.6 | 297 |  |
-| 62 | A | 95213 | Stolen Blasting Powder | 1426 | 71.5, 52.6 | 128 |  |
-| 63 | O | 95213 | Stolen Blasting Powder | 1426 | 71.5, 52.6 | 0 |  |
-| 64 | O | 433 | The Public Servant | 1426 | 71.4, 52.5 | 5 |  |
-| 65 | T | 95213 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 136 |  |
-| 66 | A | 95214 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 0 |  |
-| 67 | T | 433 | The Public Servant | 1426 | 68.7, 56.0 | 45 |  |
-| 68 | T | 96408 | A Visitor to Dun Morogh | 1426 | 64.9, 58.5 | 204 |  |
-| 69 | A | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
-| 70 | T | 96391 | Underground Map | 1426 | 64.9, 58.5 | 0 |  |
-| 71 | A | 96393 | Old Ironforge Incursion | 1426 | 64.9, 58.5 | 0 |  |
-| 72 | O | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
-| 73 | T | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
-| 74 | A | 96390 | Nip 'Em in the Bud | 1426 | 64.9, 58.5 | 0 |  |
-| 75 | O | 432 | Those Blasted Troggs! | 1426 | 69.0, 58.9 | 203 |  |
-| 76 | O | 96390 | Nip 'Em in the Bud | 1426 | 77.5, 61.2 | 427 | near #60 (went 629 yd away) |
-| 77 | O | 95214 | Stolen Blasting Powder | 1426 | 72.2, 54.2 | 350 |  |
-| 78 | T | 95214 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 149 |  |
-| 79 | T | 432 | Those Blasted Troggs! | 1426 | 69.1, 56.3 | 50 |  |
-| 80 | T | 96390 | Nip 'Em in the Bud | 1426 | 64.9, 58.5 | 218 | near #74 (went 629 yd away) |
+| 60 | A | 95213 | Stolen Blasting Powder | 1426 | 71.5, 52.6 | 169 |  |
+| 61 | O | 95213 | Stolen Blasting Powder | 1426 | 71.5, 52.6 | 0 |  |
+| 62 | O | 433 | The Public Servant | 1426 | 71.4, 52.5 | 5 |  |
+| 63 | T | 95213 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 136 |  |
+| 64 | A | 95214 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 0 |  |
+| 65 | T | 433 | The Public Servant | 1426 | 68.7, 56.0 | 45 |  |
+| 66 | T | 96408 | A Visitor to Dun Morogh | 1426 | 64.9, 58.5 | 204 |  |
+| 67 | A | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
+| 68 | O | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
+| 69 | T | 96392 | Farsen's Watch | 1426 | 64.9, 58.5 | 0 |  |
+| 70 | A | 96390 | Nip 'Em in the Bud | 1426 | 64.9, 58.5 | 0 |  |
+| 71 | O | 432 | Those Blasted Troggs! | 1426 | 69.0, 58.9 | 203 |  |
+| 72 | A | 96391 | Underground Map | 1426 | 77.6, 61.5 | 434 |  |
+| 73 | O | 96390 | Nip 'Em in the Bud | 1426 | 77.5, 61.2 | 11 |  |
+| 74 | O | 95212 | Never Saddle on Quality | 1426 | 73.7, 54.6 | 286 |  |
+| 75 | O | 95214 | Stolen Blasting Powder | 1426 | 72.2, 54.2 | 78 |  |
+| 76 | T | 95214 | Stolen Blasting Powder | 1426 | 69.2, 54.8 | 149 |  |
+| 77 | T | 432 | Those Blasted Troggs! | 1426 | 69.1, 56.3 | 50 |  |
+| 78 | T | 96390 | Nip 'Em in the Bud | 1426 | 64.9, 58.5 | 218 | near #70 (went 636 yd away) |
+| 79 | T | 96391 | Underground Map | 1426 | 64.9, 58.5 | 0 | near #70 (went 636 yd away) |
+| 80 | A | 96393 | Old Ironforge Incursion | 1426 | 64.9, 58.5 | 0 |  |
 | 81 | O | 314 | Protecting the Herd | 1426 | 62.6, 46.1 | 422 | near #57 (went 896 yd away) |
 | 82 | T | 95212 | Never Saddle on Quality | 1426 | 63.1, 49.9 | 126 | near #57 (went 812 yd away) |
 | 83 | T | 314 | Protecting the Herd | 1426 | 63.1, 49.9 | 0 |  |
@@ -687,17 +684,20 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 90 | O | 99161 | Rime's Wrath | 1426 | 58.3, 42.1 | 97 |  |
 | 91 | T | 99161 | Rime's Wrath | 1426 | 57.7, 44.9 | 97 |  |
 | 92 | T | 291 | The Reports | 1455 | 39.5, 57.5 | 478 |  |
-| 93 | F |  | flight path | 1455 | 55.5, 47.7 | 136 |  |
-| 94 | A | 419 | The Lost Pilot | 1426 | 83.9, 39.2 | 1225 |  |
-| 95 | T | 419 | The Lost Pilot | 1426 | 79.7, 36.2 | 230 |  |
-| 96 | A | 417 | A Pilot's Revenge | 1426 | 79.7, 36.2 | 0 |  |
-| 97 | O | 417 | A Pilot's Revenge | 1426 | 78.3, 37.8 | 84 |  |
-| 98 | T | 417 | A Pilot's Revenge | 1426 | 83.9, 39.2 | 278 |  |
-| 99 | T | 413 | Shimmer Stout | 1426 | 86.3, 48.8 | 337 |  |
-| 100 | A | 414 | Stout to Kadrell | 1426 | 86.3, 48.8 | 0 |  |
-| 101 | T | 414 | Stout to Kadrell | 1432 | 32.6, 49.7 | 453 |  |
+| 93 | A | 96394 | The Restless Dead | 1455 | 33.2, 48.0 | 70 |  |
+| 94 | A | 96403 | Important Heirlooms | 1455 | 32.2, 44.5 | 20 |  |
+| 95 | A | 971 | Knowledge in the Deeps | 1455 | 50.8, 5.6 | 252 |  |
+| 96 | F |  | flight path | 1455 | 55.5, 47.7 | 225 |  |
+| 97 | A | 419 | The Lost Pilot | 1426 | 83.9, 39.2 | 1225 |  |
+| 98 | T | 419 | The Lost Pilot | 1426 | 79.7, 36.2 | 230 |  |
+| 99 | A | 417 | A Pilot's Revenge | 1426 | 79.7, 36.2 | 0 |  |
+| 100 | O | 417 | A Pilot's Revenge | 1426 | 78.3, 37.8 | 84 |  |
+| 101 | T | 417 | A Pilot's Revenge | 1426 | 83.9, 39.2 | 278 |  |
+| 102 | T | 413 | Shimmer Stout | 1426 | 86.3, 48.8 | 337 |  |
+| 103 | A | 414 | Stout to Kadrell | 1426 | 86.3, 48.8 | 0 |  |
+| 104 | T | 414 | Stout to Kadrell | 1432 | 32.6, 49.7 | 453 |  |
 
-Walking between tasks: 16799 yd (~40 min at 7 yd/s).
+Walking between tasks: 16408 yd (~39 min at 7 yd/s).
 
 ## Qualité
 
@@ -718,7 +718,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 ## Logistics
 
 - step 108: `fp 1455 55.5 47.74`
-- step 132: `fp 1432 33.94 50.95`
+- step 135: `fp 1432 33.94 50.95`
 
 ## Warnings
 

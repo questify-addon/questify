@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 61 étapes, niveau final 16.00, ~21382 xp/h, 141 min.
+-- Simulation : 63 étapes, niveau final 16.00, ~20662 xp/h, 146 min.
 Q:RegisterGuide({
   id = "A_Human_03",
   title = "Westfall",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Human" },
   minLevel = 11, maxLevel = 16,
   next = "A_01",
-  sim = { steps = 61, endLevel = 16.00, xpPerHour = 21382, minutes = 141 },
+  sim = { steps = 63, endLevel = 16.00, xpPerHour = 20662, minutes = 146 },
   steps = {
     { "accept", 12 }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 11)
     { "accept", 6181 }, -- A Swift Message (lvl 10, ~210 xp, sim lvl 11)
@@ -72,6 +72,8 @@ Q:RegisterGuide({
     { "turnin", 79093, xp = 1550 }, -- Rumi of Gnomeregan: The Collected Works (lvl 20, ~1550 xp, sim lvl 15)
     { "turnin", 6281, xp = 420 }, -- Continue to Stormwind (lvl 10, ~420 xp, sim lvl 15)
     { "turnin", 92748, xp = 580 }, -- Explosive Consultation (lvl 16, ~580 xp, sim lvl 15)
-    { "level", 16, at = { 1436, 52.07, 76.61 }, note = "About 12 more mobs near the last objective" }, -- farm de niveau
+    { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
+    { "fly", 1436, node = 4, note = "Sentinel Hill, Westfall" }, -- vol
+    { "level", 16, at = { 1436, 42.43, 77.14 }, note = "About 13 more mobs here (Defias Digger, level 15)" }, -- farm de niveau
   },
 })

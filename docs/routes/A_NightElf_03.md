@@ -6,15 +6,15 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 |---|---|
 | Level band | 11-20 |
 | Simulated level | 12.00 -> 20.00 |
-| Time | 314 min |
-| XP gained | 122800 |
-| XP/h | 23486 |
+| Time | 312 min |
+| XP gained | 122799 |
+| XP/h | 23614 |
 | Steps | 123 |
 | Quests turned in | 44 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 4.11 |
-| Grinding (level steps) | ~548 mobs |
-| Level band | grinding 176 mobs with quests up to level 23: band widened to level 26 |
+| Grinding (level steps) | ~547 mobs |
+| Level band | grinding 542 mobs with quests up to level 23: band widened to level 26 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -32,41 +32,41 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7 | 1001 | Buzzbox 411 | 12 | 1150 | 12 |
 | 8 | 954 | Bashal'Aran | 12 | 680 | 12 |
 | 9 | 955 | Bashal'Aran | 12 | 910 | 13 |
-| 10 | 956 | Bashal'Aran | 13 | 910 | 13 |
-| 11 | 2138 | Cleansing of the Infected | 16 | 1150 | 14 |
-| 12 | 4811 | The Red Crystal | 14 | 490 | 14 |
-| 13 | 98025 | WANTED: Jai'vhanel | 13 | 680 est. | 14 |
-| 14 | 957 | Bashal'Aran | 13 | 680 | 14 |
-| 15 | 965 | The Tower of Althalaxx | 18 | 680 | 14 |
-| 16 | 1002 | Buzzbox 323 | 14 | 980 | 14 |
-| 17 | 982 | Deep Ocean, Vast Sea | 17 | 1250 | 14 |
-| 18 | 947 | Cave Mushrooms | 17 | 1250 | 14 |
-| 19 | 4730 | Beached Sea Creature | 16 | 580 | 14 |
-| 20 | 4722 | Beached Sea Turtle | 13 | 455 | 14 |
-| 21 | 4732 | Beached Sea Turtle | 19 | 730 | 14 |
-| 22 | 4733 | Beached Sea Creature | 19 | 730 | 14 |
+| 10 | 953 | The Fall of Ameth'Aran | 12 | 910 | 14 |
+| 11 | 985 | How Big a Threat? | 14 | 980 | 14 |
+| 12 | 2138 | Cleansing of the Infected | 16 | 1150 | 14 |
+| 13 | 1002 | Buzzbox 323 | 14 | 980 | 14 |
+| 14 | 965 | The Tower of Althalaxx | 18 | 680 | 14 |
+| 15 | 956 | Bashal'Aran | 13 | 910 | 14 |
+| 16 | 982 | Deep Ocean, Vast Sea | 17 | 1250 | 14 |
+| 17 | 947 | Cave Mushrooms | 17 | 1250 | 14 |
+| 18 | 98025 | WANTED: Jai'vhanel | 13 | 680 est. | 14 |
+| 19 | 4811 | The Red Crystal | 14 | 490 | 14 |
+| 20 | 4730 | Beached Sea Creature | 16 | 580 | 14 |
+| 21 | 4722 | Beached Sea Turtle | 13 | 455 | 14 |
+| 22 | 4731 | Beached Sea Turtle | 19 | 730 | 14 |
 | 23 | 4725 | Beached Sea Turtle | 15 | 540 | 14 |
-| 24 | 4727 | Beached Sea Turtle | 15 | 540 | 14 |
-| 25 | 4723 | Beached Sea Creature | 13 | 455 | 14 |
-| 26 | 4728 | Beached Sea Creature | 14 | 490 | 14 |
-| 27 | 4731 | Beached Sea Turtle | 19 | 730 | 14 |
-| 28 | 963 | For Love Eternal | 16 | 880 | 15 |
-| 29 | 4762 | The Cliffspring River | 15 | 800 | 15 |
-| 30 | 958 | Tools of the Highborne | 12 | 910 | 15 |
-| 31 | 953 | The Fall of Ameth'Aran | 12 | 910 | 15 |
+| 24 | 4723 | Beached Sea Creature | 13 | 455 | 14 |
+| 25 | 4733 | Beached Sea Creature | 19 | 730 | 15 |
+| 26 | 4727 | Beached Sea Turtle | 15 | 540 | 15 |
+| 27 | 4728 | Beached Sea Creature | 14 | 490 | 15 |
+| 28 | 4732 | Beached Sea Turtle | 19 | 730 | 15 |
+| 29 | 963 | For Love Eternal | 16 | 880 | 15 |
+| 30 | 4762 | The Cliffspring River | 15 | 800 | 15 |
+| 31 | 958 | Tools of the Highborne | 12 | 910 | 15 |
 | 32 | 948 | Onu | 17 | 630 | 15 |
 | 33 | 729 | The Absent Minded Prospector | 20 | 1150 | 15 |
 | 34 | 944 | The Master's Glaive | 17 | 630 | 15 |
 | 35 | 949 | The Twilight Camp | 17 | 1250 | 15 |
 | 36 | 1003 | Buzzbox 525 | 16 | 1150 | 15 |
 | 37 | 950 | Return to Onu | 17 | 950 | 15 |
-| 38 | 4812 | As Water Cascades | 14 | 490 | 15 |
+| 38 | 4812 | As Water Cascades | 14 | 490 | 16 |
 | 39 | 966 | The Tower of Althalaxx | 18 | 1350 | 16 |
-| 40 | 4763 | The Blackwood Corrupted | 18 | 1700 | 16 |
+| 40 | 957 | Bashal'Aran | 13 | 680 | 16 |
 | 41 | 98042 | It's All Fun and Games Until... | 17 | 1250 est. | 16 |
-| 42 | 4813 | The Fragments Within | 14 | 980 | 16 |
-| 43 | 2139 | Tharnariun's Hope | 18 | 1350 | 16 |
-| 44 | 985 | How Big a Threat? | 14 | 980 | 16 |
+| 42 | 4763 | The Blackwood Corrupted | 18 | 1700 | 16 |
+| 43 | 4813 | The Fragments Within | 14 | 980 | 16 |
+| 44 | 2139 | Tharnariun's Hope | 18 | 1350 | 16 |
 
 ## Dropped quests
 
@@ -86,7 +86,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1138 | Fruit of the Sea | 17 | objective too dangerous before level 17 (not reached in this chapter) |
 | 1141 | The Family and the Fishing Pole | 14 | objective item source not in zone |
 | 1143 | The Tower of Althalaxx | 31 | quest level 31 above the band |
-| 1275 | Researching the Corruption | 24 | required level 18 not reached in time (~209 mobs to farm) |
 | 1579 | Gaffer Jacks | 12 | requires a profession |
 | 1580 | Electropellers | 12 | requires a profession |
 | 1684 | Elanaria | 10 | class quest (ClassQuestData.lua) |
@@ -107,6 +106,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98028 | Baron Marinous | 21 | required level 17 not reached in time (~67 mobs to farm) |
 | 98461 | Unrequited Love | 21 | finisher outside the chapter zones |
 | 995 | Escape Through Stealth | 20 | prerequisite unavailable |
+| 1275 | Researching the Corruption | 24 | dungeon quest: required level 18 not reached in this chapter |
 
 ## Class quests
 
@@ -191,90 +191,90 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 8 | O | 3524 | Washed Ashore | 1439 | 36.4, 50.9 | 233 |  |
 | 9 | O | 983 | Buzzbox 827 | 1439 | 35.8, 48.5 | 110 |  |
 | 10 | O | 2118 | Plagued Lands | 1439 | 39.0, 59.7 | 530 |  |
-| 11 | O | 984 | How Big a Threat? | 1439 | 39.9, 53.9 | 261 |  |
-| 12 | T | 983 | Buzzbox 827 | 1439 | 36.6, 46.3 | 394 | near #9 (went 606 yd away) |
-| 13 | A | 1001 | Buzzbox 411 | 1439 | 36.6, 46.3 | 0 | near #9 (went 606 yd away) |
-| 14 | T | 3524 | Washed Ashore | 1439 | 36.6, 45.6 | 29 |  |
-| 15 | A | 4681 | Washed Ashore | 1439 | 36.6, 45.6 | 0 |  |
-| 16 | A | 963 | For Love Eternal | 1439 | 35.7, 43.7 | 100 |  |
-| 17 | O | 4681 | Washed Ashore | 1439 | 31.8, 46.3 | 280 |  |
-| 18 | T | 4681 | Washed Ashore | 1439 | 36.6, 45.6 | 315 |  |
-| 19 | T | 2118 | Plagued Lands | 1439 | 38.8, 43.4 | 173 | near #6 (went 711 yd away) |
-| 20 | A | 2138 | Cleansing of the Infected | 1439 | 38.8, 43.4 | 0 | near #6 (went 711 yd away) |
-| 21 | T | 984 | How Big a Threat? | 1439 | 39.4, 43.5 | 34 |  |
-| 22 | A | 985 | How Big a Threat? | 1439 | 39.4, 43.5 | 0 |  |
+| 11 | A | 953 | The Fall of Ameth'Aran | 1439 | 40.3, 59.7 | 87 |  |
+| 12 | O | 984 | How Big a Threat? | 1439 | 39.9, 53.9 | 256 |  |
+| 13 | T | 983 | Buzzbox 827 | 1439 | 36.6, 46.3 | 394 | near #9 (went 635 yd away) |
+| 14 | A | 1001 | Buzzbox 411 | 1439 | 36.6, 46.3 | 0 | near #9 (went 635 yd away) |
+| 15 | T | 3524 | Washed Ashore | 1439 | 36.6, 45.6 | 29 |  |
+| 16 | A | 4681 | Washed Ashore | 1439 | 36.6, 45.6 | 0 |  |
+| 17 | O | 4681 | Washed Ashore | 1439 | 31.8, 46.3 | 315 |  |
+| 18 | A | 963 | For Love Eternal | 1439 | 35.7, 43.7 | 280 |  |
+| 19 | T | 4681 | Washed Ashore | 1439 | 36.6, 45.6 | 100 |  |
+| 20 | T | 2118 | Plagued Lands | 1439 | 38.8, 43.4 | 173 | near #6 (went 718 yd away) |
+| 21 | A | 2138 | Cleansing of the Infected | 1439 | 38.8, 43.4 | 0 | near #6 (went 718 yd away) |
+| 22 | T | 984 | How Big a Threat? | 1439 | 39.4, 43.5 | 34 |  |
 | 23 | A | 4761 | Thundris Windweaver | 1439 | 39.4, 43.5 | 0 |  |
-| 24 | T | 4761 | Thundris Windweaver | 1439 | 37.4, 40.1 | 195 | near #4 (went 861 yd away) |
-| 25 | A | 958 | Tools of the Highborne | 1439 | 37.4, 40.1 | 0 | near #4 (went 861 yd away) |
-| 26 | A | 4762 | The Cliffspring River | 1439 | 37.4, 40.1 | 0 |  |
-| 27 | A | 954 | Bashal'Aran | 1439 | 37.4, 40.1 | 0 |  |
-| 28 | O | 1001 | Buzzbox 411 | 1439 | 33.7, 36.0 | 302 |  |
-| 29 | T | 1001 | Buzzbox 411 | 1439 | 42.0, 28.6 | 628 |  |
-| 30 | A | 1002 | Buzzbox 323 | 1439 | 42.0, 28.6 | 0 |  |
-| 31 | A | 4723 | Beached Sea Creature | 1439 | 41.9, 31.5 | 127 |  |
-| 32 | O | 954 | Bashal'Aran | 1439 | 44.3, 36.4 | 261 |  |
-| 33 | T | 954 | Bashal'Aran | 1439 | 44.2, 36.3 | 8 |  |
-| 34 | A | 955 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 |  |
-| 35 | O | 955 | Bashal'Aran | 1439 | 45.4, 38.0 | 109 |  |
-| 36 | T | 955 | Bashal'Aran | 1439 | 44.2, 36.3 | 109 |  |
-| 37 | A | 956 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 |  |
-| 38 | O | 956 | Bashal'Aran | 1439 | 47.3, 37.7 | 215 |  |
-| 39 | T | 956 | Bashal'Aran | 1439 | 44.2, 36.3 | 215 |  |
-| 40 | A | 957 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 |  |
-| 41 | O | 4811 | The Red Crystal | 1439 | 47.3, 48.7 | 579 |  |
-| 42 | O | 98025 | WANTED: Jai'vhanel | 1439 | 44.3, 58.2 | 459 |  |
-| 43 | O | 957 | Bashal'Aran | 1439 | 42.4, 61.8 | 204 |  |
-| 44 | O | 958 | Tools of the Highborne | 1439 | 42.6, 59.4 | 107 |  |
-| 45 | A | 953 | The Fall of Ameth'Aran | 1439 | 40.3, 59.7 | 153 | near #10 (went 1362 yd away) |
-| 46 | O | 2138 | Cleansing of the Infected | 1439 | 39.0, 59.7 | 87 | near #10 (went 1372 yd away) |
-| 47 | A | 4722 | Beached Sea Turtle | 1439 | 37.1, 62.2 | 162 |  |
-| 48 | A | 4728 | Beached Sea Creature | 1439 | 36.0, 70.9 | 386 |  |
-| 49 | A | 4730 | Beached Sea Creature | 1439 | 32.7, 80.8 | 484 |  |
-| 50 | A | 4731 | Beached Sea Turtle | 1439 | 31.7, 83.7 | 142 |  |
-| 51 | A | 4732 | Beached Sea Turtle | 1439 | 31.2, 85.6 | 88 |  |
-| 52 | A | 4733 | Beached Sea Creature | 1439 | 31.3, 87.4 | 80 |  |
-| 53 | O | 1002 | Buzzbox 323 | 1439 | 39.9, 69.1 | 980 |  |
-| 54 | O | 953 | The Fall of Ameth'Aran | 1439 | 42.6, 63.1 | 316 | near #43 (went 1297 yd away) |
-| 55 | O | 963 | For Love Eternal | 1439 | 41.8, 60.7 | 118 | near #45 (went 1355 yd away) |
-| 56 | O | 953 | The Fall of Ameth'Aran | 1439 | 43.3, 58.7 | 132 | near #44 (went 1482 yd away) |
-| 57 | A | 965 | The Tower of Althalaxx | 1439 | 39.0, 43.5 | 716 | near #23 (went 1983 yd away) |
-| 58 | T | 2138 | Cleansing of the Infected | 1439 | 38.8, 43.4 | 14 | near #23 (went 1985 yd away) |
+| 24 | A | 985 | How Big a Threat? | 1439 | 39.4, 43.5 | 0 |  |
+| 25 | A | 958 | Tools of the Highborne | 1439 | 37.4, 40.1 | 195 | near #4 (went 876 yd away) |
+| 26 | A | 954 | Bashal'Aran | 1439 | 37.4, 40.1 | 0 | near #4 (went 876 yd away) |
+| 27 | T | 4761 | Thundris Windweaver | 1439 | 37.4, 40.1 | 0 |  |
+| 28 | A | 4762 | The Cliffspring River | 1439 | 37.4, 40.1 | 0 |  |
+| 29 | O | 1001 | Buzzbox 411 | 1439 | 33.7, 36.0 | 302 |  |
+| 30 | T | 1001 | Buzzbox 411 | 1439 | 42.0, 28.6 | 628 |  |
+| 31 | A | 1002 | Buzzbox 323 | 1439 | 42.0, 28.6 | 0 |  |
+| 32 | A | 4723 | Beached Sea Creature | 1439 | 41.9, 31.5 | 127 |  |
+| 33 | O | 954 | Bashal'Aran | 1439 | 44.3, 36.4 | 261 |  |
+| 34 | T | 954 | Bashal'Aran | 1439 | 44.2, 36.3 | 8 |  |
+| 35 | A | 955 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 |  |
+| 36 | O | 955 | Bashal'Aran | 1439 | 45.4, 38.0 | 109 |  |
+| 37 | T | 955 | Bashal'Aran | 1439 | 44.2, 36.3 | 109 |  |
+| 38 | A | 956 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 |  |
+| 39 | O | 956 | Bashal'Aran | 1439 | 47.3, 37.7 | 215 |  |
+| 40 | O | 4811 | The Red Crystal | 1439 | 47.3, 48.7 | 481 |  |
+| 41 | O | 953 | The Fall of Ameth'Aran | 1439 | 43.3, 58.7 | 509 |  |
+| 42 | O | 98025 | WANTED: Jai'vhanel | 1439 | 44.3, 58.2 | 71 |  |
+| 43 | O | 958 | Tools of the Highborne | 1439 | 42.6, 59.4 | 123 |  |
+| 44 | O | 953 | The Fall of Ameth'Aran | 1439 | 42.6, 63.1 | 163 |  |
+| 45 | O | 1002 | Buzzbox 323 | 1439 | 39.9, 69.1 | 316 |  |
+| 46 | A | 4733 | Beached Sea Creature | 1439 | 31.3, 87.4 | 980 |  |
+| 47 | A | 4732 | Beached Sea Turtle | 1439 | 31.2, 85.6 | 80 |  |
+| 48 | A | 4731 | Beached Sea Turtle | 1439 | 31.7, 83.7 | 88 |  |
+| 49 | A | 4730 | Beached Sea Creature | 1439 | 32.7, 80.8 | 142 |  |
+| 50 | A | 4728 | Beached Sea Creature | 1439 | 36.0, 70.9 | 484 |  |
+| 51 | A | 4722 | Beached Sea Turtle | 1439 | 37.1, 62.2 | 386 |  |
+| 52 | O | 2138 | Cleansing of the Infected | 1439 | 39.0, 59.7 | 162 | near #11 (went 1372 yd away) |
+| 53 | T | 953 | The Fall of Ameth'Aran | 1439 | 40.3, 59.7 | 87 | near #11 (went 1362 yd away) |
+| 54 | O | 963 | For Love Eternal | 1439 | 41.8, 60.7 | 108 | near #44 (went 1355 yd away) |
+| 55 | O | 985 | How Big a Threat? | 1439 | 39.5, 53.4 | 354 | near #12 (went 1581 yd away) |
+| 56 | T | 985 | How Big a Threat? | 1439 | 39.4, 43.5 | 432 | near #24 (went 1991 yd away) |
+| 57 | A | 965 | The Tower of Althalaxx | 1439 | 39.0, 43.5 | 21 | near #24 (went 1983 yd away) |
+| 58 | T | 2138 | Cleansing of the Infected | 1439 | 38.8, 43.4 | 14 |  |
 | 59 | A | 2139 | Tharnariun's Hope | 1439 | 38.8, 43.4 | 0 |  |
-| 60 | T | 4811 | The Red Crystal | 1439 | 37.7, 43.4 | 74 |  |
-| 61 | T | 98025 | WANTED: Jai'vhanel | 1439 | 37.7, 43.4 | 0 |  |
-| 62 | A | 4812 | As Water Cascades | 1439 | 37.7, 43.4 | 0 |  |
-| 63 | A | 982 | Deep Ocean, Vast Sea | 1439 | 38.1, 41.2 | 101 |  |
-| 64 | T | 957 | Bashal'Aran | 1439 | 44.2, 36.3 | 450 | near #40 (went 2388 yd away) |
-| 65 | O | 947 | Cave Mushrooms | 1439 | 55.7, 34.9 | 755 |  |
-| 66 | T | 965 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 439 |  |
-| 67 | A | 966 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 0 |  |
-| 68 | A | 4727 | Beached Sea Turtle | 1439 | 53.1, 18.1 | 321 |  |
-| 69 | T | 1002 | Buzzbox 323 | 1439 | 51.3, 24.6 | 307 |  |
-| 70 | A | 1003 | Buzzbox 525 | 1439 | 51.3, 24.6 | 0 |  |
-| 71 | O | 4762 | The Cliffspring River | 1439 | 50.8, 25.6 | 54 |  |
-| 72 | A | 4725 | Beached Sea Turtle | 1439 | 44.2, 20.6 | 487 |  |
-| 73 | O | 982 | Deep Ocean, Vast Sea | 1439 | 38.2, 28.8 | 529 |  |
-| 74 | T | 982 | Deep Ocean, Vast Sea | 1439 | 38.1, 41.2 | 540 | near #63 (went 1407 yd away) |
-| 75 | T | 947 | Cave Mushrooms | 1439 | 37.3, 43.6 | 119 | near #63 (went 1521 yd away) |
-| 76 | A | 948 | Onu | 1439 | 37.3, 43.6 | 0 |  |
-| 77 | T | 4730 | Beached Sea Creature | 1439 | 36.6, 45.6 | 96 |  |
-| 78 | T | 4722 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
-| 79 | T | 4732 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
-| 80 | T | 4733 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
+| 60 | A | 982 | Deep Ocean, Vast Sea | 1439 | 38.1, 41.2 | 109 |  |
+| 61 | O | 982 | Deep Ocean, Vast Sea | 1439 | 38.2, 28.8 | 540 |  |
+| 62 | A | 4725 | Beached Sea Turtle | 1439 | 44.2, 20.6 | 529 |  |
+| 63 | O | 4762 | The Cliffspring River | 1439 | 50.8, 25.6 | 487 |  |
+| 64 | T | 1002 | Buzzbox 323 | 1439 | 51.3, 24.6 | 54 |  |
+| 65 | A | 1003 | Buzzbox 525 | 1439 | 51.3, 24.6 | 0 |  |
+| 66 | A | 4727 | Beached Sea Turtle | 1439 | 53.1, 18.1 | 307 |  |
+| 67 | T | 965 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 321 |  |
+| 68 | A | 966 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 0 |  |
+| 69 | O | 947 | Cave Mushrooms | 1439 | 55.7, 34.9 | 439 |  |
+| 70 | T | 956 | Bashal'Aran | 1439 | 44.2, 36.3 | 755 | near #38 (went 2388 yd away) |
+| 71 | A | 957 | Bashal'Aran | 1439 | 44.2, 36.3 | 0 | near #38 (went 2388 yd away) |
+| 72 | T | 982 | Deep Ocean, Vast Sea | 1439 | 38.1, 41.2 | 450 | near #60 (went 1407 yd away) |
+| 73 | T | 947 | Cave Mushrooms | 1439 | 37.3, 43.6 | 119 | near #60 (went 1521 yd away) |
+| 74 | A | 948 | Onu | 1439 | 37.3, 43.6 | 0 |  |
+| 75 | T | 98025 | WANTED: Jai'vhanel | 1439 | 37.7, 43.4 | 26 |  |
+| 76 | T | 4811 | The Red Crystal | 1439 | 37.7, 43.4 | 0 |  |
+| 77 | A | 4812 | As Water Cascades | 1439 | 37.7, 43.4 | 0 |  |
+| 78 | T | 4730 | Beached Sea Creature | 1439 | 36.6, 45.6 | 118 |  |
+| 79 | T | 4722 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
+| 80 | T | 4731 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
 | 81 | T | 4725 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
-| 82 | T | 4727 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
-| 83 | T | 4723 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
-| 84 | T | 4728 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
-| 85 | T | 4731 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
-| 86 | T | 963 | For Love Eternal | 1439 | 35.7, 43.7 | 100 |  |
-| 87 | T | 4762 | The Cliffspring River | 1439 | 37.4, 40.1 | 190 |  |
-| 88 | T | 958 | Tools of the Highborne | 1439 | 37.4, 40.1 | 0 |  |
+| 82 | T | 4723 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
+| 83 | T | 4733 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
+| 84 | T | 4727 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
+| 85 | T | 4728 | Beached Sea Creature | 1439 | 36.6, 45.6 | 0 |  |
+| 86 | T | 4732 | Beached Sea Turtle | 1439 | 36.6, 45.6 | 0 |  |
+| 87 | T | 963 | For Love Eternal | 1439 | 35.7, 43.7 | 100 |  |
+| 88 | T | 4762 | The Cliffspring River | 1439 | 37.4, 40.1 | 190 |  |
 | 89 | A | 4763 | The Blackwood Corrupted | 1439 | 37.4, 40.1 | 0 |  |
-| 90 | A | 729 | The Absent Minded Prospector | 1439 | 37.4, 41.8 | 74 |  |
-| 91 | O | 4812 | As Water Cascades | 1439 | 37.8, 44.0 | 98 |  |
-| 92 | O | 985 | How Big a Threat? | 1439 | 39.5, 53.4 | 423 | near #11 (went 1781 yd away) |
-| 93 | T | 953 | The Fall of Ameth'Aran | 1439 | 40.3, 59.7 | 281 | near #55 (went 2002 yd away) |
-| 94 | T | 948 | Onu | 1439 | 43.5, 76.3 | 753 |  |
+| 90 | T | 958 | Tools of the Highborne | 1439 | 37.4, 40.1 | 0 |  |
+| 91 | A | 729 | The Absent Minded Prospector | 1439 | 37.4, 41.8 | 74 |  |
+| 92 | O | 4812 | As Water Cascades | 1439 | 37.8, 44.0 | 98 |  |
+| 93 | O | 957 | Bashal'Aran | 1439 | 42.4, 61.8 | 832 | near #54 (went 2035 yd away) |
+| 94 | T | 948 | Onu | 1439 | 43.5, 76.3 | 636 |  |
 | 95 | A | 944 | The Master's Glaive | 1439 | 43.5, 76.3 | 0 |  |
 | 96 | O | 1003 | Buzzbox 525 | 1439 | 39.8, 81.2 | 327 |  |
 | 97 | T | 729 | The Absent Minded Prospector | 1439 | 35.7, 83.7 | 286 |  |
@@ -282,8 +282,8 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 99 | T | 944 | The Master's Glaive | 1439 | 38.6, 86.2 | 13 |  |
 | 100 | A | 949 | The Twilight Camp | 1439 | 38.6, 86.2 | 0 |  |
 | 101 | T | 949 | The Twilight Camp | 1439 | 38.5, 86.0 | 7 |  |
-| 102 | A | 950 | Return to Onu | 1439 | 38.5, 86.0 | 0 |  |
-| 103 | A | 98042 | It's All Fun and Games Until... | 1439 | 38.5, 86.0 | 0 |  |
+| 102 | A | 98042 | It's All Fun and Games Until... | 1439 | 38.5, 86.0 | 0 |  |
+| 103 | A | 950 | Return to Onu | 1439 | 38.5, 86.0 | 0 |  |
 | 104 | O | 98042 | It's All Fun and Games Until... | 1439 | 38.8, 86.6 | 28 |  |
 | 105 | A | 945 | Therylune's Escape | 1439 | 38.6, 87.3 | 33 |  |
 | 106 | O | 945 | Therylune's Escape | 1439 | 40.5, 87.1 | 122 |  |
@@ -291,20 +291,20 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 108 | O | 5713 | One Shot.  One Kill. | 1439 | 45.9, 90.4 | 7 |  |
 | 109 | T | 1003 | Buzzbox 525 | 1439 | 41.4, 80.6 | 521 |  |
 | 110 | T | 950 | Return to Onu | 1439 | 43.5, 76.3 | 234 | near #95 (went 635 yd away) |
-| 111 | T | 4812 | As Water Cascades | 1439 | 47.3, 48.7 | 1230 | near #41 (went 1992 yd away) |
-| 112 | A | 4813 | The Fragments Within | 1439 | 47.3, 48.7 | 0 | near #41 (went 1992 yd away) |
-| 113 | O | 966 | The Tower of Althalaxx | 1439 | 56.2, 26.7 | 1124 | near #67 (went 2888 yd away) |
-| 114 | T | 966 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 115 | near #67 (went 2928 yd away) |
-| 115 | A | 967 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 0 |  |
-| 116 | O | 4763 | The Blackwood Corrupted | 1439 | 52.5, 33.4 | 405 |  |
-| 117 | O | 2139 | Tharnariun's Hope | 1439 | 51.5, 38.3 | 222 |  |
-| 118 | T | 4763 | The Blackwood Corrupted | 1439 | 37.4, 40.1 | 925 | near #90 (went 2264 yd away) |
-| 119 | T | 98042 | It's All Fun and Games Until... | 1439 | 37.4, 40.1 | 0 | near #90 (went 2264 yd away) |
-| 120 | T | 4813 | The Fragments Within | 1439 | 37.7, 43.4 | 144 |  |
-| 121 | T | 2139 | Tharnariun's Hope | 1439 | 38.8, 43.4 | 74 | near #91 (went 2103 yd away) |
-| 122 | T | 985 | How Big a Threat? | 1439 | 39.4, 43.5 | 34 |  |
+| 111 | T | 4812 | As Water Cascades | 1439 | 47.3, 48.7 | 1230 | near #40 (went 1992 yd away) |
+| 112 | A | 4813 | The Fragments Within | 1439 | 47.3, 48.7 | 0 | near #40 (went 1992 yd away) |
+| 113 | O | 2139 | Tharnariun's Hope | 1439 | 51.5, 38.3 | 530 |  |
+| 114 | O | 4763 | The Blackwood Corrupted | 1439 | 52.5, 33.4 | 222 |  |
+| 115 | O | 966 | The Tower of Althalaxx | 1439 | 56.2, 26.7 | 382 | near #68 (went 2888 yd away) |
+| 116 | T | 966 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 115 | near #68 (went 2928 yd away) |
+| 117 | A | 967 | The Tower of Althalaxx | 1439 | 55.0, 24.9 | 0 |  |
+| 118 | T | 957 | Bashal'Aran | 1439 | 44.2, 36.3 | 864 | near #71 (went 2366 yd away) |
+| 119 | T | 98042 | It's All Fun and Games Until... | 1439 | 37.4, 40.1 | 474 | near #91 (went 2264 yd away) |
+| 120 | T | 4763 | The Blackwood Corrupted | 1439 | 37.4, 40.1 | 0 | near #91 (went 2264 yd away) |
+| 121 | T | 4813 | The Fragments Within | 1439 | 37.7, 43.4 | 144 |  |
+| 122 | T | 2139 | Tharnariun's Hope | 1439 | 38.8, 43.4 | 74 | near #92 (went 2103 yd away) |
 
-Walking between tasks: 22947 yd (~55 min at 7 yd/s).
+Walking between tasks: 22364 yd (~53 min at 7 yd/s).
 
 ## Qualité
 
@@ -324,7 +324,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 123: `level 20` — About 548 more mobs here (Moonstalker Runt, level 16)
+- step 123: `level 20` — About 547 more mobs here (Moonstalker Runt, level 16)
 
 ## Warnings
 

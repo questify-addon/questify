@@ -2,18 +2,18 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 55 étapes, niveau final 39.00, ~36966 xp/h, 128 min.
+-- Simulation : 58 étapes, niveau final 39.00, ~38137 xp/h, 124 min.
 Q:RegisterGuide({
   id = "H_11",
   title = "Arathi Highlands",
   faction = "Horde",
   minLevel = 38, maxLevel = 39,
   next = "H_12",
-  sim = { steps = 55, endLevel = 39.00, xpPerHour = 36966, minutes = 128 },
+  sim = { steps = 58, endLevel = 39.00, xpPerHour = 38137, minutes = 124 },
   steps = {
-    { "goto", 1445, 35.56, 31.88, note = "Flight master" }, -- déplacement
-    { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
-    { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
+    { "hearth", 1434 }, -- pierre de foyer
+    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
+    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
     { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
     { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
     { "accept", 677 }, -- Call to Arms (lvl 32, ~2040 xp, sim lvl 38)
@@ -22,7 +22,6 @@ Q:RegisterGuide({
     { "accept", 701 }, -- Guile of the Raptor (lvl 37, ~2850 xp, sim lvl 38)
     { "complete", 677, obj = 2, at = { 1417, 68.8, 76.69 } }, -- Call to Arms (lvl 32, ~2040 xp, sim lvl 38)
     { "complete", 677, at = { 1417, 62.26, 71.04 } }, -- Call to Arms (lvl 32, ~2040 xp, sim lvl 38)
-    { "hearth", 1417 }, -- pierre de foyer
     { "turnin", 677, xp = 2040 }, -- Call to Arms (lvl 32, ~2040 xp, sim lvl 38)
     { "accept", 678 }, -- Call to Arms (lvl 38, ~2850 xp, sim lvl 38)
     { "complete", 701, at = { 1417, 51.72, 66.78 } }, -- Guile of the Raptor (lvl 37, ~2850 xp, sim lvl 38)
@@ -49,6 +48,9 @@ Q:RegisterGuide({
     { "accept", 668 }, -- Sunken Treasure (lvl 40, ~1550 xp, sim lvl 38)
     { "turnin", 668, xp = 1550 }, -- Sunken Treasure (lvl 40, ~1550 xp, sim lvl 38)
     { "accept", 669 }, -- Sunken Treasure (lvl 40, ~0 xp, sim lvl 38)
+    { "hearth", 1417 }, -- pierre de foyer
+    { "goto", 1417, 73.02, 32.7, note = "Flight master" }, -- déplacement
+    { "fly", 1424, node = 13, note = "Tarren Mill, Hillsbrad" }, -- vol
     { "accept", 503 }, -- Gol'dir (lvl 36, ~2800 xp, sim lvl 38)
     { "accept", 566 }, -- WANTED: Baron Vardus (lvl 40, ~3150 xp, sim lvl 38)
     { "accept", 518 }, -- The Crown of Will (lvl 39, ~2250 xp, sim lvl 38)
@@ -60,7 +62,8 @@ Q:RegisterGuide({
     { "accept", 506 }, -- Blackmoore's Legacy (lvl 36, ~2100 xp, sim lvl 38)
     { "turnin", 566, xp = 3150 }, -- WANTED: Baron Vardus (lvl 40, ~3150 xp, sim lvl 38)
     { "turnin", 506, xp = 2100 }, -- Blackmoore's Legacy (lvl 36, ~2100 xp, sim lvl 38)
-    { "hearth", 1417 }, -- pierre de foyer
+    { "goto", 1424, 60.14, 18.62, note = "Flight master" }, -- déplacement
+    { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
     { "accept", 642 }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 38)
     { "turnin", 847, xp = 2850 }, -- Guile of the Raptor (lvl 37, ~2850 xp, sim lvl 38)
     { "complete", 642, at = { 1417, 84.83, 32.17 } }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 38)

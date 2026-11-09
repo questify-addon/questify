@@ -2,15 +2,15 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 44 étapes, niveau final 60.00, ~66567 xp/h, 189 min.
+-- Simulation : 44 étapes, niveau final 60.00, ~66565 xp/h, 189 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66567, minutes = 189 },
+  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66565, minutes = 189 },
   steps = {
-    { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain", optional = true, dungeon = "Blackrock Depths" },
+    { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain, Vivian Lagrave", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
     { "goto", 1452, 60.47, 36.3, note = "Flight master" }, -- déplacement
     { "fly", 1444, node = 42, note = "Camp Mojache, Feralas" }, -- vol

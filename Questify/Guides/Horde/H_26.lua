@@ -2,15 +2,16 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 45 étapes, niveau final 55.00, ~63197 xp/h, 165 min.
+-- Simulation : 46 étapes, niveau final 55.00, ~63197 xp/h, 165 min.
 Q:RegisterGuide({
   id = "H_26",
   title = "Felwood",
   faction = "Horde",
   minLevel = 54, maxLevel = 55,
   next = "H_27",
-  sim = { steps = 45, endLevel = 55.00, xpPerHour = 63197, minutes = 165 },
+  sim = { steps = 46, endLevel = 55.00, xpPerHour = 63197, minutes = 165 },
   steps = {
+    { "note", "Not running Zul'Farrak? Abandon Tabetha's Task", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1447 }, -- pierre de foyer
     { "accept", 4102 }, -- Cleansing Felwood (lvl 55, ~5650 xp, sim lvl 54)
     { "accept", 8460 }, -- Timbermaw Ally (lvl 48, ~3520 xp, sim lvl 54)

@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 48 étapes, niveau final 35.00, ~35971 xp/h, 195 min.
+-- Simulation : 50 étapes, niveau final 35.00, ~34757 xp/h, 203 min.
 Q:RegisterGuide({
   id = "H_08",
   title = "Desolace",
   faction = "Horde",
   minLevel = 33, maxLevel = 35,
   next = "H_09",
-  sim = { steps = 48, endLevel = 35.00, xpPerHour = 35971, minutes = 195 },
+  sim = { steps = 50, endLevel = 35.00, xpPerHour = 34757, minutes = 203 },
   steps = {
     { "accept", 1433 }, -- Alliance Relations (lvl 33, ~265 xp, sim lvl 33)
     { "accept", 1434 }, -- Befouled by Satyr (lvl 33, ~2650 xp, sim lvl 33)
@@ -58,6 +58,8 @@ Q:RegisterGuide({
     { "goto", 1456, 47, 49.83, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "turnin", 1436, xp = 2650 }, -- Alliance Relations (lvl 33, ~2650 xp, sim lvl 34)
-    { "level", 35, at = { 1443, 72.21, 44.04 }, note = "About 70 more mobs near the last objective" }, -- farm de niveau
+    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
+    { "fly", 1456, node = 22, note = "Thunder Bluff, Mulgore" }, -- vol
+    { "level", 35, at = { 1443, 69.99, 58.55 }, note = "About 73 more mobs here (Raging Thunder Lizard, level 33)" }, -- farm de niveau
   },
 })
