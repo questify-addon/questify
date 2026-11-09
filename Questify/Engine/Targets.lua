@@ -7,6 +7,8 @@ Q.Targets = Targets
 
 local MOB_WINDOW = 15   -- nombre d'étapes non faites examinées pour la liste des monstres
 local SITE_RADIUS = 200 -- yards : dans la zone d'objectif, la cible suit le monstre le plus proche
+local SITE_LEAVE = 1.3  -- on n'en sort qu'au-delà de 1,3 × SITE_RADIUS : pas de va-et-vient entre le
+                        -- centre et le monstre le plus proche quand on longe le bord de la zone
 local SPAWN_MIN = 25    -- yards : points d'apparition trop proches ignorés (monstre déjà tué, TomTom
                         -- efface sa flèche à l'arrivée)
 local POINT_ACTIONS = { ["goto"] = true, fp = true, sethearth = true, boat = true }
@@ -143,6 +145,21 @@ local function completeCands(step)
   return cands
 end
 
+-- Objectifs visés par des candidats ("1,3") : la navigation garde son point tant que ce groupe
+-- ne change pas (voir Nav:Refresh).
+local function candGroup(cands)
+  local seen, list = {}, {}
+  for _, c in ipairs(cands) do
+    local k = tostring(c.objIndex)
+    if not seen[k] then seen[k] = true; list[#list + 1] = k end
+  end
+  table.sort(list)
+  return table.concat(list, ",")
+end
+
+-- Étapes dont le joueur est dans la zone d'objectif : { [clé d'étape] = true } (sortie à SITE_LEAVE).
+local siteInside = {}
+
 local function givers(list)
   local cands = {}
   for _, id in ipairs(list.npcs or {}) do cands[#cands + 1] = { kind = "npc", id = id } end
@@ -163,7 +180,7 @@ end
 local function compute(entry)
   local step = entry.step
   local a = step.action
-  local mapId, x, y, kind, id
+  local mapId, x, y, kind, id, group
   if a == "accept" or a == "turnin" then
     local q = Q.QDB:Quest(step.questId)
     if not q then return nil end
@@ -173,16 +190,22 @@ local function compute(entry)
       mapId, x, y, kind = step.at[1], step.at[2], step.at[3], "area"
     end
   elseif a == "complete" then
+    local cands = completeCands(step)
+    group = candGroup(cands)
     if step.at then
       mapId, x, y, kind = step.at[1], step.at[2], step.at[3], "area"
       -- dans la zone d'objectif : le monstre (ou l'objet) le plus proche, pas le centre de la zone
       local d = Q.Maps:DistanceFromPlayer(mapId, x, y)
-      if d and d <= SITE_RADIUS then
-        local m2, x2, y2, k2, id2, d2 = nearestAway(completeCands(step), SPAWN_MIN)
+      local key = entry.key or step
+      if d then
+        local inside = d <= SITE_RADIUS or (siteInside[key] and d <= SITE_RADIUS * SITE_LEAVE)
+        siteInside[key] = inside or nil
+      end
+      if siteInside[key] then
+        local m2, x2, y2, k2, id2, d2 = nearestAway(cands, SPAWN_MIN)
         if m2 and d2 <= SITE_RADIUS * 1.5 then mapId, x, y, kind, id = m2, x2, y2, k2, id2 end
       end
     else
-      local cands = completeCands(step)
       mapId, x, y, kind, id = nearestAway(cands, SPAWN_MIN)
       if not mapId then mapId, x, y, kind, id = nearest(cands) end
     end
@@ -218,10 +241,11 @@ local function compute(entry)
     mapId, x, y, kind = step.at[1], step.at[2], step.at[3], "area"
   end
   if not mapId then return nil end
-  return { mapId = mapId, x = x, y = y, kind = kind, id = id, title = title(entry) }
+  return { mapId = mapId, x = x, y = y, kind = kind, id = id, group = group, title = title(entry) }
 end
 
--- Q.Targets:ForEntry(entry) -> { mapId, x, y, title, kind = "npc"|"object"|"area"|"point"|"zone", id } | nil
+-- Q.Targets:ForEntry(entry) -> { mapId, x, y, title, kind = "npc"|"object"|"area"|"point"|"zone", id,
+--   group (étape « complete » : objectifs visés, "1,3") } | nil
 -- Étape qui porte une zone (Engine/ZoneMode.lua, option zoneMode) : centre de la zone hors de
 -- celle-ci, objectif prioritaire le plus proche dedans (kind = "zone"). Sinon, calcul habituel.
 function Targets:ForEntry(entry)
@@ -355,7 +379,10 @@ function Targets:ObjectiveNpcSet()
 end
 
 Q:On("PROGRESS_UPDATED", invalidateMobs)
-Q:On("GUIDE_CHANGED", invalidateMobs)
+Q:On("GUIDE_CHANGED", function()
+  invalidateMobs()
+  siteInside = {}
+end)
 for _, event in ipairs({ "QUEST_LOG_UPDATE", "QUEST_ACCEPTED", "QUEST_REMOVED", "QUEST_TURNED_IN" }) do
   Q:RegisterEvent(event, invalidateMobs)
 end

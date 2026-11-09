@@ -40,6 +40,15 @@
   `/qf bags reset` offers the ignored ones again.
 - Class quests: the unfinished Undead priest quests (`<NYI>`) are gone.
 
+**Navigation**
+- The waypoint no longer keeps moving while you kill monsters: it stays on the monster (or object) it
+  points to until you reach it, unless another one is at least 60 yards closer. With WaypointUI, every
+  new waypoint replayed its intro animation and sound, every few seconds.
+- Objective area: you enter it at 200 yards and now leave it only beyond 260, so the waypoint no longer
+  jumps between the area centre and the nearest monster when you walk along its edge.
+- Zone mode: between objectives of the same priority, the arrow stays on the current one until another
+  is at least 40 yards closer.
+
 ### Français
 
 **Routes sur QuestieDB v1.0.12**
@@ -79,6 +88,16 @@
 - Option « Proposer les quêtes qui donnent un sac plus grand » (activée par défaut) ; `/qf sacs` les liste avec
   leur état, `/qf sacs reset` repropose celles qui ont été ignorées.
 - Quêtes de classe : les quêtes de prêtre mort-vivant inachevées (`<NYI>`) disparaissent.
+
+**Navigation**
+- Le repère ne bouge plus sans arrêt pendant qu'on tue des monstres : il reste sur le monstre (ou
+  l'objet) visé jusqu'à ce qu'on l'atteigne, sauf si un autre est au moins 60 yards plus près. Avec
+  WaypointUI, chaque nouveau repère rejouait son animation d'apparition et son bruitage, toutes les
+  quelques secondes.
+- Zone d'objectif : on y entre à 200 yards et on n'en sort plus qu'au-delà de 260 ; le repère ne saute
+  plus du centre de la zone au monstre le plus proche quand on en longe le bord.
+- Mode zone : entre objectifs de même priorité, la flèche reste sur l'objectif en cours tant qu'un autre
+  n'est pas au moins 40 yards plus près.
 
 ## 0.4.0 (2026-11-07)
 
