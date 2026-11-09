@@ -76,6 +76,9 @@ plans.Alliance = {
     -- Idols, troggs 18-19 ; Runes of the Sorcerer-Kings chez les ogres élites de Mo'grosh). Avec les limites de danger
     -- du simulateur et la Marche de l'Ouest plus tôt : Nain / Gnome 1-30 -6 min.
     minLevel = 11, maxLevel = 13, entry = { LOCH_MODAN, 33.9, 51.0 }, next = "A_DwarfGnome_04", strictLevel = true,
+    -- Rat Catching (416, Tunnel Rat Ears) forcée : les kobolds de la mine de Silver Stream gardent le Miners' Gear de
+    -- Filthy Paws (307), tués de toute façon (retour de jeu 2026-11-09). Faite dans le même passage. Nain / Gnome +10 min.
+    force = { [416] = true },
     flightPaths = { "Thelsamar, Loch Modan" },
     -- Fin à Stormwind : Marche de l'Ouest à pied (suite par défaut) ou Sombrivage par le bateau du port
     -- de Stormwind (A_01 commence par ce bateau). Minutes : travel.lua A_DwarfGnome_03 (guides du

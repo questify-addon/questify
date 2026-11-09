@@ -64,7 +64,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 457 | The Balance of Nature | 3 | 978 | 0 | 405 | 382 | 2.41 | 2.56 | 1 |  |
 | 458 | The Woodland Protector | 1 | 40 | 0 | 53 | 27 | 2.11 | 2.86 | 0 |  |
 | 459 | The Woodland Protector | 3 | 926 | 0 | 337 | 289 | 2.75 | 3.19 | 1 |  |
-| 916 | Webwood Venom | 4 | 1950 | 0 | 744 | 626 | 2.64 | 3.70 | 1 |  |
+| 916 | Webwood Venom | 4 | 1950 | 0 | 744 | 606 | 2.64 | 3.81 | 1 |  |
 | 917 | Webwood Egg | 5 | 560 | 0 | 214 | 78 | 2.71 | 7.56 | 1 |  |
 | 920 | Tenaron's Summons | 5 | 45 | 0 | 46 | 29 | 2.84 | 8.10 | 0 |  |
 | 921 | Crown of the Earth | 5 | 335 | 0 | 106 | 53 | 3.29 | 11.76 | 1 |  |

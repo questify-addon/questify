@@ -5,12 +5,12 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 13-16 |
-| Simulated level | 14.00 -> 16.88 |
-| Time | 117 min |
-| XP gained | 37726 |
-| XP/h | 19343 |
-| Steps | 60 |
-| Quests turned in | 19 |
+| Simulated level | 14.00 -> 17.07 |
+| Time | 130 min |
+| XP gained | 42594 |
+| XP/h | 19636 |
+| Steps | 66 |
+| Quests turned in | 20 |
 | Hubs | 8 |
 | Median ratio (XP/s) | 6.50 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
@@ -22,24 +22,25 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
 | 1 | 109 | Report to Gryan Stoutmantle | 10 | 630 | 14 |
-| 2 | 12 | The People's Militia | 12 | 910 | 14 |
-| 3 | 153 | Red Leather Bandanas | 15 | 1050 | 15 |
-| 4 | 92744 | Murloc Gills | 12 | 910 est. | 15 |
-| 5 | 92742 | Testing the Wells | 12 | 910 est. | 15 |
-| 6 | 136 | Captain Sander's Hidden Treasure | 16 | 580 | 15 |
-| 7 | 138 | Captain Sander's Hidden Treasure | 16 | 580 | 15 |
-| 8 | 139 | Captain Sander's Hidden Treasure | 16 | 580 | 15 |
-| 9 | 140 | Captain Sander's Hidden Treasure | 16 | 1150 | 15 |
-| 10 | 9 | The Killing Fields | 15 | 1050 | 16 |
-| 11 | 13 | The People's Militia | 14 | 980 | 16 |
-| 12 | 102 | Patrolling Westfall | 14 | 980 | 16 |
-| 13 | 92745 | The State of the Mines | 14 | 980 est. | 16 |
+| 2 | 136 | Captain Sander's Hidden Treasure | 16 | 580 | 14 |
+| 3 | 138 | Captain Sander's Hidden Treasure | 16 | 580 | 14 |
+| 4 | 92742 | Testing the Wells | 12 | 910 est. | 15 |
+| 5 | 92744 | Murloc Gills | 12 | 910 est. | 15 |
+| 6 | 153 | Red Leather Bandanas | 15 | 1050 | 15 |
+| 7 | 12 | The People's Militia | 12 | 910 | 15 |
+| 8 | 92745 | The State of the Mines | 14 | 980 est. | 15 |
+| 9 | 102 | Patrolling Westfall | 14 | 980 | 15 |
+| 10 | 13 | The People's Militia | 14 | 980 | 15 |
+| 11 | 9 | The Killing Fields | 15 | 1050 | 16 |
+| 12 | 139 | Captain Sander's Hidden Treasure | 16 | 580 | 16 |
+| 13 | 140 | Captain Sander's Hidden Treasure | 16 | 1150 | 16 |
 | 14 | 103 | Keeper of the Flame | 16 | 1150 | 16 |
-| 15 | 92747 | Moonbrook Espionage | 15 | 1050 est. | 16 |
-| 16 | 14 | The People's Militia | 17 | 1600 | 16 |
-| 17 | 151 | Poor Old Blanchy | 14 | 1250 | 16 |
-| 18 | 64 | The Forgotten Heirloom | 12 | 910 | 16 |
-| 19 | 92748 | Explosive Consultation | 16 | 580 est. | 16 |
+| 15 | 152 | The Coast Isn't Clear | 19 | 1450 | 16 |
+| 16 | 92747 | Moonbrook Espionage | 15 | 1050 est. | 16 |
+| 17 | 14 | The People's Militia | 17 | 1600 | 16 |
+| 18 | 151 | Poor Old Blanchy | 14 | 1250 | 16 |
+| 19 | 64 | The Forgotten Heirloom | 12 | 910 | 17 |
+| 20 | 92748 | Explosive Consultation | 16 | 580 est. | 17 |
 
 ## Dropped quests
 
@@ -87,7 +88,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 214 | Red Silk Bandanas | 17 | prerequisite unavailable |
 | 92753 | Destruction in Deadmines | 18 | prerequisite unavailable |
 | 92819 | Destruction in Deadmines | 18 | prerequisite unavailable |
-| 152 | The Coast Isn't Clear | 19 | level band reached |
 | 36 | Westfall Stew | 10 | level band reached |
 | 22 | Goretusk Liver Pie | 12 | level band reached |
 | 38 | Westfall Stew | 13 | level band reached |
@@ -117,7 +117,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 139 | Captain Sander's Hidden Treasure | 16 | 580 | 0 | 112 | 10 | 6.23 | 22.26 | 0 |  |
 | 140 | Captain Sander's Hidden Treasure | 16 | 1150 | 0 | 156 | 74 | 7.34 | 15.42 | 0 |  |
 | 151 | Poor Old Blanchy | 14 | 1250 | 0 | 133 | 133 | 9.36 | 9.36 | 1 |  |
-| 152 | The Coast Isn't Clear | 19 | 4914 | 0 | 1255 | 793 | 3.91 | 6.19 | 4 | level band reached |
+| 152 | The Coast Isn't Clear | 19 | 4914 | 0 | 1255 | 793 | 3.91 | 6.19 | 4 |  |
 | 153 | Red Leather Bandanas | 15 | 5103 | 1497 | 961 | 800 | 5.31 | 6.37 | 1 |  |
 | 79192 | Stepping Stones | 24 | 970 | 0 | 23 | 10 | 41.58 | 97.00 | 0 |  |
 | 92742 | Testing the Wells | 12 | 2407 | 1497 | 283 | 33 | 7.48 | 22.72 | 2 |  |
@@ -137,66 +137,72 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 |---|---|---|---|---|---|---|---|
 | 1 | A | 64 | The Forgotten Heirloom | 1436 | 60.0, 19.4 | 1459 |  |
 | 2 | A | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 1 |  |
-| 3 | A | 12 | The People's Militia | 1436 | 56.3, 47.5 | 667 |  |
-| 4 | A | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
-| 5 | A | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 151 |  |
-| 6 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 52 |  |
-| 7 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 |  |
-| 8 | A | 109 | Report to Gryan Stoutmantle | 1436 | 56.0, 31.2 | 522 |  |
-| 9 | A | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 0 |  |
-| 10 | O | 151 | Poor Old Blanchy | 1436 | 57.3, 18.3 | 304 | near #2 (went 825 yd away) |
-| 11 | O | 92742 | Testing the Wells | 1436 | 56.6, 18.7 | 24 | near #2 (went 812 yd away) |
-| 12 | O | 64 | The Forgotten Heirloom | 1436 | 49.3, 19.3 | 255 |  |
-| 13 | O | 153 | Red Leather Bandanas | 1436 | 45.3, 22.8 | 161 |  |
-| 14 | O | 12 | The People's Militia | 1436 | 44.8, 26.0 | 76 |  |
-| 15 | A | 136 | Captain Sander's Hidden Treasure | 1436 | 34.5, 17.0 | 415 |  |
-| 16 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 0 |  |
-| 17 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 404 |  |
-| 18 | O | 92742 | Testing the Wells | 1436 | 46.1, 38.1 | 516 |  |
-| 19 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 420 | near #4 (went 1043 yd away) |
-| 20 | T | 12 | The People's Militia | 1436 | 56.3, 47.5 | 0 | near #4 (went 1043 yd away) |
-| 21 | A | 13 | The People's Militia | 1436 | 56.3, 47.5 | 0 |  |
-| 22 | F |  | flight path | 1436 | 56.5, 52.6 | 119 |  |
-| 23 | T | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 90 | near #7 (went 1080 yd away) |
-| 24 | T | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 52 |  |
-| 25 | T | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 0 |  |
-| 26 | A | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 0 |  |
-| 27 | O | 13 | The People's Militia | 1436 | 43.7, 68.9 | 482 |  |
-| 28 | A | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 623 |  |
-| 29 | O | 102 | Patrolling Westfall | 1436 | 31.0, 68.8 | 404 |  |
-| 30 | T | 136 | Captain Sander's Hidden Treasure | 1436 | 25.9, 47.8 | 522 |  |
-| 31 | A | 138 | Captain Sander's Hidden Treasure | 1436 | 25.9, 47.8 | 0 |  |
-| 32 | O | 92745 | The State of the Mines | 1436 | 30.0, 47.3 | 143 |  |
-| 33 | A | 79192 | Stepping Stones | 1436 | 37.4, 50.7 | 272 |  |
-| 34 | O | 9 | The Killing Fields | 1436 | 38.8, 51.5 | 51 |  |
-| 35 | T | 138 | Captain Sander's Hidden Treasure | 1436 | 40.5, 47.8 | 106 |  |
-| 36 | A | 139 | Captain Sander's Hidden Treasure | 1436 | 40.5, 47.8 | 0 |  |
-| 37 | T | 139 | Captain Sander's Hidden Treasure | 1436 | 40.6, 17.0 | 717 |  |
-| 38 | A | 140 | Captain Sander's Hidden Treasure | 1436 | 40.6, 17.0 | 0 |  |
-| 39 | T | 140 | Captain Sander's Hidden Treasure | 1436 | 26.0, 16.9 | 513 |  |
-| 40 | O | 92745 | The State of the Mines | 1436 | 45.3, 20.0 | 680 | near #14 (went 1629 yd away) |
-| 41 | O | 103 | Keeper of the Flame | 1436 | 52.8, 23.8 | 278 |  |
-| 42 | T | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 206 | near #9 (went 1569 yd away) |
-| 43 | T | 13 | The People's Militia | 1436 | 56.3, 47.5 | 380 | near #22 (went 1286 yd away) |
-| 44 | A | 14 | The People's Militia | 1436 | 56.3, 47.5 | 0 | near #22 (went 1286 yd away) |
-| 45 | T | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
-| 46 | T | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 186 | near #26 (went 1252 yd away) |
-| 47 | A | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 0 | near #26 (went 1252 yd away) |
-| 48 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 551 |  |
-| 49 | T | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 802 | near #28 (went 1657 yd away) |
-| 50 | O | 92747 | Moonbrook Espionage | 1436 | 43.1, 68.8 | 608 | near #27 (went 1352 yd away) |
-| 51 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 494 | near #47 (went 1101 yd away) |
-| 52 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #47 (went 1101 yd away) |
-| 53 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 185 | near #45 (went 1286 yd away) |
-| 54 | T | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 667 | near #11 (went 1873 yd away) |
-| 55 | T | 64 | The Forgotten Heirloom | 1436 | 60.0, 19.4 | 1 | near #11 (went 1875 yd away) |
-| 56 | F |  | flight path | 1453 | 71.3, 72.2 | 1107 |  |
-| 57 | A | 167 | Oh Brother. . . | 1453 | 70.3, 40.8 | 364 |  |
-| 58 | A | 168 | Collecting Memories | 1453 | 70.3, 40.8 | 0 |  |
-| 59 | A | 2040 | Underground Assault | 1453 | 62.6, 34.1 | 154 |  |
-| 60 | T | 92748 | Explosive Consultation | 1453 | 61.9, 30.6 | 43 |  |
+| 3 | A | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 307 |  |
+| 4 | A | 109 | Report to Gryan Stoutmantle | 1436 | 56.0, 31.2 | 0 |  |
+| 5 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 380 |  |
+| 6 | A | 12 | The People's Militia | 1436 | 56.3, 47.5 | 0 |  |
+| 7 | A | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
+| 8 | F |  | flight path | 1436 | 56.5, 52.6 | 117 |  |
+| 9 | A | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 90 |  |
+| 10 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 52 |  |
+| 11 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 |  |
+| 12 | O | 92742 | Testing the Wells | 1436 | 46.1, 38.1 | 412 |  |
+| 13 | O | 151 | Poor Old Blanchy | 1436 | 57.3, 18.3 | 606 | near #2 (went 825 yd away) |
+| 14 | O | 92742 | Testing the Wells | 1436 | 56.6, 18.7 | 24 | near #2 (went 812 yd away) |
+| 15 | O | 12 | The People's Militia | 1436 | 44.8, 26.0 | 447 |  |
+| 16 | O | 153 | Red Leather Bandanas | 1436 | 45.3, 22.8 | 76 |  |
+| 17 | A | 136 | Captain Sander's Hidden Treasure | 1436 | 34.5, 17.0 | 401 |  |
+| 18 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 0 |  |
+| 19 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 404 |  |
+| 20 | T | 136 | Captain Sander's Hidden Treasure | 1436 | 25.9, 47.8 | 382 |  |
+| 21 | A | 138 | Captain Sander's Hidden Treasure | 1436 | 25.9, 47.8 | 0 |  |
+| 22 | A | 79192 | Stepping Stones | 1436 | 37.4, 50.7 | 408 |  |
+| 23 | O | 9 | The Killing Fields | 1436 | 38.8, 51.5 | 51 |  |
+| 24 | T | 138 | Captain Sander's Hidden Treasure | 1436 | 40.5, 47.8 | 106 |  |
+| 25 | A | 139 | Captain Sander's Hidden Treasure | 1436 | 40.5, 47.8 | 0 |  |
+| 26 | T | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 435 | near #11 (went 1048 yd away) |
+| 27 | T | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 | near #11 (went 1048 yd away) |
+| 28 | A | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 0 |  |
+| 29 | T | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 52 |  |
+| 30 | T | 12 | The People's Militia | 1436 | 56.3, 47.5 | 151 | near #8 (went 1064 yd away) |
+| 31 | A | 13 | The People's Militia | 1436 | 56.3, 47.5 | 0 | near #8 (went 1064 yd away) |
+| 32 | O | 92745 | The State of the Mines | 1436 | 45.3, 20.0 | 748 | near #16 (went 937 yd away) |
+| 33 | O | 92745 | The State of the Mines | 1436 | 30.0, 47.3 | 830 | near #21 (went 922 yd away) |
+| 34 | O | 102 | Patrolling Westfall | 1436 | 31.0, 68.8 | 503 |  |
+| 35 | A | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 404 |  |
+| 36 | A | 152 | The Coast Isn't Clear | 1436 | 30.0, 86.0 | 0 |  |
+| 37 | O | 13 | The People's Militia | 1436 | 43.7, 68.9 | 623 |  |
+| 38 | T | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 482 | near #29 (went 1101 yd away) |
+| 39 | A | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 0 | near #29 (went 1101 yd away) |
+| 40 | T | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 186 | near #31 (went 1287 yd away) |
+| 41 | T | 13 | The People's Militia | 1436 | 56.3, 47.5 | 3 | near #31 (went 1286 yd away) |
+| 42 | A | 14 | The People's Militia | 1436 | 56.3, 47.5 | 0 |  |
+| 43 | T | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 380 | near #4 (went 1569 yd away) |
+| 44 | O | 103 | Keeper of the Flame | 1436 | 52.8, 23.8 | 206 |  |
+| 45 | O | 64 | The Forgotten Heirloom | 1436 | 49.3, 19.3 | 161 | near #32 (went 1697 yd away) |
+| 46 | O | 152 | The Coast Isn't Clear | 1436 | 43.5, 9.6 | 303 |  |
+| 47 | T | 139 | Captain Sander's Hidden Treasure | 1436 | 40.6, 17.0 | 201 |  |
+| 48 | A | 140 | Captain Sander's Hidden Treasure | 1436 | 40.6, 17.0 | 0 |  |
+| 49 | T | 140 | Captain Sander's Hidden Treasure | 1436 | 26.0, 16.9 | 513 |  |
+| 50 | O | 152 | The Coast Isn't Clear | 1436 | 29.8, 27.6 | 283 |  |
+| 51 | O | 152 | The Coast Isn't Clear | 1436 | 27.2, 53.7 | 615 | near #21 (went 1175 yd away) |
+| 52 | O | 152 | The Coast Isn't Clear | 1436 | 27.3, 70.9 | 402 | near #34 (went 1538 yd away) |
+| 53 | T | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 364 | near #36 (went 1844 yd away) |
+| 54 | T | 152 | The Coast Isn't Clear | 1436 | 30.0, 86.0 | 0 | near #36 (went 1844 yd away) |
+| 55 | O | 92747 | Moonbrook Espionage | 1436 | 43.1, 68.8 | 608 | near #37 (went 1382 yd away) |
+| 56 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 362 |  |
+| 57 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 551 | near #39 (went 1252 yd away) |
+| 58 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #39 (went 1252 yd away) |
+| 59 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 185 | near #42 (went 1286 yd away) |
+| 60 | T | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 667 | near #14 (went 1873 yd away) |
+| 61 | T | 64 | The Forgotten Heirloom | 1436 | 60.0, 19.4 | 1 | near #14 (went 1875 yd away) |
+| 62 | F |  | flight path | 1453 | 71.3, 72.2 | 1107 |  |
+| 63 | A | 168 | Collecting Memories | 1453 | 70.3, 40.8 | 364 |  |
+| 64 | A | 167 | Oh Brother. . . | 1453 | 70.3, 40.8 | 0 |  |
+| 65 | A | 2040 | Underground Assault | 1453 | 62.6, 34.1 | 154 |  |
+| 66 | T | 92748 | Explosive Consultation | 1453 | 61.9, 30.6 | 43 |  |
 
-Walking between tasks: 16255 yd (~39 min at 7 yd/s).
+Walking between tasks: 17635 yd (~42 min at 7 yd/s).
 
 ## Qualité
 
@@ -217,7 +223,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 ## Logistics
 
 - step 1: `fp 1453 71.29 72.23`
-- step 4: `fp 1436 56.55 52.64`
+- step 6: `fp 1436 56.55 52.64`
 
 ## Warnings
 

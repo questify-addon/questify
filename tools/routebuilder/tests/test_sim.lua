@@ -141,6 +141,23 @@ return {
     t.ok(steps[i]._c.simLevel >= 3, "done at level " .. tostring(steps[i]._c.simLevel))
   end,
 
+  -- Objets gardés : les monstres hostiles à CLEAR_RADIUS yards ou moins des objets pris, au plus CLEAR_PER_OBJECT
+  -- par objet, les plus proches d'abord (signal de partage avec une quête de butin sur ces monstres).
+  guards_of_objects_counted_per_object = function(t)
+    local W = F.W()
+    local function at(x, y) return sim.mkPos(W, 9001, x, y) end
+    local function guard(x, y, npc) local p = at(x, y); p.npc, p.level = npc, 4; return p end
+    -- 1 % = 20 yd : 0,5 % = 10 yd (dans le rayon), 2 % = 40 yd (hors rayon)
+    local ctx = { guards = { guard(50.5, 50, 7), guard(50, 50.5, 7), guard(49.5, 50, 8), guard(52, 50, 9) } }
+    local g = sim.guardsOf(ctx, { at(50, 50) }, at(50, 50), 1)
+    t.eq(g.n, 2, "two per object at most")
+    t.eq(g.clear[9], nil, "a mob 40 yd away is not a guard")
+    local total = 0
+    for _, c in pairs(g.clear) do total = total + c end
+    t.eq(total, 2)
+    t.eq(sim.guardsOf(ctx, { at(10, 10) }, at(10, 10), 1), nil, "no guard far from the object")
+  end,
+
   widen_true_always_widens_the_band = function(t)
     local W = F.W()
     local plan = F.plan()

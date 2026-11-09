@@ -576,6 +576,9 @@ ones. Details and measures: `tools/routebuilder/README.md`, "Objective danger".
 - Bug fixed: QuestieDB gives level 9999 to scenario NPCs of unknown level (Zephras Isle); taken as mobs to kill, they
   asked for level 9997.
 - H_05: Dangerous! (567) before Souvenirs of Death (546), so its second site is not done on a later pass.
+- Loch Modan: Rat Catching (Tunnel Rat Ears) is done in the Silver Stream mine right after the Miners' Gear of Filthy
+  Paws, among the same kobolds (it was left out, and the mine was visited for the gear only). The simulator now knows
+  that the mobs guarding objects are killed anyway (`sim.guardsOf`) when it picks drop and kill quests.
 
 Dwarf / Gnome path 1-30, simulated:
 
@@ -583,8 +586,8 @@ Dwarf / Gnome path 1-30, simulated:
 |---|---|---|---|---|---|
 | A_DwarfGnome_01 | Coldridge Valley | 1.00 -> 6.02 | 36 min | 15 | 37 min |
 | A_DwarfGnome_02 | Dun Morogh | 6.00 -> 12.01 | 111 min | 37 | 113 min |
-| A_DwarfGnome_03 | Loch Modan | 12.00 -> 14.28 | 77 min | 20 | 124 min (to 15.56, 82 mobs of grinding) |
-| A_DwarfGnome_04 | Westfall | 14.00 -> 16.88 | 117 min | 19 | 78 min |
+| A_DwarfGnome_03 | Loch Modan | 12.00 -> 14.15 | 74 min | 19 | 124 min (to 15.56, 82 mobs of grinding) |
+| A_DwarfGnome_04 | Westfall | 14.00 -> 17.07 | 130 min | 20 | 78 min |
 | A_01 | Darkshore | 16.00 -> 19.67 | 154 min | 36 | 166 min |
 | A_02 | Ashenvale and Stonetalon | 19.00 -> 22.31 | 157 min | 28 | 126 min |
 | A_03 | Redridge and Duskwood | 22.00 -> 26.39 | 262 min | 48 | 297 min |
@@ -596,7 +599,7 @@ Totals per race path, simulated (minutes / quests / grind mobs), before → afte
 | Path 1-60 | Before | Safer routes |
 |---|---|---|
 | Human | 5 212 / 651 / 4 546 | 5 572 / 607 / 6 019 |
-| Dwarf / Gnome | 5 277 / 657 / 4 615 | 5 597 / 611 / 5 933 |
+| Dwarf / Gnome | 5 277 / 657 / 4 615 | 5 607 / 611 / 5 933 |
 | Night Elf | 5 218 / 636 / 4 684 | 5 612 / 595 / 6 086 |
 | Skyborne (Alliance) | 5 163 / 637 / 4 601 | 5 487 / 593 / 5 981 |
 | Orc / Troll | 5 158 / 617 / 2 920 | 5 538 / 557 / 4 816 |
@@ -610,4 +613,4 @@ in 20 s whatever its level, so the old totals were optimistic. 240 quests are dr
 chapters (each report lists them). Heaviest left: A_04 (Wetlands: the Dragonmaw and Dark Iron of Forever are elite
 around most objectives, 284 mobs of grinding), H_03, the 30-60 trunk. To check in game: whether those camps are really
 elite, and whether the routes still feel too hard or too easy.
-APR-COMPARE: APR clearly ahead on 47 chapters, Questify on 4, close on 21.
+APR-COMPARE: APR clearly ahead on 48 chapters, Questify on 4, close on 20.

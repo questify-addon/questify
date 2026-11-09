@@ -189,10 +189,10 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 92644 | Unfortunate News | 11 | 660 | 0 | 141 | 10 | 31.79 | 63.72 | 0 |  |
 | 92645 | Breaking the Breaker | 11 | 770 | 0 | 86 | 20 | 17.05 | 51.39 | 1 |  |
 | 92646 | Confront Lorthuna | 12 | 910 | 0 | 293 | 194 | 4.61 | 8.31 | 1 |  |
-| 92679 | Blood Tithe | 9 | 780 | 0 | 436 | 85 | 4.39 | 6.93 | 2 |  |
+| 92679 | Blood Tithe | 9 | 780 | 0 | 436 | 85 | 4.39 | 7.02 | 2 |  |
 | 92682 | Make Yourself Useful | 9 | 1115 | 0 | 280 | 277 | 4.64 | 5.50 | 1 |  |
 | 92683 | Flutterfly Dust | 9 | 780 | 0 | 136 | 80 | 5.25 | 7.41 | 1 |  |
-| 92684 | Ornery Ornery Galestriders | 9 | 1718 | 0 | 354 | 290 | 4.98 | 6.39 | 1 |  |
+| 92684 | Ornery Ornery Galestriders | 9 | 1718 | 0 | 354 | 270 | 4.98 | 6.61 | 1 |  |
 | 92685 | The Hills Have Eyes | 9 | 1718 | 0 | 360 | 298 | 5.09 | 6.82 | 1 |  |
 | 92693 | Standing Our Ground | 9 | 1316 | 0 | 223 | 180 | 5.61 | 9.03 | 2 |  |
 | 92698 | What Is My Purpose? | 9 | 780 | 0 | 62 | 10 | 12.54 | 78.00 | 0 |  |

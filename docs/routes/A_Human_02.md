@@ -480,19 +480,19 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 11 | Riverpaw Gnoll Bounty | 10 | 2726 | 0 | 554 | 505 | 4.92 | 5.39 | 1 |  |
-| 35 | Further Concerns | 10 | 420 | 0 | 179 | 29 | 3.67 | 12.03 | 0 |  |
-| 37 | Find the Lost Guards | 10 | 210 | 0 | 52 | 15 | 4.66 | 11.40 | 0 |  |
-| 39 | Deliver Thomas' Report | 10 | 1050 | 0 | 179 | 29 | 4.51 | 8.94 | 0 |  |
-| 40 | A Fishy Peril | 10 | 85 | 0 | 31 | 31 | 3.57 | 9.61 | 0 |  |
-| 45 | Discover Rolf's Fate | 10 | 420 | 0 | 48 | 10 | 4.78 | 11.10 | 0 |  |
-| 46 | Bounty on Murlocs | 10 | 2370 | 0 | 435 | 369 | 5.44 | 6.42 | 1 |  |
+| 35 | Further Concerns | 10 | 420 | 0 | 179 | 29 | 3.67 | 13.07 | 0 |  |
+| 37 | Find the Lost Guards | 10 | 210 | 0 | 52 | 15 | 4.66 | 12.72 | 0 |  |
+| 39 | Deliver Thomas' Report | 10 | 1050 | 0 | 179 | 29 | 4.51 | 10.29 | 0 |  |
+| 40 | A Fishy Peril | 10 | 85 | 0 | 31 | 31 | 3.57 | 10.21 | 0 |  |
+| 45 | Discover Rolf's Fate | 10 | 420 | 0 | 48 | 10 | 4.78 | 12.56 | 0 |  |
+| 46 | Bounty on Murlocs | 10 | 2370 | 0 | 435 | 309 | 5.44 | 7.67 | 1 |  |
 | 47 | Gold Dust Exchange | 7 | 2610 | 0 | 780 | 725 | 3.34 | 3.60 | 1 | level band reached |
 | 52 | Protect the Frontier | 10 | 1728 | 0 | 443 | 343 | 3.89 | 5.03 | 2 | level band reached |
 | 59 | Cloth and Leather Armor | 10 | 210 | 0 | 212 | 44 | 0.99 | 4.69 | 0 | level band reached |
 | 60 | Kobold Candles | 7 | 2455 | 0 | 778 | 694 | 4.24 | 5.21 | 1 |  |
 | 61 | Shipment to Stormwind | 7 | 1798 | 1008 | 139 | 26 | 12.93 | 67.84 | 0 |  |
 | 62 | The Fargodeep Mine | 7 | 475 | 0 | 143 | 68 | 4.30 | 6.69 | 1 |  |
-| 71 | Report to Thomas | 10 | 210 | 0 | 74 | 15 | 4.26 | 9.25 | 0 |  |
+| 71 | Report to Thomas | 10 | 210 | 0 | 74 | 15 | 4.26 | 10.55 | 0 |  |
 | 76 | The Jasperlode Mine | 10 | 840 | 0 | 248 | 49 | 4.51 | 6.65 | 1 |  |
 | 83 | Red Linen Goods | 9 | 2242 | 0 | 491 | 390 | 4.56 | 5.75 | 1 |  |
 | 84 | Back to Billy | 6 | 135 | 0 | 58 | 20 | 6.21 | 14.20 | 0 |  |

@@ -17,7 +17,8 @@
   (never orange), and never inside an elite camp above your level. The route grinds a little, or comes back later in
   the chapter, or leaves the quest out when the zone is too hard.
 - Dwarf / Gnome: Loch Modan 11-13 then Westfall from level 13. No more Gathering Idols or the Mo'grosh book among the
-  elite ogres; the easier Loch Modan quests are back.
+  elite ogres; the easier Loch Modan quests are back, and Rat Catching is done in the kobold mine together with the
+  Miners' Gear of Filthy Paws.
 - Routes are longer in the simulator (about 5-7 h over 1-60): the old times counted dangerous quests as if they were
   easy.
 
@@ -55,7 +56,8 @@
   niveaux au-dessus de toi (jamais orange), et jamais dans un camp d'élites plus haut que toi. La route farme un peu,
   revient plus tard dans le chapitre, ou laisse la quête quand la zone est trop dure.
 - Nain / Gnome : Loch Modan 11-13 puis Marche de l'Ouest dès le niveau 13. Plus de Gathering Idols ni de livre de
-  Mo'grosh au milieu des ogres élites ; les quêtes plus faciles du Loch Modan reviennent.
+  Mo'grosh au milieu des ogres élites ; les quêtes plus faciles du Loch Modan reviennent, et Rat Catching se fait dans la
+  mine des kobolds en même temps que le Miners' Gear de Filthy Paws.
 - Routes plus longues au simulateur (environ 5 à 7 h sur 1-60) : les anciens temps comptaient les quêtes dangereuses
   comme si elles étaient faciles.
 

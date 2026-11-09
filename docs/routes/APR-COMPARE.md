@@ -8,12 +8,12 @@ Questify: 73 chapters from `Questify/Guides/Guides.xml` (QuestieDB commit `4d31c
 
 A side is **clearly ahead** on a chapter when, on the same slice of the route, the quests that only it does (that the other addon does nowhere for the faction) are worth at least 15 % of the chapter's quest XP more than the other side's, with at least 5 such quests. "APR-only": general quests (not class quests) that APR does in the slice and no Questify chapter of the faction does, except those of a level more than 2 above the chapter's band. "Questify-only": general quests of the chapter that no APR route of the faction does. Only quest XP is compared: travel time, kill time and grinding are not.
 
-- APR clearly ahead: A_Skyborne_01 (APR-only 25 quests / 12 315 XP, Questify-only 6 / 4 070 XP, chapter 46 335 XP); A_01 (APR-only 10 quests / 12 030 XP, Questify-only 5 / 5 345 XP, chapter 44 000 XP); A_03 (APR-only 26 quests / 29 240 XP, Questify-only 4 / 6 800 XP, chapter 64 850 XP); A_04 (APR-only 25 quests / 38 885 XP, Questify-only 13 / 16 720 XP, chapter 26 065 XP); A_07 (APR-only 9 quests / 13 490 XP, Questify-only 1 / 2 450 XP, chapter 39 125 XP); A_09 (APR-only 11 quests / 22 410 XP, Questify-only 1 / 630 XP, chapter 17 650 XP); A_10 (APR-only 28 quests / 38 160 XP, Questify-only 0 / 0 XP, chapter 26 030 XP); A_11 (APR-only 11 quests / 26 750 XP, Questify-only 4 / 10 300 XP, chapter 34 275 XP); A_12 (APR-only 31 quests / 54 715 XP, Questify-only 3 / 4 785 XP, chapter 78 050 XP); A_13 (APR-only 20 quests / 48 540 XP, Questify-only 3 / 7 725 XP, chapter 41 340 XP); A_15 (APR-only 7 quests / 17 760 XP, Questify-only 3 / 6 725 XP, chapter 41 285 XP); A_16 (APR-only 15 quests / 33 900 XP, Questify-only 6 / 11 100 XP, chapter 39 655 XP); A_17 (APR-only 16 quests / 38 685 XP, Questify-only 0 / 0 XP, chapter 49 800 XP); A_18 (APR-only 11 quests / 18 120 XP, Questify-only 3 / 7 050 XP, chapter 43 115 XP); A_19 (APR-only 9 quests / 23 345 XP, Questify-only 0 / 0 XP, chapter 68 945 XP); A_20 (APR-only 16 quests / 70 550 XP, Questify-only 1 / 975 XP, chapter 27 555 XP); A_21 (APR-only 5 quests / 26 450 XP, Questify-only 1 / 975 XP, chapter 37 295 XP); A_24 (APR-only 18 quests / 82 610 XP, Questify-only 1 / 580 XP, chapter 60 850 XP); A_26 (APR-only 25 quests / 99 300 XP, Questify-only 1 / 580 XP, chapter 104 870 XP); A_27 (APR-only 64 quests / 300 075 XP, Questify-only 2 / 1 220 XP, chapter 105 810 XP); A_23 (APR-only 29 quests / 137 860 XP, Questify-only 4 / 9 900 XP, chapter 74 590 XP); A_29 (APR-only 23 quests / 114 900 XP, Questify-only 7 / 27 050 XP, chapter 88 680 XP); A_30 (APR-only 12 quests / 61 250 XP, Questify-only 2 / 13 200 XP, chapter 79 350 XP); H_Tauren_01 (APR-only 6 quests / 2 820 XP, Questify-only 0 / 0 XP, chapter 6 665 XP); H_Tauren_02 (APR-only 8 quests / 4 515 XP, Questify-only 2 / 1 120 XP, chapter 21 395 XP); H_Undead_03 (APR-only 13 quests / 9 090 XP, Questify-only 4 / 3 400 XP, chapter 12 885 XP); H_01 (APR-only 23 quests / 19 630 XP, Questify-only 2 / 2 920 XP, chapter 46 715 XP); H_02 (APR-only 17 quests / 19 370 XP, Questify-only 9 / 12 435 XP, chapter 38 040 XP); H_03 (APR-only 31 quests / 41 815 XP, Questify-only 5 / 5 190 XP, chapter 41 895 XP); H_04 (APR-only 22 quests / 40 740 XP, Questify-only 5 / 8 050 XP, chapter 49 510 XP); H_07 (APR-only 15 quests / 31 835 XP, Questify-only 1 / 640 XP, chapter 20 250 XP); H_08 (APR-only 6 quests / 9 985 XP, Questify-only 1 / 2 750 XP, chapter 36 365 XP); H_09 (APR-only 13 quests / 20 450 XP, Questify-only 1 / 275 XP, chapter 41 035 XP); H_11 (APR-only 5 quests / 12 150 XP, Questify-only 2 / 2 525 XP, chapter 43 750 XP); H_12 (APR-only 12 quests / 26 420 XP, Questify-only 3 / 5 050 XP, chapter 21 750 XP); H_13 (APR-only 14 quests / 36 495 XP, Questify-only 0 / 0 XP, chapter 61 440 XP); H_14 (APR-only 13 quests / 30 895 XP, Questify-only 2 / 4 560 XP, chapter 34 670 XP); H_15 (APR-only 12 quests / 37 995 XP, Questify-only 1 / 4 850 XP, chapter 29 390 XP); H_16 (APR-only 22 quests / 48 880 XP, Questify-only 3 / 7 050 XP, chapter 44 800 XP); H_18 (APR-only 10 quests / 38 340 XP, Questify-only 5 / 18 120 XP, chapter 64 280 XP); H_21 (APR-only 14 quests / 61 850 XP, Questify-only 2 / 10 800 XP, chapter 53 730 XP); H_25 (APR-only 6 quests / 23 100 XP, Questify-only 0 / 0 XP, chapter 58 860 XP); H_26 (APR-only 21 quests / 86 180 XP, Questify-only 1 / 4 200 XP, chapter 70 890 XP); H_27 (APR-only 5 quests / 23 950 XP, Questify-only 0 / 0 XP, chapter 98 130 XP); H_28 (APR-only 54 quests / 230 835 XP, Questify-only 1 / 580 XP, chapter 96 350 XP); H_29 (APR-only 33 quests / 140 890 XP, Questify-only 19 / 58 640 XP, chapter 226 160 XP); H_30 (APR-only 25 quests / 122 540 XP, Questify-only 2 / 13 200 XP, chapter 91 950 XP)
-- Questify clearly ahead: A_DwarfGnome_04 (APR-only 5 quests / 4 650 XP, Questify-only 10 / 9 050 XP, chapter 21 025 XP); A_Human_03 (APR-only 9 quests / 7 230 XP, Questify-only 11 / 10 600 XP, chapter 19 480 XP); H_05 (APR-only 1 quest / 2 500 XP, Questify-only 11 / 9 025 XP, chapter 34 335 XP); H_06 (APR-only 3 quests / 7 800 XP, Questify-only 8 / 14 035 XP, chapter 33 445 XP)
-- Close: A_DwarfGnome_01 (APR-only 1 quest / 630 XP, Questify-only 0 / 0 XP, chapter 4 255 XP); A_DwarfGnome_02 (APR-only 8 quests / 5 510 XP, Questify-only 6 / 3 805 XP, chapter 22 825 XP); A_DwarfGnome_03 (APR-only 7 quests / 5 060 XP, Questify-only 5 / 3 525 XP, chapter 13 625 XP); A_Human_01 (APR-only 4 quests / 2 160 XP, Questify-only 0 / 0 XP, chapter 4 270 XP); A_Human_02 (APR-only 10 quests / 6 440 XP, Questify-only 6 / 4 115 XP, chapter 24 540 XP); A_NightElf_01 (APR-only 3 quests / 1 665 XP, Questify-only 0 / 0 XP, chapter 4 110 XP); A_NightElf_02 (APR-only 14 quests / 8 680 XP, Questify-only 10 / 6 045 XP, chapter 23 190 XP); A_NightElf_03 (APR-only 16 quests / 14 810 XP, Questify-only 6 / 6 545 XP, chapter 60 270 XP); A_02 (APR-only 21 quests / 19 550 XP, Questify-only 14 / 16 945 XP, chapter 35 530 XP); A_05 (APR-only 1 quest / 2 500 XP, Questify-only 4 / 3 480 XP, chapter 16 040 XP); A_08 (APR-only 5 quests / 9 080 XP, Questify-only 4 / 9 150 XP, chapter 42 140 XP); A_22 (APR-only 1 quest / 4 400 XP, Questify-only 5 / 4 180 XP, chapter 111 600 XP); H_OrcTroll_01 (APR-only 2 quests / 810 XP, Questify-only 1 / 170 XP, chapter 5 165 XP); H_OrcTroll_02 (APR-only 3 quests / 1 265 XP, Questify-only 2 / 1 540 XP, chapter 27 530 XP); H_Undead_01 (APR-only 2 quests / 1 080 XP, Questify-only 0 / 0 XP, chapter 3 710 XP); H_Undead_02 (APR-only 9 quests / 6 020 XP, Questify-only 7 / 4 400 XP, chapter 24 340 XP); H_Skyborne_01 (APR-only 27 quests / 13 185 XP, Questify-only 18 / 12 950 XP, chapter 47 225 XP); H_10 (APR-only 2 quests / 6 300 XP, Questify-only 0 / 0 XP, chapter 24 575 XP); H_17 (APR-only 4 quests / 12 750 XP, Questify-only 1 / 4 400 XP, chapter 83 250 XP); H_23 (APR-only 0 quests / 0 XP, Questify-only 1 / 780 XP, chapter 24 280 XP); H_24 (APR-only 4 quests / 15 590 XP, Questify-only 6 / 10 605 XP, chapter 78 105 XP)
+- APR clearly ahead: A_NightElf_03 (APR-only 17 quests / 15 860 XP, Questify-only 6 / 6 545 XP, chapter 60 270 XP); A_Skyborne_01 (APR-only 25 quests / 12 315 XP, Questify-only 6 / 4 070 XP, chapter 46 335 XP); A_01 (APR-only 10 quests / 12 030 XP, Questify-only 5 / 5 345 XP, chapter 44 000 XP); A_03 (APR-only 26 quests / 29 240 XP, Questify-only 4 / 6 800 XP, chapter 64 850 XP); A_04 (APR-only 25 quests / 38 885 XP, Questify-only 13 / 16 720 XP, chapter 26 065 XP); A_07 (APR-only 9 quests / 13 490 XP, Questify-only 1 / 2 450 XP, chapter 39 125 XP); A_09 (APR-only 11 quests / 22 410 XP, Questify-only 1 / 630 XP, chapter 17 650 XP); A_10 (APR-only 28 quests / 38 160 XP, Questify-only 0 / 0 XP, chapter 26 030 XP); A_11 (APR-only 11 quests / 26 750 XP, Questify-only 4 / 10 300 XP, chapter 34 275 XP); A_12 (APR-only 31 quests / 54 715 XP, Questify-only 3 / 4 785 XP, chapter 78 050 XP); A_13 (APR-only 20 quests / 48 540 XP, Questify-only 3 / 7 725 XP, chapter 41 340 XP); A_15 (APR-only 7 quests / 17 760 XP, Questify-only 3 / 6 725 XP, chapter 41 285 XP); A_16 (APR-only 15 quests / 33 900 XP, Questify-only 6 / 11 100 XP, chapter 39 655 XP); A_17 (APR-only 16 quests / 38 685 XP, Questify-only 0 / 0 XP, chapter 49 800 XP); A_18 (APR-only 11 quests / 18 120 XP, Questify-only 3 / 7 050 XP, chapter 43 115 XP); A_19 (APR-only 9 quests / 23 345 XP, Questify-only 0 / 0 XP, chapter 68 945 XP); A_20 (APR-only 16 quests / 70 550 XP, Questify-only 1 / 975 XP, chapter 27 555 XP); A_21 (APR-only 5 quests / 26 450 XP, Questify-only 1 / 975 XP, chapter 37 295 XP); A_24 (APR-only 18 quests / 82 610 XP, Questify-only 1 / 580 XP, chapter 60 850 XP); A_26 (APR-only 25 quests / 99 300 XP, Questify-only 1 / 580 XP, chapter 104 870 XP); A_27 (APR-only 64 quests / 300 075 XP, Questify-only 2 / 1 220 XP, chapter 105 810 XP); A_23 (APR-only 29 quests / 137 860 XP, Questify-only 4 / 9 900 XP, chapter 74 590 XP); A_29 (APR-only 23 quests / 114 900 XP, Questify-only 7 / 27 050 XP, chapter 88 680 XP); A_30 (APR-only 12 quests / 61 250 XP, Questify-only 2 / 13 200 XP, chapter 79 350 XP); H_Tauren_01 (APR-only 6 quests / 2 820 XP, Questify-only 0 / 0 XP, chapter 6 665 XP); H_Tauren_02 (APR-only 8 quests / 4 515 XP, Questify-only 2 / 1 120 XP, chapter 21 395 XP); H_Undead_03 (APR-only 13 quests / 9 090 XP, Questify-only 4 / 3 400 XP, chapter 12 885 XP); H_01 (APR-only 23 quests / 19 630 XP, Questify-only 2 / 2 920 XP, chapter 46 715 XP); H_02 (APR-only 17 quests / 19 370 XP, Questify-only 9 / 12 435 XP, chapter 38 040 XP); H_03 (APR-only 31 quests / 41 815 XP, Questify-only 5 / 5 190 XP, chapter 41 895 XP); H_04 (APR-only 22 quests / 40 740 XP, Questify-only 5 / 8 050 XP, chapter 49 510 XP); H_07 (APR-only 15 quests / 31 835 XP, Questify-only 1 / 640 XP, chapter 20 250 XP); H_08 (APR-only 6 quests / 9 985 XP, Questify-only 1 / 2 750 XP, chapter 36 365 XP); H_09 (APR-only 13 quests / 20 450 XP, Questify-only 1 / 275 XP, chapter 41 035 XP); H_11 (APR-only 5 quests / 12 150 XP, Questify-only 2 / 2 525 XP, chapter 43 750 XP); H_12 (APR-only 12 quests / 26 420 XP, Questify-only 3 / 5 050 XP, chapter 21 750 XP); H_13 (APR-only 14 quests / 36 495 XP, Questify-only 0 / 0 XP, chapter 61 440 XP); H_14 (APR-only 13 quests / 30 895 XP, Questify-only 2 / 4 560 XP, chapter 34 670 XP); H_15 (APR-only 12 quests / 37 995 XP, Questify-only 1 / 4 850 XP, chapter 29 390 XP); H_16 (APR-only 22 quests / 48 880 XP, Questify-only 3 / 7 050 XP, chapter 44 800 XP); H_18 (APR-only 10 quests / 38 340 XP, Questify-only 5 / 18 120 XP, chapter 64 280 XP); H_21 (APR-only 14 quests / 61 850 XP, Questify-only 2 / 10 800 XP, chapter 53 730 XP); H_25 (APR-only 6 quests / 23 100 XP, Questify-only 0 / 0 XP, chapter 58 860 XP); H_26 (APR-only 21 quests / 86 180 XP, Questify-only 1 / 4 200 XP, chapter 70 890 XP); H_27 (APR-only 5 quests / 23 950 XP, Questify-only 0 / 0 XP, chapter 98 130 XP); H_28 (APR-only 54 quests / 230 835 XP, Questify-only 1 / 580 XP, chapter 96 350 XP); H_29 (APR-only 33 quests / 140 890 XP, Questify-only 19 / 58 640 XP, chapter 226 160 XP); H_30 (APR-only 25 quests / 122 540 XP, Questify-only 2 / 13 200 XP, chapter 91 950 XP)
+- Questify clearly ahead: A_DwarfGnome_04 (APR-only 5 quests / 4 650 XP, Questify-only 11 / 10 500 XP, chapter 22 475 XP); A_Human_03 (APR-only 9 quests / 7 230 XP, Questify-only 11 / 10 600 XP, chapter 19 480 XP); H_05 (APR-only 1 quest / 2 500 XP, Questify-only 11 / 9 025 XP, chapter 34 335 XP); H_06 (APR-only 3 quests / 7 800 XP, Questify-only 8 / 14 035 XP, chapter 33 445 XP)
+- Close: A_DwarfGnome_01 (APR-only 1 quest / 630 XP, Questify-only 0 / 0 XP, chapter 4 255 XP); A_DwarfGnome_02 (APR-only 7 quests / 4 630 XP, Questify-only 6 / 3 805 XP, chapter 22 825 XP); A_DwarfGnome_03 (APR-only 6 quests / 4 180 XP, Questify-only 5 / 3 525 XP, chapter 12 575 XP); A_Human_01 (APR-only 4 quests / 2 160 XP, Questify-only 0 / 0 XP, chapter 4 270 XP); A_Human_02 (APR-only 10 quests / 6 440 XP, Questify-only 6 / 4 115 XP, chapter 24 540 XP); A_NightElf_01 (APR-only 3 quests / 1 665 XP, Questify-only 0 / 0 XP, chapter 4 110 XP); A_NightElf_02 (APR-only 14 quests / 8 680 XP, Questify-only 10 / 6 045 XP, chapter 23 190 XP); A_02 (APR-only 22 quests / 21 305 XP, Questify-only 14 / 16 945 XP, chapter 35 530 XP); A_05 (APR-only 1 quest / 2 500 XP, Questify-only 4 / 3 480 XP, chapter 16 040 XP); A_08 (APR-only 5 quests / 9 080 XP, Questify-only 4 / 9 150 XP, chapter 42 140 XP); A_22 (APR-only 1 quest / 4 400 XP, Questify-only 5 / 4 180 XP, chapter 111 600 XP); H_OrcTroll_01 (APR-only 2 quests / 810 XP, Questify-only 1 / 170 XP, chapter 5 165 XP); H_OrcTroll_02 (APR-only 3 quests / 1 265 XP, Questify-only 2 / 1 540 XP, chapter 27 530 XP); H_Undead_01 (APR-only 2 quests / 1 080 XP, Questify-only 0 / 0 XP, chapter 3 710 XP); H_Undead_02 (APR-only 9 quests / 6 020 XP, Questify-only 7 / 4 400 XP, chapter 24 340 XP); H_Skyborne_01 (APR-only 27 quests / 13 185 XP, Questify-only 18 / 12 950 XP, chapter 47 225 XP); H_10 (APR-only 2 quests / 6 300 XP, Questify-only 0 / 0 XP, chapter 24 575 XP); H_17 (APR-only 4 quests / 12 750 XP, Questify-only 1 / 4 400 XP, chapter 83 250 XP); H_23 (APR-only 0 quests / 0 XP, Questify-only 1 / 780 XP, chapter 24 280 XP); H_24 (APR-only 4 quests / 15 590 XP, Questify-only 6 / 10 605 XP, chapter 78 105 XP)
 - No APR counterpart: A_28
 
-Alliance: 354 distinct APR-only quests over all slices. Why our route builder left them out (its chapter report, `docs/routes/<chapter>.md`): not a candidate of the chapter 175; prerequisite unavailable 48; level band reached 28; manual drop (overrides.lua) 24; objective item source not in zone 19; finisher outside the chapter zones 17; quest level below the band 16; requires a profession 15; exclusive with another quest 2; far 2; objective npc not in zone 2; repeatable 2; dungeon quest not picked up 1; exploration point not in zone 1; low ratio 1; prerequisite dropped 1.
+Alliance: 355 distinct APR-only quests over all slices. Why our route builder left them out (its chapter report, `docs/routes/<chapter>.md`): not a candidate of the chapter 176; prerequisite unavailable 48; level band reached 28; manual drop (overrides.lua) 24; objective item source not in zone 19; finisher outside the chapter zones 17; quest level below the band 16; requires a profession 15; exclusive with another quest 2; far 2; objective npc not in zone 2; repeatable 2; dungeon quest not picked up 1; exploration point not in zone 1; low ratio 1; prerequisite dropped 1.
 
 Horde: 286 distinct APR-only quests over all slices. Why our route builder left them out (its chapter report, `docs/routes/<chapter>.md`): not a candidate of the chapter 119; manual drop (overrides.lua) 42; level band reached 32; objective item source not in zone 19; prerequisite unavailable 19; finisher outside the chapter zones 18; requires a profession 11; prerequisite dropped 6; far 5; low ratio 4; objective npc not in zone 4; required level not reached in time 2; dungeon quest not picked up 1; exclusive with another quest 1; exploration point not in zone 1; not a candidate of the chapter (QuestieDB: blacklisted) 1; repeatable 1.
 
@@ -24,18 +24,18 @@ Matching: APR leveling routes of the same faction, open to a race of the chapter
 | Chapter | Band | APR routes | Quests | Q in matched APR | Q anywhere in APR | APR slice in chapter | APR-only | Q-only | Order: same pairs | Kendall tau | Class quests APR / Q | Hearth use APR / Q | Hearth bind APR / Q |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | A_DwarfGnome_01 | 1-6 | #6 | 15 | 15 (100 %) | 15 (100 %) | 15 / 19 (79 %) | 1 | 0 | 77 % | 0.55 | 0-4 / 0 | 1 / 0 | 0 / 0 |
-| A_DwarfGnome_02 | 6-11 | #6 | 38 | 32 (84 %) | 32 (84 %) | 32 / 46 (70 %) | 8 | 6 | 92 % | 0.84 | 0-5 / 0 | 1 / 0 | 2 / 0 |
-| A_DwarfGnome_03 | 11-13 | #6, #24 | 20 | 8 (40 %) | 15 (75 %) | 8 / 17 (47 %) | 7 | 5 | 73 % | 0.46 | 0-8 / 0 | 0 / 0 | 1-2 / 0 |
-| A_DwarfGnome_04 | 13-16 | #18, #31 | 23 | 9 (39 %) | 13 (57 %) | 9 / 21 (43 %) | 5 | 10 | 78 % | 0.57 | 0-5 / 0 | 0-1 / 0 | 1 / 0 |
+| A_DwarfGnome_02 | 6-11 | #6 | 38 | 32 (84 %) | 32 (84 %) | 32 / 46 (70 %) | 7 | 6 | 92 % | 0.84 | 0-5 / 0 | 1 / 0 | 2 / 0 |
+| A_DwarfGnome_03 | 11-13 | #6, #24 | 19 | 9 (47 %) | 14 (74 %) | 9 / 17 (53 %) | 6 | 5 | 77 % | 0.54 | 0-8 / 0 | 0 / 1 | 1-2 / 1 |
+| A_DwarfGnome_04 | 13-16 | #18, #31 | 24 | 9 (38 %) | 13 (54 %) | 9 / 21 (43 %) | 5 | 11 | 83 % | 0.66 | 0-5 / 0 | 0-1 / 0 | 1 / 0 |
 | A_Human_01 | 1-6 | #1 | 21 | 21 (100 %) | 21 (100 %) | 19 / 27 (70 %) | 4 | 0 | 90 % | 0.79 | 0-4 / 0 | 0 / 0 | 0 / 0 |
 | A_Human_02 | 6-11 | #1 | 45 | 36 (80 %) | 39 (87 %) | 33 / 52 (63 %) | 10 | 6 | 79 % | 0.57 | 0-6 / 0 | 1 / 0 | 1-2 / 0 |
 | A_Human_03 | 11-16 | #1, #31 | 22 | 11 (50 %) | 11 (50 %) | 11 / 36 (31 %) | 9 | 11 | 63 % | 0.25 | 0-8 / 0 | 0 / 0 | 1-2 / 0 |
 | A_NightElf_01 | 1-6 | #2 | 17 | 17 (100 %) | 17 (100 %) | 17 / 25 (68 %) | 3 | 0 | 79 % | 0.59 | 0-4 / 0 | 0 / 0 | 0-1 / 0 |
 | A_NightElf_02 | 6-11 | #2 | 38 | 28 (74 %) | 28 (74 %) | 28 / 45 (62 %) | 14 | 10 | 82 % | 0.63 | 0-6 / 0 | 0-1 / 0 | 0-1 / 0 |
-| A_NightElf_03 | 11-20 | #32, #45, #49 | 61 | 55 (90 %) | 55 (90 %) | 54 / 92 (59 %) | 16 | 6 | 83 % | 0.65 | 0-7 / 0 | 1-5 / 3 | 2-4 / 1 |
+| A_NightElf_03 | 11-20 | #32, #45, #49 | 61 | 55 (90 %) | 55 (90 %) | 54 / 92 (59 %) | 17 | 6 | 83 % | 0.65 | 0-7 / 0 | 1-5 / 3 | 2-4 / 1 |
 | A_Skyborne_01 | 1-15 | #4 | 73 | 67 (92 %) | 67 (92 %) | 67 / 92 (73 %) | 25 | 6 | 82 % | 0.63 | 0-5 / 0 | 1-3 / 0 | 2 / 0 |
 | A_01 | 16-19 | #32, #45, #49 | 42 | 36 (86 %) | 37 (88 %) | 35 / 76 (46 %) | 10 | 5 | 81 % | 0.61 | 0-6 / 0 | 2-5 / 2 | 1-3 / 1 |
-| A_02 | 20-22 | #32, #45, #49 | 29 | 15 (52 %) | 15 (52 %) | 15 / 86 (17 %) | 21 | 14 | 81 % | 0.61 | 0-7 / 0 | 3-6 / 1 | 1-3 / 0 |
+| A_02 | 20-22 | #32, #45, #49 | 29 | 15 (52 %) | 15 (52 %) | 15 / 86 (17 %) | 22 | 14 | 81 % | 0.61 | 0-7 / 0 | 3-6 / 1 | 1-3 / 0 |
 | A_03 | 22-26 | #43, #57 | 50 | 43 (86 %) | 46 (92 %) | 43 / 80 (54 %) | 26 | 4 | 69 % | 0.38 | 0-10 / 0 | 2-3 / 1 | 1-3 / 1 |
 | A_04 | 26-29 | #52, #61 | 21 | 7 (33 %) | 8 (38 %) | 7 / 33 (21 %) | 25 | 13 | 47 % | -0.06 | 0-1 / 0 | 2 / 0 | 1 / 1 |
 | A_05 | 29-30 | #68 | 11 | 7 (64 %) | 7 (64 %) | 7 / 8 (88 %) | 1 | 4 | 88 % | 0.75 | 0 / 0 | 0 / 1 | 1 / 0 |
@@ -144,11 +144,11 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
   - Absent from APR (Questify-only): 415, 95212, 98326, 99159, 99160, 99161 (3 805 XP)
   - In another APR route: none
 - APR -> Questify (slice): 32 of 46 general quests in this chapter (70 %).
-  - In another Questify chapter: 224, 420, 2160, 6387, 6388, 6391
-  - In no Questify chapter (APR-only): 267, 308, 384, 400, 412, 416, 418, 98321 (5 510 XP)
+  - In another Questify chapter: 224, 416, 420, 2160, 6387, 6388, 6391
+  - In no Questify chapter (APR-only): 267, 308, 384, 400, 412, 418, 98321 (4 630 XP)
   - Left out, quest level above 13 (band + 2): 307, 1338, 1339
     - level band reached: 384, 400, 412, 98321
-    - not a candidate of the chapter: 267, 416, 418
+    - not a candidate of the chapter: 267, 418
     - repeatable: 308
 - Order: 80 shared events, 2909 of 3160 pairs in the same order (92 %), Kendall tau 0.84.
   Most costly inversions (each event once; gap = distance in ranks among the shared events):
@@ -173,26 +173,26 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
 
 ### A_DwarfGnome_03 — Loch Modan (11-13)
 
-- Races: Dwarf, Gnome. APR routes: #6 (Dun Morogh (1426), 1-11): 8 shared of 95; #24 (Loch Modan (1432), 12-14): 3 shared of 26. Slice: 205 of 567 steps.
-- Questify -> APR: 8 of 20 general quests in the matched routes (40 %), 15 anywhere in APR (75 %).
+- Races: Dwarf, Gnome. APR routes: #6 (Dun Morogh (1426), 1-11): 9 shared of 95; #24 (Loch Modan (1432), 12-14): 4 shared of 26. Slice: 205 of 567 steps.
+- Questify -> APR: 9 of 19 general quests in the matched routes (47 %), 14 anywhere in APR (74 %).
   - Absent from APR (Questify-only): 237, 263, 273, 309, 454 (3 525 XP)
-  - In another APR route: 257, 298, 301, 302, 385, 2039, 86758
-- APR -> Questify (slice): 8 of 17 general quests in this chapter (47 %).
+  - In another APR route: 298, 301, 302, 2039, 86758
+- APR -> Questify (slice): 9 of 17 general quests in this chapter (53 %).
   - In another Questify chapter: 291, 414
-  - In no Questify chapter (APR-only): 267, 353, 416, 418, 6661, 6662, 86667 (5 060 XP)
-    - level band reached: 267, 416, 418
+  - In no Questify chapter (APR-only): 267, 353, 418, 6661, 6662, 86667 (4 180 XP)
+    - level band reached: 267, 418
     - not a candidate of the chapter: 353, 6661, 6662
     - objective item source not in zone: 86667
-- Order: 18 shared events, 112 of 153 pairs in the same order (73 %), Kendall tau 0.46.
+- Order: 21 shared events, 162 of 210 pairs in the same order (77 %), Kendall tau 0.54.
   Most costly inversions (each event once; gap = distance in ranks among the shared events):
 
   | Questify does first | then | Questify gap | APR does them the other way, gap |
   |---|---|---|---|
-  | accept 6388 | accept 224 | 9 | 9 |
-  | turnin 6391 | turnin 1339 | 5 | 5 |
-  | turnin 6388 | accept 1338 | 4 | 6 |
-  | turnin 307 | turnin 1338 | 5 | 3 |
-  | accept 6391 | accept 307 | 5 | 2 |
+  | complete 307 | accept 224 | 9 | 15 |
+  | turnin 416 | turnin 1338 | 5 | 5 |
+  | complete 416 | accept 6392 | 5 | 4 |
+  | turnin 307 | turnin 6388 | 3 | 6 |
+  | accept 6391 | accept 1338 | 3 | 3 |
 
 - Class quests:
 
@@ -205,13 +205,13 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
   | SHAMAN | 5 | 0 | 0 | 5 | none |
   | WARLOCK | 1 | 0 | 0 | 1 | none |
 
-- Hearthstone: APR uses it 0 times (WARRIOR 0, PALADIN 0, HUNTER 0, ROGUE 0, PRIEST 0, SHAMAN 0, MAGE 0, WARLOCK 0, DRUID 0; 0 "if ready" steps open to all) and binds it 1-2 times (maps Loch Modan (1432), Ironforge (1455)); Questify uses it 0 times and binds it 0 times (maps none).
+- Hearthstone: APR uses it 0 times (WARRIOR 0, PALADIN 0, HUNTER 0, ROGUE 0, PRIEST 0, SHAMAN 0, MAGE 0, WARLOCK 0, DRUID 0; 0 "if ready" steps open to all) and binds it 1-2 times (maps Loch Modan (1432), Ironforge (1455)); Questify uses it 1 times and binds it 1 times (maps Loch Modan (1432)).
 
 ### A_DwarfGnome_04 — Westfall (13-16)
 
 - Races: Dwarf, Gnome. APR routes: #18 (Elwynn Forest (1429), 11-12): 7 shared of 28; #31 (Westfall (1436), 13-15): 8 shared of 17. Slice: 112 of 178 steps.
-- Questify -> APR: 9 of 23 general quests in the matched routes (39 %), 13 anywhere in APR (57 %).
-  - Absent from APR (Questify-only): 13, 14, 136, 138, 139, 140, 79192, 92745, 92747, 92748 (9 050 XP)
+- Questify -> APR: 9 of 24 general quests in the matched routes (38 %), 13 anywhere in APR (54 %).
+  - Absent from APR (Questify-only): 13, 14, 136, 138, 139, 140, 152, 79192, 92745, 92747, 92748 (10 500 XP)
   - In another APR route: 103, 167, 168, 2040
 - APR -> Questify (slice): 9 of 21 general quests in this chapter (43 %).
   - In another Questify chapter: 22, 36, 39, 88, 184, 91733, 91740
@@ -219,16 +219,16 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
     - finisher outside the chapter zones: 65
     - level band reached: 38, 92909
     - not a candidate of the chapter: 244, 399
-- Order: 24 shared events, 216 of 276 pairs in the same order (78 %), Kendall tau 0.57.
+- Order: 24 shared events, 229 of 276 pairs in the same order (83 %), Kendall tau 0.66.
   Most costly inversions (each event once; gap = distance in ranks among the shared events):
 
   | Questify does first | then | Questify gap | APR does them the other way, gap |
   |---|---|---|---|
-  | complete 151 | turnin 109 | 6 | 9 |
-  | turnin 12 | turnin 64 | 7 | 6 |
-  | turnin 153 | turnin 151 | 5 | 6 |
-  | accept 12 | accept 109 | 5 | 5 |
-  | accept 153 | accept 9 | 4 | 4 |
+  | complete 153 | complete 64 | 8 | 8 |
+  | turnin 92742 | turnin 64 | 7 | 8 |
+  | turnin 92744 | turnin 151 | 5 | 8 |
+  | complete 12 | turnin 9 | 8 | 2 |
+  | accept 151 | accept 109 | 2 | 2 |
 
 - Class quests:
 
@@ -420,13 +420,13 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
   - Absent from APR (Questify-only): 990, 1275, 5713, 87760, 98013, 98028 (6 545 XP)
   - In another APR route: none
 - APR -> Questify (slice): 54 of 92 general quests in this chapter (59 %).
-  - In another Questify chapter: 224, 257, 298, 301, 307, 314, 385, 991, 1007, 1008, 1010, 1020, 1023, 1033, 1070, 1134, 1338, 1339, 2039, 6342, 86758, 97914
-  - In no Questify chapter (APR-only): 267, 416, 418, 436, 730, 952, 968, 970, 995, 1056, 1141, 2178, 5321, 86614, 95065, 97926 (14 810 XP)
+  - In another Questify chapter: 224, 298, 301, 307, 314, 416, 991, 1007, 1008, 1010, 1020, 1023, 1033, 1070, 1134, 1338, 1339, 2039, 6342, 86758, 97914
+  - In no Questify chapter (APR-only): 257, 267, 385, 418, 436, 730, 952, 968, 970, 995, 1056, 1141, 2178, 5321, 86614, 95065, 97926 (15 860 XP)
   - Left out, quest level above 22 (band + 2): 973, 1009, 1025, 1034, 1054, 3765
     - exclusive with another quest: 995
     - exploration point not in zone: 5321
     - finisher outside the chapter zones: 968
-    - not a candidate of the chapter: 267, 416, 418, 436, 730, 952, 970, 1056, 86614, 95065, 97926
+    - not a candidate of the chapter: 257, 267, 385, 418, 436, 730, 952, 970, 1056, 86614, 95065, 97926
     - objective item source not in zone: 1141
     - requires a profession: 2178
 - Order: 140 shared events, 8030 of 9730 pairs in the same order (83 %), Kendall tau 0.65.
@@ -532,13 +532,13 @@ Quests: general quests of the chapter. Class quests, hearth use and hearth bind 
   - Absent from APR (Questify-only): 990, 1090, 1092, 5713, 78124, 78132, 78133, 78134, 78149, 78270, 79192, 79974, 79980, 86574 (16 945 XP)
   - In another APR route: none
 - APR -> Questify (slice): 15 of 86 general quests in this chapter (17 %).
-  - In another Questify chapter: 224, 257, 298, 301, 307, 314, 385, 729, 731, 944, 947, 948, 949, 950, 951, 957, 963, 965, 966, 982, 986, 993, 1002, 1003, 1007, 1033, 1034, 1138, 1338, 1339, 2039, 2078, 2098, 2138, 2139, 4723, 4725, 4727, 4728, 4730, 4731, 4732, 4733, 4740, 4762, 4763, 4812, 4813, 86758, 98042
-  - In no Questify chapter (APR-only): 267, 416, 418, 436, 730, 741, 942, 952, 968, 970, 973, 995, 1016, 1056, 1072, 2178, 3765, 5321, 86614, 95065, 97926 (19 550 XP)
+  - In another Questify chapter: 224, 298, 301, 307, 314, 416, 729, 731, 944, 947, 948, 949, 950, 951, 957, 963, 965, 966, 982, 986, 993, 1002, 1003, 1007, 1033, 1034, 1138, 1338, 1339, 2039, 2078, 2098, 2138, 2139, 4723, 4725, 4727, 4728, 4730, 4731, 4732, 4733, 4740, 4762, 4763, 4812, 4813, 86758, 98042
+  - In no Questify chapter (APR-only): 257, 267, 385, 418, 436, 730, 741, 942, 952, 968, 970, 973, 995, 1016, 1056, 1072, 2178, 3765, 5321, 86614, 95065, 97926 (21 305 XP)
   - Left out, quest level above 24 (band + 2): 1009, 1054
     - finisher outside the chapter zones: 1072
     - level band reached: 970, 973
     - manual drop (overrides.lua): 1056
-    - not a candidate of the chapter: 267, 416, 418, 436, 730, 741, 942, 952, 968, 995, 2178, 3765, 5321, 86614, 95065, 97926
+    - not a candidate of the chapter: 257, 267, 385, 418, 436, 730, 741, 942, 952, 968, 995, 2178, 3765, 5321, 86614, 95065, 97926
     - objective item source not in zone: 1016
 - Order: 33 shared events, 426 of 528 pairs in the same order (81 %), Kendall tau 0.61.
   Most costly inversions (each event once; gap = distance in ranks among the shared events):
@@ -2408,7 +2408,7 @@ APR steps of leveling routes with a note about a cave (cave, mine, tunnel, crypt
 | Searing Gorge (1427) | 6 | 0 | 8 | none | none | 7722 | 0 |
 | Elwynn Forest (1429) | 9 | 10 | 35 | 21, 62, 76, 91743 | 60, 69, 70 | 70, 75, 3905 | 1 |
 | Duskwood (1431) | 7 | 25 | 2 | 134, 181 | 66, 78, 79, 101, 148, 149, 154, 160, 163, 164, 165, 175, 177, 223, 251, 253 | none | 0 |
-| Loch Modan (1432) | 9 | 30 | 10 | 307 | 298, 301, 302, 6387, 6392 | none | 0 |
+| Loch Modan (1432) | 9 | 30 | 10 | 307, 416 | 298, 301, 302, 6387, 6392 | none | 0 |
 | Redridge Mountains (1433) | 1 | 13 | 2 | none | 91 | none | 0 |
 | Stranglethorn Vale (1434) | 2 | 2 | 5 | none | 202, 608 | 200, 328 | 0 |
 | Westfall (1436) | 0 | 6 | 2 | none | 67, 68 | none | 0 |
@@ -2476,7 +2476,7 @@ General leveling routes (open to at least 4 classes) that no chapter of the fact
 | APR route | Quests | Done by a Questify chapter |
 |---|---|---|
 | #14 (Zephras Isle (2521), 10-13) | 4 | 0 |
-| #16 (Loch Modan (1432), 11-13) | 17 | 4 |
+| #16 (Loch Modan (1432), 11-13) | 17 | 5 |
 | #55 (Wetlands (1437), 23-24) | 12 | 2 |
 | #86 (Desolace (1443), 40-41) | 16 | 3 |
 | #107 (Western Plaguelands (1422), 51-52) | 35 | 8 |

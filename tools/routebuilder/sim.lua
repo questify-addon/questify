@@ -66,6 +66,13 @@ sim.CONST = {
   ELITE_CAMP = 2,         -- élites dans le rayon pour un camp ; un élite seul ne compte que s'il est la cible
   ELITE_ABOVE = 2,        -- un élite compte comme un monstre 2 niveaux plus haut
   ELITE_IGNORE_ABOVE = 10,
+  -- Objets gardés : ramasser un objet du monde au milieu de monstres hostiles (non élites, à CLEAR_RADIUS yards ou
+  -- moins d'un des objets pris) fait tuer au plus CLEAR_PER_OBJECT de ces monstres par objet. Au choix des quêtes, une
+  -- quête de butin ou de massacre sur les mêmes monstres au même endroit (SWEEP_AREA) en tient compte : ces combats
+  -- sont faits de toute façon (Miners' Gear de Filthy Paws et Tunnel Rat Ears de Rat Catching, mine de Silver Stream).
+  -- Le temps simulé des deux quêtes reste compté en entier (prudent).
+  CLEAR_RADIUS = 15,
+  CLEAR_PER_OBJECT = 2,
   -- Niveau minimal d'un objectif (limite de danger) : monstres (niveau moyen) au plus DANGER_MOB_ABOVE au-dessus du
   -- personnage (orange au-delà), quête au plus DANGER_QUEST_ABOVE au-dessus, élite (+ ELITE_ABOVE) au plus
   -- DANGER_MOB_ABOVE. Au-dessous, l'objectif n'est jamais fait : farm jusqu'à SAFE_GATE_GRIND mobs, sinon reporté
@@ -190,6 +197,8 @@ local function makeCtx(D, W, plan, state, opts)
   ctx.logCap = ctx.opts.logCap or plan.logCap or C.LOG_CAP
   -- cartes des chapitres suivants du parcours (build.lua) : rendus reportés possibles
   if ctx.opts.carryZones then ctx.carrySet = asSet(ctx.opts.carryZones) end
+  -- monstres hostiles ordinaires des cartes du chapitre (gardes des objets du monde)
+  ctx.guards = {}
   -- élites hostiles des cartes du chapitre (danger des sites d'objectif)
   ctx.elites = {}
   local ceiling = plan.maxLevel + (ctx.opts.levelHigh or 0) + C.ELITE_IGNORE_ABOVE
@@ -205,10 +214,53 @@ local function makeCtx(D, W, plan, state, opts)
           end
         end
       end
+    elseif (n.rank or 0) == 0 and hostile and (n.npcFlags or 0) == 0 and (n.minLevel or 0) > 0
+           and n.maxLevel <= ceiling then
+      for m, list in pairs(n.spawns or {}) do
+        if ctx.zoneSet[m] then
+          for _, p in ipairs(list) do
+            local pos = mkPos(W, m, p[1], p[2])
+            if pos then
+              pos.level, pos.npc = math.floor((n.minLevel + n.maxLevel) / 2), id
+              ctx.guards[#ctx.guards + 1] = pos
+            end
+          end
+        end
+      end
     end
   end
   return ctx
 end
+
+-- Gardes à tuer pour ramasser n objets parmi pts (les plus proches de pos) : { level, n, clear = { [npcId] = n } } ou nil.
+local function guardsOf(ctx, pts, pos, n)
+  if not pts or #pts == 0 or n <= 0 then return nil end
+  local sorted = {}
+  for _, p in ipairs(pts) do sorted[#sorted + 1] = p end
+  table.sort(sorted, function(a, b) return yards(a, pos) < yards(b, pos) end)
+  local found, seen = {}, {}
+  for k = 1, math.min(n, #sorted) do
+    local o = sorted[k]
+    for gi, g in ipairs(ctx.guards or {}) do
+      if not seen[gi] and g.c == o.c and math.abs(g.wx - o.wx) <= C.CLEAR_RADIUS and math.abs(g.wy - o.wy) <= C.CLEAR_RADIUS
+         and yards(g, o) <= C.CLEAR_RADIUS then
+        seen[gi] = true
+        found[#found + 1] = { g = g, d = yards(g, o) }
+      end
+    end
+  end
+  if #found == 0 then return nil end
+  table.sort(found, function(a, b) if a.d ~= b.d then return a.d < b.d end return a.g.npc < b.g.npc end)
+  local count = math.min(#found, n * C.CLEAR_PER_OBJECT)
+  local clear, levelSum = {}, 0
+  for k = 1, count do
+    local g = found[k].g
+    clear[g.npc] = (clear[g.npc] or 0) + 1
+    levelSum = levelSum + g.level
+  end
+  return { level = math.floor(levelSum / count), n = count, clear = clear }
+end
+sim.guardsOf = guardsOf
 
 -- Niveau de l'élite hostile le plus haut près d'une position (rayon ELITE_RADIUS + étalement), ou nil : un camp
 -- (au moins ELITE_CAMP apparitions d'élites dans le rayon) ou un élite cible de l'objectif (targets = { [npcId] = true }).
@@ -476,13 +528,18 @@ local function objectiveSite(ctx, q, o, count, ref, warnings, nearRef)
     end
     local single = (totalSpawns(D, "npc", ids[1]) <= 3) or ((D.npcs[ids[1]] or {}).rank or 0) >= 1
     local n = count or (single and 1 or C.DEFAULT_KILLS)
+    local mobs = {}
+    for _, id in ipairs(ids) do mobs[id] = true end
     return { pos = pos, dur = n * C.KILL_TIME, kills = { { npcLevel(D, ids[1]), n } }, objs = { o }, spread = spread,
-             single = single or nil }
+             single = single or nil, mobs = mobs, mobKills = n }
   elseif o.kind == "object" then
     local pos, spread, pts = bestCluster(ctx, pointsOf(ctx, "object", o.id), ref, nearRef)
     if not pos then return nil, "objective object not in zone" end
     local n = count or math.min(C.DEFAULT_OBJECTS, #pts)
-    return { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local site = { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local gd = guardsOf(ctx, pts, pos, n)
+    if gd then site.clear = gd.clear end
+    return site
   elseif o.kind == "item" then
     local it = D.items[o.id]
     if not it then return nil, "objective item unknown" end
@@ -520,11 +577,18 @@ local function objectiveSite(ctx, q, o, count, ref, warnings, nearRef)
       local single = uniqueMob and (totalSpawns(D, "npc", uniqueMob) <= 3 or ((D.npcs[uniqueMob] or {}).rank or 0) >= 1)
       local n = count or (single and 1 or C.DEFAULT_ITEMS)
       local kills = single and n or math.ceil(n / rate)
+      local mobs = {}
+      for _, p in ipairs(chosen) do if p.npc then mobs[p.npc] = true end end
       return { pos = pos, dur = kills * C.KILL_TIME, kills = { { math.floor(mobLevelSum / nMob), kills } },
-               objs = { o }, spread = spread, rate = rate, single = single or nil }
+               objs = { o }, spread = spread, rate = rate, single = single or nil, mobs = mobs, mobKills = kills }
     end
     local n = count or (nObj <= 2 and 1 or C.DEFAULT_ITEMS)
-    return { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local objPts = {}
+    for _, p in ipairs(chosen) do if p.obj then objPts[#objPts + 1] = p end end
+    local site = { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local gd = guardsOf(ctx, objPts, pos, n)
+    if gd then site.clear = gd.clear end
+    return site
   elseif o.kind == "event" then
     local te = q.triggerEnd
     local pts = {}
@@ -756,13 +820,19 @@ local function analyse(ctx, q)
         g.dur = g.dur + s.dur + yards(g.pos, s.pos) / C.WALK
         for _, k in ipairs(s.kills) do g.kills[#g.kills + 1] = k end
         for _, o in ipairs(s.objs) do g.objs[#g.objs + 1] = o end
+        for id, c in pairs(s.clear or {}) do g.clear = g.clear or {}; g.clear[id] = (g.clear[id] or 0) + c end
+        for id in pairs(s.mobs or {}) do g.mobs = g.mobs or {}; g.mobs[id] = true end
+        if s.mobKills then g.mobKills = (g.mobKills or 0) + s.mobKills end
         merged = true
         break
       end
     end
     if not merged then
-      groups[#groups + 1] = { pos = s.pos, dur = s.dur, kills = { unpack(s.kills) }, objs = { unpack(s.objs) },
-                              spread = s.spread or 0 }
+      local g = { pos = s.pos, dur = s.dur, kills = { unpack(s.kills) }, objs = { unpack(s.objs) }, spread = s.spread or 0,
+                  mobKills = s.mobKills }
+      for id, c in pairs(s.clear or {}) do g.clear = g.clear or {}; g.clear[id] = c end
+      for id in pairs(s.mobs or {}) do g.mobs = g.mobs or {}; g.mobs[id] = true end
+      groups[#groups + 1] = g
     end
   end
   for _, g in ipairs(groups) do
@@ -1070,6 +1140,26 @@ function sim.chapter(D, W, plan, state, opts)
       end
     end
   end
+  -- combats des objets gardés (quêtes au rendement isolé >= médiane), partagés avec les quêtes de butin ou de
+  -- massacre sur les mêmes monstres au même endroit
+  local clearAnchors = {}
+  for k, info in ipairs(live) do
+    if raw[k] >= baseRate then
+      for _, s in ipairs(info.sites or {}) do
+        if s.clear then clearAnchors[#clearAnchors + 1] = { pos = s.pos, q = info.q.id, clear = s.clear } end
+      end
+    end
+  end
+  local function sharedKills(info, s)
+    if not (s.mobs and s.mobKills and s.mobKills > 0) then return 0 end
+    local avail = 0
+    for _, a in ipairs(clearAnchors) do
+      if a.q ~= info.q.id and yards(a.pos, s.pos) <= C.SWEEP_AREA then
+        for id in pairs(s.mobs) do avail = avail + (a.clear[id] or 0) end
+      end
+    end
+    return math.min(avail, s.mobKills)
+  end
   for _, info in ipairs(live) do
     local function detour(p)
       local best = math.huge
@@ -1084,7 +1174,9 @@ function sim.chapter(D, W, plan, state, opts)
     local m = 2 * C.QUEST_ACTION
     if info.itemStart then m = m + (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME end
     m = m + detour(info.A)
-    for _, s in ipairs(info.sites or {}) do m = m + s.dur + detour(s.pos) end
+    for _, s in ipairs(info.sites or {}) do
+      m = m + math.max(C.QUEST_ACTION, s.dur - sharedKills(info, s) * C.KILL_TIME) + detour(s.pos)
+    end
     if info.T and not info.exit then m = m + detour(info.T) end
     info.isolatedTime = info.time
     info.marginalTime = math.min(m, info.time)

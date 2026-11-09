@@ -721,6 +721,23 @@ levels too low or inside elite camps; the simulator kills every mob in 20 s what
 optimistic. Biggest changes: A_04 (Wetlands: Dragonmaw and Dark Iron elites of Forever around most objectives, 284
 mobs of grinding), H_03, A_02 and the 30-60 trunk.
 
+### Guarded objects and shared kills (2026-11-09, player feedback)
+
+The same player was sent into the kobold mine of Silver Stream (Loch Modan) for the Miners' Gear of Filthy Paws (307)
+while Rat Catching (416: Tunnel Rat Ears from the same kobolds) was left out ("level band reached"): the simulator
+counted 6 s per object and no fight, so the ears quest looked like it cost all its kills.
+
+- `sim.guardsOf`: for an object objective (or an item looted from objects), the hostile non-elite mobs within
+  `CLEAR_RADIUS` (15 yd) of the objects taken, at most `CLEAR_PER_OBJECT` (2) per object, nearest first, are its
+  guards (`site.clear = { [npcId] = n }`).
+- At selection, the marginal time of a drop or kill objective is reduced by the guards of the same mobs at
+  `SWEEP_AREA` or less in the object sites of quests whose isolated ratio is at least the median (they are killed
+  anyway). Rat Catching goes from 4.61 to 7.11 XP/s marginal.
+- The walk still counts both quests in full (the object time has no fight in it): measured on all paths, adding the
+  guards' fights to the object quests changed every route (+30 to +80 min, objects among mobs drop out of the budget)
+  and was not kept.
+- A_DwarfGnome_03 forces Rat Catching: done right after Filthy Paws in the mine. Dwarf / Gnome +10 min.
+
 ## Bag quests (`bagquests.lua`, 2026-11-08)
 
 `build.lua` writes `Questify/Guides/BagQuestData.lua` after `ClassQuestData.lua` (both listed last in `Guides.xml`):

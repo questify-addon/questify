@@ -182,10 +182,10 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 92643 | The Turncoat | 11 | 770 | 0 | 189 | 49 | 21.38 | 46.75 | 1 |  |
 | 92644 | Unfortunate News | 11 | 660 | 0 | 147 | 10 | 31.08 | 54.87 | 0 |  |
 | 92645 | Breaking the Breaker | 11 | 770 | 0 | 86 | 20 | 16.38 | 47.31 | 1 |  |
-| 92679 | Blood Tithe | 9 | 780 | 0 | 430 | 61 | 4.41 | 7.12 | 2 |  |
+| 92679 | Blood Tithe | 9 | 780 | 0 | 430 | 61 | 4.41 | 7.21 | 2 |  |
 | 92682 | Make Yourself Useful | 9 | 1115 | 0 | 280 | 277 | 4.66 | 5.54 | 1 |  |
 | 92683 | Flutterfly Dust | 9 | 780 | 0 | 136 | 80 | 5.27 | 7.49 | 1 |  |
-| 92684 | Ornery Ornery Galestriders | 9 | 1718 | 0 | 354 | 290 | 4.99 | 6.43 | 1 |  |
+| 92684 | Ornery Ornery Galestriders | 9 | 1718 | 0 | 354 | 270 | 4.99 | 6.65 | 1 |  |
 | 92685 | The Hills Have Eyes | 9 | 1718 | 0 | 360 | 298 | 5.12 | 6.91 | 1 |  |
 | 92693 | Standing Our Ground | 9 | 1316 | 0 | 223 | 180 | 5.68 | 9.40 | 2 |  |
 | 92698 | What Is My Purpose? | 9 | 780 | 0 | 62 | 10 | 12.54 | 78.00 | 0 |  |
