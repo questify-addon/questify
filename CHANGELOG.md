@@ -1,13 +1,14 @@
 # Changelog
 
-## 0.5.0 (à paraître)
+## 0.5.0 (2026-11-09)
 
 ### English
 
 **Routes on QuestieDB v1.0.12**
 - Every route rebuilt on QuestieDB v1.0.12 (moved NPC and object spawns, Frostmane Hold exploration point, Ruins of
-  Lordaeron quests). Simulated 1-60: Human 5 186 min, Dwarf/Gnome 5 241, Night Elf 5 188, Skyborne Alliance 5 127
-  (14 to 32 min faster), Orc/Troll 5 134, Tauren 5 130, Undead 5 172, Skyborne Horde 5 159.
+  Lordaeron quests).
+- Simulated 1-60 with every change of this version: Human 5 639 min (about 94 h), Dwarf/Gnome 5 614, Night Elf
+  5 641, Skyborne Alliance 5 560, Orc/Troll 5 703, Tauren 5 705, Undead 5 756, Skyborne Horde 5 731.
 - Durotar no longer ends with a grind (59 mobs before the fix), Silverpine keeps its higher quests instead of a
   grind, and Egg Hunt is back in the Southern Barrens.
 - Dungeons window: Ruins of Lordaeron quests need level 15 and follow their chain.
@@ -72,9 +73,10 @@
 
 **Routes sur QuestieDB v1.0.12**
 - Toutes les routes refaites sur QuestieDB v1.0.12 (PNJ et objets déplacés, point d'exploration de Frostmane Hold,
-  quêtes des Ruines de Lordaeron). 1-60 simulé : Humain 5 186 min, Nain/Gnome 5 241, Elfe de la nuit 5 188,
-  Skyborne Alliance 5 127 (14 à 32 min plus rapide), Orc/Troll 5 134, Tauren 5 130, Mort-vivant 5 172, Skyborne
-  Horde 5 159.
+  quêtes des Ruines de Lordaeron).
+- 1-60 simulé avec tous les changements de cette version : Humain 5 639 min (environ 94 h), Nain/Gnome 5 614, Elfe
+  de la nuit 5 641, Skyborne Alliance 5 560, Orc/Troll 5 703, Tauren 5 705, Mort-vivant 5 756, Skyborne Horde
+  5 731.
 - Durotar ne finit plus par du farm (59 mobs sans la correction), la Forêt des Pins-Argentés garde ses quêtes
   plus hautes au lieu de farmer, et Egg Hunt revient dans le sud des Tarides.
 - Fenêtre des donjons : les quêtes des Ruines de Lordaeron demandent le niveau 15 et suivent leur chaîne.

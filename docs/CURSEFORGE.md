@@ -68,7 +68,7 @@ always shows you the next thing to do.
 ## What Questify does
 - **Optimised 1-60 routes.** Every chapter is built from QuestieDB and measured with a route simulator: all of a
   hub's quests picked up at once, one pass per objective area, grouped turn-ins, smart hearthstone use, minimal
-  grinding, one continent at a time. About 85 to 88 hours of simulated play from 1 to 60, depending on your race.
+  grinding, one continent at a time. About 93 to 96 hours of simulated play from 1 to 60, depending on your race.
 - **Follows your quest log.** Steps tick themselves; steps your character cannot do are skipped.
   `/qf skip` and `/qf back` when you want to go your own way.
 - **Navigation your way.** Native 3D waypoint, or ShortestPath Forever, WaypointUI or TomTom. Flight paths, boats
@@ -77,12 +77,13 @@ always shows you the next thing to do.
 - **Zone mode and mob targeting.** When several quests share an area, their objectives are grouped into one
   visit; the monsters to kill are listed under the objective, and one click (or a key) targets them and marks
   them with a skull.
-- **Class quests and dungeons.** Class quests up to level 60, overdue ones first in the journal with a one-click
-  "Add to route"; 22 dungeons from Ragefire Chasm to Stratholme suggested for your level and faction, with the
-  quests to pick up in town before you go.
+- **Class quests and dungeons.** Class quests up to level 60: the ones along your route are steps of the route, the
+  others are in the journal with a one-click "Add to route". Dungeon quests are picked up along the way; 22 dungeons
+  from Ragefire Chasm to Stratholme are suggested for your level and faction, and one click adds every quest to pick
+  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route.
 - **Comfort.** Optional auto accept, turn-in and reward choice (following a loot profile: Elemental, Healer,
-  Tank…), gear upgrades announced and equipped in one click, junk sold, quest item button, profession training
-  reminders.
+  Tank…), gear upgrades announced and equipped in one click, junk sold, quest item button (also for an item that
+  starts a quest, with an alert when you loot it), profession training reminders.
 - **Your style.** Four tracker themes, adjustable transparency, shareable option profiles, a first-run wizard,
   English and French.
 
@@ -111,7 +112,7 @@ t'indique toujours quoi faire ensuite.
 ## Ce que fait Questify
 - **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB et mesuré au simulateur ; toutes
   les quêtes d'un avant-poste prises d'un coup, un seul passage par zone d'objectifs, rendus groupés, pierre de
-  foyer bien utilisée, farm minimal, un continent à la fois. Environ 85 à 88 h de jeu simulé de 1 à 60 selon la
+  foyer bien utilisée, farm minimal, un continent à la fois. Environ 93 à 96 h de jeu simulé de 1 à 60 selon la
   race.
 - **Suit ton journal** : les étapes se cochent seules ; celles que ton personnage ne peut pas faire sont sautées.
   `/qf skip` et `/qf back` quand tu veux faire à ta façon.
@@ -120,12 +121,15 @@ t'indique toujours quoi faire ensuite.
   épinglées sur la carte du monde et la minicarte.
 - **Mode zone et ciblage** : quand plusieurs quêtes partagent un endroit, leurs objectifs sont regroupés en une
   visite ; les monstres à tuer sont listés sous l'objectif, un clic (ou une touche) les cible et pose le crâne.
-- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60, celles en retard en tête du journal avec
-  « Ajouter à la route » en un clic ; 22 donjons, du Gouffre de Ragefeu à Stratholme, conseillés selon ton niveau
-  et ta faction, avec les quêtes à prendre en ville avant d'y aller.
+- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de
+  la route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent
+  en chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un
+  clic ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta
+  route.
 - **Confort** : acceptation, rendu et choix de la récompense automatiques et désactivables (selon un profil de
   butin : Élémentaire, Soigneur, Tank…), améliorations d'équipement annoncées et équipées en un clic, camelote
-  vendue, bouton d'objet de quête, rappels de métiers.
+  vendue, bouton d'objet de quête (aussi pour un objet qui lance une quête, avec une alerte quand tu le ramasses),
+  rappels de métiers.
 - **À ton goût** : quatre thèmes du suivi, transparence réglable, profils d'options partageables, assistant de
   premier démarrage, anglais et français.
 
