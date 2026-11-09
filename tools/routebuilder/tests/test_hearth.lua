@@ -97,8 +97,12 @@ return {
       for _, l in ipairs(report.legs) do
         if l.kind == "O" and l.q == 107 then return l.task.reqLevel or 0 end
       end
+      for _, d in ipairs(report.dropped) do if d.id == 107 then return d.reason end end
     end
-    t.eq(gate(nil), 11, "computed safe level")
+    -- niveau « sûr » calculé (11) et limite de danger (12 - 3 = 9) hors de portée du chapitre de test : la quête
+    -- est écartée, pas faite trop bas
+    local computed = gate(nil)
+    t.ok(type(computed) == "string" and computed:find("too dangerous before level 9", 1, true), tostring(computed))
     t.eq(gate({ [107] = 3 }), 3, "plan value")
   end,
 

@@ -57,6 +57,8 @@ Engine\ClassQuests.lua
 Engine\Trainer.lua
 Engine\Professions.lua
 Engine\ClassQuestOffer.lua
+Engine\BagQuests.lua
+Engine\BagQuestOffer.lua
 Engine\StepGuard.lua
 Engine\Telemetry.lua
 Engine\XPRate.lua

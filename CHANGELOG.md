@@ -1,5 +1,85 @@
 # Changelog
 
+## Unreleased
+
+### English
+
+**Routes on QuestieDB v1.0.12**
+- Every route rebuilt on QuestieDB v1.0.12 (moved NPC and object spawns, Frostmane Hold exploration point, Ruins of
+  Lordaeron quests). Simulated 1-60: Human 5 186 min, Dwarf/Gnome 5 241, Night Elf 5 188, Skyborne Alliance 5 127
+  (14 to 32 min faster), Orc/Troll 5 134, Tauren 5 130, Undead 5 172, Skyborne Horde 5 159.
+- Durotar no longer ends with a grind (59 mobs before the fix), Silverpine keeps its higher quests instead of a
+  grind, and Egg Hunt is back in the Southern Barrens.
+- Dungeons window: Ruins of Lordaeron quests need level 15 and follow their chain.
+
+**Safer routes**
+- No more objectives done far below their level: every objective waits until its mobs are at most 2 levels above you
+  (never orange), and never inside an elite camp above your level. The route grinds a little, or comes back later in
+  the chapter, or leaves the quest out when the zone is too hard.
+- Dwarf / Gnome: Loch Modan 11-13 then Westfall from level 13. No more Gathering Idols or the Mo'grosh book among the
+  elite ogres; the easier Loch Modan quests are back, and Rat Catching is done in the kobold mine together with the
+  Miners' Gear of Filthy Paws.
+- Routes are longer in the simulator (about 5-7 h over 1-60): the old times counted dangerous quests as if they were
+  easy.
+
+**Cozy Sleeping Bag**
+- The treasure hunt that rewards the Cozy Sleeping Bag is in the routes from level 14: Stepping Stones from the
+  Nailed Plank (Westfall or Southern Barrens), Scramble and Wet Job in Stonetalon, Eagle's Fist at Stonewrought Dam
+  (Loch Modan), This Must Be The Place in north-west Arathi, where the bag is handed over (around level 29-30, in
+  Hillsbrad). Horde: every race. Alliance: Human, Dwarf and Gnome (Night Elf and Skyborne routes do not pass a
+  plank in time). About 25-35 more simulated minutes over 1-60.
+- Fix: the Horde route no longer has you accept Scramble without Stepping Stones.
+
+**Bag quests**
+- Near the giver of a quest that rewards a bag bigger than your smallest bag (or when a bag slot is empty), the
+  route offers a "Bag quest" step, like class quests: one click adds the quest to the route, with its
+  prerequisites, or ignores it. Quests the route already does are never offered. 18 quests (Carry Your Weight,
+  Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's Riddle…). The bag size is read
+  from the item tooltip in game.
+- Option "Offer quests that reward a bigger bag" (on by default); `/qf bags` lists them with their state,
+  `/qf bags reset` offers the ignored ones again.
+- Class quests: the unfinished Undead priest quests (`<NYI>`) are gone.
+
+### Français
+
+**Routes sur QuestieDB v1.0.12**
+- Toutes les routes refaites sur QuestieDB v1.0.12 (PNJ et objets déplacés, point d'exploration de Frostmane Hold,
+  quêtes des Ruines de Lordaeron). 1-60 simulé : Humain 5 186 min, Nain/Gnome 5 241, Elfe de la nuit 5 188,
+  Skyborne Alliance 5 127 (14 à 32 min plus rapide), Orc/Troll 5 134, Tauren 5 130, Mort-vivant 5 172, Skyborne
+  Horde 5 159.
+- Durotar ne finit plus par du farm (59 mobs sans la correction), la Forêt des Pins-Argentés garde ses quêtes
+  plus hautes au lieu de farmer, et Egg Hunt revient dans le sud des Tarides.
+- Fenêtre des donjons : les quêtes des Ruines de Lordaeron demandent le niveau 15 et suivent leur chaîne.
+
+**Routes plus sûres**
+- Plus d'objectifs faits bien en dessous de leur niveau : chaque objectif attend que ses monstres soient au plus 2
+  niveaux au-dessus de toi (jamais orange), et jamais dans un camp d'élites plus haut que toi. La route farme un peu,
+  revient plus tard dans le chapitre, ou laisse la quête quand la zone est trop dure.
+- Nain / Gnome : Loch Modan 11-13 puis Marche de l'Ouest dès le niveau 13. Plus de Gathering Idols ni de livre de
+  Mo'grosh au milieu des ogres élites ; les quêtes plus faciles du Loch Modan reviennent, et Rat Catching se fait dans la
+  mine des kobolds en même temps que le Miners' Gear de Filthy Paws.
+- Routes plus longues au simulateur (environ 5 à 7 h sur 1-60) : les anciens temps comptaient les quêtes dangereuses
+  comme si elles étaient faciles.
+
+**Cozy Sleeping Bag**
+- La chasse au trésor qui donne le Cozy Sleeping Bag est dans les routes dès le niveau 14 : Stepping Stones à la
+  planche clouée (Marche de l'Ouest ou sud des Tarides), Scramble et Wet Job aux Serres-Rocheuses, Eagle's Fist au
+  barrage de Thelsamar (Loch Modan), This Must Be The Place au nord-ouest d'Arathi, où le sac est remis (vers le
+  niveau 29-30, depuis les Contreforts d'Hautebrande). Horde : toutes les races. Alliance : Humain, Nain et Gnome
+  (les routes Elfe de la nuit et Skyborne ne passent pas à temps par une planche). Environ 25 à 35 minutes simulées
+  de plus sur 1-60.
+- Correctif : la route Horde ne fait plus prendre Scramble sans Stepping Stones.
+
+**Quêtes de sac**
+- Près du donneur d'une quête qui donne un sac plus grand que ton plus petit sac (ou s'il te reste un emplacement
+  de sac vide), la route propose une étape « Quête de sac », comme pour les quêtes de classe : un clic pour
+  l'ajouter à la route, prérequis compris, ou l'ignorer. Une quête que la route fait déjà n'est jamais proposée.
+  18 quêtes (Carry Your Weight, Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's
+  Riddle…). La taille du sac est lue dans l'infobulle de l'objet, en jeu.
+- Option « Proposer les quêtes qui donnent un sac plus grand » (activée par défaut) ; `/qf sacs` les liste avec
+  leur état, `/qf sacs reset` repropose celles qui ont été ignorées.
+- Quêtes de classe : les quêtes de prêtre mort-vivant inachevées (`<NYI>`) disparaissent.
+
 ## 0.4.0 (2026-11-07)
 
 ### English

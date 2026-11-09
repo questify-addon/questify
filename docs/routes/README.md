@@ -452,3 +452,165 @@ APR-COMPARE: APR clearly ahead on 42 chapters, Questify on 3, close on 27 (same 
 XP: 38 / 3 / 31). The quest XP compared there is lower in A_20, H_21 (forcings removed), H_02 and H_03 (route
 reshuffled) and A_NightElf_03; H_29 is no longer behind. Still heavy: A_20 (727 mobs), A_21 (708), A_26 (633),
 H_18 (525), H_21 (417).
+
+## QuestieDB v1.0.12 (2026-11-07)
+
+The routes are generated from QuestieDB v1.0.12 (commit `4d31c10`, the latest release; `master` after it only
+changes the release workflow) and the Questie blacklist of 2026-11-07 (commit `749cf70`). Full regeneration:
+`--jit --faction all --date 2026-11-07`. Before the update, a build on v1.0.11 gave the shipped guides again, byte
+for byte (outside the commit line of the header): every route change below comes from the data.
+
+What changed in the data that the routes use:
+
+- NPC, object, item and quest traces of Forever (`src/corrections/Forever/traces/*`): many spawns moved, so
+  objective sites and walking legs change in most 1-30 chapters.
+- `foreverQuestFixes.lua`: exploration point of Frostmane Hold (287) at 21.2, 54 (the `complete` step stays at
+  23.55, 51.57: the Frostmane Headhunter site, merged with the exploration within 150 yd; to check in game);
+  required level 15 and chains for the Ruins of Lordaeron quests (95189, 95195, 95204, 95216, 95250, Unending
+  Torment 97288-97292); prerequisites of The Wrath of Rath'mael (92422 after 99156) and Watching the Roads (95981
+  after 482); names of Dark Sacrifice (5644 / 5646 / 5679) and Your Reward has Arrived! (60860).
+- Questie blacklist: the `<NYI>` Undead priest quests 5691-5693 and 5704-5706 leave `ClassQuestData.lua` (no
+  route used them).
+- `DungeonData.lua`: Ruins of Lordaeron entrance and quests (level 15, prerequisites, Othmar's Head).
+  `Questify/Data/ClassTrainers.lua`: mage trainer 252373 is also listed for the Horde.
+
+Totals per race path, simulated (minutes / quests / grind mobs):
+
+| Path 1-60 | v1.0.11 | v1.0.12, plans unchanged | v1.0.12, plans adjusted |
+|---|---|---|---|
+| Human | 5 204 / 647 / 4 538 | 5 186 / 649 / 4 500 | 5 186 / 649 / 4 500 |
+| Dwarf / Gnome | 5 255 / 653 / 4 621 | 5 241 / 654 / 4 579 | 5 241 / 654 / 4 579 |
+| Night Elf | 5 220 / 634 / 4 733 | 5 188 / 633 / 4 670 | 5 188 / 633 / 4 670 |
+| Skyborne (Alliance) | 5 154 / 633 / 4 621 | 5 127 / 634 / 4 565 | 5 127 / 634 / 4 565 |
+| Orc / Troll | 5 113 / 611 / 2 904 | 5 138 / 610 / 2 972 | 5 134 / 614 / 2 902 |
+| Tauren | 5 133 / 608 / 2 931 | 5 130 / 606 / 2 937 | 5 130 / 607 / 2 926 |
+| Undead | 5 165 / 632 / 2 905 | 5 197 / 629 / 2 940 | 5 172 / 631 / 2 904 |
+| Skyborne (Horde) | 5 159 / 631 / 2 961 | 5 159 / 629 / 2 991 | 5 159 / 630 / 2 980 |
+
+Trunk 30-60: Alliance 4 134 → 4 131 min, Horde 3 989 → 4 000 min (H_07 +8 min: other hearthstone and flights
+after the 1-30 changes).
+
+- Alliance: -14 to -32 min per path with the plans unchanged (A_03 -15, A_02 -8, A_NightElf_02 and A_Skyborne_01
+  -6; A_01 +6 with 36 mobs of grinding). Measured and rejected on A_01: `strictLevel` (+5 min on the Human, Dwarf
+  and Skyborne paths), `strictLevel` with `levelSlack = 2` (+37 min).
+- Horde, plans unchanged: Durotar (H_OrcTroll_02) +25 min (59 mobs of grinding, band widened), Silverpine
+  (H_Undead_03) +27 min (25 mobs of grinding), H_01 -31 min (the trunk starts at the lowest join level, now 13
+  instead of 12), H_02 to H_05 +20 min (quests moved between chapters by the higher start).
+- Plan changes kept (`plans.lua`):
+  - H_OrcTroll_02: `strictLevel` and `levelSlack = 2`. Without them, Stormy Potential and Encroachment are done at
+    level 9 (59 mobs); with them, no grinding, 42 quests, 186 min, end at 13.21, so the trunk still starts at 13.
+    Orc / Troll -4 min. `strictLevel` alone ends Durotar at 12.79 (172 min) and the trunk starts at 12 again:
+    +10 min on the Orc path, +24 on the other Horde paths (rejected).
+  - H_Undead_03: 460, 461, 491 and 79096 forced. The first pass now plans 25 mobs of grinding (26 on v1.0.11), not
+    above `WIDEN_GRIND`, so the band was no longer widened; forced, they give the v1.0.11 chapter again (35 min,
+    no grinding). Undead -25 min. `strictLevel` instead: -2 min.
+  - H_04: Egg Hunt (868) forced. Its objective is farther (1 543 s isolated instead of 982) and it was dropped as
+    "low ratio", which left the four `precede` pairs of the plan without their task. Same time on every Horde
+    path, +1 quest, -11 mobs.
+- Rejected on the Horde trunk: Enraged Thunder Lizards and Cry of the Thunderhawk (907 / 913, in H_02 on v1.0.11)
+  forced in H_02: +14 min per path.
+
+APR-COMPARE (same APR commit `c5960471`, v7.5.5): APR clearly ahead on 41 chapters, Questify on 3, close on 28 (42 /
+3 / 27 before).
+
+## Cozy Sleeping Bag (2026-11-08)
+
+The treasure hunt that rewards the Cozy Sleeping Bag (item 211527: an experience bonus according to players; QuestieDB
+has no data on its effect) is woven
+into the routes from the first chapter where it can start (required level 14, all races):
+
+| Quest | Starts at | Turned in at | Alliance (Human, Dwarf, Gnome) | Horde (every race) |
+|---|---|---|---|---|
+| 79192 Stepping Stones | Nailed Plank, Westfall 37.4, 50.7 or Southern Barrens 46.4, 73.9 | Pocket Litter, Stonetalon 40.8, 52.6 | A_Human_03 / A_DwarfGnome_04 → A_02 | H_01 → H_02 |
+| 79980 Scramble | Pocket Litter | Mound of Dirt, Stonetalon 39.6, 49.9 | A_02 | H_02 |
+| 79974 Wet Job | Mound of Dirt | Carved Figurine, Stonewrought Dam (Loch Modan 49.4, 12.9) | A_02 → A_04 | H_03 → H_05 |
+| 79975 Eagle's Fist | Carved Figurine | Messenger Bag, north-west Arathi 22.5, 24.2 | A_04 → A_05 | H_05 |
+| 79976 This Must Be The Place | Messenger Bag | Hastily Rolled-Up Satchel (same place): the bag | A_05 (level 29-30) | H_05 (level 29-30) |
+
+- QuestieDB has no link between these quests (each starts at the object where the previous one ends): the links are
+  added in `tools/routebuilder/overrides.lua` (`pre`), read by `build.lua` and `tools/validate_guides.lua`. Without
+  them, H_02 had Scramble accepted without Stepping Stones.
+- Plans: Stepping Stones forced in the Westfall chapters and H_01 (Human: after Captain Sander's Hidden Treasure 140,
+  at level 14); Scramble and Wet Job forced in A_02, Scramble in H_02, Wet Job in H_03 (from H_02 its turn-in would be
+  three chapters away); A_04 and H_05 reach the dam (Loch Modan limited to it by `bounds`), A_05 and H_05 north-west
+  Arathi (also limited by `bounds`).
+- Night Elf and Skyborne (Alliance) paths do not pass a Nailed Plank before Stonetalon: their steps are filtered by
+  race; they do not get the bag on the default route.
+- A_03 gets `widen = true`: carrying Wet Job through it put its first pass at 25 mobs of grinding instead of 52, under
+  the `WIDEN_GRIND` threshold, and the chapter lost 9 quests of level 30 (A_04 then +50 min).
+
+Totals per race path, simulated (minutes / quests / grind mobs), before → after:
+
+| Path 1-60 | Before | With the Cozy Sleeping Bag |
+|---|---|---|
+| Human | 5 186 / 649 / 4 500 | 5 212 / 651 / 4 546 |
+| Dwarf / Gnome | 5 241 / 654 / 4 579 | 5 277 / 657 / 4 615 |
+| Night Elf | 5 188 / 633 / 4 670 | 5 218 / 636 / 4 684 |
+| Skyborne (Alliance) | 5 127 / 634 / 4 565 | 5 163 / 637 / 4 601 |
+| Orc / Troll | 5 134 / 614 / 2 902 | 5 158 / 617 / 2 920 |
+| Tauren | 5 130 / 607 / 2 926 | 5 154 / 610 / 2 944 |
+| Undead | 5 172 / 631 / 2 904 | 5 196 / 634 / 2 922 |
+| Skyborne (Horde) | 5 159 / 630 / 2 980 | 5 183 / 633 / 2 998 |
+
+The bag costs 24 min on every Horde path (H_01 +10 for the plank, H_05 +16 for the dam and Arathi) and 26 to 36 min on
+the Alliance paths (A_05 +15, knock-on changes of 3 to 9 min in A_07 to A_13). The Night Elf and Skyborne (Alliance)
+totals count the trunk detours that their filtered steps skip in game. The simulator does not value the experience
+bonus of the bag; the XP of the five quests is an estimate (new Forever quests). The dam is reached in a straight
+line inside the northern Eastern Kingdoms walk region (no pathing around the mountains): to check in game.
+APR-COMPARE: APR clearly ahead on 41 chapters, Questify on 4, close on 27.
+
+## Safer routes (2026-11-09, player feedback)
+
+A Dwarf player reported on Loch Modan: orange mobs (18-19) at level 16, many easy quests left out, and a trip into the
+elite ogre camp of Mo'grosh for a book in a cave (Runes of the Sorcerer-Kings, 78148). The simulator did objectives
+below their safe level whenever reaching it cost more than 60 mobs of grinding, never looked at elites around an
+objective, and Loch Modan (11-14) widened its band to level 20, so its XP budget took those quests instead of the easy
+ones. Details and measures: `tools/routebuilder/README.md`, "Objective danger".
+
+- Every objective now has a minimum level (mobs at most 2 levels above the player, quest at most 3, no elite camp or
+  elite target above the player). Below it, the route grinds up to 60 mobs, else defers the objective until the level
+  is reached in the chapter, else drops it. Level-gated chain heads are deferred the same way.
+- Dwarf / Gnome: Loch Modan 11-13 and Westfall 13-16 (Westfall earlier, as suggested). Loch Modan no longer takes
+  Gathering Idols (troggs 17-19), A Hunter's Challenge (boars 16-17 next to the Mo'grosh ogres) nor the Mo'grosh book;
+  it gets Crocolisk Hunting, Find Bingles, Protecting the Shipment and After the Ambush instead, with no grinding.
+- Bug fixed: QuestieDB gives level 9999 to scenario NPCs of unknown level (Zephras Isle); taken as mobs to kill, they
+  asked for level 9997.
+- H_05: Dangerous! (567) before Souvenirs of Death (546), so its second site is not done on a later pass.
+- Loch Modan: Rat Catching (Tunnel Rat Ears) is done in the Silver Stream mine right after the Miners' Gear of Filthy
+  Paws, among the same kobolds (it was left out, and the mine was visited for the gear only). The simulator now knows
+  that the mobs guarding objects are killed anyway (`sim.guardsOf`) when it picks drop and kill quests.
+
+Dwarf / Gnome path 1-30, simulated:
+
+| Chapter | Zone | Levels | Time | Quests | Before |
+|---|---|---|---|---|---|
+| A_DwarfGnome_01 | Coldridge Valley | 1.00 -> 6.02 | 36 min | 15 | 37 min |
+| A_DwarfGnome_02 | Dun Morogh | 6.00 -> 12.01 | 111 min | 37 | 113 min |
+| A_DwarfGnome_03 | Loch Modan | 12.00 -> 14.15 | 74 min | 19 | 124 min (to 15.56, 82 mobs of grinding) |
+| A_DwarfGnome_04 | Westfall | 14.00 -> 17.07 | 130 min | 20 | 78 min |
+| A_01 | Darkshore | 16.00 -> 19.67 | 154 min | 36 | 166 min |
+| A_02 | Ashenvale and Stonetalon | 19.00 -> 22.31 | 157 min | 28 | 126 min |
+| A_03 | Redridge and Duskwood | 22.00 -> 26.39 | 262 min | 48 | 297 min |
+| A_04 | Wetlands | 26.00 -> 29.00 | 185 min | 16 | 109 min |
+| A_05 | Hillsbrad | 29.00 -> 30.00 | 80 min | 10 | 77 min |
+
+Totals per race path, simulated (minutes / quests / grind mobs), before → after:
+
+| Path 1-60 | Before | Safer routes |
+|---|---|---|
+| Human | 5 212 / 651 / 4 546 | 5 572 / 607 / 6 019 |
+| Dwarf / Gnome | 5 277 / 657 / 4 615 | 5 607 / 611 / 5 933 |
+| Night Elf | 5 218 / 636 / 4 684 | 5 612 / 595 / 6 086 |
+| Skyborne (Alliance) | 5 163 / 637 / 4 601 | 5 487 / 593 / 5 981 |
+| Orc / Troll | 5 158 / 617 / 2 920 | 5 538 / 557 / 4 816 |
+| Tauren | 5 154 / 610 / 2 944 | 5 536 / 549 / 4 819 |
+| Undead | 5 196 / 634 / 2 922 | 5 574 / 574 / 4 843 |
+| Skyborne (Horde) | 5 183 / 633 / 2 998 | 5 566 / 573 / 4 874 |
+
+The routes are 5 to 7 hours longer in the simulator: the quests they used to do 3 to 10 levels too low or inside elite
+camps are deferred to a level where they are safe, or dropped, and grinding fills the gap. The simulator kills every mob
+in 20 s whatever its level, so the old totals were optimistic. 240 quests are dropped as "too dangerous" over all
+chapters (each report lists them). Heaviest left: A_04 (Wetlands: the Dragonmaw and Dark Iron of Forever are elite
+around most objectives, 284 mobs of grinding), H_03, the 30-60 trunk. To check in game: whether those camps are really
+elite, and whether the routes still feel too hard or too easy.
+APR-COMPARE: APR clearly ahead on 48 chapters, Questify on 4, close on 20.

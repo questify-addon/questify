@@ -5,6 +5,7 @@ local addonName, Q = ...
 --   /qf skip       passe l'étape courante
 --   /qf back       rouvre l'étape précédente
 --   /qf classe     journal sur l'onglet Quêtes de classe (alias /qf class)
+--   /qf sacs       quêtes qui donnent un sac, avec leur état (alias /qf bags) ; /qf sacs reset repropose les ignorées
 --   /qf options    fenêtre d'options (/qf options <texte> : avec cette recherche)
 --   /qf wizard     assistant de navigation
 --   /qf export     mesures de temps, prêtes à copier
@@ -87,6 +88,38 @@ COMMANDS.classe = function()
   if J then J:ShowTab("class") end
 end
 COMMANDS.class = COMMANDS.classe
+
+-- Quêtes de sac (Engine/BagQuests.lua) : liste dans la discussion ; « reset » repropose les quêtes ignorées.
+local function bagsText(eq)
+  local parts = {}
+  for _, n in ipairs(eq.sizes) do parts[#parts + 1] = tostring(n) end
+  for _ = 1, eq.empty do parts[#parts + 1] = L.UI_BAG_EMPTY end
+  return table.concat(parts, ", ")
+end
+
+COMMANDS.sacs = function(rest)
+  local BQ = Q.BagQuests
+  if not BQ then return end
+  if rest == "reset" then
+    Q:Print(L.UI_BAGS_RESET, BQ:UnignoreAll())
+    return
+  end
+  local rows = BQ:List()
+  if #rows == 0 then
+    Q:Print(L.UI_BAGS_NONE)
+    return
+  end
+  Q:Print(L.UI_BAGS_HEADER, bagsText(BQ:Equipped()))
+  for _, row in ipairs(rows) do
+    local useful, slots = BQ:Useful(row.entry)
+    local size = slots and L.UI_BAGS_SIZE:format(slots) or L.UI_BAGS_SIZE_UNKNOWN
+    local state = L["UI_BQ_STATE_" .. row.state] or row.state
+    if row.state == "available" then state = state .. " (" .. (useful and L.UI_BAGS_USEFUL or L.UI_BAGS_NOT_USEFUL) .. ")" end
+    Q:Print(L.UI_BAGS_LINE, tonumber(row.entry.level) or 1, BQ:Title(row.entry), size, state)
+  end
+  Q:Print(L.UI_BAGS_HINT)
+end
+COMMANDS.bags = COMMANDS.sacs
 
 COMMANDS.options = function(rest)
   local O = Q.UI and Q.UI.Options

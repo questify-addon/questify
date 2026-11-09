@@ -66,6 +66,7 @@ other chapters from the XML.
 | `plans.lua` | Chapter plans per faction (spec § 6), `plans.validate` (successors and `choices`). |
 | `emit.lua` | Guide file writer (spec § 5.2 format, one step per line with a comment). |
 | `classquests.lua` | Class quest chains (level ≤ 60) for `ClassQuestData.lua`. |
+| `bagquests.lua` | Quests that reward a bag, with their prerequisite chain, for `BagQuestData.lua` (see "Bag quests"). |
 | `overrides.lua` | Hand fixes applied at build time. |
 | `build.lua` | CLI. |
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
@@ -134,6 +135,8 @@ return {
   pin = { [questId] = { mapId, x, y } },    -- force the objective site
   insertAfter = { [planId] = { { afterQuestTurnin = questId, step = { "note", "..." } } } },
                                             -- step inserted after that turn-in (0 = at the start)
+  pre = { [questId] = { prerequisiteId, ... } }, -- prerequisites missing from QuestieDB (one of them, like
+                                            -- preQuestSingle); also read by tools/validate_guides.lua
 }
 ```
 
@@ -338,7 +341,7 @@ guide with an invalid step is refused in game with one `Invalid guide <id>: step
 | `arrive.via` | Point reached by computed travel before the fixed `arrive` steps. |
 | `precede` | Pairs `{ first, second }` of task ids (`A`, `T`, `C` + quest id, `O` + quest id = all its objective sites): extra precedence. |
 | `safeLevel` | `{ [questId] = level }`: level from which the objectives of that quest are done (replaces the computed safe level). |
-| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). |
+| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). `true`: always widened (a chapter that flips on the `WIDEN_GRIND` threshold for a few mobs, A_03). |
 
 ### Reports
 
@@ -669,6 +672,95 @@ After these changes, the forcings of `plans.lua` were measured again one by one 
   per Horde path (Orc +29). The trunk guides are shared by every race path, so a per-race simulation could only
   change the measure, not the routes. `grindCost` (mobs of the character's
   level, 20 s each, as `sim.grindTo`) is unchanged.
+
+## Objective danger (2026-11-09, player feedback)
+
+A Dwarf player on the 1-20 route reported orange mobs at level 16 (18-19), many easy Loch Modan quests left out, and
+a trip into the elite ogre camp of Mo'grosh for a book (Runes of the Sorcerer-Kings 78148) at level 15. Three causes
+in the simulator: an objective whose "safe" level needed more than `SAFE_GATE_GRIND` mobs of grinding was done anyway,
+too low; elites around an objective were never looked at (only the mobs to kill); and the band widening of Loch Modan
+(up to level 20) filled the XP budget with those quests instead of the easy ones.
+
+### Minimum level of an objective (`sim.lua`)
+
+- Each objective task (`O`, `C`) waits for its minimum level, the highest of: quest level - `DANGER_QUEST_ABOVE` (3),
+  average level of its mobs - `DANGER_MOB_ABOVE` (2: never orange), and for a site near hostile elites, the elite level
+  + `ELITE_ABOVE` (2) - `DANGER_MOB_ABOVE` (an elite of the player's level at most). `safeLevel` of a plan still
+  replaces it. This replaces the former "safe" level (quest - 1, mobs - 1), which was only a preference.
+- Elites (`sim.eliteNear`): hostile NPCs of rank 1 to 3 within `ELITE_RADIUS` (35 yd) + the spread of the site (at most
+  `ELITE_SPREAD`, 25 yd). They count as a camp (at least `ELITE_CAMP`, 2, spawns in the radius) or when the elite is a
+  target of the objective (kill or drop); a lone rare elite that passes by (Old Icebeard, Mor'Ladim) does not. Elites
+  more than `ELITE_IGNORE_ABOVE` (10) levels above the chapter are ignored (instance data projected on the zone, event
+  NPCs: Infernal 30 in Elwynn, Stonevault 36 in Loch Modan). Mob levels above 63 (QuestieDB 9999: scenario NPCs of
+  unknown level) are no constraint.
+- In the walk, an objective below its minimum level is reached by grinding up to `SAFE_GATE_GRIND` (60) mobs; beyond,
+  it is **deferred**: its task, the remaining tasks of its quest and of the quests that depend on it leave the queue
+  and come back as soon as the level is reached (before a chapter exit task at the latest). What is still deferred at
+  the end of the chapter is dropped ("objective too dangerous before level N"), its steps already written are removed,
+  and the chapter is run again without those quests so that the XP budget takes others. A forced quest is done anyway.
+- The accept of a chain head blocked by its required level is deferred the same way when it would need more than
+  `SAFE_GATE_GRIND` mobs (it used to be grinding without limit: 122 mobs in Tirisfal once objectives were deferred).
+- `widen = true` on a plan always widens the band (see "New plan fields").
+
+### Measured (QuestieDB v1.0.12, all eight race paths)
+
+| Variant | Human 1-60 | Orc 1-60 | Dangerous drops |
+|---|---|---|---|
+| Before (objectives done too low) | 5 212 | 5 158 | 0 |
+| Old safe level as a hard limit (skip) | 6 026 | 5 910 | ~400 |
+| Same, `strictLevel` on every chapter | 6 148 | 5 882 | 400 |
+| Danger limit mobs +2, skip | 5 720 | 5 670 | 265 |
+| Danger limit + deferral, elite radius 50 + 40 yd, any elite | 5 851 | 5 739 | 322 |
+| Same without elites | 5 699 | 5 477 | 124 |
+| Danger limit + deferral, mobs +3 | 5 758 | 5 621 | 201 |
+| One minimum level (danger), deferral, elite camps or targets within 35 + 25 yd, 9999 ignored | 5 572 | 5 551 | 215 |
+| **Kept**: same + deferred chain-head accepts | **5 572** | **5 538** | 240 |
+
+The remaining cost (+300 to +450 min per path, about +6 to +9 %) is the quests that the routes used to do 3 to 10
+levels too low or inside elite camps; the simulator kills every mob in 20 s whatever its level, so the old totals were
+optimistic. Biggest changes: A_04 (Wetlands: Dragonmaw and Dark Iron elites of Forever around most objectives, 284
+mobs of grinding), H_03, A_02 and the 30-60 trunk.
+
+### Guarded objects and shared kills (2026-11-09, player feedback)
+
+The same player was sent into the kobold mine of Silver Stream (Loch Modan) for the Miners' Gear of Filthy Paws (307)
+while Rat Catching (416: Tunnel Rat Ears from the same kobolds) was left out ("level band reached"): the simulator
+counted 6 s per object and no fight, so the ears quest looked like it cost all its kills.
+
+- `sim.guardsOf`: for an object objective (or an item looted from objects), the hostile non-elite mobs within
+  `CLEAR_RADIUS` (15 yd) of the objects taken, at most `CLEAR_PER_OBJECT` (2) per object, nearest first, are its
+  guards (`site.clear = { [npcId] = n }`).
+- At selection, the marginal time of a drop or kill objective is reduced by the guards of the same mobs at
+  `SWEEP_AREA` or less in the object sites of quests whose isolated ratio is at least the median (they are killed
+  anyway). Rat Catching goes from 4.61 to 7.11 XP/s marginal.
+- The walk still counts both quests in full (the object time has no fight in it): measured on all paths, adding the
+  guards' fights to the object quests changed every route (+30 to +80 min, objects among mobs drop out of the budget)
+  and was not kept.
+- A_DwarfGnome_03 forces Rat Catching: done right after Filthy Paws in the mine. Dwarf / Gnome +10 min.
+
+## Bag quests (`bagquests.lua`, 2026-11-08)
+
+`build.lua` writes `Questify/Guides/BagQuestData.lua` after `ClassQuestData.lua` (both listed last in `Guides.xml`):
+one entry per quest whose reward items include a regular bag (item class 1, subclass 0: no soul bag, quiver or
+profession bag), `{ key, title, faction, races, level, bag, quests, rewards }`.
+
+- `quests` is the chain to do: required prerequisites first, depth first (`preQuestSingle`: the first one, by id,
+  that the faction can do; `preQuestGroup`: all), the bag quest last; at most 8 quests. Breadcrumbs are not
+  required and are left out.
+- Left out, with the reason in the second result of `bq.build`: class quests, dungeon quests (QuestieDB zone in an
+  instance), reputation, profession or spell requirements, repeatable quests, blacklisted quests, quests of level 60
+  (reputation rewards, Darkmoon tickets), quests without a giver, and any chain whose required prerequisite is in
+  one of these cases.
+- `key` is `BAG_<questId>`, with `_A` or `_H` when the chain is limited to one faction (The Problem With Prideclaws
+  92515 has a different prerequisite per faction: two entries).
+- QuestieDB has no bag size; the game reads it from the item tooltip (`Engine/BagQuests.lua`). The game offers an
+  entry only when the bag beats the smallest regular bag worn (or a bag slot is empty), and never when the route
+  already turns in every remaining quest of the chain (`Q.Progress:RouteTurnins`).
+- `tools/validate_guides.lua` checks the shape of the entries (unique keys, bag, level, quests) and that every quest
+  is known to QuestieDB.
+
+On QuestieDB v1.0.12: 18 entries (12 for the Alliance, 9 for the Horde, 3 of them shared). Turned in by a chapter
+of the routes, so never offered on the race paths that do them: 791, 86784, 97277, 151, 97253, 140, 1003, 58.
 
 ## Known limits
 

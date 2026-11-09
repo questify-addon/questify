@@ -5,7 +5,8 @@
 --          [--only <planId>] [--report DIR] [--out DIR] [--overrides FILE] [--date AAAA-MM-JJ]
 --
 --   --out      dossier des guides (défaut Questify/Guides) : <out>/<Alliance|Horde|Skyborne>/<planId>.lua,
---              <out>/Guides.xml (tous les guides présents, puis ClassQuestData.lua) et <out>/ClassQuestData.lua
+--              <out>/Guides.xml (tous les guides présents, puis ClassQuestData.lua et BagQuestData.lua),
+--              <out>/ClassQuestData.lua et <out>/BagQuestData.lua
 --   --report   dossier des rapports Markdown (défaut docs/routes) : <report>/<planId>.md
 --   --only     ne réécrit que ce chapitre (les chapitres précédents sont simulés pour l'état du personnage)
 --
@@ -20,6 +21,7 @@ local sim = require("sim")
 local plansm = require("plans")
 local emit = require("emit")
 local cq = require("classquests")
+local bq = require("bagquests")
 local paths = require("paths")
 local quality = require("quality")
 
@@ -50,13 +52,14 @@ end
 -- Fichier de corrections manuelles : données pures, environnement vide.
 function build.loadOverrides(path)
   local f = io.open(path, "rb")
-  if not f then return { force = {}, drop = {}, pin = {}, insertAfter = {} } end
+  if not f then return { force = {}, drop = {}, pin = {}, insertAfter = {}, pre = {} } end
   local text = f:read("*a"); f:close()
   assert(text:byte(1) ~= 27, "bytecode refused: " .. path)
   local fn = assert(loadstring(text, "@" .. path))
   setfenv(fn, {})
   local ov = fn() or {}
   ov.force, ov.drop, ov.pin, ov.insertAfter = ov.force or {}, ov.drop or {}, ov.pin or {}, ov.insertAfter or {}
+  ov.pre = ov.pre or {}
   return ov
 end
 
@@ -501,7 +504,7 @@ local function isGenerated(path)
 end
 
 -- Réécrit Guides.xml : les guides des plans présents dans out (ordre des plans), puis les fichiers
--- ajoutés à la main (non générés), puis ClassQuestData.lua. Un guide généré qui n'a plus de plan
+-- ajoutés à la main (non générés), puis ClassQuestData.lua et BagQuestData.lua. Un guide généré qui n'a plus de plan
 -- (chapitre renommé ou supprimé) n'est plus chargé ; il est signalé.
 function build.writeXml(out)
   local entries = {}
@@ -530,9 +533,10 @@ function build.writeXml(out)
   end
   local lines = { '<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
                   '    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\\FrameXML\\UI.xsd">',
-                  '  <!-- Fichier réécrit par tools/routebuilder/build.lua : un <Script> par guide, puis ClassQuestData.lua. -->' }
+                  '  <!-- Fichier réécrit par tools/routebuilder/build.lua : un <Script> par guide, puis ClassQuestData.lua et BagQuestData.lua. -->' }
   for _, rel in ipairs(entries) do lines[#lines + 1] = ('  <Script file="%s"/>'):format((rel:gsub("/", "\\"))) end
   lines[#lines + 1] = '  <Script file="ClassQuestData.lua"/>'
+  lines[#lines + 1] = '  <Script file="BagQuestData.lua"/>'
   lines[#lines + 1] = "</Ui>"
   writeFile(out .. "/Guides.xml", table.concat(lines, "\n") .. "\n")
   return #entries
@@ -565,7 +569,7 @@ function build.main(argv)
   local W = world.load(here .. "/data")
   local Ds = {}
   local function D(f)
-    if not Ds[f] then Ds[f] = qdb.load({ db = o.db, questie = o.questie, faction = f }) end
+    if not Ds[f] then Ds[f] = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = f }), ov.pre) end
     return Ds[f]
   end
   mkdir(o.out)
@@ -595,8 +599,11 @@ function build.main(argv)
   -- données des quêtes de classe (les deux factions), puis Guides.xml
   local data = cq.merge(cq.build(D("Alliance")), cq.build(D("Horde")))
   writeFile(o.out .. "/ClassQuestData.lua", cq.emit(data, { commit = D("Alliance").commit, date = o.date }))
+  -- quêtes qui donnent un sac (les deux factions), proposées en jeu quand le sac est utile
+  local bags = bq.merge((bq.build(D("Alliance"), "Alliance")), (bq.build(D("Horde"), "Horde")))
+  writeFile(o.out .. "/BagQuestData.lua", bq.emit(bags, { commit = D("Alliance").commit, date = o.date }))
   local n = build.writeXml(o.out)
-  print(("wrote %d guide file(s); Guides.xml lists %d guide(s) + ClassQuestData.lua"):format(written, n))
+  print(("wrote %d guide file(s); Guides.xml lists %d guide(s) + ClassQuestData.lua + BagQuestData.lua (%d bag quests)"):format(written, n, #bags))
   return 0
 end
 

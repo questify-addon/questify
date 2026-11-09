@@ -204,6 +204,14 @@ local function compute(entry)
     if s and s.mapId and (s.kind == "npc" or s.kind == "object") then
       mapId, x, y, kind, id = s.mapId, s.x, s.y, s.kind, s.id
     end
+  elseif a == "bagquest" then
+    -- donneur le plus proche de la première quête restante de la quête à sac
+    local BQ, CQ = Q.BagQuests, Q.ClassQuests
+    local entry = BQ and BQ:Find(step.key)
+    local s = entry and CQ and CQ:Starter(BQ:FirstQuest(entry))
+    if s and s.mapId and (s.kind == "npc" or s.kind == "object") then
+      mapId, x, y, kind, id = s.mapId, s.x, s.y, s.kind, s.id
+    end
   elseif POINT_ACTIONS[a] then
     mapId, x, y, kind = step.mapId, step.x, step.y, "point"
   elseif step.at then

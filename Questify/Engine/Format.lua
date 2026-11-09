@@ -156,6 +156,8 @@ local function mainText(entry, step)
     return fmt(L.STEP_TRAINPROF_ANY, prof)
   elseif a == "classquest" then
     return fmt(L.STEP_CLASSQUEST, Q.ClassQuestOffer and Q.ClassQuestOffer:ChainTitle(step.key) or tostring(step.key))
+  elseif a == "bagquest" then
+    return fmt(L.STEP_BAGQUEST, Q.BagQuestOffer and Q.BagQuestOffer:Title(step.key) or tostring(step.key))
   end
   return tostring(a)
 end
@@ -195,7 +197,7 @@ function Format:StepParts(entry)
   local icon = classIcon(step)
   parts.head = icon and (icon .. tostring(head)) or head
   parts.objectives = type(objectives) == "table" and objectives or {}
-  if step.action == "classquest" then
+  if step.action == "classquest" or step.action == "bagquest" then
     parts.tail[#parts.tail + 1] = NOTE_COLOR .. Q.L.STEP_CLASSQUEST_HINT .. "|r"
   end
   if step.dungeon then
@@ -244,6 +246,9 @@ local function titleText(step)
   end
   if a == "classquest" then
     return fmt(L.TITLE_CLASSQUEST, Q.ClassQuestOffer and Q.ClassQuestOffer:ChainTitle(step.key) or tostring(step.key))
+  end
+  if a == "bagquest" then
+    return fmt(L.TITLE_BAGQUEST, Q.BagQuestOffer and Q.BagQuestOffer:Title(step.key) or tostring(step.key))
   end
   return tostring(a)
 end

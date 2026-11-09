@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 74 étapes, niveau final 56.00, ~63377 xp/h, 171 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Simulation : 74 étapes, niveau final 56.00, ~63375 xp/h, 171 min.
 Q:RegisterGuide({
   id = "H_27",
   title = "Un'Goro Crater",
   faction = "Horde",
   minLevel = 55, maxLevel = 56,
   next = "H_28",
-  sim = { steps = 74, endLevel = 56.00, xpPerHour = 63377, minutes = 171 },
+  sim = { steps = 74, endLevel = 56.00, xpPerHour = 63375, minutes = 171 },
   steps = {
     { "hearth", 1447 }, -- pierre de foyer
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement

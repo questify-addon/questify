@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 49 étapes, niveau final 54.00, ~48284 xp/h, 208 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Simulation : 49 étapes, niveau final 54.00, ~48309 xp/h, 207 min.
 Q:RegisterGuide({
   id = "H_25",
   title = "Azshara",
   faction = "Horde",
   minLevel = 53, maxLevel = 54,
   next = "H_26",
-  sim = { steps = 49, endLevel = 54.00, xpPerHour = 48284, minutes = 208 },
+  sim = { steps = 49, endLevel = 54.00, xpPerHour = 48309, minutes = 207 },
   steps = {
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
     { "fp", 1447, 21.96, 49.62 }, -- point de vol
@@ -29,7 +29,7 @@ Q:RegisterGuide({
     { "turnin", 3541, xp = 2550 }, -- Delivery to Jes'rimon (lvl 52, ~2550 xp, sim lvl 53)
     { "accept", 3563 }, -- Jes'rimon's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
     { "accept", 5535 }, -- Spiritual Unrest (lvl 47, ~3360 xp, sim lvl 53)
-    { "sethearth", 1447, 11.77, 76.54 }, -- lier la pierre de foyer
+    { "sethearth", 1447, 11.66, 76.54 }, -- lier la pierre de foyer
     { "accept", 5536 }, -- A Land Filled with Hatred (lvl 47, ~3360 xp, sim lvl 53)
     { "complete", 5535, at = { 1447, 17.1, 69.7 } }, -- Spiritual Unrest (lvl 47, ~3360 xp, sim lvl 53)
     { "complete", 5536, at = { 1447, 20.31, 61.77 } }, -- A Land Filled with Hatred (lvl 47, ~3360 xp, sim lvl 53)

@@ -104,6 +104,79 @@ return {
     t.ok(#report.quests >= 6, "kept quests listed")
   end,
 
+  -- Élites : un camp (2 apparitions ou plus) près d'un site, ou l'élite cible de l'objectif, fixe son niveau minimal
+  -- (niveau de l'élite) ; un élite seul qui n'est pas la cible ne compte pas.
+  elite_camp_or_target_makes_the_objective_dangerous = function(t)
+    local W = F.W()
+    local function elite(D, id, x, y, level)
+      D.npcs[id] = { id = id, name = "Elite " .. id, minLevel = level, maxLevel = level, rank = 1,
+        spawns = { [9001] = { { x, y } } }, npcFlags = 0, questStarts = {}, questEnds = {} }
+    end
+    -- camp de deux élites de niveau 9 au milieu des loups de 101 (25, 28)
+    local D = F.D()
+    elite(D, 2901, 25, 28, 9); elite(D, 2902, 25.5, 28.5, 9)
+    local _, report = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(report, 101) and dropped(report, 101):find("too dangerous before level 9", 1, true), tostring(dropped(report, 101)))
+    -- un seul élite qui n'est pas la cible : 101 reste
+    D = F.D()
+    elite(D, 2901, 25, 28, 9)
+    local steps = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(indexOf(steps, "turnin", 101), "a lone passing elite does not block")
+    -- la cible elle-même élite (chef trogg de 104, niveau 9) : 104 écartée
+    D = F.D()
+    D.npcs[2104].rank, D.npcs[2104].minLevel, D.npcs[2104].maxLevel = 1, 9, 9
+    local _, r3 = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(r3, 104) and dropped(r3, 104):find("too dangerous", 1, true), tostring(dropped(r3, 104)))
+  end,
+
+  -- Objectif sous son niveau minimal (loups de 101 au niveau 5 : minimum 3) : reporté après d'autres quêtes, fait au
+  -- niveau 3 ou plus, jamais trop bas ni écarté quand le chapitre l'atteint.
+  dangerous_objective_is_deferred_not_done_too_low = function(t)
+    local D, W = F.D(), F.W()
+    D.npcs[2101].minLevel, D.npcs[2101].maxLevel = 5, 5
+    local steps, report = sim.chapter(D, W, F.plan(), F.state())
+    t.eq(dropped(report, 101), nil, "101 kept")
+    local i = indexOf(steps, "complete", 101)
+    t.ok(i, "101 done: " .. stepsText(steps))
+    t.ok(steps[i]._c.simLevel >= 3, "done at level " .. tostring(steps[i]._c.simLevel))
+  end,
+
+  -- Objets gardés : les monstres hostiles à CLEAR_RADIUS yards ou moins des objets pris, au plus CLEAR_PER_OBJECT
+  -- par objet, les plus proches d'abord (signal de partage avec une quête de butin sur ces monstres).
+  guards_of_objects_counted_per_object = function(t)
+    local W = F.W()
+    local function at(x, y) return sim.mkPos(W, 9001, x, y) end
+    local function guard(x, y, npc) local p = at(x, y); p.npc, p.level = npc, 4; return p end
+    -- 1 % = 20 yd : 0,5 % = 10 yd (dans le rayon), 2 % = 40 yd (hors rayon)
+    local ctx = { guards = { guard(50.5, 50, 7), guard(50, 50.5, 7), guard(49.5, 50, 8), guard(52, 50, 9) } }
+    local g = sim.guardsOf(ctx, { at(50, 50) }, at(50, 50), 1)
+    t.eq(g.n, 2, "two per object at most")
+    t.eq(g.clear[9], nil, "a mob 40 yd away is not a guard")
+    local total = 0
+    for _, c in pairs(g.clear) do total = total + c end
+    t.eq(total, 2)
+    t.eq(sim.guardsOf(ctx, { at(10, 10) }, at(10, 10), 1), nil, "no guard far from the object")
+  end,
+
+  widen_true_always_widens_the_band = function(t)
+    local W = F.W()
+    local plan = F.plan()
+    local threshold = sim.CONST.WIDEN_GRIND
+    sim.CONST.WIDEN_GRIND = 100000   -- le chapitre de test ne franchit plus le seuil
+    local ok, err = pcall(function()
+      local _, base = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(base.widened, nil, "below the threshold: not widened")
+      plan.widen = true
+      local _, report = sim.chapter(F.D(), W, plan, F.state())
+      t.ok(report.widened and report.widened:find("band widened", 1, true), tostring(report.widened))
+      plan.widen = false
+      local _, never = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(never.widened, nil, "widen = false: never")
+    end)
+    sim.CONST.WIDEN_GRIND = threshold
+    if not ok then error(err, 0) end
+  end,
+
   accept_waits_for_required_level = function(t)
     local D, W = F.D(), F.W()
     D.quests[104].reqLevel = 5
