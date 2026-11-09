@@ -409,6 +409,34 @@ end
 
 -- Recalcule la cible de l'étape donnée (par défaut l'étape courante) et la pose. Une cible
 -- choisie par le joueur reste en place (voir SetManualTarget).
+-- Cible mouvante : monstre ou objet le plus proche d'une étape « complete », objectif en tête du
+-- mode zone. Recalculée toutes les 3 s, elle changeait dès que le joueur passait d'un point
+-- d'apparition à l'autre. Or chaque nouveau repère se voit et s'entend : WaypointUI (1.7.5) rejoue
+-- son animation d'apparition et son bruitage à chaque NewUserNavigation (suppressAudio ne coupe que
+-- le son « nouveau trajet »), et le repère du jeu ou la flèche de TomTom sautent. Le point visé est
+-- donc gardé tant qu'il n'est pas atteint et qu'aucun autre du même objectif n'est nettement plus
+-- proche.
+local STICKY_REACHED = 25   -- yards : point atteint (WaypointUI masque son repère en dessous)
+local STICKY_GAIN = 60      -- yards : un autre point ne le remplace que s'il est plus proche d'autant
+
+local function movingTarget(entry, tg)
+  if tg.kind == "zone" then return tg.zoneKind ~= nil end
+  return entry.step.action == "complete" and (tg.kind == "npc" or tg.kind == "object")
+end
+
+-- Garde-t-on la cible posée plutôt que `tg`, calculée pour la même étape et le même objectif ?
+local function keepMovingTarget(entry, tg)
+  local t = target
+  if not (t and t.moving and t.stepKey == entry.key and movingTarget(entry, tg)) then return false end
+  if t.title ~= tg.title or t.group ~= tg.group then return false end
+  local pm, px, py = Q.Maps:PlayerPos()
+  if not pm then return false end
+  local dOld = Q.Maps:Distance(pm, px, py, t.mapId, t.x, t.y)
+  if not dOld or dOld < STICKY_REACHED then return false end
+  local dNew = Q.Maps:Distance(pm, px, py, tg.mapId, tg.x, tg.y)
+  return not (dNew and dNew + STICKY_GAIN < dOld)
+end
+
 function Nav:Refresh(entry)
   if manual then return end
   if entry == nil then entry = Q.Progress:Current() end
@@ -418,7 +446,12 @@ function Nav:Refresh(entry)
   end
   local tg = Q.Targets:ForEntry(entry)
   if tg then
+    if keepMovingTarget(entry, tg) then return end
     self:SetTarget(tg.mapId, tg.x, tg.y, tg.title)
+    if target then
+      target.moving = movingTarget(entry, tg) or nil
+      target.stepKey, target.group = entry.key, tg.group
+    end
   else
     self:Clear()
   end

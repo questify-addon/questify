@@ -286,6 +286,28 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  -- À priorité égale, l'objectif en tête le reste tant qu'un autre n'est pas 40 yards plus près :
+  -- la flèche ne saute pas des marins aux soldats à chaque pas.
+  head_objective_kept_until_another_is_much_closer = function(t)
+    local Q = load()
+    goInside()
+    setObjective(Q784, 3, "Lieutenant Benedict slain: 1/1", true)
+    bags[KEY], bags[ENVELOPE] = 1, 1
+    Mock.fire("BAG_UPDATE_DELAYED")
+    Mock.advance(1.1)
+    t.eq(#order(Q), 2, "sailors and marines left")
+    place({ 58.0, 56.85 })   -- marin à 32 yd, soldat à 47
+    Mock.advance(1.1)
+    t.eq(order(Q)[1], "Kul Tiras Sailor")
+    place({ 58.3, 57.45 })   -- soldat à 37 yd, marin à 50 : 13 yd de mieux seulement
+    Mock.advance(1.1)
+    t.eq(order(Q)[1], "Kul Tiras Sailor", "head kept")
+    place({ 59.5, 56.0 })    -- soldat à 26 yd, marin à 74
+    Mock.advance(1.1)
+    t.eq(order(Q)[1], "Kul Tiras Marine", "much closer: switched")
+    t.eq(#Mock.errors, 0)
+  end,
+
   key_holder_stays_until_key_looted = function(t)
     local Q = load()
     goInside()
