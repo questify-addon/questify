@@ -164,13 +164,14 @@ le champ « Description » de chaque image (le titre peut reprendre sa première
 | 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters and every step of the route. Click a step to make it the current one. |
 | 5 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
 | 6 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
-| 7 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen. With a two-hander equipped, a better one-hander and shield pair is equipped in one click. |
+| 7 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
 | 8 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
-| 9 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: an alert when a chain becomes available, its start, rewards and XP, and one click to add it to your route. |
-| 10 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction, with the quests to pick up in town before you go. |
+| 9 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: an alert in the tracker when a chain is available or overdue; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
+| 10 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the entrance, the quests to pick up in town with their givers, and one click to add them to your route. |
 | 11 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
 | 12 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, and profiles you can share. |
 | 13 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
 
-Captures en jeu faites : 16 (choix de suite) et 17 (alerte d'avant-poste). Les autres scènes de
-`/qf demo` remplaceront les maquettes au fur et à mesure (voir docs/media/CAPTURES-EN-JEU.md).
+Captures en jeu faites : 06 (quêtes de classe), 07 (donjon), 14 (équipement : une pièce, puis une
+paire), 16 (choix de suite) et 17 (alerte d'avant-poste). Encore en maquettes : 01, 02, 08, 08b, 10, 11,
+13 et les thèmes ; les remplacer au fur et à mesure (voir docs/media/CAPTURES-EN-JEU.md).
