@@ -2,8 +2,9 @@ local addonName, Q = ...
 
 -- Donjons selon le niveau et la faction : table précalculée par tools/routebuilder/build_dungeons.lua
 -- (Q.DungeonData, chargée après ce fichier par Guides\DungeonData.lua : relue à chaque appel), état
--- par personnage, alerte du suivi, ajout à la route (prendre les quêtes en ville, aller à l'entrée,
--- faire, rendre) et abandon. Même schéma que les quêtes de classe (Engine/ClassQuests.lua).
+-- par personnage, alerte du suivi, ajout à la route (prendre les quêtes en ville avec les quêtes qui y
+-- mènent, aller à l'entrée, faire, rendre, revenir à la route) et abandon. Même schéma que les quêtes de
+-- classe (Engine/ClassQuests.lua).
 --
 -- Règle de faction stricte : un donjon n'est proposé qu'à une faction listée dans ses données, qui y
 -- a au moins une quête à prendre en ville, et jamais dans une capitale de l'autre faction. Le Gouffre
@@ -15,7 +16,7 @@ local Dungeons = {}
 Q.Dungeons = Dungeons
 
 local TAG_PREFIX = "dg:"
-local MAX_CHAIN = 3       -- préquêtes de passage enchaînées au plus
+local MAX_CHAIN = 5       -- niveaux de préquêtes enchaînées au plus (passage, ou quêtes de zone)
 
 -- Zone du donjon -> seule faction autorisée (garde-fou indépendant des données).
 local LOCKED_FACTION = { [2437] = "Horde" }   -- Gouffre de Ragefeu
@@ -179,8 +180,48 @@ local function usableNow(e)
   return reqLevel(e) <= (Q.Player.level or 1)
 end
 
--- Étapes qui débloquent la quête e par ses préquêtes de passage (bc ou talk), en ajoutant les quêtes
--- prises à `took` : liste d'étapes, ou nil si une préquête manque et ne peut pas être enchaînée.
+local function spawned(kind, id)
+  local rec = kind == "npc" and Q.QDB:Npc(id) or Q.QDB:Object(id)
+  return type(rec) == "table" and type(rec.spawns) == "table" and next(rec.spawns) ~= nil
+end
+
+local function anySpawned(list)
+  for _, id in ipairs(list.npcs or {}) do if spawned("npc", id) then return true end end
+  for _, id in ipairs(list.objects or {}) do if spawned("object", id) then return true end end
+  return false
+end
+
+local function hasObjectives(o)
+  return #o.creatures + #o.objects + #o.items + #o.killCredit + #o.spells > 0 or o.reputation ~= nil
+end
+
+-- Quête de zone (absente des données du donjon) enchaînable maintenant, d'après QuestieDB : faisable par le
+-- personnage à son niveau, ni répétable, ni de métier, ni de réputation, donneur et receveur placés hors
+-- instance, monstres ou objets d'objectif placés quand il y en a. Renvoie la quête ou nil.
+local function zoneQuest(id)
+  local q = Q.QDB:Quest(id)
+  local P = Q.Player
+  if not q or isTurnedIn(id) or not Q.QDB:IsEligible(id, P.raceBit, P.classBit) then return nil end
+  if (q.reqLevel or 1) > (P.level or 1) then return nil end
+  if (q.specialFlags or 0) % 2 == 1 or q.requiredSkill or q.objectives.reputation then return nil end
+  for _, x in ipairs(q.exclusiveTo or {}) do
+    if isTurnedIn(x) then return nil end
+  end
+  if not anySpawned(q.starters) or not anySpawned(q.finishers) then return nil end
+  local o = q.objectives
+  if #o.creatures + #o.objects > 0 then
+    local placed = false
+    for _, n in ipairs(o.creatures) do if spawned("npc", n) then placed = true end end
+    for _, n in ipairs(o.objects) do if spawned("object", n) then placed = true end end
+    if not placed then return nil end
+  end
+  return q
+end
+
+-- Étapes qui débloquent la quête e par ses préquêtes, en ajoutant les quêtes prises à `took` : préquêtes de
+-- passage des données (bc ou talk : prendre, rendre) ou quêtes de zone de QuestieDB (prendre, faire, rendre),
+-- sur MAX_CHAIN niveaux. Liste d'étapes, ou nil si une préquête manque et ne peut pas être enchaînée (quête
+-- du donjon lui-même, hors niveau, sans donneur placé...).
 local function unlockSteps(e, byId, depth, took)
   local single, group, exclusive = prereqLists(e)
   for _, x in ipairs(exclusive) do
@@ -189,9 +230,18 @@ local function unlockSteps(e, byId, depth, took)
   local steps = {}
   local function bring(p)
     if isTurnedIn(p) or took[p] then return true end
-    local pe = byId[p]
-    if not (pe and (pe.bc or pe.talk) and isPoint(pe.at) and usableNow(pe)) then return false end
+    local pe, talk = byId[p], true
+    if pe then
+      -- quête du donjon (en ville ou dans l'instance) : faite avec le donjon, pas avant
+      if not ((pe.bc or pe.talk) and isPoint(pe.at) and usableNow(pe)) then return false end
+    else
+      local zq = zoneQuest(p)
+      if not zq then return false end
+      talk = not hasObjectives(zq.objectives)
+      pe = { id = p }
+    end
     if Q.Progress:InLog(p) then
+      if not talk and not Q.Progress:IsComplete(p) then steps[#steps + 1] = { "complete", p } end
       steps[#steps + 1] = { "turnin", p }
       took[p] = true
       return true
@@ -203,6 +253,7 @@ local function unlockSteps(e, byId, depth, took)
       for _, s in ipairs(sub) do steps[#steps + 1] = s end
     end
     steps[#steps + 1] = { "accept", p }
+    if not talk then steps[#steps + 1] = { "complete", p } end
     steps[#steps + 1] = { "turnin", p }
     took[p] = true
     return true
@@ -267,8 +318,15 @@ local function plan(d)
     steps[#steps + 1] = { "accept", e.id }
     for id in pairs(took) do used[id] = true end
     used[e.id] = true
-    local first = byId[steps[1][2]] or e
-    res.units[#res.units + 1] = { steps = steps, start = first.at, finish = e.at, quest = e }
+    local first, start = byId[steps[1][2]], e.at
+    if first and isPoint(first.at) then
+      start = first.at
+    elseif not first then
+      local CQ = Q.ClassQuests
+      local s = CQ and CQ.Starter and CQ:Starter(steps[1][2])
+      if s and s.mapId then start = { s.mapId, s.x, s.y } end
+    end
+    res.units[#res.units + 1] = { steps = steps, start = start, finish = e.at, quest = e }
     res.active[#res.active + 1] = e
   end
   -- Les quêtes demandées par d'autres viennent après : elles peuvent être enchaînées avant celles-ci.
@@ -430,8 +488,22 @@ function Dungeons:Details(d)
   return out
 end
 
--- Add(key) : insère avant la route les quêtes à prendre (la plus proche d'abord, ville par ville),
--- l'entrée du donjon, puis « faire » et « rendre » pour chaque quête.
+-- Point où reprendre la route après le donjon : la cible de l'étape courante (hors étapes de ce donjon),
+-- sinon la position du joueur. { mapId, x, y, titre|nil } ou nil.
+local function returnPoint(tag)
+  local cur = Q.Progress:Current()
+  if cur and cur.tag ~= tag and Q.Targets and Q.Targets.ForEntry then
+    local tg = Q.Targets:ForEntry(cur)
+    if tg and tg.mapId and tg.x and tg.y then return { tg.mapId, tg.x, tg.y, tg.title } end
+  end
+  local m, x, y = Q.Maps:PlayerPos()
+  if m and x and y then return { m, x, y } end
+  return nil
+end
+
+-- Add(key) : insère avant la route les quêtes à prendre et celles qui y mènent (la plus proche d'abord,
+-- ville par ville), l'entrée du donjon, « faire » et « rendre » pour chaque quête, puis le retour au point
+-- où la route en était (étape « goto » marquée du donjon).
 function Dungeons:Add(key)
   local s = saved()
   if not s or not enabled() then return false end
@@ -444,6 +516,7 @@ function Dungeons:Add(key)
   end
   if not hasQuest then return false end
   local name = self:Name(d)
+  local back = returnPoint(TAG_PREFIX .. d.key)
   local steps = {}
   local pm, px, py = Q.Maps:PlayerPos()
   for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
@@ -469,6 +542,10 @@ function Dungeons:Add(key)
   for _, e in ipairs(inside) do steps[#steps + 1] = { "turnin", e.id, dungeon = name } end
   for _, it in ipairs(orderNearest(outside, ent[1], ent[2], ent[3])) do
     steps[#steps + 1] = { "turnin", it.quest.id, dungeon = name }
+  end
+  if back then
+    local note = back[4] and string.format(Q.L.DUNGEON_BACK_NOTE, back[4]) or Q.L.DUNGEON_BACK_NOTE_PLAIN
+    steps[#steps + 1] = { "goto", back[1], back[2], back[3], dungeon = name, note = note }
   end
   -- l'état est enregistré avant l'insertion : celle-ci déclenche déjà des mises à jour
   s.added[d.key] = true
@@ -502,7 +579,8 @@ end
 
 ---------------------------------------------------------------------------
 -- Un donjon ajouté se retire de lui-même quand il ne lui reste aucune étape de quête à faire
--- (toutes rendues ou sautées) ; l'étape d'entrée seule ne le retient pas.
+-- (toutes rendues ou sautées) ni le retour à la route (« goto » marqué du donjon) ; l'étape d'entrée
+-- seule ne le retient pas.
 ---------------------------------------------------------------------------
 local QUEST_ACTIONS = { accept = true, complete = true, turnin = true }
 
@@ -516,7 +594,7 @@ Q:On("PROGRESS_UPDATED", function()
     if type(tag) == "string" and tag:sub(1, #TAG_PREFIX) == TAG_PREFIX then
       local g = groups[tag]
       if not g then g = { open = false }; groups[tag] = g; order[#order + 1] = tag end
-      if QUEST_ACTIONS[e.step.action] then
+      if QUEST_ACTIONS[e.step.action] or (e.step.action == "goto" and e.step.dungeon) then
         local state = Q.Progress:State(e)
         if state == "active" or state == "blocked" then g.open = true end
       end
