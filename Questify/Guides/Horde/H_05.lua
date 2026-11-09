@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 65 étapes, niveau final 30.00, ~23913 xp/h, 215 min.
+-- Simulation : 67 étapes, niveau final 30.00, ~23337 xp/h, 220 min.
 Q:RegisterGuide({
   id = "H_05",
   title = "Hillsbrad Foothills",
   faction = "Horde",
   minLevel = 28, maxLevel = 30,
   next = "H_06",
-  sim = { steps = 65, endLevel = 30.00, xpPerHour = 23913, minutes = 215 },
+  sim = { steps = 67, endLevel = 30.00, xpPerHour = 23337, minutes = 220 },
   steps = {
     { "hearth", 1413 }, -- pierre de foyer
     { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
@@ -75,6 +75,8 @@ Q:RegisterGuide({
     { "turnin", 78143, xp = 310 }, -- Secrets of the Dreamers (lvl 20, ~310 xp, sim lvl 29)
     { "turnin", 79097, xp = 310 }, -- Baxtan: On Destructive Magics (lvl 20, ~310 xp, sim lvl 29)
     { "turnin", 78149, xp = 310 }, -- Fury of the Land (lvl 20, ~310 xp, sim lvl 29)
-    { "level", 30, at = { 1458, 61.29, 33.4 }, note = "About 172 more mobs here (Malus, level 29)" }, -- farm de niveau
+    { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
+    { "fly", 1424, node = 13, note = "Tarren Mill, Hillsbrad" }, -- vol
+    { "level", 30, at = { 1424, 24.3, 68.11 }, note = "About 172 more mobs here (Torn Fin Coastrunner, level 29)" }, -- farm de niveau
   },
 })

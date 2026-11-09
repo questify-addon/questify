@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 99 étapes, niveau final 52.00, ~58052 xp/h, 311 min.
+-- Simulation : 101 étapes, niveau final 52.00, ~57407 xp/h, 315 min.
 Q:RegisterGuide({
   id = "A_22",
   title = "Searing Gorge and Blasted Lands",
   faction = "Alliance",
   minLevel = 50, maxLevel = 52,
   next = "A_28",
-  sim = { steps = 99, endLevel = 52.00, xpPerHour = 58052, minutes = 311 },
+  sim = { steps = 101, endLevel = 52.00, xpPerHour = 57407, minutes = 315 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Tiara of the Deep, Tran'rek, Scarab Shells, Troll Temper", optional = true, dungeon = "Zul'Farrak" },
     { "accept", 2581 }, -- Snickerfang Jowls (lvl 50, ~4700 xp, sim lvl 50)
@@ -109,6 +109,8 @@ Q:RegisterGuide({
     { "goto", 1432, 33.94, 50.95, note = "Flight master" }, -- déplacement
     { "fly", 1455, node = 6, note = "Ironforge, Dun Morogh" }, -- vol
     { "turnin", 3368, xp = 4400 }, -- Suntara Stones (lvl 48, ~4400 xp, sim lvl 51)
-    { "level", 52, at = { 1427, 48.4, 24.03 }, note = "About 235 more mobs near the last objective" }, -- farm de niveau
+    { "goto", 1455, 55.5, 47.74, note = "Flight master" }, -- déplacement
+    { "fly", 1427, node = 74, note = "Thorium Point, Searing Gorge" }, -- vol
+    { "level", 52, at = { 1427, 66.11, 45.38 }, note = "About 235 more mobs here (Iodax the Obliterator, level 50)" }, -- farm de niveau
   },
 })

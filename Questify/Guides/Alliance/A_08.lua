@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 85 étapes, niveau final 32.00, ~26832 xp/h, 220 min.
+-- Simulation : 85 étapes, niveau final 32.00, ~26828 xp/h, 220 min.
 Q:RegisterGuide({
   id = "A_08",
   title = "Ashenvale",
   faction = "Alliance",
   minLevel = 30, maxLevel = 32,
   next = "A_07",
-  sim = { steps = 85, endLevel = 32.00, xpPerHour = 26832, minutes = 220 },
+  sim = { steps = 85, endLevel = 32.00, xpPerHour = 26828, minutes = 220 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Knowledge in the Deeps, Researching the Corruption", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running The Deadmines? Abandon Oh Brother. . ., Collecting Memories, Underground Assault", optional = true, dungeon = "The Deadmines" },
@@ -82,7 +82,7 @@ Q:RegisterGuide({
     { "turnin", 1045, xp = 2450 }, -- Raene's Cleansing (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 86757, xp = 2450 }, -- Slowing the Orc Advance (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 1025, obj = 3, at = { 1440, 53.61, 63.75 } }, -- An Aggressive Defense (lvl 24, ~1170 xp, sim lvl 30)
-    { "complete", 1025, at = { 1440, 50.09, 60.15 } }, -- An Aggressive Defense (lvl 24, ~1170 xp, sim lvl 30)
+    { "complete", 1025, at = { 1440, 50.09, 60.15 } }, -- An Aggressive Defense (lvl 24, ~1170 xp, sim lvl 31)
     { "turnin", 1035, xp = 3050 }, -- Fallen Sky Lake (lvl 30, ~3050 xp, sim lvl 31)
     { "turnin", 98027, xp = 1050 }, -- Gleaming Crescent Necklace (lvl 26, ~1050 xp, sim lvl 31)
     { "turnin", 1025, xp = 1170 }, -- An Aggressive Defense (lvl 24, ~1170 xp, sim lvl 31)

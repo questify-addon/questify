@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 70 étapes, niveau final 53.00, ~53813 xp/h, 179 min.
+-- Simulation : 70 étapes, niveau final 53.00, ~53351 xp/h, 180 min.
 Q:RegisterGuide({
   id = "H_24",
   title = "Searing Gorge and Burning Steppes",
   faction = "Horde",
   minLevel = 52, maxLevel = 53,
   next = "H_25",
-  sim = { steps = 70, endLevel = 53.00, xpPerHour = 53813, minutes = 179 },
+  sim = { steps = 70, endLevel = 53.00, xpPerHour = 53351, minutes = 180 },
   steps = {
     { "fp", 1428, 65.69, 24.22 }, -- point de vol
     { "accept", 4726 }, -- Broodling Essence (lvl 52, ~5100 xp, sim lvl 52)
@@ -80,6 +80,6 @@ Q:RegisterGuide({
     { "turnin", 81953, xp = 585 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81955, xp = 585 }, -- A Mind of Metal (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81956, xp = 585 }, -- Conjurer's Codex (lvl 45, ~585 xp, sim lvl 52)
-    { "level", 53, at = { 1458, 50.24, 73 }, note = "About 91 more mobs here (Anya Rince, level 52)" }, -- farm de niveau
+    { "level", 53, at = { 1427, 33.01, 53.96 }, note = "About 98 more mobs near the last objective" }, -- farm de niveau
   },
 })

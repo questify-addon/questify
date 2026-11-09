@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 58 étapes, niveau final 39.00, ~38136 xp/h, 123 min.
+-- Simulation : 58 étapes, niveau final 39.00, ~38137 xp/h, 124 min.
 Q:RegisterGuide({
   id = "H_11",
   title = "Arathi Highlands",
   faction = "Horde",
   minLevel = 38, maxLevel = 39,
   next = "H_12",
-  sim = { steps = 58, endLevel = 39.00, xpPerHour = 38136, minutes = 123 },
+  sim = { steps = 58, endLevel = 39.00, xpPerHour = 38137, minutes = 124 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
     { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
@@ -68,6 +68,6 @@ Q:RegisterGuide({
     { "turnin", 847, xp = 2850 }, -- Guile of the Raptor (lvl 37, ~2850 xp, sim lvl 38)
     { "complete", 642, at = { 1417, 84.83, 32.17 } }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 38)
     { "turnin", 642, xp = 2850 }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 38)
-    { "level", 39, at = { 1417, 84.79, 31.55 }, note = "About 48 more mobs here (Drywhisker Surveyor, level 37)" }, -- farm de niveau
+    { "level", 39, at = { 1417, 84.79, 31.55 }, note = "About 50 more mobs here (Drywhisker Surveyor, level 37)" }, -- farm de niveau
   },
 })

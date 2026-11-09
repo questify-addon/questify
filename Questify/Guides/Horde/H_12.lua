@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 24 étapes, niveau final 40.00, ~39687 xp/h, 129 min.
+-- Simulation : 24 étapes, niveau final 40.00, ~39701 xp/h, 130 min.
 Q:RegisterGuide({
   id = "H_12",
   title = "Badlands",
   faction = "Horde",
   minLevel = 39, maxLevel = 40,
   next = "H_13",
-  sim = { steps = 24, endLevel = 40.00, xpPerHour = 39687, minutes = 129 },
+  sim = { steps = 24, endLevel = 40.00, xpPerHour = 39701, minutes = 130 },
   steps = {
     { "note", "Not running Gnomeregan? Abandon Rig Wars, Chief Engineer Scooty", optional = true, dungeon = "Gnomeregan" },
     { "accept", 703 }, -- Barbecued Buzzard Wings (lvl 40, ~2350 xp, sim lvl 39)
@@ -34,6 +34,6 @@ Q:RegisterGuide({
     { "turnin", 1419, xp = 3150 }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 39)
     { "turnin", 2258, xp = 3000 }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
     { "accept", 2202, optional = true, dungeon = "Uldaman" }, -- Uldaman Reagent Run (lvl 42, ~0 xp, sim lvl 39)
-    { "level", 40, at = { 1418, 14.59, 62.88 }, note = "About 8 more mobs here (Giant Buzzard, level 40)" }, -- farm de niveau
+    { "level", 40, at = { 1418, 14.59, 62.88 }, note = "About 9 more mobs here (Giant Buzzard, level 40)" }, -- farm de niveau
   },
 })

@@ -6,15 +6,15 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 |---|---|
 | Level band | 11-16 |
 | Simulated level | 11.00 -> 16.00 |
-| Time | 141 min |
-| XP gained | 50402 |
-| XP/h | 21382 |
-| Steps | 61 |
+| Time | 146 min |
+| XP gained | 50378 |
+| XP/h | 20662 |
+| Steps | 63 |
 | Quests turned in | 20 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 5.22 |
-| Grinding (level steps) | ~33 mobs |
-| Level band | grinding 30 mobs with quests up to level 19: band widened to level 22 |
+| Grinding (level steps) | ~34 mobs |
+| Level band | grinding 32 mobs with quests up to level 19: band widened to level 22 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -217,7 +217,9 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 ## Logistics
 
 - step 47: `level 15` — About 21 mobs here (Defias Pillager, level 14)
-- step 61: `level 16` — About 12 more mobs near the last objective
+- step 61: `goto 1453 71.29 72.23` — Flight master
+- step 62: `fly 1436` — Sentinel Hill, Westfall
+- step 63: `level 16` — About 13 more mobs here (Defias Digger, level 15)
 
 ## Warnings
 

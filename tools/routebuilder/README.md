@@ -856,6 +856,14 @@ Measured (QuestieDB v1.0.12, sum of all chapters):
 Main remaining reasons: required level above the band (97 chapter checks) and a prerequisite done in no chapter
 (58).
 
+### No grinding in a capital (`sim.grindSite`)
+
+Forever fills the capitals with NPCs that QuestieDB lists without faction or NPC flags (Malus 29 and Anya Rince 52
+in Undercity, Gevreka 42 in Thunder Bluff): a chapter that ended in town sent the player to kill 91 to 172 of them.
+`sim.grindSite` never picks a site on a capital map (`sim.CAPITAL_MAPS`: Stormwind, Ironforge, Darnassus,
+Orgrimmar, Thunder Bluff, Undercity); a chapter that ends in a capital looks for its grind site near the last
+objective instead.
+
 ## Known limits
 
 - Walking is a straight line in world coordinates (no pathing around mountains, no city

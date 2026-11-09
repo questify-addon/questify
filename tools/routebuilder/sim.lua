@@ -2207,6 +2207,10 @@ function sim.chapter(D, W, plan, state, opts)
     local mobLevel = state.level
     if lastSite and lastSite.kills[1] then mobLevel = lastSite.kills[1][1] end
     local grind = sim.grindSite(ctx, cur, state.level)
+    -- fin de chapitre en capitale : lieu de farm cherché près du dernier site d'objectif
+    if not grind and lastSite and cur and sim.CAPITAL_MAPS[cur.m] then
+      grind = sim.grindSite(ctx, lastSite.pos, state.level)
+    end
     if grind then
       cur = sim.travel(ctx, steps, cur, grind.pos, fms)
       lastSite = { pos = grind.pos, kills = { { grind.level, 0 } } }
@@ -2377,10 +2381,14 @@ local function uniqueTargets(D)
   return set
 end
 
+-- Capitales (uiMapID) : jamais de farm. Forever y place des foules de PNJ sans faction ni drapeau dans
+-- QuestieDB (Malus 29 et Anya Rince 52 à Fossoyeuse, Gevreka 42 aux Pitons-du-Tonnerre), pris pour des mobs.
+sim.CAPITAL_MAPS = { [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true }
+
 -- Lieu de farm : le groupe de mobs hostiles de niveau adapté le plus dense à moins de 600 yd
--- (ni PNJ de quête, ni mob nommé cible unique d'une quête).
+-- (ni PNJ de quête, ni mob nommé cible unique d'une quête), hors capitale.
 function sim.grindSite(ctx, pos, level)
-  if not pos then return nil end
+  if not pos or sim.CAPITAL_MAPS[pos.m] then return nil end
   local D = ctx.D
   local unique = uniqueTargets(D)
   local pts = {}

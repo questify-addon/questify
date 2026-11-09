@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 35 étapes, niveau final 34.00, ~24323 xp/h, 145 min.
+-- Simulation : 35 étapes, niveau final 34.00, ~24300 xp/h, 144 min.
 Q:RegisterGuide({
   id = "A_09",
   title = "Thousand Needles",
   faction = "Alliance",
   minLevel = 33, maxLevel = 34,
   next = "A_10",
-  sim = { steps = 35, endLevel = 34.00, xpPerHour = 24323, minutes = 145 },
+  sim = { steps = 35, endLevel = 34.00, xpPerHour = 24300, minutes = 144 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1436, node = 4, note = "Sentinel Hill, Westfall" }, -- vol
@@ -45,6 +45,6 @@ Q:RegisterGuide({
     { "accept", 1115 }, -- The Rumormonger (lvl 36, ~0 xp, sim lvl 33)
     { "complete", 1175, at = { 1441, 78.44, 87.69 } }, -- A Bump in the Road (lvl 33, ~2650 xp, sim lvl 33)
     { "turnin", 1175, xp = 2650 }, -- A Bump in the Road (lvl 33, ~2650 xp, sim lvl 33)
-    { "level", 34, at = { 1441, 78.23, 88.47 }, note = "About 176 more mobs here (Saltstone Crystalhide, level 32)" }, -- farm de niveau
+    { "level", 34, at = { 1441, 78.23, 88.47 }, note = "About 175 more mobs here (Saltstone Crystalhide, level 32)" }, -- farm de niveau
   },
 })

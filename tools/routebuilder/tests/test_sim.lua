@@ -268,6 +268,20 @@ return {
     t.eq(#seq, 6)
   end,
 
+  -- Jamais de farm en capitale : foules de PNJ de Forever sans faction ni drapeau, prises pour des mobs.
+  grind_site_never_in_a_capital = function(t)
+    local D, W = F.D(), F.W()
+    local ctx = { D = D, W = W, letter = "A", plan = F.plan(), opts = {} }
+    local pos = sim.mkPos(W, F.MAP, 25, 28)
+    local g = sim.grindSite(ctx, pos, 2)
+    t.ok(g, "wolves of the fixture make a grind site")
+    local saved = sim.CAPITAL_MAPS[F.MAP]
+    sim.CAPITAL_MAPS[F.MAP] = true
+    local inCity = sim.grindSite(ctx, pos, 2)
+    sim.CAPITAL_MAPS[F.MAP] = saved
+    t.eq(inCity, nil, "no grind site in a capital")
+  end,
+
   -- Lot L : une quête de donjon prise au passage (jamais rendue) n'ouvre pas sa suite hors du donjon.
   dungeon_pickup_is_not_a_prerequisite = function(t)
     local D, W = F.D(), F.W()

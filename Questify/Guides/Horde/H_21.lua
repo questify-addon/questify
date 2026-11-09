@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 39 étapes, niveau final 51.00, ~51205 xp/h, 338 min.
+-- Simulation : 39 étapes, niveau final 51.00, ~51203 xp/h, 339 min.
 Q:RegisterGuide({
   id = "H_21",
   title = "The Hinterlands",
   faction = "Horde",
   minLevel = 49, maxLevel = 51,
   next = "H_23",
-  sim = { steps = 39, endLevel = 51.00, xpPerHour = 51205, minutes = 338 },
+  sim = { steps = 39, endLevel = 51.00, xpPerHour = 51203, minutes = 339 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Tran'rek, Scarab Shells, Troll Temper", optional = true, dungeon = "Zul'Farrak" },
     { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
@@ -49,6 +49,6 @@ Q:RegisterGuide({
     { "accept", 1446, optional = true, dungeon = "The Temple of Atal'Hakkar" }, -- Jammal'an the Prophet (lvl 53, ~0 xp, sim lvl 49)
     { "accept", 2933 }, -- Venom Bottles (lvl 43, ~2880 xp, sim lvl 49)
     { "turnin", 2933, xp = 2880 }, -- Venom Bottles (lvl 43, ~2880 xp, sim lvl 49)
-    { "level", 51, at = { 1425, 48.07, 66.02 }, note = "About 781 more mobs near the last objective" }, -- farm de niveau
+    { "level", 51, at = { 1425, 48.07, 66.02 }, note = "About 782 more mobs near the last objective" }, -- farm de niveau
   },
 })

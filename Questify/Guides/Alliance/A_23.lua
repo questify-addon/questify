@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 62 étapes, niveau final 58.00, ~58205 xp/h, 201 min.
+-- Simulation : 64 étapes, niveau final 58.00, ~57569 xp/h, 203 min.
 Q:RegisterGuide({
   id = "A_23",
   title = "Western Plaguelands",
   faction = "Alliance",
   minLevel = 57, maxLevel = 58,
   next = "A_29",
-  sim = { steps = 62, endLevel = 58.00, xpPerHour = 58205, minutes = 201 },
+  sim = { steps = 64, endLevel = 58.00, xpPerHour = 57569, minutes = 203 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
@@ -72,6 +72,8 @@ Q:RegisterGuide({
     { "turnin", 84402, xp = 1650 }, -- Necromancy 101 (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 84395, xp = 1650 }, -- Undead Potatoes (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 5022, xp = 2550 }, -- Better Late Than Never (lvl 52, ~2550 xp, sim lvl 57)
-    { "level", 58, at = { 1422, 64.84, 47.98 }, note = "About 365 more mobs near the last objective" }, -- farm de niveau
+    { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
+    { "fly", 1422, node = 66, note = "Chillwind Camp, Western Plaguelands" }, -- vol
+    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 340 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
   },
 })

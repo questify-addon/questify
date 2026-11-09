@@ -2,19 +2,19 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 58 étapes, niveau final 49.00, ~46656 xp/h, 340 min.
+-- Simulation : 58 étapes, niveau final 49.00, ~46150 xp/h, 344 min.
 Q:RegisterGuide({
   id = "H_18",
   title = "Stranglethorn Vale",
   faction = "Horde",
   minLevel = 47, maxLevel = 49,
   next = "H_21",
-  sim = { steps = 58, endLevel = 49.00, xpPerHour = 46656, minutes = 340 },
+  sim = { steps = 58, endLevel = 49.00, xpPerHour = 46150, minutes = 344 },
   steps = {
     { "note", "Not running Uldaman? Abandon Uldaman Reagent Run", optional = true, dungeon = "Uldaman" },
-    { "boat", 1411, 50.69, 12.89, note = "Take the zeppelin to Grom'gol (Stranglethorn Vale)" }, -- bateau
-    { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
-    { "fly", 1434, node = 18, note = "Booty Bay, Stranglethorn" }, -- vol
+    { "goto", 1444, 75.45, 44.36, note = "Flight master" }, -- déplacement
+    { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
+    { "boat", 1413, 63.54, 38.61, note = "Take the boat to Booty Bay (Stranglethorn Vale)" }, -- bateau
     { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 47)
     { "accept", 613 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 47)
     { "turnin", 2874, xp = 3900 }, -- Deliver to MacKinley (lvl 45, ~3900 xp, sim lvl 47)
