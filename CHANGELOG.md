@@ -47,6 +47,12 @@
 - Adding a dungeon from the Dungeons window now also does the zone quests that unlock its quests (up to 5 in a row),
   then the dungeon and every turn-in, and a last step takes you back to where your route was.
 
+**Quests started by a looted item**
+- When the item that starts a quest of your route lands in your bags, a message in the middle of the screen (with
+  a sound and a chat line) tells you, and the quest item button next to the tracker offers it: one click (or its
+  key binding) opens the quest, which is accepted automatically. The game does not let an addon use an item
+  without a click or a key press.
+
 **Class quests and quest items**
 - Class quests whose giver, objectives and turn-in sit along the route are now steps of the route, for your class
   only. The others stay in the class quest window.
@@ -108,6 +114,12 @@
   (28 avant). Leur prise ne fait jamais farmer pour leur niveau. Masquées avec l'option des quêtes de donjon coupée.
 - Ajouter un donjon depuis la fenêtre des donjons fait aussi les quêtes de zone qui débloquent ses quêtes (jusqu'à 5
   à la suite), puis le donjon et tous les rendus, et une dernière étape te ramène là où en était ta route.
+
+**Quêtes lancées par un objet ramassé**
+- Quand l'objet qui lance une quête de ta route arrive dans tes sacs, un message au milieu de l'écran (avec un son et
+  une ligne dans la discussion) te prévient, et le bouton d'objet de quête à côté du suivi le propose : un clic (ou
+  son raccourci) ouvre la quête, acceptée automatiquement. Le jeu n'autorise pas un addon à utiliser un objet sans
+  clic ni touche.
 
 **Quêtes de classe et objets de quête**
 - Les quêtes de classe dont le donneur, les objectifs et le rendu sont sur le chemin deviennent des étapes de la

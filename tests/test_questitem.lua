@@ -78,6 +78,36 @@ return {
     t.ok(not B.button:IsShown())
   end,
 
+  -- Étape « prendre » d'une quête lancée par un objet ramassé : l'objet dans les sacs passe sur le bouton,
+  -- avec une alerte (une seule fois) ; sans l'objet, rien.
+  starter_item_on_the_button_with_one_alert = function(t)
+    local qdb = { quests = { [99200] = { name = "Strange Note", startedBy = { nil, nil, { 7010 } },
+      finishedBy = { { 658 } }, requiredLevel = 1, questLevel = 2 } }, items = { [7010] = { name = "Strange Note" } } }
+    local Q = load(qdb)
+    Q:RegisterGuide({ id = "T_start", faction = "Alliance",
+      steps = { { "accept", 99200, at = { 1426, 30, 70 } }, { "turnin", 99200 } } })
+    Q.Progress:SetGuide("T_start")
+    local B = Q.UI.QuestItemButton
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(B.itemId, nil, "not looted yet")
+    t.eq(Mock.countPrinted("Strange Note"), 0)
+    counts[7010] = 1
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(B.itemId, 7010, "starter item on the button, no use spell needed")
+    t.ok(B.button:IsShown())
+    t.eq(B.button:GetAttribute("item"), "item:7010")
+    t.eq(Mock.countPrinted("Strange Note"), 1, "one alert in the chat")
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(Mock.countPrinted("Strange Note"), 1, "not repeated")
+    -- quête prise (clic sur le bouton, puis acceptée) : l'étape passe, le bouton suit la suivante
+    counts[7010] = 0
+    Mock.quests.log[99200] = { objectives = {} }
+    Mock.fire("QUEST_ACCEPTED", 99200)
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(B.itemId, nil)
+    t.eq(#Mock.errors, 0)
+  end,
+
   option_off = function(t)
     local Q = load(QDB)
     counts[7001], spells[7001] = 1, "Throw Vial"
