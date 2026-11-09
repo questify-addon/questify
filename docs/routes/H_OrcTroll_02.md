@@ -1,14 +1,14 @@
 # H_OrcTroll_02 — Durotar
 
-Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
 | Level band | 6-12 |
-| Simulated level | 6.00 -> 13.21 |
-| Time | 186 min |
-| XP gained | 48649 |
-| XP/h | 15670 |
+| Simulated level | 6.00 -> 13.20 |
+| Time | 176 min |
+| XP gained | 48630 |
+| XP/h | 16550 |
 | Steps | 117 |
 | Quests turned in | 42 |
 | Hubs | 9 |
@@ -21,47 +21,47 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
-| 1 | 823 | Report to Orgnil | 7 | 315 | 6 |
-| 2 | 96604 | The Great Outdoors | 6 | 540 est. | 6 |
-| 3 | 830 | The Admiral's Orders | 7 | 630 | 7 |
-| 4 | 784 | Vanquish the Betrayers | 7 | 630 | 7 |
-| 5 | 96821 | Legging It | 6 | 540 est. | 7 |
-| 6 | 96822 | For Honor | 7 | 630 est. | 8 |
-| 7 | 97281 | A Simmering Storm | 11 | 660 est. | 8 |
-| 8 | 817 | Practical Prey | 8 | 700 | 8 |
-| 9 | 818 | A Solvent Spirit | 7 | 630 | 8 |
-| 10 | 808 | Minshina's Skull | 9 | 780 | 8 |
-| 11 | 97223 | Bloodtalon Matriarch | 9 | 780 est. | 8 |
-| 12 | 786 | Thwarting Kolkar Aggression | 8 | 700 | 9 |
-| 13 | 97225 | Forgotten Loa Idols | 9 | 780 est. | 9 |
-| 14 | 826 | Zalazane | 10 | 840 | 9 |
-| 15 | 825 | From The Wreckage.... | 8 | 700 | 9 |
-| 16 | 99048 | A Missing Hand | 9 | 780 est. | 9 |
-| 17 | 99049 | Threat from Below | 9 | 780 est. | 9 |
-| 18 | 834 | Winds in the Desert | 9 | 780 | 10 |
-| 19 | 99051 | Threat from Below | 11 | 770 est. | 10 |
-| 20 | 837 | Encroachment | 10 | 630 | 10 |
-| 21 | 96825 | This Fruit Could Bite Back | 6 | 540 est. | 10 |
-| 22 | 815 | Break a Few Eggs | 8 | 700 | 10 |
+| 1 | 96604 | The Great Outdoors | 6 | 540 est. | 6 |
+| 2 | 823 | Report to Orgnil | 7 | 315 | 6 |
+| 3 | 786 | Thwarting Kolkar Aggression | 8 | 700 | 7 |
+| 4 | 97223 | Bloodtalon Matriarch | 9 | 780 est. | 7 |
+| 5 | 808 | Minshina's Skull | 9 | 780 | 8 |
+| 6 | 818 | A Solvent Spirit | 7 | 630 | 8 |
+| 7 | 817 | Practical Prey | 8 | 700 | 8 |
+| 8 | 826 | Zalazane | 10 | 840 | 8 |
+| 9 | 97225 | Forgotten Loa Idols | 9 | 780 est. | 8 |
+| 10 | 830 | The Admiral's Orders | 7 | 630 | 9 |
+| 11 | 784 | Vanquish the Betrayers | 7 | 630 | 9 |
+| 12 | 96821 | Legging It | 6 | 540 est. | 9 |
+| 13 | 815 | Break a Few Eggs | 8 | 700 | 9 |
+| 14 | 99048 | A Missing Hand | 9 | 780 est. | 9 |
+| 15 | 96822 | For Honor | 7 | 630 est. | 9 |
+| 16 | 99049 | Threat from Below | 9 | 780 est. | 9 |
+| 17 | 825 | From The Wreckage.... | 8 | 700 | 9 |
+| 18 | 97281 | A Simmering Storm | 11 | 660 est. | 10 |
+| 19 | 837 | Encroachment | 10 | 630 | 10 |
+| 20 | 806 | Dark Storms | 12 | 910 | 10 |
+| 21 | 99051 | Threat from Below | 11 | 770 est. | 10 |
+| 22 | 96825 | This Fruit Could Bite Back | 6 | 540 est. | 10 |
 | 23 | 96655 | Camping 101: Cooking | 6 | 540 est. | 10 |
-| 24 | 791 | Carry Your Weight | 7 | 630 | 11 |
-| 25 | 97282 | Stormy Potential | 10 | 840 est. | 11 |
-| 26 | 835 | Securing the Lines | 11 | 880 | 11 |
-| 27 | 831 | The Admiral's Orders | 7 | 630 | 11 |
-| 28 | 99052 | Threat from Below | 11 | 770 est. | 11 |
-| 29 | 806 | Dark Storms | 12 | 910 | 11 |
-| 30 | 828 | Margoz | 12 | 90 | 11 |
-| 31 | 827 | Skull Rock | 12 | 910 | 12 |
-| 32 | 97246 | Meal Appeal | 15 | 405 est. | 12 |
-| 33 | 5726 | Hidden Enemies | 12 | 910 | 12 |
-| 34 | 829 | Neeru Fireblade | 12 | 455 | 12 |
-| 35 | 832 | Burning Shadows | 12 | 680 | 12 |
-| 36 | 5727 | Hidden Enemies | 12 | 455 | 12 |
-| 37 | 97249 | Favorite Food | 15 | 405 est. | 12 |
-| 38 | 97275 | Whuut's the Rush | 15 | 405 est. | 12 |
-| 39 | 96877 | Halikor's Hoof | 12 | 225 est. | 12 |
-| 40 | 97242 | Yelmak's Medley | 15 | 1050 est. | 13 |
-| 41 | 97326 | Rocks to Rests | 15 | 1050 est. | 13 |
+| 24 | 791 | Carry Your Weight | 7 | 630 | 10 |
+| 25 | 834 | Winds in the Desert | 9 | 780 | 10 |
+| 26 | 828 | Margoz | 12 | 90 | 11 |
+| 27 | 97275 | Whuut's the Rush | 15 | 405 est. | 11 |
+| 28 | 831 | The Admiral's Orders | 7 | 630 | 11 |
+| 29 | 827 | Skull Rock | 12 | 910 | 11 |
+| 30 | 97246 | Meal Appeal | 15 | 405 est. | 12 |
+| 31 | 96877 | Halikor's Hoof | 12 | 225 est. | 12 |
+| 32 | 97242 | Yelmak's Medley | 15 | 1050 est. | 12 |
+| 33 | 97249 | Favorite Food | 15 | 405 est. | 12 |
+| 34 | 5726 | Hidden Enemies | 12 | 910 | 12 |
+| 35 | 829 | Neeru Fireblade | 12 | 455 | 12 |
+| 36 | 832 | Burning Shadows | 12 | 680 | 12 |
+| 37 | 97326 | Rocks to Rests | 15 | 1050 est. | 12 |
+| 38 | 5727 | Hidden Enemies | 12 | 455 | 12 |
+| 39 | 97282 | Stormy Potential | 10 | 840 est. | 13 |
+| 40 | 835 | Securing the Lines | 11 | 880 | 13 |
+| 41 | 99052 | Threat from Below | 11 | 770 est. | 13 |
 | 42 | 840 | Conscript of the Horde | 12 | 455 | 13 |
 
 ## Dropped quests
@@ -470,125 +470,125 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 826 | Zalazane | 1411 | 56.0, 74.7 | 0 |  |
-| 2 | A | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 0 |  |
-| 3 | A | 823 | Report to Orgnil | 1411 | 56.0, 74.7 | 0 |  |
-| 4 | A | 97225 | Forgotten Loa Idols | 1411 | 55.9, 74.4 | 11 |  |
-| 5 | A | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 0 |  |
-| 6 | A | 96821 | Legging It | 1411 | 56.0, 73.9 | 16 |  |
-| 7 | A | 817 | Practical Prey | 1411 | 56.0, 73.9 | 0 |  |
-| 8 | A | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 65 |  |
+| 1 | A | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 0 |  |
+| 2 | A | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 11 |  |
+| 3 | A | 97225 | Forgotten Loa Idols | 1411 | 55.9, 74.4 | 0 |  |
+| 4 | A | 817 | Practical Prey | 1411 | 56.0, 73.9 | 16 |  |
+| 5 | A | 96821 | Legging It | 1411 | 56.0, 73.9 | 0 |  |
+| 6 | A | 826 | Zalazane | 1411 | 56.0, 74.7 | 27 |  |
+| 7 | A | 823 | Report to Orgnil | 1411 | 56.0, 74.7 | 0 |  |
+| 8 | A | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 44 |  |
 | 9 | A | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 59 |  |
-| 10 | O | 818 | A Solvent Spirit | 1411 | 63.7, 56.4 | 800 |  |
-| 11 | A | 96822 | For Honor | 1411 | 54.0, 42.6 | 711 |  |
-| 12 | A | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 228 |  |
-| 13 | A | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 97 |  |
-| 14 | A | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 0 |  |
-| 15 | A | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 57 |  |
-| 16 | A | 837 | Encroachment | 1411 | 52.0, 43.5 | 0 |  |
-| 17 | T | 823 | Report to Orgnil | 1411 | 52.2, 43.1 | 19 |  |
-| 18 | A | 806 | Dark Storms | 1411 | 52.2, 43.1 | 0 |  |
-| 19 | A | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 145 |  |
-| 20 | O | 96604 | The Great Outdoors | 1411 | 52.1, 47.4 | 7 |  |
-| 21 | T | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 7 |  |
-| 22 | A | 96655 | Camping 101: Cooking | 1411 | 52.0, 47.3 | 0 |  |
-| 23 | O | 96821 | Legging It | 1411 | 52.0, 52.1 | 171 |  |
-| 24 | O | 96822 | For Honor | 1411 | 59.4, 56.4 | 416 |  |
-| 25 | O | 791 | Carry Your Weight | 1411 | 58.9, 57.5 | 46 |  |
-| 26 | O | 784 | Vanquish the Betrayers | 1411 | 57.0, 57.5 | 97 |  |
-| 27 | A | 830 | The Admiral's Orders | 1411 | 59.3, 57.6 | 117 |  |
-| 28 | O | 96822 | For Honor | 1411 | 56.5, 53.0 | 218 |  |
-| 29 | T | 830 | The Admiral's Orders | 1411 | 52.0, 43.5 | 413 | near #22 (went 631 yd away) |
-| 30 | T | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 0 | near #22 (went 631 yd away) |
-| 31 | A | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 |  |
-| 32 | T | 96821 | Legging It | 1411 | 52.0, 43.5 | 0 |  |
-| 33 | A | 831 | The Admiral's Orders | 1411 | 52.0, 43.5 | 0 |  |
-| 34 | T | 96822 | For Honor | 1411 | 54.0, 42.6 | 110 |  |
-| 35 | A | 97281 | A Simmering Storm | 1411 | 51.9, 21.6 | 748 |  |
-| 36 | A | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 296 |  |
-| 37 | T | 97281 | A Simmering Storm | 1411 | 46.4, 22.9 | 0 |  |
-| 38 | A | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 0 |  |
-| 39 | O | 834 | Winds in the Desert | 1411 | 48.2, 32.3 | 342 |  |
-| 40 | O | 96825 | This Fruit Could Bite Back | 1411 | 46.4, 49.4 | 611 |  |
-| 41 | O | 786 | Thwarting Kolkar Aggression | 1411 | 47.7, 77.3 | 987 |  |
-| 42 | O | 786 | Thwarting Kolkar Aggression | 1411 | 49.8, 81.3 | 179 |  |
-| 43 | O | 817 | Practical Prey | 1411 | 63.6, 95.9 | 893 |  |
-| 44 | O | 808 | Minshina's Skull | 1411 | 67.4, 87.8 | 347 |  |
-| 45 | O | 815 | Break a Few Eggs | 1411 | 68.7, 70.8 | 604 |  |
-| 46 | O | 97223 | Bloodtalon Matriarch | 1411 | 68.8, 71.8 | 35 |  |
-| 47 | T | 817 | Practical Prey | 1411 | 56.0, 73.9 | 683 | near #9 (went 1867 yd away) |
-| 48 | T | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 16 | near #9 (went 1882 yd away) |
-| 49 | T | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 11 |  |
-| 50 | T | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 44 |  |
-| 51 | T | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 59 |  |
-| 52 | O | 97225 | Forgotten Loa Idols | 1411 | 65.5, 84.4 | 685 |  |
-| 53 | O | 826 | Zalazane | 1411 | 67.7, 84.6 | 115 | near #44 (went 788 yd away) |
-| 54 | T | 97225 | Forgotten Loa Idols | 1411 | 56.0, 74.7 | 712 | near #51 (went 712 yd away) |
-| 55 | T | 826 | Zalazane | 1411 | 56.0, 74.7 | 0 | near #51 (went 712 yd away) |
-| 56 | O | 825 | From The Wreckage.... | 1411 | 63.4, 55.4 | 785 | near #10 (went 1456 yd away) |
-| 57 | A | 99048 | A Missing Hand | 1411 | 52.2, 43.1 | 731 | near #34 (went 1953 yd away) |
-| 58 | T | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 19 | near #34 (went 1946 yd away) |
-| 59 | T | 99048 | A Missing Hand | 1411 | 58.6, 45.6 | 359 |  |
-| 60 | A | 99049 | Threat from Below | 1411 | 58.6, 45.6 | 0 |  |
-| 61 | O | 99049 | Threat from Below | 1411 | 58.9, 44.4 | 46 |  |
-| 62 | T | 99049 | Threat from Below | 1411 | 52.2, 43.1 | 352 |  |
-| 63 | A | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
-| 64 | O | 837 | Encroachment | 1411 | 46.8, 48.5 | 344 | near #40 (went 1890 yd away) |
-| 65 | O | 837 | Encroachment | 1411 | 43.6, 40.6 | 325 |  |
-| 66 | T | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 639 | near #38 (went 2727 yd away) |
-| 67 | A | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #38 (went 2727 yd away) |
-| 68 | O | 835 | Securing the Lines | 1411 | 53.4, 24.6 | 377 | near #35 (went 2568 yd away) |
-| 69 | O | 99051 | Threat from Below | 1411 | 59.5, 26.6 | 327 |  |
-| 70 | T | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 699 | near #63 (went 777 yd away) |
-| 71 | A | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 0 | near #63 (went 777 yd away) |
-| 72 | T | 837 | Encroachment | 1411 | 52.0, 43.5 | 19 |  |
-| 73 | T | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 57 |  |
-| 74 | T | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 0 |  |
-| 75 | A | 840 | Conscript of the Horde | 1411 | 50.8, 43.6 | 42 |  |
-| 76 | O | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 42 |  |
-| 77 | T | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
-| 78 | T | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 97 |  |
-| 79 | A | 96877 | Halikor's Hoof | 1411 | 40.5, 28.4 | 652 |  |
-| 80 | O | 97282 | Stormy Potential | 1411 | 40.5, 26.5 | 67 |  |
-| 81 | O | 806 | Dark Storms | 1411 | 42.1, 26.7 | 85 |  |
-| 82 | T | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 260 | near #67 (went 782 yd away) |
-| 83 | T | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #67 (went 782 yd away) |
-| 84 | A | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 964 |  |
-| 85 | T | 831 | The Admiral's Orders | 1454 | 32.3, 35.8 | 20 |  |
-| 86 | F |  | flight path | 1454 | 45.1, 63.9 | 318 |  |
-| 87 | A | 97246 | Meal Appeal | 1454 | 55.7, 72.2 | 166 |  |
-| 88 | O | 99052 | Threat from Below | 1411 | 59.2, 17.6 | 754 |  |
-| 89 | T | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 973 | near #77 (went 1754 yd away) |
-| 90 | T | 806 | Dark Storms | 1411 | 52.2, 43.1 | 0 | near #77 (went 1754 yd away) |
-| 91 | A | 828 | Margoz | 1411 | 52.2, 43.1 | 0 |  |
-| 92 | T | 828 | Margoz | 1411 | 56.4, 20.0 | 843 |  |
-| 93 | A | 827 | Skull Rock | 1411 | 56.4, 20.0 | 0 |  |
-| 94 | O | 827 | Skull Rock | 1411 | 52.9, 9.3 | 420 |  |
-| 95 | O | 5726 | Hidden Enemies | 1411 | 52.9, 9.3 | 0 |  |
-| 96 | A | 832 | Burning Shadows | 1411 | 52.6, 8.8 | 23 |  |
-| 97 | T | 827 | Skull Rock | 1411 | 56.4, 20.0 | 443 |  |
-| 98 | A | 829 | Neeru Fireblade | 1411 | 56.4, 20.0 | 0 |  |
-| 99 | T | 97246 | Meal Appeal | 1454 | 57.2, 53.3 | 816 |  |
-| 100 | A | 97249 | Favorite Food | 1454 | 57.2, 53.3 | 0 |  |
-| 101 | T | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 385 | near #85 (went 1739 yd away) |
-| 102 | A | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 0 | near #85 (went 1739 yd away) |
-| 103 | T | 829 | Neeru Fireblade | 1454 | 49.5, 50.6 | 276 |  |
-| 104 | T | 832 | Burning Shadows | 1454 | 49.5, 50.6 | 0 |  |
-| 105 | O | 5727 | Hidden Enemies | 1454 | 49.5, 50.6 | 0 |  |
-| 106 | T | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 276 |  |
-| 107 | T | 97249 | Favorite Food | 1454 | 36.5, 29.1 | 106 |  |
-| 108 | A | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 4 |  |
-| 109 | A | 97275 | Whuut's the Rush | 1454 | 56.8, 33.0 | 283 |  |
-| 110 | T | 97275 | Whuut's the Rush | 1454 | 55.8, 32.9 | 14 |  |
-| 111 | A | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 11 |  |
-| 112 | T | 96877 | Halikor's Hoof | 1454 | 63.3, 44.8 | 142 |  |
-| 113 | O | 97242 | Yelmak's Medley | 1454 | 69.6, 31.1 | 155 |  |
-| 114 | T | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 192 |  |
-| 115 | O | 97326 | Rocks to Rests | 1454 | 43.2, 33.7 | 179 |  |
-| 116 | T | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 99 |  |
-| 117 | T | 840 | Conscript of the Horde | 1413 | 62.3, 19.4 | 1774 |  |
+| 10 | A | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 963 |  |
+| 11 | O | 96604 | The Great Outdoors | 1411 | 52.1, 47.4 | 7 |  |
+| 12 | T | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 7 |  |
+| 13 | A | 96655 | Camping 101: Cooking | 1411 | 52.0, 47.3 | 0 |  |
+| 14 | A | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 132 |  |
+| 15 | A | 837 | Encroachment | 1411 | 52.0, 43.5 | 0 |  |
+| 16 | T | 823 | Report to Orgnil | 1411 | 52.2, 43.1 | 19 |  |
+| 17 | A | 806 | Dark Storms | 1411 | 52.2, 43.1 | 0 |  |
+| 18 | A | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 64 |  |
+| 19 | A | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 0 |  |
+| 20 | A | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 97 |  |
+| 21 | A | 96822 | For Honor | 1411 | 54.0, 42.6 | 228 |  |
+| 22 | O | 96822 | For Honor | 1411 | 56.5, 53.0 | 391 |  |
+| 23 | O | 784 | Vanquish the Betrayers | 1411 | 57.0, 57.5 | 160 |  |
+| 24 | A | 830 | The Admiral's Orders | 1411 | 59.3, 57.6 | 117 |  |
+| 25 | O | 791 | Carry Your Weight | 1411 | 58.9, 57.5 | 21 |  |
+| 26 | O | 96822 | For Honor | 1411 | 59.4, 56.4 | 46 |  |
+| 27 | O | 818 | A Solvent Spirit | 1411 | 63.7, 56.4 | 230 |  |
+| 28 | O | 815 | Break a Few Eggs | 1411 | 68.7, 70.8 | 570 |  |
+| 29 | O | 97223 | Bloodtalon Matriarch | 1411 | 68.8, 71.8 | 35 |  |
+| 30 | O | 808 | Minshina's Skull | 1411 | 67.4, 87.8 | 569 |  |
+| 31 | O | 817 | Practical Prey | 1411 | 63.6, 95.9 | 347 |  |
+| 32 | O | 786 | Thwarting Kolkar Aggression | 1411 | 49.8, 81.3 | 893 |  |
+| 33 | O | 786 | Thwarting Kolkar Aggression | 1411 | 47.7, 77.3 | 179 |  |
+| 34 | T | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 373 | near #9 (went 1221 yd away) |
+| 35 | T | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 59 | near #9 (went 1269 yd away) |
+| 36 | T | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 44 |  |
+| 37 | T | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 11 |  |
+| 38 | T | 817 | Practical Prey | 1411 | 56.0, 73.9 | 16 |  |
+| 39 | O | 97225 | Forgotten Loa Idols | 1411 | 65.5, 84.4 | 626 |  |
+| 40 | O | 826 | Zalazane | 1411 | 67.7, 84.6 | 115 | near #30 (went 1090 yd away) |
+| 41 | T | 826 | Zalazane | 1411 | 56.0, 74.7 | 712 | near #38 (went 712 yd away) |
+| 42 | T | 97225 | Forgotten Loa Idols | 1411 | 56.0, 74.7 | 0 | near #38 (went 712 yd away) |
+| 43 | O | 96821 | Legging It | 1411 | 52.0, 52.1 | 822 |  |
+| 44 | T | 830 | The Admiral's Orders | 1411 | 52.0, 43.5 | 304 | near #21 (went 1946 yd away) |
+| 45 | T | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 0 | near #21 (went 1946 yd away) |
+| 46 | A | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 |  |
+| 47 | T | 96821 | Legging It | 1411 | 52.0, 43.5 | 0 |  |
+| 48 | A | 99048 | A Missing Hand | 1411 | 52.2, 43.1 | 19 |  |
+| 49 | A | 831 | The Admiral's Orders | 1411 | 52.0, 43.5 | 19 |  |
+| 50 | T | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 57 |  |
+| 51 | O | 825 | From The Wreckage.... | 1411 | 63.4, 55.4 | 794 | near #27 (went 1424 yd away) |
+| 52 | T | 99048 | A Missing Hand | 1411 | 58.6, 45.6 | 429 |  |
+| 53 | A | 99049 | Threat from Below | 1411 | 58.6, 45.6 | 0 |  |
+| 54 | O | 99049 | Threat from Below | 1411 | 58.9, 44.4 | 46 |  |
+| 55 | T | 96822 | For Honor | 1411 | 54.0, 42.6 | 266 | near #49 (went 673 yd away) |
+| 56 | T | 99049 | Threat from Below | 1411 | 52.2, 43.1 | 92 | near #50 (went 731 yd away) |
+| 57 | A | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 58 | T | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 19 |  |
+| 59 | O | 99051 | Threat from Below | 1411 | 59.5, 26.6 | 717 |  |
+| 60 | A | 97281 | A Simmering Storm | 1411 | 51.9, 21.6 | 437 |  |
+| 61 | T | 97281 | A Simmering Storm | 1411 | 46.4, 22.9 | 296 |  |
+| 62 | A | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 0 |  |
+| 63 | A | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 0 |  |
+| 64 | O | 806 | Dark Storms | 1411 | 42.1, 26.7 | 260 |  |
+| 65 | A | 96877 | Halikor's Hoof | 1411 | 40.5, 28.4 | 105 |  |
+| 66 | O | 837 | Encroachment | 1411 | 43.6, 40.6 | 462 |  |
+| 67 | O | 96825 | This Fruit Could Bite Back | 1411 | 46.4, 49.4 | 342 |  |
+| 68 | O | 837 | Encroachment | 1411 | 46.8, 48.5 | 35 |  |
+| 69 | T | 837 | Encroachment | 1411 | 52.0, 43.5 | 325 | near #58 (went 807 yd away) |
+| 70 | T | 806 | Dark Storms | 1411 | 52.2, 43.1 | 19 | near #58 (went 810 yd away) |
+| 71 | A | 828 | Margoz | 1411 | 52.2, 43.1 | 0 |  |
+| 72 | T | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 73 | A | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 74 | T | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 64 |  |
+| 75 | O | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
+| 76 | T | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
+| 77 | T | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 97 |  |
+| 78 | O | 834 | Winds in the Desert | 1411 | 48.2, 32.3 | 299 |  |
+| 79 | T | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 342 | near #63 (went 932 yd away) |
+| 80 | A | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #63 (went 932 yd away) |
+| 81 | O | 835 | Securing the Lines | 1411 | 53.4, 24.6 | 377 | near #60 (went 948 yd away) |
+| 82 | T | 828 | Margoz | 1411 | 56.4, 20.0 | 225 |  |
+| 83 | A | 827 | Skull Rock | 1411 | 56.4, 20.0 | 0 |  |
+| 84 | O | 827 | Skull Rock | 1411 | 52.9, 9.3 | 420 |  |
+| 85 | A | 832 | Burning Shadows | 1411 | 52.6, 8.8 | 23 |  |
+| 86 | A | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 534 |  |
+| 87 | A | 97275 | Whuut's the Rush | 1454 | 56.8, 33.0 | 15 |  |
+| 88 | T | 97275 | Whuut's the Rush | 1454 | 55.8, 32.9 | 14 |  |
+| 89 | A | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 340 |  |
+| 90 | T | 831 | The Admiral's Orders | 1454 | 32.3, 35.8 | 20 |  |
+| 91 | F |  | flight path | 1454 | 45.1, 63.9 | 318 |  |
+| 92 | A | 97246 | Meal Appeal | 1454 | 55.7, 72.2 | 166 |  |
+| 93 | T | 827 | Skull Rock | 1411 | 56.4, 20.0 | 693 | near #83 (went 1166 yd away) |
+| 94 | A | 829 | Neeru Fireblade | 1411 | 56.4, 20.0 | 0 | near #83 (went 1166 yd away) |
+| 95 | O | 99052 | Threat from Below | 1411 | 59.2, 17.6 | 171 |  |
+| 96 | O | 5726 | Hidden Enemies | 1411 | 52.9, 9.3 | 443 | near #85 (went 776 yd away) |
+| 97 | A | 97249 | Favorite Food | 1454 | 57.2, 53.3 | 404 |  |
+| 98 | T | 97246 | Meal Appeal | 1454 | 57.2, 53.3 | 0 |  |
+| 99 | T | 96877 | Halikor's Hoof | 1454 | 63.3, 44.8 | 117 |  |
+| 100 | O | 97242 | Yelmak's Medley | 1454 | 69.6, 31.1 | 155 |  |
+| 101 | T | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 192 |  |
+| 102 | A | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 273 | near #90 (went 1211 yd away) |
+| 103 | T | 97249 | Favorite Food | 1454 | 36.5, 29.1 | 4 | near #90 (went 1214 yd away) |
+| 104 | T | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 106 |  |
+| 105 | A | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 0 |  |
+| 106 | T | 829 | Neeru Fireblade | 1454 | 49.5, 50.6 | 276 |  |
+| 107 | T | 832 | Burning Shadows | 1454 | 49.5, 50.6 | 0 |  |
+| 108 | O | 5727 | Hidden Enemies | 1454 | 49.5, 50.6 | 0 |  |
+| 109 | O | 97326 | Rocks to Rests | 1454 | 43.2, 33.7 | 180 |  |
+| 110 | T | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 99 |  |
+| 111 | T | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 108 |  |
+| 112 | O | 97282 | Stormy Potential | 1411 | 40.5, 26.5 | 1044 | near #65 (went 1237 yd away) |
+| 113 | T | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 333 | near #80 (went 1026 yd away) |
+| 114 | T | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #80 (went 1026 yd away) |
+| 115 | T | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 777 | near #76 (went 1795 yd away) |
+| 116 | A | 840 | Conscript of the Horde | 1411 | 50.8, 43.6 | 75 | near #77 (went 1789 yd away) |
+| 117 | T | 840 | Conscript of the Horde | 1413 | 62.3, 19.4 | 965 |  |
 
-Walking between tasks: 27180 yd (~65 min at 7 yd/s).
+Walking between tasks: 22770 yd (~54 min at 7 yd/s).
 
 ## Qualité
 
@@ -608,7 +608,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 84: `fp 1454 45.12 63.89`
+- step 86: `fp 1454 45.12 63.89`
 
 ## Warnings
 

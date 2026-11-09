@@ -72,14 +72,17 @@ plans.Alliance = {
   {
     id = "A_DwarfGnome_03", title = "Loch Modan", faction = "Alliance", races = { "Dwarf", "Gnome" },
     zones = { LOCH_MODAN, IRONFORGE }, endZones = { STORMWIND },
-    minLevel = 11, maxLevel = 14, entry = { LOCH_MODAN, 33.9, 51.0 }, next = "A_DwarfGnome_04", strictLevel = true,
+    -- 11-13 (2026-11-09, retour de jeu) : à 14, le chapitre élargi allait chercher des quêtes de niveau 17-20 (Gathering
+    -- Idols, troggs 18-19 ; Runes of the Sorcerer-Kings chez les ogres élites de Mo'grosh). Avec les limites de danger
+    -- du simulateur et la Marche de l'Ouest plus tôt : Nain / Gnome 1-30 -6 min.
+    minLevel = 11, maxLevel = 13, entry = { LOCH_MODAN, 33.9, 51.0 }, next = "A_DwarfGnome_04", strictLevel = true,
     flightPaths = { "Thelsamar, Loch Modan" },
     -- Fin à Stormwind : Marche de l'Ouest à pied (suite par défaut) ou Sombrivage par le bateau du port
     -- de Stormwind (A_01 commence par ce bateau). Minutes : travel.lua A_DwarfGnome_03 (guides du
-    -- 2026-11-06, QuestieDB v1.0.11, lot I) : fin au sud de Stormwind, Marche de l'Ouest 122 s de marche,
-    -- Sombrivage 80 s de marche + 300 s de bateau + 44 s de marche.
+    -- 2026-11-09, QuestieDB v1.0.12) : fin au quartier des Nains de Stormwind (sortie du tram), Marche de l'Ouest
+    -- 209 s de marche, Sombrivage 105 s de marche + 300 s de bateau + 44 s de marche.
     choices = {
-      { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 2 } },
+      { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 3 } },
       { id = "A_01", travel = { kind = "boat", minutes = 7 } },
     },
   },
@@ -88,7 +91,7 @@ plans.Alliance = {
     -- Quartier des Nains de Stormwind (sortie du tram) : quêtes des Mortemines prises au passage
     -- (Wilder Thistlenettle, Shoni the Shilent) ; second rectangle : maître de vol
     zones = { WESTFALL, STORMWIND }, bounds = { [STORMWIND] = { { 62, 33, 71, 42 }, { 69, 70, 74, 75 } } }, endZones = { STORMWIND },
-    minLevel = 14, maxLevel = 16, levelSlack = 1, dungeonLevelHigh = 4,
+    minLevel = 13, maxLevel = 16, levelSlack = 1, dungeonLevelHigh = 4,
     entry = { WESTFALL, 56.3, 47.5 }, next = "A_01",
     flightPaths = { "Stormwind, Elwynn", "Sentinel Hill, Westfall" },
     dungeons = { "The Deadmines" },
@@ -558,6 +561,9 @@ plans.Horde = {
     -- strictLevel (QuestieDB v1.0.11) : sans lui, tranche élargie (147 mobs à farmer), 44 mobs de farm final,
     -- 188 min et une zone d'objectifs coupée sans contrainte (567 Dangerous!) ; avec lui, 176 min, aucun farm.
     strictLevel = true,
+    -- Dangerous! (567) avant Souvenirs of Death (546) : sans cela, la route passe à côté du second site de 567, fait
+    -- 546 et revient (zone coupée « free », 2026-11-09). +6 min sur les parcours Horde.
+    precede = { { "O567", "O546" } },
     flightPaths = { "Tarren Mill, Hillsbrad" },
     dungeons = { "City of Dalaran" },
   },

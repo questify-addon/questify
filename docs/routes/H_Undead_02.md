@@ -1,20 +1,20 @@
 # H_Undead_02 — Tirisfal Glades
 
-Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
 | Level band | 6-12 |
-| Simulated level | 6.00 -> 13.02 |
-| Time | 182 min |
-| XP gained | 46637 |
-| XP/h | 15341 |
-| Steps | 133 |
-| Quests turned in | 45 |
-| Hubs | 7 |
-| Median ratio (XP/s) | 3.58 |
-| Grinding (level steps) | ~1 mobs |
-| Hearthstone | bound to Innkeeper Renee after task 1; 2 return(s) planned, 1 bundle(s) |
+| Simulated level | 6.00 -> 12.50 |
+| Time | 155 min |
+| XP gained | 41348 |
+| XP/h | 15964 |
+| Steps | 122 |
+| Quests turned in | 43 |
+| Hubs | 8 |
+| Median ratio (XP/s) | 3.68 |
+| Level band | grinding 90 mobs with quests up to level 15: band widened to level 18 |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
 
@@ -22,51 +22,49 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
-| 1 | 86784 | Sticks and Bones | 7 | 630 est. | 6 |
-| 2 | 96607 | The Great Outdoors | 6 | 540 est. | 6 |
-| 3 | 361 | A Letter Undelivered | 7 | 475 | 6 |
-| 4 | 404 | A Putrid Task | 6 | 405 | 6 |
-| 5 | 5481 | Gordo's Task | 5 | 225 | 7 |
-| 6 | 5482 | Doom Weed | 6 | 540 | 8 |
-| 7 | 426 | The Mills Overrun | 8 | 880 | 8 |
-| 8 | 365 | Fields of Grief | 7 | 630 | 8 |
-| 9 | 427 | At War With The Scarlet Crusade | 8 | 700 | 8 |
-| 10 | 99134 | Discipline | 6 | 540 est. | 8 |
-| 11 | 358 | Graverobbers | 8 | 700 | 8 |
-| 12 | 407 | Fields of Grief | 7 | 160 | 8 |
-| 13 | 359 | Forsaken Duties | 9 | 195 | 8 |
-| 14 | 405 | The Prodigal Lich | 8 | 175 | 8 |
-| 15 | 96658 | Camping 101: Cooking | 6 | 540 est. | 9 |
-| 16 | 374 | Proof of Demise | 7 | 630 | 9 |
-| 17 | 370 | At War With The Scarlet Crusade | 9 | 780 | 9 |
-| 18 | 362 | The Haunted Mills | 10 | 420 | 9 |
-| 19 | 360 | Return to the Magistrate | 9 | 390 | 9 |
-| 20 | 95314 | That Shadowvale Green Elixir | 10 | 840 est. | 9 |
-| 21 | 375 | The Chill of Death | 8 | 700 | 10 |
-| 22 | 357 | The Lich's Identity | 8 | 530 | 10 |
-| 23 | 366 | Return the Book | 8 | 350 | 10 |
-| 24 | 99142 | Tomb Weed | 11 | 770 est. | 10 |
-| 25 | 398 | WANTED: Maggot Eye | 10 | 840 | 10 |
-| 26 | 371 | At War With The Scarlet Crusade | 10 | 840 | 10 |
-| 27 | 354 | Deaths in the Family | 11 | 880 | 11 |
-| 28 | 355 | Speak with Sevren | 10 | 85 | 11 |
-| 29 | 356 | Rear Guard Patrol | 11 | 660 | 11 |
-| 30 | 96895 | The Argent Emissary | 12 | 225 est. | 11 |
-| 31 | 96897 | The Cult of the Damned | 12 | 910 est. | 11 |
-| 32 | 96898 | Remnants of War | 12 | 910 est. | 11 |
-| 33 | 96899 | Bandarion Keep | 12 | 225 est. | 11 |
-| 34 | 96896 | A Righteous Cause | 12 | 225 est. | 11 |
-| 35 | 99153 | The One That Got Away | 12 | 910 est. | 12 |
-| 36 | 99152 | As Above, So Below | 12 | 910 est. | 12 |
+| 1 | 590 | A Rogue's Deal | 5 | 110 | 6 |
+| 2 | 404 | A Putrid Task | 6 | 405 | 6 |
+| 3 | 427 | At War With The Scarlet Crusade | 8 | 700 | 6 |
+| 4 | 99144 | Seeking Refuge | 7 | 630 est. | 6 |
+| 5 | 99134 | Discipline | 6 | 540 est. | 7 |
+| 6 | 365 | Fields of Grief | 7 | 630 | 7 |
+| 7 | 407 | Fields of Grief | 7 | 160 | 7 |
+| 8 | 86784 | Sticks and Bones | 7 | 630 est. | 7 |
+| 9 | 96607 | The Great Outdoors | 6 | 540 est. | 8 |
+| 10 | 96658 | Camping 101: Cooking | 6 | 540 est. | 8 |
+| 11 | 374 | Proof of Demise | 7 | 630 | 8 |
+| 12 | 370 | At War With The Scarlet Crusade | 9 | 780 | 8 |
+| 13 | 5481 | Gordo's Task | 5 | 225 | 8 |
+| 14 | 5482 | Doom Weed | 6 | 540 | 9 |
+| 15 | 426 | The Mills Overrun | 8 | 880 | 9 |
+| 16 | 358 | Graverobbers | 8 | 700 | 9 |
+| 17 | 362 | The Haunted Mills | 10 | 420 | 9 |
+| 18 | 354 | Deaths in the Family | 11 | 880 | 9 |
+| 19 | 398 | WANTED: Maggot Eye | 10 | 840 | 9 |
+| 20 | 361 | A Letter Undelivered | 7 | 475 | 9 |
+| 21 | 355 | Speak with Sevren | 10 | 85 | 9 |
+| 22 | 359 | Forsaken Duties | 9 | 195 | 9 |
+| 23 | 405 | The Prodigal Lich | 8 | 175 | 9 |
+| 24 | 96895 | The Argent Emissary | 12 | 225 est. | 10 |
+| 25 | 356 | Rear Guard Patrol | 11 | 660 | 10 |
+| 26 | 357 | The Lich's Identity | 8 | 530 | 10 |
+| 27 | 96897 | The Cult of the Damned | 12 | 910 est. | 11 |
+| 28 | 96898 | Remnants of War | 12 | 910 est. | 11 |
+| 29 | 371 | At War With The Scarlet Crusade | 10 | 840 | 11 |
+| 30 | 360 | Return to the Magistrate | 9 | 390 | 11 |
+| 31 | 99142 | Tomb Weed | 11 | 770 est. | 11 |
+| 32 | 96899 | Bandarion Keep | 12 | 225 est. | 11 |
+| 33 | 96896 | A Righteous Cause | 12 | 225 est. | 11 |
+| 34 | 99153 | The One That Got Away | 12 | 910 est. | 11 |
+| 35 | 366 | Return the Book | 8 | 350 | 11 |
+| 36 | 409 | Proving Allegiance | 12 | 680 | 11 |
 | 37 | 408 | The Family Crypt | 13 | 910 | 12 |
 | 38 | 372 | At War With The Scarlet Crusade | 12 | 910 | 12 |
-| 39 | 409 | Proving Allegiance | 12 | 680 | 12 |
+| 39 | 375 | The Chill of Death | 8 | 700 | 12 |
 | 40 | 97558 | Hides for the Forsaken | 11 | 770 est. | 12 |
-| 41 | 99156 | Rear Guard Patrol | 13 | 680 est. | 12 |
-| 42 | 411 | The Prodigal Lich Returns | 12 | 910 | 12 |
-| 43 | 98545 | Leonid's Letter | 12 | 225 est. | 12 |
-| 44 | 95328 | Whispering Horror Residue | 13 | 680 est. | 12 |
-| 45 | 445 | Delivery to Silverpine Forest | 10 | 630 | 13 |
+| 41 | 411 | The Prodigal Lich Returns | 12 | 910 | 12 |
+| 42 | 98545 | Leonid's Letter | 12 | 225 est. | 12 |
+| 43 | 97891 | Prompt Potion Runner | 16 | 580 est. | 12 |
 
 ## Dropped quests
 
@@ -78,8 +76,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 243 | Into the Field | 46 | quest level 46 above the band |
 | 410 | The Dormant Shade | 10 | repeatable |
 | 431 | Candles of Beckoning | 10 | repeatable |
-| 441 | Raleigh and the Undercity | 16 | quest level 16 above the band |
-| 446 | Thule Ravenclaw | 16 | quest level 16 above the band |
+| 445 | Delivery to Silverpine Forest | 10 | required level 9 not reached in time (~35 mobs to farm) |
 | 450 | A Recipe For Death | 15 | objective item source not in zone |
 | 495 | The Crown of Will | 39 | quest level 39 above the band |
 | 515 | Elixir of Agony | 30 | quest level 30 above the band |
@@ -185,7 +182,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 5651 | In Favor of Darkness | 4 | class quest (ClassQuestData.lua) |
 | 5658 | Touch of Weakness | 10 | class quest (ClassQuestData.lua) |
 | 5679 | Dark Sacrifice | 20 | class quest (ClassQuestData.lua) |
-| 5725 | The Power to Destroy... | 16 | quest level 16 above the band |
+| 5725 | The Power to Destroy... | 16 | dungeon quest (Ragefire Chasm not picked up in this chapter) |
 | 5804 | Araj's Scarab | 60 | quest level 60 above the band |
 | 5901 | A Plague Upon Thee | 55 | quest level 55 above the band |
 | 5902 | A Plague Upon Thee | 55 | quest level 55 above the band |
@@ -336,6 +333,8 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 94440 | A Lesson in Divinity | 12 | class quest (ClassQuestData.lua) |
 | 94441 | A Lesson in Divinity | 12 | class quest (ClassQuestData.lua) |
 | 95216 | The New Plague | 22 | quest level 22 above the band |
+| 95314 | That Shadowvale Green Elixir | 10 | objective too dangerous before level 13 (not reached in this chapter) |
+| 95328 | Whispering Horror Residue | 13 | objective too dangerous before level 13 (not reached in this chapter) |
 | 95803 | A Token of Good Faith | 12 | class quest (ClassQuestData.lua) |
 | 96988 | Source of Power | 33 | quest level 33 above the band |
 | 97286 | Research Access | 20 | class quest (ClassQuestData.lua) |
@@ -344,7 +343,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 97291 | Unending Torment | 21 | quest level 21 above the band |
 | 97292 | Unending Torment | 21 | quest level 21 above the band |
 | 97583 | WRIGGLE. | 1 | quest level 1 below the band |
-| 97891 | Prompt Potion Runner | 16 | quest level 16 above the band |
 | 97951 | Camping 101: Alchemy | 6 | requires a profession |
 | 97952 | Camping 101: Blacksmithing | 6 | requires a profession |
 | 97953 | Camping 101: Enchanting | 6 | requires a profession |
@@ -361,6 +359,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98887 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
 | 98888 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
 | 99141 | Patience | 6 | objective item source not in zone |
+| 99152 | As Above, So Below | 12 | objective too dangerous before level 13 (not reached in this chapter) |
+| 99156 | Rear Guard Patrol | 13 | objective too dangerous before level 13 (not reached in this chapter) |
+| 441 | Raleigh and the Undercity | 16 | prerequisite unavailable |
+| 446 | Thule Ravenclaw | 16 | prerequisite unavailable |
 | 1358 | Sample for Helbrim | 15 | prerequisite unavailable |
 | 6322 | Michael Garrett | 10 | prerequisite unavailable |
 | 6324 | Return to Podrig | 10 | prerequisite unavailable |
@@ -368,8 +370,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 368 | A New Plague | 9 | prerequisite dropped |
 | 369 | A New Plague | 11 | prerequisite dropped |
 | 492 | A New Plague | 11 | prerequisite dropped |
-| 99144 | Seeking Refuge | 7 | level band reached |
-| 590 | A Rogue's Deal | 5 | level band reached |
 
 ## Candidate ratios
 
@@ -379,57 +379,53 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 354 | Deaths in the Family | 11 | 1150 | 0 | 468 | 154 | 3.05 | 6.25 | 3 |  |
-| 355 | Speak with Sevren | 10 | 85 | 0 | 34 | 25 | 3.92 | 5.44 | 0 |  |
-| 356 | Rear Guard Patrol | 11 | 2068 | 0 | 472 | 399 | 3.81 | 5.16 | 1 |  |
+| 354 | Deaths in the Family | 11 | 1150 | 0 | 467 | 154 | 3.05 | 6.25 | 3 |  |
+| 355 | Speak with Sevren | 10 | 85 | 0 | 34 | 25 | 3.93 | 5.44 | 0 |  |
+| 356 | Rear Guard Patrol | 11 | 2068 | 0 | 473 | 400 | 4.37 | 5.16 | 1 |  |
 | 357 | The Lich's Identity | 8 | 530 | 0 | 247 | 19 | 3.58 | 24.20 | 1 |  |
-| 358 | Graverobbers | 8 | 3199 | 0 | 829 | 782 | 3.70 | 5.13 | 2 |  |
-| 359 | Forsaken Duties | 9 | 195 | 0 | 68 | 22 | 4.03 | 12.50 | 0 |  |
-| 360 | Return to the Magistrate | 9 | 390 | 0 | 68 | 22 | 5.71 | 17.70 | 0 |  |
+| 358 | Graverobbers | 8 | 3199 | 0 | 828 | 782 | 3.70 | 5.13 | 2 |  |
+| 359 | Forsaken Duties | 9 | 195 | 0 | 68 | 22 | 4.03 | 12.14 | 0 |  |
+| 360 | Return to the Magistrate | 9 | 390 | 0 | 68 | 22 | 5.71 | 17.20 | 0 |  |
 | 361 | A Letter Undelivered | 7 | 865 | 0 | 328 | 117 | 2.63 | 7.37 | 0 |  |
-| 362 | The Haunted Mills | 10 | 506 | 0 | 265 | 64 | 3.00 | 5.97 | 1 |  |
-| 365 | Fields of Grief | 7 | 630 | 0 | 351 | 261 | 1.94 | 2.66 | 1 |  |
+| 362 | The Haunted Mills | 10 | 506 | 0 | 264 | 64 | 3.01 | 5.97 | 1 |  |
+| 365 | Fields of Grief | 7 | 630 | 0 | 351 | 262 | 1.94 | 2.65 | 1 |  |
 | 366 | Return the Book | 8 | 350 | 0 | 126 | 10 | 5.76 | 22.75 | 0 |  |
-| 367 | A New Plague | 6 | 1400 | 0 | 596 | 383 | 2.38 | 4.29 | 1 | far |
-| 368 | A New Plague | 9 | 1640 | 0 | 766 | 329 | 2.41 | 4.88 | 1 | prerequisite dropped |
-| 369 | A New Plague | 11 | 1166 | 0 | 586 | 358 | 2.89 | 4.75 | 1 | prerequisite dropped |
-| 370 | At War With The Scarlet Crusade | 9 | 1346 | 0 | 343 | 164 | 3.55 | 7.02 | 1 |  |
-| 371 | At War With The Scarlet Crusade | 10 | 1363 | 0 | 375 | 175 | 3.28 | 6.21 | 1 |  |
-| 372 | At War With The Scarlet Crusade | 12 | 1089 | 0 | 390 | 238 | 2.79 | 4.57 | 1 |  |
+| 367 | A New Plague | 6 | 1400 | 0 | 597 | 384 | 2.38 | 4.26 | 1 | far |
+| 368 | A New Plague | 9 | 1640 | 0 | 766 | 333 | 2.41 | 4.84 | 1 | prerequisite dropped |
+| 369 | A New Plague | 11 | 1166 | 0 | 587 | 359 | 2.88 | 4.73 | 1 | prerequisite dropped |
+| 370 | At War With The Scarlet Crusade | 9 | 1346 | 0 | 342 | 163 | 3.56 | 6.85 | 1 |  |
+| 371 | At War With The Scarlet Crusade | 10 | 1363 | 0 | 374 | 174 | 3.28 | 5.95 | 1 |  |
+| 372 | At War With The Scarlet Crusade | 12 | 1089 | 0 | 390 | 260 | 2.79 | 4.17 | 1 |  |
 | 374 | Proof of Demise | 7 | 2424 | 0 | 658 | 485 | 3.68 | 4.99 | 1 |  |
-| 375 | The Chill of Death | 8 | 2650 | 0 | 699 | 579 | 3.79 | 4.57 | 2 |  |
-| 398 | WANTED: Maggot Eye | 10 | 933 | 0 | 217 | 70 | 4.29 | 13.22 | 1 |  |
+| 375 | The Chill of Death | 8 | 2650 | 0 | 699 | 622 | 3.79 | 4.26 | 2 |  |
+| 398 | WANTED: Maggot Eye | 10 | 933 | 0 | 216 | 69 | 4.30 | 13.41 | 1 |  |
 | 404 | A Putrid Task | 6 | 1305 | 0 | 413 | 342 | 3.53 | 4.42 | 1 |  |
 | 405 | The Prodigal Lich | 8 | 175 | 0 | 99 | 18 | 3.11 | 19.84 | 0 |  |
-| 407 | Fields of Grief | 7 | 160 | 0 | 44 | 25 | 3.61 | 6.36 | 0 |  |
+| 407 | Fields of Grief | 7 | 160 | 0 | 44 | 25 | 3.60 | 6.20 | 0 |  |
 | 408 | The Family Crypt | 13 | 2419 | 0 | 598 | 430 | 4.04 | 5.62 | 1 |  |
 | 409 | Proving Allegiance | 12 | 777 | 0 | 62 | 62 | 9.33 | 20.24 | 1 |  |
 | 411 | The Prodigal Lich Returns | 12 | 910 | 0 | 126 | 10 | 7.19 | 91.00 | 0 |  |
-| 426 | The Mills Overrun | 8 | 2596 | 0 | 671 | 518 | 3.86 | 5.01 | 1 |  |
-| 427 | At War With The Scarlet Crusade | 8 | 1450 | 0 | 587 | 354 | 3.19 | 5.25 | 1 |  |
-| 445 | Delivery to Silverpine Forest | 10 | 2557 | 1927 | 326 | 22 | 7.84 | 115.97 | 0 |  |
-| 492 | A New Plague | 11 | 880 | 0 | 43 | 24 | 20.08 | 35.87 | 0 | prerequisite dropped |
-| 590 | A Rogue's Deal | 5 | 110 | 0 | 82 | 82 | 1.33 | 1.33 | 1 | level band reached |
+| 426 | The Mills Overrun | 8 | 2596 | 0 | 672 | 518 | 3.86 | 5.01 | 1 |  |
+| 427 | At War With The Scarlet Crusade | 8 | 1450 | 0 | 587 | 355 | 3.20 | 5.21 | 1 |  |
+| 492 | A New Plague | 11 | 880 | 0 | 43 | 25 | 20.07 | 34.96 | 0 | prerequisite dropped |
+| 590 | A Rogue's Deal | 5 | 110 | 0 | 82 | 82 | 1.33 | 1.33 | 1 |  |
 | 5481 | Gordo's Task | 5 | 225 | 0 | 186 | 92 | 1.72 | 3.52 | 1 |  |
-| 5482 | Doom Weed | 6 | 540 | 0 | 277 | 190 | 1.97 | 4.07 | 1 |  |
-| 86784 | Sticks and Bones | 7 | 630 | 0 | 142 | 138 | 4.41 | 4.56 | 1 |  |
-| 95314 | That Shadowvale Green Elixir | 10 | 840 | 0 | 783 | 151 | 1.07 | 5.54 | 1 |  |
-| 95328 | Whispering Horror Residue | 13 | 1286 | 0 | 592 | 222 | 2.17 | 5.79 | 1 |  |
-| 96607 | The Great Outdoors | 6 | 540 | 0 | 23 | 23 | 13.49 | 16.79 | 1 |  |
-| 96658 | Camping 101: Cooking | 6 | 540 | 0 | 63 | 44 | 8.49 | 12.13 | 1 |  |
-| 96895 | The Argent Emissary | 12 | 225 | 0 | 67 | 21 | 4.20 | 7.54 | 0 |  |
-| 96896 | A Righteous Cause | 12 | 225 | 0 | 21 | 21 | 3.93 | 8.94 | 0 |  |
-| 96897 | The Cult of the Damned | 12 | 2398 | 0 | 363 | 332 | 4.21 | 7.88 | 1 |  |
-| 96898 | Remnants of War | 12 | 3142 | 0 | 524 | 490 | 4.27 | 7.14 | 1 |  |
-| 96899 | Bandarion Keep | 12 | 225 | 0 | 310 | 21 | 2.78 | 9.08 | 0 |  |
-| 97558 | Hides for the Forsaken | 11 | 3182 | 0 | 971 | 761 | 3.27 | 4.18 | 2 |  |
-| 98545 | Leonid's Letter | 12 | 1172 | 947 | 342 | 87 | 3.43 | 13.34 | 0 |  |
-| 99134 | Discipline | 6 | 540 | 0 | 124 | 30 | 4.35 | 17.98 | 1 |  |
+| 5482 | Doom Weed | 6 | 540 | 0 | 278 | 190 | 1.97 | 4.07 | 1 |  |
+| 86784 | Sticks and Bones | 7 | 630 | 0 | 143 | 143 | 4.40 | 4.40 | 1 |  |
+| 96607 | The Great Outdoors | 6 | 540 | 0 | 23 | 23 | 13.53 | 16.79 | 1 |  |
+| 96658 | Camping 101: Cooking | 6 | 540 | 0 | 63 | 44 | 8.52 | 12.13 | 1 |  |
+| 96895 | The Argent Emissary | 12 | 225 | 0 | 67 | 21 | 4.27 | 7.07 | 0 |  |
+| 96896 | A Righteous Cause | 12 | 225 | 0 | 19 | 19 | 3.97 | 7.25 | 0 |  |
+| 96897 | The Cult of the Damned | 12 | 2398 | 0 | 363 | 332 | 4.29 | 7.35 | 1 |  |
+| 96898 | Remnants of War | 12 | 3142 | 0 | 523 | 490 | 4.35 | 6.68 | 1 |  |
+| 96899 | Bandarion Keep | 12 | 225 | 0 | 309 | 19 | 2.33 | 7.71 | 0 |  |
+| 97558 | Hides for the Forsaken | 11 | 3182 | 0 | 972 | 763 | 3.27 | 4.17 | 2 |  |
+| 97891 | Prompt Potion Runner | 16 | 580 | 0 | 74 | 74 | 7.74 | 7.74 | 0 |  |
+| 98545 | Leonid's Letter | 12 | 1221 | 996 | 316 | 36 | 3.86 | 33.46 | 0 |  |
+| 99134 | Discipline | 6 | 540 | 0 | 123 | 41 | 4.36 | 12.87 | 1 |  |
 | 99142 | Tomb Weed | 11 | 770 | 0 | 386 | 106 | 1.99 | 7.21 | 1 |  |
-| 99144 | Seeking Refuge | 7 | 630 | 0 | 276 | 225 | 2.28 | 2.79 | 1 | level band reached |
-| 99152 | As Above, So Below | 12 | 2026 | 0 | 481 | 312 | 4.21 | 6.48 | 1 |  |
-| 99153 | The One That Got Away | 12 | 910 | 0 | 273 | 64 | 3.32 | 14.07 | 1 |  |
-| 99156 | Rear Guard Patrol | 13 | 781 | 0 | 304 | 153 | 2.57 | 5.07 | 1 |  |
+| 99144 | Seeking Refuge | 7 | 630 | 0 | 277 | 228 | 2.27 | 2.76 | 1 |  |
+| 99153 | The One That Got Away | 12 | 910 | 0 | 273 | 273 | 3.32 | 3.32 | 1 |  |
 
 ## Itinerary
 
@@ -439,136 +435,130 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 86784 | Sticks and Bones | 1420 | 58.5, 51.4 | 281 |  |
-| 2 | A | 404 | A Putrid Task | 1420 | 58.2, 51.5 | 160 |  |
-| 3 | O | 86784 | Sticks and Bones | 1420 | 55.7, 52.4 | 114 |  |
-| 4 | A | 361 | A Letter Undelivered | 1420 | 48.2, 34.8 | 630 |  |
-| 5 | A | 5481 | Gordo's Task | 1420 | 43.1, 54.7 | 642 |  |
-| 6 | O | 5481 | Gordo's Task | 1420 | 42.7, 54.6 | 16 |  |
-| 7 | O | 404 | A Putrid Task | 1420 | 53.3, 56.5 | 480 |  |
-| 8 | T | 86784 | Sticks and Bones | 1420 | 57.3, 55.5 | 183 | near #3 (went 746 yd away) |
-| 9 | A | 96607 | The Great Outdoors | 1420 | 57.3, 55.5 | 0 | near #3 (went 746 yd away) |
-| 10 | O | 96607 | The Great Outdoors | 1420 | 57.2, 55.6 | 5 |  |
-| 11 | T | 96607 | The Great Outdoors | 1420 | 57.3, 55.5 | 5 |  |
-| 12 | A | 96658 | Camping 101: Cooking | 1420 | 57.3, 55.5 | 0 |  |
-| 13 | T | 361 | A Letter Undelivered | 1420 | 61.6, 52.6 | 212 | near #1 (went 855 yd away) |
-| 14 | A | 358 | Graverobbers | 1420 | 61.3, 50.8 | 54 | near #2 (went 846 yd away) |
-| 15 | A | 398 | WANTED: Maggot Eye | 1420 | 60.7, 51.5 | 30 |  |
-| 16 | A | 427 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 10 |  |
-| 17 | A | 99134 | Discipline | 1420 | 60.6, 51.8 | 0 |  |
-| 18 | T | 404 | A Putrid Task | 1420 | 58.2, 51.5 | 108 |  |
-| 19 | A | 426 | The Mills Overrun | 1420 | 58.2, 51.5 | 0 |  |
-| 20 | T | 5481 | Gordo's Task | 1420 | 57.4, 48.9 | 85 |  |
-| 21 | A | 5482 | Doom Weed | 1420 | 57.4, 48.9 | 0 |  |
-| 22 | O | 99134 | Discipline | 1420 | 53.1, 54.4 | 257 |  |
-| 23 | A | 365 | Fields of Grief | 1420 | 40.9, 54.2 | 551 | near #6 (went 935 yd away) |
-| 24 | O | 365 | Fields of Grief | 1420 | 35.9, 50.6 | 250 |  |
-| 25 | O | 427 | At War With The Scarlet Crusade | 1420 | 31.8, 48.0 | 199 |  |
-| 26 | O | 426 | The Mills Overrun | 1420 | 48.2, 34.6 | 840 | near #4 (went 840 yd away) |
-| 27 | O | 358 | Graverobbers | 1420 | 59.1, 36.8 | 497 |  |
-| 28 | O | 5482 | Doom Weed | 1420 | 57.2, 40.4 | 137 |  |
-| 29 | O | 358 | Graverobbers | 1420 | 55.9, 42.5 | 88 |  |
-| 30 | T | 5482 | Doom Weed | 1420 | 57.4, 48.9 | 203 | near #21 (went 1157 yd away) |
-| 31 | A | 99142 | Tomb Weed | 1420 | 57.4, 48.9 | 0 | near #21 (went 1157 yd away) |
-| 32 | T | 426 | The Mills Overrun | 1420 | 58.2, 51.5 | 85 |  |
-| 33 | A | 95314 | That Shadowvale Green Elixir | 1420 | 59.4, 52.2 | 59 |  |
-| 34 | T | 365 | Fields of Grief | 1420 | 59.5, 52.4 | 6 |  |
-| 35 | A | 407 | Fields of Grief | 1420 | 59.5, 52.4 | 0 |  |
-| 36 | T | 427 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 55 |  |
-| 37 | T | 99134 | Discipline | 1420 | 60.6, 51.8 | 0 |  |
-| 38 | A | 370 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 |  |
-| 39 | A | 374 | Proof of Demise | 1420 | 60.9, 52.0 | 17 |  |
-| 40 | T | 358 | Graverobbers | 1420 | 61.3, 50.8 | 38 |  |
-| 41 | A | 359 | Forsaken Duties | 1420 | 61.3, 50.8 | 0 |  |
-| 42 | A | 405 | The Prodigal Lich | 1420 | 61.3, 50.8 | 0 |  |
-| 43 | T | 407 | Fields of Grief | 1420 | 62.0, 51.3 | 34 |  |
-| 44 | A | 362 | The Haunted Mills | 1420 | 61.7, 52.3 | 32 |  |
-| 45 | A | 354 | Deaths in the Family | 1420 | 61.7, 52.3 | 0 |  |
-| 46 | A | 375 | The Chill of Death | 1420 | 61.9, 52.7 | 15 |  |
-| 47 | A | 97558 | Hides for the Forsaken | 1420 | 65.4, 60.1 | 274 |  |
-| 48 | T | 359 | Forsaken Duties | 1420 | 65.5, 60.3 | 4 |  |
-| 49 | A | 356 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 0 |  |
-| 50 | A | 360 | Return to the Magistrate | 1420 | 65.5, 60.3 | 0 |  |
-| 51 | T | 405 | The Prodigal Lich | 1458 | 84.1, 17.4 | 256 |  |
-| 52 | A | 357 | The Lich's Identity | 1458 | 84.1, 17.4 | 0 |  |
-| 53 | O | 374 | Proof of Demise | 1420 | 51.8, 67.7 | 626 |  |
-| 54 | O | 370 | At War With The Scarlet Crusade | 1420 | 51.1, 67.8 | 30 |  |
-| 55 | O | 95314 | That Shadowvale Green Elixir | 1420 | 10.4, 64.9 | 1844 |  |
-| 56 | O | 362 | The Haunted Mills | 1420 | 47.2, 40.0 | 1827 |  |
-| 57 | O | 375 | The Chill of Death | 1420 | 64.0, 38.6 | 760 |  |
-| 58 | O | 357 | The Lich's Identity | 1420 | 68.0, 42.1 | 206 |  |
-| 59 | O | 96658 | Camping 101: Cooking | 1420 | 61.8, 51.4 | 397 | near #46 (went 2357 yd away) |
-| 60 | T | 96658 | Camping 101: Cooking | 1420 | 61.8, 51.4 | 0 | near #46 (went 2357 yd away) |
-| 61 | T | 374 | Proof of Demise | 1420 | 60.9, 52.0 | 40 |  |
-| 62 | T | 370 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 17 |  |
-| 63 | T | 362 | The Haunted Mills | 1420 | 61.7, 52.3 | 53 |  |
-| 64 | T | 360 | Return to the Magistrate | 1420 | 61.3, 50.8 | 48 |  |
-| 65 | A | 371 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 41 |  |
-| 66 | T | 95314 | That Shadowvale Green Elixir | 1420 | 59.4, 52.2 | 53 |  |
-| 67 | A | 445 | Delivery to Silverpine Forest | 1420 | 59.5, 52.4 | 6 |  |
-| 68 | O | 375 | The Chill of Death | 1420 | 61.0, 52.4 | 71 |  |
-| 69 | T | 375 | The Chill of Death | 1420 | 61.9, 52.7 | 40 |  |
-| 70 | A | 96895 | The Argent Emissary | 1420 | 61.5, 53.5 | 29 |  |
-| 71 | T | 357 | The Lich's Identity | 1458 | 84.1, 17.4 | 496 | near #52 (went 2501 yd away) |
-| 72 | A | 366 | Return the Book | 1458 | 84.1, 17.4 | 0 | near #52 (went 2501 yd away) |
-| 73 | O | 99142 | Tomb Weed | 1420 | 76.0, 61.0 | 522 |  |
-| 74 | O | 356 | Rear Guard Patrol | 1420 | 75.9, 61.1 | 6 |  |
-| 75 | O | 371 | At War With The Scarlet Crusade | 1420 | 78.8, 56.1 | 200 |  |
-| 76 | T | 366 | Return the Book | 1420 | 68.2, 41.9 | 643 | near #58 (went 816 yd away) |
-| 77 | A | 409 | Proving Allegiance | 1420 | 68.2, 41.9 | 0 | near #58 (went 816 yd away) |
-| 78 | O | 97558 | Hides for the Forsaken | 1420 | 64.1, 38.4 | 214 | near #57 (went 915 yd away) |
-| 79 | O | 398 | WANTED: Maggot Eye | 1420 | 58.7, 30.8 | 336 |  |
-| 80 | O | 354 | Deaths in the Family | 1420 | 45.8, 29.4 | 583 |  |
-| 81 | O | 354 | Deaths in the Family | 1420 | 42.8, 32.5 | 163 |  |
-| 82 | O | 354 | Deaths in the Family | 1420 | 49.7, 36.3 | 332 | near #26 (went 1977 yd away) |
-| 83 | T | 99142 | Tomb Weed | 1420 | 57.4, 48.9 | 512 | near #67 (went 990 yd away) |
-| 84 | T | 398 | WANTED: Maggot Eye | 1420 | 60.6, 51.8 | 167 | near #70 (went 989 yd away) |
-| 85 | T | 371 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 | near #70 (went 989 yd away) |
-| 86 | A | 372 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 |  |
-| 87 | T | 354 | Deaths in the Family | 1420 | 61.7, 52.3 | 53 |  |
-| 88 | A | 355 | Speak with Sevren | 1420 | 61.7, 52.3 | 0 |  |
-| 89 | T | 355 | Speak with Sevren | 1420 | 61.3, 50.8 | 48 |  |
-| 90 | A | 408 | The Family Crypt | 1420 | 61.3, 50.8 | 0 |  |
-| 91 | T | 356 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 341 | near #50 (went 2495 yd away) |
-| 92 | A | 99156 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 0 | near #50 (went 2495 yd away) |
-| 93 | T | 96895 | The Argent Emissary | 1420 | 65.9, 61.1 | 33 |  |
-| 94 | A | 96897 | The Cult of the Damned | 1420 | 65.9, 61.1 | 0 |  |
-| 95 | A | 96898 | Remnants of War | 1420 | 65.9, 61.1 | 0 |  |
-| 96 | O | 96898 | Remnants of War | 1420 | 67.7, 63.1 | 99 |  |
-| 97 | O | 96897 | The Cult of the Damned | 1420 | 67.7, 62.9 | 5 |  |
-| 98 | T | 96897 | The Cult of the Damned | 1420 | 65.9, 61.1 | 96 |  |
-| 99 | T | 96898 | Remnants of War | 1420 | 65.9, 61.1 | 0 |  |
-| 100 | A | 96899 | Bandarion Keep | 1420 | 65.9, 61.1 | 0 |  |
-| 101 | T | 96899 | Bandarion Keep | 1420 | 22.0, 44.7 | 2044 |  |
-| 102 | A | 96896 | A Righteous Cause | 1420 | 22.0, 44.7 | 0 |  |
-| 103 | T | 96896 | A Righteous Cause | 1420 | 22.0, 44.7 | 0 |  |
-| 104 | A | 98545 | Leonid's Letter | 1420 | 22.0, 44.7 | 0 |  |
-| 105 | A | 99152 | As Above, So Below | 1420 | 22.0, 47.3 | 75 |  |
-| 106 | A | 99153 | The One That Got Away | 1420 | 20.2, 46.5 | 84 |  |
-| 107 | O | 99153 | The One That Got Away | 1420 | 9.7, 69.4 | 836 | near #55 (went 3147 yd away) |
-| 108 | O | 99152 | As Above, So Below | 1420 | 10.1, 65.3 | 125 | near #55 (went 3117 yd away) |
-| 109 | A | 95328 | Whispering Horror Residue | 1420 | 9.7, 60.7 | 140 | near #55 (went 3126 yd away) |
-| 110 | O | 95328 | Whispering Horror Residue | 1420 | 9.7, 60.7 | 0 |  |
-| 111 | T | 99153 | The One That Got Away | 1420 | 20.2, 46.5 | 637 | near #106 (went 836 yd away) |
-| 112 | T | 99152 | As Above, So Below | 1420 | 22.0, 47.3 | 84 | near #106 (went 866 yd away) |
-| 113 | O | 408 | The Family Crypt | 1420 | 52.8, 28.4 | 1504 |  |
-| 114 | O | 97558 | Hides for the Forsaken | 1420 | 64.8, 29.5 | 543 |  |
-| 115 | O | 372 | At War With The Scarlet Crusade | 1420 | 79.5, 25.2 | 677 |  |
-| 116 | O | 99156 | Rear Guard Patrol | 1420 | 83.7, 44.8 | 622 |  |
-| 117 | T | 408 | The Family Crypt | 1420 | 61.3, 50.8 | 1031 | near #90 (went 2394 yd away) |
-| 118 | T | 372 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 41 | near #90 (went 2358 yd away) |
-| 119 | O | 409 | Proving Allegiance | 1420 | 66.7, 45.0 | 342 | near #77 (went 2675 yd away) |
-| 120 | T | 409 | Proving Allegiance | 1420 | 68.2, 41.9 | 114 | near #77 (went 2768 yd away) |
-| 121 | A | 411 | The Prodigal Lich Returns | 1420 | 68.2, 41.9 | 0 |  |
-| 122 | T | 97558 | Hides for the Forsaken | 1420 | 65.4, 60.1 | 562 | near #100 (went 2532 yd away) |
-| 123 | T | 99156 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 4 | near #100 (went 2534 yd away) |
-| 124 | T | 411 | The Prodigal Lich Returns | 1458 | 84.1, 17.4 | 256 | near #72 (went 2540 yd away) |
-| 125 | T | 98545 | Leonid's Letter | 1458 | 70.0, 47.3 | 233 |  |
-| 126 | F |  | flight path | 1458 | 63.3, 48.6 | 65 |  |
-| 127 | T | 95328 | Whispering Horror Residue | 1458 | 49.1, 14.6 | 256 |  |
-| 128 | T | 445 | Delivery to Silverpine Forest | 1421 | 42.8, 40.9 | 1776 |  |
+| 1 | A | 427 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 360 |  |
+| 2 | A | 99134 | Discipline | 1420 | 60.6, 51.8 | 0 |  |
+| 3 | A | 398 | WANTED: Maggot Eye | 1420 | 60.7, 51.5 | 10 |  |
+| 4 | A | 358 | Graverobbers | 1420 | 61.3, 50.8 | 30 |  |
+| 5 | A | 86784 | Sticks and Bones | 1420 | 58.5, 51.4 | 127 |  |
+| 6 | A | 404 | A Putrid Task | 1420 | 58.2, 51.5 | 12 |  |
+| 7 | O | 99134 | Discipline | 1420 | 53.1, 54.4 | 246 |  |
+| 8 | O | 404 | A Putrid Task | 1420 | 53.3, 56.5 | 62 |  |
+| 9 | A | 5481 | Gordo's Task | 1420 | 43.1, 54.7 | 464 |  |
+| 10 | O | 5481 | Gordo's Task | 1420 | 42.7, 54.6 | 16 |  |
+| 11 | A | 365 | Fields of Grief | 1420 | 40.9, 54.2 | 81 |  |
+| 12 | A | 590 | A Rogue's Deal | 1420 | 38.2, 56.8 | 144 |  |
+| 13 | O | 590 | A Rogue's Deal | 1420 | 38.2, 56.8 | 0 |  |
+| 14 | T | 590 | A Rogue's Deal | 1420 | 38.2, 56.8 | 0 |  |
+| 15 | O | 365 | Fields of Grief | 1420 | 35.9, 50.6 | 214 |  |
+| 16 | O | 427 | At War With The Scarlet Crusade | 1420 | 31.8, 48.0 | 199 |  |
+| 17 | A | 99144 | Seeking Refuge | 1420 | 32.0, 46.3 | 49 |  |
+| 18 | O | 99144 | Seeking Refuge | 1420 | 39.0, 48.8 | 326 |  |
+| 19 | O | 86784 | Sticks and Bones | 1420 | 55.7, 52.4 | 764 | near #7 (went 1089 yd away) |
+| 20 | T | 404 | A Putrid Task | 1420 | 58.2, 51.5 | 114 | near #6 (went 1195 yd away) |
+| 21 | A | 426 | The Mills Overrun | 1420 | 58.2, 51.5 | 0 |  |
+| 22 | T | 427 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 108 |  |
+| 23 | A | 370 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 |  |
+| 24 | A | 374 | Proof of Demise | 1420 | 60.9, 52.0 | 17 |  |
+| 25 | T | 99144 | Seeking Refuge | 1420 | 60.2, 52.7 | 37 |  |
+| 26 | T | 99134 | Discipline | 1420 | 60.6, 51.8 | 31 |  |
+| 27 | T | 365 | Fields of Grief | 1420 | 59.5, 52.4 | 55 |  |
+| 28 | A | 407 | Fields of Grief | 1420 | 59.5, 52.4 | 0 |  |
+| 29 | A | 354 | Deaths in the Family | 1420 | 61.7, 52.3 | 102 |  |
+| 30 | A | 362 | The Haunted Mills | 1420 | 61.7, 52.3 | 0 |  |
+| 31 | T | 407 | Fields of Grief | 1420 | 62.0, 51.3 | 32 |  |
+| 32 | A | 375 | The Chill of Death | 1420 | 61.9, 52.7 | 43 |  |
+| 33 | A | 96607 | The Great Outdoors | 1420 | 57.3, 55.5 | 224 |  |
+| 34 | T | 86784 | Sticks and Bones | 1420 | 57.3, 55.5 | 0 |  |
+| 35 | O | 374 | Proof of Demise | 1420 | 51.8, 67.7 | 442 |  |
+| 36 | O | 370 | At War With The Scarlet Crusade | 1420 | 51.1, 67.8 | 30 |  |
+| 37 | O | 96607 | The Great Outdoors | 1420 | 57.2, 55.6 | 458 |  |
+| 38 | T | 96607 | The Great Outdoors | 1420 | 57.3, 55.5 | 5 |  |
+| 39 | A | 96658 | Camping 101: Cooking | 1420 | 57.3, 55.5 | 0 |  |
+| 40 | O | 96658 | Camping 101: Cooking | 1420 | 61.8, 51.4 | 235 | near #32 (went 687 yd away) |
+| 41 | T | 96658 | Camping 101: Cooking | 1420 | 61.8, 51.4 | 0 | near #32 (went 687 yd away) |
+| 42 | T | 374 | Proof of Demise | 1420 | 60.9, 52.0 | 40 |  |
+| 43 | T | 370 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 17 |  |
+| 44 | A | 371 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 |  |
+| 45 | O | 375 | The Chill of Death | 1420 | 61.0, 52.4 | 27 |  |
+| 46 | T | 5481 | Gordo's Task | 1420 | 57.4, 48.9 | 193 | near #28 (went 637 yd away) |
+| 47 | A | 5482 | Doom Weed | 1420 | 57.4, 48.9 | 0 | near #28 (went 637 yd away) |
+| 48 | O | 5482 | Doom Weed | 1420 | 57.2, 40.4 | 253 |  |
+| 49 | O | 358 | Graverobbers | 1420 | 55.9, 42.5 | 88 |  |
+| 50 | O | 362 | The Haunted Mills | 1420 | 47.2, 40.0 | 397 |  |
+| 51 | O | 354 | Deaths in the Family | 1420 | 42.8, 32.5 | 300 |  |
+| 52 | O | 354 | Deaths in the Family | 1420 | 45.8, 29.4 | 163 |  |
+| 53 | O | 426 | The Mills Overrun | 1420 | 48.2, 34.6 | 190 |  |
+| 54 | A | 361 | A Letter Undelivered | 1420 | 48.2, 34.8 | 4 |  |
+| 55 | O | 354 | Deaths in the Family | 1420 | 49.7, 36.3 | 83 |  |
+| 56 | O | 398 | WANTED: Maggot Eye | 1420 | 58.7, 30.8 | 436 |  |
+| 57 | O | 358 | Graverobbers | 1420 | 59.1, 36.8 | 182 | near #48 (went 744 yd away) |
+| 58 | T | 5482 | Doom Weed | 1420 | 57.4, 48.9 | 370 | near #47 (went 822 yd away) |
+| 59 | A | 99142 | Tomb Weed | 1420 | 57.4, 48.9 | 0 | near #47 (went 822 yd away) |
+| 60 | T | 426 | The Mills Overrun | 1420 | 58.2, 51.5 | 85 |  |
+| 61 | T | 358 | Graverobbers | 1420 | 61.3, 50.8 | 139 | near #45 (went 998 yd away) |
+| 62 | A | 405 | The Prodigal Lich | 1420 | 61.3, 50.8 | 0 |  |
+| 63 | T | 362 | The Haunted Mills | 1420 | 61.7, 52.3 | 48 |  |
+| 64 | T | 354 | Deaths in the Family | 1420 | 61.7, 52.3 | 0 |  |
+| 65 | T | 398 | WANTED: Maggot Eye | 1420 | 60.6, 51.8 | 53 |  |
+| 66 | T | 361 | A Letter Undelivered | 1420 | 61.6, 52.6 | 51 |  |
+| 67 | A | 355 | Speak with Sevren | 1420 | 61.7, 52.3 | 11 |  |
+| 68 | T | 355 | Speak with Sevren | 1420 | 61.3, 50.8 | 48 |  |
+| 69 | A | 359 | Forsaken Duties | 1420 | 61.3, 50.8 | 0 |  |
+| 70 | A | 408 | The Family Crypt | 1420 | 61.3, 50.8 | 0 |  |
+| 71 | A | 97558 | Hides for the Forsaken | 1420 | 65.4, 60.1 | 337 |  |
+| 72 | A | 356 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 4 |  |
+| 73 | T | 359 | Forsaken Duties | 1420 | 65.5, 60.3 | 0 |  |
+| 74 | A | 360 | Return to the Magistrate | 1420 | 65.5, 60.3 | 0 |  |
+| 75 | T | 405 | The Prodigal Lich | 1458 | 84.1, 17.4 | 256 |  |
+| 76 | A | 357 | The Lich's Identity | 1458 | 84.1, 17.4 | 0 |  |
+| 77 | O | 99142 | Tomb Weed | 1420 | 76.0, 61.0 | 522 |  |
+| 78 | O | 356 | Rear Guard Patrol | 1420 | 75.9, 61.1 | 6 |  |
+| 79 | O | 371 | At War With The Scarlet Crusade | 1420 | 78.8, 56.1 | 200 |  |
+| 80 | O | 357 | The Lich's Identity | 1420 | 68.0, 42.1 | 647 |  |
+| 81 | A | 96895 | The Argent Emissary | 1420 | 61.5, 53.5 | 450 | near #70 (went 786 yd away) |
+| 82 | T | 96895 | The Argent Emissary | 1420 | 65.9, 61.1 | 304 | near #74 (went 601 yd away) |
+| 83 | A | 96898 | Remnants of War | 1420 | 65.9, 61.1 | 0 | near #74 (went 601 yd away) |
+| 84 | A | 96897 | The Cult of the Damned | 1420 | 65.9, 61.1 | 0 |  |
+| 85 | T | 356 | Rear Guard Patrol | 1420 | 65.5, 60.3 | 33 |  |
+| 86 | T | 357 | The Lich's Identity | 1458 | 84.1, 17.4 | 256 | near #76 (went 810 yd away) |
+| 87 | A | 366 | Return the Book | 1458 | 84.1, 17.4 | 0 | near #76 (went 810 yd away) |
+| 88 | O | 96898 | Remnants of War | 1420 | 67.7, 63.1 | 194 |  |
+| 89 | O | 96897 | The Cult of the Damned | 1420 | 67.7, 62.9 | 5 |  |
+| 90 | T | 96897 | The Cult of the Damned | 1420 | 65.9, 61.1 | 96 |  |
+| 91 | T | 96898 | Remnants of War | 1420 | 65.9, 61.1 | 0 |  |
+| 92 | A | 96899 | Bandarion Keep | 1420 | 65.9, 61.1 | 0 |  |
+| 93 | T | 371 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 371 |  |
+| 94 | A | 372 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 0 |  |
+| 95 | T | 360 | Return to the Magistrate | 1420 | 61.3, 50.8 | 41 |  |
+| 96 | T | 99142 | Tomb Weed | 1420 | 57.4, 48.9 | 182 | near #60 (went 990 yd away) |
+| 97 | T | 96899 | Bandarion Keep | 1420 | 22.0, 44.7 | 1604 |  |
+| 98 | A | 96896 | A Righteous Cause | 1420 | 22.0, 44.7 | 0 |  |
+| 99 | T | 96896 | A Righteous Cause | 1420 | 22.0, 44.7 | 0 |  |
+| 100 | A | 98545 | Leonid's Letter | 1420 | 22.0, 44.7 | 0 |  |
+| 101 | A | 99153 | The One That Got Away | 1420 | 20.2, 46.5 | 99 |  |
+| 102 | O | 99153 | The One That Got Away | 1420 | 9.7, 69.4 | 836 |  |
+| 103 | T | 99153 | The One That Got Away | 1420 | 20.2, 46.5 | 836 | near #101 (went 836 yd away) |
+| 104 | O | 408 | The Family Crypt | 1420 | 52.8, 28.4 | 1571 |  |
+| 105 | O | 97558 | Hides for the Forsaken | 1420 | 64.8, 29.5 | 543 |  |
+| 106 | O | 372 | At War With The Scarlet Crusade | 1420 | 79.5, 25.2 | 677 |  |
+| 107 | T | 366 | Return the Book | 1420 | 68.2, 41.9 | 718 | near #80 (went 2768 yd away) |
+| 108 | A | 409 | Proving Allegiance | 1420 | 68.2, 41.9 | 0 | near #80 (went 2768 yd away) |
+| 109 | O | 409 | Proving Allegiance | 1420 | 66.7, 45.0 | 114 |  |
+| 110 | T | 409 | Proving Allegiance | 1420 | 68.2, 41.9 | 114 |  |
+| 111 | A | 411 | The Prodigal Lich Returns | 1420 | 68.2, 41.9 | 0 |  |
+| 112 | O | 97558 | Hides for the Forsaken | 1420 | 64.1, 38.4 | 214 |  |
+| 113 | O | 375 | The Chill of Death | 1420 | 64.0, 38.6 | 3 |  |
+| 114 | T | 408 | The Family Crypt | 1420 | 61.3, 50.8 | 390 | near #95 (went 2394 yd away) |
+| 115 | T | 372 | At War With The Scarlet Crusade | 1420 | 60.6, 51.8 | 41 | near #95 (went 2358 yd away) |
+| 116 | T | 375 | The Chill of Death | 1420 | 61.9, 52.7 | 65 |  |
+| 117 | T | 97558 | Hides for the Forsaken | 1420 | 65.4, 60.1 | 274 | near #92 (went 2532 yd away) |
+| 118 | T | 411 | The Prodigal Lich Returns | 1458 | 84.1, 17.4 | 260 | near #87 (went 2526 yd away) |
+| 119 | T | 98545 | Leonid's Letter | 1458 | 70.0, 47.3 | 233 |  |
+| 120 | F |  | flight path | 1458 | 63.3, 48.6 | 65 |  |
+| 121 | A | 97891 | Prompt Potion Runner | 1458 | 58.6, 54.7 | 59 |  |
+| 122 | T | 97891 | Prompt Potion Runner | 1458 | 46.6, 74.1 | 169 |  |
 
-Walking between tasks: 29946 yd (~71 min at 7 yd/s).
+Walking between tasks: 21050 yd (~50 min at 7 yd/s).
 
 ## Qualité
 
@@ -588,12 +578,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 2: `sethearth 1420 61.72 52.05`
-- step 54: `fp 1458 63.25 48.56`
-- step 58: `hearth 1420`
-- step 113: `level 12` — About 1 mobs here (Shadowvale Lurcher, level 11)
-- step 121: `hearth 1420`
-- step 132: `fp 1421 45.62 42.6`
+- step 119: `fp 1458 63.25 48.56`
 
 ## Warnings
 

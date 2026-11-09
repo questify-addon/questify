@@ -104,6 +104,43 @@ return {
     t.ok(#report.quests >= 6, "kept quests listed")
   end,
 
+  -- Élites : un camp (2 apparitions ou plus) près d'un site, ou l'élite cible de l'objectif, fixe son niveau minimal
+  -- (niveau de l'élite) ; un élite seul qui n'est pas la cible ne compte pas.
+  elite_camp_or_target_makes_the_objective_dangerous = function(t)
+    local W = F.W()
+    local function elite(D, id, x, y, level)
+      D.npcs[id] = { id = id, name = "Elite " .. id, minLevel = level, maxLevel = level, rank = 1,
+        spawns = { [9001] = { { x, y } } }, npcFlags = 0, questStarts = {}, questEnds = {} }
+    end
+    -- camp de deux élites de niveau 9 au milieu des loups de 101 (25, 28)
+    local D = F.D()
+    elite(D, 2901, 25, 28, 9); elite(D, 2902, 25.5, 28.5, 9)
+    local _, report = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(report, 101) and dropped(report, 101):find("too dangerous before level 9", 1, true), tostring(dropped(report, 101)))
+    -- un seul élite qui n'est pas la cible : 101 reste
+    D = F.D()
+    elite(D, 2901, 25, 28, 9)
+    local steps = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(indexOf(steps, "turnin", 101), "a lone passing elite does not block")
+    -- la cible elle-même élite (chef trogg de 104, niveau 9) : 104 écartée
+    D = F.D()
+    D.npcs[2104].rank, D.npcs[2104].minLevel, D.npcs[2104].maxLevel = 1, 9, 9
+    local _, r3 = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(r3, 104) and dropped(r3, 104):find("too dangerous", 1, true), tostring(dropped(r3, 104)))
+  end,
+
+  -- Objectif sous son niveau minimal (loups de 101 au niveau 5 : minimum 3) : reporté après d'autres quêtes, fait au
+  -- niveau 3 ou plus, jamais trop bas ni écarté quand le chapitre l'atteint.
+  dangerous_objective_is_deferred_not_done_too_low = function(t)
+    local D, W = F.D(), F.W()
+    D.npcs[2101].minLevel, D.npcs[2101].maxLevel = 5, 5
+    local steps, report = sim.chapter(D, W, F.plan(), F.state())
+    t.eq(dropped(report, 101), nil, "101 kept")
+    local i = indexOf(steps, "complete", 101)
+    t.ok(i, "101 done: " .. stepsText(steps))
+    t.ok(steps[i]._c.simLevel >= 3, "done at level " .. tostring(steps[i]._c.simLevel))
+  end,
+
   widen_true_always_widens_the_band = function(t)
     local W = F.W()
     local plan = F.plan()

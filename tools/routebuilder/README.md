@@ -673,6 +673,54 @@ After these changes, the forcings of `plans.lua` were measured again one by one 
   change the measure, not the routes. `grindCost` (mobs of the character's
   level, 20 s each, as `sim.grindTo`) is unchanged.
 
+## Objective danger (2026-11-09, player feedback)
+
+A Dwarf player on the 1-20 route reported orange mobs at level 16 (18-19), many easy Loch Modan quests left out, and
+a trip into the elite ogre camp of Mo'grosh for a book (Runes of the Sorcerer-Kings 78148) at level 15. Three causes
+in the simulator: an objective whose "safe" level needed more than `SAFE_GATE_GRIND` mobs of grinding was done anyway,
+too low; elites around an objective were never looked at (only the mobs to kill); and the band widening of Loch Modan
+(up to level 20) filled the XP budget with those quests instead of the easy ones.
+
+### Minimum level of an objective (`sim.lua`)
+
+- Each objective task (`O`, `C`) waits for its minimum level, the highest of: quest level - `DANGER_QUEST_ABOVE` (3),
+  average level of its mobs - `DANGER_MOB_ABOVE` (2: never orange), and for a site near hostile elites, the elite level
+  + `ELITE_ABOVE` (2) - `DANGER_MOB_ABOVE` (an elite of the player's level at most). `safeLevel` of a plan still
+  replaces it. This replaces the former "safe" level (quest - 1, mobs - 1), which was only a preference.
+- Elites (`sim.eliteNear`): hostile NPCs of rank 1 to 3 within `ELITE_RADIUS` (35 yd) + the spread of the site (at most
+  `ELITE_SPREAD`, 25 yd). They count as a camp (at least `ELITE_CAMP`, 2, spawns in the radius) or when the elite is a
+  target of the objective (kill or drop); a lone rare elite that passes by (Old Icebeard, Mor'Ladim) does not. Elites
+  more than `ELITE_IGNORE_ABOVE` (10) levels above the chapter are ignored (instance data projected on the zone, event
+  NPCs: Infernal 30 in Elwynn, Stonevault 36 in Loch Modan). Mob levels above 63 (QuestieDB 9999: scenario NPCs of
+  unknown level) are no constraint.
+- In the walk, an objective below its minimum level is reached by grinding up to `SAFE_GATE_GRIND` (60) mobs; beyond,
+  it is **deferred**: its task, the remaining tasks of its quest and of the quests that depend on it leave the queue
+  and come back as soon as the level is reached (before a chapter exit task at the latest). What is still deferred at
+  the end of the chapter is dropped ("objective too dangerous before level N"), its steps already written are removed,
+  and the chapter is run again without those quests so that the XP budget takes others. A forced quest is done anyway.
+- The accept of a chain head blocked by its required level is deferred the same way when it would need more than
+  `SAFE_GATE_GRIND` mobs (it used to be grinding without limit: 122 mobs in Tirisfal once objectives were deferred).
+- `widen = true` on a plan always widens the band (see "New plan fields").
+
+### Measured (QuestieDB v1.0.12, all eight race paths)
+
+| Variant | Human 1-60 | Orc 1-60 | Dangerous drops |
+|---|---|---|---|
+| Before (objectives done too low) | 5 212 | 5 158 | 0 |
+| Old safe level as a hard limit (skip) | 6 026 | 5 910 | ~400 |
+| Same, `strictLevel` on every chapter | 6 148 | 5 882 | 400 |
+| Danger limit mobs +2, skip | 5 720 | 5 670 | 265 |
+| Danger limit + deferral, elite radius 50 + 40 yd, any elite | 5 851 | 5 739 | 322 |
+| Same without elites | 5 699 | 5 477 | 124 |
+| Danger limit + deferral, mobs +3 | 5 758 | 5 621 | 201 |
+| One minimum level (danger), deferral, elite camps or targets within 35 + 25 yd, 9999 ignored | 5 572 | 5 551 | 215 |
+| **Kept**: same + deferred chain-head accepts | **5 572** | **5 538** | 240 |
+
+The remaining cost (+300 to +450 min per path, about +6 to +9 %) is the quests that the routes used to do 3 to 10
+levels too low or inside elite camps; the simulator kills every mob in 20 s whatever its level, so the old totals were
+optimistic. Biggest changes: A_04 (Wetlands: Dragonmaw and Dark Iron elites of Forever around most objectives, 284
+mobs of grinding), H_03, A_02 and the 30-60 trunk.
+
 ## Bag quests (`bagquests.lua`, 2026-11-08)
 
 `build.lua` writes `Questify/Guides/BagQuestData.lua` after `ClassQuestData.lua` (both listed last in `Guides.xml`):

@@ -558,3 +558,56 @@ totals count the trunk detours that their filtered steps skip in game. The simul
 bonus of the bag; the XP of the five quests is an estimate (new Forever quests). The dam is reached in a straight
 line inside the northern Eastern Kingdoms walk region (no pathing around the mountains): to check in game.
 APR-COMPARE: APR clearly ahead on 41 chapters, Questify on 4, close on 27.
+
+## Safer routes (2026-11-09, player feedback)
+
+A Dwarf player reported on Loch Modan: orange mobs (18-19) at level 16, many easy quests left out, and a trip into the
+elite ogre camp of Mo'grosh for a book in a cave (Runes of the Sorcerer-Kings, 78148). The simulator did objectives
+below their safe level whenever reaching it cost more than 60 mobs of grinding, never looked at elites around an
+objective, and Loch Modan (11-14) widened its band to level 20, so its XP budget took those quests instead of the easy
+ones. Details and measures: `tools/routebuilder/README.md`, "Objective danger".
+
+- Every objective now has a minimum level (mobs at most 2 levels above the player, quest at most 3, no elite camp or
+  elite target above the player). Below it, the route grinds up to 60 mobs, else defers the objective until the level
+  is reached in the chapter, else drops it. Level-gated chain heads are deferred the same way.
+- Dwarf / Gnome: Loch Modan 11-13 and Westfall 13-16 (Westfall earlier, as suggested). Loch Modan no longer takes
+  Gathering Idols (troggs 17-19), A Hunter's Challenge (boars 16-17 next to the Mo'grosh ogres) nor the Mo'grosh book;
+  it gets Crocolisk Hunting, Find Bingles, Protecting the Shipment and After the Ambush instead, with no grinding.
+- Bug fixed: QuestieDB gives level 9999 to scenario NPCs of unknown level (Zephras Isle); taken as mobs to kill, they
+  asked for level 9997.
+- H_05: Dangerous! (567) before Souvenirs of Death (546), so its second site is not done on a later pass.
+
+Dwarf / Gnome path 1-30, simulated:
+
+| Chapter | Zone | Levels | Time | Quests | Before |
+|---|---|---|---|---|---|
+| A_DwarfGnome_01 | Coldridge Valley | 1.00 -> 6.02 | 36 min | 15 | 37 min |
+| A_DwarfGnome_02 | Dun Morogh | 6.00 -> 12.01 | 111 min | 37 | 113 min |
+| A_DwarfGnome_03 | Loch Modan | 12.00 -> 14.28 | 77 min | 20 | 124 min (to 15.56, 82 mobs of grinding) |
+| A_DwarfGnome_04 | Westfall | 14.00 -> 16.88 | 117 min | 19 | 78 min |
+| A_01 | Darkshore | 16.00 -> 19.67 | 154 min | 36 | 166 min |
+| A_02 | Ashenvale and Stonetalon | 19.00 -> 22.31 | 157 min | 28 | 126 min |
+| A_03 | Redridge and Duskwood | 22.00 -> 26.39 | 262 min | 48 | 297 min |
+| A_04 | Wetlands | 26.00 -> 29.00 | 185 min | 16 | 109 min |
+| A_05 | Hillsbrad | 29.00 -> 30.00 | 80 min | 10 | 77 min |
+
+Totals per race path, simulated (minutes / quests / grind mobs), before → after:
+
+| Path 1-60 | Before | Safer routes |
+|---|---|---|
+| Human | 5 212 / 651 / 4 546 | 5 572 / 607 / 6 019 |
+| Dwarf / Gnome | 5 277 / 657 / 4 615 | 5 597 / 611 / 5 933 |
+| Night Elf | 5 218 / 636 / 4 684 | 5 612 / 595 / 6 086 |
+| Skyborne (Alliance) | 5 163 / 637 / 4 601 | 5 487 / 593 / 5 981 |
+| Orc / Troll | 5 158 / 617 / 2 920 | 5 538 / 557 / 4 816 |
+| Tauren | 5 154 / 610 / 2 944 | 5 536 / 549 / 4 819 |
+| Undead | 5 196 / 634 / 2 922 | 5 574 / 574 / 4 843 |
+| Skyborne (Horde) | 5 183 / 633 / 2 998 | 5 566 / 573 / 4 874 |
+
+The routes are 5 to 7 hours longer in the simulator: the quests they used to do 3 to 10 levels too low or inside elite
+camps are deferred to a level where they are safe, or dropped, and grinding fills the gap. The simulator kills every mob
+in 20 s whatever its level, so the old totals were optimistic. 240 quests are dropped as "too dangerous" over all
+chapters (each report lists them). Heaviest left: A_04 (Wetlands: the Dragonmaw and Dark Iron of Forever are elite
+around most objectives, 284 mobs of grinding), H_03, the 30-60 trunk. To check in game: whether those camps are really
+elite, and whether the routes still feel too hard or too easy.
+APR-COMPARE: APR clearly ahead on 47 chapters, Questify on 4, close on 21.

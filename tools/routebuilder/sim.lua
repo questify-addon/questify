@@ -57,9 +57,21 @@ sim.CONST = {
   FLY_PENALTY = 30,       -- s ajoutées au choix d'un vol (descendre, remonter, file d'attente)
   HEARTH_PENALTY = 120,   -- s de coût d'opportunité de la pierre (60 min de recharge ; 300 n'était jamais rentable)
   HEARTH_LOAD = 15,       -- s d'écran de chargement / téléportation
-  SAFE_QUEST_ABOVE = 1,   -- niveaux : objectifs faits au plus tôt au niveau de la quête - 1 (jamais orange)
-  SAFE_GATE_GRIND = 60,   -- mobs à farmer acceptés pour atteindre le niveau « sûr » d'un objectif (au lieu de le sauter)
-  SAFE_MOB_ABOVE = 1,     -- niveaux : monstres à tuer (niveau moyen) au plus 1 niveau au-dessus du personnage
+  SAFE_GATE_GRIND = 60,   -- mobs à farmer acceptés pour atteindre le niveau minimal d'un objectif (au-delà : reporté)
+  -- Élites hostiles près d'un site d'objectif (objet, butin, monstres) : le site attend le niveau de l'élite le plus
+  -- haut + ELITE_ABOVE - DANGER_MOB_ABOVE. Un élite plus de ELITE_IGNORE_ABOVE niveaux au-dessus du chapitre est ignoré
+  -- (données d'instance projetées sur la zone, évènement : Infernal 30 à Elwynn, Stonevault 36 au Loch Modan).
+  ELITE_RADIUS = 35,      -- yards autour du site (plus l'étalement du site, au plus ELITE_SPREAD)
+  ELITE_SPREAD = 25,
+  ELITE_CAMP = 2,         -- élites dans le rayon pour un camp ; un élite seul ne compte que s'il est la cible
+  ELITE_ABOVE = 2,        -- un élite compte comme un monstre 2 niveaux plus haut
+  ELITE_IGNORE_ABOVE = 10,
+  -- Niveau minimal d'un objectif (limite de danger) : monstres (niveau moyen) au plus DANGER_MOB_ABOVE au-dessus du
+  -- personnage (orange au-delà), quête au plus DANGER_QUEST_ABOVE au-dessus, élite (+ ELITE_ABOVE) au plus
+  -- DANGER_MOB_ABOVE. Au-dessous, l'objectif n'est jamais fait : farm jusqu'à SAFE_GATE_GRIND mobs, sinon reporté
+  -- (puis écarté si le niveau n'est pas atteint dans le chapitre). Une quête forcée par le plan est faite quand même.
+  DANGER_MOB_ABOVE = 2,
+  DANGER_QUEST_ABOVE = 3,
   SWEEP_HUB = 40,         -- yards : prises et points de vol faits au premier passage à moins de cette distance
   SWEEP_TURNIN = 60,      -- yards : rendu au passage d'une quête terminée
   SWEEP_AREA = 120,       -- yards : objectifs d'une même zone faits en un seul passage
@@ -178,8 +190,45 @@ local function makeCtx(D, W, plan, state, opts)
   ctx.logCap = ctx.opts.logCap or plan.logCap or C.LOG_CAP
   -- cartes des chapitres suivants du parcours (build.lua) : rendus reportés possibles
   if ctx.opts.carryZones then ctx.carrySet = asSet(ctx.opts.carryZones) end
+  -- élites hostiles des cartes du chapitre (danger des sites d'objectif)
+  ctx.elites = {}
+  local ceiling = plan.maxLevel + (ctx.opts.levelHigh or 0) + C.ELITE_IGNORE_ABOVE
+  for _, id in ipairs(qdb.sortedKeys(D.npcs)) do
+    local n = D.npcs[id]
+    local hostile = not (n.friendly and n.friendly:find(ctx.letter, 1, true))
+    if (n.rank or 0) >= 1 and (n.rank or 0) <= 3 and hostile and (n.maxLevel or 0) > 0 and n.maxLevel <= ceiling then
+      for m, list in pairs(n.spawns or {}) do
+        if ctx.zoneSet[m] then
+          for _, p in ipairs(list) do
+            local pos = mkPos(W, m, p[1], p[2])
+            if pos then pos.level, pos.npc = n.maxLevel, id; ctx.elites[#ctx.elites + 1] = pos end
+          end
+        end
+      end
+    end
+  end
   return ctx
 end
+
+-- Niveau de l'élite hostile le plus haut près d'une position (rayon ELITE_RADIUS + étalement), ou nil : un camp
+-- (au moins ELITE_CAMP apparitions d'élites dans le rayon) ou un élite cible de l'objectif (targets = { [npcId] = true }).
+-- Un rare élite seul qui passe (Old Icebeard, Mor'Ladim) ne compte pas.
+local function eliteNear(ctx, pos, spread, targets)
+  if not pos then return nil end
+  local r = C.ELITE_RADIUS + math.min(spread or 0, C.ELITE_SPREAD)
+  local best, bestTarget, n = nil, nil, 0
+  for _, e in ipairs(ctx.elites or {}) do
+    if e.c == pos.c and math.abs(e.wx - pos.wx) <= r and math.abs(e.wy - pos.wy) <= r
+       and math.sqrt((e.wx - pos.wx) ^ 2 + (e.wy - pos.wy) ^ 2) <= r then
+      n = n + 1
+      if not best or e.level > best then best = e.level end
+      if targets and targets[e.npc] and (not bestTarget or e.level > bestTarget) then bestTarget = e.level end
+    end
+  end
+  if n >= C.ELITE_CAMP then return best end
+  return bestTarget
+end
+sim.eliteNear = eliteNear
 
 -- Le point (carte, x, y) est-il dans la région du chapitre (cartes `zones`, limitées par `bounds`) ?
 local function inRegion(ctx, m, x, y)
@@ -716,6 +765,17 @@ local function analyse(ctx, q)
                               spread = s.spread or 0 }
     end
   end
+  for _, g in ipairs(groups) do
+    local targets = {}
+    for _, o in ipairs(g.objs or {}) do
+      if o.kind == "kill" and o.id then targets[o.id] = true end
+      for _, id in ipairs(o.npcIds or {}) do targets[id] = true end
+      if o.kind == "item" and o.id and D.items[o.id] then
+        for _, id in ipairs(D.items[o.id].npcDrops or {}) do targets[id] = true end
+      end
+    end
+    g.elite = eliteNear(ctx, g.pos, g.spread, targets)
+  end
   info.sites = groups
   if info.carry then return info end
   local last = groups[#groups] and groups[#groups].pos or info.A
@@ -851,7 +911,8 @@ function sim.chapter(D, W, plan, state, opts)
     -- Quêtes sautées faute de niveau : écartées d'emblée et chapitre refait, pour que le budget d'XP
     -- garde d'autres quêtes à leur place (au plus 2 fois).
     for _ = 1, 2 do
-      if not next(report.levelSkipped or {}) or (report.grindMobs or 0) <= C.TRIVIAL_GRIND then break end
+      if not next(report.levelSkipped or {}) then break end
+      if (report.grindMobs or 0) <= C.TRIVIAL_GRIND and not report.unsafeSkipped then break end
       o2.preDrop = o2.preDrop or {}
       for id, why in pairs(report.levelSkipped) do o2.preDrop[id] = why end
       restore(state, snap)
@@ -1383,13 +1444,19 @@ function sim.chapter(D, W, plan, state, opts)
       local q = info.q
       local counted = simulatedEligible(ctx, q) and not info.foreign
       if (t.kind == "A" or t.kind == "C") and (q.reqLevel or 0) > 1 then t.reqLevel = q.reqLevel end
-      -- Difficulté : les objectifs attendent un niveau « sûr » (quête jaune facile, monstres pas plus
-      -- hauts que le personnage) ; l'ordonnancement fait d'abord le plus facile.
-      if (t.kind == "C" or t.kind == "O") and C.SAFE_QUEST_ABOVE and C.SAFE_MOB_ABOVE then
-        local safe = (q.level or 0) - C.SAFE_QUEST_ABOVE
+      -- Difficulté : les objectifs attendent leur niveau minimal (jamais de monstres orange ni d'élite au-dessus du
+      -- personnage) ; l'ordonnancement fait d'abord le plus facile.
+      if t.kind == "C" or t.kind == "O" then
+        -- niveau minimal de l'objectif (limite de danger) : quête au plus DANGER_QUEST_ABOVE au-dessus, monstres
+        -- (niveau moyen) au plus DANGER_MOB_ABOVE, élites proches (+ ELITE_ABOVE) au plus DANGER_MOB_ABOVE
+        local safe = (q.level or 0) - C.DANGER_QUEST_ABOVE
         local sites = t.kind == "O" and { t.site } or info.sites or {}
         for _, s in ipairs(sites) do
-          for _, k in ipairs(s.kills or {}) do safe = math.max(safe, k[1] - C.SAFE_MOB_ABOVE) end
+          -- niveau 9999 de QuestieDB (PNJ de scénario, niveau inconnu) : pas une contrainte
+          for _, k in ipairs(s.kills or {}) do
+            if k[1] <= xpm.MAX_LEVEL + 3 then safe = math.max(safe, k[1] - C.DANGER_MOB_ABOVE) end
+          end
+          if s.elite then safe = math.max(safe, s.elite + C.ELITE_ABOVE - C.DANGER_MOB_ABOVE) end
         end
         -- niveau « sûr » donné par le plan (objectif sans danger réel, fait dès la prise)
         if plan.safeLevel and plan.safeLevel[q.id] then safe = plan.safeLevel[q.id] end
@@ -1475,7 +1542,57 @@ function sim.chapter(D, W, plan, state, opts)
     return n
   end
   local carryBind -- liaison d'une tâche sautée : faite à la tâche suivante
-  for _, t in ipairs(ordered) do repeat
+  -- Objectifs reportés : un objectif sous sa limite de danger (plus de SAFE_GATE_GRIND mobs pour l'atteindre) est mis de
+  -- côté avec les tâches restantes de sa quête et des quêtes qui en dépendent, puis remis dans la file dès que le
+  -- niveau est atteint (avant une tâche de sortie de chapitre au plus tard). Ce qui reste à la fin est écarté.
+  local queue = {}
+  for i, t in ipairs(ordered) do queue[i] = t end
+  local deferred, qi = {}, 0
+  local function dependents(qid)
+    local set, changed = { [qid] = true }, true
+    while changed do
+      changed = false
+      for k = qi + 1, #queue do
+        local uq = queue[k].info and queue[k].info.q
+        if uq and not set[uq.id] then
+          for _, p in ipairs(uq.preSingle or {}) do if set[p] then set[uq.id] = true; changed = true end end
+          for _, p in ipairs(uq.preGroup or {}) do if set[p] then set[uq.id] = true; changed = true end end
+        end
+      end
+    end
+    return set
+  end
+  local function defer(t, need)
+    local set = dependents(t.q)
+    local group = { need = need, tasks = { t }, quests = set }
+    local k = qi + 1
+    while k <= #queue do
+      if queue[k].q and set[queue[k].q] then group.tasks[#group.tasks + 1] = table.remove(queue, k) else k = k + 1 end
+    end
+    deferred[#deferred + 1] = group
+  end
+  -- groupes reportés dont le niveau est atteint, remis à la position `at` de la file
+  local function release(at)
+    local k, n = 1, 0
+    while k <= #deferred do
+      local g = deferred[k]
+      if state.level >= g.need then
+        table.remove(deferred, k)
+        for j = #g.tasks, 1, -1 do table.insert(queue, at, g.tasks[j]) end
+        n = n + 1
+      else
+        k = k + 1
+      end
+    end
+    return n > 0
+  end
+  while true do
+    qi = qi + 1
+    local t = queue[qi]
+    if not t then break end
+    -- avant une tâche de sortie : les groupes reportés devenus possibles passent devant
+    if t.final and #deferred > 0 and release(qi) then t = queue[qi] end
+    repeat
     if t.q and skipQ[t.q] then carryBind = carryBind or hearthBinds[t.id]; break end
     if (t.kind == "A" or t.kind == "C" or t.kind == "O") and t.info and not t.info.carried then
       local q = t.info.q
@@ -1493,13 +1610,30 @@ function sim.chapter(D, W, plan, state, opts)
       end
       if q.next and byId[q.next] and not byId[q.next].dropped then opensMore = true end
       if not skip and t.safeLevel and t.reqLevel and state.level < t.reqLevel then
-        -- niveau « sûr » trop loin : la quête est faite quand même (jamais sautée pour ça)
-        t.unsafe = mobsTo(t.reqLevel, cur) > C.SAFE_GATE_GRIND
+        -- niveau « sûr » trop loin (plus de SAFE_GATE_GRIND mobs à farmer) : la quête est écartée, ses étapes déjà
+        -- écrites retirées, et le chapitre refait sans elle ; une quête forcée est faite quand même
+        local n = mobsTo(t.reqLevel, cur)
+        if n > C.SAFE_GATE_GRIND then
+          if t.info.forced then
+            t.unsafe = true
+          else
+            -- reporté : refait quand le niveau sera atteint (ou écarté en fin de chapitre)
+            report.deferred = (report.deferred or 0) + 1
+            defer(t, t.reqLevel)
+            break
+          end
+        end
       elseif not skip and not opensMore and t.reqLevel and state.level < t.reqLevel then
         local n = mobsTo(t.reqLevel, cur)
         if n > C.GATE_GRIND then
           skip = ("required level %d not reached in time (~%d mobs to farm)"):format(t.reqLevel, n)
         end
+      elseif not skip and opensMore and t.reqLevel and state.level < t.reqLevel and not t.info.forced
+             and mobsTo(t.reqLevel, cur) > C.SAFE_GATE_GRIND then
+        -- tête de chaîne bloquée par le niveau : reportée plutôt qu'un long farm (même file que les objectifs)
+        report.deferred = (report.deferred or 0) + 1
+        defer(t, t.reqLevel)
+        break
       end
       if skip then
         skipQ[q.id] = true
@@ -1617,7 +1751,27 @@ function sim.chapter(D, W, plan, state, opts)
       state.time = state.time + C.QUEST_ACTION
       state.hearth = { inn.m, inn.x, inn.y }
     end
-  until true end
+    until true
+    if not t.final then release(qi + 1) end
+  end
+  -- groupes encore reportés en fin de chapitre : quêtes écartées (étapes déjà écrites retirées, chapitre refait)
+  for _, g in ipairs(deferred) do
+    for qid in pairs(g.quests) do
+      if not skipQ[qid] and byId[qid] then
+        local why = ("objective too dangerous before level %d (not reached in this chapter)"):format(g.need)
+        skipQ[qid] = true
+        report.dropped[#report.dropped + 1] = { qid, why, id = qid, reason = why }
+        report.levelSkipped = report.levelSkipped or {}
+        report.levelSkipped[qid] = why
+        report.unsafeSkipped = true
+        state.log[qid] = nil
+        for i = #steps, 1, -1 do
+          local s = steps[i]
+          if (s[1] == "accept" or s[1] == "complete") and s[2] == qid then table.remove(steps, i) end
+        end
+      end
+    end
+  end
   if finish then cur = sim.travel(ctx, steps, cur, finish, fms) end
 
   -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif

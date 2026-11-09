@@ -1,21 +1,21 @@
 # A_Skyborne_01 — Zephras Isle
 
-Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
 
 | Item | Value |
 |---|---|
 | Level band | 1-15 |
-| Simulated level | 1.00 -> 17.09 |
-| Time | 238 min |
-| XP gained | 110442 |
-| XP/h | 27880 |
-| Steps | 209 |
+| Simulated level | 1.00 -> 17.83 |
+| Time | 231 min |
+| XP gained | 123485 |
+| XP/h | 32128 |
+| Steps | 207 |
 | Quests turned in | 73 |
 | Hubs | 17 |
 | Median ratio (XP/s) | 4.48 |
-| Grinding (level steps) | ~78 mobs |
-| Level band | grinding 78 mobs with quests up to level 18: band widened to level 21 |
-| Hearthstone | bound to Donaal Downbreeze after task 79; 1 return(s) planned, 0 bundle(s) |
+| Grinding (level steps) | ~58 mobs |
+| Level band | grinding 58 mobs with quests up to level 18: band widened to level 21 |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
 
@@ -24,76 +24,76 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
 | 1 | 92471 | Aetheen of the Gales | 4 | 180 est. | 4 |
-| 2 | 92596 | The High Order | 6 | 540 est. | 5 |
-| 3 | 92464 | Elemental Unrest | 3 | 250 est. | 5 |
-| 4 | 92465 | Agitators | 3 | 250 est. | 5 |
-| 5 | 92470 | Foul Matriarch | 5 | 450 est. | 5 |
-| 6 | 92469 | Return to Rorian | 4 | 180 est. | 5 |
-| 7 | 94414 | The Anchors of Zephras | 2 | 170 est. | 5 |
-| 8 | 96638 | The Adventurer | 6 | 135 est. | 6 |
-| 9 | 96101 | The Great Outdoors | 6 | 540 est. | 6 |
-| 10 | 96646 | Camping 101: Cooking | 6 | 540 est. | 6 |
-| 11 | 93461 | Welcome to Shen'dar Village | 6 | 540 est. | 6 |
-| 12 | 92472 | The Next Step | 5 | 225 est. | 6 |
+| 2 | 92464 | Elemental Unrest | 3 | 250 est. | 4 |
+| 3 | 92465 | Agitators | 3 | 250 est. | 4 |
+| 4 | 94414 | The Anchors of Zephras | 2 | 170 est. | 4 |
+| 5 | 92469 | Return to Rorian | 4 | 180 est. | 5 |
+| 6 | 92470 | Foul Matriarch | 5 | 450 est. | 5 |
+| 7 | 92472 | The Next Step | 5 | 225 est. | 5 |
+| 8 | 92596 | The High Order | 6 | 540 est. | 5 |
+| 9 | 96638 | The Adventurer | 6 | 135 est. | 5 |
+| 10 | 96101 | The Great Outdoors | 6 | 540 est. | 5 |
+| 11 | 96646 | Camping 101: Cooking | 6 | 540 est. | 6 |
+| 12 | 93461 | Welcome to Shen'dar Village | 6 | 540 est. | 6 |
 | 13 | 94413 | A Magical Affront | 6 | 540 est. | 6 |
-| 14 | 92517 | The Criminal Element | 7 | 630 est. | 7 |
-| 15 | 93036 | Infiltrating the Cult | 8 | 530 est. | 7 |
+| 14 | 92517 | The Criminal Element | 7 | 630 est. | 6 |
+| 15 | 93036 | Infiltrating the Cult | 8 | 530 est. | 6 |
 | 16 | 92529 | Falaath Village | 8 | 530 est. | 7 |
 | 17 | 92528 | Among the Faithful | 8 | 700 est. | 7 |
-| 18 | 93926 | The Western Watch | 8 | 700 est. | 8 |
-| 19 | 92551 | Stolen Supplies | 8 | 700 est. | 8 |
-| 20 | 93318 | WANTED: Vulgara the Insatiable | 9 | 780 est. | 8 |
-| 21 | 93927 | A Last Request | 8 | 700 est. | 8 |
-| 22 | 92550 | Havoc in the Highlands | 8 | 700 est. | 8 |
+| 18 | 93926 | The Western Watch | 8 | 700 est. | 7 |
+| 19 | 92550 | Havoc in the Highlands | 8 | 700 est. | 8 |
+| 20 | 93927 | A Last Request | 8 | 700 est. | 8 |
+| 21 | 92551 | Stolen Supplies | 8 | 700 est. | 8 |
+| 22 | 93318 | WANTED: Vulgara the Insatiable | 9 | 780 est. | 8 |
 | 23 | 94493 | A Sacrifice in Vain | 11 | 660 est. | 8 |
-| 24 | 92701 | To Valanaar | 9 | 780 est. | 8 |
-| 25 | 93948 | Deliver the Signet | 9 | 780 est. | 9 |
-| 26 | 92699 | The Supreme Magister | 9 | 780 est. | 9 |
-| 27 | 92727 | The Missing Scholar | 10 | 210 est. | 9 |
-| 28 | 92679 | Blood Tithe | 9 | 780 est. | 9 |
-| 29 | 92682 | Make Yourself Useful | 9 | 780 est. | 9 |
-| 30 | 92683 | Flutterfly Dust | 9 | 780 est. | 9 |
-| 31 | 92684 | Ornery Ornery Galestriders | 9 | 780 est. | 9 |
-| 32 | 92849 | The Missing Scholar | 10 | 840 est. | 10 |
-| 33 | 92850 | The Missing Scholar | 10 | 840 est. | 10 |
-| 34 | 99260 | Fillion's Mission | 10 | 210 est. | 10 |
-| 35 | 92685 | The Hills Have Eyes | 9 | 780 est. | 10 |
-| 36 | 92698 | What Is My Purpose? | 9 | 780 est. | 10 |
-| 37 | 92693 | Standing Our Ground | 9 | 780 est. | 10 |
-| 38 | 92840 | Catching Wind | 11 | 770 est. | 10 |
-| 39 | 92860 | In Service of Zephras | 12 | 225 est. | 10 |
-| 40 | 93320 | Tower Defense | 11 | 660 est. | 11 |
-| 41 | 92642 | Disrupting Logistics | 11 | 770 est. | 11 |
-| 42 | 92645 | Breaking the Breaker | 11 | 770 est. | 11 |
-| 43 | 92880 | Return to Valanaar | 11 | 660 est. | 11 |
-| 44 | 92881 | The High Elder's Request | 11 | 660 est. | 11 |
-| 45 | 98512 | Al'Aketh Assassins | 11 | 770 est. | 11 |
-| 46 | 92643 | The Turncoat | 11 | 770 est. | 11 |
-| 47 | 92644 | Unfortunate News | 11 | 660 est. | 11 |
-| 48 | 94568 | The Cult's True Plans | 11 | 770 est. | 11 |
-| 49 | 92640 | Desperate Times | 11 | 770 est. | 16 |
-| 50 | 92703 | Deliver the News | 9 | 465 est. | 16 |
-| 51 | 93065 | Prepare for Battle | 12 | 910 est. | 16 |
-| 52 | 93159 | The Strange Hermit | 13 | 680 est. | 16 |
-| 53 | 93172 | Free the Hollows | 13 | 680 est. | 16 |
-| 54 | 93160 | The Forest's Bounty | 13 | 680 est. | 16 |
-| 55 | 93165 | Mercy Falls on Deaf Ears | 13 | 680 est. | 16 |
-| 56 | 94485 | Tears of the Lady | 12 | 910 est. | 16 |
-| 57 | 94486 | Feathers for Binding | 11 | 770 est. | 16 |
-| 58 | 94487 | Unwanted and Unworthy | 11 | 770 est. | 16 |
-| 59 | 94488 | The Ties That Bind | 11 | 770 est. | 16 |
-| 60 | 94490 | Ripped Missive | 12 | 225 est. | 16 |
-| 61 | 94489 | The Wounds of Betrayal | 12 | 910 est. | 16 |
-| 62 | 92947 | Making Our Move | 12 | 910 est. | 16 |
-| 63 | 93958 | The Inner Sanctum | 12 | 225 est. | 16 |
-| 64 | 93317 | Crab Season | 9 | 465 est. | 16 |
-| 65 | 94491 | The Fate of the Den | 12 | 225 est. | 16 |
-| 66 | 94896 | Aid For The Refugees | 11 | 770 est. | 16 |
-| 67 | 93835 | Confront Lorthuna | 12 | 910 est. | 16 |
-| 68 | 92834 | Avenged Tenfold | 11 | 770 est. | 16 |
-| 69 | 92741 | Unwelcome Visitors | 13 | 680 est. | 16 |
-| 70 | 92709 | A Grand Adventure | 12 | 910 est. | 16 |
-| 71 | 93949 | Bugged | 8 | 280 est. | 17 |
+| 24 | 94486 | Feathers for Binding | 11 | 770 est. | 9 |
+| 25 | 94485 | Tears of the Lady | 12 | 910 est. | 9 |
+| 26 | 94487 | Unwanted and Unworthy | 11 | 770 est. | 9 |
+| 27 | 94488 | The Ties That Bind | 11 | 770 est. | 10 |
+| 28 | 94489 | The Wounds of Betrayal | 12 | 910 est. | 10 |
+| 29 | 94490 | Ripped Missive | 12 | 225 est. | 10 |
+| 30 | 92701 | To Valanaar | 9 | 780 est. | 10 |
+| 31 | 93948 | Deliver the Signet | 9 | 780 est. | 10 |
+| 32 | 92699 | The Supreme Magister | 9 | 780 est. | 10 |
+| 33 | 92727 | The Missing Scholar | 10 | 210 est. | 10 |
+| 34 | 92849 | The Missing Scholar | 10 | 840 est. | 10 |
+| 35 | 92850 | The Missing Scholar | 10 | 840 est. | 11 |
+| 36 | 99260 | Fillion's Mission | 10 | 210 est. | 11 |
+| 37 | 92709 | A Grand Adventure | 12 | 910 est. | 11 |
+| 38 | 93165 | Mercy Falls on Deaf Ears | 13 | 680 est. | 11 |
+| 39 | 93159 | The Strange Hermit | 13 | 680 est. | 11 |
+| 40 | 93160 | The Forest's Bounty | 13 | 680 est. | 11 |
+| 41 | 93172 | Free the Hollows | 13 | 680 est. | 11 |
+| 42 | 92679 | Blood Tithe | 9 | 780 est. | 11 |
+| 43 | 92682 | Make Yourself Useful | 9 | 780 est. | 12 |
+| 44 | 92683 | Flutterfly Dust | 9 | 780 est. | 12 |
+| 45 | 92684 | Ornery Ornery Galestriders | 9 | 780 est. | 12 |
+| 46 | 92698 | What Is My Purpose? | 9 | 780 est. | 12 |
+| 47 | 92685 | The Hills Have Eyes | 9 | 780 est. | 12 |
+| 48 | 92693 | Standing Our Ground | 9 | 780 est. | 12 |
+| 49 | 92741 | Unwelcome Visitors | 13 | 680 est. | 12 |
+| 50 | 92840 | Catching Wind | 11 | 770 est. | 12 |
+| 51 | 93949 | Bugged | 8 | 700 est. | 12 |
+| 52 | 92860 | In Service of Zephras | 12 | 225 est. | 12 |
+| 53 | 94896 | Aid For The Refugees | 11 | 770 est. | 12 |
+| 54 | 93320 | Tower Defense | 11 | 660 est. | 12 |
+| 55 | 92642 | Disrupting Logistics | 11 | 770 est. | 13 |
+| 56 | 92645 | Breaking the Breaker | 11 | 770 est. | 13 |
+| 57 | 92880 | Return to Valanaar | 11 | 660 est. | 13 |
+| 58 | 92881 | The High Elder's Request | 11 | 660 est. | 13 |
+| 59 | 94491 | The Fate of the Den | 12 | 225 est. | 13 |
+| 60 | 92703 | Deliver the News | 9 | 780 est. | 13 |
+| 61 | 93317 | Crab Season | 9 | 780 est. | 13 |
+| 62 | 98512 | Al'Aketh Assassins | 11 | 770 est. | 13 |
+| 63 | 92643 | The Turncoat | 11 | 770 est. | 13 |
+| 64 | 92644 | Unfortunate News | 11 | 660 est. | 13 |
+| 65 | 94568 | The Cult's True Plans | 11 | 770 est. | 13 |
+| 66 | 92640 | Desperate Times | 11 | 615 est. | 17 |
+| 67 | 93065 | Prepare for Battle | 12 | 910 est. | 17 |
+| 68 | 92947 | Making Our Move | 12 | 910 est. | 17 |
+| 69 | 93958 | The Inner Sanctum | 12 | 225 est. | 17 |
+| 70 | 92834 | Avenged Tenfold | 11 | 615 est. | 17 |
+| 71 | 93835 | Confront Lorthuna | 12 | 910 est. | 17 |
 | 72 | 94369 | The Fate of Zephras | 12 | 910 est. | 17 |
 | 73 | 93089 | What Comes Next | 13 | 455 est. | 17 |
 
@@ -251,42 +251,42 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 92471 | Aetheen of the Gales | 2521 | 42.0, 23.5 | 41 |  |
-| 2 | A | 92464 | Elemental Unrest | 2521 | 42.0, 23.5 | 0 |  |
+| 1 | A | 92464 | Elemental Unrest | 2521 | 42.0, 23.5 | 41 |  |
+| 2 | A | 92471 | Aetheen of the Gales | 2521 | 42.0, 23.5 | 0 |  |
 | 3 | T | 92471 | Aetheen of the Gales | 2521 | 42.8, 23.7 | 39 |  |
 | 4 | A | 92470 | Foul Matriarch | 2521 | 42.8, 23.7 | 0 |  |
-| 5 | O | 92470 | Foul Matriarch | 2521 | 38.7, 27.4 | 264 |  |
-| 6 | O | 92470 | Foul Matriarch | 2521 | 35.6, 26.1 | 178 |  |
-| 7 | A | 93461 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 910 |  |
-| 8 | A | 92596 | The High Order | 2521 | 45.0, 46.4 | 49 |  |
-| 9 | O | 92596 | The High Order | 2521 | 45.0, 46.4 | 0 |  |
-| 10 | T | 92596 | The High Order | 2521 | 45.0, 46.4 | 0 |  |
-| 11 | A | 94413 | A Magical Affront | 2521 | 45.0, 46.4 | 0 |  |
-| 12 | O | 93461 | Welcome to Shen'dar Village | 2521 | 45.0, 46.4 | 0 |  |
-| 13 | A | 92465 | Agitators | 2521 | 47.3, 22.0 | 912 |  |
-| 14 | T | 92464 | Elemental Unrest | 2521 | 47.3, 22.0 | 0 |  |
-| 15 | O | 92465 | Agitators | 2521 | 47.5, 19.8 | 81 |  |
-| 16 | T | 92465 | Agitators | 2521 | 47.3, 22.0 | 81 |  |
-| 17 | A | 92469 | Return to Rorian | 2521 | 47.3, 22.0 | 0 |  |
-| 18 | A | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 208 | near #4 (went 829 yd away) |
-| 19 | T | 92470 | Foul Matriarch | 2521 | 42.8, 23.7 | 57 | near #4 (went 850 yd away) |
-| 20 | A | 96638 | The Adventurer | 2521 | 42.8, 23.7 | 0 |  |
-| 21 | A | 92472 | The Next Step | 2521 | 42.8, 23.7 | 0 |  |
-| 22 | T | 92469 | Return to Rorian | 2521 | 42.0, 23.5 | 39 |  |
-| 23 | O | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 97 |  |
-| 24 | T | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 0 |  |
-| 25 | O | 94413 | A Magical Affront | 2521 | 39.7, 47.0 | 879 |  |
-| 26 | T | 96638 | The Adventurer | 2521 | 41.7, 44.8 | 135 |  |
-| 27 | A | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 0 |  |
-| 28 | O | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
-| 29 | T | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
-| 30 | A | 96646 | Camping 101: Cooking | 2521 | 41.7, 44.8 | 0 |  |
-| 31 | O | 93461 | Welcome to Shen'dar Village | 2521 | 43.0, 43.2 | 95 |  |
-| 32 | O | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 51 |  |
-| 33 | T | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 0 |  |
-| 34 | T | 93461 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 118 |  |
-| 35 | A | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 0 |  |
-| 36 | T | 92472 | The Next Step | 2521 | 45.7, 45.5 | 0 |  |
+| 5 | T | 92464 | Elemental Unrest | 2521 | 47.3, 22.0 | 257 |  |
+| 6 | A | 92465 | Agitators | 2521 | 47.3, 22.0 | 0 |  |
+| 7 | O | 92465 | Agitators | 2521 | 47.5, 19.8 | 81 |  |
+| 8 | T | 92465 | Agitators | 2521 | 47.3, 22.0 | 81 |  |
+| 9 | A | 92469 | Return to Rorian | 2521 | 47.3, 22.0 | 0 |  |
+| 10 | A | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 208 |  |
+| 11 | O | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 0 |  |
+| 12 | T | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 0 |  |
+| 13 | O | 92470 | Foul Matriarch | 2521 | 38.7, 27.4 | 306 |  |
+| 14 | O | 92470 | Foul Matriarch | 2521 | 35.6, 26.1 | 178 |  |
+| 15 | T | 92469 | Return to Rorian | 2521 | 42.0, 23.5 | 368 |  |
+| 16 | T | 92470 | Foul Matriarch | 2521 | 42.8, 23.7 | 39 |  |
+| 17 | A | 92472 | The Next Step | 2521 | 42.8, 23.7 | 0 |  |
+| 18 | A | 96638 | The Adventurer | 2521 | 42.8, 23.7 | 0 |  |
+| 19 | T | 92472 | The Next Step | 2521 | 45.7, 45.5 | 825 |  |
+| 20 | A | 93461 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 0 |  |
+| 21 | A | 92596 | The High Order | 2521 | 45.0, 46.4 | 49 |  |
+| 22 | O | 92596 | The High Order | 2521 | 45.0, 46.4 | 0 |  |
+| 23 | T | 92596 | The High Order | 2521 | 45.0, 46.4 | 0 |  |
+| 24 | A | 94413 | A Magical Affront | 2521 | 45.0, 46.4 | 0 |  |
+| 25 | O | 93461 | Welcome to Shen'dar Village | 2521 | 45.0, 46.4 | 0 |  |
+| 26 | O | 94413 | A Magical Affront | 2521 | 39.7, 47.0 | 294 |  |
+| 27 | T | 96638 | The Adventurer | 2521 | 41.7, 44.8 | 135 |  |
+| 28 | A | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 0 |  |
+| 29 | O | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
+| 30 | T | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
+| 31 | A | 96646 | Camping 101: Cooking | 2521 | 41.7, 44.8 | 0 |  |
+| 32 | O | 93461 | Welcome to Shen'dar Village | 2521 | 43.0, 43.2 | 95 |  |
+| 33 | O | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 51 |  |
+| 34 | T | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 0 |  |
+| 35 | T | 93461 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 118 |  |
+| 36 | A | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 0 |  |
 | 37 | T | 94413 | A Magical Affront | 2521 | 45.0, 46.4 | 49 |  |
 | 38 | O | 92517 | The Criminal Element | 2521 | 48.6, 37.7 | 379 |  |
 | 39 | O | 92517 | The Criminal Element | 2521 | 50.6, 34.3 | 169 |  |
@@ -294,167 +294,167 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 41 | A | 93036 | Infiltrating the Cult | 2521 | 45.7, 45.5 | 0 |  |
 | 42 | T | 93036 | Infiltrating the Cult | 2521 | 44.9, 45.5 | 43 |  |
 | 43 | A | 92529 | Falaath Village | 2521 | 44.9, 45.5 | 0 |  |
-| 44 | A | 93318 | WANTED: Vulgara the Insatiable | 2521 | 43.4, 45.8 | 84 |  |
-| 45 | T | 92529 | Falaath Village | 2521 | 46.9, 56.2 | 431 |  |
-| 46 | A | 92528 | Among the Faithful | 2521 | 46.9, 56.2 | 0 |  |
-| 47 | O | 92528 | Among the Faithful | 2521 | 48.8, 53.9 | 137 |  |
-| 48 | T | 92528 | Among the Faithful | 2521 | 45.7, 45.5 | 358 |  |
-| 49 | A | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 0 |  |
-| 50 | A | 93926 | The Western Watch | 2521 | 45.7, 45.5 | 0 |  |
-| 51 | A | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 26 |  |
-| 52 | O | 92550 | Havoc in the Highlands | 2521 | 48.6, 55.2 | 415 |  |
-| 53 | O | 92551 | Stolen Supplies | 2521 | 48.8, 55.3 | 12 |  |
-| 54 | O | 93926 | The Western Watch | 2521 | 42.3, 62.0 | 438 |  |
-| 55 | T | 93926 | The Western Watch | 2521 | 42.3, 62.0 | 0 |  |
-| 56 | A | 93927 | A Last Request | 2521 | 42.3, 62.0 | 0 |  |
-| 57 | O | 93927 | A Last Request | 2521 | 41.3, 63.5 | 80 |  |
-| 58 | O | 93318 | WANTED: Vulgara the Insatiable | 2521 | 42.7, 52.8 | 405 |  |
-| 59 | T | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 316 | near #51 (went 715 yd away) |
-| 60 | T | 93318 | WANTED: Vulgara the Insatiable | 2521 | 45.2, 45.2 | 0 | near #51 (went 715 yd away) |
-| 61 | T | 93927 | A Last Request | 2521 | 45.7, 45.5 | 26 |  |
-| 62 | T | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 0 |  |
-| 63 | A | 92701 | To Valanaar | 2521 | 45.7, 45.5 | 0 |  |
-| 64 | A | 93948 | Deliver the Signet | 2521 | 45.7, 45.5 | 0 |  |
-| 65 | A | 94493 | A Sacrifice in Vain | 2521 | 61.7, 39.2 | 921 |  |
+| 44 | T | 92529 | Falaath Village | 2521 | 46.9, 56.2 | 412 |  |
+| 45 | A | 92528 | Among the Faithful | 2521 | 46.9, 56.2 | 0 |  |
+| 46 | O | 92528 | Among the Faithful | 2521 | 48.8, 53.9 | 137 |  |
+| 47 | T | 92528 | Among the Faithful | 2521 | 45.7, 45.5 | 358 |  |
+| 48 | A | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 0 |  |
+| 49 | A | 93926 | The Western Watch | 2521 | 45.7, 45.5 | 0 |  |
+| 50 | A | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 26 |  |
+| 51 | A | 93318 | WANTED: Vulgara the Insatiable | 2521 | 43.4, 45.8 | 106 |  |
+| 52 | O | 93926 | The Western Watch | 2521 | 42.3, 62.0 | 602 |  |
+| 53 | T | 93926 | The Western Watch | 2521 | 42.3, 62.0 | 0 |  |
+| 54 | A | 93927 | A Last Request | 2521 | 42.3, 62.0 | 0 |  |
+| 55 | O | 93927 | A Last Request | 2521 | 41.3, 63.5 | 80 |  |
+| 56 | O | 92551 | Stolen Supplies | 2521 | 48.8, 55.3 | 518 |  |
+| 57 | O | 92550 | Havoc in the Highlands | 2521 | 48.6, 55.2 | 12 |  |
+| 58 | T | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 394 | near #51 (went 711 yd away) |
+| 59 | T | 93927 | A Last Request | 2521 | 45.7, 45.5 | 0 | near #51 (went 711 yd away) |
+| 60 | A | 92701 | To Valanaar | 2521 | 45.7, 45.5 | 0 |  |
+| 61 | A | 93948 | Deliver the Signet | 2521 | 45.7, 45.5 | 0 |  |
+| 62 | T | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 26 |  |
+| 63 | O | 93318 | WANTED: Vulgara the Insatiable | 2521 | 42.7, 52.8 | 316 |  |
+| 64 | T | 93318 | WANTED: Vulgara the Insatiable | 2521 | 45.2, 45.2 | 316 |  |
+| 65 | A | 94493 | A Sacrifice in Vain | 2521 | 61.7, 39.2 | 941 |  |
 | 66 | T | 94493 | A Sacrifice in Vain | 2521 | 61.7, 39.2 | 0 |  |
-| 67 | A | 94487 | Unwanted and Unworthy | 2521 | 61.7, 39.2 | 0 |  |
-| 68 | A | 94485 | Tears of the Lady | 2521 | 61.7, 39.2 | 0 |  |
-| 69 | A | 94486 | Feathers for Binding | 2521 | 61.7, 39.2 | 0 |  |
-| 70 | A | 93165 | Mercy Falls on Deaf Ears | 2521 | 63.8, 36.0 | 167 |  |
-| 71 | A | 94896 | Aid For The Refugees | 2521 | 66.0, 74.4 | 1429 |  |
-| 72 | T | 92701 | To Valanaar | 2521 | 66.1, 76.7 | 83 |  |
-| 73 | A | 92699 | The Supreme Magister | 2521 | 66.1, 76.7 | 0 |  |
-| 74 | T | 93948 | Deliver the Signet | 2521 | 66.2, 76.5 | 6 |  |
-| 75 | T | 92699 | The Supreme Magister | 2521 | 66.6, 79.9 | 129 |  |
-| 76 | A | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 0 |  |
-| 77 | A | 92727 | The Missing Scholar | 2521 | 66.3, 79.8 | 19 |  |
-| 78 | A | 92741 | Unwelcome Visitors | 2521 | 66.3, 79.5 | 12 |  |
-| 79 | A | 92679 | Blood Tithe | 2521 | 62.1, 73.2 | 333 |  |
-| 80 | O | 92679 | Blood Tithe | 2521 | 62.1, 73.2 | 21 |  |
-| 81 | A | 93317 | Crab Season | 2521 | 60.6, 72.7 | 82 |  |
-| 82 | T | 92727 | The Missing Scholar | 2521 | 53.3, 72.1 | 407 |  |
-| 83 | A | 92849 | The Missing Scholar | 2521 | 53.3, 72.1 | 0 |  |
-| 84 | O | 92679 | Blood Tithe | 2521 | 46.7, 82.0 | 518 |  |
-| 85 | T | 92679 | Blood Tithe | 2521 | 46.7, 82.0 | 0 |  |
-| 86 | A | 92683 | Flutterfly Dust | 2521 | 46.7, 82.0 | 0 |  |
-| 87 | A | 92684 | Ornery Ornery Galestriders | 2521 | 46.7, 82.0 | 0 |  |
-| 88 | A | 92682 | Make Yourself Useful | 2521 | 46.7, 82.0 | 0 |  |
-| 89 | O | 92682 | Make Yourself Useful | 2521 | 47.8, 82.8 | 68 |  |
-| 90 | T | 92682 | Make Yourself Useful | 2521 | 46.7, 82.0 | 68 |  |
-| 91 | O | 92683 | Flutterfly Dust | 2521 | 50.2, 81.2 | 195 |  |
-| 92 | O | 92684 | Ornery Ornery Galestriders | 2521 | 50.7, 81.1 | 31 |  |
-| 93 | T | 92683 | Flutterfly Dust | 2521 | 46.7, 82.0 | 226 |  |
-| 94 | T | 92684 | Ornery Ornery Galestriders | 2521 | 46.7, 82.0 | 0 |  |
-| 95 | A | 92685 | The Hills Have Eyes | 2521 | 46.7, 82.0 | 0 |  |
-| 96 | A | 92698 | What Is My Purpose? | 2521 | 48.9, 78.3 | 182 |  |
-| 97 | O | 92685 | The Hills Have Eyes | 2521 | 48.5, 75.9 | 90 |  |
-| 98 | O | 92849 | The Missing Scholar | 2521 | 50.6, 65.8 | 390 |  |
-| 99 | O | 92849 | The Missing Scholar | 2521 | 52.1, 69.4 | 155 |  |
-| 100 | T | 92849 | The Missing Scholar | 2521 | 52.1, 69.4 | 0 |  |
-| 101 | A | 92850 | The Missing Scholar | 2521 | 52.1, 69.4 | 0 |  |
-| 102 | O | 92850 | The Missing Scholar | 2521 | 52.2, 66.2 | 120 |  |
-| 103 | T | 92850 | The Missing Scholar | 2521 | 66.2, 79.9 | 931 | near #78 (went 1087 yd away) |
-| 104 | A | 99260 | Fillion's Mission | 2521 | 66.2, 79.9 | 0 | near #78 (went 1087 yd away) |
-| 105 | T | 99260 | Fillion's Mission | 2521 | 66.6, 79.9 | 24 |  |
-| 106 | A | 92840 | Catching Wind | 2521 | 66.6, 79.9 | 0 |  |
-| 107 | O | 92840 | Catching Wind | 2521 | 47.6, 68.8 | 1135 |  |
-| 108 | T | 92685 | The Hills Have Eyes | 2521 | 46.7, 82.0 | 490 | near #95 (went 1111 yd away) |
-| 109 | T | 92698 | What Is My Purpose? | 2521 | 46.7, 82.0 | 0 | near #95 (went 1111 yd away) |
-| 110 | A | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 0 |  |
-| 111 | O | 92693 | Standing Our Ground | 2521 | 47.8, 78.2 | 152 | near #97 (went 1050 yd away) |
-| 112 | O | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 152 |  |
-| 113 | T | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 0 |  |
-| 114 | A | 92703 | Deliver the News | 2521 | 46.7, 82.0 | 0 |  |
-| 115 | T | 92840 | Catching Wind | 2521 | 66.6, 79.9 | 1111 | near #106 (went 1135 yd away) |
-| 116 | A | 92834 | Avenged Tenfold | 2521 | 66.6, 79.9 | 0 | near #106 (went 1135 yd away) |
-| 117 | A | 92860 | In Service of Zephras | 2521 | 66.6, 79.9 | 0 |  |
-| 118 | T | 92860 | In Service of Zephras | 2521 | 66.1, 76.7 | 124 |  |
-| 119 | A | 93320 | Tower Defense | 2521 | 66.1, 76.7 | 0 |  |
-| 120 | T | 93320 | Tower Defense | 2521 | 69.7, 67.1 | 406 |  |
-| 121 | A | 92645 | Breaking the Breaker | 2521 | 69.7, 67.1 | 0 |  |
-| 122 | A | 92642 | Disrupting Logistics | 2521 | 69.7, 67.1 | 0 |  |
-| 123 | O | 92645 | Breaking the Breaker | 2521 | 65.6, 65.6 | 232 |  |
-| 124 | O | 92642 | Disrupting Logistics | 2521 | 65.8, 66.7 | 43 |  |
-| 125 | T | 92642 | Disrupting Logistics | 2521 | 69.7, 67.1 | 214 |  |
-| 126 | T | 92645 | Breaking the Breaker | 2521 | 69.7, 67.1 | 0 |  |
-| 127 | A | 92880 | Return to Valanaar | 2521 | 69.7, 67.1 | 0 |  |
-| 128 | T | 92880 | Return to Valanaar | 2521 | 66.1, 76.7 | 406 |  |
-| 129 | A | 92881 | The High Elder's Request | 2521 | 66.1, 76.7 | 0 |  |
-| 130 | T | 92881 | The High Elder's Request | 2521 | 66.2, 76.5 | 6 |  |
-| 131 | A | 92643 | The Turncoat | 2521 | 66.2, 76.5 | 0 |  |
-| 132 | A | 98512 | Al'Aketh Assassins | 2521 | 56.8, 61.1 | 772 |  |
-| 133 | O | 92643 | The Turncoat | 2521 | 56.2, 60.6 | 40 |  |
-| 134 | O | 98512 | Al'Aketh Assassins | 2521 | 56.1, 60.6 | 2 |  |
-| 135 | T | 98512 | Al'Aketh Assassins | 2521 | 56.8, 61.1 | 43 |  |
-| 136 | O | 93317 | Crab Season | 2521 | 53.0, 58.5 | 230 |  |
-| 137 | T | 92643 | The Turncoat | 2521 | 56.0, 58.8 | 167 |  |
-| 138 | A | 92644 | Unfortunate News | 2521 | 56.0, 58.8 | 0 |  |
-| 139 | T | 92644 | Unfortunate News | 2521 | 66.2, 76.5 | 866 | near #131 (went 988 yd away) |
-| 140 | A | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 | near #131 (went 988 yd away) |
-| 141 | O | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 |  |
-| 142 | T | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 |  |
-| 143 | A | 92640 | Desperate Times | 2521 | 66.2, 76.5 | 0 |  |
-| 144 | O | 92640 | Desperate Times | 2521 | 66.1, 76.7 | 6 |  |
-| 145 | O | 92640 | Desperate Times | 2521 | 59.2, 79.8 | 405 |  |
-| 146 | T | 92640 | Desperate Times | 2521 | 66.1, 76.7 | 405 |  |
-| 147 | A | 93065 | Prepare for Battle | 2521 | 66.1, 76.7 | 0 |  |
-| 148 | T | 92703 | Deliver the News | 2521 | 62.1, 73.2 | 260 | near #81 (went 915 yd away) |
-| 149 | O | 93065 | Prepare for Battle | 2521 | 61.1, 70.9 | 97 | near #81 (went 901 yd away) |
-| 150 | T | 93065 | Prepare for Battle | 2521 | 61.1, 70.9 | 0 |  |
-| 151 | A | 92947 | Making Our Move | 2521 | 61.1, 70.9 | 0 |  |
-| 152 | O | 93165 | Mercy Falls on Deaf Ears | 2521 | 61.7, 50.4 | 760 |  |
-| 153 | O | 92834 | Avenged Tenfold | 2521 | 61.7, 50.4 | 0 |  |
-| 154 | O | 92947 | Making Our Move | 2521 | 61.7, 50.3 | 7 |  |
-| 155 | O | 92741 | Unwelcome Visitors | 2521 | 56.2, 40.5 | 473 |  |
-| 156 | A | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 136 |  |
-| 157 | O | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 0 |  |
-| 158 | T | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 0 |  |
-| 159 | A | 93160 | The Forest's Bounty | 2521 | 54.0, 38.9 | 0 |  |
-| 160 | A | 93172 | Free the Hollows | 2521 | 54.0, 38.9 | 0 |  |
-| 161 | O | 94896 | Aid For The Refugees | 2521 | 58.2, 32.7 | 327 |  |
-| 162 | O | 93172 | Free the Hollows | 2521 | 58.3, 32.5 | 12 |  |
-| 163 | O | 93160 | The Forest's Bounty | 2521 | 58.3, 39.3 | 252 |  |
-| 164 | T | 93172 | Free the Hollows | 2521 | 54.0, 38.9 | 239 |  |
-| 165 | T | 93160 | The Forest's Bounty | 2521 | 54.0, 38.9 | 0 |  |
-| 166 | O | 94485 | Tears of the Lady | 2521 | 60.9, 38.8 | 387 |  |
-| 167 | O | 94486 | Feathers for Binding | 2521 | 61.5, 37.5 | 55 | near #70 (went 1841 yd away) |
-| 168 | O | 94487 | Unwanted and Unworthy | 2521 | 63.6, 37.5 | 117 | near #70 (went 1895 yd away) |
-| 169 | T | 93165 | Mercy Falls on Deaf Ears | 2521 | 63.8, 36.0 | 57 |  |
-| 170 | T | 94485 | Tears of the Lady | 2521 | 61.7, 39.2 | 167 |  |
-| 171 | T | 94486 | Feathers for Binding | 2521 | 61.7, 39.2 | 0 |  |
-| 172 | T | 94487 | Unwanted and Unworthy | 2521 | 61.7, 39.2 | 0 |  |
-| 173 | A | 94489 | The Wounds of Betrayal | 2521 | 61.7, 39.2 | 0 |  |
-| 174 | A | 94488 | The Ties That Bind | 2521 | 61.7, 39.2 | 0 |  |
-| 175 | O | 94489 | The Wounds of Betrayal | 2521 | 64.9, 33.6 | 274 |  |
-| 176 | A | 94490 | Ripped Missive | 2521 | 65.5, 36.3 | 106 |  |
-| 177 | O | 94488 | The Ties That Bind | 2521 | 65.5, 36.3 | 0 |  |
-| 178 | T | 94488 | The Ties That Bind | 2521 | 61.7, 39.2 | 238 |  |
-| 179 | T | 94490 | Ripped Missive | 2521 | 61.7, 39.2 | 0 |  |
-| 180 | T | 94489 | The Wounds of Betrayal | 2521 | 61.7, 39.2 | 0 |  |
-| 181 | A | 94491 | The Fate of the Den | 2521 | 61.7, 39.2 | 0 |  |
-| 182 | T | 92947 | Making Our Move | 2521 | 63.8, 50.5 | 434 | near #154 (went 733 yd away) |
-| 183 | A | 93958 | The Inner Sanctum | 2521 | 63.8, 50.5 | 0 | near #154 (went 733 yd away) |
-| 184 | T | 93958 | The Inner Sanctum | 2521 | 65.2, 50.4 | 78 |  |
-| 185 | A | 93835 | Confront Lorthuna | 2521 | 65.2, 50.4 | 0 |  |
-| 186 | A | 93949 | Bugged | 2521 | 65.2, 50.4 | 0 |  |
-| 187 | O | 93835 | Confront Lorthuna | 2521 | 74.9, 53.0 | 547 |  |
-| 188 | T | 93317 | Crab Season | 2521 | 60.6, 72.7 | 1075 | near #151 (went 1495 yd away) |
-| 189 | O | 93949 | Bugged | 2521 | 59.2, 74.7 | 106 | near #81 (went 1564 yd away) |
-| 190 | T | 94491 | The Fate of the Den | 2521 | 64.0, 75.1 | 264 | near #148 (went 1610 yd away) |
-| 191 | T | 94896 | Aid For The Refugees | 2521 | 66.0, 74.4 | 116 | near #147 (went 1612 yd away) |
-| 192 | O | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 207 | near #147 (went 1819 yd away) |
-| 193 | T | 93835 | Confront Lorthuna | 2521 | 66.6, 79.9 | 0 | near #147 (went 1819 yd away) |
-| 194 | A | 94369 | The Fate of Zephras | 2521 | 66.6, 79.9 | 0 |  |
-| 195 | T | 92834 | Avenged Tenfold | 2521 | 66.6, 79.9 | 0 |  |
-| 196 | T | 92741 | Unwelcome Visitors | 2521 | 66.3, 79.5 | 22 |  |
-| 197 | T | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 22 |  |
-| 198 | T | 93949 | Bugged | 2521 | 66.1, 76.7 | 124 |  |
-| 199 | O | 94369 | The Fate of Zephras | 2521 | 66.2, 76.5 | 6 |  |
+| 67 | A | 94485 | Tears of the Lady | 2521 | 61.7, 39.2 | 0 |  |
+| 68 | A | 94486 | Feathers for Binding | 2521 | 61.7, 39.2 | 0 |  |
+| 69 | A | 94487 | Unwanted and Unworthy | 2521 | 61.7, 39.2 | 0 |  |
+| 70 | O | 94487 | Unwanted and Unworthy | 2521 | 63.6, 37.5 | 121 |  |
+| 71 | O | 94486 | Feathers for Binding | 2521 | 61.5, 37.5 | 117 |  |
+| 72 | O | 94485 | Tears of the Lady | 2521 | 60.9, 38.8 | 55 |  |
+| 73 | T | 94486 | Feathers for Binding | 2521 | 61.7, 39.2 | 46 |  |
+| 74 | T | 94485 | Tears of the Lady | 2521 | 61.7, 39.2 | 0 |  |
+| 75 | T | 94487 | Unwanted and Unworthy | 2521 | 61.7, 39.2 | 0 |  |
+| 76 | A | 94488 | The Ties That Bind | 2521 | 61.7, 39.2 | 0 |  |
+| 77 | A | 94489 | The Wounds of Betrayal | 2521 | 61.7, 39.2 | 0 |  |
+| 78 | O | 94489 | The Wounds of Betrayal | 2521 | 64.9, 33.6 | 274 |  |
+| 79 | A | 94490 | Ripped Missive | 2521 | 65.5, 36.3 | 106 |  |
+| 80 | O | 94488 | The Ties That Bind | 2521 | 65.5, 36.3 | 0 |  |
+| 81 | A | 93165 | Mercy Falls on Deaf Ears | 2521 | 63.8, 36.0 | 96 |  |
+| 82 | T | 94488 | The Ties That Bind | 2521 | 61.7, 39.2 | 167 |  |
+| 83 | T | 94489 | The Wounds of Betrayal | 2521 | 61.7, 39.2 | 0 |  |
+| 84 | T | 94490 | Ripped Missive | 2521 | 61.7, 39.2 | 0 |  |
+| 85 | A | 94491 | The Fate of the Den | 2521 | 61.7, 39.2 | 0 |  |
+| 86 | O | 93165 | Mercy Falls on Deaf Ears | 2521 | 61.7, 50.4 | 415 |  |
+| 87 | T | 92701 | To Valanaar | 2521 | 66.1, 76.7 | 1003 |  |
+| 88 | A | 92699 | The Supreme Magister | 2521 | 66.1, 76.7 | 0 |  |
+| 89 | T | 93948 | Deliver the Signet | 2521 | 66.2, 76.5 | 6 |  |
+| 90 | T | 92699 | The Supreme Magister | 2521 | 66.6, 79.9 | 129 |  |
+| 91 | A | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 0 |  |
+| 92 | A | 92727 | The Missing Scholar | 2521 | 66.3, 79.8 | 19 |  |
+| 93 | A | 92741 | Unwelcome Visitors | 2521 | 66.3, 79.5 | 12 |  |
+| 94 | A | 92679 | Blood Tithe | 2521 | 62.1, 73.2 | 333 |  |
+| 95 | O | 92679 | Blood Tithe | 2521 | 62.1, 73.2 | 0 |  |
+| 96 | A | 93317 | Crab Season | 2521 | 60.6, 72.7 | 82 |  |
+| 97 | T | 92727 | The Missing Scholar | 2521 | 53.3, 72.1 | 407 |  |
+| 98 | A | 92849 | The Missing Scholar | 2521 | 53.3, 72.1 | 0 |  |
+| 99 | O | 92849 | The Missing Scholar | 2521 | 52.1, 69.4 | 123 |  |
+| 100 | O | 92849 | The Missing Scholar | 2521 | 50.6, 65.8 | 155 |  |
+| 101 | T | 92849 | The Missing Scholar | 2521 | 52.1, 69.4 | 155 |  |
+| 102 | A | 92850 | The Missing Scholar | 2521 | 52.1, 69.4 | 0 |  |
+| 103 | O | 92850 | The Missing Scholar | 2521 | 52.2, 66.2 | 120 |  |
+| 104 | T | 92850 | The Missing Scholar | 2521 | 66.2, 79.9 | 931 | near #93 (went 1010 yd away) |
+| 105 | A | 99260 | Fillion's Mission | 2521 | 66.2, 79.9 | 0 | near #93 (went 1010 yd away) |
+| 106 | T | 99260 | Fillion's Mission | 2521 | 66.6, 79.9 | 24 |  |
+| 107 | A | 92840 | Catching Wind | 2521 | 66.6, 79.9 | 0 |  |
+| 108 | O | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 0 |  |
+| 109 | T | 92709 | A Grand Adventure | 2521 | 66.6, 79.9 | 0 |  |
+| 110 | A | 94896 | Aid For The Refugees | 2521 | 66.0, 74.4 | 207 | near #89 (went 913 yd away) |
+| 111 | A | 93949 | Bugged | 2521 | 65.2, 50.4 | 893 |  |
+| 112 | T | 93165 | Mercy Falls on Deaf Ears | 2521 | 63.8, 36.0 | 537 | near #81 (went 1636 yd away) |
+| 113 | A | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 558 |  |
+| 114 | O | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 0 |  |
+| 115 | T | 93159 | The Strange Hermit | 2521 | 54.0, 38.9 | 0 |  |
+| 116 | A | 93160 | The Forest's Bounty | 2521 | 54.0, 38.9 | 0 |  |
+| 117 | A | 93172 | Free the Hollows | 2521 | 54.0, 38.9 | 0 |  |
+| 118 | O | 92741 | Unwelcome Visitors | 2521 | 56.2, 40.5 | 136 |  |
+| 119 | O | 93160 | The Forest's Bounty | 2521 | 58.3, 39.3 | 125 | near #72 (went 1577 yd away) |
+| 120 | O | 94896 | Aid For The Refugees | 2521 | 58.2, 32.7 | 243 |  |
+| 121 | O | 93172 | Free the Hollows | 2521 | 58.3, 32.5 | 12 |  |
+| 122 | T | 93160 | The Forest's Bounty | 2521 | 54.0, 38.9 | 339 |  |
+| 123 | T | 93172 | Free the Hollows | 2521 | 54.0, 38.9 | 0 |  |
+| 124 | O | 93317 | Crab Season | 2521 | 53.0, 58.5 | 729 |  |
+| 125 | O | 92840 | Catching Wind | 2521 | 47.6, 68.8 | 485 |  |
+| 126 | O | 92679 | Blood Tithe | 2521 | 46.7, 82.0 | 490 |  |
+| 127 | T | 92679 | Blood Tithe | 2521 | 46.7, 82.0 | 0 |  |
+| 128 | A | 92682 | Make Yourself Useful | 2521 | 46.7, 82.0 | 0 |  |
+| 129 | A | 92683 | Flutterfly Dust | 2521 | 46.7, 82.0 | 0 |  |
+| 130 | A | 92684 | Ornery Ornery Galestriders | 2521 | 46.7, 82.0 | 0 |  |
+| 131 | O | 92682 | Make Yourself Useful | 2521 | 47.8, 82.8 | 68 |  |
+| 132 | T | 92682 | Make Yourself Useful | 2521 | 46.7, 82.0 | 68 |  |
+| 133 | O | 92683 | Flutterfly Dust | 2521 | 50.2, 81.2 | 195 |  |
+| 134 | O | 92684 | Ornery Ornery Galestriders | 2521 | 50.7, 81.1 | 31 |  |
+| 135 | A | 92698 | What Is My Purpose? | 2521 | 48.9, 78.3 | 146 |  |
+| 136 | T | 92683 | Flutterfly Dust | 2521 | 46.7, 82.0 | 182 |  |
+| 137 | T | 92684 | Ornery Ornery Galestriders | 2521 | 46.7, 82.0 | 0 |  |
+| 138 | T | 92698 | What Is My Purpose? | 2521 | 46.7, 82.0 | 0 |  |
+| 139 | A | 92685 | The Hills Have Eyes | 2521 | 46.7, 82.0 | 0 |  |
+| 140 | O | 92685 | The Hills Have Eyes | 2521 | 48.5, 75.9 | 248 |  |
+| 141 | T | 92685 | The Hills Have Eyes | 2521 | 46.7, 82.0 | 248 |  |
+| 142 | A | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 0 |  |
+| 143 | O | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 0 |  |
+| 144 | O | 92693 | Standing Our Ground | 2521 | 47.8, 78.2 | 152 |  |
+| 145 | T | 92693 | Standing Our Ground | 2521 | 46.7, 82.0 | 152 |  |
+| 146 | A | 92703 | Deliver the News | 2521 | 46.7, 82.0 | 0 |  |
+| 147 | O | 93949 | Bugged | 2521 | 59.2, 74.7 | 748 | near #96 (went 1564 yd away) |
+| 148 | T | 92741 | Unwelcome Visitors | 2521 | 66.3, 79.5 | 433 | near #109 (went 1799 yd away) |
+| 149 | T | 92840 | Catching Wind | 2521 | 66.6, 79.9 | 22 | near #109 (went 1819 yd away) |
+| 150 | A | 92834 | Avenged Tenfold | 2521 | 66.6, 79.9 | 0 |  |
+| 151 | A | 92860 | In Service of Zephras | 2521 | 66.6, 79.9 | 0 |  |
+| 152 | T | 93949 | Bugged | 2521 | 66.1, 76.7 | 124 |  |
+| 153 | T | 92860 | In Service of Zephras | 2521 | 66.1, 76.7 | 0 |  |
+| 154 | A | 93320 | Tower Defense | 2521 | 66.1, 76.7 | 0 |  |
+| 155 | T | 94896 | Aid For The Refugees | 2521 | 66.0, 74.4 | 83 |  |
+| 156 | T | 93320 | Tower Defense | 2521 | 69.7, 67.1 | 338 |  |
+| 157 | A | 92642 | Disrupting Logistics | 2521 | 69.7, 67.1 | 0 |  |
+| 158 | A | 92645 | Breaking the Breaker | 2521 | 69.7, 67.1 | 0 |  |
+| 159 | O | 92645 | Breaking the Breaker | 2521 | 65.6, 65.6 | 232 |  |
+| 160 | O | 92642 | Disrupting Logistics | 2521 | 65.8, 66.7 | 43 |  |
+| 161 | T | 92642 | Disrupting Logistics | 2521 | 69.7, 67.1 | 214 |  |
+| 162 | T | 92645 | Breaking the Breaker | 2521 | 69.7, 67.1 | 0 |  |
+| 163 | A | 92880 | Return to Valanaar | 2521 | 69.7, 67.1 | 0 |  |
+| 164 | T | 92880 | Return to Valanaar | 2521 | 66.1, 76.7 | 406 |  |
+| 165 | A | 92881 | The High Elder's Request | 2521 | 66.1, 76.7 | 0 |  |
+| 166 | T | 92881 | The High Elder's Request | 2521 | 66.2, 76.5 | 6 |  |
+| 167 | A | 92643 | The Turncoat | 2521 | 66.2, 76.5 | 0 |  |
+| 168 | T | 94491 | The Fate of the Den | 2521 | 64.0, 75.1 | 132 |  |
+| 169 | T | 92703 | Deliver the News | 2521 | 62.1, 73.2 | 127 | near #96 (went 1522 yd away) |
+| 170 | T | 93317 | Crab Season | 2521 | 60.6, 72.7 | 82 |  |
+| 171 | A | 98512 | Al'Aketh Assassins | 2521 | 56.8, 61.1 | 478 |  |
+| 172 | O | 92643 | The Turncoat | 2521 | 56.2, 60.6 | 40 |  |
+| 173 | O | 98512 | Al'Aketh Assassins | 2521 | 56.1, 60.6 | 2 |  |
+| 174 | T | 98512 | Al'Aketh Assassins | 2521 | 56.8, 61.1 | 43 |  |
+| 175 | T | 92643 | The Turncoat | 2521 | 56.0, 58.8 | 96 |  |
+| 176 | A | 92644 | Unfortunate News | 2521 | 56.0, 58.8 | 0 |  |
+| 177 | T | 92644 | Unfortunate News | 2521 | 66.2, 76.5 | 866 | near #168 (went 866 yd away) |
+| 178 | A | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 | near #168 (went 866 yd away) |
+| 179 | O | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 |  |
+| 180 | T | 94568 | The Cult's True Plans | 2521 | 66.2, 76.5 | 0 |  |
+| 181 | A | 92640 | Desperate Times | 2521 | 66.2, 76.5 | 0 |  |
+| 182 | O | 92640 | Desperate Times | 2521 | 66.1, 76.7 | 6 |  |
+| 183 | O | 92640 | Desperate Times | 2521 | 59.2, 79.8 | 405 |  |
+| 184 | T | 92640 | Desperate Times | 2521 | 66.1, 76.7 | 405 |  |
+| 185 | A | 93065 | Prepare for Battle | 2521 | 66.1, 76.7 | 0 |  |
+| 186 | O | 93065 | Prepare for Battle | 2521 | 61.1, 70.9 | 349 |  |
+| 187 | T | 93065 | Prepare for Battle | 2521 | 61.1, 70.9 | 0 |  |
+| 188 | A | 92947 | Making Our Move | 2521 | 61.1, 70.9 | 0 |  |
+| 189 | O | 92834 | Avenged Tenfold | 2521 | 61.7, 50.4 | 760 | near #86 (went 1437 yd away) |
+| 190 | O | 92947 | Making Our Move | 2521 | 61.7, 50.3 | 7 | near #86 (went 1440 yd away) |
+| 191 | T | 92947 | Making Our Move | 2521 | 63.8, 50.5 | 117 |  |
+| 192 | A | 93958 | The Inner Sanctum | 2521 | 63.8, 50.5 | 0 |  |
+| 193 | T | 93958 | The Inner Sanctum | 2521 | 65.2, 50.4 | 78 |  |
+| 194 | A | 93835 | Confront Lorthuna | 2521 | 65.2, 50.4 | 0 |  |
+| 195 | O | 93835 | Confront Lorthuna | 2521 | 74.9, 53.0 | 547 |  |
+| 196 | T | 92834 | Avenged Tenfold | 2521 | 66.6, 79.9 | 1098 | near #185 (went 1134 yd away) |
+| 197 | T | 93835 | Confront Lorthuna | 2521 | 66.6, 79.9 | 0 | near #185 (went 1134 yd away) |
+| 198 | A | 94369 | The Fate of Zephras | 2521 | 66.6, 79.9 | 0 |  |
+| 199 | O | 94369 | The Fate of Zephras | 2521 | 66.2, 76.5 | 129 |  |
 | 200 | T | 94369 | The Fate of Zephras | 2521 | 66.2, 76.5 | 0 |  |
 | 201 | A | 93089 | What Comes Next | 2521 | 66.2, 76.5 | 0 |  |
 | 202 | T | 93089 | What Comes Next | 2521 | 66.6, 79.9 | 129 |  |
 
-Walking between tasks: 29277 yd (~70 min at 7 yd/s).
+Walking between tasks: 28301 yd (~67 min at 7 yd/s).
 
 ## Qualité
 
@@ -474,13 +474,11 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 1: `level 4` — About 58 mobs here (Pesky Cirrusfly, level 1)
-- step 10: `level 5` — About 20 mobs here (Windshaper Novice Seer, level 5)
-- step 82: `sethearth 2521 62.19 72.61`
-- step 191: `hearth 2521`
-- step 207: `boat 2521 65.1 81.4` — Take the skyboat to Dalaran (east dock of Valanaar)
-- step 208: `goto 1416 12 56.2` — Take the Skyborne portal to Stormwind
-- step 209: `fp 1453 71.29 72.23`
+- step 1: `level 2` — About 8 mobs here (Pesky Cirrusfly, level 1)
+- step 3: `level 4` — About 50 mobs here (Pesky Cirrusfly, level 1)
+- step 205: `boat 2521 65.1 81.4` — Take the skyboat to Dalaran (east dock of Valanaar)
+- step 206: `goto 1416 12 56.2` — Take the Skyborne portal to Stormwind
+- step 207: `fp 1453 71.29 72.23`
 
 ## Warnings
 

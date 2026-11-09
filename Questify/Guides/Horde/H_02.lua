@@ -1,96 +1,93 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-08.
--- Simulation : 81 étapes, niveau final 21.09, ~26455 xp/h, 157 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Simulation : 78 étapes, niveau final 21.00, ~24186 xp/h, 146 min.
 Q:RegisterGuide({
   id = "H_02",
   title = "Stonetalon Mountains and The Barrens",
   faction = "Horde",
   minLevel = 17, maxLevel = 21,
   next = "H_03",
-  sim = { steps = 81, endLevel = 21.09, xpPerHour = 26455, minutes = 157 },
+  sim = { steps = 78, endLevel = 21.00, xpPerHour = 24186, minutes = 146 },
   steps = {
-    { "accept", 905 }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 17)
-    { "complete", 905, at = { 1413, 52.6, 46.11 } }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 17)
-    { "accept", 1483 }, -- Ziz Fizziks (lvl 21, ~415 xp, sim lvl 17)
-    { "fly", 1413, node = 25, note = "Crossroads, The Barrens" }, -- vol
-    { "turnin", 905, xp = 1250 }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 17)
-    { "accept", 3261 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 17)
-    { "accept", 3281 }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 17)
-    { "accept", 1090 }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 17)
-    { "complete", 1090, at = { 1442, 71.87, 60 } }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 17)
-    { "turnin", 1090, xp = 2200 }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 17)
-    { "accept", 1092 }, -- Gerenzo's Orders (lvl 22, ~1300 xp, sim lvl 18)
+    { "hearth", 1413 }, -- pierre de foyer
+    { "accept", 3281 }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 18)
+    { "accept", 905 }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 18)
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
+    { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
+    { "accept", 1483 }, -- Ziz Fizziks (lvl 21, ~415 xp, sim lvl 18)
+    { "accept", 959, optional = true, dungeon = "Wailing Caverns" }, -- Trouble at the Docks (lvl 18, ~0 xp, sim lvl 18)
+    { "accept", 92706 }, -- WANTED: Bruuz (lvl 20, ~1550 xp, sim lvl 18)
+    { "complete", 905, at = { 1413, 52.6, 46.11 } }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 18)
+    { "turnin", 905, xp = 1250 }, -- The Angry Scytheclaws (lvl 17, ~1250 xp, sim lvl 18)
+    { "accept", 3261 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 18)
+    { "accept", 876 }, -- Serena Bloodfeather (lvl 20, ~1950 xp, sim lvl 18)
+    { "complete", 876, at = { 1413, 39.16, 12.17 } }, -- Serena Bloodfeather (lvl 20, ~1950 xp, sim lvl 18)
     { "turnin", 1483, xp = 415 }, -- Ziz Fizziks (lvl 21, ~415 xp, sim lvl 18)
     { "accept", 1093 }, -- Super Reaper 6000 (lvl 21, ~1650 xp, sim lvl 18)
-    { "turnin", 1092, xp = 1300 }, -- Gerenzo's Orders (lvl 22, ~1300 xp, sim lvl 18)
+    { "fp", 1442, 45.12, 59.84 }, -- point de vol
+    { "accept", 6421 }, -- Boulderslide Ravine (lvl 18, ~1350 xp, sim lvl 18)
+    { "turnin", 79192, xp = 970 }, -- Stepping Stones (lvl 24, ~970 xp, sim lvl 18)
+    { "accept", 79980 }, -- Scramble (lvl 24, ~970 xp, sim lvl 18)
+    { "turnin", 79980, xp = 970 }, -- Scramble (lvl 24, ~970 xp, sim lvl 18)
+    { "accept", 78270 }, -- Goblin Lockpicks (lvl 23, ~1400 xp, sim lvl 18)
+    { "turnin", 78270, xp = 1400 }, -- Goblin Lockpicks (lvl 23, ~1400 xp, sim lvl 18)
     { "complete", 1093, at = { 1442, 62.38, 53.01 } }, -- Super Reaper 6000 (lvl 21, ~1650 xp, sim lvl 18)
     { "turnin", 1093, xp = 1650 }, -- Super Reaper 6000 (lvl 21, ~1650 xp, sim lvl 18)
     { "accept", 1094 }, -- Further Instructions (lvl 21, ~830 xp, sim lvl 18)
-    { "accept", 6523 }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 18)
-    { "complete", 6523, at = { 1442, 77.1, 90.85 } }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 18)
-    { "accept", 6542 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 18)
-    { "turnin", 1060, xp = 1550 }, -- Letter to Jin'Zil (lvl 20, ~1550 xp, sim lvl 18)
-    { "turnin", 6523, xp = 1350 }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 18)
-    { "accept", 6401 }, -- Kaya's Alive (lvl 18, ~1000 xp, sim lvl 18)
-    { "accept", 878 }, -- Tribes at War (lvl 21, ~1650 xp, sim lvl 18)
-    { "turnin", 3261, xp = 135 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 18)
+    { "accept", 1090 }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 18)
+    { "level", 19, at = { 1442, 65.95, 50.42 }, note = "About 33 mobs here (Venture Co. Logger, level 18)" }, -- farm de niveau
+    { "complete", 1090, at = { 1442, 71.87, 60 } }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 19)
+    { "turnin", 1090, xp = 2200 }, -- Gerenzo's Orders (lvl 22, ~2200 xp, sim lvl 19)
+    { "accept", 1092 }, -- Gerenzo's Orders (lvl 22, ~1300 xp, sim lvl 19)
+    { "accept", 6523 }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 19)
+    { "accept", 6542 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 19)
+    { "complete", 6523, at = { 1442, 77.1, 90.85 } }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 19)
+    { "turnin", 6523, xp = 1350 }, -- Protect Kaya (lvl 18, ~1350 xp, sim lvl 19)
+    { "accept", 6401 }, -- Kaya's Alive (lvl 18, ~1000 xp, sim lvl 19)
+    { "turnin", 3261, xp = 135 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 19)
     { "sethearth", 1413, 45.58, 59.04 }, -- lier la pierre de foyer
-    { "accept", 882 }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 18)
-    { "accept", 884, at = { 1413, 49.4, 59.2 }, note = "Loot Owatanka's Tailspike to start the quest" }, -- Owatanka (lvl 24, ~1450 xp, sim lvl 18)
-    { "complete", 3281, at = { 1413, 58.04, 53.87 } }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 18)
-    { "turnin", 1094, xp = 830 }, -- Further Instructions (lvl 21, ~830 xp, sim lvl 18)
-    { "accept", 1095 }, -- Further Instructions (lvl 27, ~1100 xp, sim lvl 18)
-    { "complete", 882, at = { 1413, 59.8, 30.6 } }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 18)
+    { "accept", 882 }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 19)
+    { "accept", 897, at = { 1413, 42, 70 }, note = "Loot Harvester's Head to start the quest" }, -- The Harvester (lvl 24, ~2400 xp, sim lvl 19)
+    { "accept", 885, at = { 1413, 44.81, 74.93 }, note = "Loot Washte Pawne's Feather to start the quest" }, -- Washte Pawne (lvl 25, ~1500 xp, sim lvl 19)
+    { "accept", 3513, at = { 1413, 46, 70 }, note = "Loot Runed Scroll to start the quest" }, -- The Runed Scroll (lvl 25, ~2550 xp, sim lvl 19)
+    { "complete", 3281, at = { 1413, 58.04, 53.87 } }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 19)
+    { "turnin", 1094, xp = 830 }, -- Further Instructions (lvl 21, ~830 xp, sim lvl 19)
+    { "accept", 1095 }, -- Further Instructions (lvl 27, ~1100 xp, sim lvl 19)
+    { "complete", 882, at = { 1413, 59.8, 30.6 } }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 19)
+    { "turnin", 3513, xp = 2550 }, -- The Runed Scroll (lvl 25, ~2550 xp, sim lvl 19)
+    { "turnin", 6542, xp = 145 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 19)
+    { "turnin", 3281, xp = 1350 }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 19)
+    { "turnin", 876, xp = 1950 }, -- Serena Bloodfeather (lvl 20, ~1950 xp, sim lvl 19)
+    { "accept", 1060 }, -- Letter to Jin'Zil (lvl 20, ~1550 xp, sim lvl 19)
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
+    { "fly", 1413, node = 77, note = "Camp Taurajo, The Barrens" }, -- vol
+    { "turnin", 885, xp = 1500 }, -- Washte Pawne (lvl 25, ~1500 xp, sim lvl 19)
+    { "turnin", 882, xp = 1800 }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 19)
+    { "accept", 907 }, -- Enraged Thunder Lizards (lvl 18, ~1700 xp, sim lvl 19)
+    { "turnin", 897, xp = 2400 }, -- The Harvester (lvl 24, ~2400 xp, sim lvl 19)
+    { "accept", 884, at = { 1413, 49.4, 59.2 }, note = "Loot Owatanka's Tailspike to start the quest" }, -- Owatanka (lvl 24, ~1450 xp, sim lvl 19)
+    { "complete", 907, at = { 1413, 49.33, 59.83 } }, -- Enraged Thunder Lizards (lvl 18, ~1700 xp, sim lvl 19)
+    { "goto", 1413, 44.45, 59.15, note = "Flight master" }, -- déplacement
+    { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
+    { "complete", 92706, at = { 1413, 65.29, 39.59 } }, -- WANTED: Bruuz (lvl 20, ~1550 xp, sim lvl 20)
+    { "turnin", 92706, xp = 1550 }, -- WANTED: Bruuz (lvl 20, ~1550 xp, sim lvl 20)
     { "hearth", 1413 }, -- pierre de foyer
-    { "complete", 878, obj = 3, at = { 1413, 43.26, 48.08 } }, -- Tribes at War (lvl 21, ~1650 xp, sim lvl 18)
-    { "complete", 878, obj = 2, at = { 1413, 45.14, 51.55 } }, -- Tribes at War (lvl 21, ~1650 xp, sim lvl 18)
-    { "complete", 878, at = { 1413, 45.69, 54.16 } }, -- Tribes at War (lvl 21, ~1650 xp, sim lvl 18)
-    { "turnin", 882, xp = 1800 }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 18)
-    { "turnin", 884, xp = 1450 }, -- Owatanka (lvl 24, ~1450 xp, sim lvl 18)
-    { "turnin", 878, xp = 1650 }, -- Tribes at War (lvl 21, ~1650 xp, sim lvl 18)
-    { "accept", 5052 }, -- Blood Shards of Agamaggan (lvl 21, ~1250 xp, sim lvl 19)
-    { "accept", 843 }, -- Gann's Reclamation (lvl 23, ~1850 xp, sim lvl 19)
-    { "complete", 5052, at = { 1413, 47.24, 84.86 } }, -- Blood Shards of Agamaggan (lvl 21, ~1250 xp, sim lvl 19)
-    { "complete", 843, at = { 1413, 47.47, 85 } }, -- Gann's Reclamation (lvl 23, ~1850 xp, sim lvl 19)
-    { "turnin", 843, xp = 1850 }, -- Gann's Reclamation (lvl 23, ~1850 xp, sim lvl 19)
-    { "accept", 846 }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 19)
-    { "complete", 846, at = { 1413, 49.19, 84.17 } }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 19)
-    { "turnin", 846, xp = 2100 }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 19)
-    { "accept", 849 }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 19)
-    { "turnin", 5052, xp = 1250 }, -- Blood Shards of Agamaggan (lvl 21, ~1250 xp, sim lvl 19)
-    { "accept", 879 }, -- Betrayal from Within (lvl 25, ~1500 xp, sim lvl 20)
-    { "complete", 879, obj = 3, at = { 1413, 40.15, 80.54 } }, -- Betrayal from Within (lvl 25, ~1500 xp, sim lvl 20)
-    { "complete", 879, obj = 2, at = { 1413, 43.75, 83.26 } }, -- Betrayal from Within (lvl 25, ~1500 xp, sim lvl 20)
-    { "complete", 849, at = { 1413, 46.97, 85.63 } }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 20)
-    { "complete", 879, at = { 1413, 45.12, 80.07 } }, -- Betrayal from Within (lvl 25, ~1500 xp, sim lvl 20)
-    { "turnin", 849, xp = 2100 }, -- Revenge of Gann (lvl 26, ~2100 xp, sim lvl 20)
-    { "hearth", 1413 }, -- pierre de foyer
-    { "turnin", 879, xp = 1500 }, -- Betrayal from Within (lvl 25, ~1500 xp, sim lvl 20)
-    { "accept", 906 }, -- Betrayal from Within (lvl 25, ~3050 xp, sim lvl 20)
-    { "fly", 1413, node = 25, note = "Crossroads, The Barrens" }, -- vol
-    { "accept", 1487, optional = true, dungeon = "Wailing Caverns" }, -- Deviate Eradication (lvl 21, ~0 xp, sim lvl 20)
-    { "accept", 6541 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 20)
-    { "turnin", 906, xp = 3050 }, -- Betrayal from Within (lvl 25, ~3050 xp, sim lvl 20)
-    { "turnin", 3281, xp = 1350 }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 20)
-    { "turnin", 6542, xp = 145 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 20)
-    { "turnin", 6541, xp = 145 }, -- Report to Kadrak (lvl 19, ~145 xp, sim lvl 20)
+    { "turnin", 907, xp = 1700 }, -- Enraged Thunder Lizards (lvl 18, ~1700 xp, sim lvl 20)
+    { "accept", 913 }, -- Cry of the Thunderhawk (lvl 20, ~1950 xp, sim lvl 20)
+    { "turnin", 884, xp = 1450 }, -- Owatanka (lvl 24, ~1450 xp, sim lvl 20)
+    { "complete", 913, at = { 1413, 48.97, 55.85 } }, -- Cry of the Thunderhawk (lvl 20, ~1950 xp, sim lvl 20)
+    { "turnin", 913, xp = 1950 }, -- Cry of the Thunderhawk (lvl 20, ~1950 xp, sim lvl 20)
+    { "turnin", 1060, xp = 1550 }, -- Letter to Jin'Zil (lvl 20, ~1550 xp, sim lvl 20)
+    { "complete", 6421, at = { 1442, 59.73, 91.48 } }, -- Boulderslide Ravine (lvl 18, ~1350 xp, sim lvl 20)
     { "turnin", 1095, xp = 1100 }, -- Further Instructions (lvl 27, ~1100 xp, sim lvl 20)
-    { "accept", 1096 }, -- Gerenzo Wrenchwhistle (lvl 27, ~2200 xp, sim lvl 20)
-    { "complete", 1096, at = { 1442, 64.49, 40.25 } }, -- Gerenzo Wrenchwhistle (lvl 27, ~2200 xp, sim lvl 20)
-    { "turnin", 1096, xp = 2200 }, -- Gerenzo Wrenchwhistle (lvl 27, ~2200 xp, sim lvl 20)
-    { "fp", 1442, 45.12, 59.84 }, -- point de vol
-    { "accept", 6282 }, -- Harpies Threaten (lvl 26, ~2100 xp, sim lvl 20)
+    { "turnin", 1092, xp = 1300 }, -- Gerenzo's Orders (lvl 22, ~1300 xp, sim lvl 20)
     { "turnin", 6401, xp = 1000 }, -- Kaya's Alive (lvl 18, ~1000 xp, sim lvl 20)
-    { "turnin", 79192, xp = 970 }, -- Stepping Stones (lvl 24, ~970 xp, sim lvl 20)
-    { "accept", 79980 }, -- Scramble (lvl 24, ~970 xp, sim lvl 20)
-    { "turnin", 79980, xp = 970 }, -- Scramble (lvl 24, ~970 xp, sim lvl 20)
-    { "complete", 6282, at = { 1442, 32.24, 59.97 } }, -- Harpies Threaten (lvl 26, ~2100 xp, sim lvl 20)
-    { "complete", 6282, at = { 1442, 36.82, 67.37 } }, -- Harpies Threaten (lvl 26, ~2100 xp, sim lvl 20)
-    { "turnin", 6282, xp = 2100 }, -- Harpies Threaten (lvl 26, ~2100 xp, sim lvl 20)
-    { "accept", 6283 }, -- Bloodfury Bloodline (lvl 26, ~2100 xp, sim lvl 20)
-    { "complete", 6283, at = { 1442, 30.75, 61.91 } }, -- Bloodfury Bloodline (lvl 26, ~2100 xp, sim lvl 20)
-    { "turnin", 6283, xp = 2100 }, -- Bloodfury Bloodline (lvl 26, ~2100 xp, sim lvl 21)
+    { "turnin", 6421, xp = 1350 }, -- Boulderslide Ravine (lvl 18, ~1350 xp, sim lvl 20)
+    { "accept", 6481 }, -- Earthen Arise (lvl 20, ~1550 xp, sim lvl 20)
+    { "complete", 6481, at = { 1442, 57.4, 89.4 } }, -- Earthen Arise (lvl 20, ~1550 xp, sim lvl 20)
+    { "turnin", 6481, xp = 1550 }, -- Earthen Arise (lvl 20, ~1550 xp, sim lvl 20)
+    { "level", 21, at = { 1442, 53.71, 71.58 }, note = "About 30 more mobs here (Deepmoss Webspinner, level 19)" }, -- farm de niveau
   },
 })

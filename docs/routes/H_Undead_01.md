@@ -1,6 +1,6 @@
 # H_Undead_01 — Deathknell
 
-Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
@@ -8,7 +8,7 @@ Generated on 2026-11-08 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Simulated level | 1.00 -> 6.02 |
 | Time | 45 min |
 | XP gained | 7662 |
-| XP/h | 10281 |
+| XP/h | 10243 |
 | Steps | 35 |
 | Quests turned in | 13 |
 | Hubs | 1 |
@@ -94,10 +94,10 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 9 | O | 3901 | Rattling the Rattlecages | 1420 | 33.2, 62.0 | 160 |  |
 | 10 | T | 376 | The Damned | 1420 | 30.9, 66.0 | 160 |  |
 | 11 | A | 6395 | Marla's Last Wish | 1420 | 30.9, 66.0 | 0 |  |
-| 12 | T | 3901 | Rattling the Rattlecages | 1420 | 30.8, 66.2 | 4 |  |
-| 13 | A | 98389 | A Light in the Darkness | 1420 | 31.1, 66.4 | 13 |  |
-| 14 | A | 3902 | Scavenging Deathknell | 1420 | 31.6, 65.6 | 33 |  |
-| 15 | A | 380 | Night Web's Hollow | 1420 | 32.1, 66.0 | 27 |  |
+| 12 | A | 98389 | A Light in the Darkness | 1420 | 31.1, 66.4 | 15 |  |
+| 13 | A | 3902 | Scavenging Deathknell | 1420 | 31.6, 65.6 | 33 |  |
+| 14 | T | 3901 | Rattling the Rattlecages | 1420 | 30.8, 66.2 | 39 |  |
+| 15 | A | 380 | Night Web's Hollow | 1420 | 32.1, 66.0 | 59 |  |
 | 16 | O | 6395 | Marla's Last Wish | 1420 | 31.2, 65.1 | 52 |  |
 | 17 | T | 6395 | Marla's Last Wish | 1420 | 30.9, 66.0 | 32 |  |
 | 18 | O | 3902 | Scavenging Deathknell | 1420 | 33.0, 64.3 | 111 |  |
@@ -119,7 +119,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 34 | T | 383 | Vital Intelligence | 1420 | 60.6, 51.8 | 187 |  |
 | 35 | T | 8 | A Rogue's Deal | 1420 | 61.7, 52.0 | 51 |  |
 
-Walking between tasks: 4638 yd (~11 min at 7 yd/s).
+Walking between tasks: 4707 yd (~11 min at 7 yd/s).
 
 ## Qualité
 
