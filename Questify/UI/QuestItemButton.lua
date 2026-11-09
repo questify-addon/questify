@@ -3,7 +3,10 @@ local addonName, Q = ...
 -- Bouton de l'objet de quête à utiliser pour l'étape courante (fiole, torche, objet à poser…).
 -- Objet retenu : celui que le journal de quêtes désigne (GetQuestLogSpecialItemInfo) ; sinon le
 -- premier objet des sacs parmi ceux que la quête donne ou demande (QuestieDB) et qui a un effet
--- « Utiliser » (GetItemSpell). Bouton sécurisé (type « item ») posé à gauche du suivi par
+-- « Utiliser » (GetItemSpell). Étape « prendre » d'une quête démarrée par un objet ramassé : l'objet,
+-- dès qu'il est dans les sacs (un clic ouvre la quête, Automation/AutoQuest.lua l'accepte). Le jeu
+-- interdit d'utiliser un objet sans clic ni touche : à l'arrivée de l'objet dans les sacs, alerte au
+-- milieu de l'écran, son et ligne de discussion, une fois par objet et par session. Bouton sécurisé (type « item ») posé à gauche du suivi par
 -- coordonnées d'écran, jamais ancré au suivi ; ses attributs, sa position et son affichage ne
 -- changent que hors combat (en combat : en attente, appliqué sur PLAYER_REGEN_ENABLED).
 -- Raccourci clavier dans les Raccourcis du jeu (Bindings.xml). Option questItemButton.
@@ -46,12 +49,26 @@ end
 ---------------------------------------------------------------------------
 -- Objet de l'étape
 ---------------------------------------------------------------------------
+-- StarterInBags(questId) -> itemId de départ de la quête (QuestieDB) présent dans les sacs, ou nil.
+function Btn:StarterInBags(qid)
+  local q = Q.QDB and Q.QDB:Quest(qid)
+  if not q then return nil end
+  for _, id in ipairs(q.starters and q.starters.items or {}) do
+    if itemCount(id) > 0 then return id end
+  end
+  return nil
+end
+
 -- ItemFor(entry) -> itemId ou nil
 function Btn:ItemFor(entry)
   local step = type(entry) == "table" and entry.step
   if type(step) ~= "table" or not step.questId then return nil end
-  if step.action ~= "complete" and step.action ~= "turnin" then return nil end
   local qid = step.questId
+  if step.action == "accept" then
+    if Q.Progress:InLog(qid) or Q.Progress:IsTurnedIn(qid) then return nil end
+    return self:StarterInBags(qid)
+  end
+  if step.action ~= "complete" and step.action ~= "turnin" then return nil end
   if not Q.Progress:InLog(qid) then return nil end
   -- 1. objet désigné par le journal
   local logIndex = call(C_QuestLog and C_QuestLog.GetLogIndexForQuestID, qid)
@@ -179,6 +196,51 @@ function Btn:Reposition()
 end
 
 ---------------------------------------------------------------------------
+-- Objet de départ ramassé : alerte
+---------------------------------------------------------------------------
+local alerted = {}   -- [itemId] = true : alerte déjà donnée pendant cette session
+
+-- Message bien visible au milieu de l'écran (même cadre que Engine/Supplies.lua), sinon la zone des
+-- messages d'erreur.
+local CENTER_COLOR = { r = 1, g = 0.82, b = 0 }
+local function centerMessage(text)
+  if RaidWarningFrame then
+    if type(RaidWarningUtil) == "table" and type(RaidWarningUtil.AddMessage) == "function" then
+      if pcall(RaidWarningUtil.AddMessage, text, CENTER_COLOR) then return end
+    elseif type(RaidNotice_AddMessage) == "function" then
+      if pcall(RaidNotice_AddMessage, RaidWarningFrame, text, CENTER_COLOR) then return end
+    end
+  end
+  local frame = UIErrorsFrame
+  if type(frame) == "table" and type(frame.AddMessage) == "function" then
+    pcall(frame.AddMessage, frame, text, CENTER_COLOR.r, CENTER_COLOR.g, CENTER_COLOR.b)
+  end
+end
+
+-- CheckStarters() : pour chaque étape « prendre » de la route encore à faire dont l'objet de départ vient
+-- d'arriver dans les sacs, une alerte (une fois par objet et par session).
+function Btn:CheckStarters()
+  if not (Q.Progress and Q.Progress:IsEnabled() and Q.QDB and Q.QDB:IsAvailable()) then return end
+  for _, e in ipairs(Q.Progress:Entries()) do
+    local step = e.step
+    local qid = step and step.action == "accept" and step.questId
+    if qid and not Q.Progress:InLog(qid) and not Q.Progress:IsTurnedIn(qid) then
+      local state = Q.Progress:State(e)
+      local item = (state ~= "done" and state ~= "skipped") and self:StarterInBags(qid) or nil
+      if item and not alerted[item] then
+        alerted[item] = true
+        local name = Q.QDB:ItemName(item) or ("#" .. item)
+        local quest = Q.QDB:QuestName(qid) or ("#" .. qid)
+        centerMessage(string.format(L.UI_STARTER_LOOTED, name))
+        local hint = setting("questItemButton") ~= false and L.UI_STARTER_HINT_BUTTON or L.UI_STARTER_HINT_BAG
+        Q:Print(L.UI_STARTER_LOOTED_CHAT, name, quest, hint)
+        if PlaySound and SOUNDKIT and SOUNDKIT.UI_EPICLOOT_TOAST then pcall(PlaySound, SOUNDKIT.UI_EPICLOOT_TOAST) end
+      end
+    end
+  end
+end
+
+---------------------------------------------------------------------------
 -- Évènements
 ---------------------------------------------------------------------------
 _G["BINDING_NAME_CLICK " .. BUTTON_NAME .. ":LeftButton"] = L.UI_QUESTITEM_BINDING
@@ -188,7 +250,10 @@ Q:On("LOGIN", refresh)
 Q:On("PROGRESS_UPDATED", refresh)
 Q:On("STEP_CHANGED", refresh)
 Q:On("SETTINGS_CHANGED", function(path) if path == "questItemButton" or path == "tracker.scale" then refresh() end end)
-Q:RegisterEvent("BAG_UPDATE_DELAYED", refresh)
+Q:RegisterEvent("BAG_UPDATE_DELAYED", function()
+  refresh()
+  Q.SafeCall(Btn.CheckStarters, Btn)
+end)
 Q:RegisterEvent("BAG_UPDATE_COOLDOWN", function() Q.SafeCall(Btn.UpdateLook, Btn) end)
 Q:RegisterEvent("PLAYER_REGEN_ENABLED", function()
   if Btn.pending then refresh() end
