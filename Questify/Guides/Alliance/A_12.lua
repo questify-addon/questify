@@ -2,16 +2,15 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 105 étapes, niveau final 39.28, ~41219 xp/h, 263 min.
+-- Simulation : 104 étapes, niveau final 39.27, ~40797 xp/h, 265 min.
 Q:RegisterGuide({
   id = "A_12",
   title = "Stranglethorn Vale and Swamp of Sorrows",
   faction = "Alliance",
   minLevel = 37, maxLevel = 39,
   next = "A_13",
-  sim = { steps = 105, endLevel = 39.28, xpPerHour = 41219, minutes = 263 },
+  sim = { steps = 104, endLevel = 39.27, xpPerHour = 40797, minutes = 265 },
   steps = {
-    { "hearth", 1431 }, -- pierre de foyer
     { "accept", 205 }, -- Troll Witchery (lvl 40, ~3150 xp, sim lvl 37)
     { "turnin", 1180, xp = 710 }, -- Goblin Sponsorship (lvl 37, ~710 xp, sim lvl 37)
     { "accept", 1181 }, -- Goblin Sponsorship (lvl 37, ~285 xp, sim lvl 37)
@@ -93,7 +92,7 @@ Q:RegisterGuide({
     { "complete", 1396, at = { 1435, 27.2, 53.67 } }, -- Encroaching Wildlife (lvl 37, ~2850 xp, sim lvl 38)
     { "turnin", 1396, xp = 2850 }, -- Encroaching Wildlife (lvl 37, ~2850 xp, sim lvl 38)
     { "accept", 1421 }, -- The Lost Caravan (lvl 35, ~2750 xp, sim lvl 39)
-    { "accept", 1392, at = { 1435, 54.9, 34.1 }, note = "Loot Noboru's Cudgel to start the quest" }, -- Noboru the Cudgel (lvl 39, ~2250 xp, sim lvl 39)
+    { "accept", 1392, at = { 1435, 54.9, 34.1 }, note = "Loot Noboru's Cudgel to start the quest (93.3 % drop: about 2 kills)" }, -- Noboru the Cudgel (lvl 39, ~2250 xp, sim lvl 39)
     { "complete", 1389, at = { 1435, 63.27, 22.35 } }, -- Draenethyst Crystals (lvl 35, ~2750 xp, sim lvl 39)
     { "complete", 1421, at = { 1435, 64.46, 18.3 } }, -- The Lost Caravan (lvl 35, ~2750 xp, sim lvl 39)
     { "accept", 1393 }, -- Galen's Escape (lvl 38, ~2850 xp, sim lvl 39)

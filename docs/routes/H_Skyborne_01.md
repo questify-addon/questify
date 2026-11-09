@@ -6,15 +6,15 @@ Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d30
 |---|---|
 | Level band | 1-15 |
 | Simulated level | 1.00 -> 17.98 |
-| Time | 249 min |
-| XP gained | 126105 |
-| XP/h | 30387 |
-| Steps | 210 |
+| Time | 245 min |
+| XP gained | 126133 |
+| XP/h | 30862 |
+| Steps | 240 |
 | Quests turned in | 73 |
 | Hubs | 15 |
-| Median ratio (XP/s) | 4.36 |
-| Grinding (level steps) | ~57 mobs |
-| Level band | grinding 57 mobs with quests up to level 18: band widened to level 21 |
+| Median ratio (XP/s) | 4.40 |
+| Grinding (level steps) | ~63 mobs |
+| Level band | grinding 63 mobs with quests up to level 18: band widened to level 21 |
 | Hearthstone | bound to Donaal Downbreeze after task 69; 1 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -32,18 +32,18 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7 | 92598 | The Gift of Skysight | 4 | 355 est. | 5 |
 | 8 | 96638 | The Adventurer | 6 | 135 est. | 5 |
 | 9 | 96101 | The Great Outdoors | 6 | 540 est. | 5 |
-| 10 | 96646 | Camping 101: Cooking | 6 | 540 est. | 5 |
+| 10 | 92472 | The Next Step | 5 | 225 est. | 5 |
 | 11 | 92595 | The Windshapers | 6 | 540 est. | 5 |
-| 12 | 92472 | The Next Step | 5 | 225 est. | 6 |
-| 13 | 92514 | Welcome to Shen'dar Village | 6 | 540 est. | 6 |
-| 14 | 92517 | The Criminal Element | 7 | 630 est. | 6 |
-| 15 | 93036 | Infiltrating the Cult | 8 | 530 est. | 6 |
-| 16 | 92529 | Falaath Village | 8 | 530 est. | 6 |
-| 17 | 92528 | Among the Faithful | 8 | 700 est. | 7 |
+| 12 | 92514 | Welcome to Shen'dar Village | 6 | 540 est. | 6 |
+| 13 | 92517 | The Criminal Element | 7 | 630 est. | 6 |
+| 14 | 93036 | Infiltrating the Cult | 8 | 530 est. | 6 |
+| 15 | 92529 | Falaath Village | 8 | 530 est. | 6 |
+| 16 | 92528 | Among the Faithful | 8 | 700 est. | 7 |
+| 17 | 96646 | Camping 101: Cooking | 6 | 540 est. | 7 |
 | 18 | 94411 | Meddlesome Mages | 6 | 540 est. | 7 |
-| 19 | 93926 | The Western Watch | 8 | 700 est. | 7 |
-| 20 | 92551 | Stolen Supplies | 8 | 700 est. | 8 |
-| 21 | 93318 | WANTED: Vulgara the Insatiable | 9 | 780 est. | 8 |
+| 19 | 93926 | The Western Watch | 8 | 700 est. | 8 |
+| 20 | 93318 | WANTED: Vulgara the Insatiable | 9 | 780 est. | 8 |
+| 21 | 92551 | Stolen Supplies | 8 | 700 est. | 8 |
 | 22 | 92550 | Havoc in the Highlands | 8 | 700 est. | 8 |
 | 23 | 93927 | A Last Request | 8 | 700 est. | 8 |
 | 24 | 93948 | Deliver the Signet | 9 | 780 est. | 8 |
@@ -54,7 +54,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 29 | 92682 | Make Yourself Useful | 9 | 780 est. | 9 |
 | 30 | 92683 | Flutterfly Dust | 9 | 780 est. | 9 |
 | 31 | 92684 | Ornery Ornery Galestriders | 9 | 780 est. | 9 |
-| 32 | 92698 | What Is My Purpose? | 9 | 780 est. | 9 |
+| 32 | 92698 | What Is My Purpose? | 9 | 780 est. | 10 |
 | 33 | 92685 | The Hills Have Eyes | 9 | 780 est. | 10 |
 | 34 | 92693 | Standing Our Ground | 9 | 780 est. | 10 |
 | 35 | 94493 | A Sacrifice in Vain | 11 | 660 est. | 10 |
@@ -150,6 +150,33 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 92461 | Harmony in Balance | 1 | level band reached |
 | 94484 | Unnerving Silence | 11 | exclusive with 94493 |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 92466 | Call of Earth | 4 | SHAMAN | woven, detour 312 s |
+| 92467 | Call of Earth | 4 | SHAMAN | woven, detour 121 s |
+| 92468 | Call of Earth | 4 | SHAMAN | woven, detour 121 s |
+| 94003 | The Skybreaker Bulwark | 10 | WARRIOR | woven, detour 109 s |
+| 94006 | The Great Ursera Spirit | 10 | DRUID | woven, detour 132 s |
+| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 29 s |
+| 94978 | Taming the Beast | 10 | HUNTER | woven, detour 188 s |
+| 94979 | Taming the Beast | 10 | HUNTER | woven, detour 235 s |
+| 97243 | Call of Fire | 10 | SHAMAN | woven, detour 67 s |
+| 97244 | Call of Fire | 10 | SHAMAN | woven, detour 256 s |
+| 94013 | Taming the Beast | 10 | HUNTER | woven, detour 446 s |
+| 94050 | Training the Beast | 10 | HUNTER | woven, detour 160 s |
+| 94638 | Strength and Mercy | 10 | DRUID | detour 608 s |
+| 97245 | Call of Fire | 10 | SHAMAN | detour 606 s |
+| 92482 | The Way of the Hunter | 2 | HUNTER | prerequisite or exclusive quest not done for the class |
+| 92483 | At Home in the Shadows | 2 | ROGUE | prerequisite or exclusive quest not done for the class |
+| 92484 | Embracing the Elements | 2 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 92485 | A Student of Nature | 2 | DRUID | prerequisite or exclusive quest not done for the class |
+| 92532 | The Warrior's Path | 2 | WARRIOR | prerequisite or exclusive quest not done for the class |
+| 97257 | Call of Fire | 10 | SHAMAN | prerequisite or exclusive quest not done for the class |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -230,15 +257,15 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 93958 | The Inner Sanctum | 12 | 225 | 0 | 32 | 32 | 4.84 | 7.92 | 0 |  |
 | 94411 | Meddlesome Mages | 6 | 900 | 0 | 226 | 198 | 3.98 | 4.53 | 1 |  |
 | 94414 | The Anchors of Zephras | 2 | 170 | 0 | 35 | 35 | 4.81 | 4.81 | 1 |  |
-| 94484 | Unnerving Silence | 11 | 660 | 0 | 200 | 10 | 4.36 | 6.73 | 0 | exclusive with 94493 |
-| 94485 | Tears of the Lady | 12 | 910 | 0 | 145 | 145 | 5.13 | 9.01 | 1 |  |
-| 94486 | Feathers for Binding | 11 | 3650 | 0 | 883 | 843 | 4.30 | 5.44 | 1 |  |
-| 94487 | Unwanted and Unworthy | 11 | 2210 | 0 | 444 | 426 | 4.84 | 6.87 | 1 |  |
+| 94484 | Unnerving Silence | 11 | 660 | 0 | 200 | 10 | 4.40 | 7.00 | 0 | exclusive with 94493 |
+| 94485 | Tears of the Lady | 12 | 910 | 0 | 145 | 145 | 5.31 | 10.28 | 1 |  |
+| 94486 | Feathers for Binding | 11 | 3650 | 0 | 883 | 843 | 4.33 | 5.55 | 1 |  |
+| 94487 | Unwanted and Unworthy | 11 | 2210 | 0 | 444 | 426 | 4.93 | 7.22 | 1 |  |
 | 94488 | The Ties That Bind | 11 | 842 | 0 | 98 | 38 | 8.58 | 21.91 | 1 |  |
 | 94489 | The Wounds of Betrayal | 12 | 910 | 0 | 115 | 58 | 7.90 | 15.66 | 1 |  |
-| 94490 | Ripped Missive | 12 | 585 | 0 | 178 | 110 | 2.33 | 6.35 | 0 |  |
+| 94490 | Ripped Missive | 12 | 297 | 0 | 98 | 30 | 1.90 | 12.28 | 0 |  |
 | 94491 | The Fate of the Den | 12 | 225 | 0 | 200 | 10 | 1.12 | 22.50 | 0 |  |
-| 94493 | A Sacrifice in Vain | 11 | 660 | 0 | 10 | 10 | 4.75 | 6.73 | 0 |  |
+| 94493 | A Sacrifice in Vain | 11 | 660 | 0 | 10 | 10 | 4.82 | 7.00 | 0 |  |
 | 94568 | The Cult's True Plans | 11 | 770 | 0 | 21 | 20 | 43.42 | 63.69 | 1 |  |
 | 94896 | Aid For The Refugees | 11 | 770 | 0 | 608 | 160 | 1.27 | 4.79 | 1 |  |
 | 96101 | The Great Outdoors | 6 | 540 | 0 | 68 | 68 | 7.84 | 9.26 | 1 |  |
@@ -280,32 +307,32 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 24 | O | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
 | 25 | T | 96101 | The Great Outdoors | 2521 | 41.7, 44.8 | 3 |  |
 | 26 | A | 96646 | Camping 101: Cooking | 2521 | 41.7, 44.8 | 0 |  |
-| 27 | O | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 126 |  |
-| 28 | T | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 0 |  |
-| 29 | A | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 39 |  |
-| 30 | O | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 0 |  |
-| 31 | T | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 0 |  |
-| 32 | A | 94411 | Meddlesome Mages | 2521 | 43.5, 44.8 | 0 |  |
-| 33 | T | 92472 | The Next Step | 2521 | 45.7, 45.5 | 123 |  |
-| 34 | A | 92514 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 0 |  |
-| 35 | O | 92514 | Welcome to Shen'dar Village | 2521 | 43.5, 44.8 | 123 |  |
-| 36 | T | 92514 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 123 |  |
-| 37 | A | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 0 |  |
-| 38 | O | 92517 | The Criminal Element | 2521 | 48.8, 37.4 | 345 |  |
-| 39 | O | 92517 | The Criminal Element | 2521 | 50.6, 34.3 | 155 |  |
-| 40 | O | 94411 | Meddlesome Mages | 2521 | 46.7, 38.9 | 278 |  |
-| 41 | T | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 249 |  |
-| 42 | A | 93036 | Infiltrating the Cult | 2521 | 45.7, 45.5 | 0 |  |
-| 43 | T | 93036 | Infiltrating the Cult | 2521 | 44.9, 45.5 | 43 |  |
-| 44 | A | 92529 | Falaath Village | 2521 | 44.9, 45.5 | 0 |  |
-| 45 | T | 92529 | Falaath Village | 2521 | 46.9, 56.2 | 412 |  |
-| 46 | A | 92528 | Among the Faithful | 2521 | 46.9, 56.2 | 0 |  |
-| 47 | O | 92528 | Among the Faithful | 2521 | 48.8, 53.9 | 137 |  |
-| 48 | T | 92528 | Among the Faithful | 2521 | 45.7, 45.5 | 358 |  |
-| 49 | A | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 0 |  |
-| 50 | A | 93926 | The Western Watch | 2521 | 45.7, 45.5 | 0 |  |
-| 51 | A | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 26 |  |
-| 52 | T | 94411 | Meddlesome Mages | 2521 | 43.5, 44.8 | 97 |  |
+| 27 | T | 92472 | The Next Step | 2521 | 45.7, 45.5 | 224 |  |
+| 28 | A | 92514 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 0 |  |
+| 29 | A | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 123 |  |
+| 30 | O | 92514 | Welcome to Shen'dar Village | 2521 | 43.5, 44.8 | 0 |  |
+| 31 | O | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 0 |  |
+| 32 | T | 92595 | The Windshapers | 2521 | 43.5, 44.8 | 0 |  |
+| 33 | A | 94411 | Meddlesome Mages | 2521 | 43.5, 44.8 | 0 |  |
+| 34 | O | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 39 |  |
+| 35 | T | 92514 | Welcome to Shen'dar Village | 2521 | 45.7, 45.5 | 118 |  |
+| 36 | A | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 0 |  |
+| 37 | O | 92517 | The Criminal Element | 2521 | 48.8, 37.4 | 345 |  |
+| 38 | O | 92517 | The Criminal Element | 2521 | 50.6, 34.3 | 155 |  |
+| 39 | O | 94411 | Meddlesome Mages | 2521 | 46.7, 38.9 | 278 |  |
+| 40 | T | 92517 | The Criminal Element | 2521 | 45.7, 45.5 | 249 |  |
+| 41 | A | 93036 | Infiltrating the Cult | 2521 | 45.7, 45.5 | 0 |  |
+| 42 | T | 93036 | Infiltrating the Cult | 2521 | 44.9, 45.5 | 43 |  |
+| 43 | A | 92529 | Falaath Village | 2521 | 44.9, 45.5 | 0 |  |
+| 44 | T | 92529 | Falaath Village | 2521 | 46.9, 56.2 | 412 |  |
+| 45 | A | 92528 | Among the Faithful | 2521 | 46.9, 56.2 | 0 |  |
+| 46 | O | 92528 | Among the Faithful | 2521 | 48.8, 53.9 | 137 |  |
+| 47 | T | 92528 | Among the Faithful | 2521 | 45.7, 45.5 | 358 |  |
+| 48 | A | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 0 |  |
+| 49 | A | 93926 | The Western Watch | 2521 | 45.7, 45.5 | 0 |  |
+| 50 | A | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 26 |  |
+| 51 | T | 96646 | Camping 101: Cooking | 2521 | 43.9, 43.8 | 91 |  |
+| 52 | T | 94411 | Meddlesome Mages | 2521 | 43.5, 44.8 | 39 |  |
 | 53 | A | 93318 | WANTED: Vulgara the Insatiable | 2521 | 43.4, 45.8 | 39 |  |
 | 54 | O | 92550 | Havoc in the Highlands | 2521 | 49.5, 55.4 | 492 |  |
 | 55 | O | 92551 | Stolen Supplies | 2521 | 49.5, 55.5 | 4 |  |
@@ -314,12 +341,12 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 58 | A | 93927 | A Last Request | 2521 | 42.4, 62.0 | 0 |  |
 | 59 | O | 93927 | A Last Request | 2521 | 41.4, 63.5 | 75 |  |
 | 60 | O | 93318 | WANTED: Vulgara the Insatiable | 2521 | 42.7, 52.8 | 401 |  |
-| 61 | T | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 316 | near #53 (went 711 yd away) |
-| 62 | T | 93318 | WANTED: Vulgara the Insatiable | 2521 | 45.2, 45.2 | 0 | near #53 (went 711 yd away) |
+| 61 | T | 93318 | WANTED: Vulgara the Insatiable | 2521 | 45.2, 45.2 | 316 | near #53 (went 711 yd away) |
+| 62 | T | 92551 | Stolen Supplies | 2521 | 45.2, 45.2 | 0 | near #53 (went 711 yd away) |
 | 63 | T | 92550 | Havoc in the Highlands | 2521 | 45.7, 45.5 | 26 |  |
 | 64 | T | 93927 | A Last Request | 2521 | 45.7, 45.5 | 0 |  |
-| 65 | A | 92579 | To Valanaar | 2521 | 45.7, 45.5 | 0 |  |
-| 66 | A | 93948 | Deliver the Signet | 2521 | 45.7, 45.5 | 0 |  |
+| 65 | A | 93948 | Deliver the Signet | 2521 | 45.7, 45.5 | 0 |  |
+| 66 | A | 92579 | To Valanaar | 2521 | 45.7, 45.5 | 0 |  |
 | 67 | A | 98512 | Al'Aketh Assassins | 2521 | 56.8, 61.1 | 847 |  |
 | 68 | A | 93317 | Crab Season | 2521 | 60.6, 72.7 | 478 |  |
 | 69 | A | 92679 | Blood Tithe | 2521 | 62.1, 73.2 | 82 |  |
@@ -458,7 +485,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 202 | A | 93090 | What Comes Next | 2521 | 66.2, 76.5 | 0 |  |
 | 203 | T | 93090 | What Comes Next | 2521 | 59.1, 79.8 | 408 |  |
 
-Walking between tasks: 29726 yd (~71 min at 7 yd/s).
+Walking between tasks: 29730 yd (~71 min at 7 yd/s).
 
 ## Qualité
 
@@ -480,11 +507,11 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 - step 1: `level 2` — About 8 mobs here (Roiling Winds, level 2)
 - step 3: `level 4` — About 46 mobs here (Roiling Winds, level 2)
-- step 49: `level 7` — About 2 mobs here (Hippogryph Youth, level 6)
-- step 73: `sethearth 2521 62.19 72.61`
-- step 136: `level 12` — About 1 mobs here (Al'Aketh Stormchaser, level 10)
-- step 202: `hearth 2521`
-- step 210: `boat 2521 58.1 80.4` — Take the skyboat to Skywatcher Plateau (west dock of Valanaar)
+- step 56: `level 7` — About 9 mobs here (Hippogryph Youth, level 6)
+- step 83: `sethearth 2521 62.19 72.61`
+- step 227: `hearth 2521`
+- step 239: `boat 2521 58.1 80.4` — Take the skyboat to Skywatcher Plateau (west dock of Valanaar)
+- step 240: `fp 1413 51.5 30.34`
 
 ## Warnings
 

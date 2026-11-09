@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 65 étapes, niveau final 44.00, ~47235 xp/h, 263 min.
+-- Simulation : 65 étapes, niveau final 44.00, ~47233 xp/h, 263 min.
 Q:RegisterGuide({
   id = "A_17",
   title = "Stranglethorn Vale",
   faction = "Alliance",
   minLevel = 42, maxLevel = 44,
   next = "A_18",
-  sim = { steps = 65, endLevel = 44.00, xpPerHour = 47235, minutes = 263 },
+  sim = { steps = 65, endLevel = 44.00, xpPerHour = 47233, minutes = 263 },
   steps = {
     { "note", "Not running Scarlet Monastery? Abandon Past Due", optional = true, dungeon = "Scarlet Monastery" },
     { "note", "Not running Uldaman? Abandon A Sign of Hope, Power Stones", optional = true, dungeon = "Uldaman" },
@@ -24,13 +24,13 @@ Q:RegisterGuide({
     { "accept", 576 }, -- Keep An Eye Out (lvl 42, ~2550 xp, sim lvl 42)
     { "accept", 8551 }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 42)
     { "complete", 604, at = { 1434, 26.87, 83.26 } }, -- The Bloodsail Buccaneers (lvl 43, ~3600 xp, sim lvl 42)
+    { "turnin", 604, xp = 3600 }, -- The Bloodsail Buccaneers (lvl 43, ~3600 xp, sim lvl 42)
+    { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 42)
     { "complete", 348, at = { 1434, 35.05, 60.88 } }, -- Stranglethorn Fever (lvl 45, ~5850 xp, sim lvl 42)
     { "complete", 621, at = { 1434, 39.62, 58.31 } }, -- Zanzil's Secret (lvl 44, ~3750 xp, sim lvl 42)
     { "complete", 609, obj = 3, at = { 1434, 40, 58.24 } }, -- Voodoo Dues (lvl 44, ~3750 xp, sim lvl 42)
     { "complete", 609, at = { 1434, 35.26, 51.27 } }, -- Voodoo Dues (lvl 44, ~3750 xp, sim lvl 42)
     { "hearth", 1434 }, -- pierre de foyer
-    { "turnin", 604, xp = 3600 }, -- The Bloodsail Buccaneers (lvl 43, ~3600 xp, sim lvl 42)
-    { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 42)
     { "turnin", 621, xp = 3750 }, -- Zanzil's Secret (lvl 44, ~3750 xp, sim lvl 42)
     { "turnin", 609, xp = 3750 }, -- Voodoo Dues (lvl 44, ~3750 xp, sim lvl 42)
     { "turnin", 348, xp = 5850 }, -- Stranglethorn Fever (lvl 45, ~5850 xp, sim lvl 42)

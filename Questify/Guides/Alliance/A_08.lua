@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 62 étapes, niveau final 32.00, ~29970 xp/h, 197 min.
+-- Simulation : 64 étapes, niveau final 32.00, ~29971 xp/h, 192 min.
 Q:RegisterGuide({
   id = "A_08",
   title = "Ashenvale",
   faction = "Alliance",
   minLevel = 30, maxLevel = 32,
   next = "A_07",
-  sim = { steps = 62, endLevel = 32.00, xpPerHour = 29970, minutes = 197 },
+  sim = { steps = 64, endLevel = 32.00, xpPerHour = 29971, minutes = 192 },
   steps = {
     { "note", "Not running The Deadmines? Abandon Oh Brother. . ., Collecting Memories, Underground Assault", optional = true, dungeon = "The Deadmines" },
     { "note", "Not running The Hall of Thanes? Abandon Old Ironforge Incursion", optional = true, dungeon = "The Hall of Thanes" },
@@ -39,6 +39,7 @@ Q:RegisterGuide({
     { "accept", 98418 }, -- Shared Fury (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 86757, at = { 1440, 89.27, 57.58 } }, -- Slowing the Orc Advance (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 1012, at = { 1440, 77.18, 73.99 } }, -- Insane Druids (lvl 32, ~3200 xp, sim lvl 30)
+    { "accept", 78093, race = { "Human", "Dwarf" }, classes = { "PALADIN" } }, -- Return to Delgren (lvl 30, ~1200 xp, sim lvl 30)
     { "complete", 98418, at = { 1440, 78.27, 46.01 } }, -- Shared Fury (lvl 30, ~2450 xp, sim lvl 30)
     { "complete", 1031, at = { 1440, 77.99, 42.42 } }, -- The Branch of Cenarius (lvl 32, ~2550 xp, sim lvl 30)
     { "turnin", 1027, xp = 2300 }, -- Raene's Cleansing (lvl 28, ~2300 xp, sim lvl 30)
@@ -70,8 +71,9 @@ Q:RegisterGuide({
     { "turnin", 86757, xp = 2450 }, -- Slowing the Orc Advance (lvl 30, ~2450 xp, sim lvl 30)
     { "turnin", 1035, xp = 3050 }, -- Fallen Sky Lake (lvl 30, ~3050 xp, sim lvl 30)
     { "turnin", 98027, xp = 590 }, -- Gleaming Crescent Necklace (lvl 29, ~590 xp, sim lvl 30)
-    { "turnin", 1022, xp = 2450 }, -- The Howling Vale (lvl 30, ~2450 xp, sim lvl 30)
+    { "turnin", 1022, xp = 2450 }, -- The Howling Vale (lvl 30, ~2450 xp, sim lvl 31)
+    { "turnin", 78093, xp = 1200, race = { "Human", "Dwarf" }, classes = { "PALADIN" } }, -- Return to Delgren (lvl 30, ~1200 xp, sim lvl 31)
     { "turnin", 1032, xp = 2550 }, -- Satyr Slaying! (lvl 32, ~2550 xp, sim lvl 31)
-    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 264 more mobs near the last objective" }, -- farm de niveau
+    { "level", 32, at = { 1440, 54.75, 79.62 }, note = "About 251 more mobs near the last objective" }, -- farm de niveau
   },
 })

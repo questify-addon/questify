@@ -9,7 +9,7 @@ Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d30
 | Time | 36 min |
 | XP gained | 7640 |
 | XP/h | 12650 |
-| Steps | 40 |
+| Steps | 74 |
 | Quests turned in | 15 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 4.30 |
@@ -59,6 +59,30 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 94472 | Earth Sapta | 4 | class quest (ClassQuestData.lua) |
 | 98574 | Hallowed Memorandum | 1 | class quest (ClassQuestData.lua) |
 | 98581 | Archaic Rune | 1 | class quest (ClassQuestData.lua) |
+
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3106 | Simple Rune | 1 | WARRIOR | woven, detour 13 s |
+| 3107 | Consecrated Rune | 1 | PALADIN | woven, detour 18 s |
+| 3108 | Etched Rune | 1 | HUNTER | woven, detour 17 s |
+| 3109 | Encrypted Rune | 1 | ROGUE | woven, detour 13 s |
+| 3110 | Hallowed Rune | 1 | PRIEST | woven, detour 12 s |
+| 3112 | Simple Memorandum | 1 | WARRIOR | woven, detour 13 s |
+| 3113 | Encrypted Memorandum | 1 | ROGUE | woven, detour 13 s |
+| 3114 | Glyphic Memorandum | 1 | MAGE | woven, detour 11 s |
+| 3115 | Tainted Memorandum | 1 | WARLOCK | woven, detour 13 s |
+| 98574 | Hallowed Memorandum | 1 | PRIEST | woven, detour 12 s |
+| 98581 | Archaic Rune | 1 | SHAMAN | woven, detour 12 s |
+| 1599 | Beginnings | 4 | WARLOCK | woven, detour 182 s |
+| 5626 | In Favor of the Light | 4 | PRIEST | woven, detour 14 s |
+| 94373 | Call of Earth | 4 | SHAMAN | woven, detour 126 s |
+| 94374 | Call of Earth | 4 | SHAMAN | woven, detour 98 s |
+| 94375 | Call of Earth | 4 | SHAMAN | woven, detour 38 s |
+| 94472 | Earth Sapta | 4 | SHAMAN | repeatable |
 
 ## Candidate ratios
 
@@ -151,7 +175,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 40: `level 6` — About 10 more mobs here (Wendigo, level 6)
+- step 74: `level 6` — About 10 more mobs here (Wendigo, level 6)
 
 ## Warnings
 

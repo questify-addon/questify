@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 78 étapes, niveau final 15.57, ~21162 xp/h, 121 min.
+-- Simulation : 91 étapes, niveau final 15.57, ~21153 xp/h, 121 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_03",
   title = "Loch Modan",
@@ -14,12 +14,13 @@ Q:RegisterGuide({
     { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 2 } },
     { id = "A_01", travel = { kind = "boat", minutes = 7 } },
   },
-  sim = { steps = 78, endLevel = 15.57, xpPerHour = 21162, minutes = 121 },
+  sim = { steps = 91, endLevel = 15.57, xpPerHour = 21153, minutes = 121 },
   steps = {
     { "accept", 1339 }, -- Mountaineer Stormpike's Task (lvl 15, ~540 xp, sim lvl 11)
     { "sethearth", 1432, 35.53, 48.4 }, -- lier la pierre de foyer
     { "accept", 224 }, -- In Defense of the King's Lands (lvl 12, ~910 xp, sim lvl 11)
     { "complete", 224, at = { 1432, 31.8, 73.61 } }, -- In Defense of the King's Lands (lvl 12, ~910 xp, sim lvl 11)
+    { "accept", 94466, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 11)
     { "turnin", 224, xp = 910 }, -- In Defense of the King's Lands (lvl 12, ~910 xp, sim lvl 12)
     { "accept", 237 }, -- In Defense of the King's Lands (lvl 15, ~1050 xp, sim lvl 12)
     { "complete", 237, at = { 1432, 35.7, 85.02 } }, -- In Defense of the King's Lands (lvl 15, ~1050 xp, sim lvl 12)
@@ -28,7 +29,7 @@ Q:RegisterGuide({
     { "accept", 86585 }, -- Banner of the Fallen (lvl 17, ~1250 xp, sim lvl 12)
     { "complete", 263, at = { 1432, 36.01, 91.83 } }, -- In Defense of the King's Lands (lvl 15, ~1050 xp, sim lvl 12)
     { "accept", 298 }, -- Excavation Progress Report (lvl 15, ~270 xp, sim lvl 12)
-    { "level", 13, at = { 1432, 32.79, 73.77 }, note = "About 20 mobs here (Stonesplinter Trogg, level 11)" }, -- farm de niveau
+    { "level", 13, at = { 1432, 32.79, 73.77 }, note = "About 21 mobs here (Stonesplinter Trogg, level 11)" }, -- farm de niveau
     { "accept", 436 }, -- Ironband's Excavation (lvl 18, ~340 xp, sim lvl 13)
     { "turnin", 298, xp = 270 }, -- Excavation Progress Report (lvl 15, ~270 xp, sim lvl 13)
     { "accept", 301 }, -- Report to Ironforge (lvl 15, ~540 xp, sim lvl 13)
@@ -41,6 +42,10 @@ Q:RegisterGuide({
     { "accept", 302 }, -- Powder to Ironband (lvl 15, ~270 xp, sim lvl 13)
     { "accept", 79091 }, -- Archmage Antonidas: The Unabridged Autobiography (lvl 20, ~1550 xp, sim lvl 13)
     { "turnin", 6391, xp = 420 }, -- Ride to Ironforge (lvl 10, ~420 xp, sim lvl 13)
+    { "accept", 1715, classes = { "WARLOCK" } }, -- The Slaughtered Lamb (lvl 10, ~420 xp, sim lvl 13)
+    { "accept", 5639, race = { "Dwarf" }, classes = { "PRIEST" } }, -- Desperate Prayer (lvl 10, ~210 xp, sim lvl 13)
+    { "accept", 2999, race = { "Dwarf" }, classes = { "PALADIN" } }, -- Tome of Divinity (lvl 12, ~90 xp, sim lvl 13)
+    { "turnin", 2999, xp = 90, race = { "Dwarf" }, classes = { "PALADIN" } }, -- Tome of Divinity (lvl 12, ~90 xp, sim lvl 13)
     { "accept", 6388 }, -- Gryth Thurden (lvl 10, ~210 xp, sim lvl 13)
     { "turnin", 6388, xp = 210 }, -- Gryth Thurden (lvl 10, ~210 xp, sim lvl 13)
     { "accept", 6392 }, -- Return to Brock (lvl 10, ~1050 xp, sim lvl 13)
@@ -49,6 +54,8 @@ Q:RegisterGuide({
     { "accept", 1338 }, -- Stormpike's Order (lvl 14, ~980 xp, sim lvl 13)
     { "accept", 307 }, -- Filthy Paws (lvl 15, ~1350 xp, sim lvl 13)
     { "complete", 307, at = { 1432, 35.5, 24.64 } }, -- Filthy Paws (lvl 15, ~1350 xp, sim lvl 13)
+    { "complete", 94466, obj = 1, at = { 1432, 35.78, 23.76 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 13)
+    { "complete", 94466, at = { 1432, 49.02, 22.34 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 13)
     { "turnin", 307, xp = 1350 }, -- Filthy Paws (lvl 15, ~1350 xp, sim lvl 13)
     { "turnin", 302, xp = 270 }, -- Powder to Ironband (lvl 15, ~270 xp, sim lvl 13)
     { "accept", 273 }, -- Resupplying the Excavation (lvl 15, ~270 xp, sim lvl 13)
@@ -75,6 +82,10 @@ Q:RegisterGuide({
     { "complete", 86585, at = { 1432, 31.32, 84.88 } }, -- Banner of the Fallen (lvl 17, ~1250 xp, sim lvl 14)
     { "turnin", 263, xp = 1050 }, -- In Defense of the King's Lands (lvl 15, ~1050 xp, sim lvl 14)
     { "turnin", 86585, xp = 1250 }, -- Banner of the Fallen (lvl 17, ~1250 xp, sim lvl 14)
+    { "turnin", 94466, xp = 980, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 14)
+    { "accept", 94467, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 14)
+    { "complete", 94467, at = { 1432, 31.96, 64.42 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 14)
+    { "turnin", 94467, xp = 980, classes = { "SHAMAN" } }, -- Call of Fire (lvl 14, ~980 xp, sim lvl 14)
     { "complete", 297, at = { 1432, 70.11, 64.42 } }, -- Gathering Idols (lvl 18, ~1350 xp, sim lvl 14)
     { "accept", 86613, at = { 1432, 69.79, 65 }, note = "Loot Excavation Tools to start the quest" }, -- Excavation Tools (lvl 18, ~1350 xp, sim lvl 14)
     { "complete", 86613, at = { 1432, 69.79, 65 } }, -- Excavation Tools (lvl 18, ~1350 xp, sim lvl 14)
@@ -91,8 +102,10 @@ Q:RegisterGuide({
     { "complete", 79091, at = { 1455, 76, 10.4 } }, -- Archmage Antonidas: The Unabridged Autobiography (lvl 20, ~1550 xp, sim lvl 15)
     { "boat", 1455, 78, 51.4, note = "Take the Deeprun Tram to Stormwind" }, -- bateau
     { "turnin", 1338, xp = 980 }, -- Stormpike's Order (lvl 14, ~980 xp, sim lvl 15)
+    { "turnin", 5639, xp = 210, race = { "Dwarf" }, classes = { "PRIEST" } }, -- Desperate Prayer (lvl 10, ~210 xp, sim lvl 15)
     { "fp", 1453, 71.29, 72.23 }, -- point de vol
     { "turnin", 79093, xp = 1550 }, -- Rumi of Gnomeregan: The Collected Works (lvl 20, ~1550 xp, sim lvl 15)
+    { "turnin", 1715, xp = 420, classes = { "WARLOCK" } }, -- The Slaughtered Lamb (lvl 10, ~420 xp, sim lvl 15)
     { "turnin", 78148, xp = 1550 }, -- Runes of the Sorcerer-Kings (lvl 20, ~1550 xp, sim lvl 15)
     { "turnin", 79091, xp = 1550 }, -- Archmage Antonidas: The Unabridged Autobiography (lvl 20, ~1550 xp, sim lvl 15)
   },

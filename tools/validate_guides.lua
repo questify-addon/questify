@@ -71,40 +71,10 @@ function M.classesProblem(v)
   return nil
 end
 
--- classVariants(chapitres) -> classes connues nommées par les étapes `classes` du parcours, triées.
-function M.classVariants(chapters)
-  local seen, out = {}, {}
-  for _, ch in ipairs(chapters) do
-    for _, s in ipairs(ch.steps or {}) do
-      if type(s) == "table" then
-        for _, c in ipairs(classNames(s.classes) or {}) do
-          if KNOWN_CLASSES[c] and not seen[c] then seen[c] = true; out[#out + 1] = c end
-        end
-      end
-    end
-  end
-  table.sort(out)
-  return out
-end
-
--- stepsForClass(étapes, classe | nil) -> étapes vues par cette classe (nil : seulement les étapes sans
--- `classes`), index d'origine de chacune.
-function M.stepsForClass(steps, cls)
-  local out, index = {}, {}
-  for i, s in ipairs(steps or {}) do
-    local keep = true
-    local list = type(s) == "table" and classNames(s.classes)
-    if list then
-      keep = false
-      for _, c in ipairs(list) do if cls and c == cls then keep = true end end
-    end
-    if keep then
-      out[#out + 1] = s
-      index[#out] = i
-    end
-  end
-  return out, index
-end
+-- Variantes de classe d'un parcours et étapes vues par une classe : tools/routebuilder/paths.lua (aussi utilisé
+-- par build.raceFilters).
+M.classVariants = paths.classVariants
+M.stepsForClass = paths.stepsForClass
 
 local function readFile(path)
   local f = io.open(path, "rb")

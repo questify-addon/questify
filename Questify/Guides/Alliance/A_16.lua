@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 47 étapes, niveau final 42.00, ~42190 xp/h, 136 min.
+-- Simulation : 47 étapes, niveau final 42.00, ~42085 xp/h, 136 min.
 Q:RegisterGuide({
   id = "A_16",
   title = "Badlands",
   faction = "Alliance",
   minLevel = 41, maxLevel = 42,
   next = "A_17",
-  sim = { steps = 47, endLevel = 42.00, xpPerHour = 42190, minutes = 136 },
+  sim = { steps = 47, endLevel = 42.00, xpPerHour = 42085, minutes = 136 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
     { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
@@ -46,7 +46,7 @@ Q:RegisterGuide({
     { "turnin", 703, xp = 2350 }, -- Barbecued Buzzard Wings (lvl 40, ~2350 xp, sim lvl 41)
     { "turnin", 732, xp = 3600 }, -- Tremors of the Earth (lvl 43, ~3600 xp, sim lvl 41)
     { "turnin", 733, xp = 3150 }, -- Scrounging (lvl 40, ~3150 xp, sim lvl 41)
-    { "accept", 2198, at = { 1418, 47.68, 11.24 }, optional = true, dungeon = "Uldaman", note = "Loot Shattered Necklace to start the quest" }, -- The Shattered Necklace (lvl 41, ~0 xp, sim lvl 41)
+    { "accept", 2198, at = { 1418, 47.68, 11.24 }, optional = true, dungeon = "Uldaman", note = "Loot Shattered Necklace to start the quest (7.1 % drop: about 15 kills)" }, -- The Shattered Necklace (lvl 41, ~0 xp, sim lvl 41)
     { "goto", 1432, 33.94, 50.95, note = "Flight master" }, -- déplacement
     { "fly", 1455, node = 6, note = "Ironforge, Dun Morogh" }, -- vol
     { "turnin", 653, xp = 2350 }, -- Myzrael's Allies (lvl 40, ~2350 xp, sim lvl 41)
@@ -57,6 +57,6 @@ Q:RegisterGuide({
     { "turnin", 697, xp = 3750 }, -- Malin's Request (lvl 39, ~3750 xp, sim lvl 41)
     { "hearth", 1434 }, -- pierre de foyer
     { "turnin", 669, xp = 3150 }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 41)
-    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 106 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
+    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 105 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
   },
 })

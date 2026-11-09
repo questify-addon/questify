@@ -9,7 +9,7 @@ Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d30
 | Time | 65 min |
 | XP gained | 12712 |
 | XP/h | 11775 |
-| Steps | 38 |
+| Steps | 46 |
 | Quests turned in | 15 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 2.90 |
@@ -91,6 +91,25 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 754 | Winterhoof Cleansing | 6 | level band reached |
 | 756 | Thunderhorn Totem | 7 | level band reached |
 | 748 | Poison Water | 5 | level band reached |
+
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3091 | Simple Note | 1 | WARRIOR | woven, detour 13 s |
+| 3092 | Etched Note | 1 | HUNTER | woven, detour 14 s |
+| 3093 | Rune-Inscribed Note | 1 | SHAMAN | woven, detour 19 s |
+| 3094 | Verdant Note | 1 | DRUID | woven, detour 20 s |
+| 1462 | Earth Sapta | 4 | SHAMAN | repeatable |
+| 1505 | Veteran Uzzek | 10 | WARRIOR | quest level 10 above the band |
+| 2984 | Call of Fire | 10 | SHAMAN | quest level 10 above the band |
+| 2986 | Call of Water | 20 | SHAMAN | quest level 20 above the band |
+| 5928 | Heeding the Call | 10 | DRUID | quest level 10 above the band |
+| 1519 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1520 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1521 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 
 ## Candidate ratios
 

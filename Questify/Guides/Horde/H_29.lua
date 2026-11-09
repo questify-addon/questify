@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 184 étapes, niveau final 59.00, ~79651 xp/h, 295 min.
+-- Simulation : 184 étapes, niveau final 59.00, ~79329 xp/h, 300 min.
 Q:RegisterGuide({
   id = "H_29",
   title = "Western Plaguelands and Eastern Plaguelands",
   faction = "Horde",
   minLevel = 57, maxLevel = 59,
   next = "H_30",
-  sim = { steps = 184, endLevel = 59.00, xpPerHour = 79651, minutes = 295 },
+  sim = { steps = 184, endLevel = 59.00, xpPerHour = 79329, minutes = 300 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
     { "goto", 1448, 34.44, 53.96, note = "Flight master" }, -- déplacement
@@ -126,9 +126,9 @@ Q:RegisterGuide({
     { "complete", 6023, obj = 1, at = { 1422, 57.83, 36.1 } }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 57)
     { "complete", 6023, at = { 1422, 55.15, 23.62 } }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 57)
     { "turnin", 6023, xp = 6000 }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 57)
-    { "accept", 6025 }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 58)
-    { "complete", 6025, at = { 1422, 45.81, 18.25 } }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 58)
-    { "turnin", 6025, xp = 6200 }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 58)
+    { "accept", 6025 }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 57)
+    { "complete", 6025, at = { 1422, 45.81, 18.25 } }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 57)
+    { "turnin", 6025, xp = 6200 }, -- Unfinished Business (lvl 58, ~6200 xp, sim lvl 57)
     { "accept", 6042 }, -- Un-Life's Little Annoyances (lvl 58, ~6200 xp, sim lvl 58)
     { "accept", 6133 }, -- The Ranger Lord's Behest (lvl 60, ~6600 xp, sim lvl 58)
     { "turnin", 5961, xp = 1450 }, -- The Champion of the Banshee Queen (lvl 56, ~1450 xp, sim lvl 58)
@@ -194,6 +194,6 @@ Q:RegisterGuide({
     { "turnin", 84402, xp = 1650 }, -- Necromancy 101 (lvl 60, ~1650 xp, sim lvl 58)
     { "turnin", 84401, xp = 1650 }, -- Scourge: Undead Menace or Misunderstood? (lvl 60, ~1650 xp, sim lvl 58)
     { "turnin", 7817, xp = 3300 }, -- A Donation of Mageweave (lvl 60, ~3300 xp, sim lvl 58)
-    { "level", 59, at = { 1422, 62.18, 59.06 }, note = "About 205 more mobs near the last objective" }, -- farm de niveau
+    { "level", 59, at = { 1422, 62.18, 59.06 }, note = "About 220 more mobs near the last objective" }, -- farm de niveau
   },
 })

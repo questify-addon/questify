@@ -2,18 +2,19 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 52 étapes, niveau final 39.29, ~33118 xp/h, 191 min.
+-- Simulation : 52 étapes, niveau final 39.29, ~33103 xp/h, 191 min.
 Q:RegisterGuide({
   id = "H_11",
   title = "Arathi Highlands",
   faction = "Horde",
   minLevel = 38, maxLevel = 39,
   next = "H_12",
-  sim = { steps = 52, endLevel = 39.29, xpPerHour = 33118, minutes = 191 },
+  sim = { steps = 52, endLevel = 39.29, xpPerHour = 33103, minutes = 191 },
   steps = {
-    { "hearth", 1434 }, -- pierre de foyer
-    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
-    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
+    { "hearth", 1413 }, -- pierre de foyer
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
+    { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
+    { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
     { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
     { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
     { "turnin", 638, xp = 710 }, -- Trollbane (lvl 37, ~710 xp, sim lvl 38)
@@ -23,7 +24,6 @@ Q:RegisterGuide({
     { "hearth", 1417 }, -- pierre de foyer
     { "turnin", 639, xp = 2850 }, -- Sigil of Strom (lvl 37, ~2850 xp, sim lvl 38)
     { "accept", 640 }, -- The Broken Sigil (lvl 40, ~3150 xp, sim lvl 38)
-    { "turnin", 635, xp = 275 }, -- Crystal in the Mountains (lvl 35, ~275 xp, sim lvl 38)
     { "goto", 1417, 73.02, 32.7, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 13, note = "Tarren Mill, Hillsbrad" }, -- vol
     { "accept", 503 }, -- Gol'dir (lvl 36, ~2800 xp, sim lvl 38)
@@ -40,7 +40,7 @@ Q:RegisterGuide({
     { "accept", 663 }, -- Land Ho! (lvl 35, ~690 xp, sim lvl 38)
     { "turnin", 663, xp = 690 }, -- Land Ho! (lvl 35, ~690 xp, sim lvl 38)
     { "accept", 665 }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 38)
-    { "level", 39, at = { 1417, 23.19, 87.78 }, note = "About 32 mobs here (Daggerspine Raider, level 38)" }, -- farm de niveau
+    { "level", 39, at = { 1417, 23.19, 87.78 }, note = "About 33 mobs here (Daggerspine Raider, level 38)" }, -- farm de niveau
     { "complete", 665, at = { 1417, 33.87, 80.6 } }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 39)
     { "turnin", 665, xp = 3150 }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 39)
     { "accept", 666 }, -- Sunken Treasure (lvl 40, ~3900 xp, sim lvl 39)

@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 50 étapes, niveau final 40.00, ~33831 xp/h, 110 min.
+-- Simulation : 52 étapes, niveau final 40.00, ~33900 xp/h, 110 min.
 Q:RegisterGuide({
   id = "A_13",
   title = "Arathi Highlands",
   faction = "Alliance",
   minLevel = 39, maxLevel = 40,
   next = "A_15",
-  sim = { steps = 50, endLevel = 40.00, xpPerHour = 33831, minutes = 110 },
+  sim = { steps = 52, endLevel = 40.00, xpPerHour = 33900, minutes = 110 },
   steps = {
     { "boat", 1453, 69.6, 30.3, note = "Take the Deeprun Tram to Ironforge" }, -- bateau
     { "fp", 1455, 55.5, 47.74 }, -- point de vol
@@ -44,6 +44,7 @@ Q:RegisterGuide({
     { "turnin", 695, xp = 300 }, -- An Apprentice's Enchantment (lvl 39, ~300 xp, sim lvl 39)
     { "accept", 696 }, -- Attack on the Tower (lvl 39, ~3000 xp, sim lvl 39)
     { "complete", 652, at = { 1417, 63.9, 30 } }, -- Breaking the Keystone (lvl 42, ~3450 xp, sim lvl 39)
+    { "accept", 96016, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~1950 xp, sim lvl 39)
     { "turnin", 652, xp = 3450 }, -- Breaking the Keystone (lvl 42, ~3450 xp, sim lvl 39)
     { "accept", 653 }, -- Myzrael's Allies (lvl 40, ~0 xp, sim lvl 39)
     { "complete", 684, at = { 1417, 29.55, 63.55 } }, -- WANTED: Marez Cowl (lvl 39, ~3750 xp, sim lvl 39)
@@ -59,7 +60,8 @@ Q:RegisterGuide({
     { "goto", 1417, 45.73, 46.1, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "turnin", 602, xp = 1400 }, -- Magical Analysis (lvl 37, ~1400 xp, sim lvl 39)
+    { "turnin", 96016, xp = 1950, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~1950 xp, sim lvl 39)
     { "accept", 96800, optional = true, dungeon = "Scarlet Monastery" }, -- Past Due (lvl 38, ~0 xp, sim lvl 39)
-    { "level", 40, at = { 1417, 29.55, 63.55 }, note = "About 21 more mobs near the last objective" }, -- farm de niveau
+    { "level", 40, at = { 1417, 29.55, 63.55 }, note = "About 23 more mobs near the last objective" }, -- farm de niveau
   },
 })

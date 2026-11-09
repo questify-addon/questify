@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 38 étapes, niveau final 7.34, ~11775 xp/h, 65 min.
+-- Simulation : 46 étapes, niveau final 7.34, ~11775 xp/h, 65 min.
 Q:RegisterGuide({
   id = "H_Tauren_01",
   title = "Camp Narache",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Tauren" },
   minLevel = 1, maxLevel = 6,
   next = "H_Tauren_02",
-  sim = { steps = 38, endLevel = 7.34, xpPerHour = 11775, minutes = 65 },
+  sim = { steps = 46, endLevel = 7.34, xpPerHour = 11775, minutes = 65 },
   steps = {
     { "accept", 752 }, -- A Humble Task (lvl 2, ~85 xp, sim lvl 1)
     { "accept", 747 }, -- The Hunt Begins (lvl 2, ~170 xp, sim lvl 1)
@@ -19,9 +19,17 @@ Q:RegisterGuide({
     { "accept", 753 }, -- A Humble Task (lvl 3, ~250 xp, sim lvl 3)
     { "complete", 753, at = { 1412, 48.98, 81.16 } }, -- A Humble Task (lvl 3, ~250 xp, sim lvl 3)
     { "turnin", 747, xp = 170 }, -- The Hunt Begins (lvl 2, ~170 xp, sim lvl 3)
+    { "accept", 3091, classes = { "WARRIOR" } }, -- Simple Note (lvl 1, ~30 xp, sim lvl 3)
+    { "accept", 3092, classes = { "HUNTER" } }, -- Etched Note (lvl 1, ~45 xp, sim lvl 3)
+    { "accept", 3093, classes = { "SHAMAN" } }, -- Rune-Inscribed Note (lvl 1, ~45 xp, sim lvl 3)
+    { "accept", 3094, classes = { "DRUID" } }, -- Verdant Note (lvl 1, ~45 xp, sim lvl 3)
     { "accept", 750 }, -- The Hunt Continues (lvl 3, ~250 xp, sim lvl 3)
     { "accept", 3376 }, -- Break Sharptusk! (lvl 5, ~670 xp, sim lvl 3)
+    { "turnin", 3093, xp = 45, classes = { "SHAMAN" } }, -- Rune-Inscribed Note (lvl 1, ~45 xp, sim lvl 3)
+    { "turnin", 3094, xp = 45, classes = { "DRUID" } }, -- Verdant Note (lvl 1, ~45 xp, sim lvl 3)
     { "turnin", 753, xp = 250 }, -- A Humble Task (lvl 3, ~250 xp, sim lvl 3)
+    { "turnin", 3091, xp = 30, classes = { "WARRIOR" } }, -- Simple Note (lvl 1, ~30 xp, sim lvl 3)
+    { "turnin", 3092, xp = 45, classes = { "HUNTER" } }, -- Etched Note (lvl 1, ~45 xp, sim lvl 3)
     { "accept", 755 }, -- Rites of the Earthmother (lvl 3, ~250 xp, sim lvl 3)
     { "turnin", 755, xp = 250 }, -- Rites of the Earthmother (lvl 3, ~250 xp, sim lvl 3)
     { "accept", 757 }, -- Rite of Strength (lvl 4, ~445 xp, sim lvl 3)

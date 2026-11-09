@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 51 étapes, niveau final 32.07, ~37782 xp/h, 155 min.
+-- Simulation : 56 étapes, niveau final 32.07, ~37793 xp/h, 154 min.
 Q:RegisterGuide({
   id = "H_06",
   title = "Alterac Mountains and Arathi Highlands",
   faction = "Horde",
   minLevel = 30, maxLevel = 32,
   next = "H_07",
-  sim = { steps = 51, endLevel = 32.07, xpPerHour = 37782, minutes = 155 },
+  sim = { steps = 56, endLevel = 32.07, xpPerHour = 37793, minutes = 154 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Trouble in the Deeps, The Essence of Aku'Mai", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running Wailing Caverns? Abandon Trouble at the Docks, Deviate Hides, Deviate Eradication, Hamuul Runetotem", optional = true, dungeon = "Wailing Caverns" },
@@ -20,14 +20,19 @@ Q:RegisterGuide({
     { "accept", 556 }, -- Stone Tokens (lvl 32, ~2550 xp, sim lvl 30)
     { "accept", 544 }, -- Prison Break In (lvl 34, ~3350 xp, sim lvl 30)
     { "accept", 498 }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
+    { "accept", 79364, classes = { "SHAMAN" } }, -- Eyes on the Sky (lvl 33, ~1300 xp, sim lvl 30)
+    { "turnin", 79364, xp = 1300, classes = { "SHAMAN" } }, -- Eyes on the Sky (lvl 33, ~1300 xp, sim lvl 30)
     { "accept", 1361 }, -- Regthar Deathgate (lvl 32, ~0 xp, sim lvl 30)
     { "complete", 498, at = { 1424, 75.33, 41.5 } }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
+    { "accept", 96779, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~780 xp, sim lvl 30)
+    { "complete", 96779, at = { 1424, 79.35, 46.02 }, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~780 xp, sim lvl 30)
+    { "turnin", 96779, xp = 780, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~780 xp, sim lvl 30)
     { "turnin", 498, xp = 880 }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
     { "accept", 533 }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
     { "complete", 533, at = { 1416, 58.3, 67.96 } }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
     { "complete", 535, at = { 1416, 58.98, 68.49 } }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
     { "turnin", 535, xp = 270 }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
-    { "level", 31, at = { 1416, 14.01, 58.47 }, note = "About 11 mobs here (High Order Mage, level 30)" }, -- farm de niveau
+    { "level", 31, at = { 1416, 14.01, 58.47 }, note = "About 9 mobs here (High Order Mage, level 30)" }, -- farm de niveau
     { "complete", 556, at = { 1416, 19.4, 84.93 } }, -- Stone Tokens (lvl 32, ~2550 xp, sim lvl 31)
     { "complete", 544, at = { 1416, 19.91, 85.97 } }, -- Prison Break In (lvl 34, ~3350 xp, sim lvl 31)
     { "hearth", 1424 }, -- pierre de foyer

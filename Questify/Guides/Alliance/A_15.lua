@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 47 étapes, niveau final 41.00, ~37907 xp/h, 143 min.
+-- Simulation : 47 étapes, niveau final 41.00, ~37921 xp/h, 144 min.
 Q:RegisterGuide({
   id = "A_15",
   title = "Dustwallow Marsh",
   faction = "Alliance",
   minLevel = 40, maxLevel = 41,
   next = "A_16",
-  sim = { steps = 47, endLevel = 41.00, xpPerHour = 37907, minutes = 143 },
+  sim = { steps = 47, endLevel = 41.00, xpPerHour = 37921, minutes = 144 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau
@@ -57,6 +57,6 @@ Q:RegisterGuide({
     { "turnin", 1220, xp = 2750 }, -- Captain Vimes (lvl 35, ~2750 xp, sim lvl 40)
     { "turnin", 1320, xp = 1350 }, -- The Black Shield (lvl 35, ~1350 xp, sim lvl 40)
     { "turnin", 1287, xp = 2850 }, -- The Deserters (lvl 38, ~2850 xp, sim lvl 40)
-    { "level", 41, at = { 1445, 58.9, 50.31 }, note = "About 126 more mobs here (Muckshell Snapclaw, level 40)" }, -- farm de niveau
+    { "level", 41, at = { 1445, 58.9, 50.31 }, note = "About 127 more mobs here (Muckshell Snapclaw, level 40)" }, -- farm de niveau
   },
 })

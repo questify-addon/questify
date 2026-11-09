@@ -7,14 +7,14 @@ Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d30
 | Level band | 11-14 |
 | Simulated level | 11.00 -> 15.57 |
 | Time | 121 min |
-| XP gained | 42708 |
-| XP/h | 21162 |
-| Steps | 79 |
+| XP gained | 42808 |
+| XP/h | 21153 |
+| Steps | 92 |
 | Quests turned in | 27 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 4.94 |
-| Grinding (level steps) | ~73 mobs |
-| Level band | grinding 84 mobs with quests up to level 17: band widened to level 20 |
+| Grinding (level steps) | ~74 mobs |
+| Level band | grinding 85 mobs with quests up to level 17: band widened to level 20 |
 | Hearthstone | bound to Innkeeper Hearthstove after task 1; 1 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -380,6 +380,92 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 2038 | Bingles' Missing Supplies | 15 | level band reached |
 | 86614 | Silver of the Waves | 20 | level band reached |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 1715 | The Slaughtered Lamb | 10 | WARLOCK | woven, detour 86 s |
+| 5639 | Desperate Prayer | 10 | PRIEST | woven, detour 155 s |
+| 2999 | Tome of Divinity | 12 | PALADIN | woven, detour 139 s |
+| 94466 | Call of Fire | 14 | SHAMAN | woven, detour 324 s |
+| 94467 | Call of Fire | 14 | SHAMAN | woven, detour 278 s |
+| 1645 | The Tome of Divinity | 12 | PALADIN | repeatable |
+| 1655 | Bailor's Ore Shipment | 22 | PALADIN | quest level 22 above the band |
+| 1678 | Vejrek | 11 | WARRIOR | objective item source not in zone |
+| 1681 | Ironband's Compound | 11 | WARRIOR | objective item source not in zone |
+| 1698 | Yorus Barleybrew | 20 | WARRIOR | required level 20 above the band |
+| 1708 | Iron Coral | 29 | WARRIOR | quest level 29 above the band |
+| 1709 | Klockmort's Creation | 30 | WARRIOR | quest level 30 above the band |
+| 1717 | Gakin's Summons | 20 | WARLOCK | required level 20 above the band |
+| 1718 | The Islander | 30 | WARRIOR | quest level 30 above the band |
+| 1789 | The Symbol of Life | 12 | PALADIN | repeatable |
+| 1794 | The Tome of Valor | 20 | PALADIN | required level 20 above the band |
+| 1798 | Seeking Strahad | 30 | WARLOCK | quest level 30 above the band |
+| 1802 | Tome of the Cabal | 30 | WARLOCK | quest level 30 above the band |
+| 1804 | Tome of the Cabal | 30 | WARLOCK | quest level 30 above the band |
+| 1880 | Mage-tastic Gizmonitor | 10 | MAGE | objective item source not in zone |
+| 1919 | Report to Jennea | 15 | MAGE | required level 15 above the band |
+| 1939 | High Sorcerer Andromath | 26 | MAGE | quest level 26 above the band |
+| 1947 | Journey to the Marsh | 38 | MAGE | quest level 38 above the band |
+| 1953 | Return to the Marsh | 40 | MAGE | quest level 40 above the band |
+| 2298 | Kingly Shakedown | 16 | ROGUE | required level 16 above the band |
+| 4485 | The Tome of Nobility | 40 | PALADIN | quest level 40 above the band |
+| 4486 | The Tome of Nobility | 40 | PALADIN | quest level 40 above the band |
+| 4487 | Summon Felsteed | 40 | WARLOCK | quest level 40 above the band |
+| 4736 | In Search of Menara Voidrender | 31 | WARLOCK | quest level 31 above the band |
+| 4965 | Knowledge of the Orb of Orahil | 35 | WARLOCK | quest level 35 above the band |
+| 5641 | A Lack of Fear | 20 | PRIEST | required level 20 above the band |
+| 7562 | Mor'zul Bloodbringer | 58 | WARLOCK | quest level 58 above the band |
+| 7639 | To Show Due Judgment | 60 | PALADIN | quest level 60 above the band |
+| 7670 | Lord Grayson Shadowbreaker | 60 | PALADIN | quest level 60 above the band |
+| 8151 | The Hunter's Charm | 52 | HUNTER | quest level 52 above the band |
+| 8233 | A Simple Request | 52 | ROGUE | quest level 52 above the band |
+| 8250 | Magecraft | 52 | MAGE | quest level 52 above the band |
+| 8254 | Cenarion Aid | 52 | PRIEST | quest level 52 above the band |
+| 8415 | Chillwind Point | 52 | PALADIN | quest level 52 above the band |
+| 8417 | A Troubled Spirit | 50 | WARRIOR | quest level 50 above the band |
+| 8419 | An Imp's Request | 52 | WARLOCK | quest level 52 above the band |
+| 8905 | An Earnest Proposition | 60 | DRUID | quest level 60 above the band |
+| 8906 | An Earnest Proposition | 60 | HUNTER | quest level 60 above the band |
+| 8907 | An Earnest Proposition | 60 | MAGE | quest level 60 above the band |
+| 8908 | An Earnest Proposition | 60 | PALADIN | quest level 60 above the band |
+| 8909 | An Earnest Proposition | 60 | PRIEST | quest level 60 above the band |
+| 8910 | An Earnest Proposition | 60 | ROGUE | quest level 60 above the band |
+| 8911 | An Earnest Proposition | 60 | WARLOCK | quest level 60 above the band |
+| 8912 | An Earnest Proposition | 60 | WARRIOR | quest level 60 above the band |
+| 8926 | Just Compensation | 60 | DRUID | quest level 60 above the band |
+| 8931 | Just Compensation | 60 | HUNTER | quest level 60 above the band |
+| 8932 | Just Compensation | 60 | MAGE | quest level 60 above the band |
+| 8933 | Just Compensation | 60 | PALADIN | quest level 60 above the band |
+| 8934 | Just Compensation | 60 | PRIEST | quest level 60 above the band |
+| 8935 | Just Compensation | 60 | ROGUE | quest level 60 above the band |
+| 8936 | Just Compensation | 60 | WARLOCK | quest level 60 above the band |
+| 8937 | Just Compensation | 60 | WARRIOR | quest level 60 above the band |
+| 8999 | Saving the Best for Last | 60 | DRUID | quest level 60 above the band |
+| 9000 | Saving the Best for Last | 60 | HUNTER | quest level 60 above the band |
+| 9001 | Saving the Best for Last | 60 | MAGE | quest level 60 above the band |
+| 9002 | Saving the Best for Last | 60 | PALADIN | quest level 60 above the band |
+| 9003 | Saving the Best for Last | 60 | PRIEST | quest level 60 above the band |
+| 9004 | Saving the Best for Last | 60 | ROGUE | quest level 60 above the band |
+| 9005 | Saving the Best for Last | 60 | WARLOCK | quest level 60 above the band |
+| 9006 | Saving the Best for Last | 60 | WARRIOR | quest level 60 above the band |
+| 94473 | Fire Sapta | 13 | SHAMAN | repeatable |
+| 94494 | Call of Water | 20 | SHAMAN | required level 20 above the band |
+| 94495 | Call of Water | 22 | SHAMAN | quest level 22 above the band |
+| 94502 | Call of Water | 23 | SHAMAN | quest level 23 above the band |
+| 94616 | Water Sapta | 20 | SHAMAN | required level 20 above the band |
+| 94789 | Call of Air | 30 | SHAMAN | quest level 30 above the band |
+| 1682 | Grey Iron Weapons | 10 | WARRIOR | prerequisite or exclusive quest not done for the class |
+| 94817 | Confounding Flash | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
+| 1680 | Tormus Deepforge | 11 | WARRIOR | prerequisite or exclusive quest not done for the class |
+| 1647 | The Tome of Divinity | 12 | PALADIN | prerequisite or exclusive quest not done for the class |
+| 1648 | The Tome of Divinity | 13 | PALADIN | prerequisite or exclusive quest not done for the class |
+| 1778 | The Tome of Divinity | 13 | PALADIN | prerequisite or exclusive quest not done for the class |
+| 1779 | The Tome of Divinity | 13 | PALADIN | prerequisite or exclusive quest not done for the class |
+| 1785 | The Tome of Divinity | 13 | PALADIN | prerequisite or exclusive quest not done for the class |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -517,15 +603,15 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 ## Logistics
 
 - step 2: `sethearth 1432 35.53 48.4`
-- step 13: `level 13` — About 20 mobs here (Stonesplinter Trogg, level 11)
-- step 20: `fly 1455` — Ironforge, Dun Morogh
-- step 22: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
-- step 43: `level 14` — About 53 mobs here (Loch Crocolisk, level 14)
-- step 68: `hearth 1432`
-- step 71: `goto 1432 33.94 50.95` — Flight master
-- step 72: `fly 1455` — Ironforge, Dun Morogh
-- step 74: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
-- step 76: `fp 1453 71.29 72.23`
+- step 14: `level 13` — About 21 mobs here (Stonesplinter Trogg, level 11)
+- step 21: `fly 1455` — Ironforge, Dun Morogh
+- step 23: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
+- step 50: `level 14` — About 53 mobs here (Loch Crocolisk, level 14)
+- step 79: `hearth 1432`
+- step 82: `goto 1432 33.94 50.95` — Flight master
+- step 83: `fly 1455` — Ironforge, Dun Morogh
+- step 85: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
+- step 88: `fp 1453 71.29 72.23`
 
 ## Warnings
 
