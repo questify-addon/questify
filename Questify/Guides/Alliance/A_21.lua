@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 30 étapes, niveau final 50.00, ~46350 xp/h, 358 min.
+-- Simulation : 30 étapes, niveau final 50.00, ~46351 xp/h, 358 min.
 Q:RegisterGuide({
   id = "A_21",
   title = "Stranglethorn Vale",
   faction = "Alliance",
   minLevel = 48, maxLevel = 50,
   next = "A_22",
-  sim = { steps = 30, endLevel = 50.00, xpPerHour = 46350, minutes = 358 },
+  sim = { steps = 30, endLevel = 50.00, xpPerHour = 46351, minutes = 358 },
   steps = {
     { "hearth", 1446 }, -- pierre de foyer
     { "goto", 1446, 51.01, 29.34, note = "Flight master" }, -- déplacement

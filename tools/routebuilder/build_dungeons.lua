@@ -26,40 +26,8 @@ package.path = "tools/routebuilder/?.lua;" .. package.path
 local qdb = require("qdb")
 local world = require("world")
 
----------------------------------------------------------------------------
--- Donjons retenus : clé stable (sauvegardes de l'addon), zone (AreaTable), niveaux conseillés.
--- Niveaux des donjons classiques : plages usuelles de l'outil de recherche de groupe de Classic ;
--- donjons ajoutés par Forever : plages annoncées par Blizzard. À vérifier en jeu.
--- only = seule faction autorisée, quelles que soient les données.
----------------------------------------------------------------------------
-local DUNGEONS = {
-  { key = "RFC", area = 2437, min = 13, max = 18, only = "Horde" },      -- Gouffre de Ragefeu (Orgrimmar)
-  { key = "THANES", area = 16919, min = 13, max = 18 },                  -- The Hall of Thanes (Forever)
-  { key = "LORDAERON", area = 16611, min = 15, max = 22 },               -- Ruins of Lordaeron (Forever)
-  { key = "WC", area = 718, min = 17, max = 24 },                        -- Cavernes des lamentations
-  { key = "DM", area = 1581, min = 17, max = 26 },                       -- Les Mortemines
-  { key = "SFK", area = 209, min = 22, max = 30 },                       -- Donjon d'Ombrecroc
-  { key = "BFD", area = 719, min = 24, max = 32 },                       -- Profondeurs de Brassenoire
-  { key = "STOCKADE", area = 717, min = 24, max = 32, only = "Alliance" }, -- La Prison (Hurlevent)
-  { key = "EXCAVATION", area = 16732, min = 24, max = 29 },              -- Excavation Site: Wetlands (Forever)
-  { key = "DALARAN", area = 16544, min = 28, max = 33 },                 -- City of Dalaran (Forever)
-  { key = "SM", area = 796, min = 28, max = 45 },                        -- Monastère écarlate (toutes les ailes)
-  { key = "GNOMER", area = 721, min = 29, max = 38 },                    -- Gnomeregan
-  { key = "RFK", area = 491, min = 29, max = 38 },                       -- Kraal de Tranchebauge
-  -- Lot H (routes 30-60, 2026-11-06) : niveaux du plan « meta paths 1-60 », à vérifier en jeu.
-  { key = "ULDAMAN", area = 1337, min = 36, max = 47 },                  -- Uldaman
-  { key = "RFD", area = 722, min = 37, max = 46 },                       -- Souilles de Tranchebauge
-  { key = "MARAUDON", area = 2100, min = 42, max = 52 },                 -- Maraudon
-  { key = "ZF", area = 1176, min = 44, max = 54 },                       -- Zul'Farrak
-  { key = "ST", area = 1477, min = 50, max = 60 },                       -- Temple d'Atal'Hakkar
-  { key = "BRD", area = 1584, min = 52, max = 60 },                      -- Profondeurs de Rochenoire
-  -- Hache-Tripes : une seule clé (est, ouest et nord ont le même nom et la même zone 2557 dans QuestieDB)
-  { key = "DIREMAUL", area = 2557, min = 55, max = 60 },                 -- Hache-Tripes
-  { key = "SCHOLO", area = 2057, min = 55, max = 60 },                   -- Scholomance
-  { key = "STRAT", area = 2017, min = 58, max = 60 },                    -- Stratholme
-  -- Raids (Cœur du Magma, Onyxia, Zul'Gurub, Ahn'Qiraj, Naxxramas...) et Pic Rochenoire (zone 1583
-  -- commune à la partie basse et à la partie haute, raid de 10) : hors catalogue.
-}
+-- Donjons retenus : dungeon_catalog.lua (partagé avec sim.lua).
+local DUNGEONS = require("dungeon_catalog").list
 
 -- Entrées de secours (uiMapID, x, y) quand QuestieDB n'en donne pas : à vérifier en jeu.
 local MANUAL_ENTRANCES = {

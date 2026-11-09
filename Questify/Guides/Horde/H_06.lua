@@ -2,17 +2,19 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 62 étapes, niveau final 32.38, ~35850 xp/h, 199 min.
+-- Simulation : 64 étapes, niveau final 32.39, ~35844 xp/h, 199 min.
 Q:RegisterGuide({
   id = "H_06",
   title = "Alterac Mountains and Arathi Highlands",
   faction = "Horde",
   minLevel = 30, maxLevel = 32,
   next = "H_07",
-  sim = { steps = 62, endLevel = 32.38, xpPerHour = 35850, minutes = 199 },
+  sim = { steps = 64, endLevel = 32.39, xpPerHour = 35844, minutes = 199 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Trouble in the Deeps, The Essence of Aku'Mai", optional = true, dungeon = "Blackfathom Deeps" },
-    { "note", "Not running Wailing Caverns? Abandon Trouble at the Docks, Deviate Hides, Deviate Eradication, Hamuul Runetotem", optional = true, dungeon = "Wailing Caverns" },
+    { "note", "Not running Ragefire Chasm? Abandon Hidden Enemies, Slaying the Beast", optional = true, dungeon = "Ragefire Chasm" },
+    { "note", "Not running Razorfen Kraul? Abandon Blueleaf Tubers", optional = true, dungeon = "Razorfen Kraul" },
+    { "note", "Not running Wailing Caverns? Abandon Trouble at the Docks, Deviate Hides, Deviate Eradication, Hamuul Runetotem, Smart Drinks", optional = true, dungeon = "Wailing Caverns" },
     { "hearth", 1424 }, -- pierre de foyer
     { "accept", 535 }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
     { "accept", 676 }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 30)
@@ -51,7 +53,7 @@ Q:RegisterGuide({
     { "turnin", 97287, xp = 1300 }, -- Shrewd Negotiations (lvl 33, ~1300 xp, sim lvl 31)
     { "accept", 96984, optional = true, dungeon = "City of Dalaran" }, -- Heart of Disruption (lvl 33, ~0 xp, sim lvl 31)
     { "complete", 557, at = { 1416, 21.03, 58.34 } }, -- Bracers of Binding (lvl 34, ~2700 xp, sim lvl 31)
-    { "level", 32, at = { 1416, 13.13, 55.46 }, note = "About 55 mobs here (High Order Mage, level 30)" }, -- farm de niveau
+    { "level", 32, at = { 1416, 13.13, 55.46 }, note = "About 56 mobs here (High Order Mage, level 30)" }, -- farm de niveau
     { "complete", 545, at = { 1416, 21.01, 58.98 } }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 32)
     { "complete", 541, at = { 1424, 71.28, 79.49 } }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 32)
     { "hearth", 1424 }, -- pierre de foyer

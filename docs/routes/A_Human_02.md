@@ -78,9 +78,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 94 | A Watchful Eye | 21 | quest level 21 above the band |
 | 119 | Return to Verner | 18 | quest level 18 above the band |
 | 121 | Messenger to Stormwind | 14 | required level 14 above the band |
-| 141 | The Defias Brotherhood | 18 | quest level 18 above the band |
-| 167 | Oh Brother. . . | 20 | quest level 20 above the band |
-| 168 | Collecting Memories | 18 | quest level 18 above the band |
+| 141 | The Defias Brotherhood | 18 | required level 14 above the band |
+| 167 | Oh Brother. . . | 20 | required level 15 above the band |
+| 168 | Collecting Memories | 18 | required level 14 above the band |
 | 171 | A Warden of the Alliance | 60 | Questie blacklist |
 | 212 | A Meal Served Cold | 40 | quest level 40 above the band |
 | 249 | Morganth | 27 | quest level 27 above the band |
@@ -97,10 +97,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 346 | Return to Kristoff | 24 | quest level 24 above the band |
 | 350 | Look to an Old Friend | 31 | quest level 31 above the band |
 | 353 | Stormpike's Delivery | 15 | quest level 15 above the band |
-| 387 | Quell The Uprising | 26 | quest level 26 above the band |
-| 388 | The Color of Blood | 26 | quest level 26 above the band |
-| 389 | Bazil Thredd | 22 | quest level 22 above the band |
-| 391 | The Stockade Riots | 29 | quest level 29 above the band |
+| 387 | Quell The Uprising | 26 | required level 22 above the band |
+| 388 | The Color of Blood | 26 | required level 22 above the band |
+| 389 | Bazil Thredd | 22 | required level 16 above the band |
+| 391 | The Stockade Riots | 29 | required level 16 above the band |
 | 392 | The Curious Visitor | 29 | quest level 29 above the band |
 | 393 | Shadow of the Past | 29 | quest level 29 above the band |
 | 394 | The Head of the Beast | 31 | quest level 31 above the band |
@@ -135,7 +135,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1448 | In Search of The Temple | 43 | quest level 43 above the band |
 | 1449 | To The Hinterlands | 43 | quest level 43 above the band |
 | 1468 | Children's Week | 60 | Questie blacklist |
-| 1475 | Into The Temple of Atal'Hakkar | 50 | quest level 50 above the band |
+| 1475 | Into The Temple of Atal'Hakkar | 50 | required level 41 above the band |
 | 1477 | Vital Supplies | 45 | quest level 45 above the band |
 | 1479 | The Bough of the Eternals | 60 | Questie blacklist |
 | 1558 | The Stonewrought Dam | 60 | Questie blacklist |
@@ -185,7 +185,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1942 | Astral Knot Garment | 26 | class quest (ClassQuestData.lua) |
 | 1947 | Journey to the Marsh | 38 | class quest (ClassQuestData.lua) |
 | 1953 | Return to the Marsh | 40 | class quest (ClassQuestData.lua) |
-| 2040 | Underground Assault | 20 | quest level 20 above the band |
+| 2040 | Underground Assault | 20 | required level 15 above the band |
 | 2205 | Seek out SI: 7 | 10 | class quest (ClassQuestData.lua) |
 | 2206 | Snatch and Grab | 10 | class quest (ClassQuestData.lua) |
 | 2281 | Redridge Rendezvous | 16 | class quest (ClassQuestData.lua) |
@@ -198,9 +198,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 2746 | Items of Some Consequence | 31 | quest level 31 above the band |
 | 2758 | The Origins of Smithing | 40 | quest level 40 above the band |
 | 2759 | In Search of Galvan | 40 | quest level 40 above the band |
-| 2861 | Tabetha's Task | 46 | quest level 46 above the band |
-| 2923 | Tinkmaster Overspark | 26 | quest level 26 above the band |
-| 2928 | Gyrodrillmatic Excavationators | 30 | quest level 30 above the band |
+| 2861 | Tabetha's Task | 46 | required level 40 above the band |
+| 2923 | Tinkmaster Overspark | 26 | required level 20 above the band |
+| 2928 | Gyrodrillmatic Excavationators | 30 | required level 20 above the band |
 | 2998 | Tome of Divinity | 12 | class quest (ClassQuestData.lua) |
 | 3100 | Simple Letter | 1 | class quest (ClassQuestData.lua) |
 | 3101 | Consecrated Letter | 1 | class quest (ClassQuestData.lua) |
@@ -209,17 +209,17 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3104 | Glyphic Letter | 1 | class quest (ClassQuestData.lua) |
 | 3105 | Tainted Letter | 1 | class quest (ClassQuestData.lua) |
 | 3630 | Gnome Engineering | 47 | quest level 47 above the band |
-| 3636 | Bring the Light | 42 | quest level 42 above the band |
+| 3636 | Bring the Light | 42 | required level 39 above the band |
 | 3765 | The Corruption Abroad | 24 | quest level 24 above the band |
 | 3787 | Jonespyre's Request | 50 | quest level 50 above the band |
 | 3789 | Assisting Arch Druid Staghelm | 50 | quest level 50 above the band |
 | 3861 | CLUCK! | 1 | quest level 1 below the band |
 | 4181 | Goblin Engineering | 47 | quest level 47 above the band |
 | 4185 | The True Masters | 54 | quest level 54 above the band |
-| 4186 | The True Masters | 54 | quest level 54 above the band |
+| 4186 | The True Masters | 54 | required level 48 above the band |
 | 4488 | Summon Felsteed | 40 | class quest (ClassQuestData.lua) |
 | 4738 | In Search of Menara Voidrender | 31 | class quest (ClassQuestData.lua) |
-| 4766 | Mayara Brightwing | 60 | quest level 60 above the band |
+| 4766 | Mayara Brightwing | 60 | required level 57 above the band |
 | 4822 | You Scream, I Scream... | 60 | Questie blacklist |
 | 4968 | Knowledge of the Orb of Orahil | 35 | class quest (ClassQuestData.lua) |
 | 5048 | Good Natured Emma | 52 | quest level 52 above the band |
@@ -239,7 +239,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6501 | The Dragon's Eye | 60 | quest level 60 above the band |
 | 6681 | The Manor, Ravenholdt | 24 | class quest (ClassQuestData.lua) |
 | 7023 | Greatfather Winter is Here! | 60 | Questie blacklist |
-| 7494 | Feathermoon Stronghold | 57 | quest level 57 above the band |
+| 7494 | Feathermoon Stronghold | 57 | required level 54 above the band |
 | 7496 | Celebrating Good Times | 60 | quest level 60 above the band |
 | 7497 | The Journey Has Just Begun | 60 | quest level 60 above the band |
 | 7562 | Mor'zul Bloodbringer | 58 | class quest (ClassQuestData.lua) |
@@ -304,31 +304,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8311 | Hallow's End Treats for Jesper! | 60 | Questie blacklist |
 | 8356 | Flexing for Nougat | 60 | Questie blacklist |
 | 8371 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8372 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8374 | Claiming Arathi Basin | 29 | quest level 29 above the band |
-| 8375 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8383 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8384 | Claiming Arathi Basin | 29 | quest level 29 above the band |
+| 8372 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8374 | Claiming Arathi Basin | 29 | required level 20 above the band |
+| 8375 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8383 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8384 | Claiming Arathi Basin | 29 | required level 20 above the band |
 | 8385 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8386 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8391 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8392 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8393 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8394 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8395 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8396 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8397 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8398 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8399 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8400 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8401 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8402 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8403 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
-| 8404 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8405 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8406 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8407 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8408 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
+| 8386 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8391 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8392 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8393 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8394 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8395 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8396 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8397 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8398 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8399 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8400 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8401 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8402 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8403 | Fight for Warsong Gulch | 60 | required level 60 above the band |
+| 8404 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8405 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8406 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8407 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8408 | Fight for Warsong Gulch | 60 | required level 60 above the band |
 | 8415 | Chillwind Point | 52 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8419 | An Imp's Request | 52 | class quest (ClassQuestData.lua) |
@@ -421,13 +421,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 91738 | An Apple Treat | 10 | objective item source not in zone |
 | 91751 | Rough Wolf Pelts | 8 | requires a profession |
 | 91753 | An Enchanting Lesson | 7 | requires a profession |
-| 92456 | A Green Sample | 33 | quest level 33 above the band |
+| 92456 | A Green Sample | 33 | required level 24 above the band |
 | 92479 | A Scribbled Letter | 1 | class quest (ClassQuestData.lua) |
-| 92489 | Power Overwhelming | 33 | quest level 33 above the band |
-| 92749 | A Dynamite Plan | 16 | quest level 16 above the band |
-| 92750 | Detonation at a Distance | 16 | quest level 16 above the band |
-| 92751 | Detonation at a Distance | 16 | quest level 16 above the band |
-| 92752 | Explosive Consultation | 16 | quest level 16 above the band |
+| 92489 | Power Overwhelming | 33 | required level 24 above the band |
+| 92749 | A Dynamite Plan | 16 | objective item source not in zone |
 | 94773 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
 | 94774 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
 | 94777 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
@@ -460,6 +457,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98896 | Darkspear Islands Clash | 39 | quest level 39 above the band |
 | 6261 | Dungar Longdrink | 10 | prerequisite unavailable |
 | 6285 | Return to Lewis | 10 | prerequisite unavailable |
+| 92750 | Detonation at a Distance | 16 | prerequisite unavailable |
+| 92751 | Detonation at a Distance | 16 | prerequisite unavailable |
+| 92752 | Explosive Consultation | 16 | prerequisite unavailable |
 | 52 | Protect the Frontier | 10 | level band reached |
 | 59 | Cloth and Leather Armor | 10 | level band reached |
 | 5545 | A Bundle of Trouble | 9 | level band reached |

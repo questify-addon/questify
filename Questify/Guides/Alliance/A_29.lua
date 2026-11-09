@@ -2,21 +2,22 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 52 étapes, niveau final 59.00, ~59822 xp/h, 203 min.
+-- Simulation : 53 étapes, niveau final 59.00, ~59800 xp/h, 203 min.
 Q:RegisterGuide({
   id = "A_29",
   title = "Eastern Plaguelands",
   faction = "Alliance",
   minLevel = 58, maxLevel = 59,
   next = "A_30",
-  sim = { steps = 52, endLevel = 59.00, xpPerHour = 59822, minutes = 203 },
+  sim = { steps = 53, endLevel = 59.00, xpPerHour = 59800, minutes = 203 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1417, node = 16, note = "Refuge Pointe, Arathi" }, -- vol
     { "fp", 1423, 71.81, 49.6 }, -- point de vol
     { "accept", 9664 }, -- Establishing New Outposts (lvl 60, ~6600 xp, sim lvl 58)
-    { "accept", 5211 }, -- Defenders of Darrowshire (lvl 55, ~5650 xp, sim lvl 58)
+    { "accept", 5529, optional = true, dungeon = "Scholomance" }, -- Plagued Hatchlings (lvl 58, ~0 xp, sim lvl 58)
     { "accept", 5212, optional = true, dungeon = "Stratholme" }, -- The Flesh Does Not Lie (lvl 60, ~0 xp, sim lvl 58)
+    { "accept", 5211 }, -- Defenders of Darrowshire (lvl 55, ~5650 xp, sim lvl 58)
     { "turnin", 6030, xp = 2040 }, -- Duke Nicholas Zverenhoff (lvl 52, ~2040 xp, sim lvl 58)
     { "accept", 5251, optional = true, dungeon = "Stratholme" }, -- The Archivist (lvl 60, ~0 xp, sim lvl 58)
     { "accept", 5281 }, -- The Restless Souls (lvl 60, ~6600 xp, sim lvl 58)

@@ -96,7 +96,6 @@ other chapters from the XML.
     { id = "A_Human_02", races = { "Gnome" }, label = "...", travel = { kind = "tram" }, weight = 1 },
   },                                     -- (see "Successor choices" below)
   flightPaths = { "Ironforge, Dun Morogh" }, -- TaxiNodes names to pick up in this chapter (planned detour)
-  dungeons = { "The Hall of Thanes" },   -- dungeon quests (QuestieDB dungeon names) accepted in passing, optional
   optional = { [96391] = "Hall of Thanes" }, -- forced quests marked optional + dungeon label
   force = { [id] = true }, drop = { [id] = "reason" },
   levelSlack = 1,                        -- levels of overshoot allowed above maxLevel (XP budget)
@@ -339,7 +338,6 @@ guide with an invalid step is refused in game with one `Invalid guide <id>: step
 | `levelBelow` | Lowest quest level accepted: `minLevel - levelBelow` (default 3). |
 | `far` | Distance in yards beyond which a quest is dropped as `far` (default 900). |
 | `dungeonReqSlack` | Dungeon quests accepted up to required level `maxLevel + n`. |
-| `dungeonLevelHigh` | Dungeon quests accepted up to quest level `maxLevel + n`. |
 | `strictLevel` | Ordering counts the grinding before a level-gated task (see below). |
 | `arrive.via` | Point reached by computed travel before the fixed `arrive` steps. |
 | `precede` | Pairs `{ first, second }` of task ids (`A`, `T`, `C` + quest id, `O` + quest id = all its objective sites): extra precedence. |
@@ -568,7 +566,7 @@ measured here (see `docs/routes/README.md` for the per-chapter table):
 
 ### Dungeon quests taken in passing
 
-Dungeon quests accepted in passing (`dungeons`, `optional` steps, log value `"dungeon"`) used to stay in the
+Dungeon quests accepted in passing (`optional` steps, log value `"dungeon"`) used to stay in the
 simulated log for good: at level 30, 10 of the 20 slots of the Alliance path were taken. From a chapter whose
 `minLevel` is at least `DUNGEON_RELEASE_FROM` (30), each such quest whose level is at most
 `minLevel - DUNGEON_RELEASE_GAP` (4) leaves the log at the start of the chapter (`sim.releaseDungeonQuests`),
@@ -816,6 +814,47 @@ quests (`## Class quests`).
 `build.raceFilters` replays each race path once without class steps, then once per class named on the path:
 a class step invalid for a race gets a `race` filter without it, or is removed in a chapter of a single race
 path (reason in the report warnings).
+
+## Dungeon quests in every chapter (2026-11-09)
+
+Dungeon quests give a lot of XP and gear, and every dungeon should be run at least once. A chapter used to take
+the quests of the dungeons listed by hand in its plan (`dungeons`), within the quest level band. Now every
+chapter takes, in passing, the dungeon quests whose giver is in its region; the in-game dungeon window
+(`Engine/Dungeons.lua`) does the rest when the dungeon is added to the route.
+
+- Dungeons: `dungeon_catalog.lua` (shared with `build_dungeons.lua`, so the route and the dungeon window agree).
+  A quest counts when its QuestieDB zone is a catalogue dungeon open to the faction (`only`) and not outleveled
+  at the start of the chapter (`max >= minLevel`). Otherwise: `dungeon quest (X outside the dungeon catalogue)`,
+  `(X closed to the Horde)`, `(X outleveled: up to level N)`. The `dungeons` lists of `plans.lua` and
+  `dungeonLevelHigh` are gone; `optional` still forces a quest, `dungeonReqSlack` still widens the required
+  level.
+- Levels: no quest level ceiling (the quest is done later, in the instance); required level at most `maxLevel`
+  (+ `dungeonReqSlack`). The accept never grinds: below its required level the task waits (deferred, back as
+  soon as the level is reached); still blocked at the end of the chapter: `dungeon quest: required level N not
+  reached in this chapter`, without a chapter rerun.
+- Chains (`catalog.prerequisites`, `DUNGEON_CHAIN` = 3 levels of `preSingle` / `preGroup`): a quest that leads to
+  a quest of an open dungeon, given in this chapter or elsewhere, is a candidate above the quest level band,
+  kept first in the XP budget (like forced quests) and never dropped as `low ratio` (`far` still applies). When
+  only that exemption keeps it, its steps are `optional` + `dungeon` (hidden with the dungeon quests option off,
+  like the accept). Example: The Forgotten Pools, The Stagnant Oasis and Altered Beings in The Barrens open
+  Leaders of the Fang (Wailing Caverns), whose talk prerequisites the dungeon window chains itself.
+- Left to the dungeon window: givers in zones crossed before the required level (Gnomeregan quests in Ironforge
+  and Dun Morogh, Stockade and Dalaran quests in Stormwind for the Human path), and chains that start outside
+  the chapters.
+- `classquests.lua` leaves out `<NYI>` titles (never implemented quests; an older Questie clone does not
+  blacklist them).
+
+Measured (QuestieDB v1.0.12, sum of all chapters):
+
+| | Before | After |
+|---|---|---|
+| Town quests of `DungeonData.lua` taken by the routes, Alliance | 31 / 132 | 41 / 132 |
+| Same, Horde | 28 / 132 | 44 / 132 |
+| Simulated minutes, Alliance | 6 543 | 6 609 (+1.0 %) |
+| Simulated minutes, Horde | 6 355 | 6 390 (+0.6 %) |
+
+Main remaining reasons: required level above the band (97 chapter checks) and a prerequisite done in no chapter
+(58).
 
 ## Known limits
 

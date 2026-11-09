@@ -2,25 +2,23 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 55 étapes, niveau final 54.00, ~48309 xp/h, 207 min.
+-- Simulation : 56 étapes, niveau final 54.00, ~48538 xp/h, 206 min.
 Q:RegisterGuide({
   id = "H_25",
   title = "Azshara",
   faction = "Horde",
   minLevel = 53, maxLevel = 54,
   next = "H_26",
-  sim = { steps = 55, endLevel = 54.00, xpPerHour = 48309, minutes = 207 },
+  sim = { steps = 56, endLevel = 54.00, xpPerHour = 48538, minutes = 206 },
   steps = {
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
     { "fp", 1447, 21.96, 49.62 }, -- point de vol
     { "accept", 3517 }, -- Stealing Knowledge (lvl 52, ~5100 xp, sim lvl 53)
     { "complete", 3517, at = { 1447, 35.16, 56.94 } }, -- Stealing Knowledge (lvl 52, ~5100 xp, sim lvl 53)
     { "turnin", 3517, xp = 5100 }, -- Stealing Knowledge (lvl 52, ~5100 xp, sim lvl 53)
-    { "accept", 3518 }, -- Delivery to Magatha (lvl 52, ~2550 xp, sim lvl 53)
-    { "accept", 3541 }, -- Delivery to Jes'rimon (lvl 52, ~2550 xp, sim lvl 53)
     { "accept", 3561 }, -- Delivery to Archmage Xylem (lvl 52, ~2550 xp, sim lvl 53)
-    { "turnin", 3561, xp = 2550 }, -- Delivery to Archmage Xylem (lvl 52, ~2550 xp, sim lvl 53)
-    { "accept", 3565 }, -- Xylem's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
+    { "accept", 3541 }, -- Delivery to Jes'rimon (lvl 52, ~2550 xp, sim lvl 53)
+    { "accept", 3518 }, -- Delivery to Magatha (lvl 52, ~2550 xp, sim lvl 53)
     { "goto", 1447, 21.96, 49.62, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "accept", 3504 }, -- Betrayed (lvl 53, ~2650 xp, sim lvl 53)
@@ -28,8 +26,6 @@ Q:RegisterGuide({
     { "accept", 8151, classes = { "HUNTER" } }, -- The Hunter's Charm (lvl 52, ~510 xp, sim lvl 53)
     { "turnin", 649, xp = 440 }, -- Ripple Recovery (lvl 48, ~440 xp, sim lvl 53)
     { "turnin", 3541, xp = 2550 }, -- Delivery to Jes'rimon (lvl 52, ~2550 xp, sim lvl 53)
-    { "accept", 8250, classes = { "MAGE" } }, -- Magecraft (lvl 52, ~510 xp, sim lvl 53)
-    { "accept", 8254, classes = { "PRIEST" } }, -- Cenarion Aid (lvl 52, ~510 xp, sim lvl 53)
     { "accept", 3563 }, -- Jes'rimon's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
     { "accept", 5535 }, -- Spiritual Unrest (lvl 47, ~3360 xp, sim lvl 53)
     { "sethearth", 1447, 11.66, 76.54 }, -- lier la pierre de foyer
@@ -38,9 +34,9 @@ Q:RegisterGuide({
     { "complete", 5536, at = { 1447, 20.31, 61.77 } }, -- A Land Filled with Hatred (lvl 47, ~3360 xp, sim lvl 53)
     { "turnin", 3504, xp = 2650 }, -- Betrayed (lvl 53, ~2650 xp, sim lvl 53)
     { "accept", 3505 }, -- Betrayed (lvl 53, ~3950 xp, sim lvl 53)
-    { "turnin", 3565, xp = 3800 }, -- Xylem's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
-    { "turnin", 8250, xp = 510, classes = { "MAGE" } }, -- Magecraft (lvl 52, ~510 xp, sim lvl 53)
     { "turnin", 3563, xp = 3800 }, -- Jes'rimon's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
+    { "turnin", 3561, xp = 2550 }, -- Delivery to Archmage Xylem (lvl 52, ~2550 xp, sim lvl 53)
+    { "accept", 3565 }, -- Xylem's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
     { "accept", 3601 }, -- Kim'jael Indeed! (lvl 53, ~6550 xp, sim lvl 53)
     { "complete", 3601, at = { 1447, 57.57, 28.05 } }, -- Kim'jael Indeed! (lvl 53, ~6550 xp, sim lvl 53)
     { "complete", 3505, at = { 1447, 56.35, 27.88 } }, -- Betrayed (lvl 53, ~3950 xp, sim lvl 53)
@@ -52,19 +48,24 @@ Q:RegisterGuide({
     { "accept", 5534 }, -- Kim'jael's "Missing" Equipment (lvl 53, ~6550 xp, sim lvl 53)
     { "complete", 5534, at = { 1447, 47.31, 49.11 } }, -- Kim'jael's "Missing" Equipment (lvl 53, ~6550 xp, sim lvl 53)
     { "turnin", 8151, xp = 510, classes = { "HUNTER" } }, -- The Hunter's Charm (lvl 52, ~510 xp, sim lvl 53)
-    { "turnin", 8254, xp = 510, classes = { "PRIEST" } }, -- Cenarion Aid (lvl 52, ~510 xp, sim lvl 53)
     { "turnin", 5534, xp = 6550 }, -- Kim'jael's "Missing" Equipment (lvl 53, ~6550 xp, sim lvl 53)
     { "hearth", 1447 }, -- pierre de foyer
-    { "turnin", 5535, xp = 3360 }, -- Spiritual Unrest (lvl 47, ~3360 xp, sim lvl 53)
     { "turnin", 5536, xp = 3360 }, -- A Land Filled with Hatred (lvl 47, ~3360 xp, sim lvl 53)
+    { "turnin", 5535, xp = 3360 }, -- Spiritual Unrest (lvl 47, ~3360 xp, sim lvl 53)
+    { "turnin", 3565, xp = 3800 }, -- Xylem's Payment to Jediga (lvl 52, ~3800 xp, sim lvl 53)
     { "turnin", 3506, xp = 4350 }, -- Betrayed (lvl 56, ~4350 xp, sim lvl 53)
     { "accept", 3507 }, -- Betrayed (lvl 56, ~7300 xp, sim lvl 53)
     { "goto", 1447, 21.96, 49.62, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "turnin", 3507, xp = 7300 }, -- Betrayed (lvl 56, ~7300 xp, sim lvl 53)
+    { "accept", 2861, optional = true, dungeon = "Zul'Farrak" }, -- Tabetha's Task (lvl 46, ~0 xp, sim lvl 53)
+    { "accept", 8250, classes = { "MAGE" } }, -- Magecraft (lvl 52, ~510 xp, sim lvl 53)
+    { "accept", 8254, classes = { "PRIEST" } }, -- Cenarion Aid (lvl 52, ~510 xp, sim lvl 53)
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
     { "fly", 1456, node = 22, note = "Thunder Bluff, Mulgore" }, -- vol
     { "turnin", 3518, xp = 2550 }, -- Delivery to Magatha (lvl 52, ~2550 xp, sim lvl 53)
     { "level", 54, at = { 1447, 47.31, 49.11 }, note = "About 161 more mobs near the last objective" }, -- farm de niveau
+    { "turnin", 8250, xp = 510, classes = { "MAGE" } }, -- Magecraft (lvl 52, ~510 xp, sim lvl 54)
+    { "turnin", 8254, xp = 510, classes = { "PRIEST" } }, -- Cenarion Aid (lvl 52, ~510 xp, sim lvl 54)
   },
 })

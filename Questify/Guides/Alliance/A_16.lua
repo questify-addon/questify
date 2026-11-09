@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 46 étapes, niveau final 42.00, ~40282 xp/h, 143 min.
+-- Simulation : 46 étapes, niveau final 42.00, ~40266 xp/h, 143 min.
 Q:RegisterGuide({
   id = "A_16",
   title = "Badlands",
   faction = "Alliance",
   minLevel = 41, maxLevel = 42,
   next = "A_17",
-  sim = { steps = 46, endLevel = 42.00, xpPerHour = 40282, minutes = 143 },
+  sim = { steps = 46, endLevel = 42.00, xpPerHour = 40266, minutes = 143 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
     { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
@@ -56,6 +56,6 @@ Q:RegisterGuide({
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1434, node = 19, note = "Booty Bay, Stranglethorn" }, -- vol
     { "turnin", 669, xp = 3150 }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 41)
-    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 121 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
+    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 120 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
   },
 })

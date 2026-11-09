@@ -2,18 +2,18 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 43 étapes, niveau final 33.08, ~22792 xp/h, 101 min.
+-- Simulation : 44 étapes, niveau final 33.08, ~21034 xp/h, 109 min.
 Q:RegisterGuide({
   id = "H_07",
   title = "Thousand Needles",
   faction = "Horde",
   minLevel = 32, maxLevel = 33,
   next = "H_08",
-  sim = { steps = 43, endLevel = 33.08, xpPerHour = 22792, minutes = 101 },
+  sim = { steps = 44, endLevel = 33.08, xpPerHour = 21034, minutes = 109 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Amongst the Ruins", optional = true, dungeon = "Blackfathom Deeps" },
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
-    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
     { "fly", 1441, node = 30, note = "Freewind Post, Thousand Needles" }, -- vol
     { "accept", 1150 }, -- Test of Endurance (lvl 30, ~2450 xp, sim lvl 32)
     { "accept", 5361 }, -- Family Tree (lvl 35, ~2050 xp, sim lvl 32)
@@ -28,8 +28,7 @@ Q:RegisterGuide({
     { "goto", 1441, 45.14, 49.11, note = "Flight master" }, -- déplacement
     { "fly", 1413, node = 25, note = "Crossroads, The Barrens" }, -- vol
     { "accept", 1145 }, -- The Swarm Grows (lvl 33, ~1300 xp, sim lvl 32)
-    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
-    { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
+    { "fp", 1454, 45.12, 63.89 }, -- point de vol
     { "turnin", 1145, xp = 1300 }, -- The Swarm Grows (lvl 33, ~1300 xp, sim lvl 32)
     { "accept", 1146 }, -- The Swarm Grows (lvl 33, ~1950 xp, sim lvl 32)
     { "hearth", 1441 }, -- pierre de foyer
@@ -45,6 +44,8 @@ Q:RegisterGuide({
     { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "turnin", 1184, xp = 1350 }, -- Parts of the Swarm (lvl 35, ~1350 xp, sim lvl 32)
+    { "accept", 2841, optional = true, dungeon = "Gnomeregan" }, -- Rig Wars (lvl 35, ~0 xp, sim lvl 33)
+    { "accept", 2842, optional = true, dungeon = "Gnomeregan" }, -- Chief Engineer Scooty (lvl 35, ~0 xp, sim lvl 33)
     { "accept", 1431 }, -- Alliance Relations (lvl 30, ~610 xp, sim lvl 33)
     { "turnin", 1431, xp = 610 }, -- Alliance Relations (lvl 30, ~610 xp, sim lvl 33)
     { "accept", 1432 }, -- Alliance Relations (lvl 30, ~1200 xp, sim lvl 33)

@@ -73,8 +73,8 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1038 | Velinde's Effects | 30 | quest level 30 above the band |
 | 1039 | The Barrens Port | 30 | quest level 30 above the band |
 | 1047 | The New Frontier | 55 | quest level 55 above the band |
-| 1198 | In Search of Thaelrid | 24 | quest level 24 above the band |
-| 1199 | Twilight Falls | 25 | quest level 25 above the band |
+| 1198 | In Search of Thaelrid | 24 | required level 18 above the band |
+| 1199 | Twilight Falls | 25 | required level 20 above the band |
 | 1581 | Elixirs for the Bladeleafs | 8 | requires a profession |
 | 1582 | Moonglow Vest | 18 | quest level 18 above the band |
 | 1683 | Vorlus Vilehoof | 10 | class quest (ClassQuestData.lua) |
@@ -90,7 +90,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 2259 | Erion Shadewhisper | 16 | class quest (ClassQuestData.lua) |
 | 2260 | Erion's Behest | 16 | class quest (ClassQuestData.lua) |
 | 2459 | Ferocitas the Dream Eater | 8 | objective item source not in zone |
-| 2925 | Klockmort's Essentials | 30 | quest level 30 above the band |
+| 2925 | Klockmort's Essentials | 30 | required level 24 above the band |
 | 2940 | Feralas: A History | 47 | quest level 47 above the band |
 | 2941 | The Borrower | 48 | quest level 48 above the band |
 | 2943 | Return to Troyas | 48 | quest level 48 above the band |
@@ -130,7 +130,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6681 | The Manor, Ravenholdt | 24 | class quest (ClassQuestData.lua) |
 | 6761 | The New Frontier | 55 | quest level 55 above the band |
 | 6762 | Rabine Saturna | 55 | quest level 55 above the band |
-| 7494 | Feathermoon Stronghold | 57 | quest level 57 above the band |
+| 7494 | Feathermoon Stronghold | 57 | required level 54 above the band |
 | 7671 | Frostsaber Replacement | 1 | Questie blacklist |
 | 7672 | Nightsaber Replacement | 1 | Questie blacklist |
 | 7792 | A Donation of Wool | 60 | quest level 60 above the band |
@@ -142,31 +142,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8233 | A Simple Request | 52 | class quest (ClassQuestData.lua) |
 | 8357 | Dancing for Marzipan | 60 | Questie blacklist |
 | 8371 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8372 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8374 | Claiming Arathi Basin | 29 | quest level 29 above the band |
-| 8375 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8383 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8384 | Claiming Arathi Basin | 29 | quest level 29 above the band |
+| 8372 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8374 | Claiming Arathi Basin | 29 | required level 20 above the band |
+| 8375 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8383 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8384 | Claiming Arathi Basin | 29 | required level 20 above the band |
 | 8385 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8386 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8391 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8392 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8393 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8394 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8395 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8396 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8397 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8398 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8399 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8400 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8401 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8402 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8403 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
-| 8404 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8405 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8406 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8407 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8408 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
+| 8386 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8391 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8392 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8393 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8394 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8395 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8396 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8397 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8398 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8399 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8400 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8401 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8402 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8403 | Fight for Warsong Gulch | 60 | required level 60 above the band |
+| 8404 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8405 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8406 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8407 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8408 | Fight for Warsong Gulch | 60 | required level 60 above the band |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8715 | Bladeleaf the Elder | 60 | Questie blacklist |
 | 8718 | Bladeswift the Elder | 60 | Questie blacklist |

@@ -2,15 +2,16 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 72 étapes, niveau final 56.00, ~61938 xp/h, 175 min.
+-- Simulation : 73 étapes, niveau final 56.00, ~61922 xp/h, 175 min.
 Q:RegisterGuide({
   id = "H_27",
   title = "Un'Goro Crater",
   faction = "Horde",
   minLevel = 55, maxLevel = 56,
   next = "H_28",
-  sim = { steps = 72, endLevel = 56.00, xpPerHour = 61938, minutes = 175 },
+  sim = { steps = 73, endLevel = 56.00, xpPerHour = 61922, minutes = 175 },
   steps = {
+    { "note", "Not running The Temple of Atal'Hakkar? Abandon The Sunken Temple", optional = true, dungeon = "The Temple of Atal'Hakkar" },
     { "hearth", 1447 }, -- pierre de foyer
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
     { "fly", 1441, node = 30, note = "Freewind Post, Thousand Needles" }, -- vol
@@ -82,6 +83,6 @@ Q:RegisterGuide({
     { "accept", 4321 }, -- Making Sense of It (lvl 53, ~530 xp, sim lvl 55)
     { "complete", 4321, at = { 1449, 41.92, 2.7 } }, -- Making Sense of It (lvl 53, ~530 xp, sim lvl 55)
     { "turnin", 4321, xp = 530 }, -- Making Sense of It (lvl 53, ~530 xp, sim lvl 55)
-    { "level", 56, at = { 1449, 41.02, 29.78 }, note = "About 184 more mobs near the last objective" }, -- farm de niveau
+    { "level", 56, at = { 1449, 41.02, 29.78 }, note = "About 185 more mobs near the last objective" }, -- farm de niveau
   },
 })

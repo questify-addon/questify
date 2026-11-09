@@ -2,15 +2,16 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 26 étapes, niveau final 53.00, ~57064 xp/h, 169 min.
+-- Simulation : 27 étapes, niveau final 53.00, ~57064 xp/h, 169 min.
 Q:RegisterGuide({
   id = "A_28",
   title = "Burning Steppes",
   faction = "Alliance",
   minLevel = 52, maxLevel = 53,
   next = "A_24",
-  sim = { steps = 26, endLevel = 53.00, xpPerHour = 57064, minutes = 169 },
+  sim = { steps = 27, endLevel = 53.00, xpPerHour = 57064, minutes = 169 },
   steps = {
+    { "note", "Not running Maraudon? Abandon The Pariah's Instructions", optional = true, dungeon = "Maraudon" },
     { "note", "Not running Zul'Farrak? Abandon Divino-matic Rod", optional = true, dungeon = "Zul'Farrak" },
     { "goto", 1455, 55.5, 47.74, note = "Flight master" }, -- déplacement
     { "fly", 1428, node = 71, note = "Morgan's Vigil, Burning Steppes" }, -- vol

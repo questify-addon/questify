@@ -2,15 +2,16 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 76 étapes, niveau final 56.00, ~58318 xp/h, 365 min.
+-- Simulation : 77 étapes, niveau final 56.00, ~58318 xp/h, 365 min.
 Q:RegisterGuide({
   id = "A_26",
   title = "Un'Goro Crater",
   faction = "Alliance",
   minLevel = 54, maxLevel = 56,
   next = "A_27",
-  sim = { steps = 76, endLevel = 56.00, xpPerHour = 58318, minutes = 365 },
+  sim = { steps = 77, endLevel = 56.00, xpPerHour = 58318, minutes = 365 },
   steps = {
+    { "note", "Not running Zul'Farrak? Abandon Gahz'rilla", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1446 }, -- pierre de foyer
     { "goto", 1446, 51.01, 29.34, note = "Flight master" }, -- déplacement
     { "fly", 1449, node = 79, note = "Marshal's Refuge, Un'Goro Crater" }, -- vol

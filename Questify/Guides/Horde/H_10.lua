@@ -2,19 +2,17 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 31 étapes, niveau final 38.02, ~37527 xp/h, 57 min.
+-- Simulation : 29 étapes, niveau final 38.03, ~34228 xp/h, 63 min.
 Q:RegisterGuide({
   id = "H_10",
   title = "Dustwallow Marsh",
   faction = "Horde",
   minLevel = 37, maxLevel = 38,
   next = "H_11",
-  sim = { steps = 31, endLevel = 38.02, xpPerHour = 37527, minutes = 57 },
+  sim = { steps = 29, endLevel = 38.03, xpPerHour = 34228, minutes = 63 },
   steps = {
     { "note", "Not running City of Dalaran? Abandon Heart of Disruption, The Grave Knight", optional = true, dungeon = "City of Dalaran" },
-    { "hearth", 1443 }, -- pierre de foyer
-    { "goto", 1443, 21.6, 74.13, note = "Flight master" }, -- déplacement
-    { "fly", 1413, node = 77, note = "Camp Taurajo, The Barrens" }, -- vol
+    { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau
     { "fp", 1445, 35.56, 31.88 }, -- point de vol
     { "accept", 1268 }, -- Suspicious Hoofprints (lvl 35, ~1350 xp, sim lvl 37)
     { "accept", 1251 }, -- The Black Shield (lvl 35, ~690 xp, sim lvl 37)

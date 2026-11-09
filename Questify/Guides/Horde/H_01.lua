@@ -2,27 +2,27 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 129 étapes, niveau final 18.18, ~22875 xp/h, 203 min.
+-- Simulation : 129 étapes, niveau final 18.19, ~22838 xp/h, 204 min.
 Q:RegisterGuide({
   id = "H_01",
   title = "The Barrens",
   faction = "Horde",
   minLevel = 12, maxLevel = 17,
   next = "H_02",
-  sim = { steps = 129, endLevel = 18.18, xpPerHour = 22875, minutes = 203 },
+  sim = { steps = 129, endLevel = 18.19, xpPerHour = 22838, minutes = 204 },
   steps = {
     { "accept", 842, race = { "Orc", "Troll" } }, -- Crossroads Conscription (lvl 12, ~910 xp, sim lvl 12)
     { "fp", 1413, 51.5, 30.34 }, -- point de vol
+    { "accept", 6365, race = { "Orc", "Troll" } }, -- Meats to Orgrimmar (lvl 10, ~210 xp, sim lvl 12)
     { "accept", 844 }, -- Plainstrider Menace (lvl 12, ~910 xp, sim lvl 12)
     { "turnin", 842, xp = 910, race = { "Orc", "Troll" } }, -- Crossroads Conscription (lvl 12, ~910 xp, sim lvl 12)
     { "accept", 871 }, -- Disrupt the Attacks (lvl 12, ~910 xp, sim lvl 12)
-    { "turnin", 1358, xp = 1050, race = { "Undead" } }, -- Sample for Helbrim (lvl 15, ~1050 xp, sim lvl 12)
-    { "accept", 1492 }, -- Wharfmaster Dizzywig (lvl 11, ~440 xp, sim lvl 12)
-    { "accept", 848 }, -- Fungal Spores (lvl 15, ~1050 xp, sim lvl 12)
+    { "turnin", 6365, xp = 210, race = { "Orc", "Troll" } }, -- Meats to Orgrimmar (lvl 10, ~210 xp, sim lvl 12)
     { "accept", 867 }, -- Harpy Raiders (lvl 15, ~1050 xp, sim lvl 12)
+    { "accept", 848 }, -- Fungal Spores (lvl 15, ~1050 xp, sim lvl 12)
+    { "accept", 1492 }, -- Wharfmaster Dizzywig (lvl 11, ~440 xp, sim lvl 12)
     { "accept", 869 }, -- Raptor Thieves (lvl 13, ~910 xp, sim lvl 12)
     { "sethearth", 1413, 51.99, 29.89 }, -- lier la pierre de foyer
-    { "accept", 6365, race = { "Orc", "Troll" } }, -- Meats to Orgrimmar (lvl 10, ~210 xp, sim lvl 12)
     { "accept", 819, at = { 1413, 55.7, 27.3 }, note = "Loot Chen's Empty Keg to start the quest" }, -- Chen's Empty Keg (lvl 15, ~1050 xp, sim lvl 12)
     { "complete", 871, at = { 1413, 55.39, 26.7 } }, -- Disrupt the Attacks (lvl 12, ~910 xp, sim lvl 12)
     { "complete", 844, at = { 1413, 57.07, 29.5 } }, -- Plainstrider Menace (lvl 12, ~910 xp, sim lvl 13)
@@ -30,7 +30,6 @@ Q:RegisterGuide({
     { "turnin", 844, xp = 910 }, -- Plainstrider Menace (lvl 12, ~910 xp, sim lvl 13)
     { "accept", 845 }, -- The Zhevra (lvl 13, ~910 xp, sim lvl 13)
     { "turnin", 871, xp = 910 }, -- Disrupt the Attacks (lvl 12, ~910 xp, sim lvl 13)
-    { "turnin", 6365, xp = 210, race = { "Orc", "Troll" } }, -- Meats to Orgrimmar (lvl 10, ~210 xp, sim lvl 13)
     { "complete", 845, at = { 1413, 49.16, 37.48 } }, -- The Zhevra (lvl 13, ~910 xp, sim lvl 13)
     { "accept", 850 }, -- Kolkar Leaders (lvl 16, ~880 xp, sim lvl 13)
     { "complete", 848, at = { 1413, 45.11, 22.66 } }, -- Fungal Spores (lvl 15, ~1050 xp, sim lvl 13)
@@ -38,11 +37,11 @@ Q:RegisterGuide({
     { "complete", 867, at = { 1413, 40.78, 15.56 } }, -- Harpy Raiders (lvl 15, ~1050 xp, sim lvl 13)
     { "level", 14, at = { 1413, 40.93, 15.58 }, note = "About 1 mobs here (Witchwing Harpy, level 14)" }, -- farm de niveau
     { "accept", 95508 }, -- Unwelcome Guests (lvl 18, ~680 xp, sim lvl 14)
-    { "turnin", 95508, xp = 680 }, -- Unwelcome Guests (lvl 18, ~680 xp, sim lvl 14)
     { "accept", 95621 }, -- Trouble in the Valley (lvl 18, ~1350 xp, sim lvl 14)
+    { "turnin", 95508, xp = 680 }, -- Unwelcome Guests (lvl 18, ~680 xp, sim lvl 14)
     { "accept", 95494 }, -- Bruised Pride and Lion Hides (lvl 18, ~1350 xp, sim lvl 14)
-    { "accept", 95495 }, -- The Hermit Tanner (lvl 18, ~680 xp, sim lvl 14)
     { "accept", 95507 }, -- Vrang's Game (lvl 18, ~1350 xp, sim lvl 14)
+    { "accept", 95495 }, -- The Hermit Tanner (lvl 18, ~680 xp, sim lvl 14)
     { "complete", 850, at = { 1413, 42.8, 23.52 } }, -- Kolkar Leaders (lvl 16, ~880 xp, sim lvl 14)
     { "turnin", 850, xp = 880 }, -- Kolkar Leaders (lvl 16, ~880 xp, sim lvl 14)
     { "accept", 851 }, -- Verog the Dervish (lvl 18, ~1000 xp, sim lvl 14)
@@ -126,6 +125,7 @@ Q:RegisterGuide({
     { "turnin", 896, xp = 1700 }, -- Miner's Fortune (lvl 18, ~1700 xp, sim lvl 17)
     { "turnin", 863, xp = 1700 }, -- The Escape (lvl 18, ~1700 xp, sim lvl 17)
     { "turnin", 902, xp = 1150 }, -- Samophlange (lvl 16, ~1150 xp, sim lvl 17)
+    { "accept", 1483 }, -- Ziz Fizziks (lvl 21, ~0 xp, sim lvl 17)
     { "accept", 3921 }, -- Wenikee Boltbucket (lvl 14, ~490 xp, sim lvl 17)
     { "turnin", 888, xp = 1150 }, -- Stolen Booty (lvl 16, ~1150 xp, sim lvl 17)
     { "goto", 1413, 63.08, 37.16, note = "Flight master" }, -- déplacement

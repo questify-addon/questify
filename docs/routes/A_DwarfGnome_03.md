@@ -5,7 +5,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 11-13 |
-| Simulated level | 12.00 -> 14.16 |
+| Simulated level | 12.00 -> 14.15 |
 | Time | 74 min |
 | XP gained | 23373 |
 | XP/h | 19075 |
@@ -45,7 +45,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | Quest | Name | Lvl | Reason |
 |---|---|---|---|
-| 17 | Uldaman Reagent Run | 42 | quest level 42 above the band |
+| 17 | Uldaman Reagent Run | 42 | required level 38 above the band |
 | 161 | A Dark Threat Looms | 18 | quest level 18 above the band |
 | 199 | A Dark Threat Looms | 18 | quest level 18 above the band |
 | 217 | In Defense of the King's Lands | 17 | quest level 17 above the band |
@@ -70,22 +70,21 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 687 | Theldurin the Lost | 40 | quest level 40 above the band |
 | 689 | A King's Tribute | 31 | quest level 31 above the band |
 | 700 | A King's Tribute | 31 | quest level 31 above the band |
-| 704 | Agmond's Fate | 38 | quest level 38 above the band |
+| 704 | Agmond's Fate | 38 | required level 30 above the band |
 | 707 | Ironband Wants You! | 37 | quest level 37 above the band |
-| 725 | Passing Word of a Threat | 40 | quest level 40 above the band |
-| 726 | Passing Word of a Threat | 40 | quest level 40 above the band |
+| 725 | Passing Word of a Threat | 40 | required level 35 above the band |
+| 726 | Passing Word of a Threat | 40 | required level 35 above the band |
 | 735 | The Star, the Hand and the Heart | 44 | quest level 44 above the band |
 | 737 | Forbidden Knowledge | 40 | quest level 40 above the band |
-| 738 | Find Agmond | 38 | quest level 38 above the band |
-| 762 | An Ambassador of Evil | 44 | quest level 44 above the band |
-| 971 | Knowledge in the Deeps | 23 | quest level 23 above the band |
+| 738 | Find Agmond | 38 | required level 30 above the band |
+| 762 | An Ambassador of Evil | 44 | required level 35 above the band |
 | 1019 | The New Frontier | 55 | quest level 55 above the band |
-| 1050 | Mythology of the Titans | 38 | quest level 38 above the band |
+| 1050 | Mythology of the Titans | 38 | required level 28 above the band |
 | 1073 | Ineptitude + Chemicals = Fun | 21 | quest level 21 above the band |
 | 1074 | Ineptitude + Chemicals = Fun | 21 | quest level 21 above the band |
-| 1139 | The Lost Tablets of Will | 45 | quest level 45 above the band |
+| 1139 | The Lost Tablets of Will | 45 | required level 35 above the band |
 | 1179 | The Brassbolts Brothers | 30 | quest level 30 above the band |
-| 1360 | Reclaimed Treasures | 43 | quest level 43 above the band |
+| 1360 | Reclaimed Treasures | 43 | required level 33 above the band |
 | 1453 | Reclaimers' Business in Desolace | 33 | quest level 33 above the band |
 | 1578 | Supplying the Front | 12 | requires a profession |
 | 1618 | Gearing Redridge | 16 | requires a profession |
@@ -118,23 +117,23 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1947 | Journey to the Marsh | 38 | class quest (ClassQuestData.lua) |
 | 1953 | Return to the Marsh | 40 | class quest (ClassQuestData.lua) |
 | 2041 | Speak with Shoni | 15 | required level 15 above the band |
-| 2198 | The Shattered Necklace | 41 | quest level 41 above the band |
-| 2199 | Lore for a Price | 41 | quest level 41 above the band |
-| 2200 | Back to Uldaman | 42 | quest level 42 above the band |
+| 2198 | The Shattered Necklace | 41 | required level 37 above the band |
+| 2199 | Lore for a Price | 41 | required level 37 above the band |
+| 2200 | Back to Uldaman | 42 | required level 37 above the band |
 | 2238 | Simple Subterfugin' | 10 | class quest (ClassQuestData.lua) |
 | 2298 | Kingly Shakedown | 16 | class quest (ClassQuestData.lua) |
-| 2361 | Restoring the Necklace | 44 | quest level 44 above the band |
-| 2398 | The Lost Dwarves | 40 | quest level 40 above the band |
+| 2361 | Restoring the Necklace | 44 | required level 37 above the band |
+| 2398 | The Lost Dwarves | 40 | required level 35 above the band |
 | 2439 | The Platinum Discs | 47 | quest level 47 above the band |
-| 2500 | Badlands Reagent Run | 39 | quest level 39 above the band |
+| 2500 | Badlands Reagent Run | 39 | required level 36 above the band |
 | 2501 | Badlands Reagent Run II | 44 | quest level 44 above the band |
 | 2769 | The Brassbolts Brothers | 46 | quest level 46 above the band |
-| 2861 | Tabetha's Task | 46 | quest level 46 above the band |
-| 2922 | Save Techbot's Brain! | 26 | quest level 26 above the band |
-| 2924 | Essential Artificials | 30 | quest level 30 above the band |
-| 2927 | The Day After | 27 | quest level 27 above the band |
-| 2929 | The Grand Betrayal | 35 | quest level 35 above the band |
-| 2930 | Data Rescue | 30 | quest level 30 above the band |
+| 2861 | Tabetha's Task | 46 | required level 40 above the band |
+| 2922 | Save Techbot's Brain! | 26 | required level 20 above the band |
+| 2924 | Essential Artificials | 30 | required level 24 above the band |
+| 2927 | The Day After | 27 | required level 20 above the band |
+| 2929 | The Grand Betrayal | 35 | required level 25 above the band |
+| 2930 | Data Rescue | 30 | required level 25 above the band |
 | 2946 | Seeing What Happens | 50 | quest level 50 above the band |
 | 2948 | Gnome Improvement | 35 | quest level 35 above the band |
 | 2963 | Portents of Uldum | 50 | quest level 50 above the band |
@@ -143,7 +142,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3182 | Proof of Deed | 48 | quest level 48 above the band |
 | 3201 | At Last! | 48 | quest level 48 above the band |
 | 3371 | Dwarven Justice | 55 | quest level 55 above the band |
-| 3375 | Replacement Phial | 42 | quest level 42 above the band |
+| 3375 | Replacement Phial | 42 | required level 37 above the band |
 | 3448 | Passing the Burden | 52 | quest level 52 above the band |
 | 3449 | Arcane Runes | 52 | quest level 52 above the band |
 | 3450 | An Easy Pickup | 52 | quest level 52 above the band |
@@ -154,11 +153,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3640 | The Pledge of Secrecy | 47 | quest level 47 above the band |
 | 3641 | Show Your Work | 47 | quest level 47 above the band |
 | 3647 | Membership Card Renewal | 47 | quest level 47 above the band |
-| 3701 | The Smoldering Ruins of Thaurissan | 54 | quest level 54 above the band |
-| 3702 | The Smoldering Ruins of Thaurissan | 54 | quest level 54 above the band |
+| 3701 | The Smoldering Ruins of Thaurissan | 54 | required level 50 above the band |
+| 3702 | The Smoldering Ruins of Thaurissan | 54 | required level 50 above the band |
 | 3790 | Assisting Arch Druid Staghelm | 50 | quest level 50 above the band |
-| 4341 | Kharan Mighthammer | 59 | quest level 59 above the band |
-| 4362 | The Fate of the Kingdom | 59 | quest level 59 above the band |
+| 4341 | Kharan Mighthammer | 59 | required level 50 above the band |
+| 4362 | The Fate of the Kingdom | 59 | required level 50 above the band |
 | 4485 | The Tome of Nobility | 40 | class quest (ClassQuestData.lua) |
 | 4486 | The Tome of Nobility | 40 | class quest (ClassQuestData.lua) |
 | 4487 | Summon Felsteed | 40 | class quest (ClassQuestData.lua) |
@@ -182,9 +181,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7045 | A Smokywood Pastures' Thank You! | 60 | Questie blacklist |
 | 7062 | The Reason for the Season | 60 | Questie blacklist |
 | 7063 | The Feast of Winter Veil | 60 | Questie blacklist |
-| 7261 | The Sovereign Imperative | 60 | quest level 60 above the band |
+| 7261 | The Sovereign Imperative | 60 | required level 51 above the band |
 | 7342 | Arrows Are For Sissies | 60 | quest level 60 above the band |
-| 7494 | Feathermoon Stronghold | 57 | quest level 57 above the band |
+| 7494 | Feathermoon Stronghold | 57 | required level 54 above the band |
 | 7562 | Mor'zul Bloodbringer | 58 | class quest (ClassQuestData.lua) |
 | 7639 | To Show Due Judgment | 60 | class quest (ClassQuestData.lua) |
 | 7670 | Lord Grayson Shadowbreaker | 60 | class quest (ClassQuestData.lua) |
@@ -208,31 +207,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8353 | Chicken Clucking for a Mint | 60 | Questie blacklist |
 | 8355 | Incoming Gumdrop | 60 | Questie blacklist |
 | 8371 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8372 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8374 | Claiming Arathi Basin | 29 | quest level 29 above the band |
-| 8375 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8383 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8384 | Claiming Arathi Basin | 29 | quest level 29 above the band |
+| 8372 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8374 | Claiming Arathi Basin | 29 | required level 20 above the band |
+| 8375 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8383 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8384 | Claiming Arathi Basin | 29 | required level 20 above the band |
 | 8385 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8386 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8391 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8392 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8393 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8394 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8395 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8396 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8397 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8398 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8399 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8400 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8401 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8402 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8403 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
-| 8404 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8405 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8406 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8407 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8408 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
+| 8386 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8391 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8392 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8393 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8394 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8395 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8396 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8397 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8398 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8399 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8400 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8401 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8402 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8403 | Fight for Warsong Gulch | 60 | required level 60 above the band |
+| 8404 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8405 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8406 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8407 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8408 | Fight for Warsong Gulch | 60 | required level 60 above the band |
 | 8415 | Chillwind Point | 52 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8419 | An Imp's Request | 52 | class quest (ClassQuestData.lua) |
@@ -308,7 +307,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8912 | An Earnest Proposition | 60 | class quest (ClassQuestData.lua) |
 | 8922 | A Supernatural Device | 60 | quest level 60 above the band |
 | 8926 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
-| 8929 | In Search of Anthion | 60 | quest level 60 above the band |
+| 8929 | In Search of Anthion | 60 | required level 58 above the band |
 | 8931 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8932 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8933 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
@@ -316,7 +315,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8935 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8936 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8937 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
-| 8960 | Bodley's Unfortunate Fate | 60 | quest level 60 above the band |
+| 8960 | Bodley's Unfortunate Fate | 60 | required level 58 above the band |
 | 8993 | Gift Giving | 60 | Questie blacklist |
 | 8999 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
 | 9000 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
@@ -367,8 +366,6 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 96045 | Camping 101: Alchemy | 6 | quest level 6 below the band |
 | 96059 | Camping 101: Enchanting | 6 | quest level 6 below the band |
 | 96243 | Call of Earth | 4 | class quest (ClassQuestData.lua) |
-| 96394 | The Restless Dead | 15 | dungeon quest (The Hall of Thanes not picked up in this chapter) |
-| 96403 | Important Heirlooms | 15 | dungeon quest (The Hall of Thanes not picked up in this chapter) |
 | 97263 | Your Package Has Arrived | 2 | quest level 2 below the band |
 | 98895 | Darkspear Islands Clash | 39 | quest level 39 above the band |
 | 98896 | Darkspear Islands Clash | 39 | quest level 39 above the band |
@@ -431,14 +428,14 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 8910 | An Earnest Proposition | 60 | ROGUE | quest level 60 above the band |
 | 8911 | An Earnest Proposition | 60 | WARLOCK | quest level 60 above the band |
 | 8912 | An Earnest Proposition | 60 | WARRIOR | quest level 60 above the band |
-| 8926 | Just Compensation | 60 | DRUID | quest level 60 above the band |
-| 8931 | Just Compensation | 60 | HUNTER | quest level 60 above the band |
-| 8932 | Just Compensation | 60 | MAGE | quest level 60 above the band |
-| 8933 | Just Compensation | 60 | PALADIN | quest level 60 above the band |
-| 8934 | Just Compensation | 60 | PRIEST | quest level 60 above the band |
-| 8935 | Just Compensation | 60 | ROGUE | quest level 60 above the band |
-| 8936 | Just Compensation | 60 | WARLOCK | quest level 60 above the band |
-| 8937 | Just Compensation | 60 | WARRIOR | quest level 60 above the band |
+| 8926 | Just Compensation | 60 | DRUID | required level 58 above the band |
+| 8931 | Just Compensation | 60 | HUNTER | required level 58 above the band |
+| 8932 | Just Compensation | 60 | MAGE | required level 58 above the band |
+| 8933 | Just Compensation | 60 | PALADIN | required level 58 above the band |
+| 8934 | Just Compensation | 60 | PRIEST | required level 58 above the band |
+| 8935 | Just Compensation | 60 | ROGUE | required level 58 above the band |
+| 8936 | Just Compensation | 60 | WARLOCK | required level 58 above the band |
+| 8937 | Just Compensation | 60 | WARRIOR | required level 58 above the band |
 | 8999 | Saving the Best for Last | 60 | DRUID | quest level 60 above the band |
 | 9000 | Saving the Best for Last | 60 | HUNTER | quest level 60 above the band |
 | 9001 | Saving the Best for Last | 60 | MAGE | quest level 60 above the band |

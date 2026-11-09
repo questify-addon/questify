@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 59 étapes, niveau final 14.16, ~19075 xp/h, 74 min.
+-- Simulation : 59 étapes, niveau final 14.15, ~19075 xp/h, 74 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_03",
   title = "Loch Modan",
@@ -14,7 +14,7 @@ Q:RegisterGuide({
     { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 3 } },
     { id = "A_01", travel = { kind = "boat", minutes = 7 } },
   },
-  sim = { steps = 59, endLevel = 14.16, xpPerHour = 19075, minutes = 74 },
+  sim = { steps = 59, endLevel = 14.15, xpPerHour = 19075, minutes = 74 },
   steps = {
     { "accept", 416 }, -- Rat Catching (lvl 11, ~880 xp, sim lvl 12)
     { "sethearth", 1432, 35.53, 48.4 }, -- lier la pierre de foyer

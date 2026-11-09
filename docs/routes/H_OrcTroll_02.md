@@ -5,10 +5,10 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 6-12 |
-| Simulated level | 6.00 -> 13.10 |
+| Simulated level | 6.00 -> 13.09 |
 | Time | 172 min |
-| XP gained | 47586 |
-| XP/h | 16619 |
+| XP gained | 47534 |
+| XP/h | 16565 |
 | Steps | 154 |
 | Quests turned in | 42 |
 | Hubs | 9 |
@@ -24,27 +24,27 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1 | 786 | Thwarting Kolkar Aggression | 8 | 700 | 6 |
 | 2 | 96604 | The Great Outdoors | 6 | 540 est. | 6 |
 | 3 | 823 | Report to Orgnil | 7 | 315 | 6 |
-| 4 | 784 | Vanquish the Betrayers | 7 | 630 | 6 |
+| 4 | 784 | Vanquish the Betrayers | 7 | 630 | 7 |
 | 5 | 830 | The Admiral's Orders | 7 | 630 | 7 |
 | 6 | 96655 | Camping 101: Cooking | 6 | 540 est. | 7 |
-| 7 | 97223 | Bloodtalon Matriarch | 9 | 780 est. | 8 |
-| 8 | 97225 | Forgotten Loa Idols | 9 | 780 est. | 8 |
-| 9 | 808 | Minshina's Skull | 9 | 780 | 8 |
-| 10 | 826 | Zalazane | 10 | 840 | 9 |
-| 11 | 818 | A Solvent Spirit | 7 | 630 | 9 |
-| 12 | 817 | Practical Prey | 8 | 700 | 9 |
-| 13 | 837 | Encroachment | 10 | 630 | 9 |
-| 14 | 96821 | Legging It | 6 | 540 est. | 9 |
-| 15 | 825 | From The Wreckage.... | 8 | 700 | 9 |
-| 16 | 815 | Break a Few Eggs | 8 | 700 | 9 |
-| 17 | 96825 | This Fruit Could Bite Back | 6 | 540 est. | 9 |
+| 7 | 791 | Carry Your Weight | 7 | 630 | 7 |
+| 8 | 96822 | For Honor | 7 | 630 est. | 7 |
+| 9 | 97223 | Bloodtalon Matriarch | 9 | 780 est. | 8 |
+| 10 | 826 | Zalazane | 10 | 840 | 8 |
+| 11 | 97225 | Forgotten Loa Idols | 9 | 780 est. | 8 |
+| 12 | 808 | Minshina's Skull | 9 | 780 | 9 |
+| 13 | 818 | A Solvent Spirit | 7 | 630 | 9 |
+| 14 | 817 | Practical Prey | 8 | 700 | 9 |
+| 15 | 96821 | Legging It | 6 | 540 est. | 9 |
+| 16 | 825 | From The Wreckage.... | 8 | 700 | 9 |
+| 17 | 815 | Break a Few Eggs | 8 | 700 | 9 |
 | 18 | 99048 | A Missing Hand | 9 | 780 est. | 9 |
-| 19 | 96822 | For Honor | 7 | 630 est. | 10 |
-| 20 | 99049 | Threat from Below | 9 | 780 est. | 10 |
-| 21 | 791 | Carry Your Weight | 7 | 630 | 10 |
-| 22 | 99051 | Threat from Below | 11 | 770 est. | 10 |
+| 19 | 99049 | Threat from Below | 9 | 780 est. | 9 |
+| 20 | 97281 | A Simmering Storm | 11 | 660 est. | 10 |
+| 21 | 837 | Encroachment | 10 | 630 | 10 |
+| 22 | 96825 | This Fruit Could Bite Back | 6 | 540 est. | 10 |
 | 23 | 806 | Dark Storms | 12 | 910 | 10 |
-| 24 | 97281 | A Simmering Storm | 11 | 660 est. | 10 |
+| 24 | 99051 | Threat from Below | 11 | 770 est. | 10 |
 | 25 | 834 | Winds in the Desert | 9 | 780 | 10 |
 | 26 | 828 | Margoz | 12 | 90 | 11 |
 | 27 | 831 | The Admiral's Orders | 7 | 630 | 11 |
@@ -56,11 +56,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 33 | 97326 | Rocks to Rests | 15 | 1050 est. | 12 |
 | 34 | 97249 | Favorite Food | 15 | 405 est. | 12 |
 | 35 | 5726 | Hidden Enemies | 12 | 910 | 12 |
-| 36 | 829 | Neeru Fireblade | 12 | 455 | 12 |
-| 37 | 832 | Burning Shadows | 12 | 680 | 12 |
+| 36 | 832 | Burning Shadows | 12 | 680 | 12 |
+| 37 | 829 | Neeru Fireblade | 12 | 455 | 12 |
 | 38 | 5727 | Hidden Enemies | 12 | 455 | 12 |
-| 39 | 97282 | Stormy Potential | 10 | 840 est. | 12 |
-| 40 | 835 | Securing the Lines | 11 | 880 | 12 |
+| 39 | 835 | Securing the Lines | 11 | 880 | 12 |
+| 40 | 97282 | Stormy Potential | 10 | 840 est. | 12 |
 | 41 | 99052 | Threat from Below | 11 | 770 est. | 13 |
 | 42 | 840 | Conscript of the Horde | 12 | 455 | 13 |
 
@@ -124,9 +124,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1953 | Return to the Marsh | 40 | class quest (ClassQuestData.lua) |
 | 1959 | Report to Anastasia | 15 | class quest (ClassQuestData.lua) |
 | 1963 | The Shattered Hand | 13 | class quest (ClassQuestData.lua) |
-| 2283 | Necklace Recovery | 41 | quest level 41 above the band |
-| 2284 | Necklace Recovery, Take 2 | 41 | quest level 41 above the band |
-| 2341 | Necklace Recovery, Take 3 | 44 | quest level 44 above the band |
+| 2283 | Necklace Recovery | 41 | required level 37 above the band |
+| 2284 | Necklace Recovery, Take 2 | 41 | required level 37 above the band |
+| 2341 | Necklace Recovery, Take 3 | 44 | required level 40 above the band |
 | 2379 | Zando'zan | 16 | class quest (ClassQuestData.lua) |
 | 2380 | To Orgrimmar! | 16 | class quest (ClassQuestData.lua) |
 | 2382 | Wrenix of Ratchet | 16 | class quest (ClassQuestData.lua) |
@@ -141,10 +141,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 2755 | Joys of Omosh | 36 | quest level 36 above the band |
 | 2756 | The Old Ways | 40 | quest level 40 above the band |
 | 2757 | Booty Bay or Bust! | 40 | quest level 40 above the band |
-| 2841 | Rig Wars | 35 | quest level 35 above the band |
-| 2842 | Chief Engineer Scooty | 35 | quest level 35 above the band |
-| 2861 | Tabetha's Task | 46 | quest level 46 above the band |
-| 2936 | The Spider God | 45 | quest level 45 above the band |
+| 2841 | Rig Wars | 35 | required level 25 above the band |
+| 2842 | Chief Engineer Scooty | 35 | required level 20 above the band |
+| 2861 | Tabetha's Task | 46 | required level 40 above the band |
+| 2936 | The Spider God | 45 | required level 40 above the band |
 | 2937 | Summoning Shadra | 55 | quest level 55 above the band |
 | 2950 | Nogg's Ring Redo | 35 | quest level 35 above the band |
 | 2981 | A Threat in Feralas | 43 | quest level 43 above the band |
@@ -166,14 +166,14 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3563 | Jes'rimon's Payment to Jediga | 52 | quest level 52 above the band |
 | 3631 | Summon Felsteed | 40 | class quest (ClassQuestData.lua) |
 | 3924 | Samophlange Manual | 19 | quest level 19 above the band |
-| 4002 | The Eastern Kingdom | 54 | quest level 54 above the band |
-| 4003 | The Royal Rescue | 59 | quest level 59 above the band |
+| 4002 | The Eastern Kingdom | 54 | required level 48 above the band |
+| 4003 | The Royal Rescue | 59 | required level 48 above the band |
 | 4300 | Bone-Bladed Weapons | 52 | quest level 52 above the band |
 | 4494 | March of the Silithid | 53 | quest level 53 above the band |
 | 4511 | Calm Before the Storm | 54 | quest level 54 above the band |
 | 4737 | In Search of Menara Voidrender | 31 | class quest (ClassQuestData.lua) |
 | 4967 | Knowledge of the Orb of Orahil | 35 | class quest (ClassQuestData.lua) |
-| 4974 | For The Horde! | 60 | quest level 60 above the band |
+| 4974 | For The Horde! | 60 | required level 55 above the band |
 | 5093 | A Call to Arms: The Plaguelands! | 50 | quest level 50 above the band |
 | 5301 | The Art of the Armorsmith | 40 | quest level 40 above the band |
 | 5302 | The Way of the Weaponsmith | 40 | quest level 40 above the band |
@@ -183,9 +183,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 5652 | Hex of Weakness | 10 | class quest (ClassQuestData.lua) |
 | 5654 | Hex of Weakness | 10 | class quest (ClassQuestData.lua) |
 | 5680 | Shadowguard | 20 | class quest (ClassQuestData.lua) |
-| 5728 | Hidden Enemies | 16 | quest level 16 above the band |
 | 5730 | Hidden Enemies | 16 | quest level 16 above the band |
-| 5761 | Slaying the Beast | 16 | quest level 16 above the band |
 | 6062 | Taming the Beast | 10 | class quest (ClassQuestData.lua) |
 | 6068 | The Hunter's Path | 10 | class quest (ClassQuestData.lua) |
 | 6069 | The Hunter's Path | 10 | class quest (ClassQuestData.lua) |
@@ -204,11 +202,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6964 | The Reason for the Season | 60 | Questie blacklist |
 | 6984 | A Smokywood Pastures' Thank You! | 60 | Questie blacklist |
 | 7061 | The Feast of Winter Veil | 60 | Questie blacklist |
-| 7068 | Shadowshard Fragments | 42 | quest level 42 above the band |
-| 7241 | In Defense of Frostwolf | 60 | quest level 60 above the band |
+| 7068 | Shadowshard Fragments | 42 | required level 39 above the band |
+| 7241 | In Defense of Frostwolf | 60 | required level 51 above the band |
 | 7341 | A Fair Trade | 60 | quest level 60 above the band |
 | 7491 | For All To See | 60 | quest level 60 above the band |
-| 7492 | Camp Mojache | 57 | quest level 57 above the band |
+| 7492 | Camp Mojache | 57 | required level 54 above the band |
 | 7493 | The Journey Has Just Begun | 60 | quest level 60 above the band |
 | 7541 | Service to the Horde | 40 | quest level 40 above the band |
 | 7562 | Mor'zul Bloodbringer | 58 | class quest (ClassQuestData.lua) |
@@ -243,34 +241,34 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8358 | Incoming Gumdrop | 60 | Questie blacklist |
 | 8359 | Flexing for Nougat | 60 | Questie blacklist |
 | 8367 | For Great Honor | 60 | quest level 60 above the band |
-| 8368 | Battle of Warsong Gulch | 19 | quest level 19 above the band |
-| 8369 | Invaders of Alterac Valley | 60 | quest level 60 above the band |
-| 8370 | Conquering Arathi Basin | 29 | quest level 29 above the band |
-| 8387 | Invaders of Alterac Valley | 60 | quest level 60 above the band |
+| 8368 | Battle of Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8369 | Invaders of Alterac Valley | 60 | required level 51 above the band |
+| 8370 | Conquering Arathi Basin | 29 | required level 20 above the band |
+| 8387 | Invaders of Alterac Valley | 60 | required level 51 above the band |
 | 8388 | For Great Honor | 60 | quest level 60 above the band |
-| 8389 | Battle of Warsong Gulch | 19 | quest level 19 above the band |
-| 8390 | Conquering Arathi Basin | 29 | quest level 29 above the band |
+| 8389 | Battle of Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8390 | Conquering Arathi Basin | 29 | required level 20 above the band |
 | 8410 | Elemental Mastery | 50 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8419 | An Imp's Request | 52 | class quest (ClassQuestData.lua) |
-| 8426 | Battle of Warsong Gulch | 29 | quest level 29 above the band |
-| 8427 | Battle of Warsong Gulch | 39 | quest level 39 above the band |
-| 8428 | Battle of Warsong Gulch | 49 | quest level 49 above the band |
-| 8429 | Battle of Warsong Gulch | 59 | quest level 59 above the band |
-| 8430 | Battle of Warsong Gulch | 60 | quest level 60 above the band |
-| 8431 | Battle of Warsong Gulch | 29 | quest level 29 above the band |
-| 8432 | Battle of Warsong Gulch | 39 | quest level 39 above the band |
-| 8433 | Battle of Warsong Gulch | 49 | quest level 49 above the band |
-| 8434 | Battle of Warsong Gulch | 59 | quest level 59 above the band |
-| 8435 | Battle of Warsong Gulch | 60 | quest level 60 above the band |
-| 8436 | Conquering Arathi Basin | 39 | quest level 39 above the band |
-| 8437 | Conquering Arathi Basin | 49 | quest level 49 above the band |
-| 8438 | Conquering Arathi Basin | 59 | quest level 59 above the band |
-| 8439 | Conquering Arathi Basin | 60 | quest level 60 above the band |
-| 8440 | Conquering Arathi Basin | 39 | quest level 39 above the band |
-| 8441 | Conquering Arathi Basin | 49 | quest level 49 above the band |
-| 8442 | Conquering Arathi Basin | 59 | quest level 59 above the band |
-| 8443 | Conquering Arathi Basin | 60 | quest level 60 above the band |
+| 8426 | Battle of Warsong Gulch | 29 | required level 20 above the band |
+| 8427 | Battle of Warsong Gulch | 39 | required level 30 above the band |
+| 8428 | Battle of Warsong Gulch | 49 | required level 40 above the band |
+| 8429 | Battle of Warsong Gulch | 59 | required level 50 above the band |
+| 8430 | Battle of Warsong Gulch | 60 | required level 60 above the band |
+| 8431 | Battle of Warsong Gulch | 29 | required level 20 above the band |
+| 8432 | Battle of Warsong Gulch | 39 | required level 30 above the band |
+| 8433 | Battle of Warsong Gulch | 49 | required level 40 above the band |
+| 8434 | Battle of Warsong Gulch | 59 | required level 50 above the band |
+| 8435 | Battle of Warsong Gulch | 60 | required level 60 above the band |
+| 8436 | Conquering Arathi Basin | 39 | required level 30 above the band |
+| 8437 | Conquering Arathi Basin | 49 | required level 40 above the band |
+| 8438 | Conquering Arathi Basin | 59 | required level 50 above the band |
+| 8439 | Conquering Arathi Basin | 60 | required level 60 above the band |
+| 8440 | Conquering Arathi Basin | 39 | required level 30 above the band |
+| 8441 | Conquering Arathi Basin | 49 | required level 40 above the band |
+| 8442 | Conquering Arathi Basin | 59 | required level 50 above the band |
+| 8443 | Conquering Arathi Basin | 60 | required level 60 above the band |
 | 8532 | The Horde Needs Copper Bars! | 60 | seasonal or event quest |
 | 8533 | The Horde Needs More Copper Bars! | 60 | seasonal or event quest |
 | 8542 | The Horde Needs Tin Bars! | 60 | seasonal or event quest |
@@ -345,7 +343,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8920 | An Earnest Proposition | 60 | class quest (ClassQuestData.lua) |
 | 8923 | A Supernatural Device | 60 | quest level 60 above the band |
 | 8927 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
-| 8930 | In Search of Anthion | 60 | quest level 60 above the band |
+| 8930 | In Search of Anthion | 60 | required level 58 above the band |
 | 8938 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8939 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
 | 8940 | Just Compensation | 60 | class quest (ClassQuestData.lua) |
@@ -362,7 +360,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 9012 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
 | 9013 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
 | 9014 | Saving the Best for Last | 60 | class quest (ClassQuestData.lua) |
-| 9032 | Bodley's Unfortunate Fate | 60 | quest level 60 above the band |
+| 9032 | Bodley's Unfortunate Fate | 60 | required level 58 above the band |
 | 9154 | Light's Hope Chapel | 60 | seasonal or event quest |
 | 9263 | Investigate the Scourge of Orgrimmar | 10 | seasonal or event quest |
 | 9319 | A Light in Dark Places | 60 | Questie blacklist |
@@ -384,7 +382,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 65604 | The Binding | 20 | class quest (ClassQuestData.lua) |
 | 65610 | Wish You Were Here | 27 | class quest (ClassQuestData.lua) |
 | 79094 | The Lessons of Ta'zo | 20 | quest level 20 above the band |
-| 95697 | Changing Tastes | 31 | quest level 31 above the band |
+| 95697 | Changing Tastes | 31 | required level 24 above the band |
 | 96102 | Camping 101: Tailoring | 6 | requires a profession |
 | 96873 | A Pain in the Neck | 8 | requires a profession |
 | 96874 | This Is Spinal Axe | 10 | requires a profession |
@@ -425,11 +423,10 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 5652 | Hex of Weakness | 10 | PRIEST | woven, detour 191 s |
 | 6062 | Taming the Beast | 10 | HUNTER | woven, detour 223 s |
 | 6068 | The Hunter's Path | 10 | HUNTER | woven, detour 53 s |
-| 6083 | Taming the Beast | 10 | HUNTER | woven, detour 487 s |
+| 6083 | Taming the Beast | 10 | HUNTER | woven, detour 548 s |
 | 1501 | Creature of the Void | 11 | WARLOCK | woven, detour 178 s |
 | 1504 | The Binding | 11 | WARLOCK | woven, detour 61 s |
-| 6082 | Taming the Beast | 10 | HUNTER | woven, detour 273 s |
-| 6081 | Training the Beast | 10 | HUNTER | woven, detour 53 s |
+| 6082 | Taming the Beast | 10 | HUNTER | woven, detour 560 s |
 | 1463 | Earth Sapta | 4 | SHAMAN | repeatable |
 | 1464 | Fire Sapta | 13 | SHAMAN | repeatable |
 | 1499 | Vile Familiars | 4 | WARLOCK | follow-up already done |
@@ -494,14 +491,14 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 8918 | An Earnest Proposition | 60 | SHAMAN | quest level 60 above the band |
 | 8919 | An Earnest Proposition | 60 | WARLOCK | quest level 60 above the band |
 | 8920 | An Earnest Proposition | 60 | WARRIOR | quest level 60 above the band |
-| 8927 | Just Compensation | 60 | DRUID | quest level 60 above the band |
-| 8938 | Just Compensation | 60 | HUNTER | quest level 60 above the band |
-| 8939 | Just Compensation | 60 | MAGE | quest level 60 above the band |
-| 8940 | Just Compensation | 60 | PRIEST | quest level 60 above the band |
-| 8941 | Just Compensation | 60 | ROGUE | quest level 60 above the band |
-| 8942 | Just Compensation | 60 | SHAMAN | quest level 60 above the band |
-| 8943 | Just Compensation | 60 | WARLOCK | quest level 60 above the band |
-| 8944 | Just Compensation | 60 | WARRIOR | quest level 60 above the band |
+| 8927 | Just Compensation | 60 | DRUID | required level 58 above the band |
+| 8938 | Just Compensation | 60 | HUNTER | required level 58 above the band |
+| 8939 | Just Compensation | 60 | MAGE | required level 58 above the band |
+| 8940 | Just Compensation | 60 | PRIEST | required level 58 above the band |
+| 8941 | Just Compensation | 60 | ROGUE | required level 58 above the band |
+| 8942 | Just Compensation | 60 | SHAMAN | required level 58 above the band |
+| 8943 | Just Compensation | 60 | WARLOCK | required level 58 above the band |
+| 8944 | Just Compensation | 60 | WARRIOR | required level 58 above the band |
 | 9007 | Saving the Best for Last | 60 | DRUID | quest level 60 above the band |
 | 9008 | Saving the Best for Last | 60 | HUNTER | quest level 60 above the band |
 | 9009 | Saving the Best for Last | 60 | PRIEST | quest level 60 above the band |
@@ -515,7 +512,8 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 65610 | Wish You Were Here | 27 | WARLOCK | quest level 27 above the band |
 | 98575 | Tainted Tablet | 1 | WARLOCK | quest level 1 below the band |
 | 98576 | Glyphic Parchment | 1 | MAGE | quest level 1 below the band |
-| 1485 | Vile Familiars | 4 | WARLOCK | detour 2874 s |
+| 1485 | Vile Familiars | 4 | WARLOCK | detour 2878 s |
+| 6081 | Training the Beast | 10 | HUNTER | detour 878 s |
 | 1516 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 1517 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 1518 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
@@ -587,18 +585,18 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 430 |  |
-| 2 | O | 786 | Thwarting Kolkar Aggression | 1411 | 49.8, 81.3 | 346 |  |
-| 3 | O | 786 | Thwarting Kolkar Aggression | 1411 | 47.7, 77.3 | 179 |  |
-| 4 | T | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 373 |  |
-| 5 | A | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 59 |  |
-| 6 | A | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 44 |  |
-| 7 | A | 826 | Zalazane | 1411 | 56.0, 74.7 | 0 |  |
-| 8 | A | 823 | Report to Orgnil | 1411 | 56.0, 74.7 | 0 |  |
-| 9 | A | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 11 |  |
-| 10 | A | 97225 | Forgotten Loa Idols | 1411 | 55.9, 74.4 | 0 |  |
-| 11 | A | 817 | Practical Prey | 1411 | 56.0, 73.9 | 16 |  |
-| 12 | A | 96821 | Legging It | 1411 | 56.0, 73.9 | 0 |  |
+| 1 | A | 817 | Practical Prey | 1411 | 56.0, 73.9 | 437 |  |
+| 2 | A | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 16 |  |
+| 3 | A | 97225 | Forgotten Loa Idols | 1411 | 55.9, 74.4 | 0 |  |
+| 4 | A | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 11 |  |
+| 5 | A | 826 | Zalazane | 1411 | 56.0, 74.7 | 0 |  |
+| 6 | A | 823 | Report to Orgnil | 1411 | 56.0, 74.7 | 0 |  |
+| 7 | A | 96821 | Legging It | 1411 | 56.0, 73.9 | 27 |  |
+| 8 | A | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 65 |  |
+| 9 | A | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 59 |  |
+| 10 | O | 786 | Thwarting Kolkar Aggression | 1411 | 47.7, 77.3 | 373 |  |
+| 11 | O | 786 | Thwarting Kolkar Aggression | 1411 | 49.8, 81.3 | 179 |  |
+| 12 | T | 786 | Thwarting Kolkar Aggression | 1411 | 54.4, 74.3 | 346 |  |
 | 13 | A | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 963 |  |
 | 14 | O | 96604 | The Great Outdoors | 1411 | 52.1, 47.4 | 7 |  |
 | 15 | T | 96604 | The Great Outdoors | 1411 | 52.0, 47.3 | 7 |  |
@@ -607,105 +605,107 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 18 | A | 837 | Encroachment | 1411 | 52.0, 43.5 | 0 |  |
 | 19 | T | 823 | Report to Orgnil | 1411 | 52.2, 43.1 | 19 |  |
 | 20 | A | 806 | Dark Storms | 1411 | 52.2, 43.1 | 0 |  |
-| 21 | A | 96822 | For Honor | 1411 | 54.0, 42.6 | 92 |  |
-| 22 | O | 96822 | For Honor | 1411 | 56.5, 53.0 | 391 |  |
-| 23 | O | 784 | Vanquish the Betrayers | 1411 | 57.0, 57.5 | 160 |  |
-| 24 | A | 830 | The Admiral's Orders | 1411 | 59.3, 57.6 | 117 |  |
-| 25 | O | 96822 | For Honor | 1411 | 59.4, 56.4 | 44 |  |
-| 26 | T | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 601 | near #21 (went 631 yd away) |
-| 27 | A | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 | near #21 (went 631 yd away) |
-| 28 | T | 830 | The Admiral's Orders | 1411 | 52.0, 43.5 | 0 |  |
-| 29 | A | 831 | The Admiral's Orders | 1411 | 52.0, 43.5 | 0 |  |
-| 30 | A | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 57 |  |
-| 31 | A | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 0 |  |
-| 32 | O | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
-| 33 | T | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
-| 34 | A | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 97 |  |
-| 35 | O | 837 | Encroachment | 1411 | 43.6, 40.6 | 330 |  |
-| 36 | O | 96825 | This Fruit Could Bite Back | 1411 | 46.4, 49.4 | 342 |  |
-| 37 | O | 837 | Encroachment | 1411 | 46.8, 48.5 | 35 |  |
-| 38 | O | 791 | Carry Your Weight | 1411 | 58.9, 57.5 | 712 | near #25 (went 1001 yd away) |
-| 39 | O | 825 | From The Wreckage.... | 1411 | 63.4, 55.4 | 248 |  |
-| 40 | O | 818 | A Solvent Spirit | 1411 | 63.7, 56.4 | 39 |  |
-| 41 | O | 815 | Break a Few Eggs | 1411 | 68.7, 70.8 | 570 |  |
-| 42 | O | 97223 | Bloodtalon Matriarch | 1411 | 68.8, 71.8 | 35 |  |
-| 43 | O | 97225 | Forgotten Loa Idols | 1411 | 65.5, 84.4 | 477 |  |
-| 44 | O | 826 | Zalazane | 1411 | 67.7, 84.6 | 115 |  |
-| 45 | O | 808 | Minshina's Skull | 1411 | 67.4, 87.8 | 115 |  |
-| 46 | O | 817 | Practical Prey | 1411 | 63.6, 95.9 | 347 |  |
-| 47 | T | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 843 | near #12 (went 1374 yd away) |
-| 48 | T | 97225 | Forgotten Loa Idols | 1411 | 56.0, 74.7 | 44 | near #12 (went 1367 yd away) |
+| 21 | A | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 158 |  |
+| 22 | A | 96822 | For Honor | 1411 | 54.0, 42.6 | 228 |  |
+| 23 | O | 96822 | For Honor | 1411 | 56.5, 53.0 | 391 |  |
+| 24 | O | 784 | Vanquish the Betrayers | 1411 | 57.0, 57.5 | 160 |  |
+| 25 | A | 830 | The Admiral's Orders | 1411 | 59.3, 57.6 | 117 |  |
+| 26 | O | 791 | Carry Your Weight | 1411 | 58.9, 57.5 | 21 |  |
+| 27 | O | 96822 | For Honor | 1411 | 59.4, 56.4 | 46 |  |
+| 28 | T | 784 | Vanquish the Betrayers | 1411 | 52.0, 43.5 | 601 | near #22 (went 631 yd away) |
+| 29 | A | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 | near #22 (went 631 yd away) |
+| 30 | T | 830 | The Admiral's Orders | 1411 | 52.0, 43.5 | 0 |  |
+| 31 | A | 831 | The Admiral's Orders | 1411 | 52.0, 43.5 | 0 |  |
+| 32 | O | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 57 |  |
+| 33 | A | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 0 |  |
+| 34 | T | 96655 | Camping 101: Cooking | 1411 | 51.1, 42.5 | 0 |  |
+| 35 | A | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 0 |  |
+| 36 | T | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 97 |  |
+| 37 | T | 96822 | For Honor | 1411 | 54.0, 42.6 | 228 |  |
+| 38 | O | 825 | From The Wreckage.... | 1411 | 63.4, 55.4 | 673 |  |
+| 39 | O | 818 | A Solvent Spirit | 1411 | 63.7, 56.4 | 39 |  |
+| 40 | O | 815 | Break a Few Eggs | 1411 | 68.7, 70.8 | 570 |  |
+| 41 | O | 97223 | Bloodtalon Matriarch | 1411 | 68.8, 71.8 | 35 |  |
+| 42 | O | 97225 | Forgotten Loa Idols | 1411 | 65.5, 84.4 | 477 |  |
+| 43 | O | 826 | Zalazane | 1411 | 67.7, 84.6 | 115 |  |
+| 44 | O | 808 | Minshina's Skull | 1411 | 67.4, 87.8 | 115 |  |
+| 45 | O | 817 | Practical Prey | 1411 | 63.6, 95.9 | 347 |  |
+| 46 | T | 97223 | Bloodtalon Matriarch | 1411 | 55.3, 75.5 | 843 | near #12 (went 1269 yd away) |
+| 47 | T | 826 | Zalazane | 1411 | 56.0, 74.7 | 44 | near #12 (went 1251 yd away) |
+| 48 | T | 97225 | Forgotten Loa Idols | 1411 | 56.0, 74.7 | 0 |  |
 | 49 | T | 808 | Minshina's Skull | 1411 | 56.0, 74.7 | 0 |  |
-| 50 | T | 826 | Zalazane | 1411 | 56.0, 74.7 | 0 |  |
-| 51 | T | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 11 |  |
-| 52 | T | 817 | Practical Prey | 1411 | 56.0, 73.9 | 16 |  |
-| 53 | O | 96821 | Legging It | 1411 | 52.0, 52.1 | 795 |  |
-| 54 | T | 837 | Encroachment | 1411 | 52.0, 43.5 | 304 | near #33 (went 1946 yd away) |
-| 55 | T | 96821 | Legging It | 1411 | 52.0, 43.5 | 0 | near #33 (went 1946 yd away) |
-| 56 | T | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 |  |
-| 57 | A | 99048 | A Missing Hand | 1411 | 52.2, 43.1 | 19 |  |
-| 58 | T | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 64 |  |
-| 59 | T | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 0 |  |
-| 60 | T | 99048 | A Missing Hand | 1411 | 58.6, 45.6 | 411 |  |
-| 61 | A | 99049 | Threat from Below | 1411 | 58.6, 45.6 | 0 |  |
-| 62 | O | 99049 | Threat from Below | 1411 | 58.9, 44.4 | 46 |  |
-| 63 | T | 96822 | For Honor | 1411 | 54.0, 42.6 | 266 |  |
-| 64 | T | 99049 | Threat from Below | 1411 | 52.2, 43.1 | 92 |  |
-| 65 | A | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
-| 66 | T | 791 | Carry Your Weight | 1411 | 49.9, 40.4 | 158 |  |
-| 67 | A | 96877 | Halikor's Hoof | 1411 | 40.5, 28.4 | 652 |  |
-| 68 | O | 806 | Dark Storms | 1411 | 42.1, 26.7 | 105 |  |
-| 69 | A | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 260 |  |
-| 70 | A | 97281 | A Simmering Storm | 1411 | 52.0, 21.5 | 300 |  |
-| 71 | O | 99051 | Threat from Below | 1411 | 59.5, 26.6 | 435 |  |
-| 72 | T | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 699 | near #65 (went 810 yd away) |
-| 73 | A | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 0 | near #65 (went 810 yd away) |
-| 74 | T | 806 | Dark Storms | 1411 | 52.2, 43.1 | 0 |  |
-| 75 | A | 828 | Margoz | 1411 | 52.2, 43.1 | 0 |  |
-| 76 | O | 834 | Winds in the Desert | 1411 | 48.2, 32.3 | 438 |  |
-| 77 | T | 97281 | A Simmering Storm | 1411 | 46.4, 22.9 | 342 | near #69 (went 777 yd away) |
-| 78 | A | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 0 | near #69 (went 777 yd away) |
-| 79 | T | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 0 |  |
-| 80 | A | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 |  |
-| 81 | O | 835 | Securing the Lines | 1411 | 53.4, 24.6 | 377 | near #70 (went 656 yd away) |
-| 82 | T | 828 | Margoz | 1411 | 56.4, 20.0 | 225 |  |
-| 83 | A | 827 | Skull Rock | 1411 | 56.4, 20.0 | 0 |  |
-| 84 | A | 97246 | Meal Appeal | 1454 | 55.7, 72.2 | 693 |  |
-| 85 | F |  | flight path | 1454 | 45.1, 63.9 | 166 |  |
-| 86 | A | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 307 |  |
-| 87 | T | 831 | The Admiral's Orders | 1454 | 32.3, 35.8 | 20 |  |
-| 88 | A | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 89 |  |
-| 89 | A | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 273 |  |
-| 90 | A | 97275 | Whuut's the Rush | 1454 | 56.8, 33.0 | 15 |  |
-| 91 | T | 97275 | Whuut's the Rush | 1454 | 55.8, 32.9 | 14 |  |
-| 92 | T | 96877 | Halikor's Hoof | 1454 | 63.3, 44.8 | 152 |  |
-| 93 | T | 97246 | Meal Appeal | 1454 | 57.2, 53.3 | 117 |  |
-| 94 | A | 97249 | Favorite Food | 1454 | 57.2, 53.3 | 0 |  |
-| 95 | A | 832 | Burning Shadows | 1411 | 52.6, 8.8 | 381 |  |
-| 96 | O | 5726 | Hidden Enemies | 1411 | 52.9, 9.3 | 23 |  |
-| 97 | O | 827 | Skull Rock | 1411 | 52.9, 9.3 | 0 |  |
-| 98 | T | 827 | Skull Rock | 1411 | 56.4, 20.0 | 420 | near #83 (went 1170 yd away) |
-| 99 | A | 829 | Neeru Fireblade | 1411 | 56.4, 20.0 | 0 | near #83 (went 1170 yd away) |
-| 100 | O | 99052 | Threat from Below | 1411 | 59.2, 17.6 | 171 |  |
-| 101 | O | 97242 | Yelmak's Medley | 1454 | 69.6, 31.1 | 907 |  |
-| 102 | T | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 192 | near #92 (went 990 yd away) |
-| 103 | O | 97326 | Rocks to Rests | 1454 | 43.2, 33.7 | 179 | near #88 (went 1115 yd away) |
-| 104 | T | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 99 | near #88 (went 1211 yd away) |
-| 105 | T | 97249 | Favorite Food | 1454 | 36.5, 29.1 | 4 |  |
-| 106 | T | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 106 |  |
-| 107 | A | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 0 |  |
-| 108 | O | 5727 | Hidden Enemies | 1454 | 49.5, 50.6 | 276 | near #94 (went 944 yd away) |
-| 109 | T | 829 | Neeru Fireblade | 1454 | 49.5, 50.6 | 0 | near #94 (went 944 yd away) |
-| 110 | T | 832 | Burning Shadows | 1454 | 49.5, 50.6 | 0 |  |
-| 111 | T | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 276 |  |
-| 112 | O | 97282 | Stormy Potential | 1411 | 40.5, 26.5 | 1044 | near #68 (went 1237 yd away) |
-| 113 | T | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 333 | near #80 (went 1026 yd away) |
-| 114 | T | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #80 (went 1026 yd away) |
-| 115 | T | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 777 | near #75 (went 1795 yd away) |
-| 116 | A | 840 | Conscript of the Horde | 1411 | 50.8, 43.6 | 75 | near #75 (went 1789 yd away) |
-| 117 | T | 840 | Conscript of the Horde | 1413 | 62.3, 19.4 | 965 |  |
+| 50 | T | 818 | A Solvent Spirit | 1411 | 55.9, 74.4 | 11 |  |
+| 51 | T | 817 | Practical Prey | 1411 | 56.0, 73.9 | 16 |  |
+| 52 | O | 96821 | Legging It | 1411 | 52.0, 52.1 | 795 |  |
+| 53 | T | 96821 | Legging It | 1411 | 52.0, 43.5 | 304 | near #37 (went 1946 yd away) |
+| 54 | T | 825 | From The Wreckage.... | 1411 | 52.0, 43.5 | 0 | near #37 (went 1946 yd away) |
+| 55 | A | 99048 | A Missing Hand | 1411 | 52.2, 43.1 | 19 |  |
+| 56 | T | 815 | Break a Few Eggs | 1411 | 51.1, 42.5 | 64 |  |
+| 57 | T | 99048 | A Missing Hand | 1411 | 58.6, 45.6 | 411 |  |
+| 58 | A | 99049 | Threat from Below | 1411 | 58.6, 45.6 | 0 |  |
+| 59 | O | 99049 | Threat from Below | 1411 | 58.9, 44.4 | 46 |  |
+| 60 | T | 99049 | Threat from Below | 1411 | 52.2, 43.1 | 352 |  |
+| 61 | A | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 62 | O | 99051 | Threat from Below | 1411 | 59.5, 26.6 | 699 |  |
+| 63 | A | 97281 | A Simmering Storm | 1411 | 52.0, 21.5 | 435 |  |
+| 64 | T | 97281 | A Simmering Storm | 1411 | 46.4, 22.9 | 300 |  |
+| 65 | A | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 0 |  |
+| 66 | A | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 0 |  |
+| 67 | O | 806 | Dark Storms | 1411 | 42.1, 26.7 | 260 |  |
+| 68 | A | 96877 | Halikor's Hoof | 1411 | 40.5, 28.4 | 105 |  |
+| 69 | O | 837 | Encroachment | 1411 | 43.6, 40.6 | 462 |  |
+| 70 | O | 96825 | This Fruit Could Bite Back | 1411 | 46.4, 49.4 | 342 |  |
+| 71 | O | 837 | Encroachment | 1411 | 46.8, 48.5 | 35 |  |
+| 72 | A | 840 | Conscript of the Horde | 1411 | 50.8, 43.6 | 275 | near #61 (went 781 yd away) |
+| 73 | T | 837 | Encroachment | 1411 | 52.0, 43.5 | 58 | near #61 (went 807 yd away) |
+| 74 | T | 96825 | This Fruit Could Bite Back | 1411 | 51.1, 42.5 | 57 |  |
+| 75 | T | 806 | Dark Storms | 1411 | 52.2, 43.1 | 64 |  |
+| 76 | T | 99051 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 77 | A | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 0 |  |
+| 78 | A | 828 | Margoz | 1411 | 52.2, 43.1 | 0 |  |
+| 79 | O | 834 | Winds in the Desert | 1411 | 48.2, 32.3 | 438 |  |
+| 80 | T | 834 | Winds in the Desert | 1411 | 46.4, 22.9 | 342 | near #66 (went 932 yd away) |
+| 81 | A | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 0 | near #66 (went 932 yd away) |
+| 82 | O | 835 | Securing the Lines | 1411 | 53.4, 24.6 | 377 | near #63 (went 948 yd away) |
+| 83 | T | 828 | Margoz | 1411 | 56.4, 20.0 | 225 |  |
+| 84 | A | 827 | Skull Rock | 1411 | 56.4, 20.0 | 0 |  |
+| 85 | A | 97246 | Meal Appeal | 1454 | 55.7, 72.2 | 693 |  |
+| 86 | F |  | flight path | 1454 | 45.1, 63.9 | 166 |  |
+| 87 | A | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 307 |  |
+| 88 | T | 831 | The Admiral's Orders | 1454 | 32.3, 35.8 | 20 |  |
+| 89 | A | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 89 |  |
+| 90 | A | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 273 |  |
+| 91 | A | 97275 | Whuut's the Rush | 1454 | 56.8, 33.0 | 15 |  |
+| 92 | T | 97275 | Whuut's the Rush | 1454 | 55.8, 32.9 | 14 |  |
+| 93 | T | 96877 | Halikor's Hoof | 1454 | 63.3, 44.8 | 152 |  |
+| 94 | T | 97246 | Meal Appeal | 1454 | 57.2, 53.3 | 117 |  |
+| 95 | A | 97249 | Favorite Food | 1454 | 57.2, 53.3 | 0 |  |
+| 96 | A | 832 | Burning Shadows | 1411 | 52.6, 8.8 | 381 |  |
+| 97 | O | 5726 | Hidden Enemies | 1411 | 52.9, 9.3 | 23 |  |
+| 98 | O | 827 | Skull Rock | 1411 | 52.9, 9.3 | 0 |  |
+| 99 | T | 827 | Skull Rock | 1411 | 56.4, 20.0 | 420 | near #84 (went 1170 yd away) |
+| 100 | A | 829 | Neeru Fireblade | 1411 | 56.4, 20.0 | 0 | near #84 (went 1170 yd away) |
+| 101 | O | 99052 | Threat from Below | 1411 | 59.2, 17.6 | 171 |  |
+| 102 | O | 97242 | Yelmak's Medley | 1454 | 69.6, 31.1 | 907 |  |
+| 103 | T | 97242 | Yelmak's Medley | 1454 | 56.0, 34.1 | 192 | near #93 (went 990 yd away) |
+| 104 | O | 97326 | Rocks to Rests | 1454 | 43.2, 33.7 | 179 | near #89 (went 1115 yd away) |
+| 105 | T | 97326 | Rocks to Rests | 1454 | 36.8, 29.1 | 99 | near #89 (went 1211 yd away) |
+| 106 | T | 97249 | Favorite Food | 1454 | 36.5, 29.1 | 4 |  |
+| 107 | T | 5726 | Hidden Enemies | 1454 | 31.7, 37.8 | 106 |  |
+| 108 | A | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 0 |  |
+| 109 | T | 832 | Burning Shadows | 1454 | 49.5, 50.6 | 276 | near #95 (went 944 yd away) |
+| 110 | A | 5761 | Slaying the Beast | 1454 | 49.5, 50.6 | 0 | near #95 (went 944 yd away) |
+| 111 | T | 829 | Neeru Fireblade | 1454 | 49.5, 50.6 | 0 |  |
+| 112 | O | 5727 | Hidden Enemies | 1454 | 49.5, 50.6 | 0 |  |
+| 113 | T | 5727 | Hidden Enemies | 1454 | 31.7, 37.8 | 276 |  |
+| 114 | A | 5728 | Hidden Enemies | 1454 | 31.7, 37.8 | 0 |  |
+| 115 | O | 97282 | Stormy Potential | 1411 | 40.5, 26.5 | 1044 | near #68 (went 1237 yd away) |
+| 116 | T | 835 | Securing the Lines | 1411 | 46.4, 22.9 | 333 | near #81 (went 1026 yd away) |
+| 117 | T | 97282 | Stormy Potential | 1411 | 46.4, 22.9 | 0 | near #81 (went 1026 yd away) |
+| 118 | T | 99052 | Threat from Below | 1411 | 52.2, 43.1 | 777 | near #78 (went 1795 yd away) |
+| 119 | T | 840 | Conscript of the Horde | 1413 | 62.3, 19.4 | 1038 |  |
 
-Walking between tasks: 22527 yd (~54 min at 7 yd/s).
+Walking between tasks: 22613 yd (~54 min at 7 yd/s).
 
 ## Qualité
 
@@ -725,7 +725,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 107: `fp 1454 45.12 63.89`
+- step 105: `fp 1454 45.12 63.89`
 
 ## Warnings
 
