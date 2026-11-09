@@ -66,11 +66,14 @@ other chapters from the XML.
 | `plans.lua` | Chapter plans per faction (spec § 6), `plans.validate` (successors and `choices`). |
 | `emit.lua` | Guide file writer (spec § 5.2 format, one step per line with a comment). |
 | `classquests.lua` | Class quest chains (level ≤ 60) for `ClassQuestData.lua`. |
+| `bagquests.lua` | Quests that reward a bag, with their prerequisite chain, for `BagQuestData.lua` (see "Bag quests"). |
 | `overrides.lua` | Hand fixes applied at build time. |
 | `build.lua` | CLI. |
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
 | `travel.lua` | Travel time to each `choices` target with `sim.route`, from generated guides and reports (no QuestieDB). |
 | `data/*.csv` | Forever DB2 tables, build 1.60.1.70707 (wago.tools): `UiMapAssignment`, `UiMap`, `TaxiNodes`, `TaxiPath`, `AreaTable`, `Map`. |
+| `data/StarterDrops.lua` | Wowhead Classic drop rates of the items that start a quest (see "Drop rates of quest starters"). |
+| `starter_items.lua`, `starter_drops.py` | Item list for Questie's Wowhead scraper, then `data/StarterDrops.lua` from its output. |
 | `tests/` | `run.lua` runner, `test_world.lua`, `test_xp.lua`, `test_sim.lua` (on the synthetic `fixture_zone.lua`), `test_emit.lua`, `test_choices.lua` (`choices`, `sim`, validation, backfill, travel; no QuestieDB). |
 
 ## Plans (`plans.lua`)
@@ -93,7 +96,6 @@ other chapters from the XML.
     { id = "A_Human_02", races = { "Gnome" }, label = "...", travel = { kind = "tram" }, weight = 1 },
   },                                     -- (see "Successor choices" below)
   flightPaths = { "Ironforge, Dun Morogh" }, -- TaxiNodes names to pick up in this chapter (planned detour)
-  dungeons = { "The Hall of Thanes" },   -- dungeon quests (QuestieDB dungeon names) accepted in passing, optional
   optional = { [96391] = "Hall of Thanes" }, -- forced quests marked optional + dungeon label
   force = { [id] = true }, drop = { [id] = "reason" },
   levelSlack = 1,                        -- levels of overshoot allowed above maxLevel (XP budget)
@@ -134,6 +136,8 @@ return {
   pin = { [questId] = { mapId, x, y } },    -- force the objective site
   insertAfter = { [planId] = { { afterQuestTurnin = questId, step = { "note", "..." } } } },
                                             -- step inserted after that turn-in (0 = at the start)
+  pre = { [questId] = { prerequisiteId, ... } }, -- prerequisites missing from QuestieDB (one of them, like
+                                            -- preQuestSingle); also read by tools/validate_guides.lua
 }
 ```
 
@@ -148,7 +152,8 @@ All thresholds are in `sim.CONST` (`sim.lua`).
    `questLevel` in [minLevel − 3, maxLevel + 3] and `reqLevel ≤ maxLevel` (forced quests skip
    this), a starter spawn in the chapter region (or a starting item dropped by mobs there) and a
    finisher in the region or in `endZones`. Excluded: class quests (class mask of 1 or 2
-   classes: they go to `ClassQuestData.lua`; wider masks such as "all but Warlock" stay in the
+   classes: they go to `ClassQuestData.lua`, and the short ones are woven afterwards as `classes` steps,
+   see "Class quests woven into the route"; wider masks such as "all but Warlock" stay in the
    route with a `class` filter), profession, spell or reputation requirements, repeatable quests
    (`specialFlags` 1), escorts among the event quests (`specialFlags` 2 without an exploration
    point; see "Lot L" below), blacklisted quests, quests already done. Dungeon quests are only accepted in passing (`optional`,
@@ -333,12 +338,11 @@ guide with an invalid step is refused in game with one `Invalid guide <id>: step
 | `levelBelow` | Lowest quest level accepted: `minLevel - levelBelow` (default 3). |
 | `far` | Distance in yards beyond which a quest is dropped as `far` (default 900). |
 | `dungeonReqSlack` | Dungeon quests accepted up to required level `maxLevel + n`. |
-| `dungeonLevelHigh` | Dungeon quests accepted up to quest level `maxLevel + n`. |
 | `strictLevel` | Ordering counts the grinding before a level-gated task (see below). |
 | `arrive.via` | Point reached by computed travel before the fixed `arrive` steps. |
 | `precede` | Pairs `{ first, second }` of task ids (`A`, `T`, `C` + quest id, `O` + quest id = all its objective sites): extra precedence. |
 | `safeLevel` | `{ [questId] = level }`: level from which the objectives of that quest are done (replaces the computed safe level). |
-| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). |
+| `widen` | `false`: the band is never widened (chapters 30-60, whose zones are visited again later). `true`: always widened (a chapter that flips on the `WIDEN_GRIND` threshold for a few mobs, A_03). |
 
 ### Reports
 
@@ -562,7 +566,7 @@ measured here (see `docs/routes/README.md` for the per-chapter table):
 
 ### Dungeon quests taken in passing
 
-Dungeon quests accepted in passing (`dungeons`, `optional` steps, log value `"dungeon"`) used to stay in the
+Dungeon quests accepted in passing (`optional` steps, log value `"dungeon"`) used to stay in the
 simulated log for good: at level 30, 10 of the 20 slots of the Alliance path were taken. From a chapter whose
 `minLevel` is at least `DUNGEON_RELEASE_FROM` (30), each such quest whose level is at most
 `minLevel - DUNGEON_RELEASE_GAP` (4) leaves the log at the start of the chapter (`sim.releaseDungeonQuests`),
@@ -669,6 +673,196 @@ After these changes, the forcings of `plans.lua` were measured again one by one 
   per Horde path (Orc +29). The trunk guides are shared by every race path, so a per-race simulation could only
   change the measure, not the routes. `grindCost` (mobs of the character's
   level, 20 s each, as `sim.grindTo`) is unchanged.
+
+## Objective danger (2026-11-09, player feedback)
+
+A Dwarf player on the 1-20 route reported orange mobs at level 16 (18-19), many easy Loch Modan quests left out, and
+a trip into the elite ogre camp of Mo'grosh for a book (Runes of the Sorcerer-Kings 78148) at level 15. Three causes
+in the simulator: an objective whose "safe" level needed more than `SAFE_GATE_GRIND` mobs of grinding was done anyway,
+too low; elites around an objective were never looked at (only the mobs to kill); and the band widening of Loch Modan
+(up to level 20) filled the XP budget with those quests instead of the easy ones.
+
+### Minimum level of an objective (`sim.lua`)
+
+- Each objective task (`O`, `C`) waits for its minimum level, the highest of: quest level - `DANGER_QUEST_ABOVE` (3),
+  average level of its mobs - `DANGER_MOB_ABOVE` (2: never orange), and for a site near hostile elites, the elite level
+  + `ELITE_ABOVE` (2) - `DANGER_MOB_ABOVE` (an elite of the player's level at most). `safeLevel` of a plan still
+  replaces it. This replaces the former "safe" level (quest - 1, mobs - 1), which was only a preference.
+- Elites (`sim.eliteNear`): hostile NPCs of rank 1 to 3 within `ELITE_RADIUS` (35 yd) + the spread of the site (at most
+  `ELITE_SPREAD`, 25 yd). They count as a camp (at least `ELITE_CAMP`, 2, spawns in the radius) or when the elite is a
+  target of the objective (kill or drop); a lone rare elite that passes by (Old Icebeard, Mor'Ladim) does not. Elites
+  more than `ELITE_IGNORE_ABOVE` (10) levels above the chapter are ignored (instance data projected on the zone, event
+  NPCs: Infernal 30 in Elwynn, Stonevault 36 in Loch Modan). Mob levels above 63 (QuestieDB 9999: scenario NPCs of
+  unknown level) are no constraint.
+- In the walk, an objective below its minimum level is reached by grinding up to `SAFE_GATE_GRIND` (60) mobs; beyond,
+  it is **deferred**: its task, the remaining tasks of its quest and of the quests that depend on it leave the queue
+  and come back as soon as the level is reached (before a chapter exit task at the latest). What is still deferred at
+  the end of the chapter is dropped ("objective too dangerous before level N"), its steps already written are removed,
+  and the chapter is run again without those quests so that the XP budget takes others. A forced quest is done anyway.
+- The accept of a chain head blocked by its required level is deferred the same way when it would need more than
+  `SAFE_GATE_GRIND` mobs (it used to be grinding without limit: 122 mobs in Tirisfal once objectives were deferred).
+- `widen = true` on a plan always widens the band (see "New plan fields").
+
+### Measured (QuestieDB v1.0.12, all eight race paths)
+
+| Variant | Human 1-60 | Orc 1-60 | Dangerous drops |
+|---|---|---|---|
+| Before (objectives done too low) | 5 212 | 5 158 | 0 |
+| Old safe level as a hard limit (skip) | 6 026 | 5 910 | ~400 |
+| Same, `strictLevel` on every chapter | 6 148 | 5 882 | 400 |
+| Danger limit mobs +2, skip | 5 720 | 5 670 | 265 |
+| Danger limit + deferral, elite radius 50 + 40 yd, any elite | 5 851 | 5 739 | 322 |
+| Same without elites | 5 699 | 5 477 | 124 |
+| Danger limit + deferral, mobs +3 | 5 758 | 5 621 | 201 |
+| One minimum level (danger), deferral, elite camps or targets within 35 + 25 yd, 9999 ignored | 5 572 | 5 551 | 215 |
+| **Kept**: same + deferred chain-head accepts | **5 572** | **5 538** | 240 |
+
+The remaining cost (+300 to +450 min per path, about +6 to +9 %) is the quests that the routes used to do 3 to 10
+levels too low or inside elite camps; the simulator kills every mob in 20 s whatever its level, so the old totals were
+optimistic. Biggest changes: A_04 (Wetlands: Dragonmaw and Dark Iron elites of Forever around most objectives, 284
+mobs of grinding), H_03, A_02 and the 30-60 trunk.
+
+### Guarded objects and shared kills (2026-11-09, player feedback)
+
+The same player was sent into the kobold mine of Silver Stream (Loch Modan) for the Miners' Gear of Filthy Paws (307)
+while Rat Catching (416: Tunnel Rat Ears from the same kobolds) was left out ("level band reached"): the simulator
+counted 6 s per object and no fight, so the ears quest looked like it cost all its kills.
+
+- `sim.guardsOf`: for an object objective (or an item looted from objects), the hostile non-elite mobs within
+  `CLEAR_RADIUS` (15 yd) of the objects taken, at most `CLEAR_PER_OBJECT` (2) per object, nearest first, are its
+  guards (`site.clear = { [npcId] = n }`).
+- At selection, the marginal time of a drop or kill objective is reduced by the guards of the same mobs at
+  `SWEEP_AREA` or less in the object sites of quests whose isolated ratio is at least the median (they are killed
+  anyway). Rat Catching goes from 4.61 to 7.11 XP/s marginal.
+- The walk still counts both quests in full (the object time has no fight in it): measured on all paths, adding the
+  guards' fights to the object quests changed every route (+30 to +80 min, objects among mobs drop out of the budget)
+  and was not kept.
+- A_DwarfGnome_03 forces Rat Catching: done right after Filthy Paws in the mine. Dwarf / Gnome +10 min.
+
+## Bag quests (`bagquests.lua`, 2026-11-08)
+
+`build.lua` writes `Questify/Guides/BagQuestData.lua` after `ClassQuestData.lua` (both listed last in `Guides.xml`):
+one entry per quest whose reward items include a regular bag (item class 1, subclass 0: no soul bag, quiver or
+profession bag), `{ key, title, faction, races, level, bag, quests, rewards }`.
+
+- `quests` is the chain to do: required prerequisites first, depth first (`preQuestSingle`: the first one, by id,
+  that the faction can do; `preQuestGroup`: all), the bag quest last; at most 8 quests. Breadcrumbs are not
+  required and are left out.
+- Left out, with the reason in the second result of `bq.build`: class quests, dungeon quests (QuestieDB zone in an
+  instance), reputation, profession or spell requirements, repeatable quests, blacklisted quests, quests of level 60
+  (reputation rewards, Darkmoon tickets), quests without a giver, and any chain whose required prerequisite is in
+  one of these cases.
+- `key` is `BAG_<questId>`, with `_A` or `_H` when the chain is limited to one faction (The Problem With Prideclaws
+  92515 has a different prerequisite per faction: two entries).
+- QuestieDB has no bag size; the game reads it from the item tooltip (`Engine/BagQuests.lua`). The game offers an
+  entry only when the bag beats the smallest regular bag worn (or a bag slot is empty), and never when the route
+  already turns in every remaining quest of the chain (`Q.Progress:RouteTurnins`).
+- `tools/validate_guides.lua` checks the shape of the entries (unique keys, bag, level, quests) and that every quest
+  is known to QuestieDB.
+
+On QuestieDB v1.0.12: 18 entries (12 for the Alliance, 9 for the Horde, 3 of them shared). Turned in by a chapter
+of the routes, so never offered on the race paths that do them: 791, 86784, 97277, 151, 97253, 140, 1003, 58.
+
+## Drop rates, item-started quests and class quests (2026-11-09)
+
+### Drop rates of quest starters (`data/StarterDrops.lua`)
+
+QuestieDB's drop table (Wowhead, through Questie) only covers objective items. An item that starts a quest
+had no rate, and the simulator assumed 20 % (5 kills), with a 5 % floor (20 kills at most). Real rates are
+often far lower: An Old History Book 0.4-1.4 %, the OOX beacons 0.7 %. `data/StarterDrops.lua` holds the
+Wowhead Classic rates of these items ("dropped-by" tab, `count / outof` per NPC), read by `qdb.lua` only
+where Questie has no rate. Items missing from Wowhead Classic (Forever items) are listed in `missing`.
+
+```sh
+luajit tools/routebuilder/starter_items.lua > .cache/starter_items.txt
+python3 tools/routebuilder/starter_drops.py --prepare .cache/starter_items.txt   # copy of Questie's scraper
+(cd .cache/questie-scraper && ../venv-scrapy/bin/python runner.py --item-drops -ex classic)
+python3 tools/routebuilder/starter_drops.py .cache/questie-scraper/item_drop/item_drop_data.json \
+    --ids .cache/starter_items.txt
+```
+
+Scrapy lives in `.cache/venv-scrapy` (`python3 -m venv .cache/venv-scrapy && .cache/venv-scrapy/bin/pip
+install scrapy`). `--prepare` copies the scraper (the `.cache/questie` clone stays untouched), writes the item
+list and sets an honest User-Agent: Wowhead answers 403 to the scraper's fake Chrome one.
+
+Simulator rules (`sim.lua`):
+
+- Expected kills = `ceil(1 / rate)`, no floor. An NPC missing from a known list drops nothing useful. No
+  known rate: 1 for a named mob (elite, rare, or at most `STARTER_UNIQUE_SPAWNS` = 2 spawns),
+  `STARTER_UNKNOWN_RATE` = 0.2 otherwise.
+- Grind budget: when a chapter still ends with level grinding, it is simulated again with
+  `opts.grindBudget` = that many mobs. The budget goes to item-started quests (highest quest XP first) whose
+  mobs give XP at the chapter's start level (level - 2 to level + 1): those kills replace grinding and cost
+  nothing in the yield ratios. The new run is kept when it reaches at least the same level in no more time.
+- More than `STARTER_MAX_KILLS` = 60 kills left after the budget: dropped
+  (`starter item drop rate 0.7 % (about 142 kills)`). The accept step note gives the rate and the kills.
+
+### Class quests woven into the route (`sim.weaveClassQuests`)
+
+A class quest (class mask of 1 or 2 classes, the `ClassQuestData.lua` chains) whose giver, objectives and
+turn-in are in the chapter region becomes `classes = { CLASS }` steps, placed after the nearest route steps:
+accept, objectives and turn-in in this order, after the turn-in of its prerequisites for that class (a
+general quest turned in earlier in the chapter, or a class quest woven here or in an earlier chapter of the
+path, `state.classDone["CLASS:id"]`). The simulated route (order, time, XP) does not change.
+
+Left to the in-game class quest window: no route step to attach to, a detour over `CLASS_MAX_DETOUR` = 600 s
+(round trips from the nearest route steps, objective time, accept and turn-in), a full quest log (the
+general log is followed along the steps, plus the class quests already open for that class), an item
+start, a dungeon quest, or a turn-in outside the region. The chapter report lists woven and skipped class
+quests (`## Class quests`).
+
+`build.raceFilters` replays each race path once without class steps, then once per class named on the path:
+a class step invalid for a race gets a `race` filter without it, or is removed in a chapter of a single race
+path (reason in the report warnings).
+
+## Dungeon quests in every chapter (2026-11-09)
+
+Dungeon quests give a lot of XP and gear, and every dungeon should be run at least once. A chapter used to take
+the quests of the dungeons listed by hand in its plan (`dungeons`), within the quest level band. Now every
+chapter takes, in passing, the dungeon quests whose giver is in its region; the in-game dungeon window
+(`Engine/Dungeons.lua`) does the rest when the dungeon is added to the route.
+
+- Dungeons: `dungeon_catalog.lua` (shared with `build_dungeons.lua`, so the route and the dungeon window agree).
+  A quest counts when its QuestieDB zone is a catalogue dungeon open to the faction (`only`) and not outleveled
+  at the start of the chapter (`max >= minLevel`). Otherwise: `dungeon quest (X outside the dungeon catalogue)`,
+  `(X closed to the Horde)`, `(X outleveled: up to level N)`. The `dungeons` lists of `plans.lua` and
+  `dungeonLevelHigh` are gone; `optional` still forces a quest, `dungeonReqSlack` still widens the required
+  level.
+- Levels: no quest level ceiling (the quest is done later, in the instance); required level at most `maxLevel`
+  (+ `dungeonReqSlack`). The accept never grinds: below its required level the task waits (deferred, back as
+  soon as the level is reached); still blocked at the end of the chapter: `dungeon quest: required level N not
+  reached in this chapter`, without a chapter rerun.
+- Chains (`catalog.prerequisites`, `DUNGEON_CHAIN` = 3 levels of `preSingle` / `preGroup`): a quest that leads to
+  a quest of an open dungeon, given in this chapter or elsewhere, is a candidate above the quest level band,
+  kept first in the XP budget (like forced quests) and never dropped as `low ratio` (`far` still applies). When
+  only that exemption keeps it, its steps are `optional` + `dungeon` (hidden with the dungeon quests option off,
+  like the accept). Example: The Forgotten Pools, The Stagnant Oasis and Altered Beings in The Barrens open
+  Leaders of the Fang (Wailing Caverns), whose talk prerequisites the dungeon window chains itself.
+- Left to the dungeon window: givers in zones crossed before the required level (Gnomeregan quests in Ironforge
+  and Dun Morogh, Stockade and Dalaran quests in Stormwind for the Human path), and chains that start outside
+  the chapters.
+- `classquests.lua` leaves out `<NYI>` titles (never implemented quests; an older Questie clone does not
+  blacklist them).
+
+Measured (QuestieDB v1.0.12, sum of all chapters):
+
+| | Before | After |
+|---|---|---|
+| Town quests of `DungeonData.lua` taken by the routes, Alliance | 31 / 132 | 41 / 132 |
+| Same, Horde | 28 / 132 | 44 / 132 |
+| Simulated minutes, Alliance | 6 543 | 6 609 (+1.0 %) |
+| Simulated minutes, Horde | 6 355 | 6 390 (+0.6 %) |
+
+Main remaining reasons: required level above the band (97 chapter checks) and a prerequisite done in no chapter
+(58).
+
+### No grinding in a capital (`sim.grindSite`)
+
+Forever fills the capitals with NPCs that QuestieDB lists without faction or NPC flags (Malus 29 and Anya Rince 52
+in Undercity, Gevreka 42 in Thunder Bluff): a chapter that ended in town sent the player to kill 91 to 172 of them.
+`sim.grindSite` never picks a site on a capital map (`sim.CAPITAL_MAPS`: Stormwind, Ironforge, Darnassus,
+Orgrimmar, Thunder Bluff, Undercity); a chapter that ends in a capital looks for its grind site near the last
+objective instead.
 
 ## Known limits
 

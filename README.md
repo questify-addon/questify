@@ -40,6 +40,9 @@ Captures et vidéos à venir : liste des prises de vue dans [docs/media/README.m
   personnage sont sautées.
 - Navigation vers chaque étape (marqueur natif du jeu, ou TomTom, WaypointUI, ShortestPath Forever).
 - Monstres à tuer sous chaque objectif (clic ou touche de ciblage auto : cible + crâne), quêtes de classe, acceptation et rendu automatiques (désactivables).
+- Quêtes de sac (non publié, option) : près du donneur d'une quête qui donne un sac plus grand que ton plus petit
+  sac (ou s'il te reste un emplacement de sac vide), la route propose une étape « Quête de sac » ; un clic pour
+  l'ajouter à la route, prérequis compris, ou l'ignorer. `/qf sacs` les liste.
 - Donjons conseillés selon ton niveau et ta faction (non publié) : un clic ajoute ses quêtes à prendre
   en ville, l'entrée et les rendus à la route (option pour couper l'alerte).
 - Repères numérotés de l'étape courante et des 5 suivantes sur la carte du monde et la minicarte (non publié, option).
@@ -190,6 +193,9 @@ Bibliothèques incluses dans `Questify/Libs/`, copiées sans modification :
 - Navigation to every step (native in-game marker, or TomTom, WaypointUI, ShortestPath Forever).
 - Monsters to kill under each objective in the tracker (click or auto-targeting key: target +
   skull), class quests, automatic accept and turn-in (can be turned off).
+- Bag quests (unreleased, can be turned off): near the giver of a quest that rewards a bag bigger than your smallest
+  bag (or when a bag slot is empty), the route offers a "Bag quest" step; one click adds it to the route, with its
+  prerequisites, or ignores it. `/qf bags` lists them.
 - Suggested dungeons for your level and faction (unreleased): one click adds its quests to pick up
   in town, the entrance and the turn-ins to the route (the alert can be turned off).
 - Numbered pins for the current step and the next 5 on the world map and minimap (unreleased, can be turned off).

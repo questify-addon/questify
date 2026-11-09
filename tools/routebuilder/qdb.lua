@@ -24,6 +24,8 @@ end
 local CACHE = projectRoot() .. "/.cache"
 qdb.DEFAULT_DB = CACHE .. "/questiedb"
 qdb.DEFAULT_QUESTIE = CACHE .. "/questie"
+-- Taux de butin Wowhead des objets qui démarrent une quête (tools/routebuilder/starter_drops.py)
+qdb.STARTER_DROPS = projectRoot() .. "/tools/routebuilder/data/StarterDrops.lua"
 
 ------------------------------------------------------------------------------
 -- Bac à sable
@@ -480,6 +482,27 @@ function qdb.load(opts)
       end
     end
   end
+  -- Objets qui démarrent une quête : la table de Questie ne couvre que les objets d'objectif. Taux Wowhead
+  -- Classic de data/StarterDrops.lua (tools/routebuilder/starter_drops.py), seulement là où Questie n'a rien.
+  -- starterUnknown[objet] : objet sans taux connu (objets propres à Forever, absents de Wowhead Classic).
+  local starterUnknown = {}
+  do
+    local path = (opts.starterDrops ~= false) and (opts.starterDrops or qdb.STARTER_DROPS)
+    local f = path and io.open(path, "rb")
+    if f then
+      local src = f:read("*a"); f:close()
+      local sd = loadEmpty(src, "StarterDrops.lua")
+      for item, npcs in pairs(sd.drops or {}) do
+        for npc, c in pairs(npcs) do
+          if type(c) == "table" and type(c[1]) == "number" and type(c[2]) == "number" and c[2] > 0 then
+            drops[item] = drops[item] or {}
+            if drops[item][npc] == nil then drops[item][npc] = c[1] / c[2] end
+          end
+        end
+      end
+      for _, item in ipairs(sd.missing or {}) do starterUnknown[item] = true end
+    end
+  end
 
   -- XP des quêtes (support/Forever/QuestXP/xpDB-classic.lua) : [id] = {niveau, xp}
   local xp = {}
@@ -514,7 +537,7 @@ function qdb.load(opts)
   end
 
   local D = {
-    quests = {}, npcs = {}, objects = {}, items = {}, xp = xp, drops = drops,
+    quests = {}, npcs = {}, objects = {}, items = {}, xp = xp, drops = drops, starterUnknown = starterUnknown,
     npcFlags = {}, flightMasters = {}, innkeepers = {},
     blacklist = blacklist, newQuests = {}, dungeonAreas = dungeonAreas, areaName = areaName,
     raceKeys = raceKeys, classKeys = classKeys, npcFlagValues = npcFlagsEnum,
@@ -649,6 +672,27 @@ function qdb.classList(mask)
   table.sort(names)
   for _, name in ipairs(names) do if hasBit(mask, qdb.CLASS_BITS[name]) then out[#out + 1] = name end end
   return out
+end
+
+-- Prérequis ajoutés à la main (champ `pre` de overrides.lua) : chaînes que QuestieDB ne relie pas encore, comme la
+-- chasse au trésor du Cozy Sleeping Bag (79192 -> 79980 -> 79974 -> 79975 -> 79976). pre = { [quête] = { prérequis } }
+-- remplace le preQuestSingle de la quête (un prérequis au choix) et met D.unlocks à jour. Même règle dans
+-- tools/validate_guides.lua : l'ordre de ces chaînes y est contrôlé.
+function qdb.addPrereqs(D, pre)
+  for _, qid in ipairs(qdb.sortedKeys(pre or {})) do
+    local q = D.quests[qid]
+    if q then
+      q.preSingle = {}
+      for _, p in ipairs(pre[qid]) do
+        q.preSingle[#q.preSingle + 1] = p
+        D.unlocks[p] = D.unlocks[p] or {}
+        local seen = false
+        for _, x in ipairs(D.unlocks[p]) do if x == qid then seen = true end end
+        if not seen then table.insert(D.unlocks[p], qid) end
+      end
+    end
+  end
+  return D
 end
 
 -- Quête de classe : masque limité à une ou deux classes. Un masque plus large (ex. « toutes sauf

@@ -97,6 +97,10 @@ quand ils reviennent.
   en ville puis l'étape donjon. **Jamais le Gouffre de Ragefeu pour l'Alliance** (Orgrimmar, Horde
   seulement) ; table des donjons avec faction autorisée (Les Mortemines : Alliance pour les quêtes,
   Cavernes des lamentations : les deux, etc.).
+- **Routes après le niveau 60 : accès** (demandé le 8 novembre 2026) : une fois le niveau 60 atteint, des
+  routes pour débloquer les accès, à commencer par l'harmonisation d'Onyxia (chaînes Alliance et Horde
+  jusqu'à l'Amulette de Feu-drake), puis d'autres (Cœur du Magma, clés de donjon).
+  À concevoir : chapitres « accès » hors chaîne 1-60, proposés comme les quêtes de classe et de sac.
 - **Boucle télémétrie -> générateur** : importer les exports `/qf export` (temps réels par étape) dans
   `tools/routebuilder` pour recaler les constantes (vitesse de marche, temps par mob, temps PNJ) et régénérer les routes.
 

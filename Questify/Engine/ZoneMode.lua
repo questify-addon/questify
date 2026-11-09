@@ -30,6 +30,8 @@ local MAX_REF = 40           -- points de référence du site courant (coût des
 local MAX_SPAWNS = 800       -- points examinés au plus par cible
 local TICK = 1               -- secondes : entrée et sortie de la zone, changement d'objectif en tête
 local NAME_SPAN = 0.6        -- nom de sous-zone appris seulement près du centre (fraction du rayon)
+local HEAD_KEEP = 40         -- yards : à priorité égale, l'objectif en tête le reste tant qu'un autre
+                             -- n'est pas plus proche d'autant (la flèche ne saute pas de l'un à l'autre)
 
 local PRIORITY = { object = 1, named = 2, mob = 3, item = 3 }
 
@@ -46,6 +48,7 @@ local lastSig = ""    -- signature de la dernière zone annoncée (ZONEMODE_CHAN
 local learned = {}    -- noms de sous-zone appris sur place : { { mapId, x, y, radius, name } }
 local rankCache = {}
 local ticker
+local headKey         -- objectiveKey de l'objectif en tête au dernier tri (voir HEAD_KEEP)
 
 ---------------------------------------------------------------------------
 -- Outils
@@ -580,7 +583,8 @@ local function nearestPoint(o, pc, pwx, pwy)
 end
 
 -- Objectifs de la zone dans l'ordre à suivre : priorité (objet 1, nommé 2, monstre 3 ; un objet
--- qui attend sa clé passe juste après le monstre qui la porte), puis le plus proche.
+-- qui attend sa clé passe juste après le monstre qui la porte), puis le plus proche ; l'objectif
+-- déjà en tête compte HEAD_KEEP yards de moins.
 -- Chaque objectif reçoit `distance`, `nearest` (point visé) et `blocked` ({ item, by } ou nil).
 function ZoneMode:Objectives(z)
   z = z or self:Current()
@@ -599,19 +603,22 @@ function ZoneMode:Objectives(z)
         o.order = math.max(o.order, (need.by.priority or 3) + 0.5)
       end
     end
+    o.rank = o.distance
+    if o.rank and headKey and objectiveKey(o) == headKey then o.rank = o.rank - HEAD_KEEP end
     list[i] = o
   end
   table.sort(list, function(a, b)
     if a.order ~= b.order then return a.order < b.order end
-    if a.distance and b.distance then
-      if a.distance ~= b.distance then return a.distance < b.distance end
-    elseif a.distance then
+    if a.rank and b.rank then
+      if a.rank ~= b.rank then return a.rank < b.rank end
+    elseif a.rank then
       return true
-    elseif b.distance then
+    elseif b.rank then
       return false
     end
     return a.seq < b.seq
   end)
+  headKey = list[1] and objectiveKey(list[1]) or nil
   return list
 end
 

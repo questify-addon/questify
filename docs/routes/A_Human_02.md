@@ -1,18 +1,18 @@
 # A_Human_02 — Elwynn Forest
 
-Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d306458a95` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
 | Level band | 6-11 |
-| Simulated level | 6.00 -> 12.00 |
-| Time | 117 min |
-| XP gained | 35405 |
-| XP/h | 18105 |
-| Steps | 113 |
-| Quests turned in | 43 |
+| Simulated level | 6.00 -> 11.82 |
+| Time | 118 min |
+| XP gained | 34051 |
+| XP/h | 17351 |
+| Steps | 155 |
+| Quests turned in | 42 |
 | Hubs | 10 |
-| Median ratio (XP/s) | 4.06 |
+| Median ratio (XP/s) | 3.76 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -26,50 +26,50 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3 | 106 | Young Lovers | 6 | 135 | 7 |
 | 4 | 111 | Speak with Gramma | 6 | 135 | 7 |
 | 5 | 85 | Lost Necklace | 6 | 135 | 7 |
-| 6 | 62 | The Fargodeep Mine | 7 | 475 | 7 |
-| 7 | 123 | The Collector | 10 | 210 | 7 |
-| 8 | 40 | A Fishy Peril | 10 | 85 | 7 |
-| 9 | 60 | Kobold Candles | 7 | 475 | 7 |
-| 10 | 107 | Note to William | 6 | 135 | 7 |
+| 6 | 40 | A Fishy Peril | 10 | 85 | 7 |
+| 7 | 62 | The Fargodeep Mine | 7 | 475 | 7 |
+| 8 | 123 | The Collector | 10 | 210 | 7 |
+| 9 | 107 | Note to William | 6 | 135 | 7 |
+| 10 | 60 | Kobold Candles | 7 | 475 | 7 |
 | 11 | 99127 | A Net Disaster | 7 | 630 est. | 7 |
-| 12 | 35 | Further Concerns | 10 | 420 | 8 |
-| 13 | 37 | Find the Lost Guards | 10 | 210 | 8 |
-| 14 | 45 | Discover Rolf's Fate | 10 | 420 | 8 |
-| 15 | 83 | Red Linen Goods | 9 | 780 | 8 |
-| 16 | 71 | Report to Thomas | 10 | 210 | 8 |
-| 17 | 39 | Deliver Thomas' Report | 10 | 1050 | 9 |
-| 18 | 112 | Collecting Kelp | 7 | 315 | 9 |
-| 19 | 99128 | Slimy Menace | 7 | 630 est. | 9 |
-| 20 | 99143 | Bottles and Baubles | 7 | 630 est. | 9 |
-| 21 | 91723 | Delicate Instruments | 8 | 700 est. | 9 |
-| 22 | 91740 | Croaky's Head | 11 | 660 est. | 9 |
-| 23 | 91732 | Good Steel | 7 | 630 est. | 10 |
-| 24 | 91733 | Downstream | 10 | 840 est. | 10 |
-| 25 | 52 | Protect the Frontier | 10 | 630 | 10 |
-| 26 | 46 | Bounty on Murlocs | 10 | 840 | 10 |
-| 27 | 91724 | Delicate Instruments | 10 | 840 est. | 10 |
+| 12 | 91740 | Croaky's Head | 11 | 660 est. | 8 |
+| 13 | 35 | Further Concerns | 10 | 420 | 8 |
+| 14 | 91723 | Delicate Instruments | 8 | 700 est. | 8 |
+| 15 | 37 | Find the Lost Guards | 10 | 210 | 8 |
+| 16 | 45 | Discover Rolf's Fate | 10 | 420 | 9 |
+| 17 | 91732 | Good Steel | 7 | 630 est. | 9 |
+| 18 | 83 | Red Linen Goods | 9 | 780 | 9 |
+| 19 | 71 | Report to Thomas | 10 | 210 | 9 |
+| 20 | 91724 | Delicate Instruments | 10 | 840 est. | 9 |
+| 21 | 99143 | Bottles and Baubles | 7 | 630 est. | 9 |
+| 22 | 99128 | Slimy Menace | 7 | 630 est. | 9 |
+| 23 | 91746 | Elmpaw's Head | 12 | 225 est. | 9 |
+| 24 | 112 | Collecting Kelp | 7 | 315 | 9 |
+| 25 | 39 | Deliver Thomas' Report | 10 | 1050 | 9 |
+| 26 | 76 | The Jasperlode Mine | 10 | 840 | 10 |
+| 27 | 147 | Manhunt | 10 | 840 | 10 |
 | 28 | 99129 | A Man About a Murloc | 7 | 475 est. | 10 |
-| 29 | 76 | The Jasperlode Mine | 10 | 840 | 10 |
-| 30 | 147 | Manhunt | 10 | 840 | 10 |
-| 31 | 61 | Shipment to Stormwind | 7 | 790 | 11 |
-| 32 | 239 | Westbrook Garrison Needs Help! | 10 | 210 | 11 |
-| 33 | 86 | Pie for Billy | 6 | 405 | 11 |
-| 34 | 88 | Princess Must Die! | 9 | 780 | 11 |
-| 35 | 114 | The Escape | 7 | 790 | 11 |
-| 36 | 84 | Back to Billy | 6 | 135 | 11 |
-| 37 | 99130 | An Enticing Offer | 7 | 630 est. | 11 |
-| 38 | 176 | WANTED: "Hogger" | 11 | 880 | 11 |
-| 39 | 99131 | Baited for Success | 7 | 475 est. | 11 |
+| 29 | 114 | The Escape | 7 | 790 | 10 |
+| 30 | 88 | Princess Must Die! | 9 | 780 | 10 |
+| 31 | 86 | Pie for Billy | 6 | 405 | 10 |
+| 32 | 239 | Westbrook Garrison Needs Help! | 10 | 210 | 10 |
+| 33 | 11 | Riverpaw Gnoll Bounty | 10 | 840 | 11 |
+| 34 | 61 | Shipment to Stormwind | 7 | 790 | 11 |
+| 35 | 176 | WANTED: "Hogger" | 11 | 880 | 11 |
+| 36 | 99130 | An Enticing Offer | 7 | 630 est. | 11 |
+| 37 | 99131 | Baited for Success | 7 | 475 est. | 11 |
+| 38 | 91733 | Downstream | 10 | 840 est. | 11 |
+| 39 | 84 | Back to Billy | 6 | 135 | 11 |
 | 40 | 87 | Goldtooth | 8 | 880 | 11 |
-| 41 | 11 | Riverpaw Gnoll Bounty | 10 | 840 | 11 |
-| 42 | 184 | Furlbrow's Deed | 9 | 590 | 11 |
-| 43 | 109 | Report to Gryan Stoutmantle | 10 | 630 | 11 |
+| 41 | 184 | Furlbrow's Deed | 9 | 590 | 11 |
+| 42 | 109 | Report to Gryan Stoutmantle | 10 | 630 | 11 |
 
 ## Dropped quests
 
 | Quest | Name | Lvl | Reason |
 |---|---|---|---|
 | 16 | Give Gerard a Drink | 1 | quest level 1 below the band |
+| 46 | Bounty on Murlocs | 10 | objective too dangerous before level 12 (not reached in this chapter) |
 | 70 | The Legend of Stalvan | 28 | quest level 28 above the band |
 | 72 | The Legend of Stalvan | 28 | quest level 28 above the band |
 | 74 | The Legend of Stalvan | 28 | quest level 28 above the band |
@@ -78,9 +78,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 94 | A Watchful Eye | 21 | quest level 21 above the band |
 | 119 | Return to Verner | 18 | quest level 18 above the band |
 | 121 | Messenger to Stormwind | 14 | required level 14 above the band |
-| 141 | The Defias Brotherhood | 18 | quest level 18 above the band |
-| 167 | Oh Brother. . . | 20 | quest level 20 above the band |
-| 168 | Collecting Memories | 18 | quest level 18 above the band |
+| 141 | The Defias Brotherhood | 18 | required level 14 above the band |
+| 167 | Oh Brother. . . | 20 | required level 15 above the band |
+| 168 | Collecting Memories | 18 | required level 14 above the band |
 | 171 | A Warden of the Alliance | 60 | Questie blacklist |
 | 212 | A Meal Served Cold | 40 | quest level 40 above the band |
 | 249 | Morganth | 27 | quest level 27 above the band |
@@ -97,10 +97,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 346 | Return to Kristoff | 24 | quest level 24 above the band |
 | 350 | Look to an Old Friend | 31 | quest level 31 above the band |
 | 353 | Stormpike's Delivery | 15 | quest level 15 above the band |
-| 387 | Quell The Uprising | 26 | quest level 26 above the band |
-| 388 | The Color of Blood | 26 | quest level 26 above the band |
-| 389 | Bazil Thredd | 22 | quest level 22 above the band |
-| 391 | The Stockade Riots | 29 | quest level 29 above the band |
+| 387 | Quell The Uprising | 26 | required level 22 above the band |
+| 388 | The Color of Blood | 26 | required level 22 above the band |
+| 389 | Bazil Thredd | 22 | required level 16 above the band |
+| 391 | The Stockade Riots | 29 | required level 16 above the band |
 | 392 | The Curious Visitor | 29 | quest level 29 above the band |
 | 393 | Shadow of the Past | 29 | quest level 29 above the band |
 | 394 | The Head of the Beast | 31 | quest level 31 above the band |
@@ -135,7 +135,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1448 | In Search of The Temple | 43 | quest level 43 above the band |
 | 1449 | To The Hinterlands | 43 | quest level 43 above the band |
 | 1468 | Children's Week | 60 | Questie blacklist |
-| 1475 | Into The Temple of Atal'Hakkar | 50 | quest level 50 above the band |
+| 1475 | Into The Temple of Atal'Hakkar | 50 | required level 41 above the band |
 | 1477 | Vital Supplies | 45 | quest level 45 above the band |
 | 1479 | The Bough of the Eternals | 60 | Questie blacklist |
 | 1558 | The Stonewrought Dam | 60 | Questie blacklist |
@@ -185,7 +185,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 1942 | Astral Knot Garment | 26 | class quest (ClassQuestData.lua) |
 | 1947 | Journey to the Marsh | 38 | class quest (ClassQuestData.lua) |
 | 1953 | Return to the Marsh | 40 | class quest (ClassQuestData.lua) |
-| 2040 | Underground Assault | 20 | quest level 20 above the band |
+| 2040 | Underground Assault | 20 | required level 15 above the band |
 | 2205 | Seek out SI: 7 | 10 | class quest (ClassQuestData.lua) |
 | 2206 | Snatch and Grab | 10 | class quest (ClassQuestData.lua) |
 | 2281 | Redridge Rendezvous | 16 | class quest (ClassQuestData.lua) |
@@ -198,9 +198,9 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 2746 | Items of Some Consequence | 31 | quest level 31 above the band |
 | 2758 | The Origins of Smithing | 40 | quest level 40 above the band |
 | 2759 | In Search of Galvan | 40 | quest level 40 above the band |
-| 2861 | Tabetha's Task | 46 | quest level 46 above the band |
-| 2923 | Tinkmaster Overspark | 26 | quest level 26 above the band |
-| 2928 | Gyrodrillmatic Excavationators | 30 | quest level 30 above the band |
+| 2861 | Tabetha's Task | 46 | required level 40 above the band |
+| 2923 | Tinkmaster Overspark | 26 | required level 20 above the band |
+| 2928 | Gyrodrillmatic Excavationators | 30 | required level 20 above the band |
 | 2998 | Tome of Divinity | 12 | class quest (ClassQuestData.lua) |
 | 3100 | Simple Letter | 1 | class quest (ClassQuestData.lua) |
 | 3101 | Consecrated Letter | 1 | class quest (ClassQuestData.lua) |
@@ -209,17 +209,17 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3104 | Glyphic Letter | 1 | class quest (ClassQuestData.lua) |
 | 3105 | Tainted Letter | 1 | class quest (ClassQuestData.lua) |
 | 3630 | Gnome Engineering | 47 | quest level 47 above the band |
-| 3636 | Bring the Light | 42 | quest level 42 above the band |
+| 3636 | Bring the Light | 42 | required level 39 above the band |
 | 3765 | The Corruption Abroad | 24 | quest level 24 above the band |
 | 3787 | Jonespyre's Request | 50 | quest level 50 above the band |
 | 3789 | Assisting Arch Druid Staghelm | 50 | quest level 50 above the band |
 | 3861 | CLUCK! | 1 | quest level 1 below the band |
 | 4181 | Goblin Engineering | 47 | quest level 47 above the band |
 | 4185 | The True Masters | 54 | quest level 54 above the band |
-| 4186 | The True Masters | 54 | quest level 54 above the band |
+| 4186 | The True Masters | 54 | required level 48 above the band |
 | 4488 | Summon Felsteed | 40 | class quest (ClassQuestData.lua) |
 | 4738 | In Search of Menara Voidrender | 31 | class quest (ClassQuestData.lua) |
-| 4766 | Mayara Brightwing | 60 | quest level 60 above the band |
+| 4766 | Mayara Brightwing | 60 | required level 57 above the band |
 | 4822 | You Scream, I Scream... | 60 | Questie blacklist |
 | 4968 | Knowledge of the Orb of Orahil | 35 | class quest (ClassQuestData.lua) |
 | 5048 | Good Natured Emma | 52 | quest level 52 above the band |
@@ -239,7 +239,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6501 | The Dragon's Eye | 60 | quest level 60 above the band |
 | 6681 | The Manor, Ravenholdt | 24 | class quest (ClassQuestData.lua) |
 | 7023 | Greatfather Winter is Here! | 60 | Questie blacklist |
-| 7494 | Feathermoon Stronghold | 57 | quest level 57 above the band |
+| 7494 | Feathermoon Stronghold | 57 | required level 54 above the band |
 | 7496 | Celebrating Good Times | 60 | quest level 60 above the band |
 | 7497 | The Journey Has Just Begun | 60 | quest level 60 above the band |
 | 7562 | Mor'zul Bloodbringer | 58 | class quest (ClassQuestData.lua) |
@@ -304,31 +304,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8311 | Hallow's End Treats for Jesper! | 60 | Questie blacklist |
 | 8356 | Flexing for Nougat | 60 | Questie blacklist |
 | 8371 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8372 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8374 | Claiming Arathi Basin | 29 | quest level 29 above the band |
-| 8375 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8383 | Remember Alterac Valley! | 60 | quest level 60 above the band |
-| 8384 | Claiming Arathi Basin | 29 | quest level 29 above the band |
+| 8372 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8374 | Claiming Arathi Basin | 29 | required level 20 above the band |
+| 8375 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8383 | Remember Alterac Valley! | 60 | required level 51 above the band |
+| 8384 | Claiming Arathi Basin | 29 | required level 20 above the band |
 | 8385 | Concerted Efforts | 60 | quest level 60 above the band |
-| 8386 | Fight for Warsong Gulch | 19 | quest level 19 above the band |
-| 8391 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8392 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8393 | Claiming Arathi Basin | 39 | quest level 39 above the band |
-| 8394 | Claiming Arathi Basin | 49 | quest level 49 above the band |
-| 8395 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8396 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8397 | Claiming Arathi Basin | 59 | quest level 59 above the band |
-| 8398 | Claiming Arathi Basin | 60 | quest level 60 above the band |
-| 8399 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8400 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8401 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8402 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8403 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
-| 8404 | Fight for Warsong Gulch | 29 | quest level 29 above the band |
-| 8405 | Fight for Warsong Gulch | 39 | quest level 39 above the band |
-| 8406 | Fight for Warsong Gulch | 49 | quest level 49 above the band |
-| 8407 | Fight for Warsong Gulch | 59 | quest level 59 above the band |
-| 8408 | Fight for Warsong Gulch | 60 | quest level 60 above the band |
+| 8386 | Fight for Warsong Gulch | 19 | dungeon quest (Warsong Gulch outside the dungeon catalogue) |
+| 8391 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8392 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8393 | Claiming Arathi Basin | 39 | required level 30 above the band |
+| 8394 | Claiming Arathi Basin | 49 | required level 40 above the band |
+| 8395 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8396 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8397 | Claiming Arathi Basin | 59 | required level 50 above the band |
+| 8398 | Claiming Arathi Basin | 60 | required level 60 above the band |
+| 8399 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8400 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8401 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8402 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8403 | Fight for Warsong Gulch | 60 | required level 60 above the band |
+| 8404 | Fight for Warsong Gulch | 29 | required level 20 above the band |
+| 8405 | Fight for Warsong Gulch | 39 | required level 30 above the band |
+| 8406 | Fight for Warsong Gulch | 49 | required level 40 above the band |
+| 8407 | Fight for Warsong Gulch | 59 | required level 50 above the band |
+| 8408 | Fight for Warsong Gulch | 60 | required level 60 above the band |
 | 8415 | Chillwind Point | 52 | class quest (ClassQuestData.lua) |
 | 8417 | A Troubled Spirit | 50 | class quest (ClassQuestData.lua) |
 | 8419 | An Imp's Request | 52 | class quest (ClassQuestData.lua) |
@@ -369,7 +369,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 9386 | A Light in Dark Places | 60 | Questie blacklist |
 | 9388 | Flickering Flames in Kalimdor | 25 | Questie blacklist |
 | 9389 | Flickering Flames in the Eastern Kingdoms | 25 | Questie blacklist |
-| 60860 | ? | 0 | Questie blacklist |
+| 60860 | Your Reward has Arrived! | 0 | Questie blacklist |
 | 65603 | The Binding | 20 | class quest (ClassQuestData.lua) |
 | 78090 | A Second Opinion | 30 | class quest (ClassQuestData.lua) |
 | 78091 | Earning Your Salt | 30 | class quest (ClassQuestData.lua) |
@@ -421,15 +421,13 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 91738 | An Apple Treat | 10 | objective item source not in zone |
 | 91751 | Rough Wolf Pelts | 8 | requires a profession |
 | 91753 | An Enchanting Lesson | 7 | requires a profession |
-| 92456 | A Green Sample | 33 | quest level 33 above the band |
+| 92456 | A Green Sample | 33 | required level 24 above the band |
 | 92479 | A Scribbled Letter | 1 | class quest (ClassQuestData.lua) |
-| 92489 | Power Overwhelming | 33 | quest level 33 above the band |
-| 92749 | A Dynamite Plan | 16 | quest level 16 above the band |
-| 92750 | Detonation at a Distance | 16 | quest level 16 above the band |
-| 92751 | Detonation at a Distance | 16 | quest level 16 above the band |
-| 92752 | Explosive Consultation | 16 | quest level 16 above the band |
+| 92489 | Power Overwhelming | 33 | required level 24 above the band |
+| 92749 | A Dynamite Plan | 16 | objective item source not in zone |
 | 94773 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
 | 94774 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
+| 94777 | Divine Grace | 10 | class quest (ClassQuestData.lua) |
 | 94792 | Taming the Beast | 10 | class quest (ClassQuestData.lua) |
 | 94793 | Training the Beast | 10 | class quest (ClassQuestData.lua) |
 | 94863 | Taming the Beast | 10 | class quest (ClassQuestData.lua) |
@@ -459,14 +457,125 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98896 | Darkspear Islands Clash | 39 | quest level 39 above the band |
 | 6261 | Dungar Longdrink | 10 | prerequisite unavailable |
 | 6285 | Return to Lewis | 10 | prerequisite unavailable |
+| 92750 | Detonation at a Distance | 16 | prerequisite unavailable |
+| 92751 | Detonation at a Distance | 16 | prerequisite unavailable |
+| 92752 | Explosive Consultation | 16 | prerequisite unavailable |
+| 52 | Protect the Frontier | 10 | level band reached |
 | 59 | Cloth and Leather Armor | 10 | level band reached |
 | 5545 | A Bundle of Trouble | 9 | level band reached |
 | 91725 | Stolen Enchanting Supplies | 10 | level band reached |
-| 91746 | Elmpaw's Head | 12 | level band reached |
 | 91775 | Book Return | 6 | level band reached |
 | 47 | Gold Dust Exchange | 7 | level band reached |
 | 91777 | Rare Books | 7 | level band reached |
 | 95065 | Fishin' Time | 12 | level band reached |
+
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 5624 | Garments of the Light | 4 | PRIEST | woven, detour 49 s |
+| 1638 | A Warrior's Training | 10 | WARRIOR | woven, detour 119 s |
+| 1639 | Bartleby the Drunk | 10 | WARRIOR | woven, detour 207 s |
+| 1640 | Beat Bartleby | 10 | WARRIOR | woven, detour 317 s |
+| 1665 | Bartleby's Mug | 10 | WARRIOR | woven, detour 207 s |
+| 1666 | Marshal Haggard | 10 | WARRIOR | woven, detour 190 s |
+| 1667 | Dead-tooth Jack | 10 | WARRIOR | woven, detour 314 s |
+| 1685 | Gakin's Summons | 10 | WARLOCK | woven, detour 136 s |
+| 1688 | Surena Caledon | 10 | WARLOCK | woven, detour 448 s |
+| 1860 | Speak with Jennea | 10 | MAGE | woven, detour 91 s |
+| 1861 | Mirror Lake | 10 | MAGE | woven, detour 478 s |
+| 2205 | Seek out SI: 7 | 10 | ROGUE | woven, detour 91 s |
+| 2206 | Snatch and Grab | 10 | ROGUE | woven, detour 433 s |
+| 5635 | Desperate Prayer | 10 | PRIEST | woven, detour 130 s |
+| 94773 | Divine Grace | 10 | PRIEST | woven, detour 249 s |
+| 94792 | Taming the Beast | 10 | HUNTER | woven, detour 189 s |
+| 94863 | Taming the Beast | 10 | HUNTER | woven, detour 378 s |
+| 94864 | Taming the Beast | 10 | HUNTER | woven, detour 440 s |
+| 94793 | Training the Beast | 10 | HUNTER | woven, detour 165 s |
+| 397 | You Have Served Us Well | 30 | WARLOCK | quest level 30 above the band |
+| 1641 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
+| 1643 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
+| 1644 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1650 | The Tome of Valor | 23 | PALADIN | quest level 23 above the band |
+| 1653 | The Test of Righteousness | 21 | PALADIN | quest level 21 above the band |
+| 1661 | The Tome of Nobility | 40 | PALADIN | quest level 40 above the band |
+| 1698 | Yorus Barleybrew | 20 | WARRIOR | quest level 20 above the band |
+| 1700 | Grimand Elmore | 28 | WARRIOR | quest level 28 above the band |
+| 1701 | Fire Hardened Mail | 28 | WARRIOR | quest level 28 above the band |
+| 1705 | Burning Blood | 28 | WARRIOR | quest level 28 above the band |
+| 1706 | Grimand's Armor | 30 | WARRIOR | quest level 30 above the band |
+| 1716 | Devourer of Souls | -1 | WARLOCK | quest level -1 below the band |
+| 1718 | The Islander | 30 | WARRIOR | quest level 30 above the band |
+| 1739 | The Binding | 20 | WARLOCK | quest level 20 above the band |
+| 1780 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1781 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1782 | Furen's Armor | 28 | WARRIOR | quest level 28 above the band |
+| 1786 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1787 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1788 | The Tome of Divinity | 13 | PALADIN | required level 12 above the band |
+| 1790 | The Symbol of Life | 12 | PALADIN | required level 12 above the band |
+| 1793 | The Tome of Valor | 20 | PALADIN | quest level 20 above the band |
+| 1798 | Seeking Strahad | 30 | WARLOCK | quest level 30 above the band |
+| 1919 | Report to Jennea | 15 | MAGE | quest level 15 above the band |
+| 1920 | Investigate the Blue Recluse | 16 | MAGE | quest level 16 above the band |
+| 1921 | Gathering Materials | 15 | MAGE | quest level 15 above the band |
+| 1938 | Ur's Treatise on Shadow Magic | 28 | MAGE | quest level 28 above the band |
+| 1939 | High Sorcerer Andromath | 26 | MAGE | quest level 26 above the band |
+| 1940 | Pristine Spider Silk | 26 | MAGE | quest level 26 above the band |
+| 1941 | Manaweave Robe | 15 | MAGE | quest level 15 above the band |
+| 1942 | Astral Knot Garment | 26 | MAGE | quest level 26 above the band |
+| 1947 | Journey to the Marsh | 38 | MAGE | quest level 38 above the band |
+| 1953 | Return to the Marsh | 40 | MAGE | quest level 40 above the band |
+| 2281 | Redridge Rendezvous | 16 | ROGUE | quest level 16 above the band |
+| 2300 | SI:7 | 16 | ROGUE | quest level 16 above the band |
+| 2360 | Mathias and the Defias | 20 | ROGUE | quest level 20 above the band |
+| 2607 | The Touch of Zanzil | 20 | ROGUE | quest level 20 above the band |
+| 2608 | The Touch of Zanzil | 20 | ROGUE | quest level 20 above the band |
+| 2609 | The Touch of Zanzil | 20 | ROGUE | quest level 20 above the band |
+| 2998 | Tome of Divinity | 12 | PALADIN | required level 12 above the band |
+| 3100 | Simple Letter | 1 | WARRIOR | quest level 1 below the band |
+| 3101 | Consecrated Letter | 1 | PALADIN | quest level 1 below the band |
+| 3102 | Encrypted Letter | 1 | ROGUE | quest level 1 below the band |
+| 3103 | Hallowed Letter | 1 | PRIEST | quest level 1 below the band |
+| 3104 | Glyphic Letter | 1 | MAGE | quest level 1 below the band |
+| 3105 | Tainted Letter | 1 | WARLOCK | quest level 1 below the band |
+| 4488 | Summon Felsteed | 40 | WARLOCK | quest level 40 above the band |
+| 4738 | In Search of Menara Voidrender | 31 | WARLOCK | quest level 31 above the band |
+| 4968 | Knowledge of the Orb of Orahil | 35 | WARLOCK | quest level 35 above the band |
+| 5676 | Arcane Feedback | 20 | PRIEST | quest level 20 above the band |
+| 7562 | Mor'zul Bloodbringer | 58 | WARLOCK | quest level 58 above the band |
+| 7637 | Emphasis on Sacrifice | 60 | PALADIN | quest level 60 above the band |
+| 7638 | Lord Grayson Shadowbreaker | 60 | PALADIN | quest level 60 above the band |
+| 7640 | Exorcising Terrordale | 60 | PALADIN | quest level 60 above the band |
+| 7641 | The Work of Grimand Elmore | 60 | PALADIN | quest level 60 above the band |
+| 7642 | Collection of Goods | 60 | PALADIN | quest level 60 above the band |
+| 7643 | Ancient Equine Spirit | 60 | PALADIN | quest level 60 above the band |
+| 7646 | The Divination Scryer | 60 | PALADIN | quest level 60 above the band |
+| 7647 | Judgment and Redemption | 60 | PALADIN | quest level 60 above the band |
+| 7648 | Grimand's Finest Work | 60 | PALADIN | quest level 60 above the band |
+| 7666 | Again Into the Great Ossuary | 60 | PALADIN | quest level 60 above the band |
+| 8151 | The Hunter's Charm | 52 | HUNTER | quest level 52 above the band |
+| 8233 | A Simple Request | 52 | ROGUE | quest level 52 above the band |
+| 8250 | Magecraft | 52 | MAGE | quest level 52 above the band |
+| 8254 | Cenarion Aid | 52 | PRIEST | quest level 52 above the band |
+| 8415 | Chillwind Point | 52 | PALADIN | quest level 52 above the band |
+| 8417 | A Troubled Spirit | 50 | WARRIOR | quest level 50 above the band |
+| 8419 | An Imp's Request | 52 | WARLOCK | quest level 52 above the band |
+| 9063 | Torwa Pathfinder | 52 | DRUID | quest level 52 above the band |
+| 65603 | The Binding | 20 | WARLOCK | quest level 20 above the band |
+| 78090 | A Second Opinion | 30 | PALADIN | quest level 30 above the band |
+| 78091 | Earning Your Salt | 30 | PALADIN | quest level 30 above the band |
+| 78092 | It Must Be Destroyed | 30 | PALADIN | quest level 30 above the band |
+| 92479 | A Scribbled Letter | 1 | HUNTER | quest level 1 below the band |
+| 97286 | Research Access | 20 | MAGE | quest level 20 above the band |
+| 1689 | The Binding | 10 | WARLOCK | detour 785 s |
+| 1598 | The Stolen Tome | 4 | WARLOCK | prerequisite or exclusive quest not done for the class |
+| 5623 | In Favor of the Light | 4 | PRIEST | prerequisite or exclusive quest not done for the class |
+| 5638 | Desperate Prayer | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
+| 94774 | Divine Grace | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
+| 94777 | Divine Grace | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
 
 ## Candidate ratios
 
@@ -477,19 +586,18 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 11 | Riverpaw Gnoll Bounty | 10 | 2726 | 0 | 554 | 505 | 4.92 | 5.39 | 1 |  |
-| 35 | Further Concerns | 10 | 420 | 0 | 179 | 30 | 3.66 | 11.93 | 0 |  |
-| 37 | Find the Lost Guards | 10 | 210 | 0 | 52 | 15 | 4.65 | 11.32 | 0 |  |
-| 39 | Deliver Thomas' Report | 10 | 1050 | 0 | 179 | 30 | 4.49 | 8.85 | 0 |  |
-| 40 | A Fishy Peril | 10 | 85 | 0 | 31 | 31 | 3.56 | 9.52 | 0 |  |
-| 45 | Discover Rolf's Fate | 10 | 420 | 0 | 48 | 10 | 4.76 | 11.01 | 0 |  |
-| 46 | Bounty on Murlocs | 10 | 2370 | 0 | 439 | 372 | 5.39 | 6.36 | 1 |  |
+| 35 | Further Concerns | 10 | 420 | 0 | 180 | 31 | 3.27 | 16.50 | 0 |  |
+| 37 | Find the Lost Guards | 10 | 210 | 0 | 52 | 16 | 4.29 | 19.17 | 0 |  |
+| 39 | Deliver Thomas' Report | 10 | 1050 | 0 | 180 | 31 | 3.64 | 18.97 | 0 |  |
+| 40 | A Fishy Peril | 10 | 85 | 0 | 31 | 31 | 3.20 | 11.01 | 0 |  |
+| 45 | Discover Rolf's Fate | 10 | 420 | 0 | 48 | 10 | 4.39 | 22.02 | 0 |  |
 | 47 | Gold Dust Exchange | 7 | 2610 | 0 | 780 | 725 | 3.34 | 3.60 | 1 | level band reached |
-| 52 | Protect the Frontier | 10 | 1728 | 0 | 443 | 348 | 3.89 | 4.96 | 2 |  |
+| 52 | Protect the Frontier | 10 | 1728 | 0 | 445 | 367 | 3.88 | 4.70 | 2 | level band reached |
 | 59 | Cloth and Leather Armor | 10 | 210 | 0 | 213 | 45 | 0.99 | 4.65 | 0 | level band reached |
-| 60 | Kobold Candles | 7 | 2455 | 0 | 778 | 677 | 3.90 | 4.37 | 1 |  |
-| 61 | Shipment to Stormwind | 7 | 1792 | 1002 | 248 | 245 | 7.22 | 7.32 | 0 |  |
+| 60 | Kobold Candles | 7 | 2455 | 0 | 778 | 677 | 3.89 | 4.36 | 1 |  |
+| 61 | Shipment to Stormwind | 7 | 1785 | 995 | 248 | 245 | 7.19 | 7.29 | 0 |  |
 | 62 | The Fargodeep Mine | 7 | 475 | 0 | 144 | 50 | 4.30 | 6.91 | 1 |  |
-| 71 | Report to Thomas | 10 | 210 | 0 | 74 | 15 | 4.25 | 9.17 | 0 |  |
+| 71 | Report to Thomas | 10 | 210 | 0 | 75 | 16 | 3.43 | 17.30 | 0 |  |
 | 76 | The Jasperlode Mine | 10 | 840 | 0 | 249 | 50 | 4.51 | 6.64 | 1 |  |
 | 83 | Red Linen Goods | 9 | 2242 | 0 | 491 | 390 | 4.56 | 5.75 | 1 |  |
 | 84 | Back to Billy | 6 | 135 | 0 | 58 | 20 | 6.21 | 16.48 | 0 |  |
@@ -499,26 +607,26 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 88 | Princess Must Die! | 9 | 866 | 0 | 380 | 81 | 2.28 | 10.68 | 1 |  |
 | 106 | Young Lovers | 6 | 135 | 0 | 85 | 27 | 2.86 | 7.02 | 0 |  |
 | 107 | Note to William | 6 | 135 | 0 | 86 | 17 | 3.42 | 7.39 | 0 |  |
-| 109 | Report to Gryan Stoutmantle | 10 | 2313 | 1683 | 221 | 25 | 10.46 | 92.18 | 0 |  |
+| 109 | Report to Gryan Stoutmantle | 10 | 2301 | 1671 | 221 | 25 | 10.41 | 91.69 | 0 |  |
 | 111 | Speak with Gramma | 6 | 135 | 0 | 38 | 13 | 3.44 | 7.66 | 0 |  |
 | 112 | Collecting Kelp | 7 | 915 | 0 | 292 | 177 | 4.06 | 7.36 | 1 |  |
 | 114 | The Escape | 7 | 790 | 0 | 99 | 31 | 7.93 | 25.43 | 0 |  |
-| 123 | The Collector | 10 | 640 | 0 | 242 | 137 | 2.66 | 6.33 | 0 |  |
-| 147 | Manhunt | 10 | 930 | 0 | 348 | 95 | 2.67 | 9.74 | 1 |  |
+| 123 | The Collector | 10 | 812 | 0 | 282 | 177 | 2.78 | 5.90 | 0 |  |
+| 147 | Manhunt | 10 | 930 | 0 | 348 | 100 | 2.67 | 9.26 | 1 |  |
 | 176 | WANTED: "Hogger" | 11 | 973 | 0 | 222 | 91 | 4.38 | 10.64 | 1 |  |
-| 184 | Furlbrow's Deed | 9 | 1513 | 513 | 293 | 168 | 5.16 | 8.97 | 0 |  |
-| 239 | Westbrook Garrison Needs Help! | 10 | 520 | 310 | 111 | 25 | 4.87 | 6.39 | 0 |  |
+| 184 | Furlbrow's Deed | 9 | 4051 | 509 | 912 | 788 | 4.44 | 5.14 | 0 |  |
+| 239 | Westbrook Garrison Needs Help! | 10 | 518 | 308 | 111 | 25 | 4.86 | 6.39 | 0 |  |
 | 5545 | A Bundle of Trouble | 9 | 780 | 0 | 170 | 170 | 4.58 | 4.58 | 1 | level band reached |
 | 91723 | Delicate Instruments | 8 | 1324 | 0 | 272 | 209 | 4.81 | 7.02 | 1 |  |
 | 91724 | Delicate Instruments | 10 | 1528 | 0 | 322 | 187 | 4.74 | 8.15 | 1 |  |
 | 91725 | Stolen Enchanting Supplies | 10 | 840 | 0 | 313 | 191 | 2.68 | 4.39 | 1 | level band reached |
 | 91732 | Good Steel | 7 | 630 | 0 | 296 | 54 | 2.12 | 11.52 | 1 |  |
-| 91733 | Downstream | 10 | 840 | 0 | 173 | 146 | 4.83 | 5.75 | 2 |  |
-| 91740 | Croaky's Head | 11 | 1125 | 0 | 241 | 131 | 4.65 | 8.57 | 0 |  |
-| 91746 | Elmpaw's Head | 12 | 710 | 0 | 342 | 167 | 2.07 | 4.24 | 0 | level band reached |
+| 91733 | Downstream | 10 | 840 | 0 | 172 | 161 | 4.86 | 5.20 | 2 |  |
+| 91740 | Croaky's Head | 11 | 753 | 0 | 159 | 59 | 4.73 | 12.74 | 0 |  |
+| 91746 | Elmpaw's Head | 12 | 322 | 0 | 309 | 56 | 1.04 | 5.73 | 0 |  |
 | 91775 | Book Return | 6 | 1710 | 0 | 481 | 404 | 3.19 | 4.03 | 1 | level band reached |
 | 91777 | Rare Books | 7 | 790 | 0 | 325 | 223 | 2.43 | 3.53 | 1 | level band reached |
-| 95065 | Fishin' Time | 12 | 1912 | 1002 | 842 | 842 | 2.27 | 2.27 | 2 | level band reached |
+| 95065 | Fishin' Time | 12 | 1905 | 995 | 842 | 842 | 2.26 | 2.26 | 2 | level band reached |
 | 95998 | The Great Outdoors | 6 | 540 | 0 | 41 | 41 | 12.87 | 13.25 | 1 |  |
 | 96626 | Camping 101: Cooking | 6 | 540 | 0 | 42 | 39 | 12.59 | 13.50 | 1 |  |
 | 99127 | A Net Disaster | 7 | 630 | 0 | 152 | 152 | 3.60 | 4.37 | 1 |  |
@@ -547,7 +655,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 9 | O | 62 | The Fargodeep Mine | 1429 | 40.6, 82.3 | 399 |  |
 | 10 | O | 60 | Kobold Candles | 1429 | 40.0, 80.7 | 41 |  |
 | 11 | A | 106 | Young Lovers | 1429 | 43.1, 89.6 | 233 |  |
-| 12 | A | 123 | The Collector | 1429 | 26.7, 88.5 | 572 |  |
+| 12 | A | 123 | The Collector | 1429 | 26.7, 88.5 | 571 |  |
 | 13 | T | 106 | Young Lovers | 1429 | 29.8, 86.0 | 123 |  |
 | 14 | A | 111 | Speak with Gramma | 1429 | 29.8, 86.0 | 0 |  |
 | 15 | A | 85 | Lost Necklace | 1429 | 34.5, 84.2 | 166 |  |
@@ -557,99 +665,94 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 19 | T | 85 | Lost Necklace | 1429 | 43.1, 85.7 | 287 |  |
 | 20 | A | 86 | Pie for Billy | 1429 | 43.1, 85.7 | 0 |  |
 | 21 | A | 40 | A Fishy Peril | 1429 | 42.1, 67.3 | 428 | near #8 (went 727 yd away) |
-| 22 | T | 62 | The Fargodeep Mine | 1429 | 42.1, 65.9 | 30 | near #8 (went 747 yd away) |
-| 23 | T | 123 | The Collector | 1429 | 42.1, 65.9 | 0 |  |
-| 24 | T | 40 | A Fishy Peril | 1429 | 42.1, 65.9 | 0 |  |
-| 25 | A | 35 | Further Concerns | 1429 | 42.1, 65.9 | 0 |  |
-| 26 | T | 60 | Kobold Candles | 1429 | 43.3, 65.7 | 42 |  |
-| 27 | T | 107 | Note to William | 1429 | 43.3, 65.7 | 0 |  |
-| 28 | A | 61 | Shipment to Stormwind | 1429 | 43.3, 65.7 | 0 |  |
-| 29 | A | 112 | Collecting Kelp | 1429 | 43.3, 65.7 | 0 |  |
-| 30 | A | 76 | The Jasperlode Mine | 1429 | 42.1, 65.9 | 42 |  |
-| 31 | A | 147 | Manhunt | 1429 | 42.1, 65.9 | 0 |  |
-| 32 | A | 99127 | A Net Disaster | 1429 | 47.5, 62.2 | 204 | near #8 (went 943 yd away) |
+| 22 | T | 40 | A Fishy Peril | 1429 | 42.1, 65.9 | 30 | near #8 (went 747 yd away) |
+| 23 | T | 62 | The Fargodeep Mine | 1429 | 42.1, 65.9 | 0 |  |
+| 24 | T | 123 | The Collector | 1429 | 42.1, 65.9 | 0 |  |
+| 25 | A | 76 | The Jasperlode Mine | 1429 | 42.1, 65.9 | 0 |  |
+| 26 | A | 35 | Further Concerns | 1429 | 42.1, 65.9 | 0 |  |
+| 27 | A | 147 | Manhunt | 1429 | 42.1, 65.9 | 0 |  |
+| 28 | T | 107 | Note to William | 1429 | 43.3, 65.7 | 42 |  |
+| 29 | T | 60 | Kobold Candles | 1429 | 43.3, 65.7 | 0 |  |
+| 30 | A | 112 | Collecting Kelp | 1429 | 43.3, 65.7 | 0 |  |
+| 31 | A | 61 | Shipment to Stormwind | 1429 | 43.3, 65.7 | 0 |  |
+| 32 | A | 99127 | A Net Disaster | 1429 | 47.5, 62.2 | 165 | near #8 (went 943 yd away) |
 | 33 | A | 99143 | Bottles and Baubles | 1429 | 47.6, 62.3 | 6 | near #8 (went 945 yd away) |
 | 34 | O | 99127 | A Net Disaster | 1429 | 48.4, 63.8 | 43 |  |
 | 35 | T | 99127 | A Net Disaster | 1429 | 47.5, 62.2 | 48 |  |
 | 36 | A | 99128 | Slimy Menace | 1429 | 47.5, 62.2 | 0 |  |
 | 37 | O | 99143 | Bottles and Baubles | 1429 | 56.2, 66.9 | 321 |  |
-| 38 | O | 112 | Collecting Kelp | 1429 | 55.2, 66.1 | 36 |  |
-| 39 | O | 99128 | Slimy Menace | 1429 | 55.4, 66.6 | 11 |  |
-| 40 | A | 91723 | Delicate Instruments | 1429 | 65.1, 69.8 | 346 |  |
-| 41 | T | 35 | Further Concerns | 1429 | 74.0, 72.2 | 312 |  |
-| 42 | A | 37 | Find the Lost Guards | 1429 | 74.0, 72.2 | 0 |  |
-| 43 | A | 52 | Protect the Frontier | 1429 | 74.0, 72.2 | 0 |  |
-| 44 | A | 83 | Red Linen Goods | 1429 | 79.5, 68.8 | 206 |  |
-| 45 | T | 37 | Find the Lost Guards | 1429 | 72.7, 60.3 | 306 |  |
-| 46 | A | 45 | Discover Rolf's Fate | 1429 | 72.7, 60.3 | 0 |  |
-| 47 | O | 83 | Red Linen Goods | 1429 | 74.3, 52.2 | 196 |  |
-| 48 | T | 45 | Discover Rolf's Fate | 1429 | 79.8, 55.5 | 206 |  |
-| 49 | A | 71 | Report to Thomas | 1429 | 79.8, 55.5 | 0 |  |
-| 50 | A | 91732 | Good Steel | 1429 | 82.5, 63.8 | 213 |  |
-| 51 | T | 83 | Red Linen Goods | 1429 | 79.5, 68.8 | 155 |  |
-| 52 | A | 91733 | Downstream | 1429 | 76.5, 71.9 | 124 |  |
-| 53 | T | 71 | Report to Thomas | 1429 | 74.0, 72.2 | 89 |  |
-| 54 | A | 39 | Deliver Thomas' Report | 1429 | 74.0, 72.2 | 0 |  |
-| 55 | O | 88 | Princess Must Die! | 1429 | 69.7, 79.2 | 221 |  |
-| 56 | O | 86 | Pie for Billy | 1429 | 62.1, 78.2 | 262 |  |
-| 57 | A | 184 | Furlbrow's Deed | 1429 | 48.8, 84.2 | 484 |  |
-| 58 | T | 39 | Deliver Thomas' Report | 1429 | 42.1, 65.9 | 482 | near #31 (went 1401 yd away) |
-| 59 | T | 112 | Collecting Kelp | 1429 | 43.3, 65.7 | 42 | near #31 (went 1359 yd away) |
-| 60 | A | 114 | The Escape | 1429 | 43.3, 65.7 | 0 |  |
-| 61 | A | 109 | Report to Gryan Stoutmantle | 1429 | 42.1, 65.9 | 42 |  |
-| 62 | T | 99128 | Slimy Menace | 1429 | 47.5, 62.2 | 204 | near #36 (went 1215 yd away) |
-| 63 | A | 99129 | A Man About a Murloc | 1429 | 47.5, 62.2 | 0 | near #36 (went 1215 yd away) |
-| 64 | T | 99143 | Bottles and Baubles | 1429 | 47.6, 62.3 | 6 |  |
-| 65 | O | 91732 | Good Steel | 1429 | 61.3, 51.7 | 535 |  |
-| 66 | O | 76 | The Jasperlode Mine | 1429 | 61.9, 53.2 | 38 |  |
-| 67 | O | 91723 | Delicate Instruments | 1429 | 63.1, 56.1 | 78 |  |
-| 68 | T | 91723 | Delicate Instruments | 1429 | 65.1, 69.8 | 326 | near #40 (went 803 yd away) |
-| 69 | A | 91724 | Delicate Instruments | 1429 | 65.1, 69.8 | 0 | near #40 (went 803 yd away) |
-| 70 | A | 46 | Bounty on Murlocs | 1429 | 74.0, 72.2 | 312 | near #54 (went 1115 yd away) |
-| 71 | O | 91733 | Downstream | 1429 | 74.3, 76.4 | 98 | near #54 (went 1143 yd away) |
-| 72 | O | 147 | Manhunt | 1429 | 71.1, 80.6 | 148 | near #55 (went 1061 yd away) |
-| 73 | O | 91733 | Downstream | 1429 | 76.7, 82.5 | 199 |  |
-| 74 | A | 91740 | Croaky's Head | 1429 | 76.4, 84.3 | 43 |  |
-| 75 | O | 46 | Bounty on Murlocs | 1429 | 76.6, 84.4 | 4 |  |
-| 76 | O | 52 | Protect the Frontier | 1429 | 80.4, 80.3 | 164 |  |
-| 77 | T | 91740 | Croaky's Head | 1429 | 84.8, 79.3 | 151 |  |
-| 78 | O | 52 | Protect the Frontier | 1429 | 87.4, 66.3 | 314 |  |
-| 79 | T | 91732 | Good Steel | 1429 | 82.5, 63.8 | 179 | near #50 (went 1401 yd away) |
-| 80 | O | 91724 | Delicate Instruments | 1429 | 73.6, 52.2 | 410 | near #47 (went 1137 yd away) |
-| 81 | T | 91733 | Downstream | 1429 | 76.5, 71.9 | 468 |  |
-| 82 | T | 52 | Protect the Frontier | 1429 | 74.0, 72.2 | 89 |  |
-| 83 | T | 46 | Bounty on Murlocs | 1429 | 74.0, 72.2 | 0 |  |
-| 84 | T | 91724 | Delicate Instruments | 1429 | 65.1, 69.8 | 312 | near #69 (went 776 yd away) |
-| 85 | T | 99129 | A Man About a Murloc | 1429 | 42.1, 67.3 | 799 | near #61 (went 1569 yd away) |
-| 86 | A | 99130 | An Enticing Offer | 1429 | 42.1, 67.3 | 0 | near #61 (went 1569 yd away) |
-| 87 | T | 76 | The Jasperlode Mine | 1429 | 42.1, 65.9 | 30 |  |
-| 88 | A | 239 | Westbrook Garrison Needs Help! | 1429 | 42.1, 65.9 | 0 |  |
-| 89 | T | 147 | Manhunt | 1429 | 42.1, 65.9 | 0 |  |
-| 90 | F |  | flight path | 1453 | 71.3, 72.2 | 754 |  |
-| 91 | T | 61 | Shipment to Stormwind | 1453 | 63.2, 74.4 | 143 |  |
-| 92 | T | 239 | Westbrook Garrison Needs Help! | 1429 | 24.2, 74.5 | 807 |  |
-| 93 | A | 11 | Riverpaw Gnoll Bounty | 1429 | 24.2, 74.5 | 0 |  |
-| 94 | A | 176 | WANTED: "Hogger" | 1429 | 24.6, 74.7 | 12 |  |
-| 95 | O | 11 | Riverpaw Gnoll Bounty | 1429 | 26.5, 86.7 | 284 | near #14 (went 2165 yd away) |
-| 96 | O | 176 | WANTED: "Hogger" | 1429 | 25.0, 92.9 | 153 | near #12 (went 2249 yd away) |
-| 97 | T | 86 | Pie for Billy | 1429 | 34.5, 84.2 | 384 | near #18 (went 1881 yd away) |
-| 98 | A | 84 | Back to Billy | 1429 | 34.5, 84.2 | 0 | near #18 (went 1881 yd away) |
-| 99 | T | 88 | Princess Must Die! | 1429 | 34.7, 84.5 | 7 |  |
-| 100 | O | 99130 | An Enticing Offer | 1429 | 39.7, 88.7 | 199 | near #20 (went 1734 yd away) |
-| 101 | T | 114 | The Escape | 1429 | 43.1, 89.6 | 122 | near #20 (went 1626 yd away) |
-| 102 | T | 84 | Back to Billy | 1429 | 43.1, 85.7 | 90 |  |
-| 103 | A | 87 | Goldtooth | 1429 | 43.1, 85.7 | 0 |  |
-| 104 | O | 87 | Goldtooth | 1429 | 41.7, 78.0 | 184 | near #10 (went 1607 yd away) |
-| 105 | T | 99130 | An Enticing Offer | 1429 | 42.1, 67.3 | 249 | near #89 (went 844 yd away) |
-| 106 | A | 99131 | Baited for Success | 1429 | 42.1, 67.3 | 0 | near #89 (went 844 yd away) |
-| 107 | T | 176 | WANTED: "Hogger" | 1429 | 42.1, 65.9 | 30 |  |
-| 108 | T | 99131 | Baited for Success | 1429 | 47.5, 62.2 | 204 | near #64 (went 1388 yd away) |
-| 109 | T | 87 | Goldtooth | 1429 | 34.5, 84.2 | 680 | near #99 (went 680 yd away) |
-| 110 | T | 11 | Riverpaw Gnoll Bounty | 1429 | 24.2, 74.5 | 422 | near #94 (went 854 yd away) |
-| 111 | T | 184 | Furlbrow's Deed | 1436 | 60.0, 19.4 | 293 |  |
-| 112 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 669 |  |
+| 38 | O | 99128 | Slimy Menace | 1429 | 55.4, 66.6 | 28 |  |
+| 39 | O | 112 | Collecting Kelp | 1429 | 55.2, 66.1 | 11 |  |
+| 40 | O | 86 | Pie for Billy | 1429 | 62.1, 78.2 | 367 |  |
+| 41 | O | 88 | Princess Must Die! | 1429 | 69.7, 79.2 | 262 |  |
+| 42 | O | 147 | Manhunt | 1429 | 71.1, 80.6 | 59 |  |
+| 43 | A | 91740 | Croaky's Head | 1429 | 76.3, 83.6 | 193 |  |
+| 44 | A | 91746 | Elmpaw's Head | 1429 | 84.9, 83.4 | 296 |  |
+| 45 | T | 91740 | Croaky's Head | 1429 | 84.8, 79.3 | 93 |  |
+| 46 | A | 91732 | Good Steel | 1429 | 82.5, 63.8 | 366 |  |
+| 47 | A | 83 | Red Linen Goods | 1429 | 79.5, 68.8 | 155 |  |
+| 48 | T | 35 | Further Concerns | 1429 | 74.0, 72.2 | 206 |  |
+| 49 | A | 37 | Find the Lost Guards | 1429 | 74.0, 72.2 | 0 |  |
+| 50 | A | 91723 | Delicate Instruments | 1429 | 65.1, 69.8 | 312 |  |
+| 51 | O | 76 | The Jasperlode Mine | 1429 | 61.9, 53.2 | 401 |  |
+| 52 | O | 91732 | Good Steel | 1429 | 61.3, 51.7 | 38 |  |
+| 53 | O | 91723 | Delicate Instruments | 1429 | 63.1, 56.1 | 117 |  |
+| 54 | T | 91723 | Delicate Instruments | 1429 | 65.1, 69.8 | 326 |  |
+| 55 | A | 91724 | Delicate Instruments | 1429 | 65.1, 69.8 | 0 |  |
+| 56 | T | 37 | Find the Lost Guards | 1429 | 72.7, 60.3 | 342 |  |
+| 57 | A | 45 | Discover Rolf's Fate | 1429 | 72.7, 60.3 | 0 |  |
+| 58 | O | 91724 | Delicate Instruments | 1429 | 73.6, 52.2 | 191 |  |
+| 59 | O | 83 | Red Linen Goods | 1429 | 74.3, 52.2 | 24 |  |
+| 60 | T | 45 | Discover Rolf's Fate | 1429 | 79.8, 55.5 | 206 |  |
+| 61 | A | 71 | Report to Thomas | 1429 | 79.8, 55.5 | 0 |  |
+| 62 | T | 91732 | Good Steel | 1429 | 82.5, 63.8 | 213 | near #46 (went 785 yd away) |
+| 63 | T | 83 | Red Linen Goods | 1429 | 79.5, 68.8 | 155 | near #47 (went 742 yd away) |
+| 64 | A | 91733 | Downstream | 1429 | 76.5, 71.9 | 124 | near #49 (went 704 yd away) |
+| 65 | T | 71 | Report to Thomas | 1429 | 74.0, 72.2 | 89 | near #49 (went 645 yd away) |
+| 66 | A | 39 | Deliver Thomas' Report | 1429 | 74.0, 72.2 | 0 |  |
+| 67 | T | 91724 | Delicate Instruments | 1429 | 65.1, 69.8 | 312 | near #55 (went 618 yd away) |
+| 68 | T | 99143 | Bottles and Baubles | 1429 | 47.6, 62.3 | 631 | near #36 (went 1381 yd away) |
+| 69 | T | 99128 | Slimy Menace | 1429 | 47.5, 62.2 | 6 | near #36 (went 1387 yd away) |
+| 70 | A | 99129 | A Man About a Murloc | 1429 | 47.5, 62.2 | 0 |  |
+| 71 | T | 91746 | Elmpaw's Head | 1429 | 46.2, 62.2 | 42 |  |
+| 72 | T | 112 | Collecting Kelp | 1429 | 43.3, 65.7 | 129 | near #31 (went 1498 yd away) |
+| 73 | A | 114 | The Escape | 1429 | 43.3, 65.7 | 0 |  |
+| 74 | T | 39 | Deliver Thomas' Report | 1429 | 42.1, 65.9 | 42 |  |
+| 75 | T | 76 | The Jasperlode Mine | 1429 | 42.1, 65.9 | 0 |  |
+| 76 | T | 147 | Manhunt | 1429 | 42.1, 65.9 | 0 |  |
+| 77 | T | 99129 | A Man About a Murloc | 1429 | 42.1, 67.3 | 30 |  |
+| 78 | A | 239 | Westbrook Garrison Needs Help! | 1429 | 42.1, 65.9 | 30 |  |
+| 79 | A | 99130 | An Enticing Offer | 1429 | 42.1, 67.3 | 30 |  |
+| 80 | A | 109 | Report to Gryan Stoutmantle | 1429 | 42.1, 65.9 | 30 |  |
+| 81 | A | 184 | Furlbrow's Deed | 1429 | 48.7, 84.4 | 486 |  |
+| 82 | T | 114 | The Escape | 1429 | 43.1, 89.6 | 227 | near #20 (went 1497 yd away) |
+| 83 | O | 99130 | An Enticing Offer | 1429 | 39.7, 88.7 | 122 | near #20 (went 1593 yd away) |
+| 84 | T | 88 | Princess Must Die! | 1429 | 34.7, 84.5 | 199 | near #18 (went 1742 yd away) |
+| 85 | T | 86 | Pie for Billy | 1429 | 34.5, 84.2 | 7 | near #18 (went 1748 yd away) |
+| 86 | A | 84 | Back to Billy | 1429 | 34.5, 84.2 | 0 |  |
+| 87 | A | 176 | WANTED: "Hogger" | 1429 | 24.6, 74.7 | 409 |  |
+| 88 | T | 239 | Westbrook Garrison Needs Help! | 1429 | 24.2, 74.5 | 12 |  |
+| 89 | A | 11 | Riverpaw Gnoll Bounty | 1429 | 24.2, 74.5 | 0 |  |
+| 90 | O | 11 | Riverpaw Gnoll Bounty | 1429 | 26.5, 86.7 | 292 | near #14 (went 2030 yd away) |
+| 91 | O | 176 | WANTED: "Hogger" | 1429 | 25.0, 92.9 | 153 | near #12 (went 2104 yd away) |
+| 92 | T | 11 | Riverpaw Gnoll Bounty | 1429 | 24.2, 74.5 | 427 |  |
+| 93 | T | 61 | Shipment to Stormwind | 1453 | 63.2, 74.4 | 807 |  |
+| 94 | F |  | flight path | 1453 | 71.3, 72.2 | 143 |  |
+| 95 | T | 176 | WANTED: "Hogger" | 1429 | 42.1, 65.9 | 754 | near #80 (went 861 yd away) |
+| 96 | T | 99130 | An Enticing Offer | 1429 | 42.1, 67.3 | 30 | near #80 (went 844 yd away) |
+| 97 | A | 99131 | Baited for Success | 1429 | 42.1, 67.3 | 0 |  |
+| 98 | T | 99131 | Baited for Success | 1429 | 47.5, 62.2 | 218 | near #71 (went 1054 yd away) |
+| 99 | O | 91733 | Downstream | 1429 | 74.3, 76.4 | 988 | near #66 (went 1872 yd away) |
+| 100 | O | 91733 | Downstream | 1429 | 76.7, 82.5 | 162 | near #43 (went 2012 yd away) |
+| 101 | T | 91733 | Downstream | 1429 | 76.5, 71.9 | 243 |  |
+| 102 | T | 84 | Back to Billy | 1429 | 43.1, 85.7 | 1202 | near #83 (went 1216 yd away) |
+| 103 | A | 87 | Goldtooth | 1429 | 43.1, 85.7 | 0 | near #83 (went 1216 yd away) |
+| 104 | O | 87 | Goldtooth | 1429 | 41.7, 78.0 | 184 | near #10 (went 1502 yd away) |
+| 105 | T | 87 | Goldtooth | 1429 | 34.5, 84.2 | 289 | near #86 (went 1487 yd away) |
+| 106 | T | 184 | Furlbrow's Deed | 1436 | 60.0, 19.4 | 581 |  |
+| 107 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 669 |  |
 
-Walking between tasks: 17564 yd (~42 min at 7 yd/s).
+Walking between tasks: 17617 yd (~42 min at 7 yd/s).
 
 ## Qualité
 
@@ -669,8 +772,8 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 90: `fp 1453 71.29 72.23`
-- step 112: `fp 1436 56.55 52.64`
+- step 105: `fp 1453 71.29 72.23`
+- step 154: `fp 1436 56.55 52.64`
 
 ## Warnings
 

@@ -1,18 +1,19 @@
 # H_Tauren_01 — Camp Narache
 
-Generated on 2026-11-07 from QuestieDB commit `80866960788084ae1592abf66a08f0d306458a95` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
+Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 7.34 |
+| Simulated level | 1.00 -> 7.45 |
 | Time | 65 min |
-| XP gained | 12712 |
-| XP/h | 11775 |
-| Steps | 38 |
+| XP gained | 13240 |
+| XP/h | 12134 |
+| Steps | 47 |
 | Quests turned in | 15 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 2.90 |
+| Grinding (level steps) | ~3 mobs |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -21,11 +22,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
-| 1 | 752 | A Humble Task | 2 | 85 | 3 |
-| 2 | 747 | The Hunt Begins | 2 | 170 | 3 |
-| 3 | 753 | A Humble Task | 3 | 250 | 3 |
-| 4 | 755 | Rites of the Earthmother | 3 | 250 | 3 |
-| 5 | 750 | The Hunt Continues | 3 | 250 | 4 |
+| 1 | 747 | The Hunt Begins | 2 | 170 | 3 |
+| 2 | 752 | A Humble Task | 2 | 85 | 3 |
+| 3 | 753 | A Humble Task | 3 | 250 | 4 |
+| 4 | 750 | The Hunt Continues | 3 | 250 | 4 |
+| 5 | 755 | Rites of the Earthmother | 3 | 250 | 4 |
 | 6 | 99079 | Longwalker Malah | 9 | 780 est. | 5 |
 | 7 | 780 | The Battleboars | 4 | 445 | 6 |
 | 8 | 3376 | Break Sharptusk! | 5 | 670 | 6 |
@@ -92,6 +93,25 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 756 | Thunderhorn Totem | 7 | level band reached |
 | 748 | Poison Water | 5 | level band reached |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3091 | Simple Note | 1 | WARRIOR | woven, detour 13 s |
+| 3092 | Etched Note | 1 | HUNTER | woven, detour 14 s |
+| 3093 | Rune-Inscribed Note | 1 | SHAMAN | woven, detour 19 s |
+| 3094 | Verdant Note | 1 | DRUID | woven, detour 20 s |
+| 1462 | Earth Sapta | 4 | SHAMAN | repeatable |
+| 1505 | Veteran Uzzek | 10 | WARRIOR | quest level 10 above the band |
+| 2984 | Call of Fire | 10 | SHAMAN | quest level 10 above the band |
+| 2986 | Call of Water | 20 | SHAMAN | quest level 20 above the band |
+| 5928 | Heeding the Call | 10 | DRUID | quest level 10 above the band |
+| 1519 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1520 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1521 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -139,43 +159,43 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 1 | A | 752 | A Humble Task | 1412 | 43.9, 76.7 | 1 |  |
 | 2 | A | 747 | The Hunt Begins | 1412 | 44.5, 77.5 | 49 |  |
 | 3 | O | 747 | The Hunt Begins | 1412 | 44.8, 84.5 | 289 |  |
-| 4 | T | 752 | A Humble Task | 1412 | 48.8, 80.9 | 286 |  |
-| 5 | A | 753 | A Humble Task | 1412 | 48.8, 80.9 | 0 |  |
-| 6 | O | 753 | A Humble Task | 1412 | 49.0, 81.2 | 16 |  |
-| 7 | T | 747 | The Hunt Begins | 1412 | 44.5, 77.5 | 315 |  |
-| 8 | A | 750 | The Hunt Continues | 1412 | 44.5, 77.5 | 0 |  |
-| 9 | A | 3376 | Break Sharptusk! | 1412 | 44.2, 77.0 | 26 |  |
-| 10 | T | 753 | A Humble Task | 1412 | 43.9, 76.7 | 23 |  |
-| 11 | A | 755 | Rites of the Earthmother | 1412 | 43.9, 76.7 | 0 |  |
-| 12 | T | 755 | Rites of the Earthmother | 1412 | 42.5, 90.1 | 558 |  |
-| 13 | A | 757 | Rite of Strength | 1412 | 42.5, 90.1 | 0 |  |
-| 14 | O | 750 | The Hunt Continues | 1412 | 50.8, 88.7 | 513 |  |
-| 15 | T | 750 | The Hunt Continues | 1412 | 44.5, 77.5 | 602 | near #11 (went 602 yd away) |
-| 16 | A | 780 | The Battleboars | 1412 | 44.5, 77.5 | 0 | near #11 (went 602 yd away) |
-| 17 | A | 99079 | Longwalker Malah | 1412 | 46.7, 63.8 | 577 |  |
-| 18 | A | 745 | Sharing the Land | 1412 | 46.7, 63.4 | 18 |  |
-| 19 | O | 745 | Sharing the Land | 1412 | 36.0, 65.0 | 661 |  |
-| 20 | O | 745 | Sharing the Land | 1412 | 51.9, 73.7 | 1044 |  |
-| 21 | A | 749 | The Ravaged Caravan | 1412 | 54.8, 64.3 | 423 |  |
-| 22 | T | 99079 | Longwalker Malah | 1412 | 57.6, 63.2 | 181 |  |
-| 23 | A | 99081 | Grim Tidings | 1412 | 57.6, 63.2 | 0 |  |
-| 24 | O | 3376 | Break Sharptusk! | 1412 | 61.0, 78.0 | 642 |  |
-| 25 | O | 757 | Rite of Strength | 1412 | 60.9, 78.4 | 19 |  |
-| 26 | A | 781 | Attack on Camp Narache | 1412 | 59.8, 82.2 | 168 |  |
-| 27 | O | 780 | The Battleboars | 1412 | 54.3, 86.1 | 372 |  |
-| 28 | T | 780 | The Battleboars | 1412 | 44.5, 77.5 | 702 | near #16 (went 1018 yd away) |
-| 29 | T | 3376 | Break Sharptusk! | 1412 | 44.2, 77.0 | 26 | near #16 (went 1037 yd away) |
-| 30 | T | 757 | Rite of Strength | 1412 | 43.9, 76.7 | 23 |  |
-| 31 | T | 781 | Attack on Camp Narache | 1412 | 43.9, 76.7 | 0 |  |
-| 32 | A | 763 | Rites of the Earthmother | 1412 | 43.9, 76.7 | 0 |  |
-| 33 | T | 99081 | Grim Tidings | 1412 | 46.7, 63.8 | 553 | near #18 (went 1104 yd away) |
-| 34 | A | 99101 | Our Ancient Enemy | 1412 | 46.7, 63.8 | 0 | near #18 (went 1104 yd away) |
+| 4 | T | 747 | The Hunt Begins | 1412 | 44.5, 77.5 | 289 |  |
+| 5 | A | 750 | The Hunt Continues | 1412 | 44.5, 77.5 | 0 |  |
+| 6 | A | 3376 | Break Sharptusk! | 1412 | 44.2, 77.0 | 26 |  |
+| 7 | O | 750 | The Hunt Continues | 1412 | 50.8, 88.7 | 628 |  |
+| 8 | T | 752 | A Humble Task | 1412 | 48.8, 80.9 | 342 |  |
+| 9 | A | 753 | A Humble Task | 1412 | 48.8, 80.9 | 0 |  |
+| 10 | O | 753 | A Humble Task | 1412 | 49.0, 81.2 | 16 |  |
+| 11 | A | 99079 | Longwalker Malah | 1412 | 46.7, 63.8 | 724 |  |
+| 12 | A | 745 | Sharing the Land | 1412 | 46.7, 63.4 | 18 |  |
+| 13 | T | 753 | A Humble Task | 1412 | 43.9, 76.7 | 570 | near #6 (went 651 yd away) |
+| 14 | A | 755 | Rites of the Earthmother | 1412 | 43.9, 76.7 | 0 | near #6 (went 651 yd away) |
+| 15 | T | 750 | The Hunt Continues | 1412 | 44.5, 77.5 | 49 |  |
+| 16 | A | 780 | The Battleboars | 1412 | 44.5, 77.5 | 0 |  |
+| 17 | T | 755 | Rites of the Earthmother | 1412 | 42.5, 90.1 | 531 |  |
+| 18 | A | 757 | Rite of Strength | 1412 | 42.5, 90.1 | 0 |  |
+| 19 | O | 780 | The Battleboars | 1412 | 54.3, 86.1 | 744 |  |
+| 20 | A | 781 | Attack on Camp Narache | 1412 | 59.8, 82.2 | 372 |  |
+| 21 | O | 757 | Rite of Strength | 1412 | 60.9, 78.4 | 168 |  |
+| 22 | O | 3376 | Break Sharptusk! | 1412 | 61.0, 78.0 | 19 |  |
+| 23 | T | 99079 | Longwalker Malah | 1412 | 57.6, 63.2 | 642 |  |
+| 24 | A | 99081 | Grim Tidings | 1412 | 57.6, 63.2 | 0 |  |
+| 25 | A | 749 | The Ravaged Caravan | 1412 | 54.8, 64.3 | 181 |  |
+| 26 | O | 745 | Sharing the Land | 1412 | 51.9, 73.7 | 423 |  |
+| 27 | T | 780 | The Battleboars | 1412 | 44.5, 77.5 | 485 | near #16 (went 1018 yd away) |
+| 28 | T | 3376 | Break Sharptusk! | 1412 | 44.2, 77.0 | 26 | near #16 (went 1037 yd away) |
+| 29 | T | 757 | Rite of Strength | 1412 | 43.9, 76.7 | 23 |  |
+| 30 | T | 781 | Attack on Camp Narache | 1412 | 43.9, 76.7 | 0 |  |
+| 31 | A | 763 | Rites of the Earthmother | 1412 | 43.9, 76.7 | 0 |  |
+| 32 | O | 745 | Sharing the Land | 1412 | 36.0, 65.0 | 682 |  |
+| 33 | T | 99081 | Grim Tidings | 1412 | 46.7, 63.8 | 660 | near #12 (went 1108 yd away) |
+| 34 | A | 99101 | Our Ancient Enemy | 1412 | 46.7, 63.8 | 0 | near #12 (went 1108 yd away) |
 | 35 | T | 99101 | Our Ancient Enemy | 1412 | 46.7, 63.4 | 18 |  |
 | 36 | T | 745 | Sharing the Land | 1412 | 46.7, 63.4 | 0 |  |
 | 37 | T | 763 | Rites of the Earthmother | 1412 | 46.7, 63.4 | 0 |  |
 | 38 | T | 749 | The Ravaged Caravan | 1412 | 51.9, 53.4 | 520 |  |
 
-Walking between tasks: 8638 yd (~21 min at 7 yd/s).
+Walking between tasks: 8508 yd (~20 min at 7 yd/s).
 
 ## Qualité
 
@@ -195,7 +215,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-None.
+- step 17: `level 4` — About 3 mobs
 
 ## Warnings
 

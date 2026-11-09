@@ -71,40 +71,10 @@ function M.classesProblem(v)
   return nil
 end
 
--- classVariants(chapitres) -> classes connues nommées par les étapes `classes` du parcours, triées.
-function M.classVariants(chapters)
-  local seen, out = {}, {}
-  for _, ch in ipairs(chapters) do
-    for _, s in ipairs(ch.steps or {}) do
-      if type(s) == "table" then
-        for _, c in ipairs(classNames(s.classes) or {}) do
-          if KNOWN_CLASSES[c] and not seen[c] then seen[c] = true; out[#out + 1] = c end
-        end
-      end
-    end
-  end
-  table.sort(out)
-  return out
-end
-
--- stepsForClass(étapes, classe | nil) -> étapes vues par cette classe (nil : seulement les étapes sans
--- `classes`), index d'origine de chacune.
-function M.stepsForClass(steps, cls)
-  local out, index = {}, {}
-  for i, s in ipairs(steps or {}) do
-    local keep = true
-    local list = type(s) == "table" and classNames(s.classes)
-    if list then
-      keep = false
-      for _, c in ipairs(list) do if cls and c == cls then keep = true end end
-    end
-    if keep then
-      out[#out + 1] = s
-      index[#out] = i
-    end
-  end
-  return out, index
-end
+-- Variantes de classe d'un parcours et étapes vues par une classe : tools/routebuilder/paths.lua (aussi utilisé
+-- par build.raceFilters).
+M.classVariants = paths.classVariants
+M.stepsForClass = paths.stepsForClass
 
 local function readFile(path)
   local f = io.open(path, "rb")
@@ -173,9 +143,25 @@ function M.run(argv)
 
   local W = world.load(here .. "/routebuilder/data")
   local Ds = {}
+  -- prérequis ajoutés à la main (champ `pre` de routebuilder/overrides.lua, mêmes données que build.lua)
+  local pre = {}
+  do
+    local f = io.open(here .. "/routebuilder/overrides.lua", "rb")
+    if f then
+      local text = f:read("*a"); f:close()
+      local fn = text:byte(1) ~= 27 and loadstring(text, "@overrides.lua")
+      if fn then
+        setfenv(fn, {})
+        local ok, ov = pcall(fn)
+        if ok and type(ov) == "table" and type(ov.pre) == "table" then pre = ov.pre end
+      end
+    end
+  end
   local function D(faction)
     faction = faction or "Alliance"
-    if not Ds[faction] then Ds[faction] = qdb.load({ db = opts.db, questie = opts.questie, faction = faction }) end
+    if not Ds[faction] then
+      Ds[faction] = qdb.addPrereqs(qdb.load({ db = opts.db, questie = opts.questie, faction = faction }), pre)
+    end
     return Ds[faction]
   end
 
@@ -188,6 +174,29 @@ function M.run(argv)
       bad(path, 0, "load error: " .. tostring(err))
     elseif rel:match("ClassQuestData%.lua$") then
       if type(Q.ClassQuestData) ~= "table" then bad(path, 0, "ClassQuestData missing") end
+    elseif rel:match("BagQuestData%.lua$") then
+      -- quêtes à sac (tools/routebuilder/bagquests.lua) : forme des entrées et quêtes connues de QuestieDB
+      if type(Q.BagQuestData) ~= "table" then
+        bad(path, 0, "BagQuestData missing")
+      else
+        local keys = {}
+        for i, e in ipairs(Q.BagQuestData) do
+          if type(e) ~= "table" or type(e.key) ~= "string" then
+            bad(path, 0, ("bag quest %d: no key"):format(i))
+          elseif keys[e.key] then
+            bad(path, 0, "duplicate bag quest key " .. e.key)
+          else
+            keys[e.key] = true
+            if type(e.bag) ~= "number" or type(e.level) ~= "number" or type(e.quests) ~= "table" or #e.quests == 0 then
+              bad(path, 0, e.key .. ": needs bag, level and quests")
+            else
+              for _, qid in ipairs(e.quests) do
+                if not D(e.faction).quests[qid] then bad(path, 0, ("%s: unknown quest %s"):format(e.key, tostring(qid))) end
+              end
+            end
+          end
+        end
+      end
     else
       if #defs ~= 1 then bad(path, 0, ("expected one RegisterGuide call, got %d"):format(#defs)) end
       for _, def in ipairs(defs) do

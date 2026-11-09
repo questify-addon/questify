@@ -443,6 +443,50 @@ return {
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), after)
   end,
 
+  -- Cible mouvante gardée (WaypointUI rejoue animation et bruitage à chaque nouveau repère) : un
+  -- loup un peu plus proche ne remplace pas celui qui est visé ; un loup atteint, oui.
+  -- Dun Morogh : 1 point de x = 49,25 yards, 1 point de y = 32,83 yards.
+  moving_target_kept_until_reached = function(t)
+    Mock.addons.WaypointUI = true
+    local Q = load({ ["nav.display"] = "waypointui" })
+    accept179()
+    local NEW = "WaypointUIAPI.Navigation.NewUserNavigation"
+    local first = Mock.lastCall(NEW).args[1]
+    t.near(first.x, 28.73, 0.01, "nearest wolf from the start (69 yd)")
+    local before = Mock.countCalls(NEW)
+    -- un autre loup devient le plus proche (40 yd contre 58) : moins de 60 yd gagnés, on garde
+    Mock.player.x, Mock.player.y = 29.9, 72.2
+    Mock.advance(6)
+    t.eq(Mock.countCalls(NEW), before, "no new waypoint for an 18 yd gain")
+    -- loup visé atteint : le suivant
+    Mock.player.x, Mock.player.y = 28.75, 72.35
+    Mock.advance(3)
+    t.eq(Mock.countCalls(NEW), before + 1, "next wolf once reached")
+    t.near(Mock.lastCall(NEW).args[1].x, 27.6, 0.01)
+    noNavErrors(t)
+  end,
+
+  -- Bord de la zone d'objectif : entrée à 200 yards, sortie au-delà de 260 (pas de va-et-vient).
+  site_edge_has_a_margin = function(t)
+    local Q = load()
+    Q:RegisterGuide({ id = "T_site", faction = "Alliance", steps = { { "complete", 179, at = { 1426, 30.0, 72.0 } } } })
+    Mock.quests.log[179] = { objectives = { { text = "Tough Wolf Meat: 0/8", finished = false } } }
+    Mock.player.x, Mock.player.y = 45.0, 50.0                 -- loin de la zone
+    Q.Progress:SetGuide("T_site")
+    local function kind() return Q.Targets:ForEntry(Q.Progress:Current()).kind end
+    Mock.player.x, Mock.player.y = 30.0 + 220 / 49.25, 72.0   -- 220 yd : pas encore entré
+    t.eq(kind(), "area")
+    Mock.player.x, Mock.player.y = 30.1, 72.1                 -- dedans
+    t.eq(kind(), "npc")
+    Mock.player.x, Mock.player.y = 30.0 + 220 / 49.25, 72.0   -- 220 yd : on y reste
+    t.eq(kind(), "npc")
+    Mock.player.x, Mock.player.y = 30.0 + 280 / 49.25, 72.0   -- 280 yd : sorti
+    t.eq(kind(), "area")
+    Mock.player.x, Mock.player.y = 30.0 + 220 / 49.25, 72.0   -- 220 yd en revenant : pas encore rentré
+    t.eq(kind(), "area")
+    noNavErrors(t)
+  end,
+
   native_skips_maps_without_waypoints = function(t)
     local Q = load()
     local before = Mock.countCalls("C_Map.SetUserWaypoint")

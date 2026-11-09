@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 31 étapes, niveau final 43.10, ~51599 xp/h, 83 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Simulation : 27 étapes, niveau final 43.05, ~51027 xp/h, 70 min.
 Q:RegisterGuide({
   id = "H_14",
   title = "Swamp of Sorrows",
   faction = "Horde",
   minLevel = 42, maxLevel = 43,
   next = "H_15",
-  sim = { steps = 31, endLevel = 43.10, xpPerHour = 51599, minutes = 83 },
+  sim = { steps = 27, endLevel = 43.05, xpPerHour = 51027, minutes = 70 },
   steps = {
     { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
     { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 42)
@@ -36,11 +36,7 @@ Q:RegisterGuide({
     { "turnin", 1426, xp = 4450 }, -- Threat From the Sea (lvl 43, ~4450 xp, sim lvl 42)
     { "accept", 1427 }, -- Threat From the Sea (lvl 43, ~3600 xp, sim lvl 42)
     { "turnin", 1427, xp = 3600 }, -- Threat From the Sea (lvl 43, ~3600 xp, sim lvl 42)
-    { "accept", 1428 }, -- Continued Threat (lvl 45, ~3900 xp, sim lvl 42)
-    { "complete", 1428, obj = 1, at = { 1435, 84.77, 87.21 } }, -- Continued Threat (lvl 45, ~3900 xp, sim lvl 42)
-    { "complete", 1428, at = { 1435, 63.26, 82.96 } }, -- Continued Threat (lvl 45, ~3900 xp, sim lvl 42)
-    { "turnin", 1428, xp = 3900 }, -- Continued Threat (lvl 45, ~3900 xp, sim lvl 42)
-    { "turnin", 1424, xp = 4450 }, -- Pool of Tears (lvl 43, ~4450 xp, sim lvl 43)
+    { "turnin", 1424, xp = 4450 }, -- Pool of Tears (lvl 43, ~4450 xp, sim lvl 42)
     { "turnin", 1430, xp = 3750 }, -- Fresh Meat (lvl 44, ~3750 xp, sim lvl 43)
   },
 })

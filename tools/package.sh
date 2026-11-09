@@ -134,5 +134,5 @@ $bad"
 # Forever : TOC de base + _Camelot (Interface 16001), routes Forever.
 stageAddon forever
 zipAddon forever
-checkZip "$ADDON.toc" "${ADDON}_Camelot.toc" "Guides/Guides.xml" "Guides/ClassQuestData.lua" \
+checkZip "$ADDON.toc" "${ADDON}_Camelot.toc" "Guides/Guides.xml" "Guides/ClassQuestData.lua" "Guides/BagQuestData.lua" \
   "Guides/DungeonData.lua" "Guides/Alliance/A_DwarfGnome_01.lua"

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 80866960788084ae1592abf66a08f0d306458a95, généré le 2026-11-07.
--- Simulation : 35 étapes, niveau final 6.02, ~10280 xp/h, 45 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Simulation : 58 étapes, niveau final 6.02, ~10243 xp/h, 45 min.
 Q:RegisterGuide({
   id = "H_Undead_01",
   title = "Deathknell",
@@ -10,30 +10,52 @@ Q:RegisterGuide({
   races = { "Undead" },
   minLevel = 1, maxLevel = 6,
   next = "H_Undead_02",
-  sim = { steps = 35, endLevel = 6.02, xpPerHour = 10280, minutes = 45 },
+  sim = { steps = 58, endLevel = 6.02, xpPerHour = 10243, minutes = 45 },
   steps = {
     { "accept", 363 }, -- Rude Awakening (lvl 1, ~40 xp, sim lvl 1)
     { "turnin", 363, xp = 40 }, -- Rude Awakening (lvl 1, ~40 xp, sim lvl 1)
     { "accept", 364 }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 1)
     { "complete", 364, at = { 1420, 32.1, 63.41 } }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 1)
     { "accept", 376 }, -- The Damned (lvl 2, ~170 xp, sim lvl 2)
+    { "accept", 5651, classes = { "PRIEST" } }, -- In Favor of Darkness (lvl 4, ~90 xp, sim lvl 2)
     { "turnin", 364, xp = 170 }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 2)
+    { "accept", 3095, classes = { "WARRIOR" } }, -- Simple Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "accept", 3096, classes = { "ROGUE" } }, -- Encrypted Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "accept", 3097, classes = { "PRIEST" } }, -- Hallowed Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "accept", 3098, classes = { "MAGE" } }, -- Glyphic Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "accept", 3099, classes = { "WARLOCK" } }, -- Tainted Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "turnin", 3099, xp = 40, classes = { "WARLOCK" } }, -- Tainted Scroll (lvl 1, ~40 xp, sim lvl 2)
+    { "accept", 98601, classes = { "PALADIN" } }, -- A Difficult Path (lvl 1, ~40 xp, sim lvl 2)
     { "accept", 3901 }, -- Rattling the Rattlecages (lvl 3, ~250 xp, sim lvl 2)
     { "complete", 376, at = { 1420, 35.73, 58.33 } }, -- The Damned (lvl 2, ~170 xp, sim lvl 2)
     { "complete", 3901, at = { 1420, 33.15, 61.99 } }, -- Rattling the Rattlecages (lvl 3, ~250 xp, sim lvl 3)
     { "turnin", 376, xp = 170 }, -- The Damned (lvl 2, ~170 xp, sim lvl 3)
+    { "turnin", 3097, xp = 40, classes = { "PRIEST" } }, -- Hallowed Scroll (lvl 1, ~40 xp, sim lvl 3)
+    { "turnin", 3098, xp = 40, classes = { "MAGE" } }, -- Glyphic Scroll (lvl 1, ~40 xp, sim lvl 3)
     { "accept", 6395 }, -- Marla's Last Wish (lvl 5, ~450 xp, sim lvl 3)
+    { "accept", 98389 }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 3)
+    { "turnin", 98601, xp = 40, classes = { "PALADIN" } }, -- A Difficult Path (lvl 1, ~40 xp, sim lvl 3)
+    { "accept", 90902, classes = { "PALADIN" } }, -- Rediscovering the Light (lvl 2, ~170 xp, sim lvl 3)
+    { "accept", 1470, classes = { "WARLOCK" } }, -- Piercing the Veil (lvl 3, ~190 xp, sim lvl 3)
+    { "accept", 3902 }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 3)
     { "turnin", 3901, xp = 250 }, -- Rattling the Rattlecages (lvl 3, ~250 xp, sim lvl 3)
-    { "accept", 98389 }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
-    { "accept", 3902 }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 4)
     { "accept", 380 }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 4)
+    { "turnin", 3095, xp = 40, classes = { "WARRIOR" } }, -- Simple Scroll (lvl 1, ~40 xp, sim lvl 4)
+    { "turnin", 3096, xp = 40, classes = { "ROGUE" } }, -- Encrypted Scroll (lvl 1, ~40 xp, sim lvl 4)
     { "complete", 6395, at = { 1420, 31.17, 65.08 } }, -- Marla's Last Wish (lvl 5, ~450 xp, sim lvl 4)
+    { "complete", 90902, at = { 1420, 31.85, 64.36 }, classes = { "PALADIN" } }, -- Rediscovering the Light (lvl 2, ~170 xp, sim lvl 4)
     { "turnin", 6395, xp = 450 }, -- Marla's Last Wish (lvl 5, ~450 xp, sim lvl 4)
     { "complete", 3902, at = { 1420, 33.04, 64.29 } }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 4)
+    { "complete", 1470, at = { 1420, 33.15, 61.99 }, classes = { "WARLOCK" } }, -- Piercing the Veil (lvl 3, ~190 xp, sim lvl 4)
     { "turnin", 3902, xp = 315 }, -- Scavenging Deathknell (lvl 3, ~315 xp, sim lvl 4)
-    { "complete", 98389, at = { 1420, 26.81, 59.63 } }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
+    { "complete", 98389, at = { 1420, 26.82, 59.56 } }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
     { "complete", 380, at = { 1420, 28.4, 58.08 } }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 98389, xp = 355 }, -- A Light in the Darkness (lvl 4, ~355 xp, sim lvl 4)
+    { "turnin", 90902, xp = 170, classes = { "PALADIN" } }, -- Rediscovering the Light (lvl 2, ~170 xp, sim lvl 4)
+    { "turnin", 1470, xp = 190, classes = { "WARLOCK" } }, -- Piercing the Veil (lvl 3, ~190 xp, sim lvl 4)
+    { "accept", 91208, classes = { "PALADIN" } }, -- Coming to Terms (lvl 4, ~355 xp, sim lvl 4)
+    { "complete", 91208, at = { 1420, 27.69, 63.82 }, classes = { "PALADIN" } }, -- Coming to Terms (lvl 4, ~355 xp, sim lvl 4)
+    { "turnin", 91208, xp = 355, classes = { "PALADIN" } }, -- Coming to Terms (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 380, xp = 355 }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 5)
     { "accept", 381 }, -- The Scarlet Crusade (lvl 4, ~355 xp, sim lvl 5)
     { "complete", 381, at = { 1420, 37.52, 67.46 } }, -- The Scarlet Crusade (lvl 4, ~355 xp, sim lvl 5)
@@ -47,5 +69,6 @@ Q:RegisterGuide({
     { "turnin", 96656, xp = 135 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
     { "turnin", 383, xp = 335 }, -- Vital Intelligence (lvl 5, ~335 xp, sim lvl 5)
     { "turnin", 8, xp = 110 }, -- A Rogue's Deal (lvl 5, ~110 xp, sim lvl 5)
+    { "turnin", 5651, xp = 90, classes = { "PRIEST" } }, -- In Favor of Darkness (lvl 4, ~90 xp, sim lvl 5)
   },
 })

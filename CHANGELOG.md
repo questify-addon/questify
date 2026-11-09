@@ -1,5 +1,144 @@
 # Changelog
 
+## 0.5.0 (2026-11-09)
+
+### English
+
+**Routes on QuestieDB v1.0.12**
+- Every route rebuilt on QuestieDB v1.0.12 (moved NPC and object spawns, Frostmane Hold exploration point, Ruins of
+  Lordaeron quests).
+- Simulated 1-60 with every change of this version: Human 5 639 min (about 94 h), Dwarf/Gnome 5 614, Night Elf
+  5 641, Skyborne Alliance 5 560, Orc/Troll 5 703, Tauren 5 705, Undead 5 756, Skyborne Horde 5 731.
+- Durotar no longer ends with a grind (59 mobs before the fix), Silverpine keeps its higher quests instead of a
+  grind, and Egg Hunt is back in the Southern Barrens.
+- Dungeons window: Ruins of Lordaeron quests need level 15 and follow their chain.
+
+**Safer routes**
+- No more objectives done far below their level: every objective waits until its mobs are at most 2 levels above you
+  (never orange), and never inside an elite camp above your level. The route grinds a little, or comes back later in
+  the chapter, or leaves the quest out when the zone is too hard.
+- Dwarf / Gnome: Loch Modan 11-13 then Westfall from level 13. No more Gathering Idols or the Mo'grosh book among the
+  elite ogres; the easier Loch Modan quests are back, and Rat Catching is done in the kobold mine together with the
+  Miners' Gear of Filthy Paws.
+- Routes are longer in the simulator (about 5-7 h over 1-60): the old times counted dangerous quests as if they were
+  easy.
+
+**Cozy Sleeping Bag**
+- The treasure hunt that rewards the Cozy Sleeping Bag is in the routes from level 14: Stepping Stones from the
+  Nailed Plank (Westfall or Southern Barrens), Scramble and Wet Job in Stonetalon, Eagle's Fist at Stonewrought Dam
+  (Loch Modan), This Must Be The Place in north-west Arathi, where the bag is handed over (around level 29-30, in
+  Hillsbrad). Horde: every race. Alliance: Human, Dwarf and Gnome (Night Elf and Skyborne routes do not pass a
+  plank in time). About 25-35 more simulated minutes over 1-60.
+- Fix: the Horde route no longer has you accept Scramble without Stepping Stones.
+
+**Bag quests**
+- Near the giver of a quest that rewards a bag bigger than your smallest bag (or when a bag slot is empty), the
+  route offers a "Bag quest" step, like class quests: one click adds the quest to the route, with its
+  prerequisites, or ignores it. Quests the route already does are never offered. 18 quests (Carry Your Weight,
+  Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's Riddle…). The bag size is read
+  from the item tooltip in game.
+- Option "Offer quests that reward a bigger bag" (on by default); `/qf bags` lists them with their state,
+  `/qf bags reset` offers the ignored ones again.
+- Class quests: the unfinished Undead priest quests (`<NYI>`) are gone.
+
+**Dungeon quests**
+- Every chapter picks up the dungeon quests given along its way, with the quests that lead to them, and keeps them in
+  your log until you run the dungeon: 41 dungeon quests on the Alliance routes (31 before), 44 on the Horde routes
+  (28 before). Picking one up never makes you grind for its level. Hidden with the dungeon quests option off.
+- Adding a dungeon from the Dungeons window now also does the zone quests that unlock its quests (up to 5 in a row),
+  then the dungeon and every turn-in, and a last step takes you back to where your route was.
+
+**Quests started by a looted item**
+- When the item that starts a quest of your route lands in your bags, a message in the middle of the screen (with
+  a sound and a chat line) tells you, and the quest item button next to the tracker offers it: one click (or its
+  key binding) opens the quest, which is accepted automatically. The game does not let an addon use an item
+  without a click or a key press.
+
+**Class quests and quest items**
+- Class quests whose giver, objectives and turn-in sit along the route are now steps of the route, for your class
+  only. The others stay in the class quest window.
+- Quests started by a looted item use real drop rates (Wowhead): very rare items are no longer on the route unless
+  their mobs are farmed anyway, and the step tells the drop rate.
+
+**Navigation**
+- The waypoint no longer keeps moving while you kill monsters: it stays on the monster (or object) it
+  points to until you reach it, unless another one is at least 60 yards closer. With WaypointUI, every
+  new waypoint replayed its intro animation and sound, every few seconds.
+- Objective area: you enter it at 200 yards and now leave it only beyond 260, so the waypoint no longer
+  jumps between the area centre and the nearest monster when you walk along its edge.
+- Zone mode: between objectives of the same priority, the arrow stays on the current one until another
+  is at least 40 yards closer.
+
+### Français
+
+**Routes sur QuestieDB v1.0.12**
+- Toutes les routes refaites sur QuestieDB v1.0.12 (PNJ et objets déplacés, point d'exploration de Frostmane Hold,
+  quêtes des Ruines de Lordaeron).
+- 1-60 simulé avec tous les changements de cette version : Humain 5 639 min (environ 94 h), Nain/Gnome 5 614, Elfe
+  de la nuit 5 641, Skyborne Alliance 5 560, Orc/Troll 5 703, Tauren 5 705, Mort-vivant 5 756, Skyborne Horde
+  5 731.
+- Durotar ne finit plus par du farm (59 mobs sans la correction), la Forêt des Pins-Argentés garde ses quêtes
+  plus hautes au lieu de farmer, et Egg Hunt revient dans le sud des Tarides.
+- Fenêtre des donjons : les quêtes des Ruines de Lordaeron demandent le niveau 15 et suivent leur chaîne.
+
+**Routes plus sûres**
+- Plus d'objectifs faits bien en dessous de leur niveau : chaque objectif attend que ses monstres soient au plus 2
+  niveaux au-dessus de toi (jamais orange), et jamais dans un camp d'élites plus haut que toi. La route farme un peu,
+  revient plus tard dans le chapitre, ou laisse la quête quand la zone est trop dure.
+- Nain / Gnome : Loch Modan 11-13 puis Marche de l'Ouest dès le niveau 13. Plus de Gathering Idols ni de livre de
+  Mo'grosh au milieu des ogres élites ; les quêtes plus faciles du Loch Modan reviennent, et Rat Catching se fait dans la
+  mine des kobolds en même temps que le Miners' Gear de Filthy Paws.
+- Routes plus longues au simulateur (environ 5 à 7 h sur 1-60) : les anciens temps comptaient les quêtes dangereuses
+  comme si elles étaient faciles.
+
+**Cozy Sleeping Bag**
+- La chasse au trésor qui donne le Cozy Sleeping Bag est dans les routes dès le niveau 14 : Stepping Stones à la
+  planche clouée (Marche de l'Ouest ou sud des Tarides), Scramble et Wet Job aux Serres-Rocheuses, Eagle's Fist au
+  barrage de Thelsamar (Loch Modan), This Must Be The Place au nord-ouest d'Arathi, où le sac est remis (vers le
+  niveau 29-30, depuis les Contreforts d'Hautebrande). Horde : toutes les races. Alliance : Humain, Nain et Gnome
+  (les routes Elfe de la nuit et Skyborne ne passent pas à temps par une planche). Environ 25 à 35 minutes simulées
+  de plus sur 1-60.
+- Correctif : la route Horde ne fait plus prendre Scramble sans Stepping Stones.
+
+**Quêtes de sac**
+- Près du donneur d'une quête qui donne un sac plus grand que ton plus petit sac (ou s'il te reste un emplacement
+  de sac vide), la route propose une étape « Quête de sac », comme pour les quêtes de classe : un clic pour
+  l'ajouter à la route, prérequis compris, ou l'ignorer. Une quête que la route fait déjà n'est jamais proposée.
+  18 quêtes (Carry Your Weight, Poor Old Blanchy, Captain Sander's Hidden Treasure, The Night Watch, Cortello's
+  Riddle…). La taille du sac est lue dans l'infobulle de l'objet, en jeu.
+- Option « Proposer les quêtes qui donnent un sac plus grand » (activée par défaut) ; `/qf sacs` les liste avec
+  leur état, `/qf sacs reset` repropose celles qui ont été ignorées.
+- Quêtes de classe : les quêtes de prêtre mort-vivant inachevées (`<NYI>`) disparaissent.
+
+**Quêtes de donjon**
+- Chaque chapitre prend les quêtes de donjon données sur son chemin, avec les quêtes qui y mènent, et les garde dans
+  ton journal jusqu'au donjon : 41 quêtes de donjon sur les routes Alliance (31 avant), 44 sur les routes Horde
+  (28 avant). Leur prise ne fait jamais farmer pour leur niveau. Masquées avec l'option des quêtes de donjon coupée.
+- Ajouter un donjon depuis la fenêtre des donjons fait aussi les quêtes de zone qui débloquent ses quêtes (jusqu'à 5
+  à la suite), puis le donjon et tous les rendus, et une dernière étape te ramène là où en était ta route.
+
+**Quêtes lancées par un objet ramassé**
+- Quand l'objet qui lance une quête de ta route arrive dans tes sacs, un message au milieu de l'écran (avec un son et
+  une ligne dans la discussion) te prévient, et le bouton d'objet de quête à côté du suivi le propose : un clic (ou
+  son raccourci) ouvre la quête, acceptée automatiquement. Le jeu n'autorise pas un addon à utiliser un objet sans
+  clic ni touche.
+
+**Quêtes de classe et objets de quête**
+- Les quêtes de classe dont le donneur, les objectifs et le rendu sont sur le chemin deviennent des étapes de la
+  route, pour ta classe seulement. Les autres restent dans la fenêtre des quêtes de classe.
+- Les quêtes démarrées par un objet ramassé utilisent les vrais taux de butin (Wowhead) : les objets très rares ne
+  sont plus sur la route sauf si leurs monstres sont farmés de toute façon, et l'étape indique le taux.
+
+**Navigation**
+- Le repère ne bouge plus sans arrêt pendant qu'on tue des monstres : il reste sur le monstre (ou
+  l'objet) visé jusqu'à ce qu'on l'atteigne, sauf si un autre est au moins 60 yards plus près. Avec
+  WaypointUI, chaque nouveau repère rejouait son animation d'apparition et son bruitage, toutes les
+  quelques secondes.
+- Zone d'objectif : on y entre à 200 yards et on n'en sort plus qu'au-delà de 260 ; le repère ne saute
+  plus du centre de la zone au monstre le plus proche quand on en longe le bord.
+- Mode zone : entre objectifs de même priorité, la flèche reste sur l'objectif en cours tant qu'un autre
+  n'est pas au moins 40 yards plus près.
+
 ## 0.4.0 (2026-11-07)
 
 ### English

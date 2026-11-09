@@ -31,7 +31,64 @@ local function stepsText(steps)
   return table.concat(out, " | ")
 end
 
+-- Zone de test + une quête de classe (Guerrier) qui suit 103, une autre trop loin, et une quête démarrée par un
+-- objet qui tombe à 1 % des loups.
+local function extendedD()
+  local D = F.D()
+  local base = D.quests[101]
+  local function copy(t) local o = {}; for k, v in pairs(t) do o[k] = v end; return o end
+  local q109 = copy(D.quests[102]); q109.id, q109.name, q109.level, q109.classes = 109, "Warrior Tusks", 3, 1
+  q109.preSingle = { 103 }
+  local q111 = copy(D.quests[106]); q111.id, q111.name, q111.classes = 111, "Warrior Far Errand", 1
+  local q110 = copy(base); q110.id, q110.name, q110.level = 110, "Strange Note", 2
+  q110.starters = { npcs = {}, objects = {}, items = { 3199 } }
+  q110.objectives = { creatures = {}, killCredit = {}, objects = {}, items = {}, list = {} }
+  D.quests[109], D.quests[110], D.quests[111] = q109, q110, q111
+  D.items[3199] = { id = 3199, name = "Strange Note", npcDrops = { 2101 }, objectDrops = {}, itemDrops = {},
+                    questRewards = {}, vendors = {} }
+  D.drops[3199] = { [2101] = 0.01 }
+  D.xp[109], D.xp[110], D.xp[111] = { 3, 250 }, { 2, 170 }, { 3, 100 }
+  return D
+end
+
+local function runExtended(opts)
+  local D, W = extendedD(), F.W()
+  local state = F.state()
+  local steps, report = sim.chapter(D, W, F.plan(), state, opts)
+  return steps, report, state
+end
+
 return {
+  -- Quête de classe dans la région : étapes `classes`, après le rendu de son pré-requis commun, sans changer
+  -- la route commune ; trop loin : laissée à la fenêtre des quêtes de classe du jeu.
+  class_quest_woven_without_changing_the_route = function(t)
+    -- 111 : ~1 500 yd de détour (environ 9 min) ; seuil abaissé à 5 min pour ce test
+    local saved = sim.CONST.CLASS_MAX_DETOUR
+    sim.CONST.CLASS_MAX_DETOUR = 300
+    local steps, report, state = runExtended({ _noWiden = true })
+    sim.CONST.CLASS_MAX_DETOUR = saved
+    local a, c, tt = indexOf(steps, "accept", 109), indexOf(steps, "complete", 109), indexOf(steps, "turnin", 109)
+    t.ok(a and c and tt, "class quest woven: " .. stepsText(steps))
+    t.ok(a < c and c < tt, "A < O < T")
+    t.ok(indexOf(steps, "turnin", 103) < a, "after its prerequisite turn-in")
+    for _, i in ipairs({ a, c, tt }) do t.eq(table.concat(steps[i].classes or {}, ","), "WARRIOR") end
+    t.ok(state.classDone["WARRIOR:109"], "remembered for the next chapters")
+    t.eq(indexOf(steps, "accept", 111), nil, "far class quest left to the in-game offer")
+    local skipped = false
+    for _, s in ipairs(report.classSkipped) do if s.id == 111 then skipped = true end end
+    t.ok(skipped, "far class quest reported")
+    local _, base = run({ _noWiden = true })
+    t.eq(report.time, base.time, "simulated route unchanged")
+  end,
+
+  -- Objet de départ à 1 % (100 tués) : laissé ; avec un farm de niveau à faire sur ces loups, plus de raison de taux.
+  starter_item_rate_and_grind_budget = function(t)
+    local _, report = runExtended({ _noWiden = true })
+    t.ok((dropped(report, 110) or ""):find("starter item drop rate 1.0 %", 1, true), tostring((dropped(report, 110))))
+    local _, r2 = runExtended({ _noWiden = true, grindBudget = 200 })
+    t.ok(not (dropped(r2, 110) or ""):find("starter item", 1, true), "budget covers the kills: " .. tostring((dropped(r2, 110))))
+  end,
+
   respects_precedence = function(t)
     local steps = run()
     for _, q in ipairs({ 101, 102, 103, 104, 107, 108 }) do
@@ -104,6 +161,79 @@ return {
     t.ok(#report.quests >= 6, "kept quests listed")
   end,
 
+  -- Élites : un camp (2 apparitions ou plus) près d'un site, ou l'élite cible de l'objectif, fixe son niveau minimal
+  -- (niveau de l'élite) ; un élite seul qui n'est pas la cible ne compte pas.
+  elite_camp_or_target_makes_the_objective_dangerous = function(t)
+    local W = F.W()
+    local function elite(D, id, x, y, level)
+      D.npcs[id] = { id = id, name = "Elite " .. id, minLevel = level, maxLevel = level, rank = 1,
+        spawns = { [9001] = { { x, y } } }, npcFlags = 0, questStarts = {}, questEnds = {} }
+    end
+    -- camp de deux élites de niveau 9 au milieu des loups de 101 (25, 28)
+    local D = F.D()
+    elite(D, 2901, 25, 28, 9); elite(D, 2902, 25.5, 28.5, 9)
+    local _, report = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(report, 101) and dropped(report, 101):find("too dangerous before level 9", 1, true), tostring(dropped(report, 101)))
+    -- un seul élite qui n'est pas la cible : 101 reste
+    D = F.D()
+    elite(D, 2901, 25, 28, 9)
+    local steps = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(indexOf(steps, "turnin", 101), "a lone passing elite does not block")
+    -- la cible elle-même élite (chef trogg de 104, niveau 9) : 104 écartée
+    D = F.D()
+    D.npcs[2104].rank, D.npcs[2104].minLevel, D.npcs[2104].maxLevel = 1, 9, 9
+    local _, r3 = sim.chapter(D, W, F.plan(), F.state())
+    t.ok(dropped(r3, 104) and dropped(r3, 104):find("too dangerous", 1, true), tostring(dropped(r3, 104)))
+  end,
+
+  -- Objectif sous son niveau minimal (loups de 101 au niveau 5 : minimum 3) : reporté après d'autres quêtes, fait au
+  -- niveau 3 ou plus, jamais trop bas ni écarté quand le chapitre l'atteint.
+  dangerous_objective_is_deferred_not_done_too_low = function(t)
+    local D, W = F.D(), F.W()
+    D.npcs[2101].minLevel, D.npcs[2101].maxLevel = 5, 5
+    local steps, report = sim.chapter(D, W, F.plan(), F.state())
+    t.eq(dropped(report, 101), nil, "101 kept")
+    local i = indexOf(steps, "complete", 101)
+    t.ok(i, "101 done: " .. stepsText(steps))
+    t.ok(steps[i]._c.simLevel >= 3, "done at level " .. tostring(steps[i]._c.simLevel))
+  end,
+
+  -- Objets gardés : les monstres hostiles à CLEAR_RADIUS yards ou moins des objets pris, au plus CLEAR_PER_OBJECT
+  -- par objet, les plus proches d'abord (signal de partage avec une quête de butin sur ces monstres).
+  guards_of_objects_counted_per_object = function(t)
+    local W = F.W()
+    local function at(x, y) return sim.mkPos(W, 9001, x, y) end
+    local function guard(x, y, npc) local p = at(x, y); p.npc, p.level = npc, 4; return p end
+    -- 1 % = 20 yd : 0,5 % = 10 yd (dans le rayon), 2 % = 40 yd (hors rayon)
+    local ctx = { guards = { guard(50.5, 50, 7), guard(50, 50.5, 7), guard(49.5, 50, 8), guard(52, 50, 9) } }
+    local g = sim.guardsOf(ctx, { at(50, 50) }, at(50, 50), 1)
+    t.eq(g.n, 2, "two per object at most")
+    t.eq(g.clear[9], nil, "a mob 40 yd away is not a guard")
+    local total = 0
+    for _, c in pairs(g.clear) do total = total + c end
+    t.eq(total, 2)
+    t.eq(sim.guardsOf(ctx, { at(10, 10) }, at(10, 10), 1), nil, "no guard far from the object")
+  end,
+
+  widen_true_always_widens_the_band = function(t)
+    local W = F.W()
+    local plan = F.plan()
+    local threshold = sim.CONST.WIDEN_GRIND
+    sim.CONST.WIDEN_GRIND = 100000   -- le chapitre de test ne franchit plus le seuil
+    local ok, err = pcall(function()
+      local _, base = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(base.widened, nil, "below the threshold: not widened")
+      plan.widen = true
+      local _, report = sim.chapter(F.D(), W, plan, F.state())
+      t.ok(report.widened and report.widened:find("band widened", 1, true), tostring(report.widened))
+      plan.widen = false
+      local _, never = sim.chapter(F.D(), W, plan, F.state())
+      t.eq(never.widened, nil, "widen = false: never")
+    end)
+    sim.CONST.WIDEN_GRIND = threshold
+    if not ok then error(err, 0) end
+  end,
+
   accept_waits_for_required_level = function(t)
     local D, W = F.D(), F.W()
     D.quests[104].reqLevel = 5
@@ -138,10 +268,25 @@ return {
     t.eq(#seq, 6)
   end,
 
+  -- Jamais de farm en capitale : foules de PNJ de Forever sans faction ni drapeau, prises pour des mobs.
+  grind_site_never_in_a_capital = function(t)
+    local D, W = F.D(), F.W()
+    local ctx = { D = D, W = W, letter = "A", plan = F.plan(), opts = {} }
+    local pos = sim.mkPos(W, F.MAP, 25, 28)
+    local g = sim.grindSite(ctx, pos, 2)
+    t.ok(g, "wolves of the fixture make a grind site")
+    local saved = sim.CAPITAL_MAPS[F.MAP]
+    sim.CAPITAL_MAPS[F.MAP] = true
+    local inCity = sim.grindSite(ctx, pos, 2)
+    sim.CAPITAL_MAPS[F.MAP] = saved
+    t.eq(inCity, nil, "no grind site in a capital")
+  end,
+
   -- Lot L : une quête de donjon prise au passage (jamais rendue) n'ouvre pas sa suite hors du donjon.
   dungeon_pickup_is_not_a_prerequisite = function(t)
     local D, W = F.D(), F.W()
     D.dungeonAreas[9100] = "Fixture Deeps"
+    D.dungeonCatalog = { ["Fixture Deeps"] = { key = "FIX", area = 9100, min = 1, max = 10 } }
     local deep = D.quests[103]
     D.quests[110] = { }
     for k, v in pairs(deep) do D.quests[110][k] = v end
@@ -151,9 +296,7 @@ return {
     D.quests[111].id, D.quests[111].name, D.quests[111].preSingle = 111, "Back from the Deeps", { 110 }
     D.xp[111] = { 4, 900 }
     D.unlocks[110] = { 111 }
-    local plan = F.plan()
-    plan.dungeons = { "Fixture Deeps" }
-    local steps, report = sim.chapter(D, W, plan, F.state())
+    local steps, report = sim.chapter(D, W, F.plan(), F.state())
     local i = indexOf(steps, "accept", 110)
     t.ok(i, "dungeon quest picked up: " .. stepsText(steps))
     t.eq(steps[i].optional, true); t.eq(steps[i].dungeon, "Fixture Deeps")

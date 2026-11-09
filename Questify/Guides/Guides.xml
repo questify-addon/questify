@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
-  <!-- Fichier réécrit par tools/routebuilder/build.lua : un <Script> par guide, puis ClassQuestData.lua. -->
+  <!-- Fichier réécrit par tools/routebuilder/build.lua : un <Script> par guide, puis ClassQuestData.lua et BagQuestData.lua. -->
   <Script file="Alliance\A_DwarfGnome_01.lua"/>
   <Script file="Alliance\A_DwarfGnome_02.lua"/>
   <Script file="Alliance\A_DwarfGnome_03.lua"/>
@@ -75,4 +75,5 @@
   <Script file="Horde\H_29.lua"/>
   <Script file="Horde\H_30.lua"/>
   <Script file="ClassQuestData.lua"/>
+  <Script file="BagQuestData.lua"/>
 </Ui>

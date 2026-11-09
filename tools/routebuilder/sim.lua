@@ -12,6 +12,7 @@ local qdb = require("qdb")
 local quality = require("quality")
 local transport = require("transport")
 local pathsm = require("paths")
+local catalog = require("dungeon_catalog")
 
 local sim = {}
 
@@ -50,6 +51,16 @@ sim.CONST = {
   TRIVIAL_GRIND = 3,      -- mobs de fin de chapitre en dessous desquels on n'écrit pas d'étape `level`
   CARRY_BONUS = 0,        -- s de bonus d'une quête rendue dans un chapitre suivant (aucun : XP comptée)
   LOG_CAP = 20,           -- quêtes dans le journal
+  -- objets qui démarrent une quête : taux inconnu (objet propre à Forever) d'un mob ordinaire ; un mob nommé
+  -- (élite, rare ou au plus STARTER_UNIQUE_SPAWNS apparitions) lâche son objet à coup sûr
+  STARTER_UNKNOWN_RATE = 0.2,
+  STARTER_UNIQUE_SPAWNS = 2,
+  -- monstres à tuer en moyenne (1 / taux) au-delà desquels la quête est laissée, après déduction du farm
+  -- de niveau du chapitre fait sur ces monstres (opts.grindBudget)
+  STARTER_MAX_KILLS = 60,
+  -- quêtes de classe tissées dans la route (étapes `classes`) : détour au plus (s), au-delà la quête reste
+  -- proposée en jeu par la fenêtre des quêtes de classe
+  CLASS_MAX_DETOUR = 600,
   LEVEL_SLACK = 1,        -- niveaux de dépassement tolérés au-delà de maxLevel (budget d'XP)
   FAR_PENALTY = 1e6,      -- coût d'ordonnancement d'un trajet impossible à pied (autre région)
   TRANSIT = 900,          -- s forfaitaires quand aucun trajet n'est connu (ni marche, ni vol, ni liaison)
@@ -57,9 +68,28 @@ sim.CONST = {
   FLY_PENALTY = 30,       -- s ajoutées au choix d'un vol (descendre, remonter, file d'attente)
   HEARTH_PENALTY = 120,   -- s de coût d'opportunité de la pierre (60 min de recharge ; 300 n'était jamais rentable)
   HEARTH_LOAD = 15,       -- s d'écran de chargement / téléportation
-  SAFE_QUEST_ABOVE = 1,   -- niveaux : objectifs faits au plus tôt au niveau de la quête - 1 (jamais orange)
-  SAFE_GATE_GRIND = 60,   -- mobs à farmer acceptés pour atteindre le niveau « sûr » d'un objectif (au lieu de le sauter)
-  SAFE_MOB_ABOVE = 1,     -- niveaux : monstres à tuer (niveau moyen) au plus 1 niveau au-dessus du personnage
+  SAFE_GATE_GRIND = 60,   -- mobs à farmer acceptés pour atteindre le niveau minimal d'un objectif (au-delà : reporté)
+  -- Élites hostiles près d'un site d'objectif (objet, butin, monstres) : le site attend le niveau de l'élite le plus
+  -- haut + ELITE_ABOVE - DANGER_MOB_ABOVE. Un élite plus de ELITE_IGNORE_ABOVE niveaux au-dessus du chapitre est ignoré
+  -- (données d'instance projetées sur la zone, évènement : Infernal 30 à Elwynn, Stonevault 36 au Loch Modan).
+  ELITE_RADIUS = 35,      -- yards autour du site (plus l'étalement du site, au plus ELITE_SPREAD)
+  ELITE_SPREAD = 25,
+  ELITE_CAMP = 2,         -- élites dans le rayon pour un camp ; un élite seul ne compte que s'il est la cible
+  ELITE_ABOVE = 2,        -- un élite compte comme un monstre 2 niveaux plus haut
+  ELITE_IGNORE_ABOVE = 10,
+  -- Objets gardés : ramasser un objet du monde au milieu de monstres hostiles (non élites, à CLEAR_RADIUS yards ou
+  -- moins d'un des objets pris) fait tuer au plus CLEAR_PER_OBJECT de ces monstres par objet. Au choix des quêtes, une
+  -- quête de butin ou de massacre sur les mêmes monstres au même endroit (SWEEP_AREA) en tient compte : ces combats
+  -- sont faits de toute façon (Miners' Gear de Filthy Paws et Tunnel Rat Ears de Rat Catching, mine de Silver Stream).
+  -- Le temps simulé des deux quêtes reste compté en entier (prudent).
+  CLEAR_RADIUS = 15,
+  CLEAR_PER_OBJECT = 2,
+  -- Niveau minimal d'un objectif (limite de danger) : monstres (niveau moyen) au plus DANGER_MOB_ABOVE au-dessus du
+  -- personnage (orange au-delà), quête au plus DANGER_QUEST_ABOVE au-dessus, élite (+ ELITE_ABOVE) au plus
+  -- DANGER_MOB_ABOVE. Au-dessous, l'objectif n'est jamais fait : farm jusqu'à SAFE_GATE_GRIND mobs, sinon reporté
+  -- (puis écarté si le niveau n'est pas atteint dans le chapitre). Une quête forcée par le plan est faite quand même.
+  DANGER_MOB_ABOVE = 2,
+  DANGER_QUEST_ABOVE = 3,
   SWEEP_HUB = 40,         -- yards : prises et points de vol faits au premier passage à moins de cette distance
   SWEEP_TURNIN = 60,      -- yards : rendu au passage d'une quête terminée
   SWEEP_AREA = 120,       -- yards : objectifs d'une même zone faits en un seul passage
@@ -70,6 +100,7 @@ sim.CONST = {
   -- valeurs que paths.replay (validateur)
   DUNGEON_RELEASE_FROM = pathsm.DUNGEON_RELEASE_FROM,
   DUNGEON_RELEASE_GAP = pathsm.DUNGEON_RELEASE_GAP,
+  DUNGEON_CHAIN = 3,      -- niveaux de pré-requis d'une quête de donjon gardés hors rendement et hors budget
 }
 local C = sim.CONST
 
@@ -174,12 +205,95 @@ local function makeCtx(D, W, plan, state, opts)
   for q, r in pairs(plan.drop or {}) do ctx.drop[q] = r end
   for q, r in pairs(ov.drop or {}) do ctx.drop[q] = r end
   ctx.pin = ov.pin or {}
-  ctx.dungeonNames = asSet(plan.dungeons)
+  ctx.dungeons = catalog.byName(D)
+  ctx.dungeonPre = catalog.prerequisites(D, C.DUNGEON_CHAIN)
   ctx.logCap = ctx.opts.logCap or plan.logCap or C.LOG_CAP
   -- cartes des chapitres suivants du parcours (build.lua) : rendus reportés possibles
   if ctx.opts.carryZones then ctx.carrySet = asSet(ctx.opts.carryZones) end
+  -- monstres hostiles ordinaires des cartes du chapitre (gardes des objets du monde)
+  ctx.guards = {}
+  -- élites hostiles des cartes du chapitre (danger des sites d'objectif)
+  ctx.elites = {}
+  local ceiling = plan.maxLevel + (ctx.opts.levelHigh or 0) + C.ELITE_IGNORE_ABOVE
+  for _, id in ipairs(qdb.sortedKeys(D.npcs)) do
+    local n = D.npcs[id]
+    local hostile = not (n.friendly and n.friendly:find(ctx.letter, 1, true))
+    if (n.rank or 0) >= 1 and (n.rank or 0) <= 3 and hostile and (n.maxLevel or 0) > 0 and n.maxLevel <= ceiling then
+      for m, list in pairs(n.spawns or {}) do
+        if ctx.zoneSet[m] then
+          for _, p in ipairs(list) do
+            local pos = mkPos(W, m, p[1], p[2])
+            if pos then pos.level, pos.npc = n.maxLevel, id; ctx.elites[#ctx.elites + 1] = pos end
+          end
+        end
+      end
+    elseif (n.rank or 0) == 0 and hostile and (n.npcFlags or 0) == 0 and (n.minLevel or 0) > 0
+           and n.maxLevel <= ceiling then
+      for m, list in pairs(n.spawns or {}) do
+        if ctx.zoneSet[m] then
+          for _, p in ipairs(list) do
+            local pos = mkPos(W, m, p[1], p[2])
+            if pos then
+              pos.level, pos.npc = math.floor((n.minLevel + n.maxLevel) / 2), id
+              ctx.guards[#ctx.guards + 1] = pos
+            end
+          end
+        end
+      end
+    end
+  end
   return ctx
 end
+
+-- Gardes à tuer pour ramasser n objets parmi pts (les plus proches de pos) : { level, n, clear = { [npcId] = n } } ou nil.
+local function guardsOf(ctx, pts, pos, n)
+  if not pts or #pts == 0 or n <= 0 then return nil end
+  local sorted = {}
+  for _, p in ipairs(pts) do sorted[#sorted + 1] = p end
+  table.sort(sorted, function(a, b) return yards(a, pos) < yards(b, pos) end)
+  local found, seen = {}, {}
+  for k = 1, math.min(n, #sorted) do
+    local o = sorted[k]
+    for gi, g in ipairs(ctx.guards or {}) do
+      if not seen[gi] and g.c == o.c and math.abs(g.wx - o.wx) <= C.CLEAR_RADIUS and math.abs(g.wy - o.wy) <= C.CLEAR_RADIUS
+         and yards(g, o) <= C.CLEAR_RADIUS then
+        seen[gi] = true
+        found[#found + 1] = { g = g, d = yards(g, o) }
+      end
+    end
+  end
+  if #found == 0 then return nil end
+  table.sort(found, function(a, b) if a.d ~= b.d then return a.d < b.d end return a.g.npc < b.g.npc end)
+  local count = math.min(#found, n * C.CLEAR_PER_OBJECT)
+  local clear, levelSum = {}, 0
+  for k = 1, count do
+    local g = found[k].g
+    clear[g.npc] = (clear[g.npc] or 0) + 1
+    levelSum = levelSum + g.level
+  end
+  return { level = math.floor(levelSum / count), n = count, clear = clear }
+end
+sim.guardsOf = guardsOf
+
+-- Niveau de l'élite hostile le plus haut près d'une position (rayon ELITE_RADIUS + étalement), ou nil : un camp
+-- (au moins ELITE_CAMP apparitions d'élites dans le rayon) ou un élite cible de l'objectif (targets = { [npcId] = true }).
+-- Un rare élite seul qui passe (Old Icebeard, Mor'Ladim) ne compte pas.
+local function eliteNear(ctx, pos, spread, targets)
+  if not pos then return nil end
+  local r = C.ELITE_RADIUS + math.min(spread or 0, C.ELITE_SPREAD)
+  local best, bestTarget, n = nil, nil, 0
+  for _, e in ipairs(ctx.elites or {}) do
+    if e.c == pos.c and math.abs(e.wx - pos.wx) <= r and math.abs(e.wy - pos.wy) <= r
+       and math.sqrt((e.wx - pos.wx) ^ 2 + (e.wy - pos.wy) ^ 2) <= r then
+      n = n + 1
+      if not best or e.level > best then best = e.level end
+      if targets and targets[e.npc] and (not bestTarget or e.level > bestTarget) then bestTarget = e.level end
+    end
+  end
+  if n >= C.ELITE_CAMP then return best end
+  return bestTarget
+end
+sim.eliteNear = eliteNear
 
 -- Le point (carte, x, y) est-il dans la région du chapitre (cartes `zones`, limitées par `bounds`) ?
 local function inRegion(ctx, m, x, y)
@@ -427,13 +541,18 @@ local function objectiveSite(ctx, q, o, count, ref, warnings, nearRef)
     end
     local single = (totalSpawns(D, "npc", ids[1]) <= 3) or ((D.npcs[ids[1]] or {}).rank or 0) >= 1
     local n = count or (single and 1 or C.DEFAULT_KILLS)
+    local mobs = {}
+    for _, id in ipairs(ids) do mobs[id] = true end
     return { pos = pos, dur = n * C.KILL_TIME, kills = { { npcLevel(D, ids[1]), n } }, objs = { o }, spread = spread,
-             single = single or nil }
+             single = single or nil, mobs = mobs, mobKills = n }
   elseif o.kind == "object" then
     local pos, spread, pts = bestCluster(ctx, pointsOf(ctx, "object", o.id), ref, nearRef)
     if not pos then return nil, "objective object not in zone" end
     local n = count or math.min(C.DEFAULT_OBJECTS, #pts)
-    return { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local site = { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local gd = guardsOf(ctx, pts, pos, n)
+    if gd then site.clear = gd.clear end
+    return site
   elseif o.kind == "item" then
     local it = D.items[o.id]
     if not it then return nil, "objective item unknown" end
@@ -471,11 +590,18 @@ local function objectiveSite(ctx, q, o, count, ref, warnings, nearRef)
       local single = uniqueMob and (totalSpawns(D, "npc", uniqueMob) <= 3 or ((D.npcs[uniqueMob] or {}).rank or 0) >= 1)
       local n = count or (single and 1 or C.DEFAULT_ITEMS)
       local kills = single and n or math.ceil(n / rate)
+      local mobs = {}
+      for _, p in ipairs(chosen) do if p.npc then mobs[p.npc] = true end end
       return { pos = pos, dur = kills * C.KILL_TIME, kills = { { math.floor(mobLevelSum / nMob), kills } },
-               objs = { o }, spread = spread, rate = rate, single = single or nil }
+               objs = { o }, spread = spread, rate = rate, single = single or nil, mobs = mobs, mobKills = kills }
     end
     local n = count or (nObj <= 2 and 1 or C.DEFAULT_ITEMS)
-    return { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local objPts = {}
+    for _, p in ipairs(chosen) do if p.obj then objPts[#objPts + 1] = p end end
+    local site = { pos = pos, dur = n * C.OBJECT_TIME + n * spread / C.WALK, kills = {}, objs = { o }, spread = spread }
+    local gd = guardsOf(ctx, objPts, pos, n)
+    if gd then site.clear = gd.clear end
+    return site
   elseif o.kind == "event" then
     local te = q.triggerEnd
     local pts = {}
@@ -534,6 +660,20 @@ local function isDungeonQuest(ctx, q)
   return z > 0 and ctx.D.dungeonAreas[z] or nil
 end
 
+-- Donjon du catalogue ouvert à la faction du chapitre et pas encore dépassé à son début : nil, ou la raison.
+local function dungeonClosed(ctx, name)
+  local def = ctx.dungeons[name]
+  if not def then return ("%s outside the dungeon catalogue"):format(name) end
+  if def.only and def.only ~= ctx.plan.faction then return ("%s closed to the %s"):format(name, ctx.plan.faction) end
+  if def.max < ctx.plan.minLevel then return ("%s outleveled: up to level %d"):format(name, def.max) end
+end
+
+-- Pré-requis d'une quête de donjon ouverte (DUNGEON_CHAIN niveaux au plus) : nom du donjon, ou nil.
+local function dungeonPrereqOf(ctx, q)
+  local name = ctx.dungeonPre[q.id]
+  if name and not dungeonClosed(ctx, name) then return name end
+end
+
 -- Catégories de quêtes (zoneOrSort négatif) d'évènements saisonniers ou temporaires : jamais dans la
 -- route (Fête des lanternes, Sanssaint, invasion du Fléau, champs de bataille...). Valeurs de
 -- QuestieDB/src/corrections/enum/quests.lua (sortKeys).
@@ -544,7 +684,23 @@ sim.EVENT_SORTS = {
 }
 
 -- Renvoie info ou nil, raison (raison nil = ignorée sans la signaler).
-local function analyse(ctx, q)
+-- Taux supposé d'un objet de départ sans taux connu : 1 pour un mob nommé (élite ou rare, ou au plus
+-- STARTER_UNIQUE_SPAWNS apparitions), STARTER_UNKNOWN_RATE sinon.
+function sim.starterGuess(D, npcId)
+  local n = D.npcs[npcId]
+  if not n then return nil end
+  if (n.rank or 0) > 0 or totalSpawns(D, "npc", npcId) <= C.STARTER_UNIQUE_SPAWNS then return 1 end
+  return C.STARTER_UNKNOWN_RATE
+end
+
+-- Tués comptés dans le rendement d'une prise par objet : tués attendus moins ceux pris sur le farm de niveau.
+function sim.starterCost(s)
+  return math.max(0, (s.kills or 0) - (s.budget or 0))
+end
+
+-- classMode : quête de classe examinée pour une étape `classes` (sim.weaveClassQuests) : ni donjon, ni
+-- départ par objet, ni rendu reporté.
+local function analyse(ctx, q, classMode)
   local D, plan, state = ctx.D, ctx.plan, ctx.state
   local forced = ctx.force[q.id]
   if state.done[q.id] then return nil end
@@ -559,9 +715,14 @@ local function analyse(ctx, q)
       local it = D.items[itemId]
       if it then
         local pts = {}
+        local known = D.drops[itemId]
         for _, npcId in ipairs(it.npcDrops) do
-          local rate = (D.drops[itemId] and D.drops[itemId][npcId]) or 0.2
-          for _, p in ipairs(pointsOf(ctx, "npc", npcId, rate)) do p.npc = npcId; p.rate = rate; pts[#pts + 1] = p end
+          -- taux Wowhead (Questie, data/StarterDrops.lua) ; un PNJ absent d'une liste connue ne lâche rien d'utile
+          local rate = known and known[npcId]
+          if not known then rate = sim.starterGuess(D, npcId) end
+          if rate and rate > 0 then
+            for _, p in ipairs(pointsOf(ctx, "npc", npcId, rate)) do p.npc = npcId; p.rate = rate; pts[#pts + 1] = p end
+          end
         end
         for _, objId in ipairs(it.objectDrops) do
           for _, p in ipairs(pointsOf(ctx, "object", objId, 1)) do p.rate = 1; pts[#pts + 1] = p end
@@ -570,7 +731,9 @@ local function analyse(ctx, q)
         if pos then
           local rate, lvl = 0, 0
           for _, p in ipairs(chosen) do rate = rate + p.rate; lvl = lvl + (p.npc and npcLevel(D, p.npc) or 0) end
-          itemStart = { item = itemId, pos = pos, rate = rate / #chosen, level = math.floor(lvl / #chosen) }
+          itemStart = { item = itemId, pos = pos, rate = rate / #chosen, level = math.floor(lvl / #chosen),
+                        guess = known == nil and ctx.D.starterUnknown and ctx.D.starterUnknown[itemId] or nil }
+          itemStart.kills = math.ceil(1 / itemStart.rate - 1e-9)
           -- objet de départ dans un coffre fermé à clé : la clé tombe d'un PNJ à tuer avant
           for _, p in ipairs(chosen) do
             if not p.npc then
@@ -587,17 +750,20 @@ local function analyse(ctx, q)
     end
   end
   if #starters == 0 and not itemStart then return nil end
+  if classMode and itemStart then return nil end
 
   -- La quête démarre dans la région : chaque exclusion est signalée dans le rapport (spec § 7.8).
-  if qdb.isClassQuest(q) then return nil, "class quest (ClassQuestData.lua)" end
+  if qdb.isClassQuest(q) and not classMode then return nil, "class quest (ClassQuestData.lua)" end
   if q.blacklisted and not forced then return nil, "Questie blacklist" end
   if sim.EVENT_SORTS[q.zoneOrSort or 0] and not forced then return nil, "seasonal or event quest" end
   -- tranche de niveaux
   if not forced then
     if q.level <= 0 or q.level < plan.minLevel - (plan.levelBelow or C.LEVEL_RANGE) then return nil, ("quest level %d below the band"):format(q.level) end
+    -- quête de donjon : faite plus tard, dans l'instance ; seul son niveau requis compte ici
     local high = ctx.opts.levelHigh or C.LEVEL_RANGE
-    if plan.dungeonLevelHigh and isDungeonQuest(ctx, q) then high = math.max(high, plan.dungeonLevelHigh) end
-    if q.level > plan.maxLevel + high then return nil, ("quest level %d above the band"):format(q.level) end
+    if q.level > plan.maxLevel + high and not isDungeonQuest(ctx, q) and not dungeonPrereqOf(ctx, q) then
+      return nil, ("quest level %d above the band"):format(q.level)
+    end
     local reqMax = plan.maxLevel
     if isDungeonQuest(ctx, q) then reqMax = reqMax + (plan.dungeonReqSlack or 0) end
     -- niveau requis 60 : aucune XP de quête au niveau maximal (le personnage farmerait jusqu'à 60 pour rien)
@@ -606,8 +772,12 @@ local function analyse(ctx, q)
   end
   -- filtres de données et de règles
   local dungeon = isDungeonQuest(ctx, q)
-  if dungeon and not ctx.dungeonNames[dungeon] and not ctx.optional[q.id] then
-    return nil, ("dungeon quest (%s not picked up in this chapter)"):format(dungeon)
+  if classMode and dungeon then return nil end
+  -- quête de donjon prise au passage : donjon du catalogue (dungeon_catalog.lua) ouvert à la faction et pas
+  -- encore dépassé au début du chapitre ; plan.optional force une quête hors de ces règles
+  if dungeon and not ctx.optional[q.id] then
+    local closed = dungeonClosed(ctx, dungeon)
+    if closed then return nil, ("dungeon quest (%s)"):format(closed) end
   end
   if q.requiredSkill then return nil, "requires a profession" end
   if q.requiredSpell or q.requiredSpecialization then return nil, "requires a spell or specialization" end
@@ -626,6 +796,8 @@ local function analyse(ctx, q)
   if q.next and state.done[q.next] then return nil, "follow-up already done" end
 
   local info = { q = q, races = races, itemStart = itemStart, forced = forced, optional = ctx.optional[q.id] }
+  -- pré-requis d'une quête de donjon ouverte (même donnée dans un autre chapitre) : gardé comme la chaîne
+  if not dungeon then info.forDungeon = dungeonPrereqOf(ctx, q) end
   if (q.classes or 0) ~= 0 then info.classes = qdb.classList(q.classes) end
   -- quête chronométrée (« within 15 minutes », « before it gets cold in five minutes ») : faite d'une traite
   info.timed = table.concat(q.objectivesText or {}, " "):lower():find("minute", 1, true) ~= nil
@@ -645,6 +817,7 @@ local function analyse(ctx, q)
   local finishers = {}
   for _, id in ipairs(q.finishers.npcs) do for _, p in ipairs(spawnsIn(ctx, "npc", id, true)) do finishers[#finishers + 1] = p end end
   for _, id in ipairs(q.finishers.objects) do for _, p in ipairs(spawnsIn(ctx, "object", id, true)) do finishers[#finishers + 1] = p end end
+  if #finishers == 0 and classMode then return nil end
   if #finishers == 0 and ctx.carrySet and not info.timed then
     -- rendu dans un des chapitres suivants du parcours : prise et objectifs ici, rendu plus tard
     for _, id in ipairs(q.finishers.npcs) do
@@ -707,14 +880,31 @@ local function analyse(ctx, q)
         g.dur = g.dur + s.dur + yards(g.pos, s.pos) / C.WALK
         for _, k in ipairs(s.kills) do g.kills[#g.kills + 1] = k end
         for _, o in ipairs(s.objs) do g.objs[#g.objs + 1] = o end
+        for id, c in pairs(s.clear or {}) do g.clear = g.clear or {}; g.clear[id] = (g.clear[id] or 0) + c end
+        for id in pairs(s.mobs or {}) do g.mobs = g.mobs or {}; g.mobs[id] = true end
+        if s.mobKills then g.mobKills = (g.mobKills or 0) + s.mobKills end
         merged = true
         break
       end
     end
     if not merged then
-      groups[#groups + 1] = { pos = s.pos, dur = s.dur, kills = { unpack(s.kills) }, objs = { unpack(s.objs) },
-                              spread = s.spread or 0 }
+      local g = { pos = s.pos, dur = s.dur, kills = { unpack(s.kills) }, objs = { unpack(s.objs) }, spread = s.spread or 0,
+                  mobKills = s.mobKills }
+      for id, c in pairs(s.clear or {}) do g.clear = g.clear or {}; g.clear[id] = c end
+      for id in pairs(s.mobs or {}) do g.mobs = g.mobs or {}; g.mobs[id] = true end
+      groups[#groups + 1] = g
     end
+  end
+  for _, g in ipairs(groups) do
+    local targets = {}
+    for _, o in ipairs(g.objs or {}) do
+      if o.kind == "kill" and o.id then targets[o.id] = true end
+      for _, id in ipairs(o.npcIds or {}) do targets[id] = true end
+      if o.kind == "item" and o.id and D.items[o.id] then
+        for _, id in ipairs(D.items[o.id].npcDrops or {}) do targets[id] = true end
+      end
+    end
+    g.elite = eliteNear(ctx, g.pos, g.spread, targets)
   end
   info.sites = groups
   if info.carry then return info end
@@ -722,6 +912,192 @@ local function analyse(ctx, q)
   info.T = nearest(#inside > 0 and inside or finishers, last)
   info.exit = info.T.exit
   return info
+end
+
+------------------------------------------------------------------------------
+-- Quêtes de classe tissées dans la route
+------------------------------------------------------------------------------
+-- Une quête de classe (masque d'une ou deux classes, chaînes de ClassQuestData.lua) dont le donneur, les
+-- objectifs et le rendu sont dans la région du chapitre devient des étapes `classes = { CLASSE }` posées
+-- après les étapes communes les plus proches (prise, objectifs, rendu, dans cet ordre, après le rendu de
+-- ses pré-requis pour cette classe). L'ordre, le temps et l'XP simulés de la route commune ne changent pas.
+-- Détour estimé (allers-retours depuis les étapes voisines, objectifs, prise et rendu) au-delà de
+-- CLASS_MAX_DETOUR : la quête reste proposée en jeu par la fenêtre des quêtes de classe.
+-- state.classDone["CLASSE:id"] : quêtes de classe posées dans les chapitres précédents du parcours. Les
+-- races pour qui un pré-requis manque sont retirées ensuite (build.raceFilters, rejeu par classe).
+local function stepPos(W, s)
+  if s._pos then return s._pos end
+  if type(s.at) == "table" and type(s.at[1]) == "number" then return mkPos(W, s.at[1], s.at[2], s.at[3]) end
+  return nil
+end
+
+function sim.weaveClassQuests(ctx, steps, report)
+  local D, W, state = ctx.D, ctx.W, ctx.state
+  state.classDone = state.classDone or {}
+  report.classWoven, report.classSkipped = {}, {}
+  local pos, turnIdx = {}, {}
+  -- journal commun après chaque étape : nombre de fin de chapitre (journal, place des autres parcours de race)
+  -- remonté par les prises et rendus du chapitre
+  local logAfter, delta = {}, 0
+  for i, s in ipairs(steps) do
+    pos[i] = stepPos(W, s)
+    -- rendu d'une quête commune dans ce chapitre : une quête de classe qui en dépend vient après
+    if s[1] == "turnin" and type(s[2]) == "number" and not turnIdx[s[2]] then turnIdx[s[2]] = i end
+    if s[1] == "accept" then delta = delta + 1 elseif s[1] == "turnin" then delta = delta - 1 end
+    logAfter[i] = delta
+  end
+  local endLog = state.logPad or 0
+  for _ in pairs(state.log) do endLog = endLog + 1 end
+  local startLog = math.max(0, endLog - delta)
+  logAfter[0] = 0
+  for i = 0, #steps do logAfter[i] = startLog + logAfter[i] end
+  local occ = {} -- occ[classe][i] : quêtes de classe ouvertes après l'étape commune i
+  -- la quête tient une place de iA (prise après l'étape iA) à iT (rendu après l'étape iT)
+  local function logRoom(classes, iA, iT)
+    for _, cls in ipairs(classes) do
+      local o = occ[cls] or {}
+      for i = iA, iT do
+        if logAfter[i] + (o[i] or 0) + 1 > ctx.logCap then return false end
+      end
+    end
+    return true
+  end
+  -- étape commune la plus proche de p à partir de l'index from : index, yards
+  local function nearestStep(p, from)
+    local bi, bd = nil, math.huge
+    for i = math.max(from, 1), #steps do
+      if pos[i] then
+        local d = yards(pos[i], p)
+        if d < bd then bi, bd = i, d end
+      end
+    end
+    return bi, bd
+  end
+  local cands = {}
+  for _, id in ipairs(qdb.sortedKeys(D.quests)) do
+    local q = D.quests[id]
+    if qdb.isClassQuest(q) and not state.log[id] and not state.done[id] then
+      local info, why = analyse(ctx, q, true)
+      if info and info.T and info.A then cands[#cands + 1] = info
+      elseif why then report.classSkipped[#report.classSkipped + 1] = { id = id, name = q.name, reason = why } end
+    end
+  end
+  table.sort(cands, function(a, b)
+    if a.q.level ~= b.q.level then return a.q.level < b.q.level end
+    return a.q.id < b.q.id
+  end)
+  local placed = {}  -- ["CLASSE:id"] = index de l'étape commune après laquelle vient le rendu
+  local function doneFor(cls, p) return state.done[p] or state.classDone[cls .. ":" .. p] or placed[cls .. ":" .. p] end
+  -- index à partir duquel un pré-requis est rendu (rendu commun de ce chapitre, quête de classe posée ici)
+  local function readyAt(cls, p) return placed[cls .. ":" .. p] or turnIdx[p] or 1 end
+  local inserts, seq, used = {}, 0, {}
+  local function add(at, step)
+    seq = seq + 1
+    -- commentaire : niveau simulé de l'étape commune voisine
+    local near = steps[at] and steps[at]._c
+    if step._c and near and near.simLevel then step._c.simLevel = near.simLevel end
+    inserts[#inserts + 1] = { at = at, seq = seq, step = step }
+  end
+  local changed = true
+  while changed do
+    changed = false
+    for _, info in ipairs(cands) do
+      local q = info.q
+      if not used[q.id] then
+        local classes, from = {}, 1
+        for _, cls in ipairs(qdb.classList(q.classes)) do
+          if not state.classDone[cls .. ":" .. q.id] then
+            local ok, f = true, 1
+            for _, p in ipairs(q.preGroup) do
+              if doneFor(cls, p) then f = math.max(f, readyAt(cls, p)) else ok = false end
+            end
+            if ok and #q.preSingle > 0 then
+              local best
+              for _, p in ipairs(q.preSingle) do
+                if doneFor(cls, p) then
+                  local at = readyAt(cls, p)
+                  if not best or at < best then best = at end
+                end
+              end
+              if best then f = math.max(f, best) else ok = false end
+            end
+            for _, x in ipairs(q.exclusiveTo) do if doneFor(cls, x) or state.log[x] then ok = false end end
+            if ok then classes[#classes + 1] = cls; from = math.max(from, f) end
+          end
+        end
+        if #classes > 0 then
+          used[q.id] = true
+          local legs, detour = {}, 2 * C.QUEST_ACTION
+          local iA, dA = nearestStep(info.A, from)
+          local cur, ok = iA, iA ~= nil
+          if ok then
+            detour = detour + 2 * dA / C.WALK
+            for k, site in ipairs(info.sites or {}) do
+              local i, d = nearestStep(site.pos, cur)
+              if not i then ok = false; break end
+              detour = detour + 2 * d / C.WALK + site.dur
+              legs[#legs + 1] = { at = i, site = site, k = k }
+              cur = i
+            end
+          end
+          local iT, dT
+          if ok then iT, dT = nearestStep(info.T, cur); ok = iT ~= nil end
+          if ok then detour = detour + 2 * dT / C.WALK end
+          local room = ok and logRoom(classes, iA, iT)
+          if not ok or detour > C.CLASS_MAX_DETOUR or not room then
+            report.classSkipped[#report.classSkipped + 1] = { id = q.id, name = q.name, classes = classes,
+              reason = not ok and "no route step to attach to"
+                or detour > C.CLASS_MAX_DETOUR and ("detour %d s"):format(math.floor(detour + 0.5))
+                or "quest log full" }
+          else
+            changed = true
+            local raceF = #info.races < #ctx.races and info.races or nil
+            local function deco(step)
+              step.classes = classes
+              if raceF then step.race = raceF end
+              step._c = { name = q.name, level = q.level, simLevel = state.level, xp = xpm.questXP(D, q, state.level) }
+              return step
+            end
+            add(iA, deco({ "accept", q.id }))
+            local nsites = #(info.sites or {})
+            for _, l in ipairs(legs) do
+              local site = l.site
+              local step = { "complete", q.id, at = { site.pos.m, round2(site.pos.x), round2(site.pos.y) } }
+              if nsites > 1 and l.k < nsites and #site.objs == 1 and site.objs[1].index then step.obj = site.objs[1].index end
+              add(l.at, deco(step))
+            end
+            add(iT, deco({ "turnin", q.id, xp = xpm.questXP(D, q, state.level) }))
+            for _, cls in ipairs(classes) do
+              placed[cls .. ":" .. q.id] = iT
+              occ[cls] = occ[cls] or {}
+              for i = iA, iT do occ[cls][i] = (occ[cls][i] or 0) + 1 end
+            end
+            report.classWoven[#report.classWoven + 1] = { id = q.id, name = q.name, classes = classes,
+              detour = detour }
+          end
+        end
+      end
+    end
+  end
+  for _, info in ipairs(cands) do
+    if not used[info.q.id] then
+      report.classSkipped[#report.classSkipped + 1] = { id = info.q.id, name = info.q.name,
+        reason = "prerequisite or exclusive quest not done for the class" }
+    end
+  end
+  if #inserts == 0 then return end
+  for key in pairs(placed) do state.classDone[key] = true end
+  table.sort(inserts, function(a, b)
+    if a.at ~= b.at then return a.at < b.at end
+    return a.seq < b.seq
+  end)
+  local out, j = {}, 1
+  while inserts[j] and inserts[j].at <= 0 do out[#out + 1] = inserts[j].step; j = j + 1 end
+  for i = 1, #steps do
+    out[#out + 1] = steps[i]
+    while inserts[j] and inserts[j].at == i do out[#out + 1] = inserts[j].step; j = j + 1 end
+  end
+  for i = 1, #out do steps[i] = out[i] end
 end
 
 ------------------------------------------------------------------------------
@@ -786,7 +1162,7 @@ local function isolated(info, hubs)
   local hs = nearestHub(hubs, info.A)
   local pos = hs and hs.pos or info.A
   t = t + walk(pos, info.A) + C.QUEST_ACTION
-  if info.itemStart then t = t + (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME end
+  if info.itemStart then t = t + sim.starterCost(info.itemStart) * C.KILL_TIME end
   pos = info.A
   for _, s in ipairs(info.sites or {}) do
     t = t + walk(pos, s.pos) + s.dur
@@ -839,22 +1215,39 @@ function sim.chapter(D, W, plan, state, opts)
     o2._noWiden = true
     local steps, report = sim.chapter(D, W, plan, state, o2)
     local widened
-    -- plan.widen = false : jamais (zone revisitée plus tard : ses quêtes hautes restent au chapitre suivant)
-    if (report.grindMobs or 0) > C.WIDEN_GRIND and plan.widen ~= false then
+    -- plan.widen = false : jamais (zone revisitée plus tard : ses quêtes hautes restent au chapitre suivant) ;
+    -- plan.widen = true : toujours (le seuil WIDEN_GRIND fait basculer le chapitre sur une différence de quelques mobs)
+    if plan.widen == true or ((report.grindMobs or 0) > C.WIDEN_GRIND and plan.widen ~= false) then
       restore(state, snap)
       o2.levelHigh = C.LEVEL_WIDE
       widened = ("grinding %d mobs with quests up to level %d: band widened to level %d"):format(
-        report.grindMobs, plan.maxLevel + C.LEVEL_RANGE, plan.maxLevel + C.LEVEL_WIDE)
+        report.grindMobs or 0, plan.maxLevel + C.LEVEL_RANGE, plan.maxLevel + C.LEVEL_WIDE)
       steps, report = sim.chapter(D, W, plan, state, o2)
     end
     -- Quêtes sautées faute de niveau : écartées d'emblée et chapitre refait, pour que le budget d'XP
     -- garde d'autres quêtes à leur place (au plus 2 fois).
     for _ = 1, 2 do
-      if not next(report.levelSkipped or {}) or (report.grindMobs or 0) <= C.TRIVIAL_GRIND then break end
+      if not next(report.levelSkipped or {}) then break end
+      if (report.grindMobs or 0) <= C.TRIVIAL_GRIND and not report.unsafeSkipped then break end
       o2.preDrop = o2.preDrop or {}
       for id, why in pairs(report.levelSkipped) do o2.preDrop[id] = why end
       restore(state, snap)
       steps, report = sim.chapter(D, W, plan, state, o2)
+    end
+    -- Farm de niveau restant : chapitre refait en le comptant comme budget pour les objets de départ (les
+    -- mobs qui les lâchent remplacent le farm). Gardé s'il atteint au moins le même niveau, pas plus lentement.
+    if (report.grindMobs or 0) > C.TRIVIAL_GRIND and not o2.grindBudget then
+      local before = { steps = steps, report = report, state = snapshot(state) }
+      restore(state, snap)
+      o2.grindBudget = report.grindMobs
+      local s2, r2 = sim.chapter(D, W, plan, state, o2)
+      local function progress(st) return st.level + (st.xp or 0) / (xpm.LEVEL_XP[st.level] or 1) end
+      if progress(state) + 1e-6 >= progress(before.state) and state.time <= before.state.time then
+        steps, report = s2, r2
+        report.grindBudget = o2.grindBudget
+      else
+        restore(state, before.state)
+      end
     end
     report.widened = widened
     return steps, report
@@ -968,6 +1361,62 @@ function sim.chapter(D, W, plan, state, opts)
     for _, x in ipairs(q.exclusiveTo) do if state.done[x] or state.log[x] then return false end end
     return true
   end
+  -- Pré-requis d'une quête de donjon prise au passage (chaîne faite dans la région, au plus DUNGEON_CHAIN
+  -- niveaux) : gardés même au rendement faible et hors budget d'XP (info.forDungeon), sinon la quête de
+  -- donjon tombe avec eux. Une préquête au choix (preSingle) : la première candidate.
+  do
+    local function mark(q, name, depth)
+      if depth > C.DUNGEON_CHAIN then return end
+      local pres = {}
+      for _, p in ipairs(q.preGroup) do pres[#pres + 1] = p end
+      local single = false
+      for _, p in ipairs(q.preSingle) do if state.done[p] or state.log[p] then single = true end end
+      if not single then
+        for _, p in ipairs(q.preSingle) do
+          if byId[p] and not byId[p].dungeonOnly then pres[#pres + 1] = p; break end
+        end
+      end
+      for _, p in ipairs(pres) do
+        local b = byId[p]
+        if b and not b.dungeonOnly and not b.forDungeon then
+          b.forDungeon = name
+          mark(b.q, name, depth + 1)
+        end
+      end
+    end
+    for _, info in ipairs(infos) do
+      if info.dungeonOnly then mark(info.q, info.dungeonOnly, 1) end
+    end
+  end
+
+  -- Objets de départ à faible taux : le farm de niveau du chapitre (opts.grindBudget, mobs estimés au premier
+  -- passage) se fait sur les mobs qui les lâchent quand leur niveau rapporte de l'XP ; ces tués-là ne coûtent
+  -- rien de plus. Budget réparti par XP de quête décroissante. Au-delà de STARTER_MAX_KILLS tués restants, la
+  -- quête est laissée.
+  do
+    local budget = opts.grindBudget or 0
+    local list = {}
+    for _, info in ipairs(infos) do
+      if info.itemStart and not info.dropped then list[#list + 1] = info end
+    end
+    table.sort(list, function(a, b)
+      local xa, xb = xpm.questXP(D, a.q, state.level) or 0, xpm.questXP(D, b.q, state.level) or 0
+      if xa ~= xb then return xa > xb end
+      return a.q.id < b.q.id
+    end)
+    for _, info in ipairs(list) do
+      local s = info.itemStart
+      s.budget = nil
+      if budget > 0 and s.level > 0 and s.level >= state.level - 2 and s.level <= state.level + 1 then
+        s.budget = math.min(budget, s.kills)
+        budget = budget - s.budget
+      end
+      if not info.forced and sim.starterCost(s) > C.STARTER_MAX_KILLS then
+        dropInfo(info, ("starter item drop rate %.1f %% (about %d kills)"):format(100 * s.rate, s.kills))
+      end
+    end
+  end
+
   local changed = true
   while changed do
     changed = false
@@ -986,7 +1435,7 @@ function sim.chapter(D, W, plan, state, opts)
     local q = info.q
     local kills = {}
     for _, s in ipairs(info.sites or {}) do for _, k in ipairs(s.kills) do kills[#kills + 1] = k end end
-    if info.itemStart then kills[#kills + 1] = { info.itemStart.level, math.ceil(1 / math.max(info.itemStart.rate, 0.05)) } end
+    if info.itemStart then kills[#kills + 1] = { info.itemStart.level, info.itemStart.kills } end
     info.kills = kills
     info.value = xpm.questXP(D, q, state.level) + killXP(state.level, kills)
     info.time = isolated(info, hubs)
@@ -1008,6 +1457,26 @@ function sim.chapter(D, W, plan, state, opts)
       end
     end
   end
+  -- combats des objets gardés (quêtes au rendement isolé >= médiane), partagés avec les quêtes de butin ou de
+  -- massacre sur les mêmes monstres au même endroit
+  local clearAnchors = {}
+  for k, info in ipairs(live) do
+    if raw[k] >= baseRate then
+      for _, s in ipairs(info.sites or {}) do
+        if s.clear then clearAnchors[#clearAnchors + 1] = { pos = s.pos, q = info.q.id, clear = s.clear } end
+      end
+    end
+  end
+  local function sharedKills(info, s)
+    if not (s.mobs and s.mobKills and s.mobKills > 0) then return 0 end
+    local avail = 0
+    for _, a in ipairs(clearAnchors) do
+      if a.q ~= info.q.id and yards(a.pos, s.pos) <= C.SWEEP_AREA then
+        for id in pairs(s.mobs) do avail = avail + (a.clear[id] or 0) end
+      end
+    end
+    return math.min(avail, s.mobKills)
+  end
   for _, info in ipairs(live) do
     local function detour(p)
       local best = math.huge
@@ -1020,9 +1489,11 @@ function sim.chapter(D, W, plan, state, opts)
       return best == math.huge and 0 or 2 * best / C.WALK
     end
     local m = 2 * C.QUEST_ACTION
-    if info.itemStart then m = m + (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME end
+    if info.itemStart then m = m + sim.starterCost(info.itemStart) * C.KILL_TIME end
     m = m + detour(info.A)
-    for _, s in ipairs(info.sites or {}) do m = m + s.dur + detour(s.pos) end
+    for _, s in ipairs(info.sites or {}) do
+      m = m + math.max(C.QUEST_ACTION, s.dur - sharedKills(info, s) * C.KILL_TIME) + detour(s.pos)
+    end
     if info.T and not info.exit then m = m + detour(info.T) end
     info.isolatedTime = info.time
     info.marginalTime = math.min(m, info.time)
@@ -1104,7 +1575,9 @@ function sim.chapter(D, W, plan, state, opts)
       -- écartée si le rendement isolé ET le rendement marginal sont sous 0.35 × la médiane
       if far then dropInfo(info, "far")
       elseif info.ratio < C.LOW_RATIO * med and info.marginalRatio < C.LOW_RATIO * med then
-        dropInfo(info, "low ratio")
+        -- pré-requis d'une quête de donjon : gardé, ses étapes en optional + dungeon (masquées avec l'option
+        -- des quêtes de donjon coupée, comme la prise elle-même)
+        if info.forDungeon then info.keptForDungeon = true else dropInfo(info, "low ratio") end
       end
     end
   end
@@ -1127,7 +1600,8 @@ function sim.chapter(D, W, plan, state, opts)
     local order = {}
     for _, info in ipairs(live) do if not info.dropped then order[#order + 1] = info end end
     table.sort(order, function(a, b)
-      local fa, fb = (a.forced or a.optional) and 1 or 0, (b.forced or b.optional) and 1 or 0
+      local fa = (a.forced or a.optional or a.forDungeon) and 1 or 0
+      local fb = (b.forced or b.optional or b.forDungeon) and 1 or 0
       if fa ~= fb then return fa > fb end
       -- rang : rendement marginal (ce que l'on gagne vraiment à garder la quête sur la route)
       if a.marginalRatio ~= b.marginalRatio then return a.marginalRatio > b.marginalRatio end
@@ -1194,7 +1668,7 @@ function sim.chapter(D, W, plan, state, opts)
     for _ = 1, 6 do
       acc, kept = 0, {}
       for _, info in ipairs(order) do
-        if acc < need + extra or info.forced or info.optional then keep(info, 0) end
+        if acc < need + extra or info.forced or info.optional or info.forDungeon then keep(info, 0) end
       end
       local alive = survivingXP()
       if alive >= need or acc < need + extra then break end
@@ -1259,7 +1733,7 @@ function sim.chapter(D, W, plan, state, opts)
       taskOf["A" .. q.id], taskOf["T" .. q.id] = c, c
     else
       local a = addTask({ id = "A" .. q.id, kind = "A", q = q.id, pos = info.A, info = info, after = {},
-        dur = C.QUEST_ACTION + (info.itemStart and (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME or 0),
+        dur = C.QUEST_ACTION + (info.itemStart and info.itemStart.kills * C.KILL_TIME or 0),
         -- prise par un objet ramassé : tâche de zone d'objectifs (objet d'un coffre : catégorie 1)
         itemStart = info.itemStart and true or nil,
         cat = info.itemStart and (info.itemStart.level == 0 and 1 or 3) or nil })
@@ -1382,13 +1856,19 @@ function sim.chapter(D, W, plan, state, opts)
       local q = info.q
       local counted = simulatedEligible(ctx, q) and not info.foreign
       if (t.kind == "A" or t.kind == "C") and (q.reqLevel or 0) > 1 then t.reqLevel = q.reqLevel end
-      -- Difficulté : les objectifs attendent un niveau « sûr » (quête jaune facile, monstres pas plus
-      -- hauts que le personnage) ; l'ordonnancement fait d'abord le plus facile.
-      if (t.kind == "C" or t.kind == "O") and C.SAFE_QUEST_ABOVE and C.SAFE_MOB_ABOVE then
-        local safe = (q.level or 0) - C.SAFE_QUEST_ABOVE
+      -- Difficulté : les objectifs attendent leur niveau minimal (jamais de monstres orange ni d'élite au-dessus du
+      -- personnage) ; l'ordonnancement fait d'abord le plus facile.
+      if t.kind == "C" or t.kind == "O" then
+        -- niveau minimal de l'objectif (limite de danger) : quête au plus DANGER_QUEST_ABOVE au-dessus, monstres
+        -- (niveau moyen) au plus DANGER_MOB_ABOVE, élites proches (+ ELITE_ABOVE) au plus DANGER_MOB_ABOVE
+        local safe = (q.level or 0) - C.DANGER_QUEST_ABOVE
         local sites = t.kind == "O" and { t.site } or info.sites or {}
         for _, s in ipairs(sites) do
-          for _, k in ipairs(s.kills or {}) do safe = math.max(safe, k[1] - C.SAFE_MOB_ABOVE) end
+          -- niveau 9999 de QuestieDB (PNJ de scénario, niveau inconnu) : pas une contrainte
+          for _, k in ipairs(s.kills or {}) do
+            if k[1] <= xpm.MAX_LEVEL + 3 then safe = math.max(safe, k[1] - C.DANGER_MOB_ABOVE) end
+          end
+          if s.elite then safe = math.max(safe, s.elite + C.ELITE_ABOVE - C.DANGER_MOB_ABOVE) end
         end
         -- niveau « sûr » donné par le plan (objectif sans danger réel, fait dès la prise)
         if plan.safeLevel and plan.safeLevel[q.id] then safe = plan.safeLevel[q.id] end
@@ -1405,7 +1885,7 @@ function sim.chapter(D, W, plan, state, opts)
           for _, s in ipairs(info.sites or {}) do for _, k in ipairs(s.kills) do kills[#kills + 1] = k end end
           t.gain = function(level) return killXP(level, kills) + xpm.questXP(D, q, level) end
         elseif t.kind == "A" and info.itemStart then
-          local lvl, n = info.itemStart.level, math.ceil(1 / math.max(info.itemStart.rate, 0.05))
+          local lvl, n = info.itemStart.level, info.itemStart.kills
           t.gain = function(level) return xpm.mobXP(level, lvl) * n end
         end
       end
@@ -1474,7 +1954,57 @@ function sim.chapter(D, W, plan, state, opts)
     return n
   end
   local carryBind -- liaison d'une tâche sautée : faite à la tâche suivante
-  for _, t in ipairs(ordered) do repeat
+  -- Objectifs reportés : un objectif sous sa limite de danger (plus de SAFE_GATE_GRIND mobs pour l'atteindre) est mis de
+  -- côté avec les tâches restantes de sa quête et des quêtes qui en dépendent, puis remis dans la file dès que le
+  -- niveau est atteint (avant une tâche de sortie de chapitre au plus tard). Ce qui reste à la fin est écarté.
+  local queue = {}
+  for i, t in ipairs(ordered) do queue[i] = t end
+  local deferred, qi = {}, 0
+  local function dependents(qid)
+    local set, changed = { [qid] = true }, true
+    while changed do
+      changed = false
+      for k = qi + 1, #queue do
+        local uq = queue[k].info and queue[k].info.q
+        if uq and not set[uq.id] then
+          for _, p in ipairs(uq.preSingle or {}) do if set[p] then set[uq.id] = true; changed = true end end
+          for _, p in ipairs(uq.preGroup or {}) do if set[p] then set[uq.id] = true; changed = true end end
+        end
+      end
+    end
+    return set
+  end
+  local function defer(t, need)
+    local set = dependents(t.q)
+    local group = { need = need, tasks = { t }, quests = set }
+    local k = qi + 1
+    while k <= #queue do
+      if queue[k].q and set[queue[k].q] then group.tasks[#group.tasks + 1] = table.remove(queue, k) else k = k + 1 end
+    end
+    deferred[#deferred + 1] = group
+  end
+  -- groupes reportés dont le niveau est atteint, remis à la position `at` de la file
+  local function release(at)
+    local k, n = 1, 0
+    while k <= #deferred do
+      local g = deferred[k]
+      if state.level >= g.need then
+        table.remove(deferred, k)
+        for j = #g.tasks, 1, -1 do table.insert(queue, at, g.tasks[j]) end
+        n = n + 1
+      else
+        k = k + 1
+      end
+    end
+    return n > 0
+  end
+  while true do
+    qi = qi + 1
+    local t = queue[qi]
+    if not t then break end
+    -- avant une tâche de sortie : les groupes reportés devenus possibles passent devant
+    if t.final and #deferred > 0 and release(qi) then t = queue[qi] end
+    repeat
     if t.q and skipQ[t.q] then carryBind = carryBind or hearthBinds[t.id]; break end
     if (t.kind == "A" or t.kind == "C" or t.kind == "O") and t.info and not t.info.carried then
       local q = t.info.q
@@ -1491,14 +2021,37 @@ function sim.chapter(D, W, plan, state, opts)
         if byId[c] and not byId[c].dropped then opensMore = true end
       end
       if q.next and byId[q.next] and not byId[q.next].dropped then opensMore = true end
+      if not skip and t.kind == "A" and t.info.dungeonOnly and t.reqLevel and state.level < t.reqLevel then
+        -- prise d'une quête de donjon : jamais de farm pour son niveau requis ; reprise dès qu'il est atteint
+        report.deferred = (report.deferred or 0) + 1
+        defer(t, t.reqLevel)
+        break
+      end
       if not skip and t.safeLevel and t.reqLevel and state.level < t.reqLevel then
-        -- niveau « sûr » trop loin : la quête est faite quand même (jamais sautée pour ça)
-        t.unsafe = mobsTo(t.reqLevel, cur) > C.SAFE_GATE_GRIND
+        -- niveau « sûr » trop loin (plus de SAFE_GATE_GRIND mobs à farmer) : la quête est écartée, ses étapes déjà
+        -- écrites retirées, et le chapitre refait sans elle ; une quête forcée est faite quand même
+        local n = mobsTo(t.reqLevel, cur)
+        if n > C.SAFE_GATE_GRIND then
+          if t.info.forced then
+            t.unsafe = true
+          else
+            -- reporté : refait quand le niveau sera atteint (ou écarté en fin de chapitre)
+            report.deferred = (report.deferred or 0) + 1
+            defer(t, t.reqLevel)
+            break
+          end
+        end
       elseif not skip and not opensMore and t.reqLevel and state.level < t.reqLevel then
         local n = mobsTo(t.reqLevel, cur)
         if n > C.GATE_GRIND then
           skip = ("required level %d not reached in time (~%d mobs to farm)"):format(t.reqLevel, n)
         end
+      elseif not skip and opensMore and t.reqLevel and state.level < t.reqLevel and not t.info.forced
+             and mobsTo(t.reqLevel, cur) > C.SAFE_GATE_GRIND then
+        -- tête de chaîne bloquée par le niveau : reportée plutôt qu'un long farm (même file que les objectifs)
+        report.deferred = (report.deferred or 0) + 1
+        defer(t, t.reqLevel)
+        break
       end
       if skip then
         skipQ[q.id] = true
@@ -1532,7 +2085,9 @@ function sim.chapter(D, W, plan, state, opts)
         if info.classes then step.class = info.classes end
         if info.optional then step.optional = true; step.dungeon = info.optional end
         if info.dungeonOnly then step.optional = true; step.dungeon = info.dungeonOnly end
+        if info.keptForDungeon then step.optional = true; step.dungeon = info.forDungeon end
         step._c = { name = q.name, level = q.level, simLevel = state.level }
+        step._pos = t.pos -- lieu de l'étape (quêtes de classe tissées : sim.weaveClassQuests)
         return step
       end
       if (t.kind == "A" or t.kind == "C" or t.kind == "O") and t.reqLevel and state.level < t.reqLevel and not t.unsafe then
@@ -1546,6 +2101,9 @@ function sim.chapter(D, W, plan, state, opts)
           step.at = { t.pos.m, round2(t.pos.x), round2(t.pos.y) }
           local it = D.items[info.itemStart.item]
           step.note = ("Loot %s to start the quest"):format(it and it.name or ("item " .. info.itemStart.item))
+          if info.itemStart.rate < 1 and not info.itemStart.guess then
+            step.note = ("%s (%.1f %% drop: about %d kills)"):format(step.note, 100 * info.itemStart.rate, info.itemStart.kills)
+          end
           local key = info.itemStart.key
           if key then
             local holder = D.npcs[key.npcs[1]]
@@ -1616,7 +2174,32 @@ function sim.chapter(D, W, plan, state, opts)
       state.time = state.time + C.QUEST_ACTION
       state.hearth = { inn.m, inn.x, inn.y }
     end
-  until true end
+    until true
+    if not t.final then release(qi + 1) end
+  end
+  -- groupes encore reportés en fin de chapitre : quêtes écartées (étapes déjà écrites retirées, chapitre refait)
+  for _, g in ipairs(deferred) do
+    for qid in pairs(g.quests) do
+      if not skipQ[qid] and byId[qid] then
+        local why = ("objective too dangerous before level %d (not reached in this chapter)"):format(g.need)
+        -- quête de donjon prise au passage : rien à refaire (aucune XP dans le budget du chapitre)
+        local dungeonOnly = byId[qid].dungeonOnly
+        if dungeonOnly then why = ("dungeon quest: required level %d not reached in this chapter"):format(g.need) end
+        skipQ[qid] = true
+        report.dropped[#report.dropped + 1] = { qid, why, id = qid, reason = why }
+        if not dungeonOnly then
+          report.levelSkipped = report.levelSkipped or {}
+          report.levelSkipped[qid] = why
+          report.unsafeSkipped = true
+        end
+        state.log[qid] = nil
+        for i = #steps, 1, -1 do
+          local s = steps[i]
+          if (s[1] == "accept" or s[1] == "complete") and s[2] == qid then table.remove(steps, i) end
+        end
+      end
+    end
+  end
   if finish then cur = sim.travel(ctx, steps, cur, finish, fms) end
 
   -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif
@@ -1624,6 +2207,10 @@ function sim.chapter(D, W, plan, state, opts)
     local mobLevel = state.level
     if lastSite and lastSite.kills[1] then mobLevel = lastSite.kills[1][1] end
     local grind = sim.grindSite(ctx, cur, state.level)
+    -- fin de chapitre en capitale : lieu de farm cherché près du dernier site d'objectif
+    if not grind and lastSite and cur and sim.CAPITAL_MAPS[cur.m] then
+      grind = sim.grindSite(ctx, lastSite.pos, state.level)
+    end
     if grind then
       cur = sim.travel(ctx, steps, cur, grind.pos, fms)
       lastSite = { pos = grind.pos, kills = { { grind.level, 0 } } }
@@ -1654,6 +2241,9 @@ function sim.chapter(D, W, plan, state, opts)
     ctx.grindMobs = (ctx.grindMobs or 0) + n
   end
   report.grindMobs = ctx.grindMobs
+
+  -- quêtes de classe courtes : étapes `classes` posées sur la route, sans effet sur la simulation commune
+  sim.weaveClassQuests(ctx, steps, report)
 
   -- contrôle qualité de l'itinéraire (allers-retours évitables)
   report.quality = quality.check(report.legs, {
@@ -1791,10 +2381,14 @@ local function uniqueTargets(D)
   return set
 end
 
+-- Capitales (uiMapID) : jamais de farm. Forever y place des foules de PNJ sans faction ni drapeau dans
+-- QuestieDB (Malus 29 et Anya Rince 52 à Fossoyeuse, Gevreka 42 aux Pitons-du-Tonnerre), pris pour des mobs.
+sim.CAPITAL_MAPS = { [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true }
+
 -- Lieu de farm : le groupe de mobs hostiles de niveau adapté le plus dense à moins de 600 yd
--- (ni PNJ de quête, ni mob nommé cible unique d'une quête).
+-- (ni PNJ de quête, ni mob nommé cible unique d'une quête), hors capitale.
 function sim.grindSite(ctx, pos, level)
-  if not pos then return nil end
+  if not pos or sim.CAPITAL_MAPS[pos.m] then return nil end
   local D = ctx.D
   local unique = uniqueTargets(D)
   local pts = {}

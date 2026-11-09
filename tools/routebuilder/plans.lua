@@ -3,7 +3,7 @@
 -- Chaque plan : { id, title, faction, races = {...}|nil, zones = {uiMapId,...}, minLevel, maxLevel,
 --   endZones = {...}|nil, entry = {mapId, x, y}, exit = {mapId, x, y}|nil,
 --   bounds = { [uiMapId] = {x1, y1, x2, y2} | { {x1,y1,x2,y2}, ... } }|nil  -- limite la région (départs, objectifs)
---   dungeons = {nom,...}|nil      -- quêtes de donjon prises au passage, en `optional`
+--   (quêtes de donjon : prises au passage dans tout chapitre, voir sim.lua et dungeon_catalog.lua)
 --   optional = { [questId] = "nom du donjon" }|nil  -- quêtes forcées, marquées optional + dungeon
 --   force = { [questId] = true }|nil, drop = { [questId] = "raison" }|nil
 --   arrive = { via = {mapId, x, y}|nil, steps = {...}, time = s }|nil  -- étapes d'arrivée quand on vient
@@ -14,7 +14,6 @@
 --   levelBelow = n|nil               -- quêtes acceptées jusqu'à minLevel - n (défaut 3) : têtes de chaîne basses
 --   far = yd|nil                     -- distance objectif-hub au-delà de laquelle une quête est écartée (défaut 900)
 --   dungeonReqSlack = n|nil          -- quêtes de donjon prises jusqu'au niveau requis maxLevel + n (défaut 0)
---   dungeonLevelHigh = n|nil         -- quêtes de donjon prises jusqu'au niveau de quête maxLevel + n
 --   logCap = n|nil                   -- plafond du journal (défaut 20)
 --   strictLevel = true|nil           -- farm des tâches bloquées par le niveau compté dans l'ordonnancement
 --                                    -- (objectifs jamais avancés vers un niveau plus bas ; plus de marche)
@@ -63,7 +62,6 @@ plans.Alliance = {
     zones = { DUN_MOROGH, IRONFORGE }, endZones = { LOCH_MODAN },
     minLevel = 6, maxLevel = 11, entry = { DUN_MOROGH, 46.7, 53.8 }, next = "A_DwarfGnome_03",
     flightPaths = { "Ironforge, Dun Morogh" },
-    dungeons = { "The Hall of Thanes", "Gnomeregan" },
     optional = { [96391] = "The Hall of Thanes", [96392] = "The Hall of Thanes", [96393] = "The Hall of Thanes" },
     -- Réserve de MacGrann (312) : un coffre, pas de monstre à tuer ; faite dès la prise (38.51, 53.93) au lieu
     -- d'attendre le niveau 11 (retour depuis Gol'Bolar). Mesuré : Nain/Gnome 1-30 -16 min.
@@ -72,14 +70,20 @@ plans.Alliance = {
   {
     id = "A_DwarfGnome_03", title = "Loch Modan", faction = "Alliance", races = { "Dwarf", "Gnome" },
     zones = { LOCH_MODAN, IRONFORGE }, endZones = { STORMWIND },
-    minLevel = 11, maxLevel = 14, entry = { LOCH_MODAN, 33.9, 51.0 }, next = "A_DwarfGnome_04", strictLevel = true,
+    -- 11-13 (2026-11-09, retour de jeu) : à 14, le chapitre élargi allait chercher des quêtes de niveau 17-20 (Gathering
+    -- Idols, troggs 18-19 ; Runes of the Sorcerer-Kings chez les ogres élites de Mo'grosh). Avec les limites de danger
+    -- du simulateur et la Marche de l'Ouest plus tôt : Nain / Gnome 1-30 -6 min.
+    minLevel = 11, maxLevel = 13, entry = { LOCH_MODAN, 33.9, 51.0 }, next = "A_DwarfGnome_04", strictLevel = true,
+    -- Rat Catching (416, Tunnel Rat Ears) forcée : les kobolds de la mine de Silver Stream gardent le Miners' Gear de
+    -- Filthy Paws (307), tués de toute façon (retour de jeu 2026-11-09). Faite dans le même passage. Nain / Gnome +10 min.
+    force = { [416] = true },
     flightPaths = { "Thelsamar, Loch Modan" },
     -- Fin à Stormwind : Marche de l'Ouest à pied (suite par défaut) ou Sombrivage par le bateau du port
     -- de Stormwind (A_01 commence par ce bateau). Minutes : travel.lua A_DwarfGnome_03 (guides du
-    -- 2026-11-06, QuestieDB v1.0.11, lot I) : fin au sud de Stormwind, Marche de l'Ouest 122 s de marche,
-    -- Sombrivage 80 s de marche + 300 s de bateau + 44 s de marche.
+    -- 2026-11-09, QuestieDB v1.0.12) : fin au quartier des Nains de Stormwind (sortie du tram), Marche de l'Ouest
+    -- 209 s de marche, Sombrivage 105 s de marche + 300 s de bateau + 44 s de marche.
     choices = {
-      { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 2 } },
+      { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 3 } },
       { id = "A_01", travel = { kind = "boat", minutes = 7 } },
     },
   },
@@ -88,12 +92,13 @@ plans.Alliance = {
     -- Quartier des Nains de Stormwind (sortie du tram) : quêtes des Mortemines prises au passage
     -- (Wilder Thistlenettle, Shoni the Shilent) ; second rectangle : maître de vol
     zones = { WESTFALL, STORMWIND }, bounds = { [STORMWIND] = { { 62, 33, 71, 42 }, { 69, 70, 74, 75 } } }, endZones = { STORMWIND },
-    minLevel = 14, maxLevel = 16, levelSlack = 1, dungeonLevelHigh = 4,
+    minLevel = 13, maxLevel = 16, levelSlack = 1,
     entry = { WESTFALL, 56.3, 47.5 }, next = "A_01",
     flightPaths = { "Stormwind, Elwynn", "Sentinel Hill, Westfall" },
-    dungeons = { "The Deadmines" },
     -- Poor Old Blanchy (151) : écartée par le budget d'XP (« level band reached ») ; +1 085 XP pour +3 min
-    force = { [151] = true },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche de la Marche de l'Ouest,
+    -- niveau requis 14), rendue aux Serres-Rocheuses (A_02) ; suite en A_02, A_04 et A_05.
+    force = { [151] = true, [79192] = true },
   },
   -- Humain : Northshire, Elwynn, Marche de l'Ouest
   {
@@ -112,10 +117,13 @@ plans.Alliance = {
     zones = { WESTFALL }, endZones = { STORMWIND }, minLevel = 11, maxLevel = 16, levelSlack = 0,
     entry = { WESTFALL, 56.3, 47.5 }, next = "A_01",
     flightPaths = { "Sentinel Hill, Westfall" },
-    dungeons = { "The Deadmines" },
     -- Rumi of Gnomeregan (79093, niveau 20) : écartée « au-dessus de la tranche » ; rendue à Stormwind en fin
     -- de chapitre. Forcée ici seulement : un forçage global la placerait plus tôt (Elwynn + Stormwind).
-    force = { [79093] = true },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag, comme en A_DwarfGnome_04. Prise
+    -- après Captain Sander's Hidden Treasure (140), quand le niveau requis 14 est atteint : sans cette précédence,
+    -- l'ordre passe à la planche au niveau 13 et la quête est écartée (~71 mobs à farmer).
+    force = { [79093] = true, [79192] = true },
+    precede = { { "T140", "A79192" } },
   },
   -- Elfe de la nuit : Shadowglen, Teldrassil, Sombrivage (toute la zone), puis tronc commun aux Carmines
   {
@@ -138,7 +146,6 @@ plans.Alliance = {
     zones = { DARKSHORE }, minLevel = 11, maxLevel = 20, entry = { DARKSHORE, 37.0, 44.0 },
     flightPaths = { "Auberdine, Darkshore" },
     strictLevel = true, -- avec A_NightElf_02 (voir là-bas) : sinon jusqu'à 159 mobs de farm pour une tête de chaîne
-    dungeons = { "Blackfathom Deeps" },
     nextByRace = { NightElf = "A_02" },
     -- Lot Alliance 2026-11-07 : A_02 et A_03 rendent à Stormwind ; emportées d'ici, ces deux quêtes faisaient farmer
     -- 190 mobs au niveau 13 (ordre strictLevel). Fin à 20 : le tronc part du niveau le plus bas des parcours qui
@@ -161,21 +168,25 @@ plans.Alliance = {
     id = "A_01", title = "Darkshore", faction = "Alliance", zones = { DARKSHORE },
     minLevel = 16, maxLevel = 19, entry = { DARKSHORE, 37.0, 44.0 }, next = "A_02", logCap = 18,
     flightPaths = { "Auberdine, Darkshore" },
-    dungeons = { "Blackfathom Deeps" },
   },
   {
     id = "A_02", title = "Ashenvale and Stonetalon Mountains", faction = "Alliance", zones = { ASHENVALE, STONETALON },
     minLevel = 20, maxLevel = 22, levelSlack = 0, entry = { ASHENVALE, 34.4, 48.0 }, next = "A_03",
     flightPaths = { "Astranaar, Ashenvale" },
-    dungeons = { "Blackfathom Deeps" },
     -- rendus à Stormwind au passage vers les Carmines (A Scroll from Mauren 1075) : 1-30 -7 min par parcours
     endZones = { STORMWIND },
+    -- Cozy Sleeping Bag : Stepping Stones rendue, Scramble, puis Wet Job prise au Mound of Dirt et rendue au barrage
+    -- du Loch Modan (A_04). Parcours Elfe de la nuit et Skyborne : sans le départ de la Marche de l'Ouest, étapes
+    -- filtrées par race au rejeu.
+    force = { [79980] = true, [79974] = true },
   },
   {
     id = "A_03", title = "Redridge Mountains and Duskwood", faction = "Alliance", zones = { REDRIDGE, DUSKWOOD },
     minLevel = 22, maxLevel = 26, levelSlack = 1, far = 1600, entry = { REDRIDGE, 30.6, 59.4 }, next = "A_04",
+    -- widen = true (2026-11-08) : la tranche s'élargissait à 52 mobs de farm prévus, mais Wet Job portée au journal
+    -- (Cozy Sleeping Bag) la faisait passer sous le seuil de 25 : 9 quêtes de niveau 30 perdues, A_04 +50 min.
+    widen = true,
     flightPaths = { "Lakeshire, Redridge", "Darkshire, Duskwood" },
-    dungeons = { "The Stockade" },
     optional = { [253] = "Group quest: Eliza, level 31 elite" },
     -- Worgen in the Woods (173) : écartée ici seulement (chaîne de Nightbane 27-31) ; faite en A_07 (30-34).
     -- Avant le lot H (2026-11-06), écartée dans overrides.lua pour toute la route.
@@ -185,10 +196,12 @@ plans.Alliance = {
     endZones = { STORMWIND, ELWYNN, WESTFALL },
   },
   {
-    id = "A_04", title = "Wetlands", faction = "Alliance", zones = { WETLANDS },
+    id = "A_04", title = "Wetlands", faction = "Alliance", zones = { WETLANDS, LOCH_MODAN },
+    -- Loch Modan limité au barrage de Thelsamar (Stonewrought Dam) : Wet Job rendue et Eagle's Fist prise à la
+    -- Carved Figurine (chasse au trésor du Cozy Sleeping Bag), rendue en Arathi (A_05).
+    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 } }, force = { [79975] = true },
     minLevel = 26, maxLevel = 29, levelSlack = 0, entry = { WETLANDS, 9.5, 59.7 }, next = "A_05",
     flightPaths = { "Menethil Harbor, Wetlands" },
-    dungeons = { "Excavation Site: Wetlands" },
     optional = { [304] = "Group quest: Balgaras the Foul, level 34 elite",
                  [474] = "Group quest: Chieftain Nek'rosh, level 32 elite",
                  [98216] = "Group quest: Goaz Warder, level 32 elite" },
@@ -200,14 +213,16 @@ plans.Alliance = {
     }, time = 720 },
   },
   {
-    id = "A_05", title = "Hillsbrad Foothills", faction = "Alliance", zones = { HILLSBRAD },
+    id = "A_05", title = "Hillsbrad Foothills", faction = "Alliance", zones = { HILLSBRAD, ARATHI },
+    -- Arathi limité au nord-ouest (Messenger Bag, près de la frontière d'Hautebrande) : Eagle's Fist rendue, puis This
+    -- Must Be The Place, qui donne le Cozy Sleeping Bag.
+    bounds = { [ARATHI] = { 17, 18, 28, 30 } }, force = { [79976] = true },
     minLevel = 29, maxLevel = 30, levelSlack = 0, entry = { HILLSBRAD, 49.3, 52.3 }, next = "A_08",
     flightPaths = { "Southshore, Hillsbrad" },
     -- bateau Menethil -> Southshore (sinon ligne droite par-dessus la mer)
     arrive = { via = { WETLANDS, 4.9, 57.3 }, steps = {
       { "boat", WETLANDS, 4.9, 57.3, note = "Take the boat to Southshore" },
     }, time = 420 },
-    dungeons = { "City of Dalaran", "Excavation Site: Wetlands" },
   },
   -- Routes 30-60 (lot H, 2026-11-06) : chapitres du plan « meta paths 1-60 », reconstruits et mesurés ici
   -- (docs/routes/README.md). Ordre du parcours (next) :
@@ -225,7 +240,6 @@ plans.Alliance = {
     -- A_08 -11 min, +8 quêtes, -63 mobs
     minLevel = 30, maxLevel = 32, levelSlack = 0, levelBelow = 10, far = 1600, widen = false, entry = { ASHENVALE, 34.41, 47.99 }, next = "A_07",
     flightPaths = { "Astranaar, Ashenvale" },
-    dungeons = { "Blackfathom Deeps" },
   },
   {
     id = "A_07", title = "Duskwood", faction = "Alliance",
@@ -248,7 +262,6 @@ plans.Alliance = {
     bounds = { [BARRENS] = { 58, 32, 66, 42 } }, -- Ratchet
     minLevel = 33, maxLevel = 34, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { NEEDLES, 77.79, 77.27 }, next = "A_10",
     flightPaths = { "Ratchet, The Barrens" },
-    dungeons = { "Razorfen Kraul" },
   },
   {
     id = "A_10", title = "Stranglethorn Vale", faction = "Alliance", zones = { STV },
@@ -277,19 +290,16 @@ plans.Alliance = {
     minLevel = 39, maxLevel = 40, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { ARATHI, 45.73, 46.10 }, next = "A_15",
     -- titre : aucune étape mesurée dans les Montagnes d'Alterac (zone gardée pour les candidates)
     flightPaths = { "Refuge Pointe, Arathi" },
-    dungeons = { "Scarlet Monastery", "Gnomeregan" },
   },
   {
     id = "A_15", title = "Dustwallow Marsh", faction = "Alliance", zones = { DUSTWALLOW, DESOLACE },
     minLevel = 40, maxLevel = 41, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DUSTWALLOW, 67.48, 51.30 }, next = "A_16",
     -- titre : aucune quête de Désolace retenue (mesuré) ; zone gardée pour les candidates
     flightPaths = { "Theramore, Dustwallow Marsh" },
-    dungeons = { "Razorfen Downs", "Maraudon" },
   },
   {
     id = "A_16", title = "Badlands", faction = "Alliance", zones = { BADLANDS },
     minLevel = 41, maxLevel = 42, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { BADLANDS, 37.90, 10.59 }, next = "A_17",
-    dungeons = { "Uldaman" },
     -- Ironforge, Loch Modan (Murdaloc 739), Stormwind, et la Strangleronce du chapitre suivant : A_16 -15 min,
     -- +8 quêtes, -82 mobs
     endZones = { IRONFORGE, LOCH_MODAN, STORMWIND, STV },
@@ -309,18 +319,15 @@ plans.Alliance = {
     id = "A_18", title = "Tanaris", faction = "Alliance", zones = { TANARIS, NEEDLES },
     minLevel = 44, maxLevel = 45, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { TANARIS, 51.01, 29.34 }, next = "A_19",
     flightPaths = { "Gadgetzan, Tanaris" },
-    dungeons = { "Zul'Farrak" },
   },
   {
     id = "A_19", title = "Feralas", faction = "Alliance", zones = { FERALAS },
     minLevel = 45, maxLevel = 46, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { FERALAS, 30.24, 43.25 }, next = "A_20",
     flightPaths = { "Feathermoon, Feralas" },
-    dungeons = { "Maraudon" },
   },
   {
     id = "A_20", title = "Tanaris", faction = "Alliance", zones = { TANARIS },
     minLevel = 46, maxLevel = 48, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { TANARIS, 51.01, 29.34 }, next = "A_21",
-    dungeons = { "Zul'Farrak" },
     -- Gahz'ridian 3161, Thistleshrub Valley 3362, The Thirsty Goblin 2605 : forcées par le plan « meta paths » (5 quêtes
     -- seulement sans elles, ~1 500 mobs de farm) ; forçage retiré au lot L (mesuré après les corrections du simulateur :
     -- Alliance 1-60 -16 min, -3 quêtes, +28 mobs)
@@ -328,13 +335,11 @@ plans.Alliance = {
   {
     id = "A_21", title = "Stranglethorn Vale", faction = "Alliance", zones = { STV, SWAMP },
     minLevel = 48, maxLevel = 50, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { STV, 27.0, 77.13 }, next = "A_22",
-    dungeons = { "The Temple of Atal'Hakkar" },
   },
   {
     id = "A_22", title = "Searing Gorge and Blasted Lands", faction = "Alliance", zones = { SEARING, BLASTED },
     minLevel = 50, maxLevel = 52, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { SEARING, 37.94, 30.86 }, next = "A_28",
     flightPaths = { "Thorium Point, Searing Gorge", "Nethergarde Keep, Blasted Lands" },
-    dungeons = { "Blackrock Depths" },
     -- Ironforge (Suntara Stones 3368, Rise, Obsidion! 3566), Loch Modan (The Horn of the Beast 3181), Stormwind ;
     -- 3441 Divine Retribution et 3453 The Torch of Retribution (QuestieDB : « event », récits de Kalaran Windblade)
     -- ouvrent la chaîne de Thorium Point 3442 -> 3481. A_22 -23 min, +14 quêtes, -259 mobs. Forcées jusqu'au lot L :
@@ -345,7 +350,6 @@ plans.Alliance = {
     id = "A_28", title = "Burning Steppes", faction = "Alliance", zones = { BURNING },
     minLevel = 52, maxLevel = 53, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { BURNING, 84.33, 68.33 }, next = "A_24",
     flightPaths = { "Morgan's Vigil, Burning Steppes" },
-    dungeons = { "Blackrock Depths" },
     endZones = { REDRIDGE, STORMWIND }, -- The True Masters 4183 (Lakeshire), Stormwind : -8 min, +2 quêtes, -47 mobs
   },
   {
@@ -375,14 +379,12 @@ plans.Alliance = {
     id = "A_23", title = "Western Plaguelands", faction = "Alliance", zones = { WPL },
     minLevel = 57, maxLevel = 58, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { WPL, 42.92, 85.06 }, next = "A_29",
     flightPaths = { "Chillwind Camp, Western Plaguelands" },
-    dungeons = { "Scholomance" },
     endZones = { STORMWIND }, -- -15 min, +4 quêtes, -72 mobs (A_29 : +15 min de trajet depuis Stormwind)
   },
   {
     id = "A_29", title = "Eastern Plaguelands", faction = "Alliance", zones = { EPL },
     minLevel = 58, maxLevel = 59, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { EPL, 71.81, 49.60 }, next = "A_30",
     flightPaths = { "Light's Hope Chapel, Eastern Plaguelands" },
-    dungeons = { "Stratholme" },
     -- 5742 Redemption (QuestieDB : « event », histoire de Tirion Fordring), tête de Of Forgotten Memories 5781 :
     -- -3 min, +3 quêtes, -53 mobs ; forcée jusqu'au lot L, candidate ordinaire depuis (forçage retiré, mesuré
     -- identique). Maleterres de l'Ouest en zone de quêtes : -6 min mesurées, mais seulement grâce aux suites de 5848
@@ -412,7 +414,6 @@ plans.Alliance = {
     id = "A_25", title = "Feralas and Azshara", faction = "Alliance", zones = { FERALAS, AZSHARA },
     minLevel = 54, maxLevel = 55, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { FERALAS, 30.24, 43.25 }, next = "A_26",
     flightPaths = { "Talrendis Point, Azshara" },
-    dungeons = { "Dire Maul" },
   },
 }
 
@@ -426,7 +427,11 @@ plans.Horde = {
   {
     id = "H_OrcTroll_02", title = "Durotar", faction = "Horde", races = { "Orc", "Troll" },
     zones = { DUROTAR, ORGRIMMAR }, endZones = { BARRENS },
-    minLevel = 6, maxLevel = 12, entry = { DUROTAR, 52.0, 43.0 },
+    -- strictLevel + levelSlack = 2 (QuestieDB v1.0.12) : sans eux, l'ordre fait Stormy Potential et
+    -- Encroachment au niveau 9 (59 mobs de farm, tranche élargie), 190 min, fin à 13.14. Avec eux, aucun farm,
+    -- 42 quêtes, 186 min, fin à 13.21 : le tronc (H_01) part toujours du niveau 13. strictLevel seul finit à
+    -- 12.79 (172 min) mais le tronc repart du niveau 12 : Orc 1-60 +10 min. Mesuré : Orc / Troll 1-60 -4 min.
+    minLevel = 6, maxLevel = 12, levelSlack = 2, strictLevel = true, entry = { DUROTAR, 52.0, 43.0 },
     flightPaths = { "Orgrimmar, Durotar" },
     nextByRace = { Orc = "H_01", Troll = "H_01" },
   },
@@ -459,17 +464,19 @@ plans.Horde = {
     zones = { TIRISFAL, UNDERCITY }, endZones = { SILVERPINE },
     minLevel = 6, maxLevel = 12, entry = { TIRISFAL, 61.0, 52.0 }, next = "H_Undead_03",
     flightPaths = { "Undercity, Tirisfal" },
-    dungeons = { "Ruins of Lordaeron" },
   },
   {
     id = "H_Undead_03", title = "Silverpine Forest", faction = "Horde", races = { "Undead" },
-    zones = { SILVERPINE, UNDERCITY }, endZones = { TIRISFAL }, dungeonReqSlack = 1, dungeonLevelHigh = 8,
+    zones = { SILVERPINE, UNDERCITY }, endZones = { TIRISFAL }, dungeonReqSlack = 1,
     -- 12-14 sans dépassement (levelSlack = 0) : le tronc des Tarides commence à 12 ; à 16.25, l'Undead y
     -- arrivait 3.4 niveaux au-dessus du parcours Orc. Mesuré (2026-11-07) : Undead 1-30 -88 min, autres
     -- parcours -13 min (tronc moins chargé), +43 mobs de farm en H_03-H_04.
     minLevel = 12, maxLevel = 14, levelSlack = 0, entry = { SILVERPINE, 43.0, 41.0 }, nextByRace = { Undead = "H_01" },
     flightPaths = { "The Sepulcher, Silverpine Forest" },
-    dungeons = { "Ruins of Lordaeron" },
+    -- Quêtes hautes de la tranche élargie (QuestieDB v1.0.12) : le premier passage prévoit 25 mobs de farm
+    -- (26 en v1.0.11), sous le seuil d'élargissement (WIDEN_GRIND) ; sans élargissement, 60 min et 25 mobs de
+    -- farm. Forcées, elles redonnent le chapitre v1.0.11 : 35 min, aucun farm. Mesuré : Undead 1-60 -25 min.
+    force = { [460] = true, [461] = true, [491] = true, [79096] = true },
   },
   -- Skyborne (Horde)
   {
@@ -485,37 +492,53 @@ plans.Horde = {
     id = "H_01", title = "The Barrens", faction = "Horde", zones = { BARRENS },
     minLevel = 12, maxLevel = 17, entry = { BARRENS, 52.0, 30.0 }, next = "H_02",
     flightPaths = { "Crossroads, The Barrens", "Ratchet, The Barrens", "Camp Taurajo, The Barrens" },
-    dungeons = { "Wailing Caverns", "Ragefire Chasm" },
+    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche du sud des Tarides, niveau
+    -- requis 14), rendue aux Serres-Rocheuses (H_02) ; suite en H_02, H_03 et H_05.
+    force = { [79192] = true },
   },
   {
     id = "H_02", title = "Stonetalon Mountains and The Barrens", faction = "Horde",
     zones = { STONETALON, BARRENS }, minLevel = 17, maxLevel = 21, levelSlack = 0, levelBelow = 6, far = 1600,
     entry = { BARRENS, 52.0, 30.0 }, next = "H_03",
     flightPaths = { "Sun Rock Retreat, Stonetalon Mountains" },
-    dungeons = { "Wailing Caverns" },
+    -- Cozy Sleeping Bag : Stepping Stones rendue au Pocket Litter, puis Scramble (déjà gardée avant les liens de la
+    -- chaîne, mais prise sans Stepping Stones).
+    force = { [79980] = true },
   },
   {
     id = "H_03", title = "Ashenvale and Stonetalon Mountains", faction = "Horde", zones = { ASHENVALE, STONETALON },
     minLevel = 21, maxLevel = 25, levelSlack = 0, levelBelow = 6, far = 1600, entry = { ASHENVALE, 73.0, 61.0 }, next = "H_04",
     flightPaths = { "Splintertree Post, Ashenvale", "Zoram'gar Outpost, Ashenvale" },
-    dungeons = { "Blackfathom Deeps" },
+    -- Wet Job (79974) prise au Mound of Dirt des Serres-Rocheuses et rendue au barrage du Loch Modan en H_05 : de H_02,
+    -- le rendu serait trois chapitres plus loin (hors des deux chapitres du report).
+    force = { [79974] = true },
   },
   {
     id = "H_04", title = "Southern Barrens and Thousand Needles", faction = "Horde", zones = { BARRENS, NEEDLES },
     minLevel = 25, maxLevel = 28, levelSlack = 0, levelBelow = 6, far = 1600, entry = { BARRENS, 44.5, 59.1 }, next = "H_05",
     -- Egg Hunt (868) faite dans le sud des Tarides avant Mille pointes, sans y revenir. Mesuré : Horde -11 min.
     precede = { { "O868", "O1153" }, { "O868", "A1149" }, { "O868", "A5147" }, { "O868", "A4821" } },
+    -- QuestieDB v1.0.12 : son objectif est plus loin (1 543 s isolée au lieu de 982), écartée pour « low ratio »
+    -- et les précédences ci-dessus visaient une tâche absente. Forcée : même durée sur les quatre parcours
+    -- Horde, +1 quête, -11 mobs de farm.
+    force = { [868] = true },
     flightPaths = { "Freewind Post, Thousand Needles" },
   },
   {
-    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD },
+    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD, LOCH_MODAN, ARATHI },
+    -- Fin de la chasse au trésor du Cozy Sleeping Bag : Wet Job rendue et Eagle's Fist prise au barrage du Loch Modan,
+    -- rendue au nord-ouest d'Arathi, puis This Must Be The Place, qui donne le sac.
+    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 }, [ARATHI] = { 17, 18, 28, 30 } },
+    force = { [79975] = true, [79976] = true },
     minLevel = 28, maxLevel = 30, levelSlack = 0, levelBelow = 6, far = 1600, entry = { HILLSBRAD, 62.0, 20.0 }, endZones = { UNDERCITY },
     next = "H_06",
     -- strictLevel (QuestieDB v1.0.11) : sans lui, tranche élargie (147 mobs à farmer), 44 mobs de farm final,
     -- 188 min et une zone d'objectifs coupée sans contrainte (567 Dangerous!) ; avec lui, 176 min, aucun farm.
     strictLevel = true,
+    -- Dangerous! (567) avant Souvenirs of Death (546) : sans cela, la route passe à côté du second site de 567, fait
+    -- 546 et revient (zone coupée « free », 2026-11-09). +6 min sur les parcours Horde.
+    precede = { { "O567", "O546" } },
     flightPaths = { "Tarren Mill, Hillsbrad" },
-    dungeons = { "City of Dalaran" },
   },
   -- Routes 30-60 (lot H, 2026-11-06) : chapitres du plan « meta paths 1-60 », reconstruits et mesurés ici
   -- (docs/routes/README.md). Ordre : H_05 -> H_06 -> ... -> H_18 -> H_21 -> H_23 -> ... -> H_30. H_19 (Marais
@@ -534,7 +557,6 @@ plans.Horde = {
     id = "H_06", title = "Alterac Mountains and Arathi Highlands", faction = "Horde", zones = { HILLSBRAD, ALTERAC, ARATHI },
     minLevel = 30, maxLevel = 32, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { HILLSBRAD, 60.14, 18.62 }, endZones = { UNDERCITY }, next = "H_07",
     flightPaths = { "Hammerfall, Arathi" },
-    dungeons = { "City of Dalaran", "Scarlet Monastery" },
     -- plan « meta paths » : accroches de Tarren Mill (Prison Break In, Stone Tokens, Infiltration,
     -- Dalaran Patrols, The Hammer May Fall) ; lot L : +53 min sans ce forçage (gardé)
     force = { [544] = true, [556] = true, [533] = true, [545] = true, [676] = true },
@@ -552,31 +574,26 @@ plans.Horde = {
     id = "H_08", title = "Desolace", faction = "Horde", zones = { DESOLACE }, endZones = { ORGRIMMAR, THUNDERBLUFF },
     minLevel = 33, maxLevel = 35, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DESOLACE, 21.60, 74.13 }, next = "H_09",
     flightPaths = { "Shadowprey Village, Desolace" },
-    dungeons = { "Maraudon" },
   },
   {
     id = "H_09", title = "Stranglethorn Vale", faction = "Horde", zones = { STV },
     minLevel = 35, maxLevel = 37, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { STV, 32.54, 29.35 }, next = "H_10",
     flightPaths = { "Grom'gol, Stranglethorn" },
-    dungeons = { "Gnomeregan" },
   },
   {
     id = "H_10", title = "Dustwallow Marsh", faction = "Horde", zones = { DUSTWALLOW },
     minLevel = 37, maxLevel = 38, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DUSTWALLOW, 35.56, 31.88 }, next = "H_11",
     flightPaths = { "Brackenwall Village, Dustwallow Marsh" },
-    dungeons = { "Razorfen Downs" },
   },
   {
     id = "H_11", title = "Arathi Highlands", faction = "Horde", zones = { ARATHI, HILLSBRAD, ALTERAC },
     minLevel = 38, maxLevel = 39, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { ARATHI, 73.02, 32.70 }, next = "H_12",
     -- The Crown of Will (518-521, Tarren Mill) : objectifs dans les Montagnes d'Alterac
-    dungeons = { "Scarlet Monastery" },
   },
   {
     id = "H_12", title = "Badlands", faction = "Horde", zones = { BADLANDS },
     minLevel = 39, maxLevel = 40, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { BADLANDS, 3.99, 44.78 }, next = "H_13",
     flightPaths = { "Kargath, Badlands" },
-    dungeons = { "Uldaman" },
   },
   {
     id = "H_13", title = "Stranglethorn Vale", faction = "Horde", zones = { STV },
@@ -588,7 +605,6 @@ plans.Horde = {
     id = "H_14", title = "Swamp of Sorrows", faction = "Horde", zones = { SWAMP },
     minLevel = 42, maxLevel = 43, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { SWAMP, 46.07, 54.83 }, next = "H_15",
     flightPaths = { "Stonard, Swamp of Sorrows" },
-    dungeons = { "The Temple of Atal'Hakkar" },
   },
   {
     -- Âprefange II (au lieu de Désolace II : 7 quêtes, 361 mobs de farm) : chaîne de Brackenwall 43-45
@@ -601,7 +617,6 @@ plans.Horde = {
     -- 44-45 (au lieu de 44-46) : Féralas prend 45-47. Mesuré : -20 min, -90 mobs.
     minLevel = 44, maxLevel = 45, levelSlack = 0, levelBelow = 8, far = 1600, entry = { TANARIS, 51.60, 25.44 }, next = "H_17",
     flightPaths = { "Gadgetzan, Tanaris" },
-    dungeons = { "Zul'Farrak" },
     -- Gahz'ridian (3161, rendement bas) et The Thirsty Goblin (2605, loin de Gadgetzan) : forcées au lot Horde (-8 min,
     -- -96 mobs), forçage retiré au lot L (mesuré après les corrections du simulateur : Horde 1-60 -10 min, -1 quête,
     -- +43 mobs).
@@ -636,7 +651,6 @@ plans.Horde = {
     endZones = { UNDERCITY }, -- livres d'Owen Thadd (81953, 81955). Mesuré : -30 mobs, temps égal.
     minLevel = 52, maxLevel = 53, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { SEARING, 34.84, 30.87 }, next = "H_25",
     flightPaths = { "Thorium Point, Searing Gorge", "Flame Crest, Burning Steppes" },
-    dungeons = { "Blackrock Depths" },
     -- 3441 et 3453 : récits de Kalaran Windblade (drapeau « event » dans QuestieDB), têtes de la chaîne
     -- The Flawless Flame -> Trinkets... (3442-3481). Mesuré : -11 min, -177 mobs. Forcées jusqu'au lot L, candidates
     -- ordinaires depuis (forçage retiré, mesuré identique). A Taste of Flame 4023, Tablet of the Seven 4296 et Broodling
@@ -674,7 +688,6 @@ plans.Horde = {
     -- simulation depuis le lot L ; l'écart manuel est retiré (mesuré identique).
     minLevel = 57, maxLevel = 59, levelSlack = 0, levelBelow = 10, far = 1600, widen = false, entry = { WPL, 38.40, 54.05 }, next = "H_30",
     flightPaths = { "Light's Hope Chapel, Eastern Plaguelands" },
-    dungeons = { "Scholomance", "Stratholme" },
   },
   {
     id = "H_30", title = "Silithus", faction = "Horde", zones = { WINTERSPRING, SILITHUS },
@@ -686,7 +699,6 @@ plans.Horde = {
   {
     id = "H_20", title = "Tanaris", faction = "Horde", zones = { TANARIS },
     minLevel = 47, maxLevel = 49, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { TANARIS, 51.60, 25.44 }, next = "H_21",
-    dungeons = { "Zul'Farrak" },
     -- comme A_20 : quêtes de Tanaris à plus de 1 600 yd de Gadgetzan (sinon 1 quête, ~700 mobs de farm)
     force = { [3161] = true, [3362] = true, [2605] = true },
   },
