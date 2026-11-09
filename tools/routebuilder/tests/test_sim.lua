@@ -31,7 +31,64 @@ local function stepsText(steps)
   return table.concat(out, " | ")
 end
 
+-- Zone de test + une quête de classe (Guerrier) qui suit 103, une autre trop loin, et une quête démarrée par un
+-- objet qui tombe à 1 % des loups.
+local function extendedD()
+  local D = F.D()
+  local base = D.quests[101]
+  local function copy(t) local o = {}; for k, v in pairs(t) do o[k] = v end; return o end
+  local q109 = copy(D.quests[102]); q109.id, q109.name, q109.level, q109.classes = 109, "Warrior Tusks", 3, 1
+  q109.preSingle = { 103 }
+  local q111 = copy(D.quests[106]); q111.id, q111.name, q111.classes = 111, "Warrior Far Errand", 1
+  local q110 = copy(base); q110.id, q110.name, q110.level = 110, "Strange Note", 2
+  q110.starters = { npcs = {}, objects = {}, items = { 3199 } }
+  q110.objectives = { creatures = {}, killCredit = {}, objects = {}, items = {}, list = {} }
+  D.quests[109], D.quests[110], D.quests[111] = q109, q110, q111
+  D.items[3199] = { id = 3199, name = "Strange Note", npcDrops = { 2101 }, objectDrops = {}, itemDrops = {},
+                    questRewards = {}, vendors = {} }
+  D.drops[3199] = { [2101] = 0.01 }
+  D.xp[109], D.xp[110], D.xp[111] = { 3, 250 }, { 2, 170 }, { 3, 100 }
+  return D
+end
+
+local function runExtended(opts)
+  local D, W = extendedD(), F.W()
+  local state = F.state()
+  local steps, report = sim.chapter(D, W, F.plan(), state, opts)
+  return steps, report, state
+end
+
 return {
+  -- Quête de classe dans la région : étapes `classes`, après le rendu de son pré-requis commun, sans changer
+  -- la route commune ; trop loin : laissée à la fenêtre des quêtes de classe du jeu.
+  class_quest_woven_without_changing_the_route = function(t)
+    -- 111 : ~1 500 yd de détour (environ 9 min) ; seuil abaissé à 5 min pour ce test
+    local saved = sim.CONST.CLASS_MAX_DETOUR
+    sim.CONST.CLASS_MAX_DETOUR = 300
+    local steps, report, state = runExtended({ _noWiden = true })
+    sim.CONST.CLASS_MAX_DETOUR = saved
+    local a, c, tt = indexOf(steps, "accept", 109), indexOf(steps, "complete", 109), indexOf(steps, "turnin", 109)
+    t.ok(a and c and tt, "class quest woven: " .. stepsText(steps))
+    t.ok(a < c and c < tt, "A < O < T")
+    t.ok(indexOf(steps, "turnin", 103) < a, "after its prerequisite turn-in")
+    for _, i in ipairs({ a, c, tt }) do t.eq(table.concat(steps[i].classes or {}, ","), "WARRIOR") end
+    t.ok(state.classDone["WARRIOR:109"], "remembered for the next chapters")
+    t.eq(indexOf(steps, "accept", 111), nil, "far class quest left to the in-game offer")
+    local skipped = false
+    for _, s in ipairs(report.classSkipped) do if s.id == 111 then skipped = true end end
+    t.ok(skipped, "far class quest reported")
+    local _, base = run({ _noWiden = true })
+    t.eq(report.time, base.time, "simulated route unchanged")
+  end,
+
+  -- Objet de départ à 1 % (100 tués) : laissé ; avec un farm de niveau à faire sur ces loups, plus de raison de taux.
+  starter_item_rate_and_grind_budget = function(t)
+    local _, report = runExtended({ _noWiden = true })
+    t.ok((dropped(report, 110) or ""):find("starter item drop rate 1.0 %", 1, true), tostring((dropped(report, 110))))
+    local _, r2 = runExtended({ _noWiden = true, grindBudget = 200 })
+    t.ok(not (dropped(r2, 110) or ""):find("starter item", 1, true), "budget covers the kills: " .. tostring((dropped(r2, 110))))
+  end,
+
   respects_precedence = function(t)
     local steps = run()
     for _, q in ipairs({ 101, 102, 103, 104, 107, 108 }) do

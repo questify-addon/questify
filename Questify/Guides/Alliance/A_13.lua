@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 48 étapes, niveau final 40.00, ~34840 xp/h, 140 min.
+-- Simulation : 50 étapes, niveau final 40.00, ~34800 xp/h, 140 min.
 Q:RegisterGuide({
   id = "A_13",
   title = "Arathi Highlands",
   faction = "Alliance",
   minLevel = 39, maxLevel = 40,
   next = "A_15",
-  sim = { steps = 48, endLevel = 40.00, xpPerHour = 34840, minutes = 140 },
+  sim = { steps = 50, endLevel = 40.00, xpPerHour = 34800, minutes = 140 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
@@ -17,6 +17,7 @@ Q:RegisterGuide({
     { "accept", 681 }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
     { "accept", 691 }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
     { "accept", 642 }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 39)
+    { "accept", 96016, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~1950 xp, sim lvl 39)
     { "turnin", 635, xp = 275 }, -- Crystal in the Mountains (lvl 35, ~275 xp, sim lvl 39)
     { "complete", 691, at = { 1417, 68.31, 80.15 } }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
     { "accept", 79949 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~0 xp, sim lvl 39)
@@ -27,6 +28,7 @@ Q:RegisterGuide({
     { "complete", 651, obj = 2, at = { 1417, 66.7, 29.72 } }, -- Stones of Binding (lvl 38, ~2850 xp, sim lvl 39)
     { "complete", 681, at = { 1417, 33.4, 30.49 } }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
     { "complete", 651, obj = 1, at = { 1417, 25.46, 30.11 } }, -- Stones of Binding (lvl 38, ~2850 xp, sim lvl 39)
+    { "turnin", 96016, xp = 1950, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~1950 xp, sim lvl 39)
     { "turnin", 691, xp = 3500 }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
     { "accept", 693 }, -- Wand over Fist (lvl 39, ~3000 xp, sim lvl 39)
     { "turnin", 681, xp = 1000 }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
@@ -58,6 +60,6 @@ Q:RegisterGuide({
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "turnin", 602, xp = 1400 }, -- Magical Analysis (lvl 37, ~1400 xp, sim lvl 39)
     { "accept", 96800, optional = true, dungeon = "Scarlet Monastery" }, -- Past Due (lvl 38, ~0 xp, sim lvl 39)
-    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 88 more mobs near the last objective" }, -- farm de niveau
+    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 86 more mobs near the last objective" }, -- farm de niveau
   },
 })

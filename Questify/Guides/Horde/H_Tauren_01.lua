@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 39 étapes, niveau final 7.45, ~12134 xp/h, 65 min.
+-- Simulation : 47 étapes, niveau final 7.45, ~12134 xp/h, 65 min.
 Q:RegisterGuide({
   id = "H_Tauren_01",
   title = "Camp Narache",
@@ -10,14 +10,20 @@ Q:RegisterGuide({
   races = { "Tauren" },
   minLevel = 1, maxLevel = 6,
   next = "H_Tauren_02",
-  sim = { steps = 39, endLevel = 7.45, xpPerHour = 12134, minutes = 65 },
+  sim = { steps = 47, endLevel = 7.45, xpPerHour = 12134, minutes = 65 },
   steps = {
     { "accept", 752 }, -- A Humble Task (lvl 2, ~85 xp, sim lvl 1)
     { "accept", 747 }, -- The Hunt Begins (lvl 2, ~170 xp, sim lvl 1)
     { "complete", 747, at = { 1412, 44.79, 84.54 } }, -- The Hunt Begins (lvl 2, ~170 xp, sim lvl 1)
     { "turnin", 747, xp = 170 }, -- The Hunt Begins (lvl 2, ~170 xp, sim lvl 3)
+    { "accept", 3091, classes = { "WARRIOR" } }, -- Simple Note (lvl 1, ~30 xp, sim lvl 3)
+    { "accept", 3092, classes = { "HUNTER" } }, -- Etched Note (lvl 1, ~45 xp, sim lvl 3)
+    { "accept", 3093, classes = { "SHAMAN" } }, -- Rune-Inscribed Note (lvl 1, ~45 xp, sim lvl 3)
+    { "accept", 3094, classes = { "DRUID" } }, -- Verdant Note (lvl 1, ~45 xp, sim lvl 3)
     { "accept", 750 }, -- The Hunt Continues (lvl 3, ~250 xp, sim lvl 3)
     { "accept", 3376 }, -- Break Sharptusk! (lvl 5, ~670 xp, sim lvl 3)
+    { "turnin", 3093, xp = 45, classes = { "SHAMAN" } }, -- Rune-Inscribed Note (lvl 1, ~45 xp, sim lvl 3)
+    { "turnin", 3094, xp = 45, classes = { "DRUID" } }, -- Verdant Note (lvl 1, ~45 xp, sim lvl 3)
     { "complete", 750, at = { 1412, 50.83, 88.66 } }, -- The Hunt Continues (lvl 3, ~250 xp, sim lvl 3)
     { "turnin", 752, xp = 85 }, -- A Humble Task (lvl 2, ~85 xp, sim lvl 3)
     { "accept", 753 }, -- A Humble Task (lvl 3, ~250 xp, sim lvl 3)
@@ -26,6 +32,8 @@ Q:RegisterGuide({
     { "accept", 99079 }, -- Longwalker Malah (lvl 9, ~780 xp, sim lvl 4)
     { "accept", 745 }, -- Sharing the Land (lvl 8, ~540 xp, sim lvl 4)
     { "turnin", 753, xp = 250 }, -- A Humble Task (lvl 3, ~250 xp, sim lvl 4)
+    { "turnin", 3091, xp = 30, classes = { "WARRIOR" } }, -- Simple Note (lvl 1, ~30 xp, sim lvl 4)
+    { "turnin", 3092, xp = 45, classes = { "HUNTER" } }, -- Etched Note (lvl 1, ~45 xp, sim lvl 4)
     { "accept", 755 }, -- Rites of the Earthmother (lvl 3, ~250 xp, sim lvl 4)
     { "turnin", 750, xp = 250 }, -- The Hunt Continues (lvl 3, ~250 xp, sim lvl 4)
     { "accept", 780 }, -- The Battleboars (lvl 4, ~445 xp, sim lvl 4)

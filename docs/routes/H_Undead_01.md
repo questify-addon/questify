@@ -9,7 +9,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Time | 45 min |
 | XP gained | 7662 |
 | XP/h | 10243 |
-| Steps | 35 |
+| Steps | 58 |
 | Quests turned in | 13 |
 | Hubs | 1 |
 | Median ratio (XP/s) | 3.20 |
@@ -52,6 +52,24 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 91208 | Coming to Terms | 4 | class quest (ClassQuestData.lua) |
 | 91209 | Continue Your Training | 4 | class quest (ClassQuestData.lua) |
 | 98601 | A Difficult Path | 1 | class quest (ClassQuestData.lua) |
+
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3095 | Simple Scroll | 1 | WARRIOR | woven, detour 18 s |
+| 3096 | Encrypted Scroll | 1 | ROGUE | woven, detour 16 s |
+| 3097 | Hallowed Scroll | 1 | PRIEST | woven, detour 13 s |
+| 3098 | Glyphic Scroll | 1 | MAGE | woven, detour 11 s |
+| 3099 | Tainted Scroll | 1 | WARLOCK | woven, detour 12 s |
+| 98601 | A Difficult Path | 1 | PALADIN | woven, detour 10 s |
+| 90902 | Rediscovering the Light | 2 | PALADIN | woven, detour 31 s |
+| 1470 | Piercing the Veil | 3 | WARLOCK | woven, detour 493 s |
+| 5651 | In Favor of Darkness | 4 | PRIEST | woven, detour 16 s |
+| 91208 | Coming to Terms | 4 | PALADIN | woven, detour 69 s |
+| 91209 | Continue Your Training | 4 | PALADIN | objective npc not in zone |
 
 ## Candidate ratios
 

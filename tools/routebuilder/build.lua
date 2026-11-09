@@ -82,7 +82,7 @@ end
 
 local function newState(race, faction)
   return { level = 1, xp = 0, pos = nil, done = {}, log = {}, knownTaxi = {}, hearth = nil, hearthReadyAt = 0,
-           time = 0, race = race, raceBits = raceBit(race, faction), classBit = nil }
+           time = 0, race = race, raceBits = raceBit(race, faction), classBit = nil, classDone = {} }
 end
 
 local function folderFor(plan)
@@ -328,22 +328,41 @@ function build.raceFilters(D, W, faction, results, list)
         local r = results[plan.id]
         chapters[#chapters + 1] = { id = plan.id, steps = r and r.steps or {}, minLevel = plan.minLevel }
       end
-      paths.replay(D, W, faction, race, chapters, function(ci, si, msg)
-        local plan = pathOf[race][ci]
-        local step = chapters[ci].steps[si]
-        local via = through[plan.id] or {}
-        if #via > 1 then
-          local base = step.race or via
-          local keep = {}
-          for _, r in ipairs(base) do if r ~= race and paths.hasRace(via, r) then keep[#keep + 1] = r end end
-          step.race = keep
-          step._filtered = step._filtered or {}
-          step._filtered[#step._filtered + 1] = race .. ": " .. msg
-          changed = true
-        else
-          leftover[#leftover + 1] = ("%s[%s] step %d: %s"):format(plan.id, race, si, msg)
+      -- rejeu sans étape de classe, puis une fois par classe nommée par des étapes `classes` (quêtes de
+      -- classe tissées par sim.weaveClassQuests) ; pour une classe, seules ses étapes propres sont jugées
+      local variants = { false }
+      for _, c in ipairs(paths.classVariants(chapters)) do variants[#variants + 1] = c end
+      for _, cls in ipairs(variants) do
+        local vchapters, indexes = {}, {}
+        for k, ch in ipairs(chapters) do
+          local st, index = paths.stepsForClass(ch.steps, cls or nil)
+          vchapters[k] = { id = ch.id, steps = st, minLevel = ch.minLevel }
+          indexes[k] = index
         end
-      end)
+        paths.replay(D, W, faction, race, vchapters, function(ci, fsi, msg)
+          local plan = pathOf[race][ci]
+          local si = indexes[ci][fsi]
+          local step = chapters[ci].steps[si]
+          if cls and not step.classes then return end
+          local via = through[plan.id] or {}
+          if #via > 1 then
+            local base = step.race or via
+            local keep = {}
+            for _, r in ipairs(base) do if r ~= race and paths.hasRace(via, r) then keep[#keep + 1] = r end end
+            step.race = keep
+            step._filtered = step._filtered or {}
+            step._filtered[#step._filtered + 1] = race .. ": " .. msg
+            changed = true
+          elseif step.classes then
+            -- étape de classe d'un chapitre propre à une race : retirée (aucune race ne la garde)
+            step.race = {}
+            step._filtered = { race .. ": " .. msg }
+            changed = true
+          else
+            leftover[#leftover + 1] = ("%s[%s] step %d: %s"):format(plan.id, race, si, msg)
+          end
+        end)
+      end
     end
   end
   -- étapes sans aucune race : retirées ; filtre égal à toutes les races du chapitre : retiré
@@ -352,7 +371,8 @@ function build.raceFilters(D, W, faction, results, list)
     local kept = {}
     for _, s in ipairs(r.steps) do
       if s.race and #s.race == 0 then
-        r.report.warnings[#r.report.warnings + 1] = ("step removed (valid for no race): %s %s"):format(tostring(s[1]), tostring(s[2]))
+        r.report.warnings[#r.report.warnings + 1] = ("step removed (valid for no race): %s %s%s"):format(tostring(s[1]),
+          tostring(s[2]), s._filtered and (" (" .. table.concat(s._filtered, "; ") .. ")") or "")
       else
         if s.race and #via > 0 then
           local all = true
@@ -418,6 +438,27 @@ function build.reportText(D, plan, steps, report, meta)
     for _, d in ipairs(report.dropped) do
       local q = D.quests[d.id] or {}
       w(("| %d | %s | %s | %s |"):format(d.id, q.name or "?", tostring(q.level or "?"), d.reason))
+    end
+  end
+  w()
+  w("## Class quests")
+  w()
+  w("Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps "
+    .. "next to the nearest route steps (the simulated route does not change); the others stay offered in game.")
+  w()
+  if #(report.classWoven or {}) == 0 and #(report.classSkipped or {}) == 0 then w("None.") else
+    w("| Quest | Name | Lvl | Classes | Result |")
+    w("|---|---|---|---|---|")
+    for _, c in ipairs(report.classWoven or {}) do
+      local q = D.quests[c.id] or {}
+      w(("| %d | %s | %s | %s | woven, detour %d s |"):format(c.id, c.name or "?", tostring(q.level or "?"),
+        table.concat(c.classes or {}, ", "), math.floor((c.detour or 0) + 0.5)))
+    end
+    for _, c in ipairs(report.classSkipped or {}) do
+      local q = D.quests[c.id] or {}
+      local cls = c.classes or qdb.classList(q.classes or 0)
+      w(("| %d | %s | %s | %s | %s |"):format(c.id, c.name or "?", tostring(q.level or "?"),
+        table.concat(cls, ", "), c.reason or "?"))
     end
   end
   w()

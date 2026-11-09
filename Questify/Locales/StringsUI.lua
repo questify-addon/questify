@@ -6,7 +6,7 @@ local addonName, Q = ...
 Q:RegisterStrings({
   enUS = {
     -- Suivi
-    UI_TRACKER_NO_GUIDE = "No chapter for this character yet.",
+    UI_TRACKER_NO_GUIDE = "No chapter for this character yet: type /qf to pick one in the journal.",
     UI_TRACKER_DONE = "Chapter complete.",
     UI_TRACKER_LEVELS = "%d-%d",
     UI_TRACKER_PROGRESS = "%d/%d",
@@ -276,6 +276,7 @@ Q:RegisterStrings({
     UI_DEMO_WHY_DATA = "data missing",
     UI_DEMO_WHY_API = "game function missing",
     UI_DEMO_WHY_ITEM = "item not known to the game yet, try again in a moment",
+    UI_DEMO_WHY_TRACKER = "the tracker shows no chapter yet, open the journal with /qf and pick one",
     UI_SLASH_DEBUG_ON = "Debug messages on.",
     UI_SLASH_DEBUG_OFF = "Debug messages off.",
     UI_SLASH_EXPORTED = "The measurements are in the Options tab, ready to copy.",
@@ -285,7 +286,7 @@ Q:RegisterStrings({
 
   frFR = {
     -- Suivi
-    UI_TRACKER_NO_GUIDE = "Aucun chapitre pour ce personnage pour l'instant.",
+    UI_TRACKER_NO_GUIDE = "Aucun chapitre pour ce personnage pour l'instant : tape /qf pour en choisir un dans le journal.",
     UI_TRACKER_DONE = "Chapitre terminé.",
     UI_TRACKER_LEVELS = "%d-%d",
     UI_TRACKER_PROGRESS = "%d/%d",
@@ -561,6 +562,7 @@ Q:RegisterStrings({
     UI_DEMO_WHY_DATA = "donnée absente",
     UI_DEMO_WHY_API = "fonction du jeu absente",
     UI_DEMO_WHY_ITEM = "objet pas encore connu du jeu, réessaie dans un instant",
+    UI_DEMO_WHY_TRACKER = "le suivi n'affiche encore aucun chapitre, ouvre le journal avec /qf et choisis-en un",
     UI_SLASH_DEBUG_ON = "Messages de débogage activés.",
     UI_SLASH_DEBUG_OFF = "Messages de débogage désactivés.",
     UI_SLASH_EXPORTED = "Les mesures sont dans l'onglet Options, prêtes à être copiées.",

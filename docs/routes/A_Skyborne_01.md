@@ -5,14 +5,14 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 1-15 |
-| Simulated level | 1.00 -> 17.83 |
-| Time | 231 min |
-| XP gained | 123485 |
-| XP/h | 32128 |
-| Steps | 207 |
+| Simulated level | 1.00 -> 17.81 |
+| Time | 229 min |
+| XP gained | 123179 |
+| XP/h | 32235 |
+| Steps | 227 |
 | Quests turned in | 73 |
 | Hubs | 17 |
-| Median ratio (XP/s) | 4.48 |
+| Median ratio (XP/s) | 4.49 |
 | Grinding (level steps) | ~58 mobs |
 | Level band | grinding 58 mobs with quests up to level 18: band widened to level 21 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
@@ -65,7 +65,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 40 | 93160 | The Forest's Bounty | 13 | 680 est. | 11 |
 | 41 | 93172 | Free the Hollows | 13 | 680 est. | 11 |
 | 42 | 92679 | Blood Tithe | 9 | 780 est. | 11 |
-| 43 | 92682 | Make Yourself Useful | 9 | 780 est. | 12 |
+| 43 | 92682 | Make Yourself Useful | 9 | 780 est. | 11 |
 | 44 | 92683 | Flutterfly Dust | 9 | 780 est. | 12 |
 | 45 | 92684 | Ornery Ornery Galestriders | 9 | 780 est. | 12 |
 | 46 | 92698 | What Is My Purpose? | 9 | 780 est. | 12 |
@@ -145,6 +145,27 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 92460 | Coming of Age | 1 | level band reached |
 | 92461 | Harmony in Balance | 1 | level band reached |
 | 94484 | Unnerving Silence | 11 | exclusive with 94493 |
+
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 93791 | Speak with Belann | 10 | MAGE | woven, detour 71 s |
+| 94003 | The Skybreaker Bulwark | 10 | WARRIOR | woven, detour 229 s |
+| 94006 | The Great Ursera Spirit | 10 | DRUID | woven, detour 132 s |
+| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 37 s |
+| 94978 | Taming the Beast | 10 | HUNTER | woven, detour 204 s |
+| 94979 | Taming the Beast | 10 | HUNTER | woven, detour 353 s |
+| 94013 | Taming the Beast | 10 | HUNTER | woven, detour 393 s |
+| 94050 | Training the Beast | 10 | HUNTER | woven, detour 69 s |
+| 94638 | Strength and Mercy | 10 | DRUID | detour 678 s |
+| 92481 | A Student of the Arcane | 2 | MAGE | prerequisite or exclusive quest not done for the class |
+| 92482 | The Way of the Hunter | 2 | HUNTER | prerequisite or exclusive quest not done for the class |
+| 92483 | At Home in the Shadows | 2 | ROGUE | prerequisite or exclusive quest not done for the class |
+| 92485 | A Student of Nature | 2 | DRUID | prerequisite or exclusive quest not done for the class |
+| 92532 | The Warrior's Path | 2 | WARRIOR | prerequisite or exclusive quest not done for the class |
 
 ## Candidate ratios
 
@@ -226,15 +247,15 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 94369 | The Fate of Zephras | 12 | 910 | 0 | 45 | 20 | 17.47 | 45.50 | 1 |  |
 | 94413 | A Magical Affront | 6 | 900 | 0 | 227 | 169 | 3.95 | 5.30 | 1 |  |
 | 94414 | The Anchors of Zephras | 2 | 170 | 0 | 34 | 34 | 4.94 | 4.94 | 1 |  |
-| 94484 | Unnerving Silence | 11 | 660 | 0 | 200 | 10 | 4.43 | 6.92 | 0 | exclusive with 94493 |
-| 94485 | Tears of the Lady | 12 | 910 | 0 | 145 | 132 | 5.13 | 9.47 | 1 |  |
-| 94486 | Feathers for Binding | 11 | 3650 | 0 | 828 | 810 | 4.49 | 5.63 | 1 |  |
-| 94487 | Unwanted and Unworthy | 11 | 2210 | 0 | 444 | 416 | 4.84 | 7.00 | 1 |  |
+| 94484 | Unnerving Silence | 11 | 660 | 0 | 200 | 10 | 4.48 | 7.21 | 0 | exclusive with 94493 |
+| 94485 | Tears of the Lady | 12 | 910 | 0 | 145 | 132 | 5.31 | 10.94 | 1 |  |
+| 94486 | Feathers for Binding | 11 | 3650 | 0 | 828 | 810 | 4.54 | 5.76 | 1 |  |
+| 94487 | Unwanted and Unworthy | 11 | 2210 | 0 | 444 | 416 | 4.93 | 7.37 | 1 |  |
 | 94488 | The Ties That Bind | 11 | 842 | 0 | 98 | 37 | 8.58 | 22.44 | 1 |  |
 | 94489 | The Wounds of Betrayal | 12 | 910 | 0 | 115 | 57 | 7.90 | 15.82 | 1 |  |
-| 94490 | Ripped Missive | 12 | 585 | 0 | 178 | 110 | 2.33 | 6.35 | 0 |  |
+| 94490 | Ripped Missive | 12 | 297 | 0 | 98 | 30 | 1.90 | 12.28 | 0 |  |
 | 94491 | The Fate of the Den | 12 | 225 | 0 | 200 | 10 | 1.12 | 22.50 | 0 |  |
-| 94493 | A Sacrifice in Vain | 11 | 660 | 0 | 10 | 10 | 4.84 | 6.92 | 0 |  |
+| 94493 | A Sacrifice in Vain | 11 | 660 | 0 | 10 | 10 | 4.92 | 7.21 | 0 |  |
 | 94568 | The Cult's True Plans | 11 | 770 | 0 | 33 | 20 | 42.82 | 54.45 | 1 |  |
 | 94896 | Aid For The Refugees | 11 | 770 | 0 | 620 | 173 | 1.24 | 4.45 | 1 |  |
 | 96101 | The Great Outdoors | 6 | 540 | 0 | 71 | 71 | 7.55 | 8.60 | 1 |  |
@@ -255,11 +276,11 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 2 | A | 92471 | Aetheen of the Gales | 2521 | 42.0, 23.5 | 0 |  |
 | 3 | T | 92471 | Aetheen of the Gales | 2521 | 42.8, 23.7 | 39 |  |
 | 4 | A | 92470 | Foul Matriarch | 2521 | 42.8, 23.7 | 0 |  |
-| 5 | T | 92464 | Elemental Unrest | 2521 | 47.3, 22.0 | 257 |  |
-| 6 | A | 92465 | Agitators | 2521 | 47.3, 22.0 | 0 |  |
+| 5 | T | 92464 | Elemental Unrest | 2521 | 47.2, 22.0 | 257 |  |
+| 6 | A | 92465 | Agitators | 2521 | 47.2, 22.0 | 0 |  |
 | 7 | O | 92465 | Agitators | 2521 | 47.5, 19.8 | 81 |  |
-| 8 | T | 92465 | Agitators | 2521 | 47.3, 22.0 | 81 |  |
-| 9 | A | 92469 | Return to Rorian | 2521 | 47.3, 22.0 | 0 |  |
+| 8 | T | 92465 | Agitators | 2521 | 47.2, 22.0 | 81 |  |
+| 9 | A | 92469 | Return to Rorian | 2521 | 47.2, 22.0 | 0 |  |
 | 10 | A | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 208 |  |
 | 11 | O | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 0 |  |
 | 12 | T | 94414 | The Anchors of Zephras | 2521 | 43.8, 24.1 | 0 |  |
@@ -385,7 +406,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 132 | T | 92682 | Make Yourself Useful | 2521 | 46.7, 82.0 | 68 |  |
 | 133 | O | 92683 | Flutterfly Dust | 2521 | 50.2, 81.2 | 195 |  |
 | 134 | O | 92684 | Ornery Ornery Galestriders | 2521 | 50.7, 81.1 | 31 |  |
-| 135 | A | 92698 | What Is My Purpose? | 2521 | 48.9, 78.3 | 146 |  |
+| 135 | A | 92698 | What Is My Purpose? | 2521 | 48.9, 78.2 | 146 |  |
 | 136 | T | 92683 | Flutterfly Dust | 2521 | 46.7, 82.0 | 182 |  |
 | 137 | T | 92684 | Ornery Ornery Galestriders | 2521 | 46.7, 82.0 | 0 |  |
 | 138 | T | 92698 | What Is My Purpose? | 2521 | 46.7, 82.0 | 0 |  |
@@ -476,9 +497,9 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 - step 1: `level 2` — About 8 mobs here (Pesky Cirrusfly, level 1)
 - step 3: `level 4` — About 50 mobs here (Pesky Cirrusfly, level 1)
-- step 205: `boat 2521 65.1 81.4` — Take the skyboat to Dalaran (east dock of Valanaar)
-- step 206: `goto 1416 12 56.2` — Take the Skyborne portal to Stormwind
-- step 207: `fp 1453 71.29 72.23`
+- step 225: `boat 2521 65.1 81.4` — Take the skyboat to Dalaran (east dock of Valanaar)
+- step 226: `goto 1416 12 56.2` — Take the Skyborne portal to Stormwind
+- step 227: `fp 1453 71.29 72.23`
 
 ## Warnings
 

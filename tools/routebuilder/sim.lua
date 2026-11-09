@@ -50,6 +50,16 @@ sim.CONST = {
   TRIVIAL_GRIND = 3,      -- mobs de fin de chapitre en dessous desquels on n'écrit pas d'étape `level`
   CARRY_BONUS = 0,        -- s de bonus d'une quête rendue dans un chapitre suivant (aucun : XP comptée)
   LOG_CAP = 20,           -- quêtes dans le journal
+  -- objets qui démarrent une quête : taux inconnu (objet propre à Forever) d'un mob ordinaire ; un mob nommé
+  -- (élite, rare ou au plus STARTER_UNIQUE_SPAWNS apparitions) lâche son objet à coup sûr
+  STARTER_UNKNOWN_RATE = 0.2,
+  STARTER_UNIQUE_SPAWNS = 2,
+  -- monstres à tuer en moyenne (1 / taux) au-delà desquels la quête est laissée, après déduction du farm
+  -- de niveau du chapitre fait sur ces monstres (opts.grindBudget)
+  STARTER_MAX_KILLS = 60,
+  -- quêtes de classe tissées dans la route (étapes `classes`) : détour au plus (s), au-delà la quête reste
+  -- proposée en jeu par la fenêtre des quêtes de classe
+  CLASS_MAX_DETOUR = 600,
   LEVEL_SLACK = 1,        -- niveaux de dépassement tolérés au-delà de maxLevel (budget d'XP)
   FAR_PENALTY = 1e6,      -- coût d'ordonnancement d'un trajet impossible à pied (autre région)
   TRANSIT = 900,          -- s forfaitaires quand aucun trajet n'est connu (ni marche, ni vol, ni liaison)
@@ -657,7 +667,23 @@ sim.EVENT_SORTS = {
 }
 
 -- Renvoie info ou nil, raison (raison nil = ignorée sans la signaler).
-local function analyse(ctx, q)
+-- Taux supposé d'un objet de départ sans taux connu : 1 pour un mob nommé (élite ou rare, ou au plus
+-- STARTER_UNIQUE_SPAWNS apparitions), STARTER_UNKNOWN_RATE sinon.
+function sim.starterGuess(D, npcId)
+  local n = D.npcs[npcId]
+  if not n then return nil end
+  if (n.rank or 0) > 0 or totalSpawns(D, "npc", npcId) <= C.STARTER_UNIQUE_SPAWNS then return 1 end
+  return C.STARTER_UNKNOWN_RATE
+end
+
+-- Tués comptés dans le rendement d'une prise par objet : tués attendus moins ceux pris sur le farm de niveau.
+function sim.starterCost(s)
+  return math.max(0, (s.kills or 0) - (s.budget or 0))
+end
+
+-- classMode : quête de classe examinée pour une étape `classes` (sim.weaveClassQuests) : ni donjon, ni
+-- départ par objet, ni rendu reporté.
+local function analyse(ctx, q, classMode)
   local D, plan, state = ctx.D, ctx.plan, ctx.state
   local forced = ctx.force[q.id]
   if state.done[q.id] then return nil end
@@ -672,9 +698,14 @@ local function analyse(ctx, q)
       local it = D.items[itemId]
       if it then
         local pts = {}
+        local known = D.drops[itemId]
         for _, npcId in ipairs(it.npcDrops) do
-          local rate = (D.drops[itemId] and D.drops[itemId][npcId]) or 0.2
-          for _, p in ipairs(pointsOf(ctx, "npc", npcId, rate)) do p.npc = npcId; p.rate = rate; pts[#pts + 1] = p end
+          -- taux Wowhead (Questie, data/StarterDrops.lua) ; un PNJ absent d'une liste connue ne lâche rien d'utile
+          local rate = known and known[npcId]
+          if not known then rate = sim.starterGuess(D, npcId) end
+          if rate and rate > 0 then
+            for _, p in ipairs(pointsOf(ctx, "npc", npcId, rate)) do p.npc = npcId; p.rate = rate; pts[#pts + 1] = p end
+          end
         end
         for _, objId in ipairs(it.objectDrops) do
           for _, p in ipairs(pointsOf(ctx, "object", objId, 1)) do p.rate = 1; pts[#pts + 1] = p end
@@ -683,7 +714,9 @@ local function analyse(ctx, q)
         if pos then
           local rate, lvl = 0, 0
           for _, p in ipairs(chosen) do rate = rate + p.rate; lvl = lvl + (p.npc and npcLevel(D, p.npc) or 0) end
-          itemStart = { item = itemId, pos = pos, rate = rate / #chosen, level = math.floor(lvl / #chosen) }
+          itemStart = { item = itemId, pos = pos, rate = rate / #chosen, level = math.floor(lvl / #chosen),
+                        guess = known == nil and ctx.D.starterUnknown and ctx.D.starterUnknown[itemId] or nil }
+          itemStart.kills = math.ceil(1 / itemStart.rate - 1e-9)
           -- objet de départ dans un coffre fermé à clé : la clé tombe d'un PNJ à tuer avant
           for _, p in ipairs(chosen) do
             if not p.npc then
@@ -700,9 +733,10 @@ local function analyse(ctx, q)
     end
   end
   if #starters == 0 and not itemStart then return nil end
+  if classMode and itemStart then return nil end
 
   -- La quête démarre dans la région : chaque exclusion est signalée dans le rapport (spec § 7.8).
-  if qdb.isClassQuest(q) then return nil, "class quest (ClassQuestData.lua)" end
+  if qdb.isClassQuest(q) and not classMode then return nil, "class quest (ClassQuestData.lua)" end
   if q.blacklisted and not forced then return nil, "Questie blacklist" end
   if sim.EVENT_SORTS[q.zoneOrSort or 0] and not forced then return nil, "seasonal or event quest" end
   -- tranche de niveaux
@@ -719,6 +753,7 @@ local function analyse(ctx, q)
   end
   -- filtres de données et de règles
   local dungeon = isDungeonQuest(ctx, q)
+  if classMode and dungeon then return nil end
   if dungeon and not ctx.dungeonNames[dungeon] and not ctx.optional[q.id] then
     return nil, ("dungeon quest (%s not picked up in this chapter)"):format(dungeon)
   end
@@ -758,6 +793,7 @@ local function analyse(ctx, q)
   local finishers = {}
   for _, id in ipairs(q.finishers.npcs) do for _, p in ipairs(spawnsIn(ctx, "npc", id, true)) do finishers[#finishers + 1] = p end end
   for _, id in ipairs(q.finishers.objects) do for _, p in ipairs(spawnsIn(ctx, "object", id, true)) do finishers[#finishers + 1] = p end end
+  if #finishers == 0 and classMode then return nil end
   if #finishers == 0 and ctx.carrySet and not info.timed then
     -- rendu dans un des chapitres suivants du parcours : prise et objectifs ici, rendu plus tard
     for _, id in ipairs(q.finishers.npcs) do
@@ -855,6 +891,192 @@ local function analyse(ctx, q)
 end
 
 ------------------------------------------------------------------------------
+-- Quêtes de classe tissées dans la route
+------------------------------------------------------------------------------
+-- Une quête de classe (masque d'une ou deux classes, chaînes de ClassQuestData.lua) dont le donneur, les
+-- objectifs et le rendu sont dans la région du chapitre devient des étapes `classes = { CLASSE }` posées
+-- après les étapes communes les plus proches (prise, objectifs, rendu, dans cet ordre, après le rendu de
+-- ses pré-requis pour cette classe). L'ordre, le temps et l'XP simulés de la route commune ne changent pas.
+-- Détour estimé (allers-retours depuis les étapes voisines, objectifs, prise et rendu) au-delà de
+-- CLASS_MAX_DETOUR : la quête reste proposée en jeu par la fenêtre des quêtes de classe.
+-- state.classDone["CLASSE:id"] : quêtes de classe posées dans les chapitres précédents du parcours. Les
+-- races pour qui un pré-requis manque sont retirées ensuite (build.raceFilters, rejeu par classe).
+local function stepPos(W, s)
+  if s._pos then return s._pos end
+  if type(s.at) == "table" and type(s.at[1]) == "number" then return mkPos(W, s.at[1], s.at[2], s.at[3]) end
+  return nil
+end
+
+function sim.weaveClassQuests(ctx, steps, report)
+  local D, W, state = ctx.D, ctx.W, ctx.state
+  state.classDone = state.classDone or {}
+  report.classWoven, report.classSkipped = {}, {}
+  local pos, turnIdx = {}, {}
+  -- journal commun après chaque étape : nombre de fin de chapitre (journal, place des autres parcours de race)
+  -- remonté par les prises et rendus du chapitre
+  local logAfter, delta = {}, 0
+  for i, s in ipairs(steps) do
+    pos[i] = stepPos(W, s)
+    -- rendu d'une quête commune dans ce chapitre : une quête de classe qui en dépend vient après
+    if s[1] == "turnin" and type(s[2]) == "number" and not turnIdx[s[2]] then turnIdx[s[2]] = i end
+    if s[1] == "accept" then delta = delta + 1 elseif s[1] == "turnin" then delta = delta - 1 end
+    logAfter[i] = delta
+  end
+  local endLog = state.logPad or 0
+  for _ in pairs(state.log) do endLog = endLog + 1 end
+  local startLog = math.max(0, endLog - delta)
+  logAfter[0] = 0
+  for i = 0, #steps do logAfter[i] = startLog + logAfter[i] end
+  local occ = {} -- occ[classe][i] : quêtes de classe ouvertes après l'étape commune i
+  -- la quête tient une place de iA (prise après l'étape iA) à iT (rendu après l'étape iT)
+  local function logRoom(classes, iA, iT)
+    for _, cls in ipairs(classes) do
+      local o = occ[cls] or {}
+      for i = iA, iT do
+        if logAfter[i] + (o[i] or 0) + 1 > ctx.logCap then return false end
+      end
+    end
+    return true
+  end
+  -- étape commune la plus proche de p à partir de l'index from : index, yards
+  local function nearestStep(p, from)
+    local bi, bd = nil, math.huge
+    for i = math.max(from, 1), #steps do
+      if pos[i] then
+        local d = yards(pos[i], p)
+        if d < bd then bi, bd = i, d end
+      end
+    end
+    return bi, bd
+  end
+  local cands = {}
+  for _, id in ipairs(qdb.sortedKeys(D.quests)) do
+    local q = D.quests[id]
+    if qdb.isClassQuest(q) and not state.log[id] and not state.done[id] then
+      local info, why = analyse(ctx, q, true)
+      if info and info.T and info.A then cands[#cands + 1] = info
+      elseif why then report.classSkipped[#report.classSkipped + 1] = { id = id, name = q.name, reason = why } end
+    end
+  end
+  table.sort(cands, function(a, b)
+    if a.q.level ~= b.q.level then return a.q.level < b.q.level end
+    return a.q.id < b.q.id
+  end)
+  local placed = {}  -- ["CLASSE:id"] = index de l'étape commune après laquelle vient le rendu
+  local function doneFor(cls, p) return state.done[p] or state.classDone[cls .. ":" .. p] or placed[cls .. ":" .. p] end
+  -- index à partir duquel un pré-requis est rendu (rendu commun de ce chapitre, quête de classe posée ici)
+  local function readyAt(cls, p) return placed[cls .. ":" .. p] or turnIdx[p] or 1 end
+  local inserts, seq, used = {}, 0, {}
+  local function add(at, step)
+    seq = seq + 1
+    -- commentaire : niveau simulé de l'étape commune voisine
+    local near = steps[at] and steps[at]._c
+    if step._c and near and near.simLevel then step._c.simLevel = near.simLevel end
+    inserts[#inserts + 1] = { at = at, seq = seq, step = step }
+  end
+  local changed = true
+  while changed do
+    changed = false
+    for _, info in ipairs(cands) do
+      local q = info.q
+      if not used[q.id] then
+        local classes, from = {}, 1
+        for _, cls in ipairs(qdb.classList(q.classes)) do
+          if not state.classDone[cls .. ":" .. q.id] then
+            local ok, f = true, 1
+            for _, p in ipairs(q.preGroup) do
+              if doneFor(cls, p) then f = math.max(f, readyAt(cls, p)) else ok = false end
+            end
+            if ok and #q.preSingle > 0 then
+              local best
+              for _, p in ipairs(q.preSingle) do
+                if doneFor(cls, p) then
+                  local at = readyAt(cls, p)
+                  if not best or at < best then best = at end
+                end
+              end
+              if best then f = math.max(f, best) else ok = false end
+            end
+            for _, x in ipairs(q.exclusiveTo) do if doneFor(cls, x) or state.log[x] then ok = false end end
+            if ok then classes[#classes + 1] = cls; from = math.max(from, f) end
+          end
+        end
+        if #classes > 0 then
+          used[q.id] = true
+          local legs, detour = {}, 2 * C.QUEST_ACTION
+          local iA, dA = nearestStep(info.A, from)
+          local cur, ok = iA, iA ~= nil
+          if ok then
+            detour = detour + 2 * dA / C.WALK
+            for k, site in ipairs(info.sites or {}) do
+              local i, d = nearestStep(site.pos, cur)
+              if not i then ok = false; break end
+              detour = detour + 2 * d / C.WALK + site.dur
+              legs[#legs + 1] = { at = i, site = site, k = k }
+              cur = i
+            end
+          end
+          local iT, dT
+          if ok then iT, dT = nearestStep(info.T, cur); ok = iT ~= nil end
+          if ok then detour = detour + 2 * dT / C.WALK end
+          local room = ok and logRoom(classes, iA, iT)
+          if not ok or detour > C.CLASS_MAX_DETOUR or not room then
+            report.classSkipped[#report.classSkipped + 1] = { id = q.id, name = q.name, classes = classes,
+              reason = not ok and "no route step to attach to"
+                or detour > C.CLASS_MAX_DETOUR and ("detour %d s"):format(math.floor(detour + 0.5))
+                or "quest log full" }
+          else
+            changed = true
+            local raceF = #info.races < #ctx.races and info.races or nil
+            local function deco(step)
+              step.classes = classes
+              if raceF then step.race = raceF end
+              step._c = { name = q.name, level = q.level, simLevel = state.level, xp = xpm.questXP(D, q, state.level) }
+              return step
+            end
+            add(iA, deco({ "accept", q.id }))
+            local nsites = #(info.sites or {})
+            for _, l in ipairs(legs) do
+              local site = l.site
+              local step = { "complete", q.id, at = { site.pos.m, round2(site.pos.x), round2(site.pos.y) } }
+              if nsites > 1 and l.k < nsites and #site.objs == 1 and site.objs[1].index then step.obj = site.objs[1].index end
+              add(l.at, deco(step))
+            end
+            add(iT, deco({ "turnin", q.id, xp = xpm.questXP(D, q, state.level) }))
+            for _, cls in ipairs(classes) do
+              placed[cls .. ":" .. q.id] = iT
+              occ[cls] = occ[cls] or {}
+              for i = iA, iT do occ[cls][i] = (occ[cls][i] or 0) + 1 end
+            end
+            report.classWoven[#report.classWoven + 1] = { id = q.id, name = q.name, classes = classes,
+              detour = detour }
+          end
+        end
+      end
+    end
+  end
+  for _, info in ipairs(cands) do
+    if not used[info.q.id] then
+      report.classSkipped[#report.classSkipped + 1] = { id = info.q.id, name = info.q.name,
+        reason = "prerequisite or exclusive quest not done for the class" }
+    end
+  end
+  if #inserts == 0 then return end
+  for key in pairs(placed) do state.classDone[key] = true end
+  table.sort(inserts, function(a, b)
+    if a.at ~= b.at then return a.at < b.at end
+    return a.seq < b.seq
+  end)
+  local out, j = {}, 1
+  while inserts[j] and inserts[j].at <= 0 do out[#out + 1] = inserts[j].step; j = j + 1 end
+  for i = 1, #steps do
+    out[#out + 1] = steps[i]
+    while inserts[j] and inserts[j].at == i do out[#out + 1] = inserts[j].step; j = j + 1 end
+  end
+  for i = 1, #out do steps[i] = out[i] end
+end
+
+------------------------------------------------------------------------------
 -- Hubs
 ------------------------------------------------------------------------------
 local function buildHubs(infos)
@@ -916,7 +1138,7 @@ local function isolated(info, hubs)
   local hs = nearestHub(hubs, info.A)
   local pos = hs and hs.pos or info.A
   t = t + walk(pos, info.A) + C.QUEST_ACTION
-  if info.itemStart then t = t + (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME end
+  if info.itemStart then t = t + sim.starterCost(info.itemStart) * C.KILL_TIME end
   pos = info.A
   for _, s in ipairs(info.sites or {}) do
     t = t + walk(pos, s.pos) + s.dur
@@ -987,6 +1209,21 @@ function sim.chapter(D, W, plan, state, opts)
       for id, why in pairs(report.levelSkipped) do o2.preDrop[id] = why end
       restore(state, snap)
       steps, report = sim.chapter(D, W, plan, state, o2)
+    end
+    -- Farm de niveau restant : chapitre refait en le comptant comme budget pour les objets de départ (les
+    -- mobs qui les lâchent remplacent le farm). Gardé s'il atteint au moins le même niveau, pas plus lentement.
+    if (report.grindMobs or 0) > C.TRIVIAL_GRIND and not o2.grindBudget then
+      local before = { steps = steps, report = report, state = snapshot(state) }
+      restore(state, snap)
+      o2.grindBudget = report.grindMobs
+      local s2, r2 = sim.chapter(D, W, plan, state, o2)
+      local function progress(st) return st.level + (st.xp or 0) / (xpm.LEVEL_XP[st.level] or 1) end
+      if progress(state) + 1e-6 >= progress(before.state) and state.time <= before.state.time then
+        steps, report = s2, r2
+        report.grindBudget = o2.grindBudget
+      else
+        restore(state, before.state)
+      end
     end
     report.widened = widened
     return steps, report
@@ -1100,6 +1337,34 @@ function sim.chapter(D, W, plan, state, opts)
     for _, x in ipairs(q.exclusiveTo) do if state.done[x] or state.log[x] then return false end end
     return true
   end
+  -- Objets de départ à faible taux : le farm de niveau du chapitre (opts.grindBudget, mobs estimés au premier
+  -- passage) se fait sur les mobs qui les lâchent quand leur niveau rapporte de l'XP ; ces tués-là ne coûtent
+  -- rien de plus. Budget réparti par XP de quête décroissante. Au-delà de STARTER_MAX_KILLS tués restants, la
+  -- quête est laissée.
+  do
+    local budget = opts.grindBudget or 0
+    local list = {}
+    for _, info in ipairs(infos) do
+      if info.itemStart and not info.dropped then list[#list + 1] = info end
+    end
+    table.sort(list, function(a, b)
+      local xa, xb = xpm.questXP(D, a.q, state.level) or 0, xpm.questXP(D, b.q, state.level) or 0
+      if xa ~= xb then return xa > xb end
+      return a.q.id < b.q.id
+    end)
+    for _, info in ipairs(list) do
+      local s = info.itemStart
+      s.budget = nil
+      if budget > 0 and s.level > 0 and s.level >= state.level - 2 and s.level <= state.level + 1 then
+        s.budget = math.min(budget, s.kills)
+        budget = budget - s.budget
+      end
+      if not info.forced and sim.starterCost(s) > C.STARTER_MAX_KILLS then
+        dropInfo(info, ("starter item drop rate %.1f %% (about %d kills)"):format(100 * s.rate, s.kills))
+      end
+    end
+  end
+
   local changed = true
   while changed do
     changed = false
@@ -1118,7 +1383,7 @@ function sim.chapter(D, W, plan, state, opts)
     local q = info.q
     local kills = {}
     for _, s in ipairs(info.sites or {}) do for _, k in ipairs(s.kills) do kills[#kills + 1] = k end end
-    if info.itemStart then kills[#kills + 1] = { info.itemStart.level, math.ceil(1 / math.max(info.itemStart.rate, 0.05)) } end
+    if info.itemStart then kills[#kills + 1] = { info.itemStart.level, info.itemStart.kills } end
     info.kills = kills
     info.value = xpm.questXP(D, q, state.level) + killXP(state.level, kills)
     info.time = isolated(info, hubs)
@@ -1172,7 +1437,7 @@ function sim.chapter(D, W, plan, state, opts)
       return best == math.huge and 0 or 2 * best / C.WALK
     end
     local m = 2 * C.QUEST_ACTION
-    if info.itemStart then m = m + (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME end
+    if info.itemStart then m = m + sim.starterCost(info.itemStart) * C.KILL_TIME end
     m = m + detour(info.A)
     for _, s in ipairs(info.sites or {}) do
       m = m + math.max(C.QUEST_ACTION, s.dur - sharedKills(info, s) * C.KILL_TIME) + detour(s.pos)
@@ -1413,7 +1678,7 @@ function sim.chapter(D, W, plan, state, opts)
       taskOf["A" .. q.id], taskOf["T" .. q.id] = c, c
     else
       local a = addTask({ id = "A" .. q.id, kind = "A", q = q.id, pos = info.A, info = info, after = {},
-        dur = C.QUEST_ACTION + (info.itemStart and (1 / math.max(info.itemStart.rate, 0.05)) * C.KILL_TIME or 0),
+        dur = C.QUEST_ACTION + (info.itemStart and info.itemStart.kills * C.KILL_TIME or 0),
         -- prise par un objet ramassé : tâche de zone d'objectifs (objet d'un coffre : catégorie 1)
         itemStart = info.itemStart and true or nil,
         cat = info.itemStart and (info.itemStart.level == 0 and 1 or 3) or nil })
@@ -1565,7 +1830,7 @@ function sim.chapter(D, W, plan, state, opts)
           for _, s in ipairs(info.sites or {}) do for _, k in ipairs(s.kills) do kills[#kills + 1] = k end end
           t.gain = function(level) return killXP(level, kills) + xpm.questXP(D, q, level) end
         elseif t.kind == "A" and info.itemStart then
-          local lvl, n = info.itemStart.level, math.ceil(1 / math.max(info.itemStart.rate, 0.05))
+          local lvl, n = info.itemStart.level, info.itemStart.kills
           t.gain = function(level) return xpm.mobXP(level, lvl) * n end
         end
       end
@@ -1760,6 +2025,7 @@ function sim.chapter(D, W, plan, state, opts)
         if info.optional then step.optional = true; step.dungeon = info.optional end
         if info.dungeonOnly then step.optional = true; step.dungeon = info.dungeonOnly end
         step._c = { name = q.name, level = q.level, simLevel = state.level }
+        step._pos = t.pos -- lieu de l'étape (quêtes de classe tissées : sim.weaveClassQuests)
         return step
       end
       if (t.kind == "A" or t.kind == "C" or t.kind == "O") and t.reqLevel and state.level < t.reqLevel and not t.unsafe then
@@ -1773,6 +2039,9 @@ function sim.chapter(D, W, plan, state, opts)
           step.at = { t.pos.m, round2(t.pos.x), round2(t.pos.y) }
           local it = D.items[info.itemStart.item]
           step.note = ("Loot %s to start the quest"):format(it and it.name or ("item " .. info.itemStart.item))
+          if info.itemStart.rate < 1 and not info.itemStart.guess then
+            step.note = ("%s (%.1f %% drop: about %d kills)"):format(step.note, 100 * info.itemStart.rate, info.itemStart.kills)
+          end
           local key = info.itemStart.key
           if key then
             local holder = D.npcs[key.npcs[1]]
@@ -1901,6 +2170,9 @@ function sim.chapter(D, W, plan, state, opts)
     ctx.grindMobs = (ctx.grindMobs or 0) + n
   end
   report.grindMobs = ctx.grindMobs
+
+  -- quêtes de classe courtes : étapes `classes` posées sur la route, sans effet sur la simulation commune
+  sim.weaveClassQuests(ctx, steps, report)
 
   -- contrôle qualité de l'itinéraire (allers-retours évitables)
   report.quality = quality.check(report.legs, {

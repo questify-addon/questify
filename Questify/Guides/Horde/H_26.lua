@@ -2,21 +2,23 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 44 étapes, niveau final 55.00, ~63143 xp/h, 165 min.
+-- Simulation : 45 étapes, niveau final 55.00, ~63197 xp/h, 165 min.
 Q:RegisterGuide({
   id = "H_26",
   title = "Felwood",
   faction = "Horde",
   minLevel = 54, maxLevel = 55,
   next = "H_27",
-  sim = { steps = 44, endLevel = 55.00, xpPerHour = 63143, minutes = 165 },
+  sim = { steps = 45, endLevel = 55.00, xpPerHour = 63197, minutes = 165 },
   steps = {
     { "hearth", 1447 }, -- pierre de foyer
     { "accept", 4102 }, -- Cleansing Felwood (lvl 55, ~5650 xp, sim lvl 54)
     { "accept", 8460 }, -- Timbermaw Ally (lvl 48, ~3520 xp, sim lvl 54)
     { "accept", 5155 }, -- Forces of Jaedenar (lvl 51, ~4900 xp, sim lvl 54)
     { "complete", 4102, at = { 1448, 58.31, 20.92 } }, -- Cleansing Felwood (lvl 55, ~5650 xp, sim lvl 54)
-    { "accept", 5202, at = { 1448, 39.53, 48.92 }, note = "Loot Blood Red Key to start the quest" }, -- A Strange Red Key (lvl 55, ~5650 xp, sim lvl 54)
+    { "accept", 5202, at = { 1448, 39.53, 48.86 }, note = "Loot Blood Red Key to start the quest (5.2 % drop: about 20 kills)" }, -- A Strange Red Key (lvl 55, ~5650 xp, sim lvl 54)
+    { "accept", 7601, classes = { "WARLOCK" } }, -- What Niby Commands (lvl 50, ~470 xp, sim lvl 54)
+    { "turnin", 7601, xp = 470, classes = { "WARLOCK" } }, -- What Niby Commands (lvl 50, ~470 xp, sim lvl 54)
     { "fp", 1448, 34.44, 53.96 }, -- point de vol
     { "accept", 4505 }, -- Well of Corruption (lvl 54, ~5450 xp, sim lvl 54)
     { "accept", 6162 }, -- A Husband's Last Battle (lvl 51, ~4900 xp, sim lvl 54)
@@ -51,9 +53,8 @@ Q:RegisterGuide({
     { "accept", 8461 }, -- Deadwood of the North (lvl 55, ~5650 xp, sim lvl 54)
     { "turnin", 8462, xp = 560 }, -- Speak to Nafien (lvl 55, ~560 xp, sim lvl 54)
     { "complete", 8461, at = { 1448, 62.07, 8.44 } }, -- Deadwood of the North (lvl 55, ~5650 xp, sim lvl 54)
-    { "accept", 5083, at = { 1448, 60.23, 5.75 }, note = "Loot Empty Firewater Flask to start the quest" }, -- Winterfall Firewater (lvl 56, ~0 xp, sim lvl 54)
     { "turnin", 8461, xp = 5650 }, -- Deadwood of the North (lvl 55, ~5650 xp, sim lvl 54)
     { "accept", 8465 }, -- Speak to Salfa (lvl 55, ~0 xp, sim lvl 54)
-    { "level", 55, at = { 1448, 62.54, 9.84 }, note = "About 250 more mobs here (Deadwood Avenger, level 54)" }, -- farm de niveau
+    { "level", 55, at = { 1448, 62.54, 9.84 }, note = "About 241 more mobs here (Deadwood Avenger, level 54)" }, -- farm de niveau
   },
 })

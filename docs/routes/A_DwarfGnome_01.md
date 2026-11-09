@@ -9,7 +9,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Time | 36 min |
 | XP gained | 7660 |
 | XP/h | 12667 |
-| Steps | 40 |
+| Steps | 74 |
 | Quests turned in | 15 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 4.30 |
@@ -61,6 +61,31 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98574 | Hallowed Memorandum | 1 | class quest (ClassQuestData.lua) |
 | 98581 | Archaic Rune | 1 | class quest (ClassQuestData.lua) |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3106 | Simple Rune | 1 | WARRIOR | woven, detour 13 s |
+| 3107 | Consecrated Rune | 1 | PALADIN | woven, detour 18 s |
+| 3108 | Etched Rune | 1 | HUNTER | woven, detour 17 s |
+| 3109 | Encrypted Rune | 1 | ROGUE | woven, detour 13 s |
+| 3110 | Hallowed Rune | 1 | PRIEST | woven, detour 21 s |
+| 3112 | Simple Memorandum | 1 | WARRIOR | woven, detour 13 s |
+| 3113 | Encrypted Memorandum | 1 | ROGUE | woven, detour 13 s |
+| 3114 | Glyphic Memorandum | 1 | MAGE | woven, detour 21 s |
+| 3115 | Tainted Memorandum | 1 | WARLOCK | woven, detour 23 s |
+| 98574 | Hallowed Memorandum | 1 | PRIEST | woven, detour 21 s |
+| 98581 | Archaic Rune | 1 | SHAMAN | woven, detour 23 s |
+| 1599 | Beginnings | 4 | WARLOCK | woven, detour 182 s |
+| 5626 | In Favor of the Light | 4 | PRIEST | woven, detour 14 s |
+| 94373 | Call of Earth | 4 | SHAMAN | woven, detour 126 s |
+| 94374 | Call of Earth | 4 | SHAMAN | woven, detour 98 s |
+| 94375 | Call of Earth | 4 | SHAMAN | woven, detour 38 s |
+| 94449 | Call of Fire | 10 | SHAMAN | quest level 10 above the band |
+| 94472 | Earth Sapta | 4 | SHAMAN | repeatable |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -108,7 +133,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 13 | A | 3361 | A Refugee's Quandary | 1426 | 28.6, 67.6 | 7 |  |
 | 14 | T | 179 | Dwarven Outfitters | 1426 | 29.9, 71.2 | 135 |  |
 | 15 | A | 233 | Coldridge Valley Mail Delivery | 1426 | 29.9, 71.2 | 0 |  |
-| 16 | A | 170 | A New Threat | 1426 | 29.7, 71.3 | 10 |  |
+| 16 | A | 170 | A New Threat | 1426 | 29.7, 71.2 | 10 |  |
 | 17 | O | 170 | A New Threat | 1426 | 31.0, 75.7 | 161 |  |
 | 18 | O | 218 | The Stolen Journal | 1426 | 30.5, 80.2 | 147 |  |
 | 19 | O | 3361 | A Refugee's Quandary | 1426 | 26.3, 79.3 | 206 |  |
@@ -123,7 +148,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 28 | O | 97277 | Grund and Gozwin | 1426 | 27.3, 62.9 | 435 | near #11 (went 604 yd away) |
 | 29 | T | 97277 | Grund and Gozwin | 1426 | 28.7, 67.5 | 167 |  |
 | 30 | T | 3361 | A Refugee's Quandary | 1426 | 28.6, 67.6 | 7 |  |
-| 31 | T | 170 | A New Threat | 1426 | 29.7, 71.3 | 131 |  |
+| 31 | T | 170 | A New Threat | 1426 | 29.7, 71.2 | 131 |  |
 | 32 | T | 282 | Senir's Observations | 1426 | 33.5, 71.8 | 186 |  |
 | 33 | A | 420 | Senir's Observations | 1426 | 33.5, 71.8 | 0 |  |
 | 34 | A | 96628 | The Adventurer | 1426 | 33.5, 71.8 | 0 |  |
@@ -152,7 +177,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 40: `level 6` — About 10 more mobs here (Wendigo, level 6)
+- step 74: `level 6` — About 10 more mobs here (Wendigo, level 6)
 
 ## Warnings
 

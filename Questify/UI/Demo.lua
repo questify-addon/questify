@@ -42,6 +42,7 @@ local ITEM_TRIES, ITEM_DELAY = 6, 0.5          -- attente du chargement d'un obj
 local SUPPLY_COLOR = "|cffffd040"
 local CENTER_COLOR = { r = 1, g = 0.82, b = 0.25 }
 local WHY_DATA, WHY_API, WHY_ITEM = "UI_DEMO_WHY_DATA", "UI_DEMO_WHY_API", "UI_DEMO_WHY_ITEM"
+local WHY_TRACKER = "UI_DEMO_WHY_TRACKER"
 
 local token = 0            -- change à chaque scène et à chaque « off » : les attentes en cours s'annulent
 local patches = {}         -- fonctions remplacées : { table, clé, original }
@@ -229,7 +230,18 @@ function SCENE.classquest()
   return true
 end
 
+-- Le suivi ne dessine ses alertes qu'avec QuestieDB et un chapitre en cours (UI/Tracker.lua, Refresh) :
+-- sans eux, une scène qui ne montre qu'une alerte du suivi n'aurait rien à l'écran.
+local function trackerShowsChapter()
+  local qdb = Q.QDB
+  if not qdb then return false end
+  local status = qdb.Status and qdb:Status() or (qdb.IsAvailable and qdb:IsAvailable() and "ok") or "missing"
+  if status ~= "ok" then return false end
+  return Q.Progress and Q.Progress.Guide and Q.Progress:Guide() ~= nil or false
+end
+
 function SCENE.classlate()
+  if not trackerShowsChapter() then return false, WHY_TRACKER end
   local chain = pickChain(true)
   if not (Q.UI.ClassQuestPopup and chain) then return false, WHY_DATA end
   classAlert(chain, true)

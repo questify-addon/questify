@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 31 étapes, niveau final 30.00, ~33001 xp/h, 80 min.
+-- Simulation : 31 étapes, niveau final 30.00, ~33013 xp/h, 81 min.
 Q:RegisterGuide({
   id = "A_05",
   title = "Hillsbrad Foothills",
   faction = "Alliance",
   minLevel = 29, maxLevel = 30,
   next = "A_08",
-  sim = { steps = 31, endLevel = 30.00, xpPerHour = 33001, minutes = 80 },
+  sim = { steps = 31, endLevel = 30.00, xpPerHour = 33013, minutes = 81 },
   steps = {
     { "hearth", 1437 }, -- pierre de foyer
     { "boat", 1437, 4.9, 57.3, note = "Take the boat to Southshore" }, -- bateau
@@ -32,15 +32,15 @@ Q:RegisterGuide({
     { "turnin", 561, xp = 255 }, -- Farren's Proof (lvl 32, ~255 xp, sim lvl 29)
     { "accept", 562 }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 29)
     { "complete", 555, at = { 1424, 56.08, 53.87 } }, -- Soothing Turtle Bisque (lvl 31, ~2500 xp, sim lvl 29)
-    { "turnin", 79975, xp = 640, race = { "Dwarf", "Gnome", "Human" } }, -- Eagle's Fist (lvl 32, ~640 xp, sim lvl 29)
-    { "accept", 79976, race = { "Dwarf", "Gnome", "Human" } }, -- This Must Be The Place (lvl 32, ~640 xp, sim lvl 29)
-    { "turnin", 79976, xp = 640, race = { "Dwarf", "Gnome", "Human" } }, -- This Must Be The Place (lvl 32, ~640 xp, sim lvl 29)
+    { "turnin", 79975, xp = 640, race = { "Dwarf", "Gnome" } }, -- Eagle's Fist (lvl 32, ~640 xp, sim lvl 29)
+    { "accept", 79976, race = { "Dwarf", "Gnome" } }, -- This Must Be The Place (lvl 32, ~640 xp, sim lvl 29)
+    { "turnin", 79976, xp = 640, race = { "Dwarf", "Gnome" } }, -- This Must Be The Place (lvl 32, ~640 xp, sim lvl 29)
     { "complete", 98071, at = { 1424, 70, 79 } }, -- Brewer's Trade (lvl 27, ~1100 xp, sim lvl 29)
     { "complete", 562, at = { 1424, 58.14, 71.42 } }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 29)
     { "turnin", 98071, xp = 1100 }, -- Brewer's Trade (lvl 27, ~1100 xp, sim lvl 29)
     { "turnin", 555, xp = 2500 }, -- Soothing Turtle Bisque (lvl 31, ~2500 xp, sim lvl 29)
     { "turnin", 562, xp = 1950 }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 29)
     { "accept", 563 }, -- Reassignment (lvl 32, ~0 xp, sim lvl 29)
-    { "level", 30, at = { 1424, 59.96, 74.99 }, note = "About 37 more mobs here (Daggerspine Shorehunter, level 30)" }, -- farm de niveau
+    { "level", 30, at = { 1424, 59.96, 74.99 }, note = "About 38 more mobs here (Daggerspine Shorehunter, level 30)" }, -- farm de niveau
   },
 })

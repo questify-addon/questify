@@ -106,6 +106,16 @@ return {
     noErrors(t)
   end,
 
+  -- Sans chapitre en cours (assistant pas terminé), le suivi ne dessine pas l'alerte : la scène le dit.
+  classlate_without_a_chapter_says_why = function(t)
+    local Q = load()
+    Q.Progress.Guide = function() return nil end
+    qf("demo classlate")
+    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_MISSING, "classlate", Q.L.UI_DEMO_WHY_TRACKER)), "reason printed")
+    t.ok(not shown(Q.UI.Tracker.alert), "no alert drawn")
+    noErrors(t)
+  end,
+
   dungeon_scene_opens_the_faction_dungeon = function(t)
     local Q = load()
     qf("demo dungeon")

@@ -5,11 +5,11 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.23 |
+| Simulated level | 1.00 -> 6.22 |
 | Time | 44 min |
-| XP gained | 8432 |
-| XP/h | 11484 |
-| Steps | 52 |
+| XP gained | 8383 |
+| XP/h | 11418 |
+| Steps | 71 |
 | Quests turned in | 21 |
 | Hubs | 2 |
 | Median ratio (XP/s) | 3.11 |
@@ -29,15 +29,15 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6 | 18 | Brotherhood of Thieves | 4 | 355 | 4 |
 | 7 | 3903 | Milly Osworth | 4 | 35 | 4 |
 | 8 | 91743 | Rascally Rodents | 2 | 170 est. | 4 |
-| 9 | 15 | Investigate Echo Ridge | 3 | 250 | 5 |
+| 9 | 15 | Investigate Echo Ridge | 3 | 250 | 4 |
 | 10 | 33 | Wolves Across the Border | 2 | 170 | 5 |
 | 11 | 91745 | Mining Consultant | 3 | 250 est. | 5 |
-| 12 | 91752 | The Big Picture | 3 | 250 est. | 5 |
-| 13 | 21 | Skirmish at Echo Ridge | 5 | 450 | 5 |
+| 12 | 21 | Skirmish at Echo Ridge | 5 | 450 | 5 |
+| 13 | 91752 | The Big Picture | 3 | 250 est. | 5 |
 | 14 | 91758 | Follow That Kobold! | 4 | 180 est. | 5 |
 | 15 | 3904 | Milly's Harvest | 4 | 180 | 5 |
 | 16 | 3905 | Grape Manifest | 4 | 355 | 5 |
-| 17 | 6 | Bounty on Garrick Padfoot | 5 | 335 | 6 |
+| 17 | 6 | Bounty on Garrick Padfoot | 5 | 335 | 5 |
 | 18 | 96627 | The Adventurer | 6 | 135 est. | 6 |
 | 19 | 2158 | Rest and Relaxation | 5 | 110 | 6 |
 | 20 | 54 | Report to Goldshire | 5 | 225 | 6 |
@@ -59,6 +59,22 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 5623 | In Favor of the Light | 4 | class quest (ClassQuestData.lua) |
 | 92479 | A Scribbled Letter | 1 | class quest (ClassQuestData.lua) |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 3100 | Simple Letter | 1 | WARRIOR | woven, detour 19 s |
+| 3101 | Consecrated Letter | 1 | PALADIN | woven, detour 20 s |
+| 3102 | Encrypted Letter | 1 | ROGUE | woven, detour 15 s |
+| 3103 | Hallowed Letter | 1 | PRIEST | woven, detour 16 s |
+| 3104 | Glyphic Letter | 1 | MAGE | woven, detour 17 s |
+| 3105 | Tainted Letter | 1 | WARLOCK | woven, detour 18 s |
+| 92479 | A Scribbled Letter | 1 | HUNTER | woven, detour 10 s |
+| 1598 | The Stolen Tome | 4 | WARLOCK | woven, detour 106 s |
+| 5623 | In Favor of the Light | 4 | PRIEST | woven, detour 21 s |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -68,26 +84,26 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 6 | Bounty on Garrick Padfoot | 5 | 395 | 0 | 144 | 74 | 2.73 | 5.33 | 1 |  |
-| 7 | Kobold Camp Cleanup | 2 | 670 | 0 | 249 | 218 | 3.07 | 3.94 | 1 |  |
-| 15 | Investigate Echo Ridge | 3 | 800 | 0 | 264 | 234 | 3.31 | 4.56 | 1 |  |
+| 7 | Kobold Camp Cleanup | 2 | 670 | 0 | 249 | 218 | 3.07 | 3.93 | 1 |  |
+| 15 | Investigate Echo Ridge | 3 | 800 | 0 | 264 | 234 | 3.31 | 4.55 | 1 |  |
 | 18 | Brotherhood of Thieves | 4 | 1510 | 0 | 511 | 496 | 2.67 | 3.11 | 1 |  |
-| 21 | Skirmish at Echo Ridge | 5 | 1110 | 0 | 341 | 262 | 3.54 | 5.93 | 1 |  |
+| 21 | Skirmish at Echo Ridge | 5 | 1110 | 0 | 341 | 262 | 3.53 | 5.91 | 1 |  |
 | 33 | Wolves Across the Border | 2 | 920 | 0 | 345 | 327 | 2.66 | 2.81 | 1 |  |
-| 54 | Report to Goldshire | 5 | 463 | 238 | 99 | 14 | 4.67 | 32.96 | 0 |  |
+| 54 | Report to Goldshire | 5 | 459 | 234 | 99 | 14 | 4.63 | 32.72 | 0 |  |
 | 783 | A Threat Within | 1 | 40 | 0 | 25 | 25 | 2.81 | 3.31 | 0 |  |
-| 2158 | Rest and Relaxation | 5 | 274 | 164 | 98 | 34 | 2.79 | 7.89 | 0 |  |
-| 3903 | Milly Osworth | 4 | 82 | 47 | 44 | 44 | 2.08 | 2.57 | 0 |  |
+| 2158 | Rest and Relaxation | 5 | 272 | 162 | 98 | 34 | 2.76 | 7.82 | 0 |  |
+| 3903 | Milly Osworth | 4 | 81 | 46 | 44 | 44 | 2.08 | 2.57 | 0 |  |
 | 3904 | Milly's Harvest | 4 | 180 | 0 | 177 | 127 | 2.15 | 2.89 | 1 |  |
 | 3905 | Grape Manifest | 4 | 355 | 0 | 30 | 30 | 11.57 | 11.57 | 0 |  |
-| 5261 | Eagan Peltskinner | 2 | 112 | 27 | 31 | 31 | 2.77 | 2.90 | 0 |  |
-| 91741 | Nibbled-On Book | 2 | 397 | 0 | 143 | 116 | 3.04 | 3.73 | 0 |  |
+| 5261 | Eagan Peltskinner | 2 | 111 | 26 | 31 | 31 | 2.77 | 2.89 | 0 |  |
+| 91741 | Nibbled-On Book | 2 | 345 | 0 | 143 | 116 | 2.91 | 3.57 | 0 |  |
 | 91743 | Rascally Rodents | 2 | 1002 | 0 | 376 | 343 | 3.11 | 3.84 | 1 |  |
-| 91745 | Mining Consultant | 3 | 250 | 0 | 43 | 16 | 4.56 | 9.43 | 0 |  |
-| 91752 | The Big Picture | 3 | 305 | 0 | 94 | 34 | 4.13 | 7.98 | 1 |  |
-| 91758 | Follow That Kobold! | 4 | 180 | 0 | 33 | 33 | 5.13 | 7.40 | 0 |  |
-| 91772 | Shhh! We're Hunting Kobolds | 4 | 613 | 258 | 121 | 69 | 5.03 | 8.79 | 1 |  |
+| 91745 | Mining Consultant | 3 | 250 | 0 | 43 | 16 | 4.55 | 9.42 | 0 |  |
+| 91752 | The Big Picture | 3 | 305 | 0 | 94 | 34 | 4.12 | 7.96 | 1 |  |
+| 91758 | Follow That Kobold! | 4 | 180 | 0 | 33 | 33 | 5.10 | 7.36 | 0 |  |
+| 91772 | Shhh! We're Hunting Kobolds | 4 | 609 | 254 | 121 | 69 | 5.00 | 8.74 | 1 |  |
 | 92124 | Book Inventory | 2 | 85 | 0 | 16 | 16 | 3.20 | 3.91 | 0 |  |
-| 96627 | The Adventurer | 6 | 338 | 203 | 86 | 14 | 3.91 | 24.11 | 0 |  |
+| 96627 | The Adventurer | 6 | 335 | 200 | 86 | 14 | 3.88 | 23.91 | 0 |  |
 
 ## Itinerary
 
@@ -114,8 +130,8 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 15 | A | 18 | Brotherhood of Thieves | 1429 | 48.2, 42.9 | 69 |  |
 | 16 | O | 18 | Brotherhood of Thieves | 1429 | 54.0, 47.7 | 229 |  |
 | 17 | T | 18 | Brotherhood of Thieves | 1429 | 48.2, 42.9 | 229 |  |
-| 18 | A | 3903 | Milly Osworth | 1429 | 48.2, 42.9 | 0 |  |
-| 19 | A | 6 | Bounty on Garrick Padfoot | 1429 | 48.2, 42.9 | 0 |  |
+| 18 | A | 6 | Bounty on Garrick Padfoot | 1429 | 48.2, 42.9 | 0 |  |
+| 19 | A | 3903 | Milly Osworth | 1429 | 48.2, 42.9 | 0 |  |
 | 20 | O | 15 | Investigate Echo Ridge | 1429 | 48.3, 34.0 | 206 |  |
 | 21 | O | 91743 | Rascally Rodents | 1429 | 48.5, 34.6 | 14 |  |
 | 22 | O | 33 | Wolves Across the Border | 1429 | 47.0, 37.2 | 79 |  |
@@ -130,9 +146,9 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 31 | A | 91752 | The Big Picture | 1429 | 47.2, 32.2 | 0 |  |
 | 32 | O | 21 | Skirmish at Echo Ridge | 1429 | 48.9, 28.3 | 105 |  |
 | 33 | O | 91752 | The Big Picture | 1429 | 49.2, 28.0 | 14 |  |
-| 34 | T | 91752 | The Big Picture | 1429 | 48.9, 41.6 | 314 |  |
-| 35 | T | 21 | Skirmish at Echo Ridge | 1429 | 48.9, 41.6 | 0 |  |
-| 36 | A | 54 | Report to Goldshire | 1429 | 48.9, 41.6 | 0 |  |
+| 34 | T | 21 | Skirmish at Echo Ridge | 1429 | 48.9, 41.6 | 314 |  |
+| 35 | A | 54 | Report to Goldshire | 1429 | 48.9, 41.6 | 0 |  |
+| 36 | T | 91752 | The Big Picture | 1429 | 48.9, 41.6 | 0 |  |
 | 37 | A | 91758 | Follow That Kobold! | 1429 | 48.9, 41.6 | 0 |  |
 | 38 | A | 96627 | The Adventurer | 1429 | 48.9, 41.6 | 0 |  |
 | 39 | O | 3904 | Milly's Harvest | 1429 | 54.0, 48.6 | 239 |  |

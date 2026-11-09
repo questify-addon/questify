@@ -59,6 +59,48 @@ local function nodeByName(W, name)
   return nil
 end
 
+-- Étapes propres à une classe (champ `classes`) : noms de qdb.CLASS_BITS (comme Q.CLASS_BITS du jeu).
+local function classNames(v)
+  if type(v) == "string" then return { v } end
+  if type(v) == "table" then return v end
+  return nil
+end
+
+-- classVariants(chapitres) -> classes connues nommées par les étapes `classes` du parcours, triées.
+function paths.classVariants(chapters)
+  local seen, out = {}, {}
+  for _, ch in ipairs(chapters) do
+    for _, s in ipairs(ch.steps or {}) do
+      if type(s) == "table" then
+        for _, c in ipairs(classNames(s.classes) or {}) do
+          if qdb.CLASS_BITS[c] and not seen[c] then seen[c] = true; out[#out + 1] = c end
+        end
+      end
+    end
+  end
+  table.sort(out)
+  return out
+end
+
+-- stepsForClass(étapes, classe | nil) -> étapes vues par cette classe (nil : seulement les étapes sans
+-- `classes`), index d'origine de chacune.
+function paths.stepsForClass(steps, cls)
+  local out, index = {}, {}
+  for i, s in ipairs(steps or {}) do
+    local keep = true
+    local list = type(s) == "table" and classNames(s.classes)
+    if list then
+      keep = false
+      for _, c in ipairs(list) do if cls and c == cls then keep = true end end
+    end
+    if keep then
+      out[#out + 1] = s
+      index[#out] = i
+    end
+  end
+  return out, index
+end
+
 function paths.replay(D, W, faction, race, chapters, onIssue)
   local log, nlog, done = {}, 0, {}
   local known, hearthMap = {}, nil

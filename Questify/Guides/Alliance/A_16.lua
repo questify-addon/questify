@@ -2,20 +2,20 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 46 étapes, niveau final 42.00, ~40352 xp/h, 142 min.
+-- Simulation : 46 étapes, niveau final 42.00, ~40282 xp/h, 143 min.
 Q:RegisterGuide({
   id = "A_16",
   title = "Badlands",
   faction = "Alliance",
   minLevel = 41, maxLevel = 42,
   next = "A_17",
-  sim = { steps = 46, endLevel = 42.00, xpPerHour = 40352, minutes = 142 },
+  sim = { steps = 46, endLevel = 42.00, xpPerHour = 40282, minutes = 143 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
     { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
     { "fly", 1455, node = 6, note = "Ironforge, Dun Morogh" }, -- vol
     { "fp", 1432, 33.94, 50.95 }, -- point de vol
-    { "accept", 2198, at = { 1418, 47.68, 11.24 }, optional = true, dungeon = "Uldaman", note = "Loot Shattered Necklace to start the quest" }, -- The Shattered Necklace (lvl 41, ~0 xp, sim lvl 41)
+    { "accept", 2198, at = { 1418, 47.68, 11.24 }, optional = true, dungeon = "Uldaman", note = "Loot Shattered Necklace to start the quest (7.1 % drop: about 15 kills)" }, -- The Shattered Necklace (lvl 41, ~0 xp, sim lvl 41)
     { "accept", 710 }, -- Study of the Elements: Rock (lvl 37, ~2850 xp, sim lvl 41)
     { "complete", 710, at = { 1418, 20.96, 45.07 } }, -- Study of the Elements: Rock (lvl 37, ~2850 xp, sim lvl 41)
     { "turnin", 710, xp = 2850 }, -- Study of the Elements: Rock (lvl 37, ~2850 xp, sim lvl 41)
@@ -56,6 +56,6 @@ Q:RegisterGuide({
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1434, node = 19, note = "Booty Bay, Stranglethorn" }, -- vol
     { "turnin", 669, xp = 3150 }, -- Sunken Treasure (lvl 40, ~3150 xp, sim lvl 41)
-    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 120 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
+    { "level", 42, at = { 1434, 27.13, 82.94 }, note = "About 121 more mobs here (Bloodsail Swashbuckler, level 42)" }, -- farm de niveau
   },
 })

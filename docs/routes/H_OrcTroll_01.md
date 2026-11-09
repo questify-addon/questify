@@ -5,14 +5,15 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.06 |
-| Time | 38 min |
-| XP gained | 7804 |
-| XP/h | 12171 |
-| Steps | 40 |
+| Simulated level | 1.00 -> 6.01 |
+| Time | 39 min |
+| XP gained | 7624 |
+| XP/h | 11756 |
+| Steps | 68 |
 | Quests turned in | 15 |
 | Hubs | 2 |
 | Median ratio (XP/s) | 2.79 |
+| Grinding (level steps) | ~2 mobs |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -35,7 +36,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 12 | 96652 | The Adventurer | 6 | 135 est. | 5 |
 | 13 | 96876 | Ukor's Lost Pack | 8 | 530 est. | 5 |
 | 14 | 99123 | Lost in the Shadows | 8 | 700 est. | 5 |
-| 15 | 805 | Report to Sen'jin Village | 5 | 225 | 6 |
+| 15 | 805 | Report to Sen'jin Village | 5 | 225 | 5 |
 
 ## Dropped quests
 
@@ -67,6 +68,37 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 98575 | Tainted Tablet | 1 | class quest (ClassQuestData.lua) |
 | 98576 | Glyphic Parchment | 1 | class quest (ClassQuestData.lua) |
 
+## Class quests
+
+Class quests whose giver, objectives and turn-in are in the chapter region become `classes` steps next to the nearest route steps (the simulated route does not change); the others stay offered in game.
+
+| Quest | Name | Lvl | Classes | Result |
+|---|---|---|---|---|
+| 2383 | Simple Parchment | 1 | WARRIOR | woven, detour 13 s |
+| 3065 | Simple Tablet | 1 | WARRIOR | woven, detour 13 s |
+| 3082 | Etched Tablet | 1 | HUNTER | woven, detour 12 s |
+| 3083 | Encrypted Tablet | 1 | ROGUE | woven, detour 22 s |
+| 3084 | Rune-Inscribed Tablet | 1 | SHAMAN | woven, detour 16 s |
+| 3085 | Hallowed Tablet | 1 | PRIEST | woven, detour 17 s |
+| 3086 | Glyphic Tablet | 1 | MAGE | woven, detour 14 s |
+| 3087 | Etched Parchment | 1 | HUNTER | woven, detour 12 s |
+| 3088 | Encrypted Parchment | 1 | ROGUE | woven, detour 22 s |
+| 3089 | Rune-Inscribed Parchment | 1 | SHAMAN | woven, detour 16 s |
+| 3090 | Tainted Parchment | 1 | WARLOCK | woven, detour 31 s |
+| 98575 | Tainted Tablet | 1 | WARLOCK | woven, detour 31 s |
+| 98576 | Glyphic Parchment | 1 | MAGE | woven, detour 14 s |
+| 5649 | In Favor of Spirituality | 4 | PRIEST | woven, detour 72 s |
+| 1463 | Earth Sapta | 4 | SHAMAN | repeatable |
+| 1464 | Fire Sapta | 13 | SHAMAN | quest level 13 above the band |
+| 1499 | Vile Familiars | 4 | WARLOCK | follow-up already done |
+| 1525 | Call of Fire | 12 | SHAMAN | quest level 12 above the band |
+| 1526 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
+| 1527 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
+| 1485 | Vile Familiars | 4 | WARLOCK | detour 2731 s |
+| 1516 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1517 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1518 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+
 ## Candidate ratios
 
 Value = quest XP at the simulated level + mob XP + strategic bonus. Ratio = chain value / isolated time;
@@ -87,7 +119,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 5441 | Lazy Peons | 4 | 445 | 0 | 155 | 90 | 2.60 | 5.42 | 1 |  |
 | 6394 | Thazz'ril's Pick | 4 | 445 | 0 | 193 | 70 | 2.30 | 6.29 | 1 |  |
 | 96652 | The Adventurer | 6 | 442 | 307 | 143 | 16 | 3.09 | 27.26 | 0 |  |
-| 96876 | Ukor's Lost Pack | 8 | 1015 | 150 | 259 | 178 | 3.91 | 5.70 | 0 |  |
+| 96876 | Ukor's Lost Pack | 8 | 747 | 150 | 179 | 98 | 4.16 | 7.60 | 0 |  |
 | 97279 | Wayward Weapons | 2 | 170 | 0 | 191 | 129 | 0.89 | 1.31 | 1 |  |
 | 99123 | Lost in the Shadows | 8 | 879 | 179 | 158 | 158 | 5.55 | 5.55 | 1 |  |
 

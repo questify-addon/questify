@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 64 étapes, niveau final 30.00, ~24649 xp/h, 208 min.
+-- Simulation : 66 étapes, niveau final 30.00, ~24669 xp/h, 209 min.
 Q:RegisterGuide({
   id = "H_05",
   title = "Hillsbrad Foothills",
   faction = "Horde",
   minLevel = 28, maxLevel = 30,
   next = "H_06",
-  sim = { steps = 64, endLevel = 30.00, xpPerHour = 24649, minutes = 208 },
+  sim = { steps = 66, endLevel = 30.00, xpPerHour = 24669, minutes = 209 },
   steps = {
     { "fp", 1454, 45.12, 63.89 }, -- point de vol
     { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
@@ -22,6 +22,8 @@ Q:RegisterGuide({
     { "accept", 567 }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 28)
     { "sethearth", 1424, 62.78, 19.03 }, -- lier la pierre de foyer
     { "accept", 97287 }, -- Shrewd Negotiations (lvl 33, ~0 xp, sim lvl 28)
+    { "accept", 95125, race = { "Undead" }, classes = { "PALADIN" } }, -- Ott's Masterwork (lvl 25, ~1000 xp, sim lvl 28)
+    { "turnin", 95125, xp = 1000, race = { "Undead" }, classes = { "PALADIN" } }, -- Ott's Masterwork (lvl 25, ~1000 xp, sim lvl 28)
     { "accept", 509 }, -- Elixir of Agony (lvl 28, ~2300 xp, sim lvl 28)
     { "accept", 501 }, -- Elixir of Pain (lvl 24, ~1950 xp, sim lvl 28)
     { "complete", 527, at = { 1424, 33.86, 37.58 } }, -- Battle of Hillsbrad (lvl 24, ~1950 xp, sim lvl 28)
@@ -74,6 +76,6 @@ Q:RegisterGuide({
     { "turnin", 79097, xp = 310 }, -- Baxtan: On Destructive Magics (lvl 20, ~310 xp, sim lvl 29)
     { "turnin", 78149, xp = 310 }, -- Fury of the Land (lvl 20, ~310 xp, sim lvl 29)
     { "turnin", 78145, xp = 310 }, -- Arcanic Systems Manual (lvl 20, ~310 xp, sim lvl 29)
-    { "level", 30, at = { 1458, 61.29, 33.4 }, note = "About 170 more mobs here (Malus, level 29)" }, -- farm de niveau
+    { "level", 30, at = { 1458, 61.29, 33.4 }, note = "About 171 more mobs here (Malus, level 29)" }, -- farm de niveau
   },
 })

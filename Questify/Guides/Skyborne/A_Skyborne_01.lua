@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 207 étapes, niveau final 17.83, ~32128 xp/h, 231 min.
+-- Simulation : 227 étapes, niveau final 17.81, ~32235 xp/h, 229 min.
 Q:RegisterGuide({
   id = "A_Skyborne_01",
   title = "Zephras Isle",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Skyborne" },
   minLevel = 1, maxLevel = 15,
   nextByRace = { Skyborne = "A_01" },
-  sim = { steps = 207, endLevel = 17.83, xpPerHour = 32128, minutes = 231 },
+  sim = { steps = 227, endLevel = 17.81, xpPerHour = 32235, minutes = 229 },
   steps = {
     { "level", 2, at = { 2521, 46.75, 27.74 }, note = "About 8 mobs here (Pesky Cirrusfly, level 1)" }, -- farm de niveau
     { "accept", 92464 }, -- Elemental Unrest (lvl 3, ~250 xp, sim lvl 2)
@@ -64,6 +64,7 @@ Q:RegisterGuide({
     { "accept", 92550 }, -- Havoc in the Highlands (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 93926 }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 92551 }, -- Stolen Supplies (lvl 8, ~700 xp, sim lvl 7)
+    { "accept", 94007, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 7)
     { "accept", 93318 }, -- WANTED: Vulgara the Insatiable (lvl 9, ~780 xp, sim lvl 7)
     { "complete", 93926, at = { 2521, 42.34, 62.02 } }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
     { "turnin", 93926, xp = 700 }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
@@ -110,6 +111,9 @@ Q:RegisterGuide({
     { "accept", 92679 }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 10)
     { "complete", 92679, obj = 2, at = { 2521, 62.08, 73.17 } }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 93317 }, -- Crab Season (lvl 9, ~780 xp, sim lvl 10)
+    { "accept", 94003, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 10)
+    { "turnin", 94007, xp = 125, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 10)
+    { "accept", 94978, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
     { "turnin", 92727, xp = 210 }, -- The Missing Scholar (lvl 10, ~210 xp, sim lvl 10)
     { "accept", 92849 }, -- The Missing Scholar (lvl 10, ~840 xp, sim lvl 10)
     { "complete", 92849, obj = 2, at = { 2521, 52.08, 69.4 } }, -- The Missing Scholar (lvl 10, ~840 xp, sim lvl 10)
@@ -138,6 +142,7 @@ Q:RegisterGuide({
     { "turnin", 93160, xp = 680 }, -- The Forest's Bounty (lvl 13, ~680 xp, sim lvl 11)
     { "turnin", 93172, xp = 680 }, -- Free the Hollows (lvl 13, ~680 xp, sim lvl 11)
     { "complete", 93317, at = { 2521, 53.04, 58.54 } }, -- Crab Season (lvl 9, ~780 xp, sim lvl 11)
+    { "complete", 94978, at = { 2521, 53.04, 58.54 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 11)
     { "complete", 92840, at = { 2521, 47.61, 68.8 } }, -- Catching Wind (lvl 11, ~770 xp, sim lvl 11)
     { "complete", 92679, at = { 2521, 46.7, 81.95 } }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 11)
     { "turnin", 92679, xp = 780 }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 11)
@@ -146,8 +151,8 @@ Q:RegisterGuide({
     { "accept", 92684 }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 11)
     { "complete", 92682, at = { 2521, 47.81, 82.75 } }, -- Make Yourself Useful (lvl 9, ~780 xp, sim lvl 11)
     { "turnin", 92682, xp = 780 }, -- Make Yourself Useful (lvl 9, ~780 xp, sim lvl 11)
-    { "complete", 92683, at = { 2521, 50.17, 81.17 } }, -- Flutterfly Dust (lvl 9, ~780 xp, sim lvl 12)
-    { "complete", 92684, at = { 2521, 50.73, 81.05 } }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 12)
+    { "complete", 92683, at = { 2521, 50.17, 81.17 } }, -- Flutterfly Dust (lvl 9, ~780 xp, sim lvl 11)
+    { "complete", 92684, at = { 2521, 50.73, 81.05 } }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 11)
     { "accept", 92698 }, -- What Is My Purpose? (lvl 9, ~780 xp, sim lvl 12)
     { "turnin", 92683, xp = 780 }, -- Flutterfly Dust (lvl 9, ~780 xp, sim lvl 12)
     { "turnin", 92684, xp = 780 }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 12)
@@ -182,8 +187,13 @@ Q:RegisterGuide({
     { "turnin", 92881, xp = 660 }, -- The High Elder's Request (lvl 11, ~660 xp, sim lvl 13)
     { "accept", 92643 }, -- The Turncoat (lvl 11, ~770 xp, sim lvl 13)
     { "turnin", 94491, xp = 225 }, -- The Fate of the Den (lvl 12, ~225 xp, sim lvl 13)
+    { "accept", 93791, classes = { "MAGE" } }, -- Speak with Belann (lvl 10, ~125 xp, sim lvl 13)
+    { "turnin", 93791, xp = 125, classes = { "MAGE" } }, -- Speak with Belann (lvl 10, ~125 xp, sim lvl 13)
+    { "accept", 94006, classes = { "DRUID" } }, -- The Great Ursera Spirit (lvl 10, ~125 xp, sim lvl 13)
     { "turnin", 92703, xp = 780 }, -- Deliver the News (lvl 9, ~780 xp, sim lvl 13)
     { "turnin", 93317, xp = 780 }, -- Crab Season (lvl 9, ~780 xp, sim lvl 13)
+    { "turnin", 94978, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 13)
+    { "accept", 94979, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 13)
     { "accept", 98512 }, -- Al'Aketh Assassins (lvl 11, ~770 xp, sim lvl 13)
     { "complete", 92643, at = { 2521, 56.16, 60.59 } }, -- The Turncoat (lvl 11, ~770 xp, sim lvl 13)
     { "complete", 98512, at = { 2521, 56.12, 60.56 } }, -- Al'Aketh Assassins (lvl 11, ~770 xp, sim lvl 13)
@@ -197,22 +207,32 @@ Q:RegisterGuide({
     { "accept", 92640 }, -- Desperate Times (lvl 11, ~615 xp, sim lvl 13)
     { "complete", 92640, at = { 2521, 66.14, 76.67 } }, -- Desperate Times (lvl 11, ~615 xp, sim lvl 13)
     { "complete", 92640, at = { 2521, 59.15, 79.78 } }, -- Desperate Times (lvl 11, ~615 xp, sim lvl 13)
+    { "complete", 94979, at = { 2521, 50.73, 81.05 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 13)
     { "turnin", 92640, xp = 615 }, -- Desperate Times (lvl 11, ~615 xp, sim lvl 17)
     { "accept", 93065 }, -- Prepare for Battle (lvl 12, ~910 xp, sim lvl 17)
     { "complete", 93065, at = { 2521, 61.15, 70.93 } }, -- Prepare for Battle (lvl 12, ~910 xp, sim lvl 17)
+    { "turnin", 94979, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 17)
+    { "accept", 94013, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 17)
+    { "complete", 94013, at = { 2521, 52.79, 79.46 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 17)
+    { "turnin", 94013, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 17)
+    { "accept", 94050, classes = { "HUNTER" } }, -- Training the Beast (lvl 10, ~125 xp, sim lvl 17)
+    { "turnin", 94050, xp = 125, classes = { "HUNTER" } }, -- Training the Beast (lvl 10, ~125 xp, sim lvl 17)
     { "turnin", 93065, xp = 910 }, -- Prepare for Battle (lvl 12, ~910 xp, sim lvl 17)
     { "accept", 92947 }, -- Making Our Move (lvl 12, ~910 xp, sim lvl 17)
     { "complete", 92834, at = { 2521, 61.75, 50.43 } }, -- Avenged Tenfold (lvl 11, ~615 xp, sim lvl 17)
     { "complete", 92947, at = { 2521, 61.67, 50.26 } }, -- Making Our Move (lvl 12, ~910 xp, sim lvl 17)
+    { "complete", 94003, at = { 2521, 56.63, 50.37 }, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 17)
     { "turnin", 92947, xp = 910 }, -- Making Our Move (lvl 12, ~910 xp, sim lvl 17)
     { "accept", 93958 }, -- The Inner Sanctum (lvl 12, ~225 xp, sim lvl 17)
     { "turnin", 93958, xp = 225 }, -- The Inner Sanctum (lvl 12, ~225 xp, sim lvl 17)
     { "accept", 93835 }, -- Confront Lorthuna (lvl 12, ~910 xp, sim lvl 17)
     { "complete", 93835, at = { 2521, 74.87, 53.02 } }, -- Confront Lorthuna (lvl 12, ~910 xp, sim lvl 17)
+    { "turnin", 94006, xp = 125, classes = { "DRUID" } }, -- The Great Ursera Spirit (lvl 10, ~125 xp, sim lvl 17)
     { "turnin", 92834, xp = 615 }, -- Avenged Tenfold (lvl 11, ~615 xp, sim lvl 17)
     { "turnin", 93835, xp = 910 }, -- Confront Lorthuna (lvl 12, ~910 xp, sim lvl 17)
     { "accept", 94369 }, -- The Fate of Zephras (lvl 12, ~910 xp, sim lvl 17)
     { "complete", 94369, at = { 2521, 66.17, 76.51 } }, -- The Fate of Zephras (lvl 12, ~910 xp, sim lvl 17)
+    { "turnin", 94003, xp = 500, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 17)
     { "turnin", 94369, xp = 910 }, -- The Fate of Zephras (lvl 12, ~910 xp, sim lvl 17)
     { "accept", 93089 }, -- What Comes Next (lvl 13, ~455 xp, sim lvl 17)
     { "turnin", 93089, xp = 455 }, -- What Comes Next (lvl 13, ~455 xp, sim lvl 17)

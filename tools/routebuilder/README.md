@@ -72,6 +72,8 @@ other chapters from the XML.
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
 | `travel.lua` | Travel time to each `choices` target with `sim.route`, from generated guides and reports (no QuestieDB). |
 | `data/*.csv` | Forever DB2 tables, build 1.60.1.70707 (wago.tools): `UiMapAssignment`, `UiMap`, `TaxiNodes`, `TaxiPath`, `AreaTable`, `Map`. |
+| `data/StarterDrops.lua` | Wowhead Classic drop rates of the items that start a quest (see "Drop rates of quest starters"). |
+| `starter_items.lua`, `starter_drops.py` | Item list for Questie's Wowhead scraper, then `data/StarterDrops.lua` from its output. |
 | `tests/` | `run.lua` runner, `test_world.lua`, `test_xp.lua`, `test_sim.lua` (on the synthetic `fixture_zone.lua`), `test_emit.lua`, `test_choices.lua` (`choices`, `sim`, validation, backfill, travel; no QuestieDB). |
 
 ## Plans (`plans.lua`)
@@ -151,7 +153,8 @@ All thresholds are in `sim.CONST` (`sim.lua`).
    `questLevel` in [minLevel − 3, maxLevel + 3] and `reqLevel ≤ maxLevel` (forced quests skip
    this), a starter spawn in the chapter region (or a starting item dropped by mobs there) and a
    finisher in the region or in `endZones`. Excluded: class quests (class mask of 1 or 2
-   classes: they go to `ClassQuestData.lua`; wider masks such as "all but Warlock" stay in the
+   classes: they go to `ClassQuestData.lua`, and the short ones are woven afterwards as `classes` steps,
+   see "Class quests woven into the route"; wider masks such as "all but Warlock" stay in the
    route with a `class` filter), profession, spell or reputation requirements, repeatable quests
    (`specialFlags` 1), escorts among the event quests (`specialFlags` 2 without an exploration
    point; see "Lot L" below), blacklisted quests, quests already done. Dungeon quests are only accepted in passing (`optional`,
@@ -761,6 +764,58 @@ profession bag), `{ key, title, faction, races, level, bag, quests, rewards }`.
 
 On QuestieDB v1.0.12: 18 entries (12 for the Alliance, 9 for the Horde, 3 of them shared). Turned in by a chapter
 of the routes, so never offered on the race paths that do them: 791, 86784, 97277, 151, 97253, 140, 1003, 58.
+
+## Drop rates, item-started quests and class quests (2026-11-09)
+
+### Drop rates of quest starters (`data/StarterDrops.lua`)
+
+QuestieDB's drop table (Wowhead, through Questie) only covers objective items. An item that starts a quest
+had no rate, and the simulator assumed 20 % (5 kills), with a 5 % floor (20 kills at most). Real rates are
+often far lower: An Old History Book 0.4-1.4 %, the OOX beacons 0.7 %. `data/StarterDrops.lua` holds the
+Wowhead Classic rates of these items ("dropped-by" tab, `count / outof` per NPC), read by `qdb.lua` only
+where Questie has no rate. Items missing from Wowhead Classic (Forever items) are listed in `missing`.
+
+```sh
+luajit tools/routebuilder/starter_items.lua > .cache/starter_items.txt
+python3 tools/routebuilder/starter_drops.py --prepare .cache/starter_items.txt   # copy of Questie's scraper
+(cd .cache/questie-scraper && ../venv-scrapy/bin/python runner.py --item-drops -ex classic)
+python3 tools/routebuilder/starter_drops.py .cache/questie-scraper/item_drop/item_drop_data.json \
+    --ids .cache/starter_items.txt
+```
+
+Scrapy lives in `.cache/venv-scrapy` (`python3 -m venv .cache/venv-scrapy && .cache/venv-scrapy/bin/pip
+install scrapy`). `--prepare` copies the scraper (the `.cache/questie` clone stays untouched), writes the item
+list and sets an honest User-Agent: Wowhead answers 403 to the scraper's fake Chrome one.
+
+Simulator rules (`sim.lua`):
+
+- Expected kills = `ceil(1 / rate)`, no floor. An NPC missing from a known list drops nothing useful. No
+  known rate: 1 for a named mob (elite, rare, or at most `STARTER_UNIQUE_SPAWNS` = 2 spawns),
+  `STARTER_UNKNOWN_RATE` = 0.2 otherwise.
+- Grind budget: when a chapter still ends with level grinding, it is simulated again with
+  `opts.grindBudget` = that many mobs. The budget goes to item-started quests (highest quest XP first) whose
+  mobs give XP at the chapter's start level (level - 2 to level + 1): those kills replace grinding and cost
+  nothing in the yield ratios. The new run is kept when it reaches at least the same level in no more time.
+- More than `STARTER_MAX_KILLS` = 60 kills left after the budget: dropped
+  (`starter item drop rate 0.7 % (about 142 kills)`). The accept step note gives the rate and the kills.
+
+### Class quests woven into the route (`sim.weaveClassQuests`)
+
+A class quest (class mask of 1 or 2 classes, the `ClassQuestData.lua` chains) whose giver, objectives and
+turn-in are in the chapter region becomes `classes = { CLASS }` steps, placed after the nearest route steps:
+accept, objectives and turn-in in this order, after the turn-in of its prerequisites for that class (a
+general quest turned in earlier in the chapter, or a class quest woven here or in an earlier chapter of the
+path, `state.classDone["CLASS:id"]`). The simulated route (order, time, XP) does not change.
+
+Left to the in-game class quest window: no route step to attach to, a detour over `CLASS_MAX_DETOUR` = 600 s
+(round trips from the nearest route steps, objective time, accept and turn-in), a full quest log (the
+general log is followed along the steps, plus the class quests already open for that class), an item
+start, a dungeon quest, or a turn-in outside the region. The chapter report lists woven and skipped class
+quests (`## Class quests`).
+
+`build.raceFilters` replays each race path once without class steps, then once per class named on the path:
+a class step invalid for a race gets a `race` filter without it, or is removed in a chapter of a single race
+path (reason in the report warnings).
 
 ## Known limits
 

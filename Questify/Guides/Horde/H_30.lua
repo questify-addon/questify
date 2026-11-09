@@ -2,13 +2,13 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 47 étapes, niveau final 60.00, ~65636 xp/h, 191 min.
+-- Simulation : 44 étapes, niveau final 60.00, ~66567 xp/h, 189 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 47, endLevel = 60.00, xpPerHour = 65636, minutes = 191 },
+  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66567, minutes = 189 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
@@ -34,7 +34,7 @@ Q:RegisterGuide({
     { "complete", 8279, obj = 3, at = { 1451, 40.86, 42.22 } }, -- The Twilight Lexicon (lvl 60, ~8300 xp, sim lvl 59)
     { "complete", 8281, at = { 1451, 30.56, 43.71 } }, -- Stepping Up Security (lvl 57, ~6000 xp, sim lvl 59)
     { "complete", 8279, obj = 1, at = { 1451, 26.35, 36.62 } }, -- The Twilight Lexicon (lvl 60, ~8300 xp, sim lvl 59)
-    { "accept", 8308, at = { 1451, 21.77, 60.87 }, note = "Loot Brann Bronzebeard's Lost Letter to start the quest" }, -- Brann Bronzebeard's Lost Letter (lvl 60, ~8300 xp, sim lvl 59)
+    { "accept", 8308, at = { 1451, 25.19, 61.73 }, note = "Loot Brann Bronzebeard's Lost Letter to start the quest (0.4 % drop: about 225 kills)" }, -- Brann Bronzebeard's Lost Letter (lvl 60, ~8300 xp, sim lvl 59)
     { "complete", 8279, at = { 1451, 16.09, 86.37 } }, -- The Twilight Lexicon (lvl 60, ~8300 xp, sim lvl 59)
     { "complete", 8304, at = { 1451, 40.81, 88.86 } }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8308, xp = 8300 }, -- Brann Bronzebeard's Lost Letter (lvl 60, ~8300 xp, sim lvl 59)
@@ -51,11 +51,8 @@ Q:RegisterGuide({
     { "turnin", 8283, xp = 8050 }, -- Wanted - Deathclasp, Terror of the Sands (lvl 59, ~8050 xp, sim lvl 59)
     { "hearth", 1452 }, -- pierre de foyer
     { "accept", 5055 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
-    { "accept", 5121 }, -- High Chief Winterfall (lvl 59, ~6400 xp, sim lvl 59)
     { "complete", 5055, at = { 1452, 62.54, 57.9 } }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
-    { "complete", 5121, at = { 1452, 69.56, 38.31 } }, -- High Chief Winterfall (lvl 59, ~6400 xp, sim lvl 59)
     { "turnin", 5055, xp = 6200 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
-    { "turnin", 5121, xp = 6400 }, -- High Chief Winterfall (lvl 59, ~6400 xp, sim lvl 59)
-    { "level", 60, at = { 1452, 69.56, 38.31 }, note = "About 245 more mobs near the last objective" }, -- farm de niveau
+    { "level", 60, at = { 1452, 62.54, 57.9 }, note = "About 65 more mobs near the last objective" }, -- farm de niveau
   },
 })

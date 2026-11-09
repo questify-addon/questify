@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 43 étapes, niveau final 33.08, ~23490 xp/h, 98 min.
+-- Simulation : 43 étapes, niveau final 33.08, ~22792 xp/h, 101 min.
 Q:RegisterGuide({
   id = "H_07",
   title = "Thousand Needles",
   faction = "Horde",
   minLevel = 32, maxLevel = 33,
   next = "H_08",
-  sim = { steps = 43, endLevel = 33.08, xpPerHour = 23490, minutes = 98 },
+  sim = { steps = 43, endLevel = 33.08, xpPerHour = 22792, minutes = 101 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Amongst the Ruins", optional = true, dungeon = "Blackfathom Deeps" },
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
@@ -35,7 +35,7 @@ Q:RegisterGuide({
     { "hearth", 1441 }, -- pierre de foyer
     { "turnin", 1146, xp = 1950 }, -- The Swarm Grows (lvl 33, ~1950 xp, sim lvl 32)
     { "accept", 5762 }, -- Hemet Nesingwary (lvl 31, ~0 xp, sim lvl 32)
-    { "accept", 1148, at = { 1441, 69.97, 85.22 }, note = "Loot Cracked Silithid Carapace to start the quest" }, -- Parts of the Swarm (lvl 35, ~1350 xp, sim lvl 32)
+    { "accept", 1148, at = { 1441, 70.08, 85.09 }, note = "Loot Cracked Silithid Carapace to start the quest (7.3 % drop: about 14 kills)" }, -- Parts of the Swarm (lvl 35, ~1350 xp, sim lvl 32)
     { "complete", 1148, at = { 1441, 69.98, 85.21 } }, -- Parts of the Swarm (lvl 35, ~1350 xp, sim lvl 32)
     { "turnin", 1151, xp = 3050 }, -- Test of Strength (lvl 30, ~3050 xp, sim lvl 32)
     { "goto", 1441, 45.14, 49.11, note = "Flight master" }, -- déplacement
