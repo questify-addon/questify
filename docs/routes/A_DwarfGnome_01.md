@@ -1,6 +1,6 @@
 # A_DwarfGnome_01 — Coldridge Valley
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -79,7 +79,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 98574 | Hallowed Memorandum | 1 | PRIEST | woven, detour 21 s |
 | 98581 | Archaic Rune | 1 | SHAMAN | woven, detour 23 s |
 | 1599 | Beginnings | 4 | WARLOCK | woven, detour 182 s |
-| 5626 | In Favor of the Light | 4 | PRIEST | woven, detour 14 s |
+| 5626 | In Favor of the Light | 4 | PRIEST | woven, detour 22 s |
 | 94373 | Call of Earth | 4 | SHAMAN | woven, detour 126 s |
 | 94374 | Call of Earth | 4 | SHAMAN | woven, detour 98 s |
 | 94375 | Call of Earth | 4 | SHAMAN | woven, detour 38 s |

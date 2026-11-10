@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 154 étapes, niveau final 13.09, ~16565 xp/h, 172 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 151 étapes, niveau final 13.09, ~16565 xp/h, 172 min.
 Q:RegisterGuide({
   id = "H_OrcTroll_02",
   title = "Durotar",
@@ -10,13 +10,12 @@ Q:RegisterGuide({
   races = { "Orc", "Troll" },
   minLevel = 6, maxLevel = 12,
   nextByRace = { Orc = "H_01", Troll = "H_01" },
-  sim = { steps = 154, endLevel = 13.09, xpPerHour = 16565, minutes = 172 },
+  sim = { steps = 151, endLevel = 13.09, xpPerHour = 16565, minutes = 172 },
   steps = {
     { "accept", 817 }, -- Practical Prey (lvl 8, ~700 xp, sim lvl 6)
     { "accept", 818 }, -- A Solvent Spirit (lvl 7, ~630 xp, sim lvl 6)
     { "accept", 97225 }, -- Forgotten Loa Idols (lvl 9, ~780 xp, sim lvl 6)
     { "accept", 808 }, -- Minshina's Skull (lvl 9, ~780 xp, sim lvl 6)
-    { "accept", 1884, classes = { "MAGE" } }, -- Ju-Ju Heaps (lvl 10, ~840 xp, sim lvl 6)
     { "accept", 826 }, -- Zalazane (lvl 10, ~840 xp, sim lvl 6)
     { "accept", 823 }, -- Report to Orgnil (lvl 7, ~315 xp, sim lvl 6)
     { "accept", 96821 }, -- Legging It (lvl 6, ~540 xp, sim lvl 6)
@@ -30,16 +29,12 @@ Q:RegisterGuide({
     { "turnin", 96604, xp = 540 }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "accept", 96655 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
     { "accept", 784 }, -- Vanquish the Betrayers (lvl 7, ~630 xp, sim lvl 6)
-    { "accept", 1859, race = { "Orc" }, classes = { "ROGUE" } }, -- Therzok (lvl 10, ~210 xp, sim lvl 6)
-    { "accept", 6062, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 6)
     { "accept", 837 }, -- Encroachment (lvl 10, ~630 xp, sim lvl 6)
     { "turnin", 823, xp = 315 }, -- Report to Orgnil (lvl 7, ~315 xp, sim lvl 6)
     { "accept", 806 }, -- Dark Storms (lvl 12, ~910 xp, sim lvl 6)
     { "accept", 791 }, -- Carry Your Weight (lvl 7, ~630 xp, sim lvl 6)
     { "accept", 96822 }, -- For Honor (lvl 7, ~630 xp, sim lvl 6)
     { "accept", 5648, race = { "Troll" }, classes = { "PRIEST" } }, -- Garments of Spirituality (lvl 4, ~50 xp, sim lvl 6)
-    { "accept", 1505, classes = { "WARRIOR" } }, -- Veteran Uzzek (lvl 10, ~85 xp, sim lvl 6)
-    { "accept", 1506, classes = { "WARLOCK" } }, -- Gan'rul's Summons (lvl 10, ~210 xp, sim lvl 6)
     { "complete", 96822, obj = 3, at = { 1411, 56.54, 53 } }, -- For Honor (lvl 7, ~630 xp, sim lvl 6)
     { "complete", 784, at = { 1411, 57.04, 57.49 } }, -- Vanquish the Betrayers (lvl 7, ~630 xp, sim lvl 6)
     { "accept", 830, at = { 1411, 59.26, 57.65 }, note = "Open Benedict's Chest with Benedict's Key (dropped by Lieutenant Benedict) and loot Aged Envelope to start the quest" }, -- The Admiral's Orders (lvl 7, ~630 xp, sim lvl 6)
@@ -63,12 +58,10 @@ Q:RegisterGuide({
     { "complete", 97223, at = { 1411, 68.81, 71.78 } }, -- Bloodtalon Matriarch (lvl 9, ~780 xp, sim lvl 8)
     { "complete", 97225, at = { 1411, 65.53, 84.41 } }, -- Forgotten Loa Idols (lvl 9, ~780 xp, sim lvl 8)
     { "complete", 826, at = { 1411, 67.71, 84.56 } }, -- Zalazane (lvl 10, ~840 xp, sim lvl 8)
-    { "complete", 1884, at = { 1411, 68.11, 83.14 }, classes = { "MAGE" } }, -- Ju-Ju Heaps (lvl 10, ~840 xp, sim lvl 8)
     { "complete", 808, at = { 1411, 67.45, 87.82 } }, -- Minshina's Skull (lvl 9, ~780 xp, sim lvl 8)
     { "complete", 817, at = { 1411, 63.64, 95.86 } }, -- Practical Prey (lvl 8, ~700 xp, sim lvl 8)
     { "turnin", 97223, xp = 780 }, -- Bloodtalon Matriarch (lvl 9, ~780 xp, sim lvl 8)
     { "turnin", 826, xp = 840 }, -- Zalazane (lvl 10, ~840 xp, sim lvl 8)
-    { "turnin", 1884, xp = 840, classes = { "MAGE" } }, -- Ju-Ju Heaps (lvl 10, ~840 xp, sim lvl 8)
     { "turnin", 97225, xp = 780 }, -- Forgotten Loa Idols (lvl 9, ~780 xp, sim lvl 8)
     { "turnin", 808, xp = 780 }, -- Minshina's Skull (lvl 9, ~780 xp, sim lvl 8)
     { "turnin", 818, xp = 630 }, -- A Solvent Spirit (lvl 7, ~630 xp, sim lvl 9)
@@ -93,16 +86,20 @@ Q:RegisterGuide({
     { "complete", 837, at = { 1411, 43.63, 40.62 } }, -- Encroachment (lvl 10, ~630 xp, sim lvl 10)
     { "complete", 96825, at = { 1411, 46.43, 49.39 } }, -- This Fruit Could Bite Back (lvl 6, ~540 xp, sim lvl 10)
     { "complete", 837, at = { 1411, 46.8, 48.54 } }, -- Encroachment (lvl 10, ~630 xp, sim lvl 10)
-    { "complete", 6062, at = { 1411, 46.39, 43.63 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "accept", 840 }, -- Conscript of the Horde (lvl 12, ~455 xp, sim lvl 10)
     { "turnin", 837, xp = 630 }, -- Encroachment (lvl 10, ~630 xp, sim lvl 10)
+    { "accept", 1859, race = { "Orc" }, classes = { "ROGUE" } }, -- Therzok (lvl 10, ~210 xp, sim lvl 10)
+    { "accept", 6062, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
+    { "turnin", 96825, xp = 540 }, -- This Fruit Could Bite Back (lvl 6, ~540 xp, sim lvl 10)
+    { "complete", 6062, at = { 1411, 46.39, 43.63 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
+    { "turnin", 806, xp = 910 }, -- Dark Storms (lvl 12, ~910 xp, sim lvl 10)
+    { "accept", 1505, classes = { "WARRIOR" } }, -- Veteran Uzzek (lvl 10, ~85 xp, sim lvl 10)
+    { "accept", 1506, classes = { "WARLOCK" } }, -- Gan'rul's Summons (lvl 10, ~210 xp, sim lvl 10)
     { "turnin", 6062, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "accept", 6083, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "complete", 6083, at = { 1411, 65.9, 74.26 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "turnin", 6083, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "accept", 6082, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
-    { "turnin", 96825, xp = 540 }, -- This Fruit Could Bite Back (lvl 6, ~540 xp, sim lvl 10)
-    { "turnin", 806, xp = 910 }, -- Dark Storms (lvl 12, ~910 xp, sim lvl 10)
     { "turnin", 99051, xp = 770 }, -- Threat from Below (lvl 11, ~770 xp, sim lvl 10)
     { "accept", 99052 }, -- Threat from Below (lvl 11, ~770 xp, sim lvl 10)
     { "accept", 828 }, -- Margoz (lvl 12, ~90 xp, sim lvl 10)

@@ -3,8 +3,19 @@
 ## Notes: Free leveling guide for World of Warcraft: Forever (1-60).
 ## Notes-frFR: Guide de leveling gratuit pour World of Warcraft: Forever (1-60).
 ## Author: Questify contributors
-## Version: 0.5.0
+## Version: 0.6.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
+## Category: Quests
+## Category-deDE: Quests
+## Category-esES: Misiones
+## Category-esMX: Misiones
+## Category-frFR: Quêtes
+## Category-itIT: Missioni
+## Category-koKR: 퀘스트
+## Category-ptBR: Missões
+## Category-ruRU: Задания
+## Category-zhCN: 任务
+## Category-zhTW: 任務
 ## OptionalDeps: QuestieDB, TomTom, WaypointUI, ShortestPathForever
 ## SavedVariables: QuestifyDB
 ## SavedVariablesPerCharacter: QuestifyCharDB
@@ -78,6 +89,8 @@ Automation\Taxi.lua
 
 UI\Themes.lua
 UI\Tracker.lua
+UI\TrackerButtons.lua
+UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
 UI\ObjectGlow.lua
@@ -85,6 +98,7 @@ UI\UpgradePopup.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
 UI\DungeonPopup.lua
+UI\DungeonChainPopup.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
 UI\MinimapButton.lua

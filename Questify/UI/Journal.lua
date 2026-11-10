@@ -1,11 +1,12 @@
 local addonName, Q = ...
 
--- Journal principal (spec § 5.8), ouvert par /questify, /qf ou le compartiment d'addons.
--- Deux onglets :
---   « Route » : chapitres de la faction à gauche, étapes du chapitre à droite (icône d'état,
---               clic = étape courante) ;
---   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver,
---                          puis la section « Donjons » (même principe, Engine/Dungeons.lua).
+-- Journal principal (spec § 5.8), ouvert par /questify, /qf, le compartiment d'addons ou les boutons du
+-- suivi (UI/TrackerButtons.lua). Trois onglets, chacun avec l'icône de son bouton du suivi :
+--   « Route » : chapitres de la faction à gauche, groupés (conseillés à ton niveau, à suivre, puis
+--               faits, dépassés ou d'une autre race ; coche verte sur un chapitre fini), étapes du
+--               chapitre à droite (icône d'état, clic = étape courante) ;
+--   « Donjons » : liste groupée et notée (étoiles) à gauche, détail du donjon choisi à droite ;
+--   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver.
 -- Le bouton « Options… » en bas à droite ouvre la fenêtre d'options (UI/Options.lua).
 Q.UI = Q.UI or {}
 local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {} }
@@ -15,8 +16,8 @@ local L = Q.L
 
 local FRAME_NAME = "QuestifyJournal"
 local WIDTH, HEIGHT = 520, 560
-local TAB_NAMES = { "route", "class" }
-local TAB_INDEX = { route = 1, class = 2 }
+local TAB_NAMES = { "route", "dungeons", "class" }
+local TAB_INDEX = { route = 1, dungeons = 2, class = 3 }
 
 local CHAPTER_W, CHAPTER_ROW_H = 150, 20
 local STEP_W, STEP_ROW_H = 290, 18
@@ -119,7 +120,16 @@ function Journal:Create()
   content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 30)
   self.content = content
 
-  local labels = { L.UI_TAB_ROUTE, L.UI_TAB_CLASS }
+  -- libellés précédés de l'icône du bouton du suivi correspondant
+  local B = Q.UI.TrackerButtons
+  local function label(key, text)
+    if B and B.IconMarkup then
+      local ok, icon = pcall(B.IconMarkup, key, 14)
+      if ok and icon ~= "" then return icon .. " " .. text end
+    end
+    return text
+  end
+  local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS) }
   for i, name in ipairs(TAB_NAMES) do
     local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, f, "PanelTabButtonTemplate")
     tab:SetID(i)
@@ -145,6 +155,7 @@ function Journal:Create()
   if PanelTemplates_SetNumTabs then pcall(PanelTemplates_SetNumTabs, f, #TAB_NAMES) end
 
   self:BuildRoute(self.panels.route)
+  self:BuildDungeons(self.panels.dungeons)
   self:BuildClass(self.panels.class)
   -- Options : fenêtre à part (UI/Options.lua)
   local opt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -187,14 +198,20 @@ function Journal:Toggle()
   end
 end
 
--- ShowTab("route" | "class") : ouvre le journal sur cet onglet. "options" ouvre la fenêtre
--- d'options (l'ancien onglet Options).
+-- ResolveTab(nom) -> onglet réellement ouvert pour ce nom ("route" si le nom est inconnu).
+function Journal:ResolveTab(name)
+  if not TAB_INDEX[name] then name = "route" end
+  return name
+end
+
+-- ShowTab("route" | "class" | "dungeons") : ouvre le journal sur cet onglet. "options" ouvre la
+-- fenêtre d'options (l'ancien onglet Options).
 function Journal:ShowTab(name)
   if name == "options" then
     if Q.UI.Options then Q.UI.Options:Open() end
     return
   end
-  if not TAB_INDEX[name] then name = "route" end
+  name = self:ResolveTab(name)
   self:Create()
   self.tab = name
   if PanelTemplates_SetTab then pcall(PanelTemplates_SetTab, self.frame, TAB_INDEX[name]) end
@@ -208,6 +225,8 @@ end
 function Journal:RefreshTab(name, scroll)
   if name == "route" then
     self:RefreshRoute(scroll)
+  elseif name == "dungeons" then
+    self:RefreshDungeonTab()
   elseif name == "class" then
     self:RefreshClass()
   end
@@ -254,7 +273,6 @@ local function chapterRow(i)
   if row then return row end
   row = CreateFrame("Button", nil, Journal.chapterChild)
   row:SetSize(CHAPTER_W, CHAPTER_ROW_H)
-  row:SetPoint("TOPLEFT", Journal.chapterChild, "TOPLEFT", 0, -(i - 1) * CHAPTER_ROW_H)
   row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
   local sel = row:CreateTexture(nil, "BACKGROUND")
   sel:SetAllPoints(row)
@@ -262,15 +280,21 @@ local function chapterRow(i)
   sel:SetBlendMode("ADD")
   sel:SetVertexColor(1, 0.82, 0, 0.5)
   sel:Hide()
+  -- coche verte : chapitre fini (Q.Progress:ChapterDone)
+  local check = row:CreateTexture(nil, "ARTWORK")
+  check:SetTexture(ICONS.done)
+  check:SetSize(12, 12)
+  check:SetPoint("LEFT", row, "LEFT", 2, 0)
+  check:Hide()
   local text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  text:SetPoint("LEFT", row, "LEFT", 4, 0)
-  text:SetWidth(CHAPTER_W - 40)
+  text:SetPoint("LEFT", row, "LEFT", 16, 0)
+  text:SetWidth(CHAPTER_W - 52)
   text:SetJustifyH("LEFT")
   text:SetWordWrap(false)
   local lvl = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   lvl:SetPoint("RIGHT", row, "RIGHT", -4, 0)
   lvl:SetJustifyH("RIGHT")
-  row.text, row.levels, row.selected = text, lvl, sel
+  row.text, row.levels, row.selected, row.check = text, lvl, sel, check
   row:SetScript("OnClick", safe(function(self)
     if self.guide then
       playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
@@ -281,9 +305,11 @@ local function chapterRow(i)
   end))
   row:SetScript("OnEnter", safe(function(self)
     if self.guide then
-      showTooltip(self, { Q.Guides:DisplayTitle(self.guide),
-        string.format(L.UI_TRACKER_LEVELS, self.guide.minLevel or 1, self.guide.maxLevel or 60),
-        L.UI_ROUTE_CHAPTER_HINT })
+      local lines = { Q.Guides:DisplayTitle(self.guide),
+        string.format(L.UI_TRACKER_LEVELS, self.guide.minLevel or 1, self.guide.maxLevel or 60) }
+      if self.done then lines[#lines + 1] = "|cff40e050" .. L.UI_ROUTE_CHAPTER_DONE .. "|r" end
+      lines[#lines + 1] = L.UI_ROUTE_CHAPTER_HINT
+      showTooltip(self, lines)
     end
   end))
   row:SetScript("OnLeave", hideTooltip)
@@ -379,6 +405,57 @@ local function factionChapters()
   return list
 end
 
+-- Groupes de chapitres, comme les donjons :
+--   « now »  : conseillés à ton niveau (niveau entre le minimum et le maximum du chapitre), et le
+--              chapitre suivi même s'il n'est plus de ton niveau ;
+--   « next » : à suivre (niveau minimum pas encore atteint) ;
+--   « past » : faits, dépassés, ou réservés à une autre race.
+-- ChapterGroups(chapitres, chapitre suivi, niveau, race) -> { { key, items = { { guide, done } } } },
+-- groupes vides omis, ordre des chapitres gardé dans chaque groupe.
+local CHAPTER_GROUPS = { "now", "next", "past" }
+local CHAPTER_GROUP_TEXT = { now = "UI_ROUTE_GROUP_NOW", next = "UI_ROUTE_GROUP_NEXT", past = "UI_ROUTE_GROUP_PAST" }
+
+function Journal.ChapterGroups(chapters, current, level, raceKey)
+  level = tonumber(level) or 1
+  local by = {}
+  for _, g in ipairs(chapters) do
+    local done = Q.Progress.ChapterDone and Q.Progress:ChapterDone(g) or false
+    local group
+    if current and g.id == current.id then
+      group = "now"
+    elseif done then
+      group = "past"
+    elseif raceKey and g.races and not Q.Util.Contains(g.races, raceKey) then
+      group = "past"
+    elseif level > (g.maxLevel or 60) then
+      group = "past"
+    elseif level < (g.minLevel or 1) then
+      group = "next"
+    else
+      group = "now"
+    end
+    by[group] = by[group] or {}
+    table.insert(by[group], { guide = g, done = done })
+  end
+  local out = {}
+  for _, key in ipairs(CHAPTER_GROUPS) do
+    if by[key] then out[#out + 1] = { key = key, items = by[key] } end
+  end
+  return out
+end
+
+local function chapterHeader(i)
+  Journal.chapterHeaders = Journal.chapterHeaders or {}
+  local h = Journal.chapterHeaders[i]
+  if h then return h end
+  h = Journal.chapterChild:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  h:SetJustifyH("LEFT")
+  h:SetWidth(CHAPTER_W - 8)
+  h:SetWordWrap(false)
+  Journal.chapterHeaders[i] = h
+  return h
+end
+
 local function setStepRow(row, e, cur)
   local state, reason = Q.Progress:State(e)
   local isCurrent = cur ~= nil and e.key == cur.key
@@ -419,24 +496,49 @@ end
 function Journal:RefreshRoute(scrollToCurrent)
   if not self.frame then return end
   local available = Q.QDB and Q.QDB:IsAvailable()
-  -- Chapitres
+  -- Chapitres, groupés
   local chapters = available and factionChapters() or {}
   local guide = available and Q.Progress:Guide() or nil
-  for i, g in ipairs(chapters) do
-    local row = chapterRow(i)
-    row.guide = g
-    row.text:SetText(Q.Guides:DisplayTitle(g))
-    row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, g.minLevel or 1, g.maxLevel or 60)
-    local selected = guide ~= nil and guide.id == g.id
-    if selected then row.selected:Show() else row.selected:Hide() end
-    if selected then row.text:SetTextColor(1, 0.82, 0) else row.text:SetTextColor(1, 1, 1) end
-    row:Show()
+  local P = Q.Player or {}
+  local groups = Journal.ChapterGroups(chapters, guide, P.level, P.raceKey)
+  local child, y, nh, nr = self.chapterChild, 0, 0, 0
+  for _, grp in ipairs(groups) do
+    nh = nh + 1
+    local h = chapterHeader(nh)
+    h:SetText(L[CHAPTER_GROUP_TEXT[grp.key]])
+    h:ClearAllPoints()
+    h:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -(y + 6))
+    h:Show()
+    y = y + CHAPTER_ROW_H
+    for _, it in ipairs(grp.items) do
+      nr = nr + 1
+      local g = it.guide
+      local row = chapterRow(nr)
+      row.guide, row.done = g, it.done
+      row:ClearAllPoints()
+      row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -y)
+      row.text:SetText(Q.Guides:DisplayTitle(g))
+      row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, g.minLevel or 1, g.maxLevel or 60)
+      if it.done then row.check:Show() else row.check:Hide() end
+      local selected = guide ~= nil and guide.id == g.id
+      if selected then row.selected:Show() else row.selected:Hide() end
+      if selected then
+        row.text:SetTextColor(1, 0.82, 0)
+      elseif grp.key == "now" then
+        row.text:SetTextColor(1, 1, 1)
+      else
+        row.text:SetTextColor(0.6, 0.6, 0.6)
+      end
+      row:Show()
+      y = y + CHAPTER_ROW_H
+    end
   end
-  for i = #chapters + 1, #self.chapterRows do
+  for i = nh + 1, #(self.chapterHeaders or {}) do self.chapterHeaders[i]:Hide() end
+  for i = nr + 1, #self.chapterRows do
     self.chapterRows[i].guide = nil
     self.chapterRows[i]:Hide()
   end
-  self.chapterChild:SetHeight(math.max(1, #chapters * CHAPTER_ROW_H))
+  self.chapterChild:SetHeight(math.max(1, y))
 
   -- Étapes
   local entries = guide and Q.Progress:Entries() or {}
@@ -664,17 +766,17 @@ function Journal:RefreshClass()
   else
     self.classEmpty:Hide()
   end
-  -- Section « Donjons » sous les chaînes de classe (protégée : une erreur n'efface pas les chaînes)
-  local top = n * CLASS_ROW_H + (self.classEmpty:IsShown() and 30 or 0)
-  local ok, err = pcall(self.RefreshDungeons, self, top, qdbOk)
-  if not ok then Q:ReportError(err) end
 end
 
 ---------------------------------------------------------------------------
--- Section Donjons (onglet Quêtes de classe) : une ligne par donjon proposé à la faction, avec son
--- état et Ajouter / Ignorer / Réactiver (Engine/Dungeons.lua).
+-- Onglet Donjons (Engine/Dungeons.lua) : la liste à gauche, groupée comme les chapitres (conseillés à
+-- ton niveau, à venir, puis ignorés, dépassés et faits), triée par niveau ou par nombre de quêtes ; le
+-- détail du donjon choisi à droite : niveaux, entrée, état, note, quêtes à prendre avec leur donneur
+-- (grisées avec la raison quand elles ne sont pas à prendre), et Ajouter / Ignorer / Réactiver.
+-- Note : une à trois étoiles selon les quêtes qu'il reste à y faire (DungeonStars).
 ---------------------------------------------------------------------------
-local DG_ROW_H = 40
+local DG_LIST_W, DG_ROW_H, DG_HEAD_H = 210, 18, 20
+local DG_DETAIL_X, DG_DETAIL_W = 244, 226
 local DG_STATE_TEXT = {
   available = "DUNGEON_STATE_AVAILABLE", upcoming = "DUNGEON_STATE_UPCOMING", added = "DUNGEON_STATE_ADDED",
   ignored = "DUNGEON_STATE_IGNORED", done = "DUNGEON_STATE_DONE", past = "DUNGEON_STATE_PAST",
@@ -683,142 +785,588 @@ local DG_STATE_COLOR = {
   available = "|cff40ff40", upcoming = "|cffaaaaaa", added = "|cffffd100",
   ignored = "|cff808080", done = "|cff808080", past = "|cff808080",
 }
+-- Groupe de la liste selon l'état du donjon.
+local DG_GROUP = { available = "now", added = "now", upcoming = "next", ignored = "past", done = "past", past = "past" }
+local GROUP_ORDER = { "now", "next", "past" }
+local DG_GROUP_TEXT = { now = "DUNGEON_GROUP_NOW", next = "DUNGEON_GROUP_NEXT", past = "DUNGEON_GROUP_PAST" }
+local STAR_ON, STAR_OFF = "tradeskills-star", "tradeskills-star-off"
+local STAR_FALLBACK = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1"   -- étoile des marqueurs de raid
+local ROUTE_DOT = "Interface\\COMMON\\Indicator-Green"
+
+-- DungeonStars(n) -> 0 à 3 étoiles pour n quêtes à faire : 1-3 -> 1, 4-7 -> 2, 8 et plus -> 3.
+function Journal.DungeonStars(n)
+  n = tonumber(n) or 0
+  if n <= 0 then return 0 end
+  if n <= 3 then return 1 end
+  if n <= 7 then return 2 end
+  return 3
+end
+
+-- Trois textures d'étoile pleines ou vides ; aucune quand count vaut 0.
+local function newStars(parent, size)
+  local stars = {}
+  for i = 1, 3 do
+    local tex = parent:CreateTexture(nil, "ARTWORK")
+    tex:SetSize(size, size)
+    stars[i] = tex
+  end
+  return stars
+end
+
+local function setStars(stars, count)
+  for i, tex in ipairs(stars) do
+    local on = i <= count
+    local atlas = on and STAR_ON or STAR_OFF
+    if Q.Util.HasAtlas(atlas) then
+      tex:SetAtlas(atlas)
+      tex:SetDesaturated(false)
+      tex:SetAlpha(1)
+    else
+      tex:SetTexture(STAR_FALLBACK)
+      tex:SetDesaturated(not on)
+      tex:SetAlpha(on and 1 or 0.35)
+    end
+    if count > 0 then tex:Show() else tex:Hide() end
+  end
+end
 
 local function dungeonAction(method, key)
   local D = Q.Dungeons
   if not (D and D[method]) then return end
   playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
   D[method](D, key)
-  Journal:RefreshClass()
+  Journal:RefreshDungeonTab()
 end
 
-local function dungeonTooltip(row)
-  local d = row.dungeon
-  if not d then return end
-  local P = Q.UI.DungeonPopup
-  local lines = { P.DungeonName(d), string.format(L.DUNGEON_LEVELS, d.minLevel or 1, d.maxLevel or 60) }
-  if type(d.entrance) == "table" and type(d.entrance[1]) == "number" then
-    lines[#lines + 1] = string.format(L.DUNGEON_ENTRANCE, Q.Maps:MapName(d.entrance[1]))
+-- Donjons de la faction avec leurs quêtes restantes : { dungeon, state, group, todo, now, details }.
+-- nil si le module manque ou échoue.
+local function dungeonItems()
+  local D = Q.Dungeons
+  if not (D and D.List) then return nil end
+  local ok, list = pcall(D.List, D)
+  if not ok then
+    Q:ReportError(list)
+    return nil
   end
-  local rows = Q.Dungeons and Q.Dungeons.Details and Q.Dungeons:Details(d) or {}
-  for _, r in ipairs(rows) do lines[#lines + 1] = "- " .. P.QuestLine(r) end
-  showTooltip(row, lines)
+  local out = {}
+  for _, row in ipairs(type(list) == "table" and list or {}) do
+    if type(row) == "table" and type(row.dungeon) == "table" then
+      local okD, details = pcall(D.Details, D, row.dungeon)
+      if not okD then
+        Q:ReportError(details)
+        details = {}
+      end
+      details = type(details) == "table" and details or {}
+      -- quêtes rendues : listées (en dernier, cochées) mais hors des compteurs et des étoiles
+      local now, todo = 0, 0
+      for _, r in ipairs(details) do
+        if not r.done then todo = todo + 1 end
+        if r.ok and r.reason ~= "log" then now = now + 1 end
+      end
+      out[#out + 1] = { dungeon = row.dungeon, state = row.state, group = DG_GROUP[row.state] or "past",
+        todo = todo, now = now, details = details }
+    end
+  end
+  return out
+end
+Journal.DungeonItems = dungeonItems
+
+-- Groupes affichés : { { key, items }, ... } dans l'ordre de GROUP_ORDER, groupes vides omis. Tri
+-- « quests » : plus de quêtes à faire d'abord, puis par niveau ; sinon l'ordre de Dungeons:List (niveau).
+function Journal.DungeonGroups(items, sort)
+  local byGroup = {}
+  for i, it in ipairs(items) do
+    it.order = i
+    byGroup[it.group] = byGroup[it.group] or {}
+    table.insert(byGroup[it.group], it)
+  end
+  local out = {}
+  for _, key in ipairs(GROUP_ORDER) do
+    local list = byGroup[key]
+    if list then
+      if sort == "quests" then
+        table.sort(list, function(a, b)
+          if a.todo ~= b.todo then return a.todo > b.todo end
+          return a.order < b.order
+        end)
+      end
+      out[#out + 1] = { key = key, items = list }
+    end
+  end
+  return out
 end
 
-local function dungeonRow(i)
-  Journal.dungeonRows = Journal.dungeonRows or {}
-  local row = Journal.dungeonRows[i]
+local function dgHeader(i)
+  Journal.dgHeaders = Journal.dgHeaders or {}
+  local h = Journal.dgHeaders[i]
+  if h then return h end
+  h = Journal.dgChild:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  h:SetJustifyH("LEFT")
+  h:SetWidth(DG_LIST_W - 8)
+  h:SetWordWrap(false)
+  Journal.dgHeaders[i] = h
+  return h
+end
+
+local function dgRow(i)
+  Journal.dgRows = Journal.dgRows or {}
+  local row = Journal.dgRows[i]
   if row then return row end
-  local parent = Journal.classChild
-  row = CreateFrame("Button", nil, parent)
-  row:SetSize(CLASS_W, DG_ROW_H)
-  if i % 2 == 0 then
-    local stripe = row:CreateTexture(nil, "BACKGROUND")
-    stripe:SetAllPoints(row)
-    stripe:SetColorTexture(1, 1, 1, 0.04)
+  row = CreateFrame("Button", nil, Journal.dgChild)
+  row:SetSize(DG_LIST_W, DG_ROW_H)
+  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+  local sel = row:CreateTexture(nil, "BACKGROUND")
+  sel:SetAllPoints(row)
+  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
+  sel:SetBlendMode("ADD")
+  sel:SetVertexColor(1, 0.82, 0, 0.5)
+  sel:Hide()
+  local stars = newStars(row, 9)
+  for s, tex in ipairs(stars) do tex:SetPoint("LEFT", row, "LEFT", 2 + (s - 1) * 9, 0) end
+  local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  name:SetPoint("LEFT", row, "LEFT", 32, 0)
+  name:SetWidth(DG_LIST_W - 32 - 50)
+  name:SetJustifyH("LEFT")
+  name:SetWordWrap(false)
+  local lvl = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  lvl:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+  lvl:SetJustifyH("RIGHT")
+  local dot = row:CreateTexture(nil, "ARTWORK")
+  dot:SetTexture(ROUTE_DOT)
+  dot:SetSize(10, 10)
+  dot:SetPoint("RIGHT", row, "RIGHT", -38, 0)
+  dot:Hide()
+  row.selected, row.stars, row.name, row.levels, row.routeDot = sel, stars, name, lvl, dot
+  row:SetScript("OnClick", safe(function(self)
+    if self.item then
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      Journal.dungeonSel = self.item.dungeon.key
+      Journal:RefreshDungeonTab()
+    end
+  end))
+  Journal.dgRows[i] = row
+  return row
+end
+
+-- Lignes de quête du détail (créées à la demande).
+local function dgLine(i)
+  Journal.dgLines = Journal.dgLines or {}
+  local fs = Journal.dgLines[i]
+  if fs then return fs end
+  fs = Journal.dgDetail:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  fs:SetWidth(DG_DETAIL_W - 10)
+  fs:SetJustifyH("LEFT")
+  fs:SetWordWrap(true)
+  Journal.dgLines[i] = fs
+  return fs
+end
+
+-- Quête bloquée par une chaîne de préquêtes : infobulle (quêtes à faire, zones, XP, récompenses) et boutons
+-- « Ajouter ces quêtes » / « Les retirer » et « Plus d'infos » (UI/DungeonChainPopup.lua).
+local function chainInfo(row)
+  local D, item = Q.Dungeons, Journal.dgItem
+  if not (D and D.ChainInfo and item and row) then return nil end
+  local ok, info = pcall(D.ChainInfo, D, item.dungeon.key, row.id)
+  if ok then return info end
+  Q:ReportError(info)
+  return nil
+end
+
+local function chainTooltip(owner)
+  local info = chainInfo(owner.row)
+  if not info then return end
+  local names = {}
+  for _, r in ipairs(owner.rows or { owner.row }) do names[#names + 1] = Q.QDB:QuestName(r.id) end
+  local lines = { table.concat(names, ", ") }
+  for _, l in ipairs(Q.UI.DungeonChainPopup.TooltipLines(info)) do lines[#lines + 1] = l end
+  showTooltip(owner, lines)
+end
+
+local function chainAction(row)
+  local D, item = Q.Dungeons, Journal.dgItem
+  if not (D and item and row and row.chain) then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  if row.chain.chosen then D:RemoveChain(item.dungeon.key, row.id) else D:AddChain(item.dungeon.key, row.id) end
+  Journal:RefreshDungeonTab()
+  local P = Q.UI.DungeonChainPopup
+  if P and P.frame and P.frame:IsShown() and P.questId == row.id then P:Show(item.dungeon.key, row.id) end
+end
+
+-- Encadré d'une chaîne de préquêtes sous la quête qu'elle débloque : « Demande une suite de 6 quêtes, hors de ta
+-- route (zones) », infobulle au survol, boutons « Voir la suite » (annexe du journal) et « Ajouter la suite ».
+local CHAIN_BACKDROP = {
+  bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 },
+}
+
+local function dgChain(i)
+  Journal.dgChains = Journal.dgChains or {}
+  local w = Journal.dgChains[i]
+  if w then return w end
+  local parent = Journal.dgDetail
+  local ok, box = pcall(CreateFrame, "Frame", nil, parent, "BackdropTemplate")
+  if not ok or not box then box = CreateFrame("Frame", nil, parent) end
+  if box.SetBackdrop then
+    box:SetBackdrop(CHAIN_BACKDROP)
+    box:SetBackdropColor(0.12, 0.09, 0.05, 0.85)
+    box:SetBackdropBorderColor(0.6, 0.5, 0.3, 0.9)
   end
-  local title = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  title:SetPoint("TOPLEFT", row, "TOPLEFT", 8, -5)
-  title:SetWidth(260)
+  box:EnableMouse(true)
+  box:SetScript("OnEnter", safe(function(self) chainTooltip(self) end))
+  box:SetScript("OnLeave", hideTooltip)
+  local text = box:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  text:SetPoint("TOPLEFT", box, "TOPLEFT", 7, -7)
+  text:SetJustifyH("LEFT")
+  text:SetWordWrap(true)
+  local function button(width)
+    local b = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
+    b:SetSize(width, 20)
+    return b
+  end
+  local info, add = button(100), button(100)
+  info:SetText(L.DUNGEON_CHAIN_INFO)
+  add:SetScript("OnClick", safe(function(self) chainAction(self.row) end))
+  info:SetScript("OnClick", safe(function(self)
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+    if Journal.dgItem and self.row then Q.UI.DungeonChainPopup:Show(Journal.dgItem.dungeon.key, self.row.id) end
+  end))
+  box:Hide()
+  w = { box = box, text = text, add = add, info = info }
+  Journal.dgChains[i] = w
+  return w
+end
+
+-- Raison d'une suite hors de portée, en une ligne (quête en cause nommée).
+local WHY_KEYS = { unknown = "DUNGEON_CHAIN_WHY_UNKNOWN", race = "DUNGEON_CHAIN_WHY_RACE",
+  special = "DUNGEON_CHAIN_WHY_SPECIAL", exclusive = "DUNGEON_CHAIN_WHY_EXCLUSIVE",
+  nogiver = "DUNGEON_CHAIN_WHY_NOGIVER", dungeon = "DUNGEON_CHAIN_WHY_DUNGEON", long = "DUNGEON_CHAIN_WHY_LONG" }
+
+local function questLabel(id)
+  local name = type(id) == "number" and Q.QDB:QuestName(id) or nil
+  if type(name) ~= "string" or name == "" or name == "?" then return "#" .. tostring(id or "?") end
+  return name
+end
+
+-- Texte de l'encadré : suite (quêtes qu'elle débloque en tête, nombre de quêtes, zones hors de la route ou
+-- non), niveau à atteindre, suite déjà ajoutée (tout de suite ou au niveau voulu), ou raison quand elle est hors
+-- de portée. rows : quêtes du détail que cette suite débloque (une ou plusieurs).
+local function chainBoxText(chain, rows)
+  if chain.reason then
+    return string.format(L[WHY_KEYS[chain.reason] or "DUNGEON_CHAIN_WHY_UNKNOWN"], questLabel(chain.reasonQuest))
+  end
+  local names = {}
+  for _, m in ipairs(chain.zones or {}) do names[#names + 1] = Q.Maps:MapName(m) end
+  local zones = table.concat(names, ", ")
+  local n = tonumber(chain.count) or 0
+  local lvl = tonumber(chain.readyLevel) or 1
+  local quests = {}
+  for _, r in ipairs(rows or {}) do quests[#quests + 1] = questLabel(r.id) end
+  local who = "|cffffffff" .. table.concat(quests, ", ") .. "|r"
+  local pl = #quests > 1 and "_PL" or ""
+  if chain.chosen then
+    if not chain.ready then
+      if n == 0 then return string.format(L.DUNGEON_CHAIN_BOX_LATER, lvl) end
+      return string.format(L.DUNGEON_CHAIN_BOX_LATER_CHAIN, who, n, lvl)
+    end
+    return string.format(L.DUNGEON_CHAIN_BOX_ADDED, who, n, zones)
+  end
+  if n == 0 then return string.format(L.DUNGEON_CHAIN_BOX_LEVEL, lvl) end
+  local text
+  if n == 1 then text = string.format(L["DUNGEON_CHAIN_BOX_ONE" .. pl], who, zones)
+  elseif chain.offRoute then text = string.format(L["DUNGEON_CHAIN_BOX" .. pl], who, n, zones)
+  else text = string.format(L["DUNGEON_CHAIN_BOX_ON" .. pl], who, n, zones) end
+  if not chain.ready then text = text .. "\n" .. string.format(L.DUNGEON_CHAIN_BOX_LEVEL, lvl) end
+  return text
+end
+
+-- Largeur d'un bouton d'après son texte (texte + 18 px), sans dépasser `max`.
+local function fitButton(b, max)
+  local w
+  local ok, tw = pcall(function() return b:GetTextWidth() end)
+  if ok and type(tw) == "number" and tw > 0 then w = tw end
+  if not w then
+    local fs = b.GetFontString and b:GetFontString()
+    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
+  end
+  w = math.floor((w or #(b:GetText() or "") * 6) + 18)
+  b:SetWidth(math.min(max, math.max(60, w)))
+  return b:GetWidth()
+end
+
+function Journal:BuildDungeons(panel)
+  local head = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  head:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
+  head:SetText(L.DUNGEON_SECTION)
+  -- Tri : niveau ou nombre de quêtes
+  local function sortButton(key, label)
+    local b = CreateFrame("Button", nil, panel)
+    b:SetSize(48, 14)
+    local fs = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    fs:SetAllPoints(b)
+    fs:SetText(label)
+    b.text, b.sortKey = fs, key
+    b:SetScript("OnClick", safe(function()
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      Journal.dungeonSort = key
+      Journal:RefreshDungeonTab()
+    end))
+    return b
+  end
+  local byQuests = sortButton("quests", L.DUNGEON_SORT_QUESTS)
+  byQuests:SetPoint("TOPRIGHT", panel, "TOPLEFT", DG_LIST_W + 4, -4)
+  local byLevel = sortButton("level", L.DUNGEON_SORT_LEVEL)
+  byLevel:SetPoint("RIGHT", byQuests, "LEFT", -2, 0)
+  local sortLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  sortLabel:SetPoint("RIGHT", byLevel, "LEFT", -2, 0)
+  sortLabel:SetText(L.DUNGEON_SORT)
+  self.dgSortButtons = { level = byLevel, quests = byQuests }
+
+  local scroll, child = newScroll(panel, "QuestifyJournalDungeonScroll", DG_LIST_W, LIST_H)
+  scroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 2, -24)
+  self.dgScroll, self.dgChild = scroll, child
+  local dScroll, dChild = newScroll(panel, "QuestifyJournalDungeonDetail", DG_DETAIL_W, LIST_H + 20)
+  dScroll:SetPoint("TOPLEFT", panel, "TOPLEFT", DG_DETAIL_X, -4)
+  self.dgDetailScroll, self.dgDetail = dScroll, dChild
+
+  local title = dChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+  title:SetPoint("TOPLEFT", dChild, "TOPLEFT", 2, -2)
+  title:SetWidth(DG_DETAIL_W - 6)
   title:SetJustifyH("LEFT")
-  title:SetWordWrap(false)
-  local info = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  info:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -4)
-  info:SetWidth(260)
-  info:SetJustifyH("LEFT")
-  info:SetWordWrap(false)
-  row.title, row.info = title, info
+  local meta = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  meta:SetWidth(DG_DETAIL_W - 6)
+  meta:SetJustifyH("LEFT")
+  local stars = newStars(dChild, 13)
+  local score = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  score:SetWidth(DG_DETAIL_W - 50)
+  score:SetJustifyH("LEFT")
+  self.dgTitle, self.dgMeta, self.dgStars, self.dgScore = title, meta, stars, score
+
   local function button(label, width)
-    local b = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+    local b = CreateFrame("Button", nil, dChild, "UIPanelButtonTemplate")
     b:SetSize(width, 22)
     b:SetText(label)
     b:Hide()
     return b
   end
-  row.ignoreButton = button(L.UI_BTN_IGNORE, 80)
-  row.unignoreButton = button(L.UI_BTN_UNIGNORE, 80)
-  row.addButton = button(L.UI_BTN_ADD, 80)
-  row.ignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
-  row.unignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
-  row.addButton:SetPoint("RIGHT", row, "RIGHT", -90, 0)
-  row.addButton:SetScript("OnClick", safe(function() if row.dungeon then dungeonAction("Add", row.dungeon.key) end end))
-  row.ignoreButton:SetScript("OnClick", safe(function() if row.dungeon then dungeonAction("Ignore", row.dungeon.key) end end))
-  row.unignoreButton:SetScript("OnClick", safe(function() if row.dungeon then dungeonAction("Unignore", row.dungeon.key) end end))
-  row:SetScript("OnEnter", safe(dungeonTooltip))
-  row:SetScript("OnLeave", hideTooltip)
-  Journal.dungeonRows[i] = row
-  return row
+  self.dgAdd = button(L.UI_BTN_ADD_ROUTE, 130)
+  self.dgIgnore = button(L.UI_BTN_IGNORE, 80)
+  self.dgUnignore = button(L.UI_BTN_UNIGNORE, 90)
+  self.dgAdd:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Add", Journal.dgItem.dungeon.key) end end))
+  self.dgIgnore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Ignore", Journal.dgItem.dungeon.key) end end))
+  self.dgUnignore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Unignore", Journal.dgItem.dungeon.key) end end))
+
+  local empty = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  empty:SetPoint("TOPLEFT", panel, "TOPLEFT", 8, -30)
+  empty:SetWidth(DG_LIST_W + DG_DETAIL_W)
+  empty:SetJustifyH("LEFT")
+  empty:Hide()
+  self.dgEmpty = empty
 end
 
--- top = hauteur déjà occupée par les chaînes de classe dans la liste défilante.
-function Journal:RefreshDungeons(top, qdbOk)
-  local child = self.classChild
-  if not self.dungeonHeader then
-    local h = child:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    h:SetJustifyH("LEFT")
-    h:SetText(L.DUNGEON_SECTION)
-    self.dungeonHeader = h
-    local empty = child:CreateFontString(nil, "OVERLAY", "GameFontDisable")
-    empty:SetJustifyH("LEFT")
-    empty:SetWidth(CLASS_W - 16)
-    empty:SetText(L.DUNGEON_EMPTY)
-    self.dungeonEmpty = empty
-  end
-  local rows = self.dungeonRows or {}
-  local D = Q.Dungeons
-  local list
-  if qdbOk and D and D.List then
-    local ok, res = pcall(D.List, D)
-    if ok and type(res) == "table" then list = res elseif not ok then Q:ReportError(res) end
-  end
-  if not list then
-    -- QuestieDB absent ou module en erreur : la section disparaît (le message des chaînes suffit)
-    self.dungeonHeader:Hide()
-    self.dungeonEmpty:Hide()
-    for _, r in ipairs(rows) do r.dungeon = nil; r:Hide() end
+-- Détail du donjon choisi (item de dungeonItems) ; nil vide la colonne.
+function Journal:ShowDungeonDetail(item)
+  self.dgItem = item
+  local child = self.dgDetail
+  local lines = self.dgLines or {}
+  local widgets = { self.dgTitle, self.dgMeta, self.dgScore, self.dgAdd, self.dgIgnore, self.dgUnignore }
+  if not item then
+    for _, w in ipairs(widgets) do w:Hide() end
+    setStars(self.dgStars, 0)
+    for _, fs in ipairs(lines) do fs:Hide() end
+    for _, w in ipairs(self.dgChains or {}) do w.box:Hide() end
+    child:SetHeight(1)
     return
   end
-  local y = top + 10
-  self.dungeonHeader:ClearAllPoints()
-  self.dungeonHeader:SetPoint("TOPLEFT", child, "TOPLEFT", 6, -y)
-  self.dungeonHeader:Show()
-  y = y + 20
-  local n = 0
-  for _, item in ipairs(list) do
-    if type(item) == "table" and type(item.dungeon) == "table" then
-      n = n + 1
-      local row = dungeonRow(n)
-      local d, state = item.dungeon, item.state
-      row.dungeon, row.dgState = d, state
-      row:ClearAllPoints()
-      row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -(y + (n - 1) * DG_ROW_H))
-      row.title:SetText(Q.UI.DungeonPopup.DungeonName(d))
-      local key = DG_STATE_TEXT[state]
-      row.info:SetText(string.format(L.DUNGEON_ROW_INFO, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60,
-        (DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r"))
-      local canAdd = state == "available" or state == "upcoming" or state == "past" or state == "ignored"
-      local canIgnore = state == "available" or state == "upcoming" or state == "past" or state == "added"
-      if canAdd then row.addButton:Show() else row.addButton:Hide() end
-      if canIgnore then row.ignoreButton:Show() else row.ignoreButton:Hide() end
-      if state == "ignored" then row.unignoreButton:Show() else row.unignoreButton:Hide() end
-      row:Show()
+  local d, state = item.dungeon, item.state
+  self.dgTitle:SetText(Q.UI.DungeonPopup.DungeonName(d))
+  self.dgTitle:Show()
+  local key = DG_STATE_TEXT[state]
+  local meta = string.format(L.DUNGEON_ROW_INFO, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60,
+    (DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r")
+  if type(d.entrance) == "table" and type(d.entrance[1]) == "number" then
+    meta = meta .. "\n" .. string.format(L.DUNGEON_ENTRANCE, Q.Maps:MapName(d.entrance[1]))
+  end
+  self.dgMeta:SetText(meta)
+  local y = 2 + (self.dgTitle:GetStringHeight() or 16) + 4
+  self.dgMeta:ClearAllPoints()
+  self.dgMeta:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+  self.dgMeta:Show()
+  y = y + (self.dgMeta:GetStringHeight() or 24) + 8
+  -- note et décompte
+  local count = Journal.DungeonStars(item.todo)
+  setStars(self.dgStars, count)
+  for i, tex in ipairs(self.dgStars) do
+    tex:ClearAllPoints()
+    tex:SetPoint("TOPLEFT", child, "TOPLEFT", 2 + (i - 1) * 13, -y)
+  end
+  self.dgScore:ClearAllPoints()
+  self.dgScore:SetPoint("TOPLEFT", child, "TOPLEFT", count > 0 and 44 or 2, -y)
+  if item.todo > 0 then
+    self.dgScore:SetFormattedText(L.DUNGEON_SCORE, item.todo, item.now)
+  else
+    self.dgScore:SetText(L.DUNGEON_SCORE_NONE)
+  end
+  self.dgScore:Show()
+  y = y + math.max(14, self.dgScore:GetStringHeight() or 12) + 8
+  -- quêtes
+  local P = Q.UI.DungeonPopup
+  local nChain, nLine = 0, 0
+  local boxW = DG_DETAIL_W - 14
+  local inner = boxW - 14
+  -- quêtes débloquées par une même suite : un seul encadré, à la place de la première, qui les nomme toutes
+  local function isSuite(c) return type(c) == "table" and not c.reason and (tonumber(c.count) or 0) > 0 and c.sig end
+  local bySig = {}
+  for _, r in ipairs(item.details) do
+    if isSuite(r.chain) then
+      bySig[r.chain.sig] = bySig[r.chain.sig] or {}
+      table.insert(bySig[r.chain.sig], r)
     end
   end
-  self.dungeonRows = self.dungeonRows or {}
-  for i = n + 1, #self.dungeonRows do
-    self.dungeonRows[i].dungeon = nil
-    self.dungeonRows[i]:Hide()
+  local function box(r, chain, rows)
+    nChain = nChain + 1
+    local w = dgChain(nChain)
+    w.box.row, w.add.row, w.info.row = r, r, r
+    w.box.rows = rows
+    w.text:SetWidth(inner)
+    w.text:SetText(chainBoxText(chain, rows))
+    local textH = w.text:GetStringHeight() or 12
+    local buttonsH = 0
+    if chain.reason then
+      w.add:Hide()
+      w.info:Hide()
+    else
+      w.add:SetText(chain.chosen and L.DUNGEON_CHAIN_REMOVE or L.DUNGEON_CHAIN_ADD)
+      local wi, wa = fitButton(w.info, inner), fitButton(w.add, inner)
+      w.info:ClearAllPoints()
+      w.add:ClearAllPoints()
+      w.info:SetPoint("TOPLEFT", w.box, "TOPLEFT", 7, -(textH + 12))
+      if wi + 4 + wa <= inner then
+        w.add:SetPoint("LEFT", w.info, "RIGHT", 4, 0)
+        buttonsH = 24
+      else
+        -- trop étroit côte à côte : l'un sous l'autre
+        w.add:SetPoint("TOPLEFT", w.info, "BOTTOMLEFT", 0, -3)
+        buttonsH = 47
+      end
+      w.info:Show()
+      w.add:Show()
+    end
+    local boxH = textH + 14 + buttonsH
+    w.box:ClearAllPoints()
+    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 8, -y)
+    w.box:SetSize(boxW, boxH)
+    w.box:Show()
+    y = y + boxH + 6
   end
-  if n == 0 then
-    self.dungeonEmpty:ClearAllPoints()
-    self.dungeonEmpty:SetPoint("TOPLEFT", child, "TOPLEFT", 8, -y)
-    self.dungeonEmpty:Show()
-    y = y + 20
-  else
-    self.dungeonEmpty:Hide()
-    y = y + n * DG_ROW_H
+  for _, r in ipairs(item.details) do
+    local chain = type(r.chain) == "table" and r.chain or nil
+    if isSuite(chain) then
+      local rows = bySig[chain.sig]
+      if rows[1] == r then box(r, chain, rows) end
+    else
+      nLine = nLine + 1
+      local fs = dgLine(nLine)
+      local prefix = r.done and "|TInterface\\RaidFrame\\ReadyCheck-Ready:12:12|t " or "- "
+      fs:SetText(prefix .. P.QuestLine(r, chain and { box = true } or nil))
+      fs:ClearAllPoints()
+      fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
+      fs:Show()
+      y = y + (fs:GetStringHeight() or 12) + 4
+      -- quête sans suite : niveau seul, ou suite hors de portée (raison, sans bouton)
+      if chain then box(r, chain, { r }) end
+    end
+  end
+  for i = nLine + 1, #(self.dgLines or {}) do self.dgLines[i]:Hide() end
+  for i = nChain + 1, #(self.dgChains or {}) do self.dgChains[i].box:Hide() end
+  -- actions
+  y = y + 6
+  local canAdd = state == "available" or state == "upcoming" or state == "past" or state == "ignored"
+  local canIgnore = state == "available" or state == "upcoming" or state == "past" or state == "added"
+  local x = 2
+  for _, pair in ipairs({ { self.dgAdd, canAdd }, { self.dgUnignore, state == "ignored" }, { self.dgIgnore, canIgnore } }) do
+    local b, shown = pair[1], pair[2]
+    b:ClearAllPoints()
+    if shown then
+      b:SetPoint("TOPLEFT", child, "TOPLEFT", x, -y)
+      b:Show()
+      x = x + b:GetWidth() + 6
+    else
+      b:Hide()
+    end
+  end
+  child:SetHeight(math.max(1, y + 28))
+end
+
+function Journal:RefreshDungeonTab()
+  if not self.frame or not self.dgChild then return end
+  local qdbOk = Q.QDB and Q.QDB:IsAvailable()
+  local items = qdbOk and dungeonItems() or nil
+  local sort = self.dungeonSort or "level"
+  for key, b in pairs(self.dgSortButtons) do
+    if key == sort then b.text:SetTextColor(1, 0.82, 0) else b.text:SetTextColor(0.6, 0.6, 0.6) end
+  end
+  local groups = items and Journal.DungeonGroups(items, sort) or {}
+  -- sélection : celle d'avant si le donjon est encore là, sinon le premier conseillé, sinon le premier
+  local selected, first
+  for _, g in ipairs(groups) do
+    for _, it in ipairs(g.items) do
+      first = first or it
+      if it.dungeon.key == self.dungeonSel then selected = it end
+    end
+  end
+  selected = selected or first
+  self.dungeonSel = selected and selected.dungeon.key or nil
+
+  local child, y, nh, nr = self.dgChild, 0, 0, 0
+  for _, g in ipairs(groups) do
+    nh = nh + 1
+    local h = dgHeader(nh)
+    h:SetText(L[DG_GROUP_TEXT[g.key]])
+    h:ClearAllPoints()
+    h:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -(y + 6))
+    h:Show()
+    y = y + DG_HEAD_H
+    for _, it in ipairs(g.items) do
+      nr = nr + 1
+      local row = dgRow(nr)
+      row.item = it
+      row:ClearAllPoints()
+      row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -y)
+      setStars(row.stars, Journal.DungeonStars(it.todo))
+      row.name:SetText(Q.UI.DungeonPopup.DungeonName(it.dungeon))
+      row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, tonumber(it.dungeon.minLevel) or 1, tonumber(it.dungeon.maxLevel) or 60)
+      local isSel = it == selected
+      if isSel then row.selected:Show() else row.selected:Hide() end
+      if isSel then
+        row.name:SetTextColor(1, 0.82, 0)
+      elseif g.key == "now" then
+        row.name:SetTextColor(1, 1, 1)
+      else
+        row.name:SetTextColor(0.6, 0.6, 0.6)
+      end
+      if it.state == "added" then row.routeDot:Show() else row.routeDot:Hide() end
+      row:Show()
+      y = y + DG_ROW_H
+    end
+  end
+  for i = nh + 1, #(self.dgHeaders or {}) do self.dgHeaders[i]:Hide() end
+  for i = nr + 1, #(self.dgRows or {}) do
+    self.dgRows[i].item = nil
+    self.dgRows[i]:Hide()
   end
   child:SetHeight(math.max(1, y))
+
+  if not qdbOk then
+    self.dgEmpty:SetText(Q.QDB and Q.QDB.Status and Q.QDB:Status() == "old" and L.QUESTIEDB_TOO_OLD
+      or L.NEED_QUESTIEDB)
+    self.dgEmpty:Show()
+  elseif nr == 0 then
+    self.dgEmpty:SetText(L.DUNGEON_EMPTY)
+    self.dgEmpty:Show()
+  else
+    self.dgEmpty:Hide()
+  end
+  self:ShowDungeonDetail(selected)
 end
 
 ---------------------------------------------------------------------------
@@ -831,8 +1379,11 @@ end
 ---------------------------------------------------------------------------
 -- Messages
 ---------------------------------------------------------------------------
-Q:On("PROGRESS_UPDATED", function() refreshIfShown("route", false) end)
+Q:On("PROGRESS_UPDATED", function()
+  refreshIfShown("route", false)
+  refreshIfShown("dungeons")
+end)
 Q:On("GUIDE_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("STEP_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("CLASSQUESTS_CHANGED", function() refreshIfShown("class") end)
-Q:On("DUNGEONS_CHANGED", function() refreshIfShown("class") end)
+Q:On("DUNGEONS_CHANGED", function() refreshIfShown("dungeons") end)

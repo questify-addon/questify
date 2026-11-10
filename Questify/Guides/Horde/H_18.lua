@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 58 étapes, niveau final 49.00, ~46150 xp/h, 344 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 58 étapes, niveau final 49.00, ~46151 xp/h, 344 min.
 Q:RegisterGuide({
   id = "H_18",
   title = "Stranglethorn Vale",
   faction = "Horde",
   minLevel = 47, maxLevel = 49,
   next = "H_21",
-  sim = { steps = 58, endLevel = 49.00, xpPerHour = 46150, minutes = 344 },
+  sim = { steps = 58, endLevel = 49.00, xpPerHour = 46151, minutes = 344 },
   steps = {
     { "note", "Not running Uldaman? Abandon Uldaman Reagent Run", optional = true, dungeon = "Uldaman" },
     { "goto", 1444, 75.45, 44.36, note = "Flight master" }, -- déplacement

@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 74 étapes, niveau final 6.02, ~12667 xp/h, 36 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_01",
@@ -25,7 +25,6 @@ Q:RegisterGuide({
     { "turnin", 3364, xp = 225 }, -- Scalding Mornbrew Delivery (lvl 5, ~225 xp, sim lvl 4)
     { "accept", 3365 }, -- Bring Back the Mug (lvl 5, ~450 xp, sim lvl 4)
     { "accept", 1599, classes = { "WARLOCK" } }, -- Beginnings (lvl 4, ~355 xp, sim lvl 4)
-    { "accept", 5626, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 4)
     { "accept", 94373, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~355 xp, sim lvl 4)
     { "accept", 97277 }, -- Grund and Gozwin (lvl 6, ~540 xp, sim lvl 4)
     { "accept", 3361 }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 4)
@@ -67,6 +66,7 @@ Q:RegisterGuide({
     { "turnin", 98574, xp = 40, race = { "Gnome" }, classes = { "PRIEST" } }, -- Hallowed Memorandum (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 98581, xp = 40, race = { "Dwarf" }, classes = { "SHAMAN" } }, -- Archaic Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 1599, xp = 355, classes = { "WARLOCK" } }, -- Beginnings (lvl 4, ~355 xp, sim lvl 5)
+    { "accept", 5626, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
     { "turnin", 94373, xp = 355, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~355 xp, sim lvl 5)
     { "accept", 94374, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~180 xp, sim lvl 5)
     { "turnin", 3361, xp = 250 }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 5)

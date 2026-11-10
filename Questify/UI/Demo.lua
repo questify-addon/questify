@@ -3,8 +3,8 @@ local addonName, Q = ...
 -- Commande cachée /qf demo : montre les vraies fenêtres et alertes de l'addon avec des données
 -- d'exemple, pour prendre des captures en jeu. Absente de /qf help, des options et du menu de la
 -- minicarte ; /qf demo seul liste les scènes dans la discussion.
---   /qf demo <scène>   une scène : classquest, classlate, dungeon, upgrade, pair, route, supplies, cave,
---                      profession
+--   /qf demo <scène>   une scène : tracker, classquest, classlate, dungeon, upgrade, pair, route, supplies,
+--                      cave, profession, questitem, theme (thème suivant à chaque appel), options
 --   /qf demo all       enchaîne les scènes ; /qf demo next passe à la suivante
 --   /qf demo off       ferme tout et rétablit l'état d'avant (repère, lignes du suivi, alertes)
 -- Aucun effet de bord : rien n'est écrit dans Q.char ni dans Q.db, aucune quête n'est ajoutée, ignorée
@@ -24,7 +24,8 @@ Q.UI.Demo = Demo
 local L = Q.L
 
 -- Ordre de /qf demo all.
-Demo.SCENES = { "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave", "profession" }
+Demo.SCENES = { "tracker", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
+  "profession", "questitem", "theme", "options" }
 
 -- Objets d'exemple (ID de WoW Classic) : par liste, le premier que le client connaît est pris.
 -- upgrade : annonce simple ; main + off : une arme à une main et un bouclier (annonce de paire).
@@ -32,6 +33,7 @@ Demo.ITEMS = {
   upgrade = { 2129, 2362 },
   main = { 36, 37 },
   off = { 2362, 2129 },
+  quest = 13892,   -- Kodo Kombobulator : objet de quête à utiliser, absent des sacs (le clic ne fait rien)
 }
 
 local ROUTE_FROM = "A_DwarfGnome_03"            -- Loch Modan : Marche de l'Ouest ou Sombrivage
@@ -48,6 +50,9 @@ local token = 0            -- change à chaque scène et à chaque « off » : l
 local patches = {}         -- fonctions remplacées : { table, clé, original }
 local extraLines = {}      -- lignes ajoutées au suivi (zone des avertissements)
 local savedNav             -- { target = ... } : repère d'avant la scène
+local coverActive          -- étape « tuer » simulée : la route est recalculée à la fermeture
+local optionsOpened        -- fenêtre d'options ouverte par la scène « options »
+Demo.themeIndex = 0        -- dernier thème montré par la scène « theme » (le suivant au prochain appel)
 local seq                  -- { i = scène courante de /qf demo all }
 
 local function inCombat() return InCombatLockdown and InCombatLockdown() end
@@ -205,6 +210,12 @@ end
 ---------------------------------------------------------------------------
 local SCENE = {}
 
+-- Bouton du suivi qui brille pendant la scène (UI/TrackerButtons.lua : ClassGlow ou DungeonGlow).
+local function glowButton(name)
+  local B = Q.UI.TrackerButtons
+  if B and B[name] then patch(B, name, function() return function() return 1 end end) end
+end
+
 -- Alerte du suivi : une seule ligne d'exemple à la place des vraies alertes ; late = en retard.
 local function classAlert(chain, late)
   local cq = Q.ClassQuests
@@ -218,6 +229,7 @@ local function classAlert(chain, late)
       return orig(c, state)
     end
   end)
+  glowButton("ClassGlow")
 end
 
 function SCENE.classquest()
@@ -256,6 +268,7 @@ function SCENE.dungeon()
   patch(D, "Alerts", function()
     return function() return { { dungeon = d, state = "available" } } end
   end)
+  glowButton("DungeonGlow")
   refreshTracker()
   P:Show(d, 1, 1)
   return true
@@ -375,6 +388,102 @@ function SCENE.profession()
   return true
 end
 
+-- Couverture : le suivi sur une étape « tuer » du chapitre courant, avec les monstres sous l'objectif,
+-- la distance et la ligne XP/h. Étape choisie : d'abord une quête du journal (vrais compteurs), sinon la
+-- première étape « complete » dont les objectifs ont des monstres. Sans assez de données pour l'XP/h,
+-- un exemple fixe la remplace.
+local function killEntry()
+  local P, T = Q.Progress, Q.Targets
+  if not (P and P.Entries and T and T.MobsForEntry) then return nil end
+  local fallback
+  for _, e in ipairs(P:Entries()) do
+    local s = e.step
+    if type(s) == "table" and s.action == "complete" and type(s.questId) == "number" then
+      local ok, mobs = pcall(T.MobsForEntry, T, e)
+      if ok and type(mobs) == "table" and #mobs > 0 then
+        if P:InLog(s.questId) then return e end
+        fallback = fallback or e
+      end
+    end
+  end
+  return fallback
+end
+
+local function coverSetup()
+  if not trackerShowsChapter() then return false, WHY_TRACKER end
+  local entry = killEntry()
+  if not entry then return false, WHY_DATA end
+  coverActive = true
+  patch(Q.Progress, "Current", function() return function() return entry end end)
+  local X, C = Q.XPRate, Q.Comfort
+  if X and X.Text and C and C.Format and C.FormatDuration then
+    patch(X, "Text", function(orig)
+      return function(self, ...)
+        local text = orig(self, ...)
+        if text then return text end
+        return C.Format(L.COMFORT_XP_RATE_LEVEL, "11.8k", C.FormatDuration(1260))
+      end
+    end)
+  end
+  return true
+end
+
+function SCENE.tracker()
+  local ok, why = coverSetup()
+  if not ok then return false, why end
+  refreshTracker()
+  return true
+end
+
+-- Bouton de l'objet de quête à gauche du suivi (objet d'exemple Demo.ITEMS.quest, icône en couleur).
+function SCENE.questitem()
+  local B = Q.UI.QuestItemButton
+  if not (B and B.ItemFor and B.Refresh and B.UpdateLook) then return false, WHY_API end
+  local ok, why = coverSetup()
+  if not ok then return false, why end
+  patch(B, "ItemFor", function() return function() return Demo.ITEMS.quest end end)
+  patch(B, "UpdateLook", function(orig)
+    return function(self, ...)
+      orig(self, ...)
+      if self.icon then self.icon:SetDesaturated(false) end
+    end
+  end)
+  refreshTracker()
+  B:Refresh()
+  return true
+end
+
+-- Thèmes du suivi : chaque appel montre le suivant (parchemin, noir, transparent, dégradé), sur la
+-- même étape que la couverture ; le réglage enregistré ne change pas.
+function SCENE.theme()
+  local T = Q.Themes
+  if not (T and T.List) then return false, WHY_API end
+  local list = T:List()
+  if #list == 0 then return false, WHY_DATA end
+  local ok, why = coverSetup()
+  if not ok then return false, why end
+  Demo.themeIndex = Demo.themeIndex % #list + 1
+  local theme = list[Demo.themeIndex]
+  patch(Q.Settings, "Get", function(orig)
+    return function(self, path, ...)
+      if path == "tracker.theme" then return theme.key end
+      return orig(self, path, ...)
+    end
+  end)
+  say(L.UI_DEMO_THEME, theme.label, Demo.themeIndex, #list)
+  refreshTracker()
+  return true
+end
+
+-- Fenêtre d'options sur la section Automatisation (bouton de la touche de ciblage).
+function SCENE.options()
+  local O = Q.UI.Options
+  if not (O and O.Open) then return false, WHY_API end
+  O:Open("automation")
+  optionsOpened = true
+  return true
+end
+
 ---------------------------------------------------------------------------
 -- Ouverture, fermeture
 ---------------------------------------------------------------------------
@@ -397,6 +506,17 @@ function Demo:Reset()
   end
   unpatch()
   extraLines = {}
+  if optionsOpened then
+    optionsOpened = nil
+    if Q.UI.Options and Q.UI.Options.Close then Q.UI.Options:Close() end
+  end
+  -- étape simulée : la route, le repère et le bouton d'objet reviennent à l'étape réelle
+  if coverActive then
+    coverActive = nil
+    if Q.Progress and Q.Progress.Update then Q.SafeCall(Q.Progress.Update, Q.Progress) end
+  end
+  local qb = Q.UI.QuestItemButton
+  if qb and qb.Refresh and qb.button then Q.SafeCall(qb.Refresh, qb) end
   if savedNav then
     local prev = savedNav.target
     savedNav = nil

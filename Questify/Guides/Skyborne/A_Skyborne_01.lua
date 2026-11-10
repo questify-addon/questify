@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 227 étapes, niveau final 17.81, ~32235 xp/h, 229 min.
 Q:RegisterGuide({
   id = "A_Skyborne_01",
@@ -64,7 +64,6 @@ Q:RegisterGuide({
     { "accept", 92550 }, -- Havoc in the Highlands (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 93926 }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 92551 }, -- Stolen Supplies (lvl 8, ~700 xp, sim lvl 7)
-    { "accept", 94007, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 7)
     { "accept", 93318 }, -- WANTED: Vulgara the Insatiable (lvl 9, ~780 xp, sim lvl 7)
     { "complete", 93926, at = { 2521, 42.34, 62.02 } }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
     { "turnin", 93926, xp = 700 }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
@@ -112,7 +111,6 @@ Q:RegisterGuide({
     { "complete", 92679, obj = 2, at = { 2521, 62.08, 73.17 } }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 93317 }, -- Crab Season (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 94003, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 10)
-    { "turnin", 94007, xp = 125, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 10)
     { "accept", 94978, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
     { "turnin", 92727, xp = 210 }, -- The Missing Scholar (lvl 10, ~210 xp, sim lvl 10)
     { "accept", 92849 }, -- The Missing Scholar (lvl 10, ~840 xp, sim lvl 10)
@@ -131,6 +129,7 @@ Q:RegisterGuide({
     { "accept", 93949 }, -- Bugged (lvl 8, ~700 xp, sim lvl 11)
     { "turnin", 93165, xp = 680 }, -- Mercy Falls on Deaf Ears (lvl 13, ~680 xp, sim lvl 11)
     { "accept", 93159 }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 11)
+    { "accept", 94007, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 11)
     { "complete", 93159, at = { 2521, 53.96, 38.9 } }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 11)
     { "turnin", 93159, xp = 680 }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 11)
     { "accept", 93160 }, -- The Forest's Bounty (lvl 13, ~680 xp, sim lvl 11)
@@ -192,6 +191,7 @@ Q:RegisterGuide({
     { "accept", 94006, classes = { "DRUID" } }, -- The Great Ursera Spirit (lvl 10, ~125 xp, sim lvl 13)
     { "turnin", 92703, xp = 780 }, -- Deliver the News (lvl 9, ~780 xp, sim lvl 13)
     { "turnin", 93317, xp = 780 }, -- Crab Season (lvl 9, ~780 xp, sim lvl 13)
+    { "turnin", 94007, xp = 125, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 13)
     { "turnin", 94978, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 13)
     { "accept", 94979, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 13)
     { "accept", 98512 }, -- Al'Aketh Assassins (lvl 11, ~770 xp, sim lvl 13)

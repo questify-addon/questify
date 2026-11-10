@@ -1,7 +1,8 @@
 local addonName, Q = ...
 
 -- Suivi sous la minimap (spec § 5.8) :
---   en-tête : titre du chapitre, niveaux, barre de progression « faites/total » ;
+--   en-tête : titre du chapitre et boutons d'accès rapide (UI/TrackerButtons.lua : journal, donjons,
+--   quêtes de classe, options), puis barre de progression « faites/total · niveaux » ;
 --   alerte de quête de classe (lueur pulsée) quand une chaîne devient disponible ;
 --   alerte de donjon conseillé (Engine/Dungeons.lua), clic = fenêtre du donjon ;
 --   étape courante en gros : icône d'action, texte coloré, distance (mise à jour toutes les 0,5 s),
@@ -312,9 +313,11 @@ function Tracker:Create()
   title:SetWordWrap(false)
   self.title = title
 
+  -- Niveaux du chapitre : écrits dans la barre (la place à droite du titre est aux boutons).
   local levels = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   levels:SetPoint("TOPRIGHT", -PAD, -PAD - 1)
   levels:SetJustifyH("RIGHT")
+  levels:Hide()
   self.levels = levels
 
   local bar = CreateFrame("StatusBar", nil, f)
@@ -327,7 +330,10 @@ function Tracker:Create()
   local barBg = bar:CreateTexture(nil, "BACKGROUND")
   barBg:SetAllPoints(bar)
   local barText = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  barText:SetPoint("CENTER", bar, "CENTER", 0, 0)
+  barText:SetPoint("LEFT", bar, "LEFT", 2, 0)
+  barText:SetPoint("RIGHT", bar, "RIGHT", -2, 0)
+  barText:SetJustifyH("CENTER")
+  barText:SetWordWrap(false)
   self.bar, self.barBg, self.barText = bar, barBg, barText
 
   -- XP/h et temps avant le prochain niveau (Engine/XPRate.lua)
@@ -1128,6 +1134,19 @@ function Tracker:LayoutWarnings(y)
   return y
 end
 
+-- Boutons d'accès rapide en haut à droite (UI/TrackerButtons.lua) ; -> largeur qu'ils prennent
+-- (0 si le module manque ou échoue : le suivi s'affiche quand même).
+local function layoutButtons(f)
+  local B = Q.UI.TrackerButtons
+  if not (B and B.Layout) then return 0 end
+  local ok, err = pcall(B.Layout, B, f, PAD)
+  if not ok then
+    Q:ReportError(err)
+    return 0
+  end
+  return B:Width() + 6
+end
+
 function Tracker:Refresh()
   local f = self.frame
   if not f then return end
@@ -1143,8 +1162,9 @@ function Tracker:Refresh()
   applyLock(f)
   local W = curWidth()
   f:SetWidth(W)
-  self.message:SetWidth(W - 2 * PAD)
-  self.title:SetWidth(W - 2 * PAD - 48)
+  local buttonsW = layoutButtons(f)
+  self.message:SetWidth(W - 2 * PAD - buttonsW)
+  self.title:SetWidth(W - 2 * PAD - buttonsW)
   for _, line in ipairs(self.nextLines) do line.text:SetWidth(W - 2 * PAD - 16) end
   f:Show()
 
@@ -1175,11 +1195,12 @@ function Tracker:Refresh()
   self.title:SetText(Q.Guides:DisplayTitle(guide))
   self.title:Show()
   self.levels:SetFormattedText(L.UI_TRACKER_LEVELS, guide.minLevel or 1, guide.maxLevel or 60)
-  self.levels:Show()
   local done, total = chapterProgress()
   self.bar:SetMinMaxValues(0, math.max(total, 1))
   self.bar:SetValue(done)
   self.barText:SetFormattedText(L.UI_TRACKER_PROGRESS, done, total)
+  self.barText:SetText(self.barText:GetText() .. "  ·  "
+    .. string.format(L.UI_TRACKER_BAR_LEVELS, guide.minLevel or 1, guide.maxLevel or 60))
   local chapterXP = comfort("XPRate", "ChapterText")
   if type(chapterXP) == "string" and chapterXP ~= "" then
     self.barText:SetText((self.barText:GetText() or "") .. "  ·  " .. chapterXP)

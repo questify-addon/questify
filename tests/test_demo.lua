@@ -86,6 +86,9 @@ return {
     t.eq(P.title:GetText(), P.ChainTitle(P.chain))
     t.ok(P.chain.key:find("^WARRIOR_"), "chain of the player's class: " .. tostring(P.chain.key))
     t.ok(#Q.UI.Tracker.ClassAlerts() == 1, "the tracker shows the alert too")
+    t.ok(Q.UI.TrackerButtons.buttons.class.glow:IsShown(), "class button glows")
+    qf("demo off")
+    t.ok(not Q.UI.TrackerButtons.buttons.class.glow:IsShown(), "glow gone after off")
     noErrors(t)
   end,
 
@@ -125,6 +128,7 @@ return {
     t.ok(P.dungeon.demo)
     t.eq(P.title:GetText(), P.DungeonName(P.dungeon))
     t.ok(#Q.UI.Tracker.DungeonAlerts() == 1, "alert in the tracker")
+    t.ok(Q.UI.TrackerButtons.buttons.dungeons.glow:IsShown(), "dungeons button glows")
     Q.Player.faction = "Horde"
     qf("demo dungeon")
     t.eq(P.dungeon.key, "RFC", "Horde: Ragefire Chasm")
@@ -371,18 +375,76 @@ return {
       and Q.Dungeons.Alerts == fns[4], "originals restored")
   end,
 
+  -- Couverture : le suivi passe sur une étape « tuer » avec ses monstres et la ligne XP/h ; « off »
+  -- rend l'étape réelle.
+  tracker_scene_shows_a_kill_step = function(t)
+    local Q = load()
+    local before = Q.Progress:Current()
+    local original = Q.Progress.Current
+    qf("demo tracker")
+    local cur = Q.Progress:Current()
+    t.ok(cur and cur.step.action == "complete", "kill step")
+    t.ok(#Q.Targets:MobsForEntry(cur) > 0, "with monsters")
+    t.ok(Q.UI.Tracker.xpLine:IsShown(), "XP per hour line")
+    t.ok(plain(Q.UI.Tracker.xpLine:GetText()):find("11.8k", 1, true), "example rate without data")
+    qf("demo off")
+    t.ok(Q.Progress.Current == original, "original restored")
+    t.ok(Q.Progress:Current() == before, "real step back")
+    noErrors(t)
+  end,
+
+  questitem_scene_shows_the_button = function(t)
+    local Q = load()
+    local B = Q.UI.QuestItemButton
+    qf("demo questitem")
+    t.eq(B.itemId, Q.UI.Demo.ITEMS.quest)
+    t.ok(B.button:IsShown(), "button next to the tracker")
+    qf("demo off")
+    t.ok(not B.button:IsShown(), "hidden after off")
+    noErrors(t)
+  end,
+
+  -- Thèmes : chaque appel montre le suivant, le réglage enregistré ne change pas.
+  theme_scene_cycles_themes = function(t)
+    local Q = load()
+    local list = Q.Themes:List()
+    local saved = Q.Settings:Get("tracker.theme")
+    qf("demo theme")
+    t.eq(Q.UI.Tracker.themeKey, list[1].key)
+    qf("demo theme")
+    t.eq(Q.UI.Tracker.themeKey, list[2].key, "next theme")
+    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_THEME, list[2].label, 2, #list)))
+    qf("demo off")
+    t.eq(Q.Settings:Get("tracker.theme"), saved, "setting untouched")
+    t.eq(Q.UI.Tracker.themeKey, Q.Themes:Resolve(saved), "tracker back to its theme")
+    noErrors(t)
+  end,
+
+  options_scene_opens_automation = function(t)
+    local Q = load()
+    qf("demo options")
+    t.ok(QuestifyOptions and QuestifyOptions:IsShown(), "options shown")
+    t.eq(Q.UI.Options.section, "automation")
+    qf("demo off")
+    t.ok(not QuestifyOptions:IsShown(), "closed after off")
+    noErrors(t)
+  end,
+
   -- all / next : une scène à la fois.
   all_and_next_walk_through_the_scenes = function(t)
     local Q = load()
     stubItems(Q)
     local D = Q.UI.Demo
+    t.eq(D.SCENES[1], "tracker")
+    t.eq(D.SCENES[2], "classquest")
     qf("demo all")
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[1], 1, #D.SCENES)), "first scene named")
-    t.ok(shown(Q.UI.ClassQuestPopup.frame), "first scene shown")
+    qf("demo next")
+    t.ok(shown(Q.UI.ClassQuestPopup.frame), "class quest scene shown")
+    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[2], 2, #D.SCENES)))
     qf("demo next")
     t.ok(not shown(Q.UI.ClassQuestPopup.frame), "previous scene closed")
-    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[2], 2, #D.SCENES)))
-    for _ = 3, #D.SCENES do qf("demo next") end
+    for _ = 4, #D.SCENES do qf("demo next") end
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[#D.SCENES], #D.SCENES, #D.SCENES)))
     qf("demo next")
     t.ok(Mock.printed(Q.L.UI_DEMO_LAST), "end of the sequence")

@@ -791,6 +791,24 @@ function Progress:RouteTurnins()
   return set
 end
 
+-- ChapterDone(g) -> vrai quand toutes les quêtes que le chapitre g fait rendre au personnage sont
+-- rendues, ou leurs étapes passées ou cochées (étapes « turnin » qui le concernent : champ classes,
+-- filtres race et classe, quêtes de donjon). Un chapitre sans rendu n'est jamais fini ici. Sert au
+-- journal (coche verte sur le chapitre), pour n'importe quel chapitre, courant ou non.
+function Progress:ChapterDone(g)
+  if type(g) ~= "table" or type(g.steps) ~= "table" or type(g.id) ~= "string" then return false end
+  local c = charState()
+  local any = false
+  for i, step in ipairs(g.steps) do
+    if step.action == "turnin" and type(step.questId) == "number" and not filterSkip(step) then
+      any = true
+      local key = "g:" .. g.id .. ":" .. i
+      if not (self:IsTurnedIn(step.questId) or c.skipped[key] or c.manual[key]) then return false end
+    end
+  end
+  return any
+end
+
 -- Insère des étapes (quêtes de classe…) avant la route ; un tag existant est remplacé.
 function Progress:InsertSteps(tag, steps)
   if type(tag) ~= "string" or tag == "" or type(steps) ~= "table" or not Q.char then return false end

@@ -1,5 +1,96 @@
 # Changelog
 
+## 0.6.0 (2026-11-10)
+
+### English
+
+**Tracker**
+- Four quick buttons in the tracker header: route journal, dungeons, class quests, options. The class button glows
+  while a class quest chain is available and you follow none; the dungeon button glows while a dungeon is suggested.
+  The chapter levels move into the progress bar.
+- Blizzard's objective tracker is folded at login and /reload, so it does not sit next to Questify's (option, on by
+  default; its own button opens it again).
+
+**Journal**
+- Three tabs, each with the icon of its tracker button: Route, Dungeons, Class quests.
+- Route: chapters grouped (suggested for your level, coming next, then done, below your level or for another race),
+  with a green check on finished chapters.
+- New Dungeons tab: every dungeon of your faction, rated with one to three stars for the quests left to do, sorted by
+  level or by quests. On the right, the selected dungeon with its quests in order: missing, in your quest log, done.
+- Quest chains off your route: when dungeon quests need a chain of earlier quests, one box offers it. "See the chain"
+  opens a panel docked to the journal: the zones in order (green when already on your route), each step with its giver
+  and XP, what it unlocks, and the rewards of the dungeon quests. One click adds it to your route, with the dungeon
+  quests picked up right after.
+- Reward items behave like items in your bags: full tooltip, comparison with your gear (Shift or the game option),
+  Shift-click for the link, Ctrl-click for the dressing room.
+
+**Options**
+- Keys are set right in the options: click the button, press a key; right-click removes it.
+
+**Class quests**
+- Fix: a class quest that can also be started elsewhere (Call of Earth) shows as done once its chain is finished, and
+  the extra start is no longer a step of the route. Same fix for six Warlock and Priest chains.
+- Routes no longer pick up a class quest before its required level.
+
+**Cozy Sleeping Bag**
+- Fix: Stepping Stones needs "... and that note you found" first. The note is taken at the Burned-Out Remains of
+  your faction and handed in at the other end of the world, where the Nailed Plank gives Stepping Stones. In 0.5.0
+  the route sent you to a plank that gives nothing.
+- Alliance (Human, Dwarf, Gnome): the note at Alexston Farmstead (Westfall), handed in at the burned tower south of
+  Camp Taurajo (Southern Barrens) during Ashenvale and Stonetalon (level 20-22). The rest of the hunt is unchanged.
+- Horde, every race: the hunt is later on the route. The note at the burned tower south of Camp Taurajo while in
+  Thousand Needles (level 32-33), handed in at Alexston Farmstead from Grom'gol (Stranglethorn, 35-37), Scramble and
+  Wet Job in Stonetalon at the end of Dustwallow Marsh (37-38), then the Loch Modan dam and north-west Arathi, where
+  the bag is handed over (38-39). 26 more simulated minutes over 1-60 for 6 more quests: Orc/Troll 5 644 min,
+  Tauren 5 646, Undead 5 697, Skyborne Horde 5 672. The walks to Westfall and to the dam are counted in a straight
+  line: to check in game.
+
+### Français
+
+**Suivi**
+- Quatre boutons d'accès rapide dans l'en-tête du suivi : journal de route, donjons, quêtes de classe, options. Le
+  bouton de classe brille tant qu'une suite de quêtes de classe est disponible et qu'aucune n'est suivie ; celui des
+  donjons tant qu'un donjon est conseillé. Les niveaux du chapitre passent dans la barre de progression.
+- Le suivi d'objectifs de Blizzard est replié à la connexion et au /reload, pour ne pas s'afficher à côté de celui de
+  Questify (option activée par défaut ; son propre bouton le rouvre).
+
+**Journal**
+- Trois onglets, chacun avec l'icône de son bouton du suivi : Route, Donjons, Quêtes de classe.
+- Route : chapitres groupés (conseillés à ton niveau, à suivre, puis faits, dépassés ou d'une autre race), avec une
+  coche verte sur les chapitres finis.
+- Nouvel onglet Donjons : tous les donjons de ta faction, notés d'une à trois étoiles selon les quêtes à y faire,
+  triés par niveau ou par quêtes. À droite, le donjon choisi, avec ses quêtes dans l'ordre : manquantes, dans ton
+  journal de quêtes, terminées.
+- Suites de quêtes hors de ta route : quand des quêtes de donjon demandent une suite de quêtes, un encadré la propose.
+  « Voir la suite » ouvre une annexe collée au journal : les zones dans l'ordre (en vert celles de ta route), chaque
+  étape avec son donneur et son XP, ce qu'elle débloque et les récompenses des quêtes du donjon. Un clic l'ajoute à ta
+  route, avec la prise des quêtes du donjon juste après.
+- Les objets de récompense se comportent comme ceux de tes sacs : infobulle complète, comparaison avec ton équipement
+  (Maj ou l'option du jeu), Maj + clic pour le lien, Ctrl + clic pour la cabine d'essayage.
+
+**Options**
+- Les touches se règlent dans les options : clic sur le bouton, puis la touche ; clic droit pour la retirer.
+
+**Quêtes de classe**
+- Correctif : une quête de classe qui peut aussi commencer ailleurs (Call of Earth) passe à terminée une fois sa suite
+  faite, et ce second départ n'est plus une étape de la route. Même correctif pour six suites de Démoniste et de
+  Prêtre.
+- Les routes ne font plus prendre une quête de classe avant son niveau requis.
+
+**Cozy Sleeping Bag**
+- Correctif : Stepping Stones demande d'abord « ... and that note you found ». La note se prend aux Burned-Out Remains
+  de ta faction et se rend à l'autre bout du monde, où la Nailed Plank donne Stepping Stones. En 0.5.0, la route
+  t'envoyait à une planche qui ne donne rien.
+- Alliance (Humain, Nain, Gnome) : la note à la ferme d'Alexston (Marche de l'Ouest), rendue à la tour brûlée au sud
+  de Camp Taurajo (sud des Tarides) pendant Ashenvale et les Serres-Rocheuses (niveau 20-22). La suite de la chasse ne
+  change pas.
+- Horde, toutes les races : la chasse arrive plus tard sur la route. La note à la tour brûlée au sud de Camp Taurajo
+  pendant Mille pointes (niveau 32-33), rendue à la ferme d'Alexston depuis Grom'gol (Strangleronce, 35-37), Scramble
+  et Wet Job aux Serres-Rocheuses à la fin du Marécage d'Âprefange (37-38), puis le barrage du Loch Modan et le
+  nord-ouest d'Arathi, où le sac est remis (38-39). 26 minutes simulées de plus sur 1-60 pour 6 quêtes de plus :
+  Orc/Troll 5 644 min, Tauren 5 646, Mort-vivant 5 697, Skyborne Horde 5 672. Les trajets vers la Marche de l'Ouest et
+  vers le barrage sont comptés en ligne droite : à vérifier en jeu.
+
 ## 0.5.0 (2026-11-09)
 
 ### English

@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 155 étapes, niveau final 11.82, ~17351 xp/h, 118 min.
 Q:RegisterGuide({
   id = "A_Human_02",
@@ -13,19 +13,13 @@ Q:RegisterGuide({
   sim = { steps = 155, endLevel = 11.82, xpPerHour = 17351, minutes = 118 },
   steps = {
     { "accept", 62 }, -- The Fargodeep Mine (lvl 7, ~475 xp, sim lvl 6)
-    { "accept", 1638, classes = { "WARRIOR" } }, -- A Warrior's Training (lvl 10, ~85 xp, sim lvl 6)
-    { "accept", 94792, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 6)
     { "accept", 60 }, -- Kobold Candles (lvl 7, ~475 xp, sim lvl 6)
     { "accept", 5624, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~160 xp, sim lvl 6)
-    { "accept", 1860, classes = { "MAGE" } }, -- Speak with Jennea (lvl 10, ~420 xp, sim lvl 6)
-    { "accept", 5635, classes = { "PRIEST" } }, -- Desperate Prayer (lvl 10, ~210 xp, sim lvl 6)
     { "accept", 95998 }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "complete", 95998, at = { 1429, 44.94, 63.2 } }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "turnin", 95998, xp = 540 }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "accept", 96626 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
     { "complete", 96626, at = { 1429, 44.37, 65.99 } }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
-    { "accept", 1685, classes = { "WARLOCK" } }, -- Gakin's Summons (lvl 10, ~420 xp, sim lvl 6)
-    { "accept", 2205, classes = { "ROGUE" } }, -- Seek out SI: 7 (lvl 10, ~210 xp, sim lvl 6)
     { "turnin", 96626, xp = 540 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
     { "complete", 62, at = { 1429, 40.56, 82.26 } }, -- The Fargodeep Mine (lvl 7, ~475 xp, sim lvl 6)
     { "complete", 60, at = { 1429, 39.98, 80.7 } }, -- Kobold Candles (lvl 7, ~475 xp, sim lvl 6)
@@ -60,7 +54,6 @@ Q:RegisterGuide({
     { "complete", 99128, at = { 1429, 55.37, 66.57 } }, -- Slimy Menace (lvl 7, ~630 xp, sim lvl 7)
     { "complete", 112, at = { 1429, 55.24, 66.13 } }, -- Collecting Kelp (lvl 7, ~315 xp, sim lvl 7)
     { "complete", 86, at = { 1429, 62.14, 78.17 } }, -- Pie for Billy (lvl 6, ~405 xp, sim lvl 7)
-    { "complete", 94792, at = { 1429, 62.14, 78.17 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 7)
     { "complete", 88, at = { 1429, 69.66, 79.25 } }, -- Princess Must Die! (lvl 9, ~780 xp, sim lvl 8)
     { "complete", 147, at = { 1429, 71.09, 80.65 } }, -- Manhunt (lvl 10, ~840 xp, sim lvl 8)
     { "accept", 91740, at = { 1429, 76.32, 83.57 }, note = "Loot Croaky's Head to start the quest" }, -- Croaky's Head (lvl 11, ~660 xp, sim lvl 8)
@@ -96,10 +89,14 @@ Q:RegisterGuide({
     { "turnin", 5624, xp = 160, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~160 xp, sim lvl 9)
     { "accept", 114 }, -- The Escape (lvl 7, ~790 xp, sim lvl 9)
     { "turnin", 39, xp = 1050 }, -- Deliver Thomas' Report (lvl 10, ~1050 xp, sim lvl 9)
-    { "turnin", 94792, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 9)
-    { "accept", 94863, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 9)
     { "turnin", 76, xp = 840 }, -- The Jasperlode Mine (lvl 10, ~840 xp, sim lvl 9)
     { "turnin", 147, xp = 840 }, -- Manhunt (lvl 10, ~840 xp, sim lvl 10)
+    { "accept", 1638, classes = { "WARRIOR" } }, -- A Warrior's Training (lvl 10, ~85 xp, sim lvl 10)
+    { "accept", 1685, classes = { "WARLOCK" } }, -- Gakin's Summons (lvl 10, ~420 xp, sim lvl 10)
+    { "accept", 1860, classes = { "MAGE" } }, -- Speak with Jennea (lvl 10, ~420 xp, sim lvl 10)
+    { "accept", 2205, classes = { "ROGUE" } }, -- Seek out SI: 7 (lvl 10, ~210 xp, sim lvl 10)
+    { "accept", 5635, classes = { "PRIEST" } }, -- Desperate Prayer (lvl 10, ~210 xp, sim lvl 10)
+    { "accept", 94792, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "turnin", 99129, xp = 475 }, -- A Man About a Murloc (lvl 7, ~475 xp, sim lvl 10)
     { "accept", 239 }, -- Westbrook Garrison Needs Help! (lvl 10, ~210 xp, sim lvl 10)
     { "accept", 99130 }, -- An Enticing Offer (lvl 7, ~630 xp, sim lvl 10)
@@ -141,12 +138,9 @@ Q:RegisterGuide({
     { "turnin", 99130, xp = 630 }, -- An Enticing Offer (lvl 7, ~630 xp, sim lvl 11)
     { "accept", 99131 }, -- Baited for Success (lvl 7, ~475 xp, sim lvl 11)
     { "turnin", 99131, xp = 475 }, -- Baited for Success (lvl 7, ~475 xp, sim lvl 11)
-    { "complete", 94863, at = { 1429, 60.45, 65.03 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
-    { "turnin", 94863, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
-    { "accept", 94864, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "complete", 91733, obj = 2, at = { 1429, 74.3, 76.4 } }, -- Downstream (lvl 10, ~840 xp, sim lvl 11)
     { "complete", 1688, at = { 1429, 71.01, 80.77 }, classes = { "WARLOCK" } }, -- Surena Caledon (lvl 10, ~630 xp, sim lvl 11)
-    { "complete", 94864, at = { 1429, 61.89, 78.03 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "complete", 94792, at = { 1429, 62.14, 78.17 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "complete", 91733, at = { 1429, 76.7, 82.45 } }, -- Downstream (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 91733, xp = 840 }, -- Downstream (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 1666, xp = 420, classes = { "WARRIOR" } }, -- Marshal Haggard (lvl 10, ~420 xp, sim lvl 11)
@@ -158,6 +152,12 @@ Q:RegisterGuide({
     { "accept", 87 }, -- Goldtooth (lvl 8, ~880 xp, sim lvl 11)
     { "complete", 87, at = { 1429, 41.71, 78.03 } }, -- Goldtooth (lvl 8, ~880 xp, sim lvl 11)
     { "turnin", 2206, xp = 840, classes = { "ROGUE" } }, -- Snatch and Grab (lvl 10, ~840 xp, sim lvl 11)
+    { "turnin", 94792, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "accept", 94863, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "complete", 94863, at = { 1429, 60.45, 65.03 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "turnin", 94863, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "accept", 94864, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "complete", 94864, at = { 1429, 61.89, 78.03 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 94864, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "accept", 94793, classes = { "HUNTER" } }, -- Training the Beast (lvl 10, ~210 xp, sim lvl 11)
     { "turnin", 94793, xp = 210, classes = { "HUNTER" } }, -- Training the Beast (lvl 10, ~210 xp, sim lvl 11)

@@ -22,9 +22,17 @@
 --   * une faction n'est autorisée que si elle a au moins une quête en ville, que le donjon ne lui est
 --     pas interdit (only) et que l'entrée n'est pas dans une capitale de l'autre faction.
 --     Le Gouffre de Ragefeu (Orgrimmar) est donc Horde seulement.
+--   * XP et récompenses (Q.QuestRewardData, même fichier) : pour chaque quête de donjon et toute sa chaîne de
+--     préquêtes, l'XP de base au niveau de la quête (xp.baseXP du simulateur : QuestXP de QuestieDB, -50 % en
+--     donjon, est = true si estimée) et les objets donnés en récompense (questRewards des objets de QuestieDB,
+--     au choix ou d'office : QuestieDB ne distingue pas). La fenêtre Donjons les montre avant qu'on ajoute à la
+--     route une chaîne de préquêtes trop longue pour être enchaînée d'office.
 package.path = "tools/routebuilder/?.lua;" .. package.path
 local qdb = require("qdb")
 local world = require("world")
+local xpm = require("xp")
+
+local M = {}
 
 -- Donjons retenus : dungeon_catalog.lua (partagé avec sim.lua).
 local DUNGEONS = require("dungeon_catalog").list
@@ -197,6 +205,60 @@ local function collectQuests(W, D, areas, faction)
 end
 
 ---------------------------------------------------------------------------
+-- XP et récompenses
+---------------------------------------------------------------------------
+local MAX_REWARD_DEPTH = 15   -- niveaux de préquêtes suivis au plus (chaînes de Forever : 8 au plus vues)
+
+-- rewards(D, roots, into) -> into : { [questId] = { xp = n, est = true|nil, items = { itemId, ... } } } pour les
+-- quêtes `roots` et toutes leurs préquêtes (preSingle et preGroup). Les appels successifs (une faction puis
+-- l'autre) complètent la même table.
+function M.rewards(D, roots, into)
+  local out = into or {}
+  if not D._rewardItems then
+    local idx = {}
+    for itemId, it in pairs(D.items or {}) do
+      for _, qid in ipairs(it.questRewards or {}) do
+        idx[qid] = idx[qid] or {}
+        table.insert(idx[qid], itemId)
+      end
+    end
+    for _, list in pairs(idx) do table.sort(list) end
+    D._rewardItems = idx
+  end
+  local function visit(id, depth)
+    if out[id] or depth > MAX_REWARD_DEPTH then return end
+    local q = D.quests[id]
+    if not q then return end
+    local base, known = xpm.baseXP(D, q)
+    local items = {}
+    for i, itemId in ipairs(D._rewardItems[id] or {}) do items[i] = itemId end
+    out[id] = { xp = base, est = (not known) or nil, items = items }
+    for _, p in ipairs(q.preSingle or {}) do visit(p, depth + 1) end
+    for _, p in ipairs(q.preGroup or {}) do visit(p, depth + 1) end
+  end
+  for _, id in ipairs(roots) do visit(id, 0) end
+  return out
+end
+
+-- Texte Lua de Q.QuestRewardData, trié par ID de quête.
+function M.emitRewards(rewards)
+  local lines = {
+    "-- XP de base au niveau de la quête (est = estimée) et objets de récompense (au choix ou d'office) des quêtes",
+    "-- des donjons et de toutes leurs préquêtes.",
+    "Q.QuestRewardData = {",
+  }
+  for _, id in ipairs(qdb.sortedKeys(rewards)) do
+    local r = rewards[id]
+    local parts = { ("xp = %d"):format(r.xp or 0) }
+    if r.est then parts[#parts + 1] = "est = true" end
+    parts[#parts + 1] = "items = { " .. table.concat(r.items or {}, ", ") .. " }"
+    lines[#lines + 1] = ("  [%d] = { %s },"):format(id, table.concat(parts, ", "))
+  end
+  lines[#lines + 1] = "}"
+  return table.concat(lines, "\n") .. "\n"
+end
+
+---------------------------------------------------------------------------
 -- Écriture
 ---------------------------------------------------------------------------
 local function point(t) return ("{ %d, %s, %s }"):format(t[1], tostring(t[2]), tostring(t[3])) end
@@ -229,7 +291,7 @@ local function main(argv)
   for _, f in ipairs(FACTIONS) do Ds[f] = qdb.load({ db = o.db, questie = o.questie, faction = f }) end
   local support = loadDungeonSupport(o.db)
 
-  local out = {}
+  local out, rewards = {}, {}
   for _, def in ipairs(DUNGEONS) do
     local entry = support[def.area]
     local areas = { [def.area] = true }
@@ -258,6 +320,9 @@ local function main(argv)
       if allowed then
         d.factions[#d.factions + 1] = f
         d.quests[f] = list
+        local roots = {}
+        for _, e in ipairs(list) do roots[#roots + 1] = e.id end
+        M.rewards(Ds[f], roots, rewards)
       end
     end
     if entrance and #d.factions > 0 then
@@ -307,10 +372,12 @@ local function main(argv)
       table.concat(d.factions, "+"), table.concat(counts, "  "), point(d.entrance), d.source))
   end
   lines[#lines + 1] = "}"
+  lines[#lines + 1] = M.emitRewards(rewards)
   local f = assert(io.open(o.out, "w"))
   f:write(table.concat(lines, "\n"), "\n")
   f:close()
   print("wrote " .. o.out)
 end
 
+if select(1, ...) == "--as-module" then return M end
 main(arg or {})

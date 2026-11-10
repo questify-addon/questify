@@ -1,6 +1,6 @@
 # A_Human_01 — Northshire
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
@@ -73,7 +73,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 3105 | Tainted Letter | 1 | WARLOCK | woven, detour 18 s |
 | 92479 | A Scribbled Letter | 1 | HUNTER | woven, detour 10 s |
 | 1598 | The Stolen Tome | 4 | WARLOCK | woven, detour 106 s |
-| 5623 | In Favor of the Light | 4 | PRIEST | woven, detour 21 s |
+| 5623 | In Favor of the Light | 4 | PRIEST | woven, detour 24 s |
 
 ## Candidate ratios
 

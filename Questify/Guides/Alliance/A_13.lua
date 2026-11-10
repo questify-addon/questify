@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 50 étapes, niveau final 40.00, ~34880 xp/h, 141 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 50 étapes, niveau final 40.00, ~34860 xp/h, 141 min.
 Q:RegisterGuide({
   id = "A_13",
   title = "Arathi Highlands",
   faction = "Alliance",
   minLevel = 39, maxLevel = 40,
   next = "A_15",
-  sim = { steps = 50, endLevel = 40.00, xpPerHour = 34880, minutes = 141 },
+  sim = { steps = 50, endLevel = 40.00, xpPerHour = 34860, minutes = 141 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
@@ -60,6 +60,6 @@ Q:RegisterGuide({
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "turnin", 602, xp = 1400 }, -- Magical Analysis (lvl 37, ~1400 xp, sim lvl 39)
     { "accept", 96800, optional = true, dungeon = "Scarlet Monastery" }, -- Past Due (lvl 38, ~0 xp, sim lvl 39)
-    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 90 more mobs near the last objective" }, -- farm de niveau
+    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 89 more mobs near the last objective" }, -- farm de niveau
   },
 })

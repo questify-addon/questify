@@ -96,9 +96,10 @@ plans.Alliance = {
     entry = { WESTFALL, 56.3, 47.5 }, next = "A_01",
     flightPaths = { "Stormwind, Elwynn", "Sentinel Hill, Westfall" },
     -- Poor Old Blanchy (151) : écartée par le budget d'XP (« level band reached ») ; +1 085 XP pour +3 min
-    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche de la Marche de l'Ouest,
-    -- niveau requis 14), rendue aux Serres-Rocheuses (A_02) ; suite en A_02, A_04 et A_05.
-    force = { [151] = true, [79192] = true },
+    -- ... and that note you found (79008) : début de la chasse au trésor du Cozy Sleeping Bag (Burned-Out Remains de
+    -- l'Alexston Farmstead, niveau requis 14), rendue aux Tarides en A_02, où la Nailed Plank donne Stepping Stones.
+    -- La planche de la Marche de l'Ouest est le bout du chemin Horde : elle ne donne rien à l'Alliance.
+    force = { [151] = true, [79008] = true },
   },
   -- Humain : Northshire, Elwynn, Marche de l'Ouest
   {
@@ -119,11 +120,11 @@ plans.Alliance = {
     flightPaths = { "Sentinel Hill, Westfall" },
     -- Rumi of Gnomeregan (79093, niveau 20) : écartée « au-dessus de la tranche » ; rendue à Stormwind en fin
     -- de chapitre. Forcée ici seulement : un forçage global la placerait plus tôt (Elwynn + Stormwind).
-    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag, comme en A_DwarfGnome_04. Prise
-    -- après Captain Sander's Hidden Treasure (140), quand le niveau requis 14 est atteint : sans cette précédence,
-    -- l'ordre passe à la planche au niveau 13 et la quête est écartée (~71 mobs à farmer).
-    force = { [79093] = true, [79192] = true },
-    precede = { { "T140", "A79192" } },
+    -- ... and that note you found (79008) : début de la chasse au trésor du Cozy Sleeping Bag, comme en
+    -- A_DwarfGnome_04. Prise après Captain Sander's Hidden Treasure (140), quand le niveau requis 14 est atteint :
+    -- sans cette précédence, l'ordre passe aux Burned-Out Remains au niveau 13 et la quête est écartée.
+    force = { [79093] = true, [79008] = true },
+    precede = { { "T140", "A79008" } },
   },
   -- Elfe de la nuit : Shadowglen, Teldrassil, Sombrivage (toute la zone), puis tronc commun aux Carmines
   {
@@ -170,15 +171,18 @@ plans.Alliance = {
     flightPaths = { "Auberdine, Darkshore" },
   },
   {
-    id = "A_02", title = "Ashenvale and Stonetalon Mountains", faction = "Alliance", zones = { ASHENVALE, STONETALON },
+    id = "A_02", title = "Ashenvale and Stonetalon Mountains", faction = "Alliance",
+    zones = { ASHENVALE, STONETALON, BARRENS },
     minLevel = 20, maxLevel = 22, levelSlack = 0, entry = { ASHENVALE, 34.4, 48.0 }, next = "A_03",
     flightPaths = { "Astranaar, Ashenvale" },
     -- rendus à Stormwind au passage vers les Carmines (A Scroll from Mauren 1075) : 1-30 -7 min par parcours
     endZones = { STORMWIND },
-    -- Cozy Sleeping Bag : Stepping Stones rendue, Scramble, puis Wet Job prise au Mound of Dirt et rendue au barrage
-    -- du Loch Modan (A_04). Parcours Elfe de la nuit et Skyborne : sans le départ de la Marche de l'Ouest, étapes
-    -- filtrées par race au rejeu.
-    force = { [79980] = true, [79974] = true },
+    -- Cozy Sleeping Bag : la note de la Marche de l'Ouest (79008) rendue à la tour brûlée au sud de Camp Taurajo (seul
+    -- coin des Tarides du chapitre), Stepping Stones prise à la Nailed Plank et rendue au Pocket Litter, Scramble, puis
+    -- Wet Job prise au Mound of Dirt et rendue au barrage du Loch Modan (A_04). Parcours Elfe de la nuit et Skyborne :
+    -- sans le départ de la Marche de l'Ouest, étapes filtrées par race au rejeu.
+    bounds = { [BARRENS] = { 44, 71, 49, 77 } },
+    force = { [79192] = true, [79980] = true, [79974] = true },
   },
   {
     id = "A_03", title = "Redridge Mountains and Duskwood", faction = "Alliance", zones = { REDRIDGE, DUSKWOOD },
@@ -492,26 +496,22 @@ plans.Horde = {
     id = "H_01", title = "The Barrens", faction = "Horde", zones = { BARRENS },
     minLevel = 12, maxLevel = 17, entry = { BARRENS, 52.0, 30.0 }, next = "H_02",
     flightPaths = { "Crossroads, The Barrens", "Ratchet, The Barrens", "Camp Taurajo, The Barrens" },
-    -- Stepping Stones (79192) : début de la chasse au trésor du Cozy Sleeping Bag (planche du sud des Tarides, niveau
-    -- requis 14), rendue aux Serres-Rocheuses (H_02) ; suite en H_02, H_03 et H_05.
-    force = { [79192] = true },
+    -- Chasse au trésor du Cozy Sleeping Bag : pas ici. Sa note (79007, Burned-Out Remains du sud des Tarides) se rend
+    -- à la Nailed Plank de la Marche de l'Ouest, qui donne Stepping Stones, et la route Horde n'y passe qu'en H_09 :
+    -- prise ici, la note resterait huit chapitres dans le journal (report limité à deux chapitres, build.lua). La
+    -- chaîne passe donc par H_07 (note), H_09 (planche), H_10 (Serres-Rocheuses) et H_11 (Loch Modan, Arathi).
+    -- La planche des Tarides ne donne Stepping Stones qu'à l'Alliance.
   },
   {
     id = "H_02", title = "Stonetalon Mountains and The Barrens", faction = "Horde",
     zones = { STONETALON, BARRENS }, minLevel = 17, maxLevel = 21, levelSlack = 0, levelBelow = 6, far = 1600,
     entry = { BARRENS, 52.0, 30.0 }, next = "H_03",
     flightPaths = { "Sun Rock Retreat, Stonetalon Mountains" },
-    -- Cozy Sleeping Bag : Stepping Stones rendue au Pocket Litter, puis Scramble (déjà gardée avant les liens de la
-    -- chaîne, mais prise sans Stepping Stones).
-    force = { [79980] = true },
   },
   {
     id = "H_03", title = "Ashenvale and Stonetalon Mountains", faction = "Horde", zones = { ASHENVALE, STONETALON },
     minLevel = 21, maxLevel = 25, levelSlack = 0, levelBelow = 6, far = 1600, entry = { ASHENVALE, 73.0, 61.0 }, next = "H_04",
     flightPaths = { "Splintertree Post, Ashenvale", "Zoram'gar Outpost, Ashenvale" },
-    -- Wet Job (79974) prise au Mound of Dirt des Serres-Rocheuses et rendue au barrage du Loch Modan en H_05 : de H_02,
-    -- le rendu serait trois chapitres plus loin (hors des deux chapitres du report).
-    force = { [79974] = true },
   },
   {
     id = "H_04", title = "Southern Barrens and Thousand Needles", faction = "Horde", zones = { BARRENS, NEEDLES },
@@ -525,11 +525,7 @@ plans.Horde = {
     flightPaths = { "Freewind Post, Thousand Needles" },
   },
   {
-    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD, LOCH_MODAN, ARATHI },
-    -- Fin de la chasse au trésor du Cozy Sleeping Bag : Wet Job rendue et Eagle's Fist prise au barrage du Loch Modan,
-    -- rendue au nord-ouest d'Arathi, puis This Must Be The Place, qui donne le sac.
-    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 }, [ARATHI] = { 17, 18, 28, 30 } },
-    force = { [79975] = true, [79976] = true },
+    id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD },
     minLevel = 28, maxLevel = 30, levelSlack = 0, levelBelow = 6, far = 1600, entry = { HILLSBRAD, 62.0, 20.0 }, endZones = { UNDERCITY },
     next = "H_06",
     -- strictLevel (QuestieDB v1.0.11) : sans lui, tranche élargie (147 mobs à farmer), 44 mobs de farm final,
@@ -563,7 +559,13 @@ plans.Horde = {
   },
   {
     id = "H_07", title = "Thousand Needles", faction = "Horde", zones = { NEEDLES, BARRENS, ORGRIMMAR },
-    bounds = { [BARRENS] = { 44, 26, 53, 32 } }, -- Carrefour et Bastion : The Swarm Grows, The Kolkar of Desolace
+    -- Carrefour et Bastion : The Swarm Grows, The Kolkar of Desolace ; second rectangle : tour brûlée au sud de Camp
+    -- Taurajo, en remontant du Grand Élévateur
+    bounds = { [BARRENS] = { { 44, 26, 53, 32 }, { 44, 71, 49, 77 } } },
+    -- Cozy Sleeping Bag (2026-11-10) : « ... and that note you found » (79007, Burned-Out Remains, niveau requis 14),
+    -- rendue à la Nailed Plank de la Marche de l'Ouest en H_09 (deux chapitres plus loin, limite du report). Suite :
+    -- H_09, H_10, H_11. Mesuré : chaîne complète, +26 min sur les quatre parcours Horde 1-60 (+6 quêtes, -5 mobs).
+    force = { [79007] = true },
     -- Orgrimmar (zeppelin depuis Fossoyeuse) : The Swarm Grows (1146) et Alliance Relations (1432), têtes des
     -- chaînes des Mille pointes et de Désolace. Mesuré : -19 min, -154 mobs (H_07 et H_08 sans farm).
     -- (1145 The Swarm Grows et 1362 The Kolkar of Desolace, forcées jusqu'au lot L : forçage retiré, mesuré identique)
@@ -576,17 +578,31 @@ plans.Horde = {
     flightPaths = { "Shadowprey Village, Desolace" },
   },
   {
-    id = "H_09", title = "Stranglethorn Vale", faction = "Horde", zones = { STV },
+    id = "H_09", title = "Stranglethorn Vale", faction = "Horde", zones = { STV, WESTFALL },
     minLevel = 35, maxLevel = 37, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { STV, 32.54, 29.35 }, next = "H_10",
     flightPaths = { "Grom'gol, Stranglethorn" },
+    -- Cozy Sleeping Bag : la note de H_07 rendue à la ferme d'Alexston (Marche de l'Ouest limitée à elle), où la Nailed
+    -- Plank donne Stepping Stones (79192), rendue aux Serres-Rocheuses en H_10. Aller-retour depuis Grom'gol compté en
+    -- ligne droite dans la région de marche du sud (sans contourner les reliefs) : à vérifier en jeu. H_09 +1 min.
+    bounds = { [WESTFALL] = { 35, 48, 40, 53 } },
+    force = { [79192] = true },
   },
   {
-    id = "H_10", title = "Dustwallow Marsh", faction = "Horde", zones = { DUSTWALLOW },
+    id = "H_10", title = "Dustwallow Marsh", faction = "Horde", zones = { DUSTWALLOW, STONETALON },
     minLevel = 37, maxLevel = 38, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DUSTWALLOW, 35.56, 31.88 }, next = "H_11",
     flightPaths = { "Brackenwall Village, Dustwallow Marsh" },
+    -- Cozy Sleeping Bag : vol vers Sun Rock Retreat en fin de chapitre, Stepping Stones rendue au Pocket Litter,
+    -- Scramble, puis Wet Job (79974) prise au Mound of Dirt et rendue au barrage du Loch Modan en H_11. H_10 +13 min.
+    bounds = { [STONETALON] = { 37, 47, 43, 55 } },
+    force = { [79980] = true, [79974] = true },
   },
   {
-    id = "H_11", title = "Arathi Highlands", faction = "Horde", zones = { ARATHI, HILLSBRAD, ALTERAC },
+    id = "H_11", title = "Arathi Highlands", faction = "Horde", zones = { ARATHI, HILLSBRAD, ALTERAC, LOCH_MODAN },
+    -- Fin du Cozy Sleeping Bag : Wet Job rendue et Eagle's Fist prise au barrage du Loch Modan (limité à lui), rendue
+    -- au nord-ouest d'Arathi, puis This Must Be The Place, qui donne le sac. Barrage atteint en ligne droite depuis
+    -- l'est d'Arathi (sans le détour par le pont de Thandol et les Paluns) : à vérifier en jeu. H_11 +11 min.
+    bounds = { [LOCH_MODAN] = { 44, 8, 55, 18 } },
+    force = { [79975] = true, [79976] = true },
     minLevel = 38, maxLevel = 39, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { ARATHI, 73.02, 32.70 }, next = "H_12",
     -- The Crown of Will (518-521, Tarren Mill) : objectifs dans les Montagnes d'Alterac
   },

@@ -77,10 +77,15 @@ always shows you the next thing to do.
 - **Zone mode and mob targeting.** When several quests share an area, their objectives are grouped into one
   visit; the monsters to kill are listed under the objective, and one click (or a key) targets them and marks
   them with a skull.
+- **Everything one click away.** Four buttons in the tracker open the journal on the route, the dungeons or the class
+  quests, and the options; the class and dungeon buttons glow when something is waiting for you. Blizzard's objective
+  tracker folds itself away.
 - **Class quests and dungeons.** Class quests up to level 60: the ones along your route are steps of the route, the
   others are in the journal with a one-click "Add to route". Dungeon quests are picked up along the way; 22 dungeons
   from Ragefire Chasm to Stratholme are suggested for your level and faction, and one click adds every quest to pick
-  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route.
+  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route. The Dungeons tab
+  rates each dungeon by the quests left to do; when its quests need a chain of earlier quests off your route, a panel
+  docked to the journal shows the zones, the steps and the dungeon rewards before you add it.
 - **Comfort.** Optional auto accept, turn-in and reward choice (following a loot profile: Elemental, Healer,
   Tank…), gear upgrades announced and equipped in one click, junk sold, quest item button (also for an item that
   starts a quest, with an alert when you loot it), profession training reminders.
@@ -121,11 +126,16 @@ t'indique toujours quoi faire ensuite.
   épinglées sur la carte du monde et la minicarte.
 - **Mode zone et ciblage** : quand plusieurs quêtes partagent un endroit, leurs objectifs sont regroupés en une
   visite ; les monstres à tuer sont listés sous l'objectif, un clic (ou une touche) les cible et pose le crâne.
-- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de
-  la route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent
-  en chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un
-  clic ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta
-  route.
+- **Tout à portée de clic** : quatre boutons dans le suivi ouvrent le journal sur la route, les donjons ou les quêtes
+  de classe, et les options ; ceux de classe et des donjons brillent quand quelque chose t'attend. Le suivi
+  d'objectifs de Blizzard se replie tout seul.
+- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de la
+  route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent en
+  chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un clic
+  ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta route.
+  L'onglet Donjons note chaque donjon selon les quêtes à y faire ; quand ses quêtes demandent une suite de quêtes hors
+  de ta route, une annexe collée au journal montre les zones, les étapes et les récompenses du donjon avant que tu
+  l'ajoutes.
 - **Confort** : acceptation, rendu et choix de la récompense automatiques et désactivables (selon un profil de
   butin : Élémentaire, Soigneur, Tank…), améliorations d'équipement annoncées et équipées en un clic, camelote
   vendue, bouton d'objet de quête (aussi pour un objet qui lance une quête, avec une alerte quand tu le ramasses),
@@ -162,20 +172,23 @@ le champ « Description » de chaque image (le titre peut reprendre sa première
 
 | # | Fichier | Légende (anglais) |
 |---|---|---|
-| 1 (couverture) | [`en/01-tracker.png`](media/apercus/en/01-tracker.png) | The tracker: chapter progress, XP left and XP per hour, the current step with its distance and the monsters to kill, then the next steps. |
+| 1 (couverture) | [`en/01-tracker.png`](media/apercus/en/01-tracker.png) | The tracker: chapter progress, levels, XP left and XP per hour, the current step with its distance and the monsters to kill, then the next steps. Four buttons open the route, the dungeons, the class quests and the options. |
 | 2 | [`en/11-zone-mode.png`](media/apercus/en/11-zone-mode.png) | Zone mode: objectives of several quests in the same place are grouped into one visit, objects first, then elites and named, then monsters. |
 | 3 | [`en/16-route-choice.png`](media/apercus/en/16-route-choice.png) | Choose your next zone: at the end of a chapter, one card per zone with levels, quests, simulated time and XP per hour, travel and highlights. The recommended one glows. |
-| 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters and every step of the route. Click a step to make it the current one. |
-| 5 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
-| 6 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
-| 7 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
-| 8 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
-| 9 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: an alert in the tracker when a chain is available or overdue; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
-| 10 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the entrance, the quests to pick up in town with their givers, and one click to add them to your route. |
-| 11 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
-| 12 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, and profiles you can share. |
-| 13 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
+| 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters grouped by level, a green check on finished ones, and every step of the route. Click a step to make it the current one. |
+| 5 | [`en/08c-journal-dungeons.png`](media/apercus/en/08c-journal-dungeons.png) | Dungeons tab: every dungeon of your faction, rated with one to three stars for the quests left to do, with the quests to pick up and one click to add it to your route. |
+| 6 | [`en/18-quest-chain.png`](media/apercus/en/18-quest-chain.png) | Quest chains off your route: when dungeon quests need earlier quests elsewhere, an annex docked to the journal shows the zones in order, every step with its giver and XP, what it unlocks and the dungeon rewards, and one click adds it all to your route. |
+| 7 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
+| 8 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
+| 9 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
+| 10 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
+| 11 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: the class button of the tracker glows while a chain is available; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
+| 12 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the dungeon button glows, and the window gives the entrance, the quests to pick up with their givers, and one click to add them to your route. |
+| 13 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
+| 14 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, keys set in one click, and profiles you can share. |
+| 15 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
 
-Captures en jeu faites : 06 (quêtes de classe), 07 (donjon), 14 (équipement : une pièce, puis une
-paire), 16 (choix de suite) et 17 (alerte d'avant-poste). Encore en maquettes : 01, 02, 08, 08b, 10, 11,
-13 et les thèmes ; les remplacer au fur et à mesure (voir docs/media/CAPTURES-EN-JEU.md).
+Captures en jeu faites : 01 (suivi), 06 (quêtes de classe), 07 (donjon), 08 (journal, onglet Route),
+08b (options), 08c (journal, onglet Donjons), 10 (objet de quête), 18 (suite de quêtes hors route), 14 (équipement), 16 (choix de suite),
+17 (alerte d'avant-poste) et les thèmes. Encore en maquettes : 02, 11 et 13 ; les remplacer au fur et à
+mesure (voir docs/media/CAPTURES-EN-JEU.md).

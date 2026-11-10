@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 50 étapes, niveau final 35.00, ~34757 xp/h, 203 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 49 étapes, niveau final 35.00, ~35314 xp/h, 202 min.
 Q:RegisterGuide({
   id = "H_08",
   title = "Desolace",
   faction = "Horde",
   minLevel = 33, maxLevel = 35,
   next = "H_09",
-  sim = { steps = 50, endLevel = 35.00, xpPerHour = 34757, minutes = 203 },
+  sim = { steps = 49, endLevel = 35.00, xpPerHour = 35314, minutes = 202 },
   steps = {
     { "accept", 1433 }, -- Alliance Relations (lvl 33, ~265 xp, sim lvl 33)
     { "accept", 1434 }, -- Befouled by Satyr (lvl 33, ~2650 xp, sim lvl 33)
@@ -22,7 +22,6 @@ Q:RegisterGuide({
     { "complete", 6161, obj = 1, at = { 1443, 33.01, 32.36 } }, -- Claim Rackmore's Treasure! (lvl 36, ~2800 xp, sim lvl 33)
     { "fp", 1443, 21.6, 74.13 }, -- point de vol
     { "accept", 6142 }, -- Clam Bait (lvl 35, ~2750 xp, sim lvl 33)
-    { "sethearth", 1443, 24.09, 68.21 }, -- lier la pierre de foyer
     { "accept", 6143 }, -- Other Fish to Fry (lvl 36, ~2800 xp, sim lvl 33)
     { "turnin", 1435, xp = 2650 }, -- The Burning of Spirits (lvl 33, ~2650 xp, sim lvl 33)
     { "turnin", 1480, xp = 1300 }, -- The Corrupter (lvl 33, ~1300 xp, sim lvl 33)
@@ -40,7 +39,6 @@ Q:RegisterGuide({
     { "turnin", 6161, xp = 2800 }, -- Claim Rackmore's Treasure! (lvl 36, ~2800 xp, sim lvl 34)
     { "complete", 6143, at = { 1443, 32.21, 22.1 } }, -- Other Fish to Fry (lvl 36, ~2800 xp, sim lvl 34)
     { "complete", 6142, at = { 1443, 33.28, 28.35 } }, -- Clam Bait (lvl 35, ~2750 xp, sim lvl 34)
-    { "hearth", 1443 }, -- pierre de foyer
     { "turnin", 6142, xp = 2750 }, -- Clam Bait (lvl 35, ~2750 xp, sim lvl 34)
     { "turnin", 6143, xp = 2800 }, -- Other Fish to Fry (lvl 36, ~2800 xp, sim lvl 34)
     { "accept", 5763 }, -- Hunting in Stranglethorn (lvl 31, ~0 xp, sim lvl 34)
@@ -55,11 +53,12 @@ Q:RegisterGuide({
     { "turnin", 5821, xp = 2750 }, -- Bodyguard for Hire (lvl 35, ~2750 xp, sim lvl 34)
     { "turnin", 5561, xp = 2000 }, -- Kodo Roundup (lvl 34, ~2000 xp, sim lvl 34)
     { "turnin", 1366, xp = 3750 }, -- Centaur Bounty (lvl 31, ~3750 xp, sim lvl 34)
-    { "goto", 1456, 47, 49.83, note = "Flight master" }, -- déplacement
+    { "hearth", 1413 }, -- pierre de foyer
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "turnin", 1436, xp = 2650 }, -- Alliance Relations (lvl 33, ~2650 xp, sim lvl 34)
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
     { "fly", 1456, node = 22, note = "Thunder Bluff, Mulgore" }, -- vol
-    { "level", 35, at = { 1443, 69.99, 58.55 }, note = "About 73 more mobs here (Raging Thunder Lizard, level 33)" }, -- farm de niveau
+    { "level", 35, at = { 1443, 69.99, 58.55 }, note = "About 79 more mobs here (Raging Thunder Lizard, level 33)" }, -- farm de niveau
   },
 })

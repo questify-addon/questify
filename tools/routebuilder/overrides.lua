@@ -9,6 +9,8 @@
 --                                                      -- (afterQuestTurnin = 0 : en tête du chapitre)
 --   pre         = { [questId] = { prérequis } }         -- prérequis absents de QuestieDB (un au choix, comme
 --                                                      -- preQuestSingle) ; build.lua et validate_guides.lua
+--   notes       = { [questId] = { accept = "...", turnin = "..." } }
+--                                                      -- texte ajouté à l'étape accept / turnin de la quête
 -- Les textes des étapes `note` sont en anglais, comme toutes les notes générées (affichées telles quelles).
 -- Les notes de donjon sont `optional` : masquées quand les quêtes de donjon sont désactivées.
 return {
@@ -26,15 +28,25 @@ return {
     [98059] = { 1424, 29.7, 41.6 }, -- Hillsbrad's Hoard : table de l'hôtel de ville de Hillsbrad
     [11] = { 1429, 26.46, 86.65 }, -- Riverpaw Gnoll Bounty : groupe ouest (apparition de Riverpaw Runt 97), près de Westbrook
   },
-  -- Chasse au trésor du Cozy Sleeping Bag (Forever, niveau requis 14, toutes races) : QuestieDB n'a aucun lien entre
-  -- les cinq quêtes, chacune commence à l'objet où la précédente se rend (planche des Tarides ou de la Marche de
-  -- l'Ouest -> Pocket Litter et Mound of Dirt aux Serres-Rocheuses -> Carved Figurine au barrage du Loch Modan ->
-  -- Messenger Bag en Arathi, qui donne le sac). Sans ces liens, H_02 faisait prendre Scramble seule.
+  -- Chasse au trésor du Cozy Sleeping Bag (Forever, niveau requis 14) : QuestieDB n'a aucun lien entre les six
+  -- quêtes, chacune commence à l'objet où la précédente se rend. Départ croisé : « ... and that note you found »
+  -- se prend aux Burned-Out Remains de sa faction (79008 Alliance : Marche de l'Ouest ; 79007 Horde : Tarides) et
+  -- se rend de l'autre côté, où la Nailed Plank donne Stepping Stones (guide Wowhead Forever du Cozy Sleeping Bag,
+  -- 2026-11-08). Puis Pocket Litter et Mound of Dirt aux Serres-Rocheuses -> Carved Figurine au barrage du Loch
+  -- Modan -> Messenger Bag en Arathi, qui donne le sac. Sans ces liens, H_02 faisait prendre Scramble seule, et la
+  -- route Alliance prendre Stepping Stones à la planche de la Marche de l'Ouest, qui ne la donne pas à l'Alliance.
   pre = {
+    [79192] = { 79007, 79008 }, -- Stepping Stones après la note de sa faction (rendue à l'autre bout du monde)
     [79980] = { 79192 }, -- Scramble après Stepping Stones
     [79974] = { 79980 }, -- Wet Job après Scramble
     [79975] = { 79974 }, -- Eagle's Fist après Wet Job
     [79976] = { 79975 }, -- This Must Be The Place après Eagle's Fist (récompense : Cozy Sleeping Bag 211527)
+  },
+  notes = {
+    -- QuestieDB fait partir Stepping Stones des quatre objets (Burned-Out Remains et Nailed Plank, Tarides et Marche
+    -- de l'Ouest) et le suivi nomme le plus proche : aux Tarides (Alliance) comme à la ferme d'Alexston (Horde), les deux
+    -- sont à quelques mètres l'un de l'autre. Texte sans lieu : il sert aux deux factions.
+    [79192] = { accept = "Click the Nailed Plank: the Burned-Out Remains next to it do not give this quest" },
   },
   insertAfter = {
     A_DwarfGnome_03 = {

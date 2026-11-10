@@ -112,13 +112,46 @@ local function itemIcon(itemId)
 end
 
 ---------------------------------------------------------------------------
--- Boutons d'objets (aussi utilisés par l'onglet « Quêtes de classe » du journal)
+-- Boutons d'objets (aussi utilisés par l'onglet « Quêtes de classe » du journal et par la fenêtre des
+-- chaînes de préquêtes). Comme un objet des sacs : infobulle complète du jeu, comparaison avec
+-- l'équipement porté (touche de comparaison, Maj par défaut, ou toujours si l'option du jeu est active,
+-- mise à jour quand on appuie ou relâche la touche), Maj + clic pour le lien dans la discussion,
+-- Ctrl + clic pour l'essayer (cabine d'essayage).
 ---------------------------------------------------------------------------
+local function itemLink(itemId)
+  if C_Item and C_Item.GetItemInfo then
+    local ok, _, link = pcall(C_Item.GetItemInfo, itemId)
+    if ok and type(link) == "string" then return link end
+  end
+  return nil
+end
+
+local function wantsCompare()
+  if IsModifiedClick and IsModifiedClick("COMPAREITEMS") then return true end
+  return GetCVarBool ~= nil and GetCVarBool("alwaysCompareItems") == true
+end
+
 local function itemOnEnter(btn)
   if not (btn.itemId and GameTooltip) then return end
   GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
   GameTooltip:SetItemByID(btn.itemId)
+  if wantsCompare() and GameTooltip_ShowCompareItem then
+    pcall(GameTooltip_ShowCompareItem, GameTooltip)
+  elseif GameTooltip_HideShoppingTooltips then
+    pcall(GameTooltip_HideShoppingTooltips, GameTooltip)
+  end
   GameTooltip:Show()
+end
+Popup.ItemOnEnter = itemOnEnter
+
+local function itemOnLeave(btn)
+  if btn.UnregisterEvent then btn:UnregisterEvent("MODIFIER_STATE_CHANGED") end
+  if GameTooltip then GameTooltip:Hide() end
+end
+
+local function itemOnClick(btn)
+  local link = btn.itemId and itemLink(btn.itemId)
+  if link and HandleModifiedItemClick then HandleModifiedItemClick(link) end
 end
 
 function Popup.CreateItemButton(parent, size)
@@ -128,8 +161,14 @@ function Popup.CreateItemButton(parent, size)
   icon:SetAllPoints(b)
   b.icon = icon
   b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
-  b:SetScript("OnEnter", function(self) Q.SafeCall(itemOnEnter, self) end)
-  b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+  b:RegisterForClicks("LeftButtonUp")
+  b:SetScript("OnEnter", function(self)
+    if self.RegisterEvent then self:RegisterEvent("MODIFIER_STATE_CHANGED") end
+    Q.SafeCall(itemOnEnter, self)
+  end)
+  b:SetScript("OnLeave", function(self) Q.SafeCall(itemOnLeave, self) end)
+  b:SetScript("OnEvent", function(self) Q.SafeCall(itemOnEnter, self) end)
+  b:SetScript("OnClick", function(self) Q.SafeCall(itemOnClick, self) end)
   b:Hide()
   return b
 end

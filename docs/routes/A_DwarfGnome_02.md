@@ -1,6 +1,6 @@
 # A_DwarfGnome_02 — Dun Morogh
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -9,7 +9,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Time | 111 min |
 | XP gained | 36429 |
 | XP/h | 19634 |
-| Steps | 137 |
+| Steps | 129 |
 | Quests turned in | 37 |
 | Hubs | 11 |
 | Median ratio (XP/s) | 4.80 |
@@ -423,17 +423,14 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | Quest | Name | Lvl | Classes | Result |
 |---|---|---|---|---|
 | 5625 | Garments of the Light | 4 | PRIEST | woven, detour 42 s |
-| 96243 | Call of Earth | 4 | SHAMAN | woven, detour 169 s |
-| 1679 | Muren Stormpike | 10 | WARRIOR | woven, detour 98 s |
-| 1879 | Speak with Bink | 10 | MAGE | woven, detour 66 s |
+| 1679 | Muren Stormpike | 10 | WARRIOR | woven, detour 231 s |
+| 1879 | Speak with Bink | 10 | MAGE | woven, detour 199 s |
 | 1880 | Mage-tastic Gizmonitor | 10 | MAGE | woven, detour 587 s |
-| 2218 | Road to Salvation | 10 | ROGUE | woven, detour 27 s |
+| 2218 | Road to Salvation | 10 | ROGUE | woven, detour 158 s |
 | 2238 | Simple Subterfugin' | 10 | ROGUE | woven, detour 548 s |
 | 2239 | Onin's Report | 10 | ROGUE | woven, detour 548 s |
-| 6064 | Taming the Beast | 10 | HUNTER | woven, detour 211 s |
 | 6074 | The Hunter's Path | 10 | HUNTER | woven, detour 360 s |
-| 6084 | Taming the Beast | 10 | HUNTER | woven, detour 395 s |
-| 94449 | Call of Fire | 10 | SHAMAN | woven, detour 58 s |
+| 94449 | Call of Fire | 10 | SHAMAN | woven, detour 189 s |
 | 94817 | Confounding Flash | 10 | PRIEST | woven, detour 120 s |
 | 94465 | Call of Fire | 11 | SHAMAN | woven, detour 140 s |
 | 1645 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
@@ -518,15 +515,18 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 94789 | Call of Air | 30 | SHAMAN | quest level 30 above the band |
 | 98574 | Hallowed Memorandum | 1 | PRIEST | quest level 1 below the band |
 | 98581 | Archaic Rune | 1 | SHAMAN | quest level 1 below the band |
-| 6085 | Taming the Beast | 10 | HUNTER | detour 761 s |
+| 6064 | Taming the Beast | 10 | HUNTER | detour 756 s |
 | 1678 | Vejrek | 11 | WARRIOR | detour 638 s |
 | 1599 | Beginnings | 4 | WARLOCK | prerequisite or exclusive quest not done for the class |
 | 5626 | In Favor of the Light | 4 | PRIEST | prerequisite or exclusive quest not done for the class |
 | 94373 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 94374 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 94375 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 96243 | Call of Earth | 4 | SHAMAN | letter to 94373, already taken or done |
 | 1682 | Grey Iron Weapons | 10 | WARRIOR | prerequisite or exclusive quest not done for the class |
 | 6075 | The Hunter's Path | 10 | HUNTER | prerequisite or exclusive quest not done for the class |
+| 6084 | Taming the Beast | 10 | HUNTER | prerequisite or exclusive quest not done for the class |
+| 6085 | Taming the Beast | 10 | HUNTER | prerequisite or exclusive quest not done for the class |
 | 6086 | Training the Beast | 10 | HUNTER | prerequisite or exclusive quest not done for the class |
 | 94824 | Confounding Flash | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
 | 1680 | Tormus Deepforge | 11 | WARRIOR | prerequisite or exclusive quest not done for the class |
@@ -717,8 +717,8 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 108: `fp 1455 55.5 47.74`
-- step 135: `fp 1432 33.94 50.95`
+- step 100: `fp 1455 55.5 47.74`
+- step 127: `fp 1432 33.94 50.95`
 
 ## Warnings
 

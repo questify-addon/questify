@@ -30,6 +30,10 @@ La commande est cachée : absente de `/qf help`, des options et du menu de la mi
 | `/qf demo supplies` | l'alerte d'avant-poste : lignes du suivi, message au centre de l'écran et discussion (« 4 places libres sur 64, pas de boisson ») | une auberge ou une ville, suivi visible | `17-outpost-alert.png` |
 | `/qf demo cave` | le repère « Entrée de la grotte — The Grizzled Den » posé à l'entrée réelle, avec l'affichage choisi dans les options (WaypointUI, TomTom ou repère natif) | Dun Morogh, au sud-ouest de Kharanos, en vue de l'entrée | `13-cave-entrance.png` |
 | `/qf demo profession` | l'étape « Métier : Herboristerie (Compagnon) » : titre dans la discussion, texte dans la zone d'avertissements du suivi (rien n'est inséré dans la route) | n'importe où, suivi visible | `18-profession-step.png` |
+| `/qf demo tracker` | le suivi sur une étape « tuer » du chapitre en cours : monstres sous l'objectif, distance, ligne XP/h (exemple fixe si pas encore de mesure), boutons de l'en-tête | en pleine nature, suivi visible | `01-tracker.png` |
+| `/qf demo questitem` | la même étape, avec le bouton de l'objet de quête à gauche du suivi (Kodo Kombobulator, absent des sacs : le clic ne fait rien) | n'importe où | `10-quest-item.png` |
+| `/qf demo theme` | la même étape dans le thème suivant à chaque appel : parchemin, noir, transparent, dégradé ; le réglage enregistré ne change pas | un fond varié (herbe, roche) | `bonus-themes.png` (une capture par thème) |
+| `/qf demo options` | la fenêtre d'options sur la section Automatisation, avec le bouton de la touche de ciblage | n'importe où | `08b-journal-options.png` |
 | `/qf demo all` | enchaîne toutes les scènes, dans l'ordre du tableau (hors la liste) | n'importe où | une capture par scène |
 | `/qf demo next` | passe à la scène suivante de `all` | n'importe où | |
 | `/qf demo off` | ferme tout et remet l'état d'avant : fenêtres, lignes et alertes du suivi, repère de navigation | n'importe où | |

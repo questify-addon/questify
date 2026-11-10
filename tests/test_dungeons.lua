@@ -471,25 +471,89 @@ return {
     alliance(17)
     local Q = load()
     local J = Q.UI.Journal
-    J:ShowTab("class")
-    t.ok(J.dungeonHeader:IsShown(), "section header")
-    local row = J.dungeonRows[1]
+    J:ShowTab("dungeons")
+    t.eq(J.dgHeaders[1]:GetText(), Q.L.DUNGEON_GROUP_NOW, "first group: suggested")
+    local row = J.dgRows[1]
     t.ok(row and row:IsShown(), "dungeon row")
-    t.eq(row.title:GetText(), "The Deadmines")
-    t.ok(plain(row.info:GetText()):find(Q.L.DUNGEON_STATE_AVAILABLE, 1, true), "state shown")
-    t.ok(row.addButton:IsShown() and row.ignoreButton:IsShown())
-    Mock.click(row.addButton, "LeftButton")
+    t.eq(row.name:GetText(), "The Deadmines")
+    t.ok(row.selected:IsShown(), "first suggested dungeon selected")
+    -- détail du donjon choisi
+    t.eq(J.dgTitle:GetText(), "The Deadmines")
+    t.ok(plain(J.dgMeta:GetText()):find(Q.L.DUNGEON_STATE_AVAILABLE, 1, true), "state shown")
+    local item = J.dgItem
+    t.ok(item.todo > 0, "quests to do")
+    t.eq(plain(J.dgScore:GetText()), string.format(Q.L.DUNGEON_SCORE, item.todo, item.now))
+    t.ok(J.dgLines[1]:IsShown(), "quest lines")
+    t.ok(J.dgAdd:IsShown() and J.dgIgnore:IsShown())
+    Mock.click(J.dgAdd, "LeftButton")
     t.eq(stateOf(Q, "DM"), "added")
-    t.ok(plain(J.dungeonRows[1].info:GetText()):find(Q.L.DUNGEON_STATE_ADDED, 1, true), "refreshed")
-    Mock.click(J.dungeonRows[1].ignoreButton, "LeftButton")
-    t.ok(J.dungeonRows[1].unignoreButton:IsShown(), "Réactiver")
-    Mock.click(J.dungeonRows[1].unignoreButton, "LeftButton")
+    t.ok(plain(J.dgMeta:GetText()):find(Q.L.DUNGEON_STATE_ADDED, 1, true), "refreshed")
+    t.ok(J.dgRows[1].routeDot:IsShown(), "route mark in the list")
+    Mock.click(J.dgIgnore, "LeftButton")
+    t.ok(J.dgUnignore:IsShown(), "Réactiver")
+    t.eq(J.dgHeaders[#J.dgHeaders]:GetText(), Q.L.DUNGEON_GROUP_PAST, "ignored: last group")
+    Mock.click(J.dgUnignore, "LeftButton")
     t.eq(stateOf(Q, "DM"), "available")
+    -- la section Donjons a quitté l'onglet des quêtes de classe
+    t.eq(J.dungeonHeader, nil)
     -- option dans la fenêtre d'options (Classe et donjons)
     Q.UI.Options:Open("class")
     local w = Q.UI.Options:Widget("dungeonSuggest")
     t.ok(w and w.check, "option checkbox")
     t.eq(w.check:GetChecked(), true)
+    noErrors(t)
+  end,
+
+  -- Note : une à trois étoiles selon les quêtes à faire.
+  dungeon_stars_by_quests_to_do = function(t)
+    local Q = load()
+    local S = Q.UI.Journal.DungeonStars
+    t.eq({ S(0), S(1), S(3), S(4), S(7), S(8), S(18), S(nil) }, { 0, 1, 1, 2, 2, 3, 3, 0 })
+    noErrors(t)
+  end,
+
+  -- Tri par quêtes : plus de quêtes à faire d'abord dans chaque groupe ; les groupes gardent leur ordre.
+  dungeon_groups_sorted_by_quests = function(t)
+    local Q = load()
+    local function it(key, group, todo) return { dungeon = { key = key }, group = group, todo = todo } end
+    local items = { it("a", "now", 2), it("b", "next", 9), it("c", "now", 7), it("d", "past", 3), it("e", "now", 7) }
+    local function keysOf(groups)
+      local out = {}
+      for _, grp in ipairs(groups) do
+        local ks = {}
+        for _, x in ipairs(grp.items) do ks[#ks + 1] = x.dungeon.key end
+        out[#out + 1] = grp.key .. ":" .. table.concat(ks, ",")
+      end
+      return out
+    end
+    t.eq(keysOf(Q.UI.Journal.DungeonGroups(items, "level")), { "now:a,c,e", "next:b", "past:d" })
+    t.eq(keysOf(Q.UI.Journal.DungeonGroups(items, "quests")), { "now:c,e,a", "next:b", "past:d" })
+    noErrors(t)
+  end,
+
+  dungeon_tab_sort_buttons = function(t)
+    alliance(17)
+    local Q = load()
+    local J = Q.UI.Journal
+    J:ShowTab("dungeons")
+    t.eq(J.dungeonSort, nil, "level order by default")
+    Mock.click(J.dgSortButtons.quests, "LeftButton")
+    t.eq(J.dungeonSort, "quests")
+    t.eq({ J.dgSortButtons.quests.text:GetTextColor() }, { 1, 0.82, 0 }, "active sort highlighted")
+    noErrors(t)
+  end,
+
+  -- Suggested (lueur du bouton Donjons du suivi) : le donjon reste conseillé une fois vu ; Alerts
+  -- n'en garde que les non vus.
+  suggested_keeps_seen_dungeons = function(t)
+    alliance(17)
+    local Q = load()
+    t.eq(keys(Q.Dungeons:Suggested()), { "DM" })
+    Q.Dungeons:MarkSeen("DM")
+    t.eq(keys(Q.Dungeons:Suggested()), { "DM" }, "still suggested once seen")
+    t.eq(#Q.Dungeons:Alerts(), 0, "no alert once seen")
+    Q.Settings:Set("dungeonSuggest", false)
+    t.eq(Q.Dungeons:Suggested(), {})
     noErrors(t)
   end,
 

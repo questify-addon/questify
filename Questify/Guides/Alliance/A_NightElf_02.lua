@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 125 étapes, niveau final 12.05, ~18921 xp/h, 112 min.
 Q:RegisterGuide({
   id = "A_NightElf_02",
@@ -14,16 +14,12 @@ Q:RegisterGuide({
   steps = {
     { "accept", 929 }, -- Crown of the Earth (lvl 5, ~335 xp, sim lvl 6)
     { "accept", 99046 }, -- The Lost Runner (lvl 9, ~780 xp, sim lvl 6)
-    { "accept", 2241, classes = { "ROGUE" } }, -- The Apple Falls (lvl 10, ~420 xp, sim lvl 6)
-    { "accept", 6063, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 6)
     { "accept", 997 }, -- Denalan's Earth (lvl 5, ~225 xp, sim lvl 6)
     { "accept", 475 }, -- A Troubling Breeze (lvl 6, ~270 xp, sim lvl 6)
     { "accept", 98391 }, -- The Sisterhood of Elune (lvl 10, ~210 xp, sim lvl 6)
     { "accept", 5621, classes = { "PRIEST" } }, -- Garments of the Moon (lvl 4, ~105 xp, sim lvl 6)
-    { "accept", 5629, classes = { "PRIEST" } }, -- Returning Home (lvl 10, ~210 xp, sim lvl 6)
     { "accept", 96606 }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "accept", 488 }, -- Zenn's Bidding (lvl 5, ~450 xp, sim lvl 6)
-    { "complete", 6063, at = { 1438, 60.32, 59.35 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 6)
     { "complete", 929, at = { 1438, 63.38, 58.09 } }, -- Crown of the Earth (lvl 5, ~335 xp, sim lvl 6)
     { "turnin", 475, xp = 270 }, -- A Troubling Breeze (lvl 6, ~270 xp, sim lvl 6)
     { "accept", 476 }, -- Gnarlpine Corruption (lvl 6, ~540 xp, sim lvl 6)
@@ -62,13 +58,13 @@ Q:RegisterGuide({
     { "turnin", 488, xp = 450 }, -- Zenn's Bidding (lvl 5, ~450 xp, sim lvl 9)
     { "accept", 489 }, -- Seek Redemption! (lvl 7, ~630 xp, sim lvl 9)
     { "turnin", 99053, xp = 840 }, -- Escaping Ban'ethil (lvl 10, ~840 xp, sim lvl 9)
-    { "turnin", 6063, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 9)
-    { "accept", 6101, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 9)
     { "complete", 96634, at = { 1438, 57.12, 61.3 } }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 9)
     { "complete", 5621, at = { 1438, 57.24, 63.51 }, classes = { "PRIEST" } }, -- Garments of the Moon (lvl 4, ~105 xp, sim lvl 9)
     { "turnin", 96634, xp = 540 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 9)
     { "turnin", 7383, xp = 660 }, -- Crown of the Earth (lvl 11, ~660 xp, sim lvl 9)
     { "accept", 935 }, -- Crown of the Earth (lvl 11, ~1100 xp, sim lvl 10)
+    { "accept", 2241, classes = { "ROGUE" } }, -- The Apple Falls (lvl 10, ~420 xp, sim lvl 10)
+    { "accept", 6063, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "complete", 483, at = { 1438, 45.65, 57.44 } }, -- The Relics of Wakening (lvl 9, ~780 xp, sim lvl 10)
     { "complete", 2561, at = { 1438, 45.53, 58.58 } }, -- Druid of the Claw (lvl 10, ~1050 xp, sim lvl 10)
     { "accept", 6344 }, -- Nessa Shadowsong (lvl 10, ~210 xp, sim lvl 10)
@@ -106,7 +102,6 @@ Q:RegisterGuide({
     { "turnin", 98046, xp = 660 }, -- Crown of the Earth (lvl 11, ~660 xp, sim lvl 11)
     { "accept", 98065 }, -- Crown of the Earth (lvl 11, ~660 xp, sim lvl 11)
     { "turnin", 98065, xp = 660 }, -- Crown of the Earth (lvl 11, ~660 xp, sim lvl 11)
-    { "turnin", 5629, xp = 210, classes = { "PRIEST" } }, -- Returning Home (lvl 10, ~210 xp, sim lvl 11)
     { "complete", 2520, at = { 1457, 39.18, 85.59 } }, -- Sathrah's Sacrifice (lvl 12, ~910 xp, sim lvl 11)
     { "turnin", 2520, xp = 910 }, -- Sathrah's Sacrifice (lvl 12, ~910 xp, sim lvl 11)
     { "complete", 483, at = { 1438, 43.7, 61.22 } }, -- The Relics of Wakening (lvl 9, ~780 xp, sim lvl 11)
@@ -116,8 +111,12 @@ Q:RegisterGuide({
     { "complete", 489, at = { 1438, 50.9, 58.46 } }, -- Seek Redemption! (lvl 7, ~630 xp, sim lvl 11)
     { "turnin", 483, xp = 780 }, -- The Relics of Wakening (lvl 9, ~780 xp, sim lvl 11)
     { "turnin", 5621, xp = 105, classes = { "PRIEST" } }, -- Garments of the Moon (lvl 4, ~105 xp, sim lvl 11)
+    { "accept", 5629, classes = { "PRIEST" } }, -- Returning Home (lvl 10, ~210 xp, sim lvl 11)
     { "turnin", 6071, xp = 85, classes = { "HUNTER" } }, -- The Hunter's Path (lvl 10, ~85 xp, sim lvl 11)
     { "turnin", 489, xp = 630 }, -- Seek Redemption! (lvl 7, ~630 xp, sim lvl 11)
+    { "complete", 6063, at = { 1438, 60.32, 59.35 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "turnin", 6063, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "accept", 6101, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 927, xp = 455 }, -- The Moss-twined Heart (lvl 12, ~455 xp, sim lvl 11)
     { "complete", 6101, at = { 1438, 62.76, 71.96 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 6101, xp = 840, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
@@ -127,6 +126,7 @@ Q:RegisterGuide({
     { "turnin", 931, xp = 840 }, -- The Shimmering Frond (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 941, xp = 910 }, -- Planting the Heart (lvl 12, ~910 xp, sim lvl 11)
     { "complete", 2499, at = { 1438, 53.76, 75.12 } }, -- Oakenscowl (lvl 9, ~980 xp, sim lvl 11)
+    { "turnin", 5629, xp = 210, classes = { "PRIEST" } }, -- Returning Home (lvl 10, ~210 xp, sim lvl 11)
     { "turnin", 2499, xp = 980 }, -- Oakenscowl (lvl 9, ~980 xp, sim lvl 11)
     { "goto", 1457, 29.1, 41.2, note = "Take the portal down to Rut'theran Village" }, -- déplacement
     { "fp", 1438, 58.4, 94.02 }, -- point de vol

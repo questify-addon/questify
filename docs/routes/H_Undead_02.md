@@ -1,6 +1,6 @@
 # H_Undead_02 — Tirisfal Glades
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
@@ -380,21 +380,21 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 5650 | Garments of Darkness | 4 | PRIEST | woven, detour 54 s |
 | 91209 | Continue Your Training | 4 | PALADIN | woven, detour 170 s |
 | 1473 | Creature of the Void | 10 | WARLOCK | woven, detour 263 s |
-| 1478 | Halgar's Summons | 10 | WARLOCK | woven, detour 27 s |
-| 1818 | Speak with Dillinger | 10 | WARRIOR | woven, detour 12 s |
-| 1819 | Ulag the Cleaver | 10 | WARRIOR | woven, detour 57 s |
-| 1820 | Speak with Coleman | 10 | WARRIOR | woven, detour 10 s |
+| 1478 | Halgar's Summons | 10 | WARLOCK | woven, detour 29 s |
+| 1818 | Speak with Dillinger | 10 | WARRIOR | woven, detour 61 s |
+| 1819 | Ulag the Cleaver | 10 | WARRIOR | woven, detour 106 s |
+| 1820 | Speak with Coleman | 10 | WARRIOR | woven, detour 39 s |
 | 1881 | Speak with Anastasia | 10 | MAGE | woven, detour 26 s |
 | 1882 | The Balnir Farmstead | 10 | MAGE | woven, detour 100 s |
-| 1885 | Mennet Carkad | 10 | ROGUE | woven, detour 67 s |
+| 1885 | Mennet Carkad | 10 | ROGUE | woven, detour 69 s |
 | 5658 | Touch of Weakness | 10 | PRIEST | woven, detour 147 s |
-| 1821 | Agamand Heirlooms | 11 | WARRIOR | woven, detour 87 s |
+| 1821 | Agamand Heirlooms | 11 | WARRIOR | woven, detour 332 s |
 | 1822 | Heirloom Weapon | 11 | WARRIOR | woven, detour 19 s |
-| 91282 | A Second Home | 11 | PALADIN | woven, detour 15 s |
+| 91282 | A Second Home | 11 | PALADIN | woven, detour 24 s |
 | 91285 | Murlocs at the Gates | 11 | PALADIN | woven, detour 452 s |
 | 91294 | Touring the Grounds | 11 | PALADIN | woven, detour 226 s |
 | 91316 | Making Repairs | 11 | PALADIN | woven, detour 277 s |
-| 94427 | A Lesson in Divinity | 12 | PALADIN | woven, detour 33 s |
+| 94427 | A Lesson in Divinity | 12 | PALADIN | woven, detour 533 s |
 | 94434 | A Lesson in Divinity | 12 | PALADIN | woven, detour 564 s |
 | 1471 | The Binding | 10 | WARLOCK | woven, detour 301 s |
 | 1472 | Devourer of Souls | -1 | WARLOCK | quest level -1 below the band |
@@ -657,7 +657,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 81: `level 10` — About 3 mobs here (Scarlet Zealot, level 8)
+- step 70: `level 10` — About 3 mobs here (Scarlet Zealot, level 8)
 - step 159: `fp 1458 63.25 48.56`
 
 ## Warnings

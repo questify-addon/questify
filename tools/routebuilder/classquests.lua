@@ -123,10 +123,26 @@ function cq.build(D)
       end
       return false
     end
+    -- Variantes : même titre et même texte d'objectif, chez des donneurs différents. « Contingency Plan » 94819
+    -- (Hurlevent) et 94820 (Forgefer) disent toutes deux « Speak to High Priestess Mims in Ironforge » : deux
+    -- lettres, une seule se fait. Sans exclusiveTo dans les données, (b) les mettait l'une après l'autre.
+    local function variants(a, b)
+      local qa, qb = set[a], set[b]
+      -- même niveau requis : « Gakin's Summons » 1685 (10) et 1717 (20) ont le même texte, pas la même étape
+      if qa.name ~= qb.name or (qa.reqLevel or 0) ~= (qb.reqLevel or 0) then return false end
+      local ta, tb = table.concat(qa.objectivesText or {}, "\n"), table.concat(qb.objectivesText or {}, "\n")
+      if ta == "" or ta ~= tb then return false end
+      local sa, sb = qa.starters.npcs or {}, qb.starters.npcs or {}
+      if #sa == 0 or #sb == 0 then return false end
+      for _, s in ipairs(sa) do
+        for _, t in ipairs(sb) do if s == t then return false end end
+      end
+      return true
+    end
     local function excludes(a, b)
       for _, x in ipairs(set[a].exclusiveTo or {}) do if x == b then return true end end
       for _, x in ipairs(set[b].exclusiveTo or {}) do if x == a then return true end end
-      return false
+      return variants(a, b)
     end
     local function isolatedEnd(id) return not children[id] end
     local function reaches(from, target)
@@ -139,6 +155,35 @@ function cq.build(D)
         return false
       end
       return walk(from)
+    end
+    -- letterTo[lettre] = quête vers laquelle elle mène (cq.letters, chaînes qui s'excluent)
+    local letterTo = {}
+    local function meets(a, b) -- un PNJ qui termine a donne b
+      for _, f in ipairs(set[a].finishers.npcs or {}) do
+        for _, st in ipairs(set[b].starters.npcs or {}) do if f == st then return true end end
+      end
+      return false
+    end
+    -- Lettre de QuestieDB : quête sans objectif, exclusive d'une quête qu'elle mène à prendre (rendue au PNJ qui
+    -- la donne), quand cette quête fait partie d'une chaîne. Si la quête a déjà une étape d'avant, la lettre est
+    -- un autre départ de la même chaîne (« The Slaughtered Lamb » 1715, chez Lago Blackwrench, vers « Surena
+    -- Caledon » 1688, suite de « Gakin's Summons » 1685) : une tête de plus, la chaîne d'origine garde la sienne.
+    -- Sinon elle devient sa tête (« Gakin's Summons » 1717, niveau 20, vers « Devourer of Souls » 1716). Avant,
+    -- (a) reliait 1715 (niveau 10) à 1716 (niveau 20) et (b) mettait 1717 au bout de la chaîne de 1685 : aucune
+    -- des deux n'était jamais faite. Les lettres vers une quête seule (sorts raciaux du Prêtre) restent seules :
+    -- exclusiveTo les met déjà dans un même groupe.
+    for _, id in ipairs(ids) do
+      local q = set[id]
+      if not children[id] and #((q.objectives or {}).list or {}) == 0 then
+        for _, t in ipairs(q.exclusiveTo or {}) do
+          if t ~= id and set[t] and meets(id, t) and (hasParent[t] or children[t]) and not reaches(t, id) then
+            -- autre départ : lien sans hasParent (déjà vrai pour t) ; sinon lien ordinaire, la lettre est la tête
+            if hasParent[t] then children[id] = { t } else link(id, t) end
+            letterTo[id] = t
+            break
+          end
+        end
+      end
     end
     for _, a in ipairs(ids) do
       local qa = set[a]
@@ -157,12 +202,36 @@ function cq.build(D)
         end
       end
     end
+    -- Lettre vers une tête : quête de même titre qui se rend au PNJ donnant une tête de chaîne déjà rangée,
+    -- sans passage de relais depuis la fin de la chaîne précédente. « Call of Earth » 96243 (niveau 10, chez
+    -- Eldrun Stormbreaker à Forgefer ou Ingrid Dunwald à Kharanos) mène à Teo Hammerstorm, qui donne 94373 :
+    -- accrochée après 94375 par (b), elle rendait la chaîne jamais faite pour un nain parti d'Anvilmar. Elle
+    -- devient une autre tête suivie de la chaîne (la tête garde la sienne) ; les deux s'excluent.
+    local function letterHead(list, k, cur)
+      if children[cur] then return nil end
+      for j = 1, k - 1 do
+        local h = list[j]
+        if not hasParent[h] and not letterTo[h] and meets(cur, h) then return h end
+      end
+      return nil
+    end
     local byTitle = {}
     for _, id in ipairs(ids) do
       local q = set[id]
       local key = (q.name or "") .. "#" .. tostring(q.races or 0)
       byTitle[key] = byTitle[key] or {}
       table.insert(byTitle[key], id)
+    end
+    local variantOf = {}
+    for _, list in pairs(byTitle) do
+      for _, a in ipairs(list) do
+        for _, b in ipairs(list) do
+          if a ~= b and variants(a, b) then
+            variantOf[a] = variantOf[a] or {}
+            table.insert(variantOf[a], b)
+          end
+        end
+      end
     end
     for _, key in ipairs(qdb.sortedKeys(byTitle)) do
       local list = byTitle[key]
@@ -178,9 +247,25 @@ function cq.build(D)
           local tail = prev
           local guard = 0
           while children[tail] and #children[tail] == 1 and guard < 30 do tail = children[tail][1]; guard = guard + 1 end
-          if not hasParent[cur] and not children[tail] and tail ~= cur and not excludes(prev, cur)
-             and not excludes(tail, cur) then
-            link(tail, cur)
+          -- (une lettre déjà reconnue mène ailleurs : jamais une suite)
+          if not hasParent[cur] and not letterTo[cur] and not children[tail] and tail ~= cur
+             and not excludes(prev, cur) and not excludes(tail, cur) then
+            -- Autre départ qui rejoint la chaîne précédente : « Seeking Strahad » 3001 (Carendin Halgar,
+            -- Undercity) mène à 1801 comme 2996 (Gan'rul Bloodeye, Orgrimmar). Accrochée après la fin commune
+            -- 1795, elle finissait la chaîne Horde et celle de l'Alliance (1798), qui passe aussi par 1795.
+            local joins
+            for _, c in ipairs(children[cur] or {}) do
+              if reaches(prev, c) then joins = c; break end
+            end
+            local head = not joins and not meets(tail, cur) and letterHead(list, k, cur) or nil
+            if joins then
+              letterTo[cur] = joins
+            elseif head then
+              children[cur] = { head } -- sans hasParent : la tête reste une tête
+              letterTo[cur] = head
+            else
+              link(tail, cur)
+            end
           end
         end
       end
@@ -207,7 +292,38 @@ function cq.build(D)
           races = (mask and mask ~= 0) and mask or nil,
           level = (first.reqLevel and first.reqLevel > 0) and first.reqLevel or questLevel(first),
           quests = order, rewards = {},
+          letterFor = letterTo[order[1]], -- tête vers laquelle mène la lettre (cq.letters ; non émis)
         }
+        -- Fins de la chaîne (quêtes sans suite dans la chaîne), quand il y en a plusieurs : branches qui se
+        -- valent (Démoniste : succube « The Binding » 1739 ou incube 65603, après 1716 ; armures au choix du
+        -- Guerrier). La chaîne est faite quand l'une d'elles est rendue ; sa dernière quête n'est que la fin de
+        -- la dernière branche parcourue. Une fin dont l'étape d'avant continue aussi plus loin par une autre
+        -- branche est une quête annexe (Paladin « A Second Home » : « Making Repairs » 91316, à côté de « The
+        -- Tarnished » 91317 puis « A Token of Good Faith » 95803, la vraie fin). Une fin accrochée à la tête même
+        -- ne compte pas non plus : une étoile autour de la tête vient de données sans liens (Chasseur 60 « The
+        -- Ancient Leaf »). S'il reste moins de deux fins, la dernière quête reste la règle.
+        local inChain, depth, parentOf, isLeaf = {}, { [order[1]] = 0 }, {}, {}
+        for _, q in ipairs(order) do inChain[q] = true end
+        for _, q in ipairs(order) do
+          isLeaf[q] = true
+          for _, c in ipairs(children[q] or {}) do
+            if inChain[c] then
+              isLeaf[q] = false
+              if not depth[c] then depth[c], parentOf[c] = depth[q] + 1, q end
+            end
+          end
+        end
+        local function sideQuest(q)
+          for _, c in ipairs(children[parentOf[q]] or {}) do
+            if c ~= q and inChain[c] and not isLeaf[c] then return true end
+          end
+          return false
+        end
+        local ends = {}
+        for _, q in ipairs(order) do
+          if isLeaf[q] and (depth[q] or 0) >= 2 and not sideQuest(q) then ends[#ends + 1] = q end
+        end
+        if #ends > 1 then chain.ends = ends end
         for _, q in ipairs(order) do
           local r = { items = rewards[q] or {}, xp = D.xp[q] and D.xp[q][2] or nil }
           chain.rewards[q] = r
@@ -243,6 +359,17 @@ function cq.build(D)
       for _, q in ipairs(ch.quests) do
         for _, x in ipairs(set[q].exclusiveTo or {}) do if not mine[x] then mark(x) end end
       end
+      -- autre départ (lettre) : sa chaîne et toute chaîne qui passe par la quête où il mène s'excluent
+      local to = letterTo[ch.quests[1]]
+      if to then mark(to) end
+      for _, other in ipairs(chains) do
+        local oto = letterTo[other.quests[1]]
+        if other.key ~= ch.key and oto and mine[oto] then ex[other.key] = true end
+      end
+      -- variantes (même étape chez deux donneurs) : les chaînes qui en ont chacune une s'excluent
+      for _, q in ipairs(ch.quests) do
+        for _, v in ipairs(variantOf[q] or {}) do if not mine[v] then mark(v) end end
+      end
       for _, other in ipairs(chains) do
         if other.key ~= ch.key and not ex[other.key] then
           for _, q in ipairs(other.quests) do
@@ -261,6 +388,22 @@ function cq.build(D)
     end)
     out[cls] = chains
   end
+  return out
+end
+
+-- cq.letters(D) -> { [lettre] = tête } : lettres vers une tête de chaîne (« Call of Earth » 96243 -> 94373),
+-- toutes classes. Calculé une fois par jeu de données (sim.weaveClassQuests, à chaque chapitre).
+local lettersCache = setmetatable({}, { __mode = "k" })
+function cq.letters(D)
+  local out = lettersCache[D]
+  if out then return out end
+  out = {}
+  for _, chains in pairs(cq.build(D)) do
+    for _, ch in ipairs(chains) do
+      if ch.letterFor then out[ch.quests[1]] = ch.letterFor end
+    end
+  end
+  lettersCache[D] = out
   return out
 end
 
@@ -313,6 +456,9 @@ function cq.emit(data, meta)
       parts[#parts + 1] = ("quests = %s"):format(emitm.value(c.quests))
       if c.exclusive and #c.exclusive > 0 then
         parts[#parts + 1] = ("exclusive = %s"):format(emitm.value(c.exclusive))
+      end
+      if c.ends and #c.ends > 1 then
+        parts[#parts + 1] = ("ends = %s"):format(emitm.value(c.ends))
       end
       local rw = {}
       for _, q in ipairs(c.quests) do

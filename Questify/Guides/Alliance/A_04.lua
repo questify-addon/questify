@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 51 étapes, niveau final 29.00, ~32836 xp/h, 179 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 51 étapes, niveau final 29.00, ~32837 xp/h, 179 min.
 Q:RegisterGuide({
   id = "A_04",
   title = "Wetlands",
   faction = "Alliance",
   minLevel = 26, maxLevel = 29,
   next = "A_05",
-  sim = { steps = 51, endLevel = 29.00, xpPerHour = 32836, minutes = 179 },
+  sim = { steps = 51, endLevel = 29.00, xpPerHour = 32837, minutes = 179 },
   steps = {
     { "note", "You pass through Stormwind: run The Stockade now for Crime and Punishment and What Comes Around..., or abandon them", optional = true, dungeon = "The Stockade" },
     { "goto", 1436, 56.55, 52.64, note = "Flight master" }, -- déplacement

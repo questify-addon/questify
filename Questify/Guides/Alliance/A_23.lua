@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 64 étapes, niveau final 58.00, ~57569 xp/h, 203 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 64 étapes, niveau final 58.00, ~57572 xp/h, 203 min.
 Q:RegisterGuide({
   id = "A_23",
   title = "Western Plaguelands",
   faction = "Alliance",
   minLevel = 57, maxLevel = 58,
   next = "A_29",
-  sim = { steps = 64, endLevel = 58.00, xpPerHour = 57569, minutes = 203 },
+  sim = { steps = 64, endLevel = 58.00, xpPerHour = 57572, minutes = 203 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
@@ -74,6 +74,6 @@ Q:RegisterGuide({
     { "turnin", 5022, xp = 2550 }, -- Better Late Than Never (lvl 52, ~2550 xp, sim lvl 57)
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1422, node = 66, note = "Chillwind Camp, Western Plaguelands" }, -- vol
-    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 340 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
+    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 341 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
   },
 })

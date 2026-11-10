@@ -303,6 +303,24 @@ return {
     t.eq(Q.Progress:Current().key:sub(1, 2), "g:")
   end,
 
+  -- Branches qui se valent (Démoniste : succube « The Binding » 1739 ou incube 65603 après 1716) : la chaîne est
+  -- faite quand l'une de ses fins (champ ends) est rendue, même si la dernière de la liste ne l'est pas.
+  chain_with_ends_is_done_when_one_end_is_turned_in = function(t)
+    warlock()
+    local data = { WARLOCK = { { key = "WARLOCK_FORK", title = "Fork", faction = "Alliance", races = ALLIANCE,
+      level = 1, quests = { 1598, 1599, 9300 }, ends = { 1599, 9300 }, rewards = {} } } }
+    local Q = loadWith(data)
+    Q.ClassQuests:Add("WARLOCK_FORK")
+    turnIn(1598)
+    t.ok(stateOf(Q, "WARLOCK_FORK") ~= "done", "no end turned in yet")
+    t.eq(#Q.char.inserted, 1)
+    turnIn(1599)
+    t.eq(stateOf(Q, "WARLOCK_FORK"), "done", "one end is enough")
+    t.eq(#Q.char.inserted, 0, "inserted steps of the other branch removed")
+    t.eq(Q.char.classQuests.added.WARLOCK_FORK, nil)
+    noCQErrors(t)
+  end,
+
   chain_finishes_when_the_remaining_steps_are_skipped = function(t)
     warlock()
     local Q = load()
@@ -420,6 +438,10 @@ return {
         for _, id in ipairs(chain.quests) do t.eq(type(id), "number") end
         t.ok(chain.exclusive == nil or type(chain.exclusive) == "table", "exclusive")
         for _, k in ipairs(chain.exclusive or {}) do t.eq(type(k), "string") end
+        t.ok(chain.ends == nil or type(chain.ends) == "table", "ends")
+        local inChain = {}
+        for _, id in ipairs(chain.quests) do inChain[id] = true end
+        for _, id in ipairs(chain.ends or {}) do t.ok(inChain[id], chain.key .. ": end " .. tostring(id) .. " in quests") end
         t.eq(type(chain.rewards), "table")
         for id, reward in pairs(chain.rewards) do
           t.eq(type(id), "number"); t.eq(type(reward.items), "table")
@@ -429,5 +451,26 @@ return {
     end
     t.ok(count > 0, "at least one chain")
     t.ok(data.WARLOCK ~= nil, "a Warlock chain")
+  end,
+
+  -- Chaman nain niveau 19 qui a fini « Call of Earth » (94373, 94374, puis 94375 qui donne le totem de terre)
+  -- et ignoré l'alerte. 96243, même titre, se prend à Forgefer ou Kharanos au niveau 10 et se rend à Teo
+  -- Hammerstorm, qui donne 94373 : c'est une lettre vers le début de la chaîne, pas sa suite. Le joueur ne l'a
+  -- jamais rendue ; la chaîne est faite quand même (elle restait « ignorée »).
+  shipped_call_of_earth_done_without_its_letter = function(t)
+    Mock.player.classFile, Mock.player.level = "SHAMAN", 19   -- Nain, Alliance (faux client par défaut)
+    for _, id in ipairs({ 94373, 94374, 94375 }) do Mock.quests.completed[id] = true end
+    local Q = Mock.loadAddon(TOC, { extraFiles = { GUIDES } })
+    Q.ClassQuests:Ignore("SHAMAN_94373")
+    local rows = 0
+    for _, r in ipairs(Q.ClassQuests:List()) do
+      if r.chain.title == "Call of Earth" then
+        rows = rows + 1
+        t.eq(r.state, "done", r.chain.key)
+        t.eq(r.chain.quests[#r.chain.quests], 94375, r.chain.key .. " ends with the Earth Totem quest")
+      end
+    end
+    t.eq(rows, 1, "one Call of Earth row")
+    noCQErrors(t)
   end,
 }

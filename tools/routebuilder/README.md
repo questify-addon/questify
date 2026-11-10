@@ -138,6 +138,9 @@ return {
                                             -- step inserted after that turn-in (0 = at the start)
   pre = { [questId] = { prerequisiteId, ... } }, -- prerequisites missing from QuestieDB (one of them, like
                                             -- preQuestSingle); also read by tools/validate_guides.lua
+  notes = { [questId] = { accept = "...", turnin = "..." } },
+                                            -- text added to that quest's accept / turn-in step, after any
+                                            -- generated note (the tracker names the nearest giver)
 }
 ```
 
@@ -595,6 +598,13 @@ Uldaman 36-47, Razorfen Downs 37-46, Maraudon 42-52, Zul'Farrak 44-54, The Templ
 Blackrock Depths 52-60, Dire Maul 55-60 (one key `DIREMAUL`, area 2557: east, west and north have the same
 QuestieDB name), Scholomance 55-60, Stratholme 58-60. Entrances from QuestieDB. Raids and Blackrock Spire
 (one area for the lower and the upper spire) stay out.
+
+The same file holds `Q.QuestRewardData`: for every dungeon quest and its whole prerequisite chain, the base XP
+at the quest level (`xp.baseXP`: QuestXP, -50 % in a dungeon, `est = true` when estimated) and the items it
+rewards (`questRewards` of QuestieDB items, choice and fixed rewards together: QuestieDB does not tell them
+apart). The dungeon window uses it when it offers a prerequisite chain too long to be chained on its own
+(The Defias Brotherhood: six quests between Westfall, Lakeshire and Stormwind), with `Q.Dungeons:ChainInfo`,
+`AddChain` and `RemoveChain`.
 
 ## Simulator corrections (2026-11-07, lot L)
 

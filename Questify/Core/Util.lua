@@ -82,3 +82,11 @@ function Util.StripColors(s)
   if type(s) ~= "string" then return s end
   return (s:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""))
 end
+
+-- Vrai si le client connaît cet atlas (C_Texture.GetAtlasInfo) ; faux sans l'API.
+function Util.HasAtlas(name)
+  local T = C_Texture
+  if not (T and T.GetAtlasInfo) or type(name) ~= "string" then return false end
+  local ok, info = pcall(T.GetAtlasInfo, name)
+  return ok and info ~= nil
+end

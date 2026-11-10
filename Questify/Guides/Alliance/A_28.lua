@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 25 étapes, niveau final 53.00, ~53314 xp/h, 181 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 25 étapes, niveau final 53.00, ~53307 xp/h, 180 min.
 Q:RegisterGuide({
   id = "A_28",
   title = "Burning Steppes",
   faction = "Alliance",
   minLevel = 52, maxLevel = 53,
   next = "A_24",
-  sim = { steps = 25, endLevel = 53.00, xpPerHour = 53314, minutes = 181 },
+  sim = { steps = 25, endLevel = 53.00, xpPerHour = 53307, minutes = 180 },
   steps = {
     { "note", "Not running Maraudon? Abandon The Pariah's Instructions", optional = true, dungeon = "Maraudon" },
     { "note", "Not running Zul'Farrak? Abandon Divino-matic Rod", optional = true, dungeon = "Zul'Farrak" },
@@ -35,6 +35,6 @@ Q:RegisterGuide({
     { "accept", 81953 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "complete", 81953, at = { 1428, 28.96, 28.93 } }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81953, xp = 585 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
-    { "level", 53, at = { 1428, 39.83, 47.48 }, note = "About 401 more mobs here (Scalding Broodling, level 53)" }, -- farm de niveau
+    { "level", 53, at = { 1428, 39.83, 47.48 }, note = "About 400 more mobs here (Scalding Broodling, level 53)" }, -- farm de niveau
   },
 })

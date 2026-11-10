@@ -1,6 +1,6 @@
 # H_OrcTroll_01 — Valley of Trials
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
@@ -87,7 +87,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 3090 | Tainted Parchment | 1 | WARLOCK | woven, detour 31 s |
 | 98575 | Tainted Tablet | 1 | WARLOCK | woven, detour 31 s |
 | 98576 | Glyphic Parchment | 1 | MAGE | woven, detour 14 s |
-| 5649 | In Favor of Spirituality | 4 | PRIEST | woven, detour 72 s |
+| 5649 | In Favor of Spirituality | 4 | PRIEST | woven, detour 73 s |
 | 1463 | Earth Sapta | 4 | SHAMAN | repeatable |
 | 1464 | Fire Sapta | 13 | SHAMAN | quest level 13 above the band |
 | 1499 | Vile Familiars | 4 | WARLOCK | follow-up already done |

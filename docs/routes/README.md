@@ -614,3 +614,39 @@ chapters (each report lists them). Heaviest left: A_04 (Wetlands: the Dragonmaw 
 around most objectives, 284 mobs of grinding), H_03, the 30-60 trunk. To check in game: whether those camps are really
 elite, and whether the routes still feel too hard or too easy.
 APR-COMPARE: APR clearly ahead on 48 chapters, Questify on 4, close on 20.
+
+## Cozy Sleeping Bag, corrected start (2026-11-10)
+
+Stepping Stones (79192) needs "... and that note you found" first. 79008 (Alliance) is taken at the Burned-Out Remains
+of Alexston Farmstead (Westfall) and handed in at the burned tower south of Camp Taurajo (Southern Barrens); 79007
+(Horde) goes the other way. The Nailed Plank where the note is handed in gives Stepping Stones (Wowhead Forever guide
+"Cozy Sleeping Bag", 2026-11-08; Questie's Season of Discovery fix `preQuestSingle = {79007, 79008}`). QuestieDB
+Forever has no such link: `tools/routebuilder/overrides.lua` adds it (`pre[79192]`), and a note on the accept step
+says to click the plank, not the Burned-Out Remains a few yards away.
+
+- Alliance: the note in A_DwarfGnome_04 and A_Human_03, handed in in A_02 (a corner of the Barrens, `bounds` 44-49 x
+  71-77), where Stepping Stones is taken. A_02 131 -> 166 min (Stonetalon -> Barrens -> Stonetalon), A_08 220 -> 190
+  min (four Barrens quests moved up to A_02).
+- Horde: no chapter passes Westfall before H_09 (Stranglethorn 35-37), and a quest is carried at most two chapters
+  (`carryZones` in `build.lua`): the note cannot be taken in H_01. The hunt runs H_07 (note: second Barrens rectangle
+  around the tower, reached from the Great Lift), H_09 (Westfall limited to the farmstead, from Grom'gol), H_10
+  (flight to Sun Rock Retreat at the end of the chapter, Stonetalon limited to Pocket Litter and Mound of Dirt) and
+  H_11 (Loch Modan limited to the dam, then north-west Arathi, where the bag is handed over).
+
+Horde chapters (Orc path), without -> with the hunt: H_07 110 -> 112 min, H_08 204 -> 202, H_09 277 -> 278, H_10
+55 -> 68, H_11 128 -> 139, H_12 129 -> 131, H_13 317 -> 316. H_09 binds the hearthstone at Grom'gol for the Westfall
+round trip; Chapter IV (342) is picked up on a later pass because of the log cap.
+
+Totals per Horde race path, simulated (minutes / quests / grind mobs):
+
+| Path 1-60 | Without the hunt | With the hunt |
+|---|---|---|
+| Orc / Troll | 5 618 / 547 / 4 859 | 5 644 / 553 / 4 854 |
+| Tauren | 5 620 / 540 / 4 860 | 5 646 / 546 / 4 855 |
+| Undead | 5 671 / 550 / 4 861 | 5 697 / 556 / 4 856 |
+| Skyborne (Horde) | 5 646 / 563 / 4 915 | 5 672 / 569 / 4 910 |
+
+The six quests are 6 to 14 levels below the character (about 85-95 XP for the first three, 510 for the last three, estimates):
+the hunt is kept for the bag, at 26 min. To check in game: the walk from Grom'gol to Alexston Farmstead (2 410 yd in a
+straight line in the simulator, the real way goes around the hills) and the walk from east Arathi to the dam (straight
+line; the real way crosses Thandol Span and the Wetlands).

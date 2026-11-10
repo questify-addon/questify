@@ -15,7 +15,7 @@ local QUEST_FIELDS = {
   "name", "questLevel", "requiredLevel", "requiredRaces", "requiredClasses",
   "startedBy", "finishedBy", "objectives", "preQuestSingle", "preQuestGroup", "exclusiveTo",
   "nextQuestInChain", "breadcrumbForQuestId", "specialFlags", "requiredSkill",
-  "sourceItemId", "requiredSourceItems",
+  "sourceItemId", "requiredSourceItems", "triggerEnd",
 }
 local NPC_FIELDS = { "name", "minLevel", "maxLevel", "spawns", "subName", "npcFlags" }
 local OBJECT_FIELDS = { "name", "spawns" }
@@ -191,6 +191,7 @@ function QDB:Quest(id)
     requiredSkill = type(skill) == "table" and nz(skill[1]) or nil,
     sourceItem = type(v[16]) == "number" and nz(v[16]) or nil,   -- objet donné à la prise
     sourceItems = ids(v[17]),                                      -- objets requis (non ramassés)
+    triggerEnd = type(v[18]) == "table" or nil,                    -- objectif d'exploration ou d'escorte
   }
   questCache[id] = q
   return q

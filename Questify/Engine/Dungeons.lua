@@ -27,13 +27,14 @@ local CAPITAL = { [1453] = "Alliance", [1455] = "Alliance", [1457] = "Alliance",
 ---------------------------------------------------------------------------
 -- État sauvegardé
 ---------------------------------------------------------------------------
--- Q.char.dungeons = { added = {[key]=true}, ignored = {...}, seen = {...} }
+-- Q.char.dungeons = { added = {[key]=true}, ignored = {...}, seen = {...}, chains = {[questId]=true} }
+-- chains : quêtes de donjon dont le joueur a ajouté la chaîne de préquêtes (AddChain).
 local function saved()
   local c = Q.char
   if type(c) ~= "table" then return nil end
   if type(c.dungeons) ~= "table" then c.dungeons = {} end
   local s = c.dungeons
-  for _, k in ipairs({ "added", "ignored", "seen" }) do
+  for _, k in ipairs({ "added", "ignored", "seen", "chains" }) do
     if type(s[k]) ~= "table" then s[k] = {} end
   end
   return s
@@ -157,19 +158,22 @@ local function prereqLists(e)
 end
 
 -- Préquêtes faites : règle de QuestieDB, ou celle des données quand QuestieDB ne connaît pas la quête
--- (pre = au moins une rendue, preAll = toutes rendues).
-local function prereqsMet(e)
-  if Q.QDB:Quest(e.id) then return Q.QDB:PrereqsMet(e.id, isTurnedIn) end
+-- (pre = au moins une rendue, preAll = toutes rendues). planned = { [questId] = true } : quêtes comptées
+-- comme rendues (chaîne prévue avant).
+local function prereqsMet(e, planned)
+  local done = isTurnedIn
+  if planned then done = function(id) return planned[id] == true or isTurnedIn(id) end end
+  if Q.QDB:Quest(e.id) then return Q.QDB:PrereqsMet(e.id, done) end
   local single = type(e.pre) == "table" and e.pre or {}
   if #single > 0 then
     local any = false
     for _, p in ipairs(single) do
-      if isTurnedIn(p) then any = true; break end
+      if done(p) then any = true; break end
     end
     if not any then return false end
   end
   for _, p in ipairs(type(e.preAll) == "table" and e.preAll or {}) do
-    if not isTurnedIn(p) then return false end
+    if not done(p) then return false end
   end
   return true
 end
@@ -276,6 +280,154 @@ local function unlockSteps(e, byId, depth, took)
   return steps
 end
 
+---------------------------------------------------------------------------
+-- Chaînes de préquêtes trop longues pour être enchaînées d'office (plus de MAX_CHAIN niveaux, ou quêtes hors
+-- des règles de zoneQuest) : la fenêtre en donne le détail (ChainInfo) et le joueur peut les ajouter (AddChain).
+---------------------------------------------------------------------------
+local MAX_FULL_CHAIN = 20   -- quêtes au plus dans une chaîne proposée
+
+-- Quête d'une chaîne, faisable par le personnage : connue de QuestieDB, race et classe, ni répétable, ni de
+-- métier, ni de réputation, donneur et receveur placés. Le niveau requis n'est pas exigé ici (readyLevel).
+-- -> q, ou nil et la raison : "unknown", "race", "special", "exclusive", "nogiver".
+local function chainQuest(id)
+  local q = Q.QDB:Quest(id)
+  local P = Q.Player
+  if not q then return nil, "unknown" end
+  if not Q.QDB:IsEligible(id, P.raceBit, P.classBit) then return nil, "race" end
+  if (q.specialFlags or 0) % 2 == 1 or q.requiredSkill or q.objectives.reputation then return nil, "special" end
+  for _, x in ipairs(q.exclusiveTo or {}) do
+    if isTurnedIn(x) then return nil, "exclusive" end
+  end
+  if not anySpawned(q.starters) or not anySpawned(q.finishers) then return nil, "nogiver" end
+  return q
+end
+
+-- missingChain(e, planned, d) -> { questId, ... } : préquêtes à faire avant la quête de donjon e, dans l'ordre
+-- (chaque quête après les siennes ; liste vide si aucune ne manque), ou nil, raison, quête en cause (raisons
+-- de chainQuest, "dungeon" : quête faite dans le donjon lui-même, "long" : plus de MAX_FULL_CHAIN quêtes).
+-- planned : quêtes déjà prévues (une autre chaîne), comptées comme faites. Préquête au choix (pre) : une déjà
+-- rendue ou prévue suffit, sinon la première faisable.
+local function missingChain(e, planned, d)
+  planned = planned or {}
+  local inside = {}
+  if d then
+    for _, x in ipairs(questsOf(d, Q.Player.faction)) do
+      if isQuest(x) and x.inside then inside[x.id] = true end
+    end
+  end
+  local order, seen = {}, {}
+  local why, whyId
+  local function fail(reason, id)
+    if not why then why, whyId = reason, id end
+    return false
+  end
+  local function done(id) return isTurnedIn(id) or planned[id] or seen[id] end
+  local visit
+  local function needs(single, group, depth)
+    if #single > 0 then
+      local any = false
+      for _, p in ipairs(single) do
+        if done(p) then any = true; break end
+      end
+      if not any then
+        for _, p in ipairs(single) do
+          local n, before = #order, {}
+          for k in pairs(seen) do before[k] = true end
+          if visit(p, depth) then any = true; why, whyId = nil, nil; break end
+          for i = #order, n + 1, -1 do order[i] = nil end
+          seen = before
+        end
+      end
+      if not any then return false end
+    end
+    for _, p in ipairs(group) do
+      if not done(p) and not visit(p, depth) then return false end
+    end
+    return true
+  end
+  visit = function(id, depth)
+    if done(id) then return true end
+    if depth > MAX_FULL_CHAIN or #order >= MAX_FULL_CHAIN then return fail("long", id) end
+    if inside[id] then return fail("dungeon", id) end
+    local q, reason = chainQuest(id)
+    if not q then return fail(reason, id) end
+    seen[id] = true
+    if not Q.Progress:InLog(id) and not needs(q.preSingle, q.preGroup, depth + 1) then return false end
+    order[#order + 1] = id
+    return true
+  end
+  local single, group, exclusive = prereqLists(e)
+  for _, x in ipairs(exclusive) do
+    if isTurnedIn(x) then return nil, "exclusive", e.id end
+  end
+  if not needs(single, group, 1) then return nil, why or "unknown", whyId end
+  return order
+end
+
+-- Niveau à partir duquel une chaîne et sa quête de donjon sont faisables (niveau requis le plus haut).
+local function readyLevel(e, list)
+  local lvl = reqLevel(e)
+  for _, id in ipairs(list or {}) do
+    local q = Q.QDB:Quest(id)
+    if q and q.reqLevel and q.reqLevel > lvl then lvl = q.reqLevel end
+  end
+  return lvl
+end
+
+-- Étapes d'une quête de la chaîne : prendre, faire (s'il y a un objectif, une escorte ou un lieu à
+-- explorer), rendre ; « faire » et « rendre » seulement si elle est déjà au journal.
+local function chainQuestSteps(id, out)
+  local q = Q.QDB:Quest(id)
+  local talk = q and not hasObjectives(q.objectives) and not q.triggerEnd
+  if Q.Progress:InLog(id) then
+    if not talk and not Q.Progress:IsComplete(id) then out[#out + 1] = { "complete", id } end
+  else
+    out[#out + 1] = { "accept", id }
+    if not talk then out[#out + 1] = { "complete", id } end
+  end
+  out[#out + 1] = { "turnin", id }
+end
+
+-- Quête de donjon laissée de côté par le chemin de base, que le joueur peut ajouter : en ville, faisable par
+-- sa race et sa classe, ni rendue, ni au journal, et bloquée par une préquête ou par le niveau.
+local function chainTarget(e)
+  return isTown(e) and eligible(e) and not isTurnedIn(e.id) and not Q.Progress:InLog(e.id)
+    and (reqLevel(e) > (Q.Player.level or 1) or not prereqsMet(e))
+end
+
+-- Quête débloquée par une chaîne prête maintenant (niveau compris).
+local function chainCandidate(e)
+  return chainTarget(e) and reqLevel(e) <= (Q.Player.level or 1)
+end
+
+-- Vrai si deux listes de quêtes ont une quête en commun.
+local function overlap(a, b)
+  local set = {}
+  for _, id in ipairs(a or {}) do set[id] = true end
+  for _, id in ipairs(b or {}) do
+    if set[id] then return true end
+  end
+  return false
+end
+
+-- Suite choisie pour la quête e : elle-même (AddChain), ou une autre quête du donjon dont la suite partage des
+-- quêtes avec la sienne (même chaîne, ajoutée depuis l'autre quête). -> vrai, quêtes choisies concernées.
+local function chosenFor(d, e, list)
+  local s = saved()
+  if not s then return false, {} end
+  local out = {}
+  if s.chains[e.id] then out[#out + 1] = e.id end
+  if list and #list > 0 then
+    for _, other in ipairs(questsOf(d, Q.Player.faction)) do
+      if other.id ~= e.id and s.chains[other.id] and isQuest(other) then
+        local l2 = missingChain(other, nil, d)
+        if l2 and overlap(list, l2) then out[#out + 1] = other.id end
+      end
+    end
+  end
+  return #out > 0, out
+end
+
 -- plan(d) -> {
 --   units = { { steps = {...}, start = {m,x,y}, finish = {m,x,y}, quest = e }, ... },  -- à prendre en ville
 --   active = { e, ... },   -- quêtes à faire puis rendre (prises par les unités, déjà dans le journal,
@@ -294,6 +446,41 @@ local function plan(d)
   end
   local res = { units = {}, active = {}, locked = {} }
   local used = {}
+  -- Chaînes choisies par le joueur (AddChain) : un seul bloc, préquêtes d'abord, puis la prise de chaque quête
+  -- du donjon qu'elles débloquent (celles choisies et les autres).
+  local s = saved()
+  local chosen = s and s.chains or {}
+  local chainSteps, planned = {}, {}
+  local level = Q.Player.level or 1
+  for _, e in ipairs(list) do
+    if chosen[e.id] and chainCandidate(e) and not prereqsMet(e, planned) then
+      -- chaîne prête : toutes ses quêtes à la portée du niveau (sinon elle attend, PLAYER_LEVEL_UP plus bas)
+      local miss = missingChain(e, planned, d)
+      if miss and readyLevel(e, miss) <= level then
+        for _, id in ipairs(miss) do
+          chainQuestSteps(id, chainSteps)
+          planned[id] = true
+        end
+      end
+    end
+  end
+  if #chainSteps > 0 then
+    local first
+    for _, e in ipairs(list) do
+      if chainCandidate(e) and prereqsMet(e, planned) then
+        chainSteps[#chainSteps + 1] = { "accept", e.id }
+        used[e.id] = true
+        res.active[#res.active + 1] = e
+        first = first or e
+      end
+    end
+    if first then
+      local CQ = Q.ClassQuests
+      local st = CQ and CQ.Starter and CQ:Starter(chainSteps[1][2])
+      local start = st and st.mapId and { st.mapId, st.x, st.y } or first.at
+      res.units[#res.units + 1] = { steps = chainSteps, start = start, finish = first.at, quest = first, chain = true }
+    end
+  end
   local function consider(e)
     if used[e.id] or isTurnedIn(e.id) or not eligible(e) then return end
     if Q.Progress:InLog(e.id) then
@@ -441,19 +628,29 @@ function Dungeons:List()
   return out
 end
 
--- Alerts() -> donjons conseillés pas encore vus (option dungeonSuggest), hors donjons dont la route
--- prend déjà les quêtes.
-function Dungeons:Alerts()
+-- Suggested() -> donjons conseillés (option dungeonSuggest), vus ou non, hors donjons dont la route
+-- prend déjà les quêtes : { { dungeon, state }, ... }.
+function Dungeons:Suggested()
   local out = {}
   if Q.Settings:Get("dungeonSuggest") == false then return out end
-  local s = enabled() and saved()
-  if not s then return out end
+  if not (enabled() and saved()) then return out end
   local set
   for _, row in ipairs(self:List()) do
-    if row.state == "available" and not s.seen[row.dungeon.key] then
+    if row.state == "available" then
       set = set or routeQuests()
       if not inRoute(row.dungeon, set) then out[#out + 1] = row end
     end
+  end
+  return out
+end
+
+-- Alerts() -> donjons conseillés pas encore vus.
+function Dungeons:Alerts()
+  local out = {}
+  local s = saved()
+  if not s then return out end
+  for _, row in ipairs(self:Suggested()) do
+    if not s.seen[row.dungeon.key] then out[#out + 1] = row end
   end
   return out
 end
@@ -464,17 +661,31 @@ function Dungeons:MarkSeen(key)
 end
 
 -- Details(d) -> { { id, giver, obj, at, ok = vrai si à prendre maintenant, reason = "level" | "prereq" |
--- "log" (déjà dans le journal), level = niveau requis }, ... } pour la fenêtre et le journal.
+-- "log" (déjà dans le journal) | "done" (rendue), level = niveau requis, chain = résumé de suite (ChainSummary)
+-- }, ... } pour la fenêtre et le journal. Trois groupes, chacun dans l'ordre des données : les quêtes manquantes
+-- (à prendre maintenant ou bloquées), celles du journal de quêtes, puis celles déjà rendues (done = true).
 function Dungeons:Details(d)
   local out = {}
   if not (enabled() and validDungeon(d)) then return out end
   local p = plan(d)
-  local taken, active = {}, {}
-  for _, u in ipairs(p.units) do taken[u.quest.id] = true end
+  local taken, active, afterChain = {}, {}, {}
+  for _, u in ipairs(p.units) do
+    taken[u.quest.id] = true
+    for _, st in ipairs(u.steps) do
+      if st[1] == "accept" then
+        taken[st[2]] = true
+        if u.chain then afterChain[st[2]] = true end
+      end
+    end
+  end
   for _, e in ipairs(p.active) do active[e.id] = true end
+  local missing, inLog, done = {}, {}, {}
   for _, e in ipairs(townQuests(d)) do
-    if not isTurnedIn(e.id) then
-      local row = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, level = reqLevel(e) }
+    local row = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, level = reqLevel(e) }
+    if isTurnedIn(e.id) then
+      row.ok, row.reason, row.done = false, "done", true
+      done[#done + 1] = row
+    else
       if taken[e.id] then
         row.ok = true
       elseif active[e.id] then
@@ -482,10 +693,206 @@ function Dungeons:Details(d)
       else
         row.ok, row.reason = false, p.locked[e.id] or "prereq"
       end
-      out[#out + 1] = row
+      -- quête laissée de côté (préquête, niveau) ou prise après une suite ajoutée : encadré du journal
+      if (not row.ok and chainTarget(e)) or afterChain[e.id] then
+        local ok, c = pcall(Dungeons.ChainSummary, Dungeons, e, d)
+        if ok then row.chain = c else Q:ReportError(c) end
+      end
+      if row.reason == "log" then inLog[#inLog + 1] = row else missing[#missing + 1] = row end
     end
   end
+  for _, group in ipairs({ missing, inLog, done }) do
+    for _, row in ipairs(group) do out[#out + 1] = row end
+  end
   return out
+end
+
+---------------------------------------------------------------------------
+-- Chaînes de préquêtes : détail, ajout, retrait
+---------------------------------------------------------------------------
+-- Donneur le plus proche du joueur d'une liste QuestieDB : { kind = "npc"|"object", id, at = {m, x, y} }.
+local function placeOf(list)
+  local pm, px, py = Q.Maps:PlayerPos()
+  local best
+  local function try(kind, id, rec)
+    if type(rec) ~= "table" or type(rec.spawns) ~= "table" then return end
+    local m, x, y, dist = Q.Maps:Nearest(rec.spawns, pm, px, py)
+    if not m then return end
+    if not best or (dist and (not best.dist or dist < best.dist)) then
+      best = { kind = kind, id = id, at = { m, x, y }, dist = dist }
+    end
+  end
+  for _, id in ipairs(list and list.npcs or {}) do try("npc", id, Q.QDB:Npc(id)) end
+  for _, id in ipairs(list and list.objects or {}) do try("object", id, Q.QDB:Object(id)) end
+  if best then best.dist = nil end
+  return best
+end
+
+-- XP d'une quête au niveau du personnage (Q.QuestRewardData, XP de base de DungeonData.lua ; modificateur
+-- Classic selon l'écart de niveau, arrondi à 5) et objets de récompense.
+local function rewardOf(id)
+  local data = type(Q.QuestRewardData) == "table" and Q.QuestRewardData[id]
+  if type(data) ~= "table" then return 0, {} end
+  local level = Q.Player.level or 1
+  local xp = 0
+  if type(data.xp) == "number" and level < 60 then
+    local q = Q.QDB:Quest(id)
+    local diff = q and q.level and (level - q.level) or 0
+    local m = 0.1
+    if diff <= 5 then m = 1 elseif diff == 6 then m = 0.8 elseif diff == 7 then m = 0.6
+    elseif diff == 8 then m = 0.4 elseif diff == 9 then m = 0.2 end
+    xp = math.floor(data.xp * m / 5) * 5
+  end
+  return xp, type(data.items) == "table" and data.items or {}
+end
+
+-- Cartes de la route du chapitre (étapes du guide : lieux d'objectif, points de passage) : { [uiMapID] = true }.
+local function routeMaps()
+  local set = {}
+  for _, e in ipairs(Q.Progress:Entries()) do
+    local st = e.step
+    if e.source == "guide" and type(st) == "table" then
+      if type(st.at) == "table" and type(st.at[1]) == "number" then set[st.at[1]] = true end
+      if type(st.mapId) == "number" then set[st.mapId] = true end
+    end
+  end
+  return set
+end
+
+-- Cartes traversées par une chaîne, dans l'ordre de passage (donneur puis receveur de chaque quête) :
+-- trajet (deux cartes de suite identiques fusionnées) et liste sans doublon.
+local function chainZones(list)
+  local path, zones, seen = {}, {}, {}
+  local function add(place)
+    local m = place and place.at[1]
+    if not m then return end
+    if path[#path] ~= m then path[#path + 1] = m end
+    if not seen[m] then seen[m] = true; zones[#zones + 1] = m end
+  end
+  for _, qid in ipairs(list) do
+    local q = Q.QDB:Quest(qid)
+    if q then
+      add(placeOf(q.starters))
+      add(placeOf(q.finishers))
+    end
+  end
+  return path, zones
+end
+
+-- ChainSummary(e, d) -> résumé de ce qui manque à la quête de donjon e :
+--   { count, sig = "65,132,...", giver|nil, obj|nil, mapId|nil, zones = { uiMapID, ... }, offRoute = bool,
+--     readyLevel, ready = bool, chosen = bool }   -- count = 0 : seulement le niveau
+--   ou { reason, reasonQuest } : suite hors de portée (raisons de missingChain).
+-- Deux quêtes de même signature attendent la même suite.
+function Dungeons:ChainSummary(e, d)
+  local list, why, whyId = missingChain(e, nil, d)
+  if not list then return { reason = why, reasonQuest = whyId } end
+  local c = { count = #list, sig = table.concat(list, ","), readyLevel = readyLevel(e, list), zones = {},
+              offRoute = false }
+  c.ready = c.readyLevel <= (Q.Player.level or 1)
+  c.chosen = d and (chosenFor(d, e, list)) or false
+  if #list > 0 then
+    local q = Q.QDB:Quest(list[1])
+    local place = q and placeOf(q.starters)
+    if place then
+      if place.kind == "npc" then c.giver = place.id else c.obj = place.id end
+      c.mapId = place.at[1]
+    end
+    local _, zones = chainZones(list)
+    local onRoute = routeMaps()
+    c.zones = zones
+    for _, m in ipairs(zones) do
+      if not onRoute[m] then c.offRoute = true end
+    end
+  end
+  return c
+end
+
+local function townEntry(d, id)
+  for _, e in ipairs(townQuests(d)) do
+    if e.id == id then return e end
+  end
+  return nil
+end
+
+-- ChainInfo(key, questId) -> {
+--   quests = { { id, kind, giver|nil, obj|nil, at = {m,x,y}|nil, ender|nil, endObj|nil, endAt|nil, xp, items },
+--              ... },             -- préquêtes, dans l'ordre ; kind = "talk" (parler), "objectives" (tuer,
+--                                 -- ramasser), "event" (escorte, lieu à explorer)
+--   unlocks = { questId, ... },   -- quêtes du donjon prises après la chaîne (la quête demandée d'abord)
+--   zones = { uiMapID, ... },     -- cartes des donneurs et des receveurs, sans doublon
+--   path = { uiMapID, ... },      -- les mêmes dans l'ordre de passage (retours compris)
+--   onRoute = { [uiMapID] = true }, -- cartes déjà sur la route du chapitre
+--   minLevel, maxLevel,           -- niveau requis le plus bas, niveau de quête le plus haut de la chaîne
+--   dungeon = nom du donjon,
+--   xpChain = n,                  -- XP de la chaîne seule, au niveau du personnage
+--   xp = n,                       -- XP de la chaîne et des quêtes débloquées
+--   items = { itemId, ... },      -- récompenses des quêtes du donjon débloquées (pas celles de la suite)
+--   rewards = { { quest = questId, items = { itemId, ... } }, ... },  -- les mêmes, par quête débloquée
+--   readyLevel, ready = bool,     -- niveau à atteindre pour la suite et la quête ; atteint ou non
+--   chosen = bool,                -- suite déjà ajoutée (AddChain), depuis cette quête ou une autre
+-- } ou nil (quête prise par le chemin de base, ou suite hors de portée : ChainSummary en donne la raison).
+-- quests est vide pour une quête bloquée seulement par le niveau.
+function Dungeons:ChainInfo(key, id)
+  if not enabled() then return nil end
+  local d = findDungeon(key)
+  local e = d and townEntry(d, id)
+  if not e or not chainTarget(e) then return nil end
+  local list = missingChain(e, nil, d)
+  if not list then return nil end
+  local planned = {}
+  for _, qid in ipairs(list) do planned[qid] = true end
+  local info = { quests = {}, unlocks = { id }, xp = 0, xpChain = 0, items = {}, dungeon = self:Name(d) }
+  info.path, info.zones = chainZones(list)
+  info.onRoute = routeMaps()
+  info.readyLevel = readyLevel(e, list)
+  info.ready = info.readyLevel <= (Q.Player.level or 1)
+  if #list > 0 then
+    for _, other in ipairs(questsOf(d, Q.Player.faction)) do
+      if other.id ~= id and isQuest(other) and chainTarget(other) and not prereqsMet(other)
+        and prereqsMet(other, planned) then
+        info.unlocks[#info.unlocks + 1] = other.id
+      end
+    end
+  end
+  local seenItem = {}
+  for _, qid in ipairs(list) do
+    local q = Q.QDB:Quest(qid)
+    local row = { id = qid, kind = "talk" }
+    if q then
+      if q.triggerEnd then row.kind = "event" elseif hasObjectives(q.objectives) then row.kind = "objectives" end
+      if q.reqLevel and (not info.minLevel or q.reqLevel < info.minLevel) then info.minLevel = q.reqLevel end
+      if q.level and (not info.maxLevel or q.level > info.maxLevel) then info.maxLevel = q.level end
+    end
+    local from = q and placeOf(q.starters)
+    if from then
+      if from.kind == "npc" then row.giver = from.id else row.obj = from.id end
+      row.at = from.at
+    end
+    local to = q and placeOf(q.finishers)
+    if to then
+      if to.kind == "npc" then row.ender = to.id else row.endObj = to.id end
+      row.endAt = to.at
+    end
+    row.xp, row.items = rewardOf(qid)
+    info.xpChain = info.xpChain + row.xp
+    info.quests[#info.quests + 1] = row
+  end
+  -- récompenses : seulement celles des quêtes du donjon débloquées (l'intérêt de la suite), par quête
+  info.xp = info.xpChain
+  info.rewards = {}
+  for _, qid in ipairs(info.unlocks) do
+    local xp, items = rewardOf(qid)
+    info.xp = info.xp + xp
+    local group = { quest = qid, items = {} }
+    for _, it in ipairs(items) do
+      group.items[#group.items + 1] = it
+      if not seenItem[it] then seenItem[it] = true; info.items[#info.items + 1] = it end
+    end
+    if #group.items > 0 then info.rewards[#info.rewards + 1] = group end
+  end
+  info.chosen = (chosenFor(d, e, list))
+  return info
 end
 
 -- Point où reprendre la route après le donjon : la cible de l'étape courante (hors étapes de ce donjon),
@@ -563,6 +970,7 @@ function Dungeons:Ignore(key)
   s.ignored[key] = true
   s.added[key] = nil
   s.seen[key] = true
+  for _, e in ipairs(townQuests(findDungeon(key))) do s.chains[e.id] = nil end
   Q.Progress:RemoveInserted(TAG_PREFIX .. key)
   notify()
   return true
@@ -576,6 +984,95 @@ function Dungeons:Unignore(key)
   notify()
   return true
 end
+
+-- Rebâtit les étapes d'un donjon (chaînes ajoutées ou retirées) ; l'ajoute s'il ne l'était pas et que `add`.
+local function rebuild(self, s, d, add)
+  if s.added[d.key] then
+    Q.Progress:RemoveInserted(TAG_PREFIX .. d.key)
+    s.added[d.key] = nil
+    add = true
+  end
+  if add then return self:Add(d.key) end
+  return true
+end
+
+-- AddChain(key, questId) : la quête laissée de côté rejoint la route avec sa suite de préquêtes, dans les
+-- étapes du donjon (ajouté s'il ne l'était pas), avant l'entrée. Suite ou quête au-dessus du niveau : elle est
+-- retenue et rejoint la route au niveau voulu (PLAYER_LEVEL_UP), pour ne pas bloquer la route d'ici là. Faux si
+-- rien n'est à ajouter (suite hors de portée, ou déjà ajoutée depuis une autre quête).
+function Dungeons:AddChain(key, id)
+  local s = saved()
+  if not s or not enabled() then return false end
+  local d = findDungeon(key)
+  local info = d and self:ChainInfo(key, id)
+  if not info or info.chosen then return false end
+  s.chains[id] = true
+  s.ignored[d.key] = nil
+  if not info.ready then
+    notify()
+    return true
+  end
+  if not rebuild(self, s, d, true) then
+    s.chains[id] = nil
+    return false
+  end
+  return true
+end
+
+-- RemoveChain(key, questId) : retire la suite (choisie depuis cette quête ou une autre quête de la même suite) ;
+-- le donjon ajouté garde ses autres quêtes.
+function Dungeons:RemoveChain(key, id)
+  local s = saved()
+  if not s or not enabled() then return false end
+  local d = findDungeon(key)
+  local e = d and townEntry(d, id)
+  local ids = {}
+  if e then
+    local list = missingChain(e, nil, d)
+    local _, found = chosenFor(d, e, list)
+    ids = found
+  elseif s.chains[id] then
+    ids = { id }
+  end
+  if #ids == 0 then return false end
+  for _, q in ipairs(ids) do s.chains[q] = nil end
+  if d then rebuild(self, s, d, false) end
+  notify()
+  return true
+end
+
+-- Passage de niveau : une suite retenue qui devient faisable rejoint la route (le donjon est ajouté au besoin).
+local function inGroup(d, id)
+  for _, e in ipairs(Q.Progress:Entries()) do
+    if e.tag == TAG_PREFIX .. d.key and e.step and e.step.action == "accept" and e.step.questId == id then
+      return true
+    end
+  end
+  return false
+end
+
+local function joinReadyChains()
+  if not enabled() then return end
+  local s = saved()
+  if not s or next(s.chains) == nil then return end
+  local level = Q.Player.level or 1
+  for _, d in ipairs(dungeonsForPlayer()) do
+    local due = false
+    for _, e in ipairs(townQuests(d)) do
+      if s.chains[e.id] and not isTurnedIn(e.id) and not Q.Progress:InLog(e.id) and not inGroup(d, e.id) then
+        local list = missingChain(e, nil, d)
+        if list and readyLevel(e, list) <= level then due = true end
+      end
+    end
+    if due then rebuild(Dungeons, s, d, true) end
+  end
+end
+Dungeons.JoinReadyChains = joinReadyChains
+
+Q:RegisterEvent("PLAYER_LEVEL_UP", function()
+  local ok, err = pcall(joinReadyChains)
+  if not ok then Q:ReportError(err) end
+end)
 
 ---------------------------------------------------------------------------
 -- Un donjon ajouté se retire de lui-même quand il ne lui reste aucune étape de quête à faire

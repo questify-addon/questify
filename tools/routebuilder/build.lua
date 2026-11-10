@@ -60,7 +60,17 @@ function build.loadOverrides(path)
   local ov = fn() or {}
   ov.force, ov.drop, ov.pin, ov.insertAfter = ov.force or {}, ov.drop or {}, ov.pin or {}, ov.insertAfter or {}
   ov.pre = ov.pre or {}
+  ov.notes = ov.notes or {}
   return ov
+end
+
+-- Applique notes : texte ajouté à l'étape accept / turnin d'une quête (après la note générée, s'il y en a une).
+function build.applyNotes(steps, ov)
+  local notes = ov.notes or {}
+  for _, s in ipairs(steps) do
+    local text = (s[1] == "accept" or s[1] == "turnin") and notes[s[2]] and notes[s[2]][s[1]]
+    if text then s.note = s.note and (s.note .. ". " .. text) or text end
+  end
 end
 
 -- Applique insertAfter : étape ajoutée après le turnin d'une quête (0 = en tête).
@@ -226,6 +236,7 @@ function build.simulateFaction(D, W, faction, ov, only)
     local steps, report = sim.chapter(D, W, plan, state, { overrides = ov, carryZones = carryZones(plan, race),
       exitTo = exitTo, nextEntry = exitTo or nextEntry(plan, race) })
     build.applyInserts(plan.id, steps, ov)
+    build.applyNotes(steps, ov)
     report.simRace = race
     results[plan.id] = { plan = plan, steps = steps, report = report }
     order[#order + 1] = plan.id
