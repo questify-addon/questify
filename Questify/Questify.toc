@@ -5,6 +5,17 @@
 ## Author: Questify contributors
 ## Version: 0.5.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
+## Category: Quests
+## Category-deDE: Quests
+## Category-esES: Misiones
+## Category-esMX: Misiones
+## Category-frFR: Quêtes
+## Category-itIT: Missioni
+## Category-koKR: 퀘스트
+## Category-ptBR: Missões
+## Category-ruRU: Задания
+## Category-zhCN: 任务
+## Category-zhTW: 任務
 ## OptionalDeps: QuestieDB, TomTom, WaypointUI, ShortestPathForever
 ## SavedVariables: QuestifyDB
 ## SavedVariablesPerCharacter: QuestifyCharDB
