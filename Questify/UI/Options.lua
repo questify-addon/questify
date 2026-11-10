@@ -65,7 +65,6 @@ local function showEntryTooltip(owner, e)
   if not (GameTooltip and e) then return end
   GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
   local title = e.label and L[e.label] or e.id
-  if e.type == "keybind" then title = string.format(title, Options.KeyText(e)) end
   GameTooltip:SetText(title, 1, 0.82, 0, 1, true)
   if e.tip then GameTooltip:AddLine(L[e.tip], 1, 1, 1, true) end
   GameTooltip:Show()
@@ -127,6 +126,131 @@ function Options.KeyText(e)
     if ok and type(txt) == "string" and txt ~= "" then return txt end
   end
   return key
+end
+
+---------------------------------------------------------------------------
+-- Raccourcis : assignés depuis la fenêtre (bouton des lignes « keybind »)
+---------------------------------------------------------------------------
+-- Touches seules ignorées pendant l'attente : on attend la vraie touche, avec ses modificateurs.
+local MODIFIER_KEYS = { LSHIFT = true, RSHIFT = true, LCTRL = true, RCTRL = true, LALT = true, RALT = true,
+  LMETA = true, RMETA = true, UNKNOWN = true }
+
+local function inCombat() return InCombatLockdown and InCombatLockdown() end
+
+-- KeyWithModifiers(touche) -> nom de touche du jeu, modificateurs dans son ordre : ALT-CTRL-SHIFT-F.
+function Options.KeyWithModifiers(key)
+  local prefix = ""
+  if IsAltKeyDown and IsAltKeyDown() then prefix = prefix .. "ALT-" end
+  if IsControlKeyDown and IsControlKeyDown() then prefix = prefix .. "CTRL-" end
+  if IsShiftKeyDown and IsShiftKeyDown() then prefix = prefix .. "SHIFT-" end
+  return prefix .. key
+end
+
+local function boundKeys(binding)
+  if type(GetBindingKey) ~= "function" then return {} end
+  local ok, a, b = pcall(GetBindingKey, binding)
+  if not ok then return {} end
+  local out = {}
+  for _, k in ipairs({ a, b }) do
+    if type(k) == "string" and k ~= "" then out[#out + 1] = k end
+  end
+  return out
+end
+
+local function saveBindings()
+  if type(SaveBindings) == "function" then
+    local set = type(GetCurrentBindingSet) == "function" and GetCurrentBindingSet() or 1
+    SaveBindings(set)
+  end
+end
+
+local function keyLabel(key)
+  if type(GetBindingText) == "function" then
+    local ok, txt = pcall(GetBindingText, key)
+    if ok and type(txt) == "string" and txt ~= "" then return txt end
+  end
+  return key
+end
+
+-- ListenKey(ligne) : le bouton de la ligne attend la prochaine touche.
+function Options:ListenKey(row)
+  if inCombat() then
+    self:Status(L.OPT_KEY_COMBAT, true)
+    return false
+  end
+  if self.listening and self.listening ~= row then self:StopListening() end
+  self.listening = row
+  row.button:EnableKeyboard(true)
+  if row.button.SetPropagateKeyboardInput then row.button:SetPropagateKeyboardInput(false) end
+  row.sync()
+  self:Status(L.OPT_KEY_PRESS_HINT)
+  return true
+end
+
+function Options:StopListening()
+  local row = self.listening
+  self.listening = nil
+  if row then
+    row.button:EnableKeyboard(false)
+    row.sync()
+  end
+end
+
+-- CaptureKey(ligne, touche) : touche reçue pendant l'attente. Échap annule.
+function Options:CaptureKey(row, key)
+  if self.listening ~= row or type(key) ~= "string" or MODIFIER_KEYS[key] then return end
+  self:StopListening()
+  if key == "ESCAPE" then
+    self:Status("")
+    return
+  end
+  self:BindKey(row.entry, Options.KeyWithModifiers(key))
+  row.sync()
+end
+
+-- BindKey(entrée, touche) : la touche devient la seule de l'action (les anciennes sont libérées). Une
+-- touche déjà prise par une autre action passe à celle-ci ; la ligne d'état le dit. -> vrai si assignée.
+function Options:BindKey(e, key)
+  if inCombat() then
+    self:Status(L.OPT_KEY_COMBAT, true)
+    return false
+  end
+  if type(SetBinding) ~= "function" or not e.binding then return false end
+  local previous = type(GetBindingAction) == "function" and GetBindingAction(key) or ""
+  for _, old in ipairs(boundKeys(e.binding)) do SetBinding(old) end
+  if not SetBinding(key, e.binding) then
+    self:Status(string.format(L.OPT_KEY_FAILED, keyLabel(key)), true)
+    return false
+  end
+  saveBindings()
+  if type(previous) == "string" and previous ~= "" and previous ~= e.binding then
+    local name = previous
+    if type(GetBindingName) == "function" then
+      local ok, n = pcall(GetBindingName, previous)
+      if ok and type(n) == "string" and n ~= "" then name = n end
+    end
+    self:Status(string.format(L.OPT_KEY_REPLACED, keyLabel(key), name))
+  else
+    self:Status(string.format(L.OPT_KEY_SET, keyLabel(key)))
+  end
+  return true
+end
+
+-- ClearKey(entrée) : retire les touches de l'action.
+function Options:ClearKey(e)
+  if inCombat() then
+    self:Status(L.OPT_KEY_COMBAT, true)
+    return false
+  end
+  if self.listening then self:StopListening() end
+  local keys = boundKeys(e.binding)
+  if #keys == 0 or type(SetBinding) ~= "function" then return false end
+  for _, k in ipairs(keys) do SetBinding(k) end
+  saveBindings()
+  self:Status(L.OPT_KEY_CLEARED)
+  local row = self.widgets and self.widgets[e.id]
+  if row then row.sync() end
+  return true
 end
 
 ---------------------------------------------------------------------------
@@ -648,18 +772,34 @@ function Build.action(e)
 end
 
 -- Raccourci du jeu : « Touche … : <touche> » et « i » (la touche se choisit dans les Raccourcis).
+-- Raccourci : libellé, puis un bouton qui montre la touche. Clic : le bouton attend une touche (Échap
+-- annule) et l'assigne à l'action ; clic droit : retire la touche. Hors combat seulement (SetBinding
+-- est protégé en combat). La touche se règle toujours aussi dans les raccourcis du jeu.
+local KEY_BUTTON_W = 150
 function Build.keybind(e)
   local row = newRow(e)
   local label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  label:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 6, -4)
+  label:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 6, -6)
   label:SetJustifyH("LEFT")
+  local button = CreateFrame("Button", nextName("Key"), row, "UIPanelButtonTemplate")
+  button:SetSize(KEY_BUTTON_W, 22)
+  button:SetPoint("LEFT", label, "RIGHT", 10, 0)
+  button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  button:SetScript("OnClick", safe(function(_, mouse)
+    if mouse == "RightButton" then Options:ClearKey(e) else Options:ListenKey(row) end
+  end))
+  button:SetScript("OnKeyDown", safe(function(_, key) Options:CaptureKey(row, key) end))
+  button:SetScript("OnHide", function() if Options.listening == row then Options:StopListening() end end)
   local icon = infoIcon(row, e)
-  icon:SetPoint("TOPLEFT", label, "TOPRIGHT", 4, 4)
-  row.label, row.info = label, icon
-  row.sync = function() label:SetText(string.format(L[e.label], Options.KeyText(e))) end
+  icon:SetPoint("LEFT", button, "RIGHT", 4, 0)
+  row.label, row.button, row.info = label, button, icon
+  row.sync = function()
+    label:SetText(L[e.label])
+    button:SetText(Options.listening == row and L.OPT_KEY_PRESS or Options.KeyText(e))
+  end
   row.layout = function()
-    local _, h = fitLabel(label, CONTENT_W - INDENT - INFO_SIZE - 20)
-    local height = math.max(22, h + 8)
+    local _, h = fitLabel(label, CONTENT_W - INDENT - KEY_BUTTON_W - INFO_SIZE - 30)
+    local height = math.max(30, h + 12)
     row:SetHeight(height)
     return height
   end

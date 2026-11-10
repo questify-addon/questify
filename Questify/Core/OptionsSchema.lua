@@ -305,6 +305,9 @@ add({ id = "trackerResetPosition", section = "tracker", category = "layout", typ
 add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "toggle",
   path = "tracker.showMobs", label = "UI_OPT_SHOWMOBS", tip = "OPT_TIP_SHOWMOBS",
   keywords = "suivi monstres liste tuer tracker monsters mobs list kill" })
+add({ id = "tracker.foldBlizzard", section = "tracker", category = "content", type = "toggle",
+  path = "tracker.foldBlizzard", label = "OPT_TRACKER_FOLD_BLIZZARD", tip = "OPT_TIP_TRACKER_FOLD_BLIZZARD",
+  keywords = "suivi blizzard objectifs replier masquer cacher objective tracker blizzard fold collapse hide" })
 add({ id = "showXPRate", section = "tracker", category = "content", type = "toggle", path = "showXPRate",
   label = "COMFORT_OPT_XPRATE", tip = "OPT_TIP_XPRATE",
   keywords = "suivi experience xp heure niveau tracker xp per hour level rate" })

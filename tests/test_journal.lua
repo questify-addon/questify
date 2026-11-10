@@ -48,10 +48,17 @@ return {
     for _, n in ipairs(UISpecialFrames) do if n == "QuestifyJournal" then special = true end end
     t.ok(special, "closes with Escape (UISpecialFrames)")
     t.eq(Q.UI.Journal.tab, "route", "route tab by default")
-    t.eq(#Q.UI.Journal.tabs, 2, "Route and Class quests: options have their own window")
-    t.eq(Q.UI.Journal.tabs[2]:GetText(), Q.L.UI_TAB_CLASS)
+    t.eq(#Q.UI.Journal.tabs, 3, "Route, Dungeons and Class quests: options have their own window")
+    -- chaque onglet porte l'icône de son bouton du suivi devant son nom
+    local B = Q.UI.TrackerButtons
+    t.eq(Q.UI.Journal.tabs[1]:GetText(), B.IconMarkup("route", 14) .. " " .. Q.L.UI_TAB_ROUTE)
+    t.eq(Q.UI.Journal.tabs[2]:GetText(), B.IconMarkup("dungeons", 14) .. " " .. Q.L.UI_TAB_DUNGEONS)
+    t.eq(Q.UI.Journal.tabs[3]:GetText(), B.IconMarkup("class", 14) .. " " .. Q.L.UI_TAB_CLASS)
     t.eq(Q.UI.Journal.panels.options, nil)
     Mock.click(Q.UI.Journal.tabs[2], "LeftButton")
+    t.eq(Q.UI.Journal.tab, "dungeons")
+    t.ok(Q.UI.Journal.panels.dungeons:IsShown())
+    Mock.click(Q.UI.Journal.tabs[3], "LeftButton")
     t.eq(Q.UI.Journal.tab, "class")
     t.ok(Q.UI.Journal.panels.class:IsShown())
     t.ok(not Q.UI.Journal.panels.route:IsShown())
@@ -86,6 +93,50 @@ return {
     Mock.click(second, "LeftButton")
     t.eq(Q.Progress:Guide().id, "A_DwarfGnome_02", "click follows the chapter")
     t.eq(shownRows(J.stepRows), #Q.Progress:Entries(), "step list follows")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Chapitres groupés : conseillés à ton niveau, à suivre, puis faits, dépassés ou d'une autre race.
+  chapter_groups_by_level_race_and_completion = function(t)
+    local Q = load()
+    local function g(id, lo, hi, races) return { id = id, minLevel = lo, maxLevel = hi, races = races, steps = {} } end
+    local list = { g("low", 1, 6), g("mine", 6, 11, { "Dwarf" }), g("elf", 6, 11, { "NightElf" }),
+      g("cur", 1, 6), g("high", 12, 16) }
+    local groups = Q.UI.Journal.ChapterGroups(list, list[4], 8, "Dwarf")
+    local ids = {}
+    for _, grp in ipairs(groups) do
+      local out = {}
+      for _, it in ipairs(grp.items) do out[#out + 1] = it.guide.id end
+      ids[#ids + 1] = { grp.key, out }
+    end
+    t.eq(ids, { { "now", { "mine", "cur" } }, { "next", { "high" } }, { "past", { "low", "elf" } } },
+      "followed chapter stays suggested; other race and passed levels go last")
+    -- chapitre fini : dernier groupe, coché
+    Q.Progress.ChapterDone = function(_, ch) return ch.id == "mine" end
+    groups = Q.UI.Journal.ChapterGroups(list, nil, 8, "Dwarf")
+    t.eq(groups[#groups].key, "past")
+    local done
+    for _, it in ipairs(groups[#groups].items) do if it.guide.id == "mine" then done = it.done end end
+    t.eq(done, true)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Coche verte : toutes les quêtes que le chapitre fait rendre sont rendues (ou leurs étapes passées).
+  route_tab_checks_finished_chapters = function(t)
+    local Q = load()
+    local g1 = Q.Guides:Get("A_DwarfGnome_01")
+    t.eq(Q.Progress:ChapterDone(g1), false)
+    for _, step in ipairs(g1.steps) do
+      if step.action == "turnin" then Mock.quests.completed[step.questId] = true end
+    end
+    t.eq(Q.Progress:ChapterDone(g1), true)
+    t.eq(Q.Progress:ChapterDone({ id = "empty", steps = { { action = "goto" } } }), false, "no turn-in: never done")
+    Q.UI.Journal:ShowTab("route")
+    local J = Q.UI.Journal
+    local row
+    for _, r in ipairs(J.chapterRows) do if r:IsShown() and r.guide.id == "A_DwarfGnome_01" then row = r end end
+    t.ok(row and row.check:IsShown(), "green check on the finished chapter")
+    t.eq(J.chapterHeaders[1]:GetText(), Q.L.UI_ROUTE_GROUP_NOW)
     t.eq(#Mock.errors, 0)
   end,
 

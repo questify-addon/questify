@@ -162,20 +162,22 @@ le champ « Description » de chaque image (le titre peut reprendre sa première
 
 | # | Fichier | Légende (anglais) |
 |---|---|---|
-| 1 (couverture) | [`en/01-tracker.png`](media/apercus/en/01-tracker.png) | The tracker: chapter progress, XP left and XP per hour, the current step with its distance and the monsters to kill, then the next steps. |
+| 1 (couverture) | [`en/01-tracker.png`](media/apercus/en/01-tracker.png) | The tracker: chapter progress, levels, XP left and XP per hour, the current step with its distance and the monsters to kill, then the next steps. Four buttons open the route, the dungeons, the class quests and the options. |
 | 2 | [`en/11-zone-mode.png`](media/apercus/en/11-zone-mode.png) | Zone mode: objectives of several quests in the same place are grouped into one visit, objects first, then elites and named, then monsters. |
 | 3 | [`en/16-route-choice.png`](media/apercus/en/16-route-choice.png) | Choose your next zone: at the end of a chapter, one card per zone with levels, quests, simulated time and XP per hour, travel and highlights. The recommended one glows. |
-| 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters and every step of the route. Click a step to make it the current one. |
-| 5 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
-| 6 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
-| 7 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
-| 8 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
-| 9 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: an alert in the tracker when a chain is available or overdue; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
-| 10 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the entrance, the quests to pick up in town with their givers, and one click to add them to your route. |
-| 11 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
-| 12 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, and profiles you can share. |
-| 13 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
+| 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters grouped by level, a green check on finished ones, and every step of the route. Click a step to make it the current one. |
+| 5 | [`en/08c-journal-dungeons.png`](media/apercus/en/08c-journal-dungeons.png) | Dungeons tab: every dungeon of your faction, rated with one to three stars for the quests left to do, with the quests to pick up and one click to add it to your route. |
+| 6 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
+| 7 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
+| 8 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
+| 9 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
+| 10 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: the class button of the tracker glows while a chain is available; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
+| 11 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the dungeon button glows, and the window gives the entrance, the quests to pick up with their givers, and one click to add them to your route. |
+| 12 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
+| 13 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, keys set in one click, and profiles you can share. |
+| 14 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
 
-Captures en jeu faites : 06 (quêtes de classe), 07 (donjon), 14 (équipement : une pièce, puis une
-paire), 16 (choix de suite) et 17 (alerte d'avant-poste). Encore en maquettes : 01, 02, 08, 08b, 10, 11,
-13 et les thèmes ; les remplacer au fur et à mesure (voir docs/media/CAPTURES-EN-JEU.md).
+Captures en jeu faites : 01 (suivi), 06 (quêtes de classe), 07 (donjon), 08 (journal, onglet Route),
+08b (options), 08c (journal, onglet Donjons), 10 (objet de quête), 14 (équipement), 16 (choix de suite),
+17 (alerte d'avant-poste) et les thèmes. Encore en maquettes : 02, 11 et 13 ; les remplacer au fur et à
+mesure (voir docs/media/CAPTURES-EN-JEU.md).

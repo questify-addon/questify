@@ -28,7 +28,7 @@ return {
     t.eq(lo, 0)
     t.ok(hi > 0, "progress total")
     t.eq(T.bar:GetValue(), 0)
-    t.eq(T.barText:GetText(), "0/" .. hi)
+    t.eq(T.barText:GetText(), "0/" .. hi .. "  ·  lvl 1-6")
     t.eq(#Mock.errors, 0)
   end,
 

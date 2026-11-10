@@ -441,19 +441,29 @@ function Dungeons:List()
   return out
 end
 
--- Alerts() -> donjons conseillés pas encore vus (option dungeonSuggest), hors donjons dont la route
--- prend déjà les quêtes.
-function Dungeons:Alerts()
+-- Suggested() -> donjons conseillés (option dungeonSuggest), vus ou non, hors donjons dont la route
+-- prend déjà les quêtes : { { dungeon, state }, ... }.
+function Dungeons:Suggested()
   local out = {}
   if Q.Settings:Get("dungeonSuggest") == false then return out end
-  local s = enabled() and saved()
-  if not s then return out end
+  if not (enabled() and saved()) then return out end
   local set
   for _, row in ipairs(self:List()) do
-    if row.state == "available" and not s.seen[row.dungeon.key] then
+    if row.state == "available" then
       set = set or routeQuests()
       if not inRoute(row.dungeon, set) then out[#out + 1] = row end
     end
+  end
+  return out
+end
+
+-- Alerts() -> donjons conseillés pas encore vus.
+function Dungeons:Alerts()
+  local out = {}
+  local s = saved()
+  if not s then return out end
+  for _, row in ipairs(self:Suggested()) do
+    if not s.seen[row.dungeon.key] then out[#out + 1] = row end
   end
   return out
 end

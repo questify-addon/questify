@@ -89,6 +89,8 @@ Automation\Taxi.lua
 
 UI\Themes.lua
 UI\Tracker.lua
+UI\TrackerButtons.lua
+UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
 UI\ObjectGlow.lua

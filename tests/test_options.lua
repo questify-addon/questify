@@ -420,17 +420,80 @@ return {
     noErrors(t)
   end,
 
-  keybind_hint_shows_the_bound_key = function(t)
+  keybind_button_shows_the_bound_key = function(t)
     local Q = load()
     local O = Q.UI.Options
     O:Open("automation")
     local w = O:Widget("keyAutoTarget")
-    t.ok(plain(w.label:GetText()):find(Q.L.OPT_KEY_NONE, 1, true), "not bound")
+    t.eq(w.label:GetText(), Q.L.OPT_KEY_AUTOTARGET)
+    t.eq(w.button:GetText(), Q.L.OPT_KEY_NONE, "not bound")
     GetBindingKey = function(action) if action == "CLICK QuestifyAutoTarget:LeftButton" then return "SHIFT-F" end end
     GetBindingText = function(key) return "Shift-F" end
     O:Open("automation")
-    t.ok(plain(w.label:GetText()):find("Shift-F", 1, true), "bound key shown")
+    t.eq(w.button:GetText(), "Shift-F", "bound key shown")
     GetBindingKey, GetBindingText = nil, nil
+    noErrors(t)
+  end,
+
+  -- Clic sur le bouton, puis touche : assignée à l'action, enregistrée, ancienne touche libérée.
+  keybind_button_binds_the_next_key = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    local ACTION = "CLICK QuestifyAutoTarget:LeftButton"
+    local binds, saved = { ["F5"] = ACTION, ["G"] = "TOGGLEAUTORUN" }, 0
+    GetBindingKey = function(action)
+      for k, a in pairs(binds) do if a == action then return k end end
+    end
+    GetBindingAction = function(key) return binds[key] or "" end
+    GetBindingName = function(action) return action == "TOGGLEAUTORUN" and "Course automatique" or action end
+    SetBinding = function(key, action) binds[key] = action; return true end
+    SaveBindings = function() saved = saved + 1 end
+    GetCurrentBindingSet = function() return 2 end
+    O:Open("automation")
+    local w = O:Widget("keyAutoTarget")
+    Mock.click(w.button, "LeftButton")
+    t.ok(O.listening == w, "waiting for a key")
+    t.eq(w.button:GetText(), Q.L.OPT_KEY_PRESS)
+    local onKey = w.button:GetScript("OnKeyDown")
+    Mock.player.shift = true
+    onKey(w.button, "LSHIFT")
+    t.ok(O.listening == w, "a lone modifier keeps waiting")
+    onKey(w.button, "G")
+    Mock.player.shift = false
+    t.eq(binds["SHIFT-G"], ACTION, "Shift-G bound")
+    t.eq(binds["F5"], nil, "old key freed")
+    t.eq(saved, 1, "bindings saved")
+    t.eq(O.listening, nil)
+    t.eq(O.statusText:GetText(), string.format(Q.L.OPT_KEY_SET, "SHIFT-G"))
+    -- touche déjà prise : elle passe à Questify, l'état le dit
+    Mock.click(w.button, "LeftButton")
+    onKey(w.button, "G")
+    t.eq(binds["G"], ACTION)
+    t.eq(O.statusText:GetText(), string.format(Q.L.OPT_KEY_REPLACED, "G", "Course automatique"))
+    -- Échap annule
+    Mock.click(w.button, "LeftButton")
+    onKey(w.button, "ESCAPE")
+    t.eq(binds["ESCAPE"], nil)
+    t.eq(O.listening, nil)
+    -- clic droit : touche retirée
+    Mock.click(w.button, "RightButton")
+    t.eq(binds["G"], nil, "key removed")
+    t.eq(O.statusText:GetText(), Q.L.OPT_KEY_CLEARED)
+    GetBindingKey, GetBindingAction, GetBindingName, SetBinding, SaveBindings, GetCurrentBindingSet =
+      nil, nil, nil, nil, nil, nil
+    noErrors(t)
+  end,
+
+  keybind_button_refused_in_combat = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    O:Open("automation")
+    local w = O:Widget("keyAutoTarget")
+    Mock.player.combat = true
+    Mock.click(w.button, "LeftButton")
+    t.eq(O.listening, nil, "no wait in combat")
+    t.eq(O.statusText:GetText(), Q.L.OPT_KEY_COMBAT)
+    Mock.player.combat = false
     noErrors(t)
   end,
 
