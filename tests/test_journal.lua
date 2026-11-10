@@ -303,6 +303,40 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  -- Récompense comme un objet des sacs : comparaison avec l'équipement (touche de comparaison ou option
+  -- du jeu, suivie quand on appuie sur la touche), lien et cabine d'essayage par clic modifié.
+  reward_items_behave_like_bag_items = function(t)
+    local Q = load()
+    Ext.fakeClassQuests(Q, { { chain = Ext.warlockChain(), state = "upcoming" } })
+    local compared, hidden, clicked = 0, 0, nil
+    local modifier, always = false, false
+    IsModifiedClick = function(what) return what == "COMPAREITEMS" and modifier end
+    GetCVarBool = function(name) return name == "alwaysCompareItems" and always end
+    GameTooltip_ShowCompareItem = function(tip) if tip == GameTooltip then compared = compared + 1 end end
+    GameTooltip_HideShoppingTooltips = function() hidden = hidden + 1 end
+    HandleModifiedItemClick = function(link) clicked = link end
+    C_Item.GetItemInfo = function(id) return "Item " .. id, "|cff1eff00|Hitem:" .. id .. "|h[Item]|h|r" end
+    Q.UI.Journal:ShowTab("class")
+    local item = Q.UI.Journal.classRows[1].items[1]
+    item:GetScript("OnEnter")(item)
+    t.eq(compared, 0, "no comparison without the key")
+    t.eq(hidden, 1)
+    modifier = true
+    Mock.fire("MODIFIER_STATE_CHANGED", "LSHIFT", 1)
+    t.eq(compared, 1, "comparison as soon as the key is pressed")
+    item:GetScript("OnLeave")(item)
+    Mock.fire("MODIFIER_STATE_CHANGED", "LSHIFT", 0)
+    t.eq(compared, 1, "nothing once the mouse left")
+    modifier, always = false, true
+    item:GetScript("OnEnter")(item)
+    t.eq(compared, 2, "always compare (game option)")
+    Mock.click(item, "LeftButton")
+    t.eq(clicked, "|cff1eff00|Hitem:6900|h[Item]|h|r", "modified click gets the item link")
+    IsModifiedClick, GetCVarBool, GameTooltip_ShowCompareItem, GameTooltip_HideShoppingTooltips, HandleModifiedItemClick =
+      nil, nil, nil, nil, nil
+    t.eq(#Mock.errors, 0)
+  end,
+
   class_tab_without_module = function(t)
     local Q = load()
     Q.ClassQuests = nil
