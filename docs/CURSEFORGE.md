@@ -77,10 +77,15 @@ always shows you the next thing to do.
 - **Zone mode and mob targeting.** When several quests share an area, their objectives are grouped into one
   visit; the monsters to kill are listed under the objective, and one click (or a key) targets them and marks
   them with a skull.
+- **Everything one click away.** Four buttons in the tracker open the journal on the route, the dungeons or the class
+  quests, and the options; the class and dungeon buttons glow when something is waiting for you. Blizzard's objective
+  tracker folds itself away.
 - **Class quests and dungeons.** Class quests up to level 60: the ones along your route are steps of the route, the
   others are in the journal with a one-click "Add to route". Dungeon quests are picked up along the way; 22 dungeons
   from Ragefire Chasm to Stratholme are suggested for your level and faction, and one click adds every quest to pick
-  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route.
+  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route. The Dungeons tab
+  rates each dungeon by the quests left to do; when its quests need a chain of earlier quests off your route, a panel
+  docked to the journal shows the zones, the steps and the dungeon rewards before you add it.
 - **Comfort.** Optional auto accept, turn-in and reward choice (following a loot profile: Elemental, Healer,
   Tank…), gear upgrades announced and equipped in one click, junk sold, quest item button (also for an item that
   starts a quest, with an alert when you loot it), profession training reminders.
@@ -121,11 +126,16 @@ t'indique toujours quoi faire ensuite.
   épinglées sur la carte du monde et la minicarte.
 - **Mode zone et ciblage** : quand plusieurs quêtes partagent un endroit, leurs objectifs sont regroupés en une
   visite ; les monstres à tuer sont listés sous l'objectif, un clic (ou une touche) les cible et pose le crâne.
-- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de
-  la route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent
-  en chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un
-  clic ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta
-  route.
+- **Tout à portée de clic** : quatre boutons dans le suivi ouvrent le journal sur la route, les donjons ou les quêtes
+  de classe, et les options ; ceux de classe et des donjons brillent quand quelque chose t'attend. Le suivi
+  d'objectifs de Blizzard se replie tout seul.
+- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de la
+  route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent en
+  chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un clic
+  ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta route.
+  L'onglet Donjons note chaque donjon selon les quêtes à y faire ; quand ses quêtes demandent une suite de quêtes hors
+  de ta route, une annexe collée au journal montre les zones, les étapes et les récompenses du donjon avant que tu
+  l'ajoutes.
 - **Confort** : acceptation, rendu et choix de la récompense automatiques et désactivables (selon un profil de
   butin : Élémentaire, Soigneur, Tank…), améliorations d'équipement annoncées et équipées en un clic, camelote
   vendue, bouton d'objet de quête (aussi pour un objet qui lance une quête, avec une alerte quand tu le ramasses),

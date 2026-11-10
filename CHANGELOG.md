@@ -1,8 +1,36 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 (à paraître)
 
 ### English
+
+**Tracker**
+- Four quick buttons in the tracker header: route journal, dungeons, class quests, options. The class button glows
+  while a class quest chain is available and you follow none; the dungeon button glows while a dungeon is suggested.
+  The chapter levels move into the progress bar.
+- Blizzard's objective tracker is folded at login and /reload, so it does not sit next to Questify's (option, on by
+  default; its own button opens it again).
+
+**Journal**
+- Three tabs, each with the icon of its tracker button: Route, Dungeons, Class quests.
+- Route: chapters grouped (suggested for your level, coming next, then done, below your level or for another race),
+  with a green check on finished chapters.
+- New Dungeons tab: every dungeon of your faction, rated with one to three stars for the quests left to do, sorted by
+  level or by quests. On the right, the selected dungeon with its quests in order: missing, in your quest log, done.
+- Quest chains off your route: when dungeon quests need a chain of earlier quests, one box offers it. "See the chain"
+  opens a panel docked to the journal: the zones in order (green when already on your route), each step with its giver
+  and XP, what it unlocks, and the rewards of the dungeon quests. One click adds it to your route, with the dungeon
+  quests picked up right after.
+- Reward items behave like items in your bags: full tooltip, comparison with your gear (Shift or the game option),
+  Shift-click for the link, Ctrl-click for the dressing room.
+
+**Options**
+- Keys are set right in the options: click the button, press a key; right-click removes it.
+
+**Class quests**
+- Fix: a class quest that can also be started elsewhere (Call of Earth) shows as done once its chain is finished, and
+  the extra start is no longer a step of the route. Same fix for six Warlock and Priest chains.
+- Routes no longer pick up a class quest before its required level.
 
 **Cozy Sleeping Bag**
 - Fix: Stepping Stones needs "... and that note you found" first. The note is taken at the Burned-Out Remains of
@@ -18,6 +46,36 @@
   line: to check in game.
 
 ### Français
+
+**Suivi**
+- Quatre boutons d'accès rapide dans l'en-tête du suivi : journal de route, donjons, quêtes de classe, options. Le
+  bouton de classe brille tant qu'une suite de quêtes de classe est disponible et qu'aucune n'est suivie ; celui des
+  donjons tant qu'un donjon est conseillé. Les niveaux du chapitre passent dans la barre de progression.
+- Le suivi d'objectifs de Blizzard est replié à la connexion et au /reload, pour ne pas s'afficher à côté de celui de
+  Questify (option activée par défaut ; son propre bouton le rouvre).
+
+**Journal**
+- Trois onglets, chacun avec l'icône de son bouton du suivi : Route, Donjons, Quêtes de classe.
+- Route : chapitres groupés (conseillés à ton niveau, à suivre, puis faits, dépassés ou d'une autre race), avec une
+  coche verte sur les chapitres finis.
+- Nouvel onglet Donjons : tous les donjons de ta faction, notés d'une à trois étoiles selon les quêtes à y faire,
+  triés par niveau ou par quêtes. À droite, le donjon choisi, avec ses quêtes dans l'ordre : manquantes, dans ton
+  journal de quêtes, terminées.
+- Suites de quêtes hors de ta route : quand des quêtes de donjon demandent une suite de quêtes, un encadré la propose.
+  « Voir la suite » ouvre une annexe collée au journal : les zones dans l'ordre (en vert celles de ta route), chaque
+  étape avec son donneur et son XP, ce qu'elle débloque et les récompenses des quêtes du donjon. Un clic l'ajoute à ta
+  route, avec la prise des quêtes du donjon juste après.
+- Les objets de récompense se comportent comme ceux de tes sacs : infobulle complète, comparaison avec ton équipement
+  (Maj ou l'option du jeu), Maj + clic pour le lien, Ctrl + clic pour la cabine d'essayage.
+
+**Options**
+- Les touches se règlent dans les options : clic sur le bouton, puis la touche ; clic droit pour la retirer.
+
+**Quêtes de classe**
+- Correctif : une quête de classe qui peut aussi commencer ailleurs (Call of Earth) passe à terminée une fois sa suite
+  faite, et ce second départ n'est plus une étape de la route. Même correctif pour six suites de Démoniste et de
+  Prêtre.
+- Les routes ne font plus prendre une quête de classe avant son niveau requis.
 
 **Cozy Sleeping Bag**
 - Correctif : Stepping Stones demande d'abord « ... and that note you found ». La note se prend aux Burned-Out Remains
