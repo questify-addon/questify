@@ -98,6 +98,7 @@ UI\UpgradePopup.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
 UI\DungeonPopup.lua
+UI\DungeonChainPopup.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
 UI\MinimapButton.lua

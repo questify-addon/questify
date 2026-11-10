@@ -32,8 +32,22 @@ local function giverName(row)
   return nil
 end
 
+-- Raison d'une quête bloquée par une chaîne de préquêtes : « demande 6 quêtes avant, chez Gryan (Westfall) ».
+function Popup.ChainText(chain)
+  if chain.reason then return L.DUNGEON_LOCKED_PREREQ end
+  local n = tonumber(chain.count) or 0
+  if n == 0 then return string.format(L.DUNGEON_LOCKED_LEVEL, tonumber(chain.readyLevel) or 1) end
+  local who = chain.giver and Q.QDB:NpcName(chain.giver) or chain.obj and Q.QDB:ObjectName(chain.obj) or nil
+  local zone = type(chain.mapId) == "number" and Q.Maps:MapName(chain.mapId) or nil
+  if not who or not zone then return string.format(L.DUNGEON_CHAIN_LOCKED_NOZONE, n) end
+  if n == 1 then return string.format(L.DUNGEON_CHAIN_LOCKED_ONE, who, zone) end
+  return string.format(L.DUNGEON_CHAIN_LOCKED, n, who, zone)
+end
+
 -- Ligne d'une quête : « Nom - Donneur (Zone) », grisée avec la raison quand elle n'est pas à prendre.
-function Popup.QuestLine(row)
+-- opts.box : le journal montre la suite de préquêtes, le niveau ou la raison dans un encadré sous la ligne
+-- (pas de raison ici).
+function Popup.QuestLine(row, opts)
   local name = Q.QDB:QuestName(row.id)
   local who = giverName(row)
   -- donneur en couleur seulement pour une quête à prendre (une ligne grisée reste grise)
@@ -46,12 +60,24 @@ function Popup.QuestLine(row)
   else
     text = name
   end
-  if row.ok and row.reason ~= "log" then return OK_COLOR .. text .. "|r" end
+  if row.done then return LOCKED_COLOR .. text .. " (" .. L.DUNGEON_DONE_TAG .. ")|r" end
+  local chain = type(row.chain) == "table" and row.chain or nil
+  opts = opts or {}
+  if chain and opts.box then return (row.ok and OK_COLOR or LOCKED_COLOR) .. text .. "|r" end
+  if row.ok and row.reason ~= "log" then
+    -- prise après une chaîne de préquêtes ajoutée à la route
+    if chain then
+      return OK_COLOR .. text .. "|r |cffaaaaaa(" .. string.format(L.DUNGEON_CHAIN_ADDED, chain.count or 0) .. ")|r"
+    end
+    return OK_COLOR .. text .. "|r"
+  end
   local why
   if row.reason == "log" then
     why = L.DUNGEON_IN_LOG
   elseif row.reason == "level" then
     why = string.format(L.DUNGEON_LOCKED_LEVEL, tonumber(row.level) or 1)
+  elseif chain then
+    why = Popup.ChainText(chain)
   else
     why = L.DUNGEON_LOCKED_PREREQ
   end
@@ -185,10 +211,10 @@ function Popup:Show(d, index, total)
     local ok, res = pcall(Q.Dungeons.Details, Q.Dungeons, d)
     if ok and type(res) == "table" then rows = res elseif not ok then Q:ReportError(res) end
   end
-  -- quêtes à prendre d'abord, puis les autres
+  -- quêtes à prendre d'abord, puis les autres ; les quêtes déjà rendues restent au journal
   local sorted = {}
   for _, r in ipairs(rows) do if r.ok then sorted[#sorted + 1] = r end end
-  for _, r in ipairs(rows) do if not r.ok then sorted[#sorted + 1] = r end end
+  for _, r in ipairs(rows) do if not r.ok and not r.done then sorted[#sorted + 1] = r end end
   local shown = math.min(#sorted, MAX_LINES)
   for i = 1, shown do
     local fs = line(i)

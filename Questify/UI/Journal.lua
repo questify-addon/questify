@@ -857,12 +857,14 @@ local function dungeonItems()
         details = {}
       end
       details = type(details) == "table" and details or {}
-      local now = 0
+      -- quêtes rendues : listées (en dernier, cochées) mais hors des compteurs et des étoiles
+      local now, todo = 0, 0
       for _, r in ipairs(details) do
+        if not r.done then todo = todo + 1 end
         if r.ok and r.reason ~= "log" then now = now + 1 end
       end
       out[#out + 1] = { dungeon = row.dungeon, state = row.state, group = DG_GROUP[row.state] or "past",
-        todo = #details, now = now, details = details }
+        todo = todo, now = now, details = details }
     end
   end
   return out
@@ -959,6 +961,138 @@ local function dgLine(i)
   return fs
 end
 
+-- Quête bloquée par une chaîne de préquêtes : infobulle (quêtes à faire, zones, XP, récompenses) et boutons
+-- « Ajouter ces quêtes » / « Les retirer » et « Plus d'infos » (UI/DungeonChainPopup.lua).
+local function chainInfo(row)
+  local D, item = Q.Dungeons, Journal.dgItem
+  if not (D and D.ChainInfo and item and row) then return nil end
+  local ok, info = pcall(D.ChainInfo, D, item.dungeon.key, row.id)
+  if ok then return info end
+  Q:ReportError(info)
+  return nil
+end
+
+local function chainTooltip(owner)
+  local info = chainInfo(owner.row)
+  if not info then return end
+  local names = {}
+  for _, r in ipairs(owner.rows or { owner.row }) do names[#names + 1] = Q.QDB:QuestName(r.id) end
+  local lines = { table.concat(names, ", ") }
+  for _, l in ipairs(Q.UI.DungeonChainPopup.TooltipLines(info)) do lines[#lines + 1] = l end
+  showTooltip(owner, lines)
+end
+
+local function chainAction(row)
+  local D, item = Q.Dungeons, Journal.dgItem
+  if not (D and item and row and row.chain) then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  if row.chain.chosen then D:RemoveChain(item.dungeon.key, row.id) else D:AddChain(item.dungeon.key, row.id) end
+  Journal:RefreshDungeonTab()
+  local P = Q.UI.DungeonChainPopup
+  if P and P.frame and P.frame:IsShown() and P.questId == row.id then P:Show(item.dungeon.key, row.id) end
+end
+
+-- Encadré d'une chaîne de préquêtes sous la quête qu'elle débloque : « Demande une suite de 6 quêtes, hors de ta
+-- route (zones) », infobulle au survol, boutons « Voir la suite » (annexe du journal) et « Ajouter la suite ».
+local CHAIN_BACKDROP = {
+  bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 },
+}
+
+local function dgChain(i)
+  Journal.dgChains = Journal.dgChains or {}
+  local w = Journal.dgChains[i]
+  if w then return w end
+  local parent = Journal.dgDetail
+  local ok, box = pcall(CreateFrame, "Frame", nil, parent, "BackdropTemplate")
+  if not ok or not box then box = CreateFrame("Frame", nil, parent) end
+  if box.SetBackdrop then
+    box:SetBackdrop(CHAIN_BACKDROP)
+    box:SetBackdropColor(0.12, 0.09, 0.05, 0.85)
+    box:SetBackdropBorderColor(0.6, 0.5, 0.3, 0.9)
+  end
+  box:EnableMouse(true)
+  box:SetScript("OnEnter", safe(function(self) chainTooltip(self) end))
+  box:SetScript("OnLeave", hideTooltip)
+  local text = box:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  text:SetPoint("TOPLEFT", box, "TOPLEFT", 7, -7)
+  text:SetJustifyH("LEFT")
+  text:SetWordWrap(true)
+  local function button(width)
+    local b = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
+    b:SetSize(width, 20)
+    return b
+  end
+  local info, add = button(100), button(100)
+  info:SetText(L.DUNGEON_CHAIN_INFO)
+  add:SetScript("OnClick", safe(function(self) chainAction(self.row) end))
+  info:SetScript("OnClick", safe(function(self)
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+    if Journal.dgItem and self.row then Q.UI.DungeonChainPopup:Show(Journal.dgItem.dungeon.key, self.row.id) end
+  end))
+  box:Hide()
+  w = { box = box, text = text, add = add, info = info }
+  Journal.dgChains[i] = w
+  return w
+end
+
+-- Raison d'une suite hors de portée, en une ligne (quête en cause nommée).
+local WHY_KEYS = { unknown = "DUNGEON_CHAIN_WHY_UNKNOWN", race = "DUNGEON_CHAIN_WHY_RACE",
+  special = "DUNGEON_CHAIN_WHY_SPECIAL", exclusive = "DUNGEON_CHAIN_WHY_EXCLUSIVE",
+  nogiver = "DUNGEON_CHAIN_WHY_NOGIVER", dungeon = "DUNGEON_CHAIN_WHY_DUNGEON", long = "DUNGEON_CHAIN_WHY_LONG" }
+
+local function questLabel(id)
+  local name = type(id) == "number" and Q.QDB:QuestName(id) or nil
+  if type(name) ~= "string" or name == "" or name == "?" then return "#" .. tostring(id or "?") end
+  return name
+end
+
+-- Texte de l'encadré : suite (quêtes qu'elle débloque en tête, nombre de quêtes, zones hors de la route ou
+-- non), niveau à atteindre, suite déjà ajoutée (tout de suite ou au niveau voulu), ou raison quand elle est hors
+-- de portée. rows : quêtes du détail que cette suite débloque (une ou plusieurs).
+local function chainBoxText(chain, rows)
+  if chain.reason then
+    return string.format(L[WHY_KEYS[chain.reason] or "DUNGEON_CHAIN_WHY_UNKNOWN"], questLabel(chain.reasonQuest))
+  end
+  local names = {}
+  for _, m in ipairs(chain.zones or {}) do names[#names + 1] = Q.Maps:MapName(m) end
+  local zones = table.concat(names, ", ")
+  local n = tonumber(chain.count) or 0
+  local lvl = tonumber(chain.readyLevel) or 1
+  local quests = {}
+  for _, r in ipairs(rows or {}) do quests[#quests + 1] = questLabel(r.id) end
+  local who = "|cffffffff" .. table.concat(quests, ", ") .. "|r"
+  local pl = #quests > 1 and "_PL" or ""
+  if chain.chosen then
+    if not chain.ready then
+      if n == 0 then return string.format(L.DUNGEON_CHAIN_BOX_LATER, lvl) end
+      return string.format(L.DUNGEON_CHAIN_BOX_LATER_CHAIN, who, n, lvl)
+    end
+    return string.format(L.DUNGEON_CHAIN_BOX_ADDED, who, n, zones)
+  end
+  if n == 0 then return string.format(L.DUNGEON_CHAIN_BOX_LEVEL, lvl) end
+  local text
+  if n == 1 then text = string.format(L["DUNGEON_CHAIN_BOX_ONE" .. pl], who, zones)
+  elseif chain.offRoute then text = string.format(L["DUNGEON_CHAIN_BOX" .. pl], who, n, zones)
+  else text = string.format(L["DUNGEON_CHAIN_BOX_ON" .. pl], who, n, zones) end
+  if not chain.ready then text = text .. "\n" .. string.format(L.DUNGEON_CHAIN_BOX_LEVEL, lvl) end
+  return text
+end
+
+-- Largeur d'un bouton d'après son texte (texte + 18 px), sans dépasser `max`.
+local function fitButton(b, max)
+  local w
+  local ok, tw = pcall(function() return b:GetTextWidth() end)
+  if ok and type(tw) == "number" and tw > 0 then w = tw end
+  if not w then
+    local fs = b.GetFontString and b:GetFontString()
+    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
+  end
+  w = math.floor((w or #(b:GetText() or "") * 6) + 18)
+  b:SetWidth(math.min(max, math.max(60, w)))
+  return b:GetWidth()
+end
+
 function Journal:BuildDungeons(panel)
   local head = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   head:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
@@ -1039,6 +1173,7 @@ function Journal:ShowDungeonDetail(item)
     for _, w in ipairs(widgets) do w:Hide() end
     setStars(self.dgStars, 0)
     for _, fs in ipairs(lines) do fs:Hide() end
+    for _, w in ipairs(self.dgChains or {}) do w.box:Hide() end
     child:SetHeight(1)
     return
   end
@@ -1075,15 +1210,74 @@ function Journal:ShowDungeonDetail(item)
   y = y + math.max(14, self.dgScore:GetStringHeight() or 12) + 8
   -- quêtes
   local P = Q.UI.DungeonPopup
-  for i, r in ipairs(item.details) do
-    local fs = dgLine(i)
-    fs:SetText("- " .. P.QuestLine(r))
-    fs:ClearAllPoints()
-    fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
-    fs:Show()
-    y = y + (fs:GetStringHeight() or 12) + 4
+  local nChain, nLine = 0, 0
+  local boxW = DG_DETAIL_W - 14
+  local inner = boxW - 14
+  -- quêtes débloquées par une même suite : un seul encadré, à la place de la première, qui les nomme toutes
+  local function isSuite(c) return type(c) == "table" and not c.reason and (tonumber(c.count) or 0) > 0 and c.sig end
+  local bySig = {}
+  for _, r in ipairs(item.details) do
+    if isSuite(r.chain) then
+      bySig[r.chain.sig] = bySig[r.chain.sig] or {}
+      table.insert(bySig[r.chain.sig], r)
+    end
   end
-  for i = #item.details + 1, #(self.dgLines or {}) do self.dgLines[i]:Hide() end
+  local function box(r, chain, rows)
+    nChain = nChain + 1
+    local w = dgChain(nChain)
+    w.box.row, w.add.row, w.info.row = r, r, r
+    w.box.rows = rows
+    w.text:SetWidth(inner)
+    w.text:SetText(chainBoxText(chain, rows))
+    local textH = w.text:GetStringHeight() or 12
+    local buttonsH = 0
+    if chain.reason then
+      w.add:Hide()
+      w.info:Hide()
+    else
+      w.add:SetText(chain.chosen and L.DUNGEON_CHAIN_REMOVE or L.DUNGEON_CHAIN_ADD)
+      local wi, wa = fitButton(w.info, inner), fitButton(w.add, inner)
+      w.info:ClearAllPoints()
+      w.add:ClearAllPoints()
+      w.info:SetPoint("TOPLEFT", w.box, "TOPLEFT", 7, -(textH + 12))
+      if wi + 4 + wa <= inner then
+        w.add:SetPoint("LEFT", w.info, "RIGHT", 4, 0)
+        buttonsH = 24
+      else
+        -- trop étroit côte à côte : l'un sous l'autre
+        w.add:SetPoint("TOPLEFT", w.info, "BOTTOMLEFT", 0, -3)
+        buttonsH = 47
+      end
+      w.info:Show()
+      w.add:Show()
+    end
+    local boxH = textH + 14 + buttonsH
+    w.box:ClearAllPoints()
+    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 8, -y)
+    w.box:SetSize(boxW, boxH)
+    w.box:Show()
+    y = y + boxH + 6
+  end
+  for _, r in ipairs(item.details) do
+    local chain = type(r.chain) == "table" and r.chain or nil
+    if isSuite(chain) then
+      local rows = bySig[chain.sig]
+      if rows[1] == r then box(r, chain, rows) end
+    else
+      nLine = nLine + 1
+      local fs = dgLine(nLine)
+      local prefix = r.done and "|TInterface\\RaidFrame\\ReadyCheck-Ready:12:12|t " or "- "
+      fs:SetText(prefix .. P.QuestLine(r, chain and { box = true } or nil))
+      fs:ClearAllPoints()
+      fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
+      fs:Show()
+      y = y + (fs:GetStringHeight() or 12) + 4
+      -- quête sans suite : niveau seul, ou suite hors de portée (raison, sans bouton)
+      if chain then box(r, chain, { r }) end
+    end
+  end
+  for i = nLine + 1, #(self.dgLines or {}) do self.dgLines[i]:Hide() end
+  for i = nChain + 1, #(self.dgChains or {}) do self.dgChains[i].box:Hide() end
   -- actions
   y = y + 6
   local canAdd = state == "available" or state == "upcoming" or state == "past" or state == "ignored"
