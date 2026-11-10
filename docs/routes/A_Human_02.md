@@ -1,6 +1,6 @@
 # A_Human_02 — Elwynn Forest
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
@@ -482,17 +482,17 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 1665 | Bartleby's Mug | 10 | WARRIOR | woven, detour 207 s |
 | 1666 | Marshal Haggard | 10 | WARRIOR | woven, detour 190 s |
 | 1667 | Dead-tooth Jack | 10 | WARRIOR | woven, detour 314 s |
-| 1685 | Gakin's Summons | 10 | WARLOCK | woven, detour 136 s |
+| 1685 | Gakin's Summons | 10 | WARLOCK | woven, detour 158 s |
 | 1688 | Surena Caledon | 10 | WARLOCK | woven, detour 448 s |
-| 1860 | Speak with Jennea | 10 | MAGE | woven, detour 91 s |
+| 1860 | Speak with Jennea | 10 | MAGE | woven, detour 99 s |
 | 1861 | Mirror Lake | 10 | MAGE | woven, detour 478 s |
-| 2205 | Seek out SI: 7 | 10 | ROGUE | woven, detour 91 s |
+| 2205 | Seek out SI: 7 | 10 | ROGUE | woven, detour 104 s |
 | 2206 | Snatch and Grab | 10 | ROGUE | woven, detour 433 s |
-| 5635 | Desperate Prayer | 10 | PRIEST | woven, detour 130 s |
+| 5635 | Desperate Prayer | 10 | PRIEST | woven, detour 141 s |
 | 94773 | Divine Grace | 10 | PRIEST | woven, detour 249 s |
-| 94792 | Taming the Beast | 10 | HUNTER | woven, detour 189 s |
-| 94863 | Taming the Beast | 10 | HUNTER | woven, detour 378 s |
-| 94864 | Taming the Beast | 10 | HUNTER | woven, detour 440 s |
+| 94792 | Taming the Beast | 10 | HUNTER | woven, detour 379 s |
+| 94863 | Taming the Beast | 10 | HUNTER | woven, detour 531 s |
+| 94864 | Taming the Beast | 10 | HUNTER | woven, detour 527 s |
 | 94793 | Training the Beast | 10 | HUNTER | woven, detour 165 s |
 | 397 | You Have Served Us Well | 30 | WARLOCK | quest level 30 above the band |
 | 1641 | The Tome of Divinity | 12 | PALADIN | required level 12 above the band |
@@ -772,7 +772,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 105: `fp 1453 71.29 72.23`
+- step 102: `fp 1453 71.29 72.23`
 - step 154: `fp 1436 56.55 52.64`
 
 ## Warnings

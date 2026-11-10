@@ -81,6 +81,49 @@ return {
     t.eq(report.time, base.time, "simulated route unchanged")
   end,
 
+  -- Quête de classe au niveau requis pas encore atteint : jamais prise avant ce niveau. « Call of Earth » 96243
+  -- (niveau requis 10) était prise au niveau simulé 6 en A_DwarfGnome_02, une étape que le jeu refuse.
+  class_quest_not_accepted_below_its_required_level = function(t)
+    local D, W = extendedD(), F.W()
+    D.quests[109].reqLevel = 4   -- 103 est rendue au niveau 2, le niveau 4 n'arrive qu'en fin de chapitre
+    -- détour sans limite : la quête est posée, reste à savoir où
+    local saved = sim.CONST.CLASS_MAX_DETOUR
+    sim.CONST.CLASS_MAX_DETOUR = math.huge
+    local steps = sim.chapter(D, W, F.plan(), F.state(), { _noWiden = true })
+    sim.CONST.CLASS_MAX_DETOUR = saved
+    local a = indexOf(steps, "accept", 109)
+    t.ok(a, "class quest woven: " .. stepsText(steps))
+    local lvl = 0
+    for i = 1, a - 1 do
+      local s = steps[i]
+      if not s.classes and s._c and s._c.simLevel then lvl = math.max(lvl, s._c.simLevel) end
+      if s[1] == "level" then lvl = math.max(lvl, s[2]) end
+    end
+    t.ok(lvl >= 4, ("accepted at simulated level %d: %s"):format(lvl, stepsText(steps)))
+  end,
+
+  -- Lettre vers une chaîne déjà faite : pas tissée. 112, même titre que 109, se prend chez Giver Two et se rend
+  -- chez Giver One, qui donne 109 (comme « Call of Earth » 96243 -> Teo Hammerstorm -> 94373). 109 est posée
+  -- dans le chapitre : la lettre ne mène plus à rien.
+  class_letter_to_a_chain_already_done_is_not_woven = function(t)
+    local D, W = extendedD(), F.W()
+    local q112 = {}
+    for k, v in pairs(D.quests[105]) do q112[k] = v end
+    q112.id, q112.name, q112.level, q112.classes, q112.breadcrumbFor = 112, "Warrior Tusks", 3, 1, nil
+    q112.starters = { npcs = { 2001 }, objects = {}, items = {} }
+    q112.finishers = { npcs = { 1001 }, objects = {} }
+    D.quests[112], D.xp[112] = q112, { 3, 40 }
+    local saved = sim.CONST.CLASS_MAX_DETOUR
+    sim.CONST.CLASS_MAX_DETOUR = math.huge
+    local steps, report = sim.chapter(D, W, F.plan(), F.state(), { _noWiden = true })
+    sim.CONST.CLASS_MAX_DETOUR = saved
+    t.ok(indexOf(steps, "turnin", 109), "the chain is woven: " .. stepsText(steps))
+    t.eq(indexOf(steps, "accept", 112), nil, "the letter is not: " .. stepsText(steps))
+    local why
+    for _, s in ipairs(report.classSkipped) do if s.id == 112 then why = s.reason end end
+    t.ok(why and why:find("letter to 109", 1, true), "reported as a letter: " .. tostring(why))
+  end,
+
   -- Objet de départ à 1 % (100 tués) : laissé ; avec un farm de niveau à faire sur ces loups, plus de raison de taux.
   starter_item_rate_and_grind_budget = function(t)
     local _, report = runExtended({ _noWiden = true })

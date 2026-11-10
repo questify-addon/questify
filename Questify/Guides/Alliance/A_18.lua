@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 44 étapes, niveau final 45.00, ~47501 xp/h, 141 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 44 étapes, niveau final 45.00, ~47502 xp/h, 141 min.
 Q:RegisterGuide({
   id = "A_18",
   title = "Tanaris",
   faction = "Alliance",
   minLevel = 44, maxLevel = 45,
   next = "A_19",
-  sim = { steps = 44, endLevel = 45.00, xpPerHour = 47501, minutes = 141 },
+  sim = { steps = 44, endLevel = 45.00, xpPerHour = 47502, minutes = 141 },
   steps = {
     { "note", "Not running Uldaman? Abandon Solution to Doom", optional = true, dungeon = "Uldaman" },
     { "hearth", 1434 }, -- pierre de foyer
@@ -54,6 +54,6 @@ Q:RegisterGuide({
     { "turnin", 2875, xp = 3900 }, -- WANTED: Andre Firebeard (lvl 45, ~3900 xp, sim lvl 44)
     { "turnin", 8366, xp = 3900 }, -- Southsea Shakedown (lvl 45, ~3900 xp, sim lvl 44)
     { "turnin", 8365, xp = 3900 }, -- Pirate Hats Ahoy! (lvl 45, ~3900 xp, sim lvl 44)
-    { "level", 45, at = { 1446, 75.27, 45.64 }, note = "About 137 more mobs near the last objective" }, -- farm de niveau
+    { "level", 45, at = { 1446, 75.27, 45.64 }, note = "About 138 more mobs near the last objective" }, -- farm de niveau
   },
 })

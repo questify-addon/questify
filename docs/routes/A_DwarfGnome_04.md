@@ -1,6 +1,6 @@
 # A_DwarfGnome_04 — Westfall
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -71,8 +71,8 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 8151 | The Hunter's Charm | 52 | class quest (ClassQuestData.lua) |
 | 8675 | Skychaser the Elder | 60 | Questie blacklist |
 | 78142 | Bewitchments and Glamours | 20 | quest level 20 above the band |
-| 79008 | ... and that note you found | 22 | quest level 22 above the band |
 | 79093 | Rumi of Gnomeregan: The Collected Works | 20 | quest level 20 above the band |
+| 79192 | Stepping Stones | 24 | quest level 24 above the band |
 | 92109 | My First Alchemy Set | 10 | requires a profession |
 | 92110 | My First Real Potion | 10 | requires a profession |
 | 92910 | Harvesting the Harvesters | 15 | requires a profession |
@@ -130,7 +130,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 151 | Poor Old Blanchy | 14 | 1250 | 0 | 133 | 133 | 9.36 | 9.36 | 1 |  |
 | 152 | The Coast Isn't Clear | 19 | 4914 | 0 | 1255 | 768 | 3.91 | 6.39 | 4 | far |
 | 153 | Red Leather Bandanas | 15 | 5069 | 1463 | 961 | 800 | 5.27 | 6.33 | 1 |  |
-| 79192 | Stepping Stones | 24 | 970 | 0 | 82 | 10 | 11.82 | 97.00 | 0 |  |
+| 79008 | ... and that note you found | 22 | 870 | 0 | 82 | 10 | 10.60 | 87.00 | 0 |  |
 | 92742 | Testing the Wells | 12 | 2373 | 1463 | 283 | 33 | 7.39 | 21.10 | 2 |  |
 | 92744 | Murloc Gills | 12 | 3773 | 1463 | 592 | 370 | 6.67 | 12.44 | 1 |  |
 | 92745 | The State of the Mines | 14 | 3477 | 1463 | 560 | 324 | 6.95 | 15.32 | 2 |  |
@@ -159,7 +159,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 11 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 186 |  |
 | 12 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 0 |  |
 | 13 | O | 9 | The Killing Fields | 1436 | 38.8, 51.5 | 480 |  |
-| 14 | A | 79192 | Stepping Stones | 1436 | 37.4, 50.7 | 51 |  |
+| 14 | A | 79008 | ... and that note you found | 1436 | 37.4, 50.7 | 51 |  |
 | 15 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 443 |  |
 | 16 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 404 |  |
 | 17 | O | 12 | The People's Militia | 1436 | 44.8, 26.0 | 415 |  |

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 137 étapes, niveau final 12.01, ~19634 xp/h, 111 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 129 étapes, niveau final 12.01, ~19634 xp/h, 111 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_02",
   title = "Dun Morogh",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 6, maxLevel = 11,
   next = "A_DwarfGnome_03",
-  sim = { steps = 137, endLevel = 12.01, xpPerHour = 19634, minutes = 111 },
+  sim = { steps = 129, endLevel = 12.01, xpPerHour = 19634, minutes = 111 },
   steps = {
     { "accept", 317 }, -- Stocking Jetsteam (lvl 6, ~680 xp, sim lvl 6)
     { "accept", 313 }, -- The Grizzled Den (lvl 7, ~630 xp, sim lvl 6)
@@ -21,12 +21,8 @@ Q:RegisterGuide({
     { "turnin", 96608, xp = 540 }, -- The Great Outdoors (lvl 6, ~540 xp, sim lvl 6)
     { "accept", 96629 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
     { "complete", 96629, at = { 1426, 47.67, 52.31 } }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
-    { "accept", 96243, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~70 xp, sim lvl 6)
-    { "accept", 94449, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~210 xp, sim lvl 6)
     { "accept", 99158 }, -- Dawn in the Mountains (lvl 8, ~530 xp, sim lvl 6)
     { "accept", 5625, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~105 xp, sim lvl 6)
-    { "accept", 1679, classes = { "WARRIOR" } }, -- Muren Stormpike (lvl 10, ~85 xp, sim lvl 6)
-    { "accept", 1879, race = { "Gnome" }, classes = { "MAGE" } }, -- Speak with Bink (lvl 10, ~85 xp, sim lvl 6)
     { "turnin", 96629, xp = 540 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 6)
     { "complete", 5541, at = { 1426, 44.13, 56.95 } }, -- Ammo for Rumbleshot (lvl 6, ~540 xp, sim lvl 6)
     { "turnin", 98322, xp = 530 }, -- Secure the Mountain (lvl 8, ~530 xp, sim lvl 6)
@@ -54,25 +50,19 @@ Q:RegisterGuide({
     { "complete", 5625, at = { 1426, 45.81, 54.57 }, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~105 xp, sim lvl 8)
     { "turnin", 310, xp = 135 }, -- Bitter Rivals (lvl 6, ~135 xp, sim lvl 8)
     { "turnin", 5625, xp = 105, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~105 xp, sim lvl 8)
-    { "accept", 2218, classes = { "ROGUE" } }, -- Road to Salvation (lvl 10, ~420 xp, sim lvl 8)
     { "accept", 311 }, -- Return to Marleth (lvl 7, ~630 xp, sim lvl 8)
     { "accept", 415 }, -- Rejold's New Brew (lvl 10, ~85 xp, sim lvl 8)
-    { "accept", 6064, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 8)
     { "complete", 98319, at = { 1426, 43.03, 49.62 } }, -- Secure the Mountain (lvl 8, ~700 xp, sim lvl 8)
     { "complete", 98326, at = { 1426, 39.33, 48.79 } }, -- Frosthowl (lvl 9, ~780 xp, sim lvl 8)
-    { "complete", 6064, at = { 1426, 38.45, 49.08 }, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 8)
     { "turnin", 98326, xp = 780 }, -- Frosthowl (lvl 9, ~780 xp, sim lvl 8)
     { "turnin", 311, xp = 630 }, -- Return to Marleth (lvl 7, ~630 xp, sim lvl 8)
     { "turnin", 415, xp = 85 }, -- Rejold's New Brew (lvl 10, ~85 xp, sim lvl 8)
     { "accept", 413 }, -- Shimmer Stout (lvl 10, ~420 xp, sim lvl 8)
     { "complete", 287, at = { 1426, 23.55, 51.57 } }, -- Frostmane Hold (lvl 9, ~590 xp, sim lvl 8)
-    { "turnin", 96243, xp = 70, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~70 xp, sim lvl 8)
     { "turnin", 312, xp = 910 }, -- Tundra MacGrann's Stolen Stash (lvl 12, ~910 xp, sim lvl 8)
     { "turnin", 98319, xp = 700 }, -- Secure the Mountain (lvl 8, ~700 xp, sim lvl 8)
     { "accept", 98323 }, -- Secure the Mountain (lvl 8, ~530 xp, sim lvl 8)
     { "turnin", 287, xp = 590 }, -- Frostmane Hold (lvl 9, ~590 xp, sim lvl 8)
-    { "turnin", 6064, xp = 840, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 8)
-    { "accept", 6084, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 8)
     { "turnin", 98323, xp = 530 }, -- Secure the Mountain (lvl 8, ~530 xp, sim lvl 9)
     { "accept", 291 }, -- The Reports (lvl 10, ~420 xp, sim lvl 9)
     { "turnin", 320, xp = 880 }, -- Return to Bellowfiz (lvl 8, ~880 xp, sim lvl 9)
@@ -109,8 +99,10 @@ Q:RegisterGuide({
     { "turnin", 95212, xp = 840 }, -- Never Saddle on Quality (lvl 10, ~840 xp, sim lvl 11)
     { "turnin", 314, xp = 910 }, -- Protecting the Herd (lvl 12, ~910 xp, sim lvl 11)
     { "complete", 99159, at = { 1426, 57.04, 54.19 } }, -- Finding Warmth (lvl 8, ~700 xp, sim lvl 11)
-    { "complete", 6084, at = { 1426, 59.33, 58.46 }, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
-    { "turnin", 6084, xp = 840, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 11)
+    { "accept", 1679, classes = { "WARRIOR" } }, -- Muren Stormpike (lvl 10, ~85 xp, sim lvl 11)
+    { "accept", 1879, race = { "Gnome" }, classes = { "MAGE" } }, -- Speak with Bink (lvl 10, ~85 xp, sim lvl 11)
+    { "accept", 2218, classes = { "ROGUE" } }, -- Road to Salvation (lvl 10, ~420 xp, sim lvl 11)
+    { "accept", 94449, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~210 xp, sim lvl 11)
     { "turnin", 99159, xp = 700 }, -- Finding Warmth (lvl 8, ~700 xp, sim lvl 11)
     { "accept", 99160 }, -- Rime's Wrath (lvl 8, ~700 xp, sim lvl 11)
     { "complete", 99160, at = { 1426, 56.72, 45.53 } }, -- Rime's Wrath (lvl 8, ~700 xp, sim lvl 11)

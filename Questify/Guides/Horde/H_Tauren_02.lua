@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 121 étapes, niveau final 12.85, ~15945 xp/h, 148 min.
 Q:RegisterGuide({
   id = "H_Tauren_02",
@@ -39,12 +39,10 @@ Q:RegisterGuide({
     { "turnin", 756, xp = 630 }, -- Thunderhorn Totem (lvl 7, ~630 xp, sim lvl 9)
     { "accept", 758 }, -- Thunderhorn Cleansing (lvl 8, ~700 xp, sim lvl 9)
     { "turnin", 767, xp = 55 }, -- Rite of Vision (lvl 6, ~55 xp, sim lvl 9)
-    { "accept", 6061, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 9)
     { "accept", 771 }, -- Rite of Vision (lvl 7, ~630 xp, sim lvl 9)
     { "complete", 758, at = { 1412, 44.17, 51.11 } }, -- Thunderhorn Cleansing (lvl 8, ~700 xp, sim lvl 9)
     { "fp", 1456, 47, 49.83 }, -- point de vol
     { "accept", 76156 }, -- Stalk With The Earthmother (lvl 10, ~840 xp, sim lvl 9)
-    { "accept", 5926, classes = { "DRUID" } }, -- Heeding the Call (lvl 10, ~85 xp, sim lvl 9)
     { "accept", 744 }, -- Preparation for Ceremony (lvl 11, ~880 xp, sim lvl 9)
     { "accept", 770, at = { 1412, 47.11, 47.75 }, note = "Loot Demon Scarred Cloak to start the quest (89.5 % drop: about 2 kills)" }, -- The Demon Scarred Cloak (lvl 12, ~910 xp, sim lvl 9)
     { "accept", 99411 }, -- Kyle's Gone Missing! (lvl 7, ~630 xp, sim lvl 9)
@@ -78,6 +76,7 @@ Q:RegisterGuide({
     { "accept", 99082 }, -- The High Chieftain (lvl 11, ~660 xp, sim lvl 10)
     { "complete", 99411, at = { 1412, 46.28, 62.34 } }, -- Kyle's Gone Missing! (lvl 7, ~630 xp, sim lvl 10)
     { "turnin", 771, xp = 630 }, -- Rite of Vision (lvl 7, ~630 xp, sim lvl 10)
+    { "accept", 6061, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 10)
     { "accept", 772 }, -- Rite of Vision (lvl 7, ~475 xp, sim lvl 11)
     { "complete", 96661, at = { 1412, 44.92, 61.67 } }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 11)
     { "turnin", 96661, xp = 540 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 11)
@@ -88,6 +87,7 @@ Q:RegisterGuide({
     { "accept", 1523, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~420 xp, sim lvl 11)
     { "turnin", 744, xp = 880 }, -- Preparation for Ceremony (lvl 11, ~880 xp, sim lvl 11)
     { "turnin", 76156, xp = 840 }, -- Stalk With The Earthmother (lvl 10, ~840 xp, sim lvl 11)
+    { "accept", 5926, classes = { "DRUID" } }, -- Heeding the Call (lvl 10, ~85 xp, sim lvl 11)
     { "accept", 833 }, -- A Sacred Burial (lvl 10, ~630 xp, sim lvl 11)
     { "turnin", 773, xp = 840 }, -- Rite of Wisdom (lvl 10, ~840 xp, sim lvl 11)
     { "accept", 775 }, -- Journey into Thunder Bluff (lvl 10, ~420 xp, sim lvl 11)

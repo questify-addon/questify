@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 77 étapes, niveau final 56.00, ~58319 xp/h, 365 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 77 étapes, niveau final 56.00, ~58318 xp/h, 365 min.
 Q:RegisterGuide({
   id = "A_26",
   title = "Un'Goro Crater",
   faction = "Alliance",
   minLevel = 54, maxLevel = 56,
   next = "A_27",
-  sim = { steps = 77, endLevel = 56.00, xpPerHour = 58319, minutes = 365 },
+  sim = { steps = 77, endLevel = 56.00, xpPerHour = 58318, minutes = 365 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Gahz'rilla", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1446 }, -- pierre de foyer
@@ -87,6 +87,6 @@ Q:RegisterGuide({
     { "turnin", 5249, xp = 580 }, -- To Winterspring! (lvl 56, ~580 xp, sim lvl 54)
     { "fp", 1452, 62.33, 36.61 }, -- point de vol
     { "turnin", 4808, xp = 2700 }, -- Felnok Steelspring (lvl 54, ~2700 xp, sim lvl 54)
-    { "level", 56, at = { 1452, 66.83, 42.67 }, note = "About 658 more mobs here (Ice Thistle Yeti, level 55)" }, -- farm de niveau
+    { "level", 56, at = { 1452, 66.83, 42.67 }, note = "About 657 more mobs here (Ice Thistle Yeti, level 55)" }, -- farm de niveau
   },
 })

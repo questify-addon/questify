@@ -136,6 +136,71 @@ return {
     t.ok(chainOf(94465) == fire and chainOf(94468) == fire and f2 < f5, "94449 > 94465 ... 94468")
   end,
 
+  -- « Call of Earth » 96243 (niveau 10, même titre) se prend chez Eldrun Stormbreaker (Forgefer) ou Ingrid
+  -- Dunwald (Kharanos) et se rend à Teo Hammerstorm, qui donne 94373 : une lettre vers la tête de la chaîne.
+  -- Accrochée après 94375 (même titre, niveau puis id), elle rendait la chaîne jamais faite pour un nain qui
+  -- commence à Anvilmar. Elle ouvre une variante de la chaîne, exclusive de celle qui part de Teo.
+  classquests_letter_to_head_is_an_alternative_head = function(t)
+    local cq = require("classquests")
+    local data = cq.build(H.D("Alliance"))
+    local byKey = {}
+    for _, ch in ipairs(data.SHAMAN) do byKey[ch.key] = ch end
+    local function list(key)
+      local ch = byKey[key]
+      return ch and table.concat(ch.quests, ",") or "absent"
+    end
+    t.eq(list("SHAMAN_94373"), "94373,94374,94375", "chain from Teo Hammerstorm ends with the Earth Totem")
+    t.eq(list("SHAMAN_96243"), "96243,94373,94374,94375", "the letter leads to Teo, then the chain")
+    t.eq(byKey.SHAMAN_96243 and byKey.SHAMAN_96243.level, 10, "the letter needs level 10")
+    t.eq(table.concat(byKey.SHAMAN_94373.exclusive or {}, ","), "SHAMAN_96243", "Teo's chain excludes the letter")
+    t.eq(table.concat(byKey.SHAMAN_96243 and byKey.SHAMAN_96243.exclusive or {}, ","), "SHAMAN_94373",
+      "the letter excludes Teo's chain")
+    -- Même cas chez le Druide tauren : 98405 (Dendrite Starblaze -> Esprit du Grand Félin) précède 98342,
+    -- donnée par l'Esprit (côté Alliance : 98394 puis 98396). Avant, 98405 suivait 98342.
+    local horde = {}
+    for _, ch in ipairs(cq.build(H.D("Horde")).DRUID) do horde[ch.key] = table.concat(ch.quests, ",") end
+    t.eq(horde.DRUID_98405, "98405,98342", "Dendrite's letter, then the relics")
+    t.eq(horde.DRUID_98342, "98342", "the relics quest no longer followed by the letter")
+  end,
+
+  -- Autres départs ajoutés en fin de liste (même schéma que « Call of Earth » 96243) : aucune chaîne ne doit
+  -- finir sur un départ qu'un personnage ne prend jamais.
+  classquests_alternative_starts_are_heads = function(t)
+    local cq = require("classquests")
+    local byKey = {}
+    for _, f in ipairs({ "Alliance", "Horde" }) do
+      for _, chains in pairs(cq.build(H.D(f))) do
+        for _, ch in ipairs(chains) do byKey[ch.key] = byKey[ch.key] or ch end
+      end
+    end
+    local function list(key) return byKey[key] and table.concat(byKey[key].quests, ",") or "absent" end
+    local function ex(key) return byKey[key] and table.concat(byKey[key].exclusive or {}, ",") or "absent" end
+    -- Démoniste Alliance : 1715 (Lago Blackwrench) est l'autre départ du niveau 10, 1717 la lettre du niveau 20
+    t.eq(list("WARLOCK_1685"), "1685,1688,1689", "voidwalker from Remen Marcot")
+    t.eq(list("WARLOCK_1715"), "1715,1688,1689", "voidwalker from Lago Blackwrench")
+    t.eq(ex("WARLOCK_1715"), "WARLOCK_1685")
+    t.eq(list("WARLOCK_1717"), "1717,1716,1738,1739,65602,65603", "level 20 letter, then the succubus or incubus")
+    t.eq(table.concat(byKey.WARLOCK_1717.ends or {}, ","), "1739,65603", "either binding ends the chain")
+    -- Démoniste Horde : succube ou incube, la branche incube n'est plus la seule fin (Orgrimmar : branches de
+    -- longueurs différentes)
+    t.eq(table.concat(byKey.WARLOCK_1478.ends or {}, ","), "1474,65597", "Undercity")
+    t.eq(table.concat(byKey.WARLOCK_1506.ends or {}, ","), "1513,65604", "Orgrimmar")
+    t.eq(ex("WARLOCK_1506"), "WARLOCK_1478")
+    -- quête annexe à côté de la vraie fin : pas de fins multiples
+    t.eq(byKey.PALADIN_91282.ends, nil, "Making Repairs is a side quest of A Second Home")
+    -- « Seeking Strahad » : 3001 (Undercity) est un autre départ de la chaîne de 2996 (Orgrimmar)
+    t.eq(list("WARLOCK_2996"), "2996,1801,1803,1805,1795")
+    t.eq(list("WARLOCK_3001"), "3001,1801,1803,1805,1795")
+    t.eq(ex("WARLOCK_3001"), "WARLOCK_2996")
+    t.eq(list("WARLOCK_1798"), "1798,1758,1802,1804,1795", "the Alliance chain ends at its own binding")
+    -- « Contingency Plan » : deux lettres au même texte (Hurlevent, Forgefer), une seule se fait
+    t.eq(list("PRIEST_94818"), "94818,94819")
+    t.eq(list("PRIEST_94820"), "94820")
+    t.eq(ex("PRIEST_94820"), "PRIEST_94818")
+    -- étoile sans liens autour de la tête : la dernière quête reste la règle
+    t.eq(byKey.HUNTER_7632.ends, nil, "no ends for The Ancient Leaf")
+  end,
+
   -- Guerrier 10 de l'Alliance : trois branches parallèles (Bartleby à Hurlevent, Vejrek à Forgefer,
   -- Vorlus à Darnassus). La 2e quête de chaque branche accepte n'importe quelle 1re partie
   -- (preQuestSingle) : les branches ne doivent pas se fondre en une seule chaîne.

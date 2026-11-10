@@ -1,14 +1,14 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 44 étapes, niveau final 60.00, ~66565 xp/h, 189 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 44 étapes, niveau final 60.00, ~66609 xp/h, 189 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66565, minutes = 189 },
+  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66609, minutes = 189 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain, Vivian Lagrave", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
@@ -53,6 +53,6 @@ Q:RegisterGuide({
     { "accept", 5055 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "complete", 5055, at = { 1452, 62.54, 57.9 } }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "turnin", 5055, xp = 6200 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
-    { "level", 60, at = { 1452, 62.54, 57.9 }, note = "About 65 more mobs near the last objective" }, -- farm de niveau
+    { "level", 60, at = { 1452, 62.54, 57.9 }, note = "About 64 more mobs near the last objective" }, -- farm de niveau
   },
 })

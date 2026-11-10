@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 71 étapes, niveau final 6.22, ~11418 xp/h, 44 min.
 Q:RegisterGuide({
   id = "A_Human_01",
@@ -19,7 +19,6 @@ Q:RegisterGuide({
     { "accept", 91741, at = { 1429, 48.47, 34.61 }, note = "Loot Nibbled-On Book to start the quest" }, -- Nibbled-On Book (lvl 2, ~85 xp, sim lvl 1)
     { "complete", 7, at = { 1429, 48.82, 36.18 } }, -- Kobold Camp Cleanup (lvl 2, ~170 xp, sim lvl 1)
     { "turnin", 91741, xp = 85 }, -- Nibbled-On Book (lvl 2, ~85 xp, sim lvl 2)
-    { "accept", 5623, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 2)
     { "accept", 92124 }, -- Book Inventory (lvl 2, ~85 xp, sim lvl 2)
     { "turnin", 92124, xp = 85 }, -- Book Inventory (lvl 2, ~85 xp, sim lvl 2)
     { "accept", 91743 }, -- Rascally Rodents (lvl 2, ~170 xp, sim lvl 2)
@@ -67,6 +66,7 @@ Q:RegisterGuide({
     { "turnin", 92479, xp = 40, classes = { "HUNTER" } }, -- A Scribbled Letter (lvl 1, ~40 xp, sim lvl 5)
     { "accept", 91772 }, -- Shhh! We're Hunting Kobolds (lvl 4, ~355 xp, sim lvl 5)
     { "turnin", 3904, xp = 180 }, -- Milly's Harvest (lvl 4, ~180 xp, sim lvl 5)
+    { "accept", 5623, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
     { "accept", 3905 }, -- Grape Manifest (lvl 4, ~355 xp, sim lvl 5)
     { "turnin", 3905, xp = 355 }, -- Grape Manifest (lvl 4, ~355 xp, sim lvl 5)
     { "turnin", 3100, xp = 40, classes = { "WARRIOR" } }, -- Simple Letter (lvl 1, ~40 xp, sim lvl 5)

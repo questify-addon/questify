@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 246 étapes, niveau final 17.05, ~27483 xp/h, 239 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 239 étapes, niveau final 17.05, ~27483 xp/h, 239 min.
 Q:RegisterGuide({
   id = "H_Skyborne_01",
   title = "Zephras Isle",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Skyborne" },
   minLevel = 1, maxLevel = 15,
   nextByRace = { Skyborne = "H_01" },
-  sim = { steps = 246, endLevel = 17.05, xpPerHour = 27483, minutes = 239 },
+  sim = { steps = 239, endLevel = 17.05, xpPerHour = 27483, minutes = 239 },
   steps = {
     { "level", 2, at = { 2521, 46.75, 27.74 }, note = "About 8 mobs here (Pesky Cirrusfly, level 1)" }, -- farm de niveau
     { "accept", 92464 }, -- Elemental Unrest (lvl 3, ~250 xp, sim lvl 2)
@@ -50,7 +50,6 @@ Q:RegisterGuide({
     { "complete", 96646, at = { 2521, 43.85, 43.84 } }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 5)
     { "turnin", 96646, xp = 540 }, -- Camping 101: Cooking (lvl 6, ~540 xp, sim lvl 5)
     { "accept", 92595 }, -- The Windshapers (lvl 6, ~540 xp, sim lvl 5)
-    { "accept", 97243, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~125 xp, sim lvl 5)
     { "complete", 92595, at = { 2521, 43.51, 44.77 } }, -- The Windshapers (lvl 6, ~540 xp, sim lvl 5)
     { "turnin", 92595, xp = 540 }, -- The Windshapers (lvl 6, ~540 xp, sim lvl 5)
     { "accept", 94411 }, -- Meddlesome Mages (lvl 6, ~540 xp, sim lvl 5)
@@ -73,7 +72,6 @@ Q:RegisterGuide({
     { "accept", 92550 }, -- Havoc in the Highlands (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 93926 }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
     { "accept", 92551 }, -- Stolen Supplies (lvl 8, ~700 xp, sim lvl 7)
-    { "accept", 94007, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 7)
     { "turnin", 94411, xp = 540 }, -- Meddlesome Mages (lvl 6, ~540 xp, sim lvl 7)
     { "accept", 93318 }, -- WANTED: Vulgara the Insatiable (lvl 9, ~780 xp, sim lvl 7)
     { "complete", 93926, at = { 2521, 42.34, 62.02 } }, -- The Western Watch (lvl 8, ~700 xp, sim lvl 7)
@@ -90,7 +88,6 @@ Q:RegisterGuide({
     { "complete", 93318, at = { 2521, 42.66, 52.8 } }, -- WANTED: Vulgara the Insatiable (lvl 9, ~780 xp, sim lvl 8)
     { "turnin", 93318, xp = 780 }, -- WANTED: Vulgara the Insatiable (lvl 9, ~780 xp, sim lvl 8)
     { "accept", 93317 }, -- Crab Season (lvl 9, ~465 xp, sim lvl 8)
-    { "accept", 94003, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 8)
     { "accept", 92679 }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 8)
     { "sethearth", 2521, 62.19, 72.61 }, -- lier la pierre de foyer
     { "complete", 92679, obj = 2, at = { 2521, 62.08, 73.17 } }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 8)
@@ -101,13 +98,9 @@ Q:RegisterGuide({
     { "accept", 93735 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 8)
     { "accept", 92708 }, -- A Grand Adventure (lvl 12, ~910 xp, sim lvl 8)
     { "turnin", 93735, xp = 780 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 8)
-    { "turnin", 94007, xp = 125, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 8)
-    { "accept", 94978, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 8)
     { "accept", 93737 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 9)
     { "complete", 93737, obj = 3, at = { 2521, 53.18, 50.74 } }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 9)
-    { "complete", 94003, at = { 2521, 56.63, 50.37 }, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 9)
     { "complete", 93317, at = { 2521, 53.04, 58.54 } }, -- Crab Season (lvl 9, ~465 xp, sim lvl 9)
-    { "complete", 94978, at = { 2521, 53.04, 58.54 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 9)
     { "complete", 93737, obj = 2, at = { 2521, 51.93, 67.07 } }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 9)
     { "complete", 93737, obj = 4, at = { 2521, 44.42, 75.04 } }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 9)
     { "complete", 92679, at = { 2521, 46.7, 81.95 } }, -- Blood Tithe (lvl 9, ~780 xp, sim lvl 9)
@@ -119,8 +112,6 @@ Q:RegisterGuide({
     { "turnin", 92682, xp = 780 }, -- Make Yourself Useful (lvl 9, ~780 xp, sim lvl 9)
     { "complete", 92683, at = { 2521, 50.17, 81.17 } }, -- Flutterfly Dust (lvl 9, ~780 xp, sim lvl 9)
     { "complete", 92684, at = { 2521, 50.73, 81.05 } }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 9)
-    { "turnin", 97243, xp = 125, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~125 xp, sim lvl 9)
-    { "accept", 97244, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 9)
     { "turnin", 92684, xp = 780 }, -- Ornery Ornery Galestriders (lvl 9, ~780 xp, sim lvl 9)
     { "turnin", 92683, xp = 780 }, -- Flutterfly Dust (lvl 9, ~780 xp, sim lvl 9)
     { "accept", 92685 }, -- The Hills Have Eyes (lvl 9, ~780 xp, sim lvl 9)
@@ -134,14 +125,12 @@ Q:RegisterGuide({
     { "turnin", 92693, xp = 780 }, -- Standing Our Ground (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 92703 }, -- Deliver the News (lvl 9, ~465 xp, sim lvl 10)
     { "complete", 93737, at = { 2521, 59.06, 72.98 } }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 10)
-    { "turnin", 94978, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
-    { "accept", 94979, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
+    { "accept", 94978, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
     { "turnin", 93737, xp = 780 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 93738 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 10)
     { "turnin", 93738, xp = 780 }, -- The Broken Construct (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 93746 }, -- A Firm Response (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 93736 }, -- Unwelcome Spirits (lvl 9, ~465 xp, sim lvl 10)
-    { "complete", 94979, at = { 2521, 50.73, 81.05 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 10)
     { "complete", 93746, at = { 2521, 59.43, 57.2 } }, -- A Firm Response (lvl 9, ~780 xp, sim lvl 10)
     { "turnin", 93746, xp = 780 }, -- A Firm Response (lvl 9, ~780 xp, sim lvl 10)
     { "accept", 92871 }, -- In Service of Zephras (lvl 11, ~660 xp, sim lvl 10)
@@ -153,7 +142,6 @@ Q:RegisterGuide({
     { "accept", 92642 }, -- Disrupting Logistics (lvl 11, ~770 xp, sim lvl 10)
     { "accept", 92645 }, -- Breaking the Breaker (lvl 11, ~770 xp, sim lvl 10)
     { "complete", 92645, at = { 2521, 65.58, 65.62 } }, -- Breaking the Breaker (lvl 11, ~770 xp, sim lvl 10)
-    { "complete", 97244, at = { 2521, 64.43, 63.71 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 10)
     { "complete", 92642, at = { 2521, 65.81, 66.73 } }, -- Disrupting Logistics (lvl 11, ~770 xp, sim lvl 10)
     { "turnin", 92645, xp = 770 }, -- Breaking the Breaker (lvl 11, ~770 xp, sim lvl 11)
     { "turnin", 92642, xp = 770 }, -- Disrupting Logistics (lvl 11, ~770 xp, sim lvl 11)
@@ -167,6 +155,7 @@ Q:RegisterGuide({
     { "complete", 98512, at = { 2521, 56.12, 60.56 } }, -- Al'Aketh Assassins (lvl 11, ~770 xp, sim lvl 11)
     { "turnin", 98512, xp = 770 }, -- Al'Aketh Assassins (lvl 11, ~770 xp, sim lvl 11)
     { "turnin", 92643, xp = 770 }, -- The Turncoat (lvl 11, ~770 xp, sim lvl 11)
+    { "complete", 94978, at = { 2521, 53.04, 58.54 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 11)
     { "accept", 92644 }, -- Unfortunate News (lvl 11, ~660 xp, sim lvl 11)
     { "turnin", 92644, xp = 660 }, -- Unfortunate News (lvl 11, ~660 xp, sim lvl 11)
     { "accept", 94568 }, -- The Cult's True Plans (lvl 11, ~770 xp, sim lvl 11)
@@ -184,6 +173,8 @@ Q:RegisterGuide({
     { "turnin", 93065, xp = 910 }, -- Prepare for Battle (lvl 12, ~910 xp, sim lvl 16)
     { "accept", 92947 }, -- Making Our Move (lvl 12, ~910 xp, sim lvl 16)
     { "accept", 93159 }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 16)
+    { "accept", 94007, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 16)
+    { "accept", 97243, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~125 xp, sim lvl 16)
     { "complete", 93159, at = { 2521, 53.96, 38.9 } }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 16)
     { "turnin", 93159, xp = 680 }, -- The Strange Hermit (lvl 13, ~680 xp, sim lvl 16)
     { "accept", 93160 }, -- The Forest's Bounty (lvl 13, ~680 xp, sim lvl 16)
@@ -227,19 +218,19 @@ Q:RegisterGuide({
     { "complete", 92646, at = { 2521, 74.87, 53.02 } }, -- Confront Lorthuna (lvl 12, ~910 xp, sim lvl 16)
     { "hearth", 2521 }, -- pierre de foyer
     { "turnin", 93317, xp = 465 }, -- Crab Season (lvl 9, ~465 xp, sim lvl 16)
+    { "accept", 94003, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 16)
+    { "complete", 94003, at = { 2521, 56.63, 50.37 }, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 16)
     { "turnin", 94003, xp = 500, classes = { "WARRIOR" } }, -- The Skybreaker Bulwark (lvl 10, ~500 xp, sim lvl 16)
-    { "turnin", 94979, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
-    { "accept", 94013, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
+    { "turnin", 94007, xp = 125, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~125 xp, sim lvl 16)
+    { "turnin", 94978, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
+    { "accept", 94979, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
     { "complete", 93949, at = { 2521, 59.25, 74.65 } }, -- Bugged (lvl 8, ~140 xp, sim lvl 16)
     { "turnin", 93736, xp = 465 }, -- Unwelcome Spirits (lvl 9, ~465 xp, sim lvl 16)
-    { "turnin", 97244, xp = 500, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "accept", 97245, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "complete", 97245, at = { 2521, 42.44, 68.75 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "turnin", 97245, xp = 500, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "accept", 97257, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "complete", 97257, obj = 1, at = { 2521, 51.2, 85.9 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "complete", 97257, at = { 2521, 58.35, 78.84 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
-    { "turnin", 97257, xp = 500, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
+    { "complete", 94979, at = { 2521, 50.73, 81.05 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
+    { "turnin", 94979, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
+    { "turnin", 97243, xp = 125, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~125 xp, sim lvl 16)
+    { "accept", 97244, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
+    { "accept", 94013, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
     { "complete", 94013, at = { 2521, 52.79, 79.46 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
     { "turnin", 94013, xp = 500, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~500 xp, sim lvl 16)
     { "accept", 94050, classes = { "HUNTER" } }, -- Training the Beast (lvl 10, ~125 xp, sim lvl 16)
@@ -251,11 +242,13 @@ Q:RegisterGuide({
     { "accept", 94006, classes = { "DRUID" } }, -- The Great Ursera Spirit (lvl 10, ~125 xp, sim lvl 16)
     { "turnin", 94896, xp = 770 }, -- Aid For The Refugees (lvl 11, ~770 xp, sim lvl 16)
     { "turnin", 94006, xp = 125, classes = { "DRUID" } }, -- The Great Ursera Spirit (lvl 10, ~125 xp, sim lvl 16)
+    { "complete", 97244, at = { 2521, 64.43, 63.71 }, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 16)
     { "complete", 93836, at = { 2521, 66.17, 76.51 } }, -- The Fate of Zephras (lvl 12, ~910 xp, sim lvl 16)
     { "turnin", 93836, xp = 910 }, -- The Fate of Zephras (lvl 12, ~910 xp, sim lvl 16)
     { "accept", 93090 }, -- What Comes Next (lvl 13, ~455 xp, sim lvl 17)
     { "turnin", 93949, xp = 140 }, -- Bugged (lvl 8, ~140 xp, sim lvl 17)
     { "turnin", 93090, xp = 455 }, -- What Comes Next (lvl 13, ~455 xp, sim lvl 17)
+    { "turnin", 97244, xp = 500, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~500 xp, sim lvl 17)
     { "boat", 2521, 58.1, 80.4, note = "Take the skyboat to Skywatcher Plateau (west dock of Valanaar)" }, -- bateau
     { "fp", 1413, 51.5, 30.34 }, -- point de vol
   },

@@ -1,6 +1,6 @@
 # A_Skyborne_01 — Zephras Isle
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
 
 | Item | Value |
 |---|---|
@@ -155,7 +155,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 93791 | Speak with Belann | 10 | MAGE | woven, detour 71 s |
 | 94003 | The Skybreaker Bulwark | 10 | WARRIOR | woven, detour 229 s |
 | 94006 | The Great Ursera Spirit | 10 | DRUID | woven, detour 132 s |
-| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 37 s |
+| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 177 s |
 | 94978 | Taming the Beast | 10 | HUNTER | woven, detour 204 s |
 | 94979 | Taming the Beast | 10 | HUNTER | woven, detour 353 s |
 | 94013 | Taming the Beast | 10 | HUNTER | woven, detour 393 s |

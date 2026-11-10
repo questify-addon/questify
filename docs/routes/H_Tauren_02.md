@@ -1,6 +1,6 @@
 # H_Tauren_02 — Mulgore
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
 
 | Item | Value |
 |---|---|
@@ -490,7 +490,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 31: `fp 1456 47 49.83`
+- step 30: `fp 1456 47 49.83`
 - step 117: `fp 1413 51.5 30.34`
 
 ## Warnings

@@ -1,6 +1,6 @@
 # H_OrcTroll_02 — Durotar
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
@@ -9,7 +9,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Time | 172 min |
 | XP gained | 47534 |
 | XP/h | 16565 |
-| Steps | 154 |
+| Steps | 151 |
 | Quests turned in | 42 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 3.95 |
@@ -414,19 +414,18 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | Quest | Name | Lvl | Classes | Result |
 |---|---|---|---|---|
 | 5648 | Garments of Spirituality | 4 | PRIEST | woven, detour 66 s |
-| 1505 | Veteran Uzzek | 10 | WARRIOR | woven, detour 56 s |
-| 1506 | Gan'rul's Summons | 10 | WARLOCK | woven, detour 40 s |
+| 1505 | Veteran Uzzek | 10 | WARRIOR | woven, detour 82 s |
+| 1506 | Gan'rul's Summons | 10 | WARLOCK | woven, detour 62 s |
 | 1522 | Call of Fire | 10 | SHAMAN | woven, detour 214 s |
 | 1859 | Therzok | 10 | ROGUE | woven, detour 40 s |
 | 1883 | Speak with Un'thuwa | 10 | MAGE | woven, detour 414 s |
-| 1884 | Ju-Ju Heaps | 10 | MAGE | woven, detour 81 s |
 | 5652 | Hex of Weakness | 10 | PRIEST | woven, detour 191 s |
-| 6062 | Taming the Beast | 10 | HUNTER | woven, detour 223 s |
+| 6062 | Taming the Beast | 10 | HUNTER | woven, detour 251 s |
 | 6068 | The Hunter's Path | 10 | HUNTER | woven, detour 53 s |
-| 6083 | Taming the Beast | 10 | HUNTER | woven, detour 548 s |
+| 6083 | Taming the Beast | 10 | HUNTER | woven, detour 559 s |
 | 1501 | Creature of the Void | 11 | WARLOCK | woven, detour 178 s |
 | 1504 | The Binding | 11 | WARLOCK | woven, detour 61 s |
-| 6082 | Taming the Beast | 10 | HUNTER | woven, detour 560 s |
+| 6082 | Taming the Beast | 10 | HUNTER | woven, detour 565 s |
 | 1463 | Earth Sapta | 4 | SHAMAN | repeatable |
 | 1464 | Fire Sapta | 13 | SHAMAN | repeatable |
 | 1499 | Vile Familiars | 4 | WARLOCK | follow-up already done |
@@ -513,6 +512,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 98575 | Tainted Tablet | 1 | WARLOCK | quest level 1 below the band |
 | 98576 | Glyphic Parchment | 1 | MAGE | quest level 1 below the band |
 | 1485 | Vile Familiars | 4 | WARLOCK | detour 2878 s |
+| 1884 | Ju-Ju Heaps | 10 | MAGE | detour 1144 s |
 | 6081 | Training the Beast | 10 | HUNTER | detour 878 s |
 | 1516 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 1517 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
@@ -725,7 +725,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 105: `fp 1454 45.12 63.89`
+- step 102: `fp 1454 45.12 63.89`
 
 ## Warnings
 

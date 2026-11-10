@@ -1,6 +1,6 @@
 # A_NightElf_02 — Teldrassil
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
 
 | Item | Value |
 |---|---|
@@ -237,13 +237,13 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 |---|---|---|---|---|
 | 5621 | Garments of the Moon | 4 | PRIEST | woven, detour 49 s |
 | 1683 | Vorlus Vilehoof | 10 | WARRIOR | woven, detour 356 s |
-| 2241 | The Apple Falls | 10 | ROGUE | woven, detour 22 s |
+| 2241 | The Apple Falls | 10 | ROGUE | woven, detour 29 s |
 | 2242 | Destiny Calls | 10 | ROGUE | woven, detour 87 s |
-| 5629 | Returning Home | 10 | PRIEST | woven, detour 11 s |
+| 5629 | Returning Home | 10 | PRIEST | woven, detour 444 s |
 | 5923 | Heeding the Call | 10 | DRUID | woven, detour 16 s |
-| 6063 | Taming the Beast | 10 | HUNTER | woven, detour 221 s |
+| 6063 | Taming the Beast | 10 | HUNTER | woven, detour 286 s |
 | 6071 | The Hunter's Path | 10 | HUNTER | woven, detour 51 s |
-| 6101 | Taming the Beast | 10 | HUNTER | woven, detour 330 s |
+| 6101 | Taming the Beast | 10 | HUNTER | woven, detour 382 s |
 | 26 | A Lesson to Learn | 16 | DRUID | quest level 16 above the band |
 | 1686 | The Shade of Elura | 10 | WARRIOR | objective item source not in zone |
 | 1698 | Yorus Barleybrew | 20 | WARRIOR | quest level 20 above the band |

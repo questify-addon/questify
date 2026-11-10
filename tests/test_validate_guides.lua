@@ -121,4 +121,37 @@ return {
     t.ok(text:find("A_Bad_01.lua:13 turnin 179 without accept (race path: Dwarf, class: PRIEST)", 1, true), text)
     t.ok(text:find("violation", 1, true), text)
   end,
+
+  -- Chasse au trésor du Cozy Sleeping Bag : Stepping Stones (79192) ne se prend qu'après « ... and that note you
+  -- found », rendue à l'autre bout du monde (79008 Alliance : Marche de l'Ouest -> Tarides ; 79007 Horde : Tarides
+  -- -> Marche de l'Ouest). QuestieDB n'a pas ce lien, overrides.lua le pose. Sans lui, la route Alliance faisait
+  -- prendre Stepping Stones à la Nailed Plank de la Marche de l'Ouest, qui ne donne rien à un joueur de l'Alliance.
+  stepping_stones_after_the_note = function(t)
+    local f = assert(io.open(ROOT .. "/tools/routebuilder/overrides.lua", "rb"))
+    local fn = assert(loadstring(f:read("*a"), "@overrides.lua")); f:close()
+    setfenv(fn, {})
+    local ov = fn()
+    t.eq(ov.pre and ov.pre[79192], { 79007, 79008 }, "Stepping Stones after either note")
+
+    package.path = ROOT .. "/tools/routebuilder/?.lua;" .. package.path
+    local qdb = require("qdb")
+    if not exists(qdb.DEFAULT_DB .. "/QuestieDB.toc") then return end   -- pas de clone QuestieDB (CI) : sauté
+    local dir = (os.getenv("TMPDIR") or "/tmp"):gsub("/$", "") .. "/questify_validate_stepping_stones"
+    os.execute(('rm -rf "%s"; mkdir -p "%s/Alliance"'):format(dir, dir))
+    writeFile(dir .. "/Alliance/A_Good_01.lua", guideSource("A_Good_01", { "Dwarf" },
+      { '{ "accept", 79008 }', '{ "turnin", 79008 }', '{ "accept", 79192 }' }))
+    writeFile(dir .. "/Alliance/A_Bad_01.lua", guideSource("A_Bad_01", { "Gnome" }, { '{ "accept", 79192 }' }))
+    writeFile(dir .. "/Guides.xml", '<Ui>\n  <Script file="Alliance\\A_Good_01.lua"/>\n'
+      .. '  <Script file="Alliance\\A_Bad_01.lua"/>\n</Ui>\n')
+    local out = dir .. "/out.txt"
+    os.execute(('cd "%s" && luajit tools/validate_guides.lua --guides "%s" > "%s" 2>&1'):format(ROOT, dir, out))
+    local text = readFile(out)
+    t.ok(not text:find("A_Good_01", 1, true), "Stepping Stones after the note is valid:\n" .. text)
+    t.ok(text:find("A_Bad_01.lua:10 accept 79192: no prerequisite (79007,79008) turned in", 1, true), text)
+
+    -- guides générés : chaque parcours de race prend la note avant Stepping Stones
+    os.execute(('cd "%s" && luajit tools/validate_guides.lua > "%s" 2>&1'):format(ROOT, out))
+    text = readFile(out)
+    t.ok(text:find("no violation", 1, true), text)
+  end,
 }

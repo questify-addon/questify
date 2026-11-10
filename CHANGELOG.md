@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+### English
+
+**Cozy Sleeping Bag**
+- Fix: Stepping Stones needs "... and that note you found" first. The note is taken at the Burned-Out Remains of
+  your faction and handed in at the other end of the world, where the Nailed Plank gives Stepping Stones. In 0.5.0
+  the route sent you to a plank that gives nothing.
+- Alliance (Human, Dwarf, Gnome): the note at Alexston Farmstead (Westfall), handed in at the burned tower south of
+  Camp Taurajo (Southern Barrens) during Ashenvale and Stonetalon (level 20-22). The rest of the hunt is unchanged.
+- Horde, every race: the hunt is later on the route. The note at the burned tower south of Camp Taurajo while in
+  Thousand Needles (level 32-33), handed in at Alexston Farmstead from Grom'gol (Stranglethorn, 35-37), Scramble and
+  Wet Job in Stonetalon at the end of Dustwallow Marsh (37-38), then the Loch Modan dam and north-west Arathi, where
+  the bag is handed over (38-39). 26 more simulated minutes over 1-60 for 6 more quests: Orc/Troll 5 644 min,
+  Tauren 5 646, Undead 5 697, Skyborne Horde 5 672. The walks to Westfall and to the dam are counted in a straight
+  line: to check in game.
+
+### Français
+
+**Cozy Sleeping Bag**
+- Correctif : Stepping Stones demande d'abord « ... and that note you found ». La note se prend aux Burned-Out Remains
+  de ta faction et se rend à l'autre bout du monde, où la Nailed Plank donne Stepping Stones. En 0.5.0, la route
+  t'envoyait à une planche qui ne donne rien.
+- Alliance (Humain, Nain, Gnome) : la note à la ferme d'Alexston (Marche de l'Ouest), rendue à la tour brûlée au sud
+  de Camp Taurajo (sud des Tarides) pendant Ashenvale et les Serres-Rocheuses (niveau 20-22). La suite de la chasse ne
+  change pas.
+- Horde, toutes les races : la chasse arrive plus tard sur la route. La note à la tour brûlée au sud de Camp Taurajo
+  pendant Mille pointes (niveau 32-33), rendue à la ferme d'Alexston depuis Grom'gol (Strangleronce, 35-37), Scramble
+  et Wet Job aux Serres-Rocheuses à la fin du Marécage d'Âprefange (37-38), puis le barrage du Loch Modan et le
+  nord-ouest d'Arathi, où le sac est remis (38-39). 26 minutes simulées de plus sur 1-60 pour 6 quêtes de plus :
+  Orc/Troll 5 644 min, Tauren 5 646, Mort-vivant 5 697, Skyborne Horde 5 672. Les trajets vers la Marche de l'Ouest et
+  vers le barrage sont comptés en ligne droite : à vérifier en jeu.
+
 ## 0.5.0 (2026-11-09)
 
 ### English

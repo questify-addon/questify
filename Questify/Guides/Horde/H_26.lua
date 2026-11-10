@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 46 étapes, niveau final 55.00, ~63197 xp/h, 165 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 46 étapes, niveau final 55.00, ~63184 xp/h, 165 min.
 Q:RegisterGuide({
   id = "H_26",
   title = "Felwood",
   faction = "Horde",
   minLevel = 54, maxLevel = 55,
   next = "H_27",
-  sim = { steps = 46, endLevel = 55.00, xpPerHour = 63197, minutes = 165 },
+  sim = { steps = 46, endLevel = 55.00, xpPerHour = 63184, minutes = 165 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Tabetha's Task", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1447 }, -- pierre de foyer
@@ -56,6 +56,6 @@ Q:RegisterGuide({
     { "complete", 8461, at = { 1448, 62.07, 8.44 } }, -- Deadwood of the North (lvl 55, ~5650 xp, sim lvl 54)
     { "turnin", 8461, xp = 5650 }, -- Deadwood of the North (lvl 55, ~5650 xp, sim lvl 54)
     { "accept", 8465 }, -- Speak to Salfa (lvl 55, ~0 xp, sim lvl 54)
-    { "level", 55, at = { 1448, 62.54, 9.84 }, note = "About 241 more mobs here (Deadwood Avenger, level 54)" }, -- farm de niveau
+    { "level", 55, at = { 1448, 62.54, 9.84 }, note = "About 242 more mobs here (Deadwood Avenger, level 54)" }, -- farm de niveau
   },
 })

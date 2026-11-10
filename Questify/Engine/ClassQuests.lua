@@ -67,13 +67,26 @@ end
 -- FindChain(key) -> chaîne du joueur portant cette clé, ou nil.
 function ClassQuests:FindChain(key) return findChain(key) end
 
+-- Chaîne finie : sa dernière quête est rendue, ou l'une de ses fins (champ ends du générateur : branches qui
+-- se valent, comme la succube ou l'incube du Démoniste) l'est.
+local function chainFinished(chain)
+  local quests = chain.quests
+  local last = quests[#quests]
+  if last and Q.Progress:IsTurnedIn(last) then return true end
+  if type(chain.ends) == "table" then
+    for _, id in ipairs(chain.ends) do
+      if Q.Progress:IsTurnedIn(id) then return true end
+    end
+  end
+  return false
+end
+
 -- État d'une chaîne, dans cet ordre de priorité :
 -- done, inroute, inprogress, added, ignored, available, upcoming.
 -- routeTurnins : Q.Progress:RouteTurnins(), calculé une fois par liste (nil : pas d'état inroute).
 local function chainState(chain, cq, routeTurnins)
   local quests = chain.quests
-  local last = quests[#quests]
-  if last and Q.Progress:IsTurnedIn(last) then return "done" end
+  if chainFinished(chain) then return "done" end
   if inRoute(chain, routeTurnins) then return "inroute" end
   for _, id in ipairs(quests) do
     if Q.Progress:InLog(id) then return "inprogress" end
@@ -295,8 +308,8 @@ end
 ---------------------------------------------------------------------------
 -- Une chaîne insérée se retire d'elle-même quand toutes ses étapes sont faites
 ---------------------------------------------------------------------------
--- Une chaîne insérée est finie quand sa dernière quête est rendue, ou quand il ne lui reste
--- aucune étape à faire (toutes faites ou sautées).
+-- Une chaîne insérée est finie quand sa dernière quête ou l'une de ses fins est rendue (chainFinished),
+-- ou quand il ne lui reste aucune étape à faire (toutes faites ou sautées).
 local function finishedTags()
   local groups, order = {}, {}
   for _, e in ipairs(Q.Progress:Entries()) do
@@ -313,8 +326,9 @@ local function finishedTags()
   for _, tag in ipairs(order) do
     local g = groups[tag]
     local chain = findChain(tag:sub(#TAG_PREFIX + 1))
-    local lastQuest = chain and chain.quests[#chain.quests] or g.last
-    if not g.open or (lastQuest and Q.Progress:IsTurnedIn(lastQuest)) then out[#out + 1] = tag end
+    local finished
+    if chain then finished = chainFinished(chain) else finished = g.last and Q.Progress:IsTurnedIn(g.last) end
+    if not g.open or finished then out[#out + 1] = tag end
   end
   return out
 end

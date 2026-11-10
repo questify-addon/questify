@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
--- Simulation : 75 étapes, niveau final 33.00, ~36337 xp/h, 90 min.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Simulation : 75 étapes, niveau final 33.00, ~36339 xp/h, 90 min.
 Q:RegisterGuide({
   id = "A_07",
   title = "Duskwood",
   faction = "Alliance",
   minLevel = 32, maxLevel = 33,
   next = "A_09",
-  sim = { steps = 75, endLevel = 33.00, xpPerHour = 36337, minutes = 90 },
+  sim = { steps = 75, endLevel = 33.00, xpPerHour = 36339, minutes = 90 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Highland Hides", optional = true, dungeon = "Excavation Site: Wetlands" },
     { "hearth", 1437 }, -- pierre de foyer
@@ -85,6 +85,6 @@ Q:RegisterGuide({
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 32)
-    { "level", 33, at = { 1431, 77.35, 36.19 }, note = "About 30 more mobs near the last objective" }, -- farm de niveau
+    { "level", 33, at = { 1431, 77.35, 36.19 }, note = "About 31 more mobs near the last objective" }, -- farm de niveau
   },
 })

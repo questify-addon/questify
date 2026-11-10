@@ -1,6 +1,6 @@
 # H_Undead_01 — Deathknell
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
@@ -67,7 +67,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 98601 | A Difficult Path | 1 | PALADIN | woven, detour 10 s |
 | 90902 | Rediscovering the Light | 2 | PALADIN | woven, detour 31 s |
 | 1470 | Piercing the Veil | 3 | WARLOCK | woven, detour 493 s |
-| 5651 | In Favor of Darkness | 4 | PRIEST | woven, detour 16 s |
+| 5651 | In Favor of Darkness | 4 | PRIEST | woven, detour 26 s |
 | 91208 | Coming to Terms | 4 | PALADIN | woven, detour 69 s |
 | 91209 | Continue Your Training | 4 | PALADIN | objective npc not in zone |
 

@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 68 étapes, niveau final 6.01, ~11756 xp/h, 39 min.
 Q:RegisterGuide({
   id = "H_OrcTroll_01",
@@ -14,7 +14,6 @@ Q:RegisterGuide({
   steps = {
     { "accept", 4641 }, -- Your Place In The World (lvl 1, ~40 xp, sim lvl 1)
     { "accept", 97279 }, -- Wayward Weapons (lvl 2, ~170 xp, sim lvl 1)
-    { "accept", 5649, race = { "Troll" }, classes = { "PRIEST" } }, -- In Favor of Spirituality (lvl 4, ~90 xp, sim lvl 1)
     { "turnin", 4641, xp = 40 }, -- Your Place In The World (lvl 1, ~40 xp, sim lvl 1)
     { "accept", 788 }, -- Cutting Teeth (lvl 2, ~170 xp, sim lvl 1)
     { "complete", 97279, at = { 1411, 44.26, 64.18 } }, -- Wayward Weapons (lvl 2, ~170 xp, sim lvl 1)
@@ -72,6 +71,7 @@ Q:RegisterGuide({
     { "turnin", 3086, xp = 40, race = { "Troll" }, classes = { "MAGE" } }, -- Glyphic Tablet (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3089, xp = 40, race = { "Orc" }, classes = { "SHAMAN" } }, -- Rune-Inscribed Parchment (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 98576, xp = 40, race = { "Orc" }, classes = { "MAGE" } }, -- Glyphic Parchment (lvl 1, ~40 xp, sim lvl 5)
+    { "accept", 5649, race = { "Troll" }, classes = { "PRIEST" } }, -- In Favor of Spirituality (lvl 4, ~90 xp, sim lvl 5)
     { "accept", 99123 }, -- Lost in the Shadows (lvl 8, ~700 xp, sim lvl 5)
     { "complete", 99123, at = { 1411, 51.41, 79.29 } }, -- Lost in the Shadows (lvl 8, ~700 xp, sim lvl 5)
     { "accept", 96876, at = { 1411, 50.99, 55.72 }, note = "Loot Ukor's Lost Pack to start the quest" }, -- Ukor's Lost Pack (lvl 8, ~530 xp, sim lvl 5)

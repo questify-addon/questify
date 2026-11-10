@@ -13,6 +13,7 @@ local quality = require("quality")
 local transport = require("transport")
 local pathsm = require("paths")
 local catalog = require("dungeon_catalog")
+local cqm = require("classquests")
 
 local sim = {}
 
@@ -946,6 +947,20 @@ function sim.weaveClassQuests(ctx, steps, report)
     if s[1] == "accept" then delta = delta + 1 elseif s[1] == "turnin" then delta = delta - 1 end
     logAfter[i] = delta
   end
+  -- Niveau simulé après chaque étape commune, borne basse : niveau au moment de l'étape, ou cible d'une étape
+  -- `level`. Une quête de classe ne se prend pas avant son niveau requis (« Call of Earth » 96243, niveau 10,
+  -- était prise au niveau 6 en A_DwarfGnome_02).
+  local levelAfter, lvl = {}, report.startLevel or 0
+  for i, s in ipairs(steps) do
+    if s._c and s._c.simLevel then lvl = math.max(lvl, s._c.simLevel) end
+    if s[1] == "level" and type(s[2]) == "number" then lvl = math.max(lvl, s[2]) end
+    levelAfter[i] = lvl
+  end
+  -- première étape commune après laquelle le niveau requis est atteint (nil : pas dans ce chapitre)
+  local function firstAtLevel(req)
+    for i = 1, #steps do if levelAfter[i] >= (req or 0) then return i end end
+    return nil
+  end
   local endLog = state.logPad or 0
   for _ in pairs(state.log) do endLog = endLog + 1 end
   local startLog = math.max(0, endLog - delta)
@@ -986,6 +1001,10 @@ function sim.weaveClassQuests(ctx, steps, report)
     if a.q.level ~= b.q.level then return a.q.level < b.q.level end
     return a.q.id < b.q.id
   end)
+  -- Lettre vers une tête de chaîne (classquests.lua) : inutile, et sans doute plus proposée, une fois la tête
+  -- prise ou rendue. « Call of Earth » 96243 mène à Teo Hammerstorm, qui donne 94373 : posée en A_DwarfGnome_02
+  -- alors que A_DwarfGnome_01 fait déjà 94373 à 94375.
+  local letters, letterDone = cqm.letters(D), {}
   local placed = {}  -- ["CLASSE:id"] = index de l'étape commune après laquelle vient le rendu
   local function doneFor(cls, p) return state.done[p] or state.classDone[cls .. ":" .. p] or placed[cls .. ":" .. p] end
   -- index à partir duquel un pré-requis est rendu (rendu commun de ce chapitre, quête de classe posée ici)
@@ -1022,11 +1041,19 @@ function sim.weaveClassQuests(ctx, steps, report)
               if best then f = math.max(f, best) else ok = false end
             end
             for _, x in ipairs(q.exclusiveTo) do if doneFor(cls, x) or state.log[x] then ok = false end end
+            local head = letters[q.id]
+            if ok and head and (doneFor(cls, head) or state.log[head]) then ok = false; letterDone[q.id] = head end
             if ok then classes[#classes + 1] = cls; from = math.max(from, f) end
           end
         end
-        if #classes > 0 then
+        local atLevel = #classes > 0 and firstAtLevel(q.reqLevel)
+        if #classes > 0 and not atLevel then
           used[q.id] = true
+          report.classSkipped[#report.classSkipped + 1] = { id = q.id, name = q.name, classes = classes,
+            reason = ("required level %d not reached in the chapter"):format(q.reqLevel) }
+        elseif #classes > 0 then
+          used[q.id] = true
+          from = math.max(from, atLevel)
           local legs, detour = {}, 2 * C.QUEST_ACTION
           local iA, dA = nearestStep(info.A, from)
           local cur, ok = iA, iA ~= nil
@@ -1081,8 +1108,10 @@ function sim.weaveClassQuests(ctx, steps, report)
   end
   for _, info in ipairs(cands) do
     if not used[info.q.id] then
+      local head = letterDone[info.q.id]
       report.classSkipped[#report.classSkipped + 1] = { id = info.q.id, name = info.q.name,
-        reason = "prerequisite or exclusive quest not done for the class" }
+        reason = head and ("letter to %d, already taken or done"):format(head)
+          or "prerequisite or exclusive quest not done for the class" }
     end
   end
   if #inserts == 0 then return end

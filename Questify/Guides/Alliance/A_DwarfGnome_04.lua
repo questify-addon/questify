@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 60 étapes, niveau final 16.98, ~18491 xp/h, 133 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_04",
@@ -27,7 +27,7 @@ Q:RegisterGuide({
     { "accept", 92744 }, -- Murloc Gills (lvl 12, ~910 xp, sim lvl 14)
     { "accept", 92742 }, -- Testing the Wells (lvl 12, ~910 xp, sim lvl 14)
     { "complete", 9, at = { 1436, 38.78, 51.51 } }, -- The Killing Fields (lvl 15, ~1050 xp, sim lvl 14)
-    { "accept", 79192 }, -- Stepping Stones (lvl 24, ~0 xp, sim lvl 14)
+    { "accept", 79008 }, -- ... and that note you found (lvl 22, ~0 xp, sim lvl 14)
     { "complete", 12, obj = 1, at = { 1436, 31.61, 33.78 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
     { "complete", 92744, at = { 1436, 34.53, 17 } }, -- Murloc Gills (lvl 12, ~910 xp, sim lvl 14)
     { "complete", 12, at = { 1436, 44.8, 25.95 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)

@@ -1,6 +1,6 @@
 # H_Skyborne_01 — Zephras Isle
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
 
 | Item | Value |
 |---|---|
@@ -9,7 +9,7 @@ Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cd
 | Time | 239 min |
 | XP gained | 109653 |
 | XP/h | 27483 |
-| Steps | 246 |
+| Steps | 239 |
 | Quests turned in | 73 |
 | Hubs | 15 |
 | Median ratio (XP/s) | 4.44 |
@@ -159,23 +159,23 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 92466 | Call of Earth | 4 | SHAMAN | woven, detour 311 s |
 | 92467 | Call of Earth | 4 | SHAMAN | woven, detour 121 s |
 | 92468 | Call of Earth | 4 | SHAMAN | woven, detour 121 s |
-| 94003 | The Skybreaker Bulwark | 10 | WARRIOR | woven, detour 109 s |
+| 94003 | The Skybreaker Bulwark | 10 | WARRIOR | woven, detour 299 s |
 | 94006 | The Great Ursera Spirit | 10 | DRUID | woven, detour 157 s |
-| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 29 s |
-| 94978 | Taming the Beast | 10 | HUNTER | woven, detour 188 s |
-| 94979 | Taming the Beast | 10 | HUNTER | woven, detour 317 s |
-| 97243 | Call of Fire | 10 | SHAMAN | woven, detour 66 s |
-| 97244 | Call of Fire | 10 | SHAMAN | woven, detour 250 s |
-| 97245 | Call of Fire | 10 | SHAMAN | woven, detour 574 s |
-| 97257 | Call of Fire | 10 | SHAMAN | woven, detour 334 s |
-| 94013 | Taming the Beast | 10 | HUNTER | woven, detour 337 s |
+| 94007 | Taming the Beast | 10 | HUNTER | woven, detour 177 s |
+| 94978 | Taming the Beast | 10 | HUNTER | woven, detour 244 s |
+| 94979 | Taming the Beast | 10 | HUNTER | woven, detour 373 s |
+| 97243 | Call of Fire | 10 | SHAMAN | woven, detour 326 s |
+| 97244 | Call of Fire | 10 | SHAMAN | woven, detour 427 s |
+| 94013 | Taming the Beast | 10 | HUNTER | woven, detour 385 s |
 | 94050 | Training the Beast | 10 | HUNTER | woven, detour 139 s |
 | 94638 | Strength and Mercy | 10 | DRUID | detour 738 s |
+| 97245 | Call of Fire | 10 | SHAMAN | detour 606 s |
 | 92482 | The Way of the Hunter | 2 | HUNTER | prerequisite or exclusive quest not done for the class |
 | 92483 | At Home in the Shadows | 2 | ROGUE | prerequisite or exclusive quest not done for the class |
 | 92484 | Embracing the Elements | 2 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 92485 | A Student of Nature | 2 | DRUID | prerequisite or exclusive quest not done for the class |
 | 92532 | The Warrior's Path | 2 | WARRIOR | prerequisite or exclusive quest not done for the class |
+| 97257 | Call of Fire | 10 | SHAMAN | prerequisite or exclusive quest not done for the class |
 
 ## Candidate ratios
 
@@ -507,10 +507,10 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 - step 1: `level 2` — About 8 mobs here (Pesky Cirrusfly, level 1)
 - step 3: `level 4` — About 50 mobs here (Pesky Cirrusfly, level 1)
-- step 81: `sethearth 2521 62.19 72.61`
-- step 214: `hearth 2521`
-- step 245: `boat 2521 58.1 80.4` — Take the skyboat to Skywatcher Plateau (west dock of Valanaar)
-- step 246: `fp 1413 51.5 30.34`
+- step 78: `sethearth 2521 62.19 72.61`
+- step 205: `hearth 2521`
+- step 238: `boat 2521 58.1 80.4` — Take the skyboat to Skywatcher Plateau (west dock of Valanaar)
+- step 239: `fp 1413 51.5 30.34`
 
 ## Warnings
 

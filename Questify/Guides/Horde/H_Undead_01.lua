@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-09.
+-- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
 -- Simulation : 58 étapes, niveau final 6.02, ~10243 xp/h, 45 min.
 Q:RegisterGuide({
   id = "H_Undead_01",
@@ -17,7 +17,6 @@ Q:RegisterGuide({
     { "accept", 364 }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 1)
     { "complete", 364, at = { 1420, 32.1, 63.41 } }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 1)
     { "accept", 376 }, -- The Damned (lvl 2, ~170 xp, sim lvl 2)
-    { "accept", 5651, classes = { "PRIEST" } }, -- In Favor of Darkness (lvl 4, ~90 xp, sim lvl 2)
     { "turnin", 364, xp = 170 }, -- The Mindless Ones (lvl 2, ~170 xp, sim lvl 2)
     { "accept", 3095, classes = { "WARRIOR" } }, -- Simple Scroll (lvl 1, ~40 xp, sim lvl 2)
     { "accept", 3096, classes = { "ROGUE" } }, -- Encrypted Scroll (lvl 1, ~40 xp, sim lvl 2)
@@ -57,6 +56,7 @@ Q:RegisterGuide({
     { "complete", 91208, at = { 1420, 27.69, 63.82 }, classes = { "PALADIN" } }, -- Coming to Terms (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 91208, xp = 355, classes = { "PALADIN" } }, -- Coming to Terms (lvl 4, ~355 xp, sim lvl 4)
     { "turnin", 380, xp = 355 }, -- Night Web's Hollow (lvl 4, ~355 xp, sim lvl 5)
+    { "accept", 5651, classes = { "PRIEST" } }, -- In Favor of Darkness (lvl 4, ~90 xp, sim lvl 5)
     { "accept", 381 }, -- The Scarlet Crusade (lvl 4, ~355 xp, sim lvl 5)
     { "complete", 381, at = { 1420, 37.52, 67.46 } }, -- The Scarlet Crusade (lvl 4, ~355 xp, sim lvl 5)
     { "turnin", 381, xp = 355 }, -- The Scarlet Crusade (lvl 4, ~355 xp, sim lvl 5)

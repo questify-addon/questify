@@ -1,6 +1,6 @@
 # A_Human_03 — Westfall
 
-Generated on 2026-11-09 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
@@ -64,8 +64,8 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 3861 | CLUCK! | 1 | quest level 1 below the band |
 | 8675 | Skychaser the Elder | 60 | Questie blacklist |
 | 78142 | Bewitchments and Glamours | 20 | objective too dangerous before level 17 (not reached in this chapter) |
-| 79008 | ... and that note you found | 22 | finisher outside the chapter zones |
-| 79192 | Stepping Stones | 24 | required level 14 not reached in time (~73 mobs to farm) |
+| 79008 | ... and that note you found | 22 | required level 14 not reached in time (~73 mobs to farm) |
+| 79192 | Stepping Stones | 24 | quest level 24 above the band |
 | 92109 | My First Alchemy Set | 10 | requires a profession |
 | 92110 | My First Real Potion | 10 | requires a profession |
 | 92910 | Harvesting the Harvesters | 15 | requires a profession |
@@ -223,4 +223,4 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Warnings
 
-- precede T140 < A79192: task not in the chapter
+- precede T140 < A79008: task not in the chapter
