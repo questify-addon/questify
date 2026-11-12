@@ -93,7 +93,7 @@ always shows you the next thing to do.
   English and French.
 
 ## Requirements
-- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb).
+- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 or newer.
 - **Optional:** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom).
 
@@ -144,7 +144,7 @@ t'indique toujours quoi faire ensuite.
   premier démarrage, anglais et français.
 
 ## Prérequis
-- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb).
+- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 ou plus récent.
 - **Optionnels :** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom).
 
