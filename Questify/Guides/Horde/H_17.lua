@@ -1,23 +1,23 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 68 étapes, niveau final 47.00, ~46317 xp/h, 312 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 69 étapes, niveau final 47.00, ~47918 xp/h, 302 min.
 Q:RegisterGuide({
   id = "H_17",
   title = "Feralas",
   faction = "Horde",
   minLevel = 45, maxLevel = 47,
   next = "H_18",
-  sim = { steps = 68, endLevel = 47.00, xpPerHour = 46317, minutes = 312 },
+  sim = { steps = 69, endLevel = 47.00, xpPerHour = 47918, minutes = 302 },
   steps = {
     { "goto", 1446, 51.6, 25.44, note = "Flight master" }, -- déplacement
     { "fly", 1441, node = 30, note = "Freewind Post, Thousand Needles" }, -- vol
     { "fp", 1444, 75.45, 44.36 }, -- point de vol
-    { "accept", 3062 }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
-    { "accept", 2975 }, -- The Ogres of Feralas (lvl 43, ~2700 xp, sim lvl 45)
     { "accept", 2987 }, -- Gordunni Cobalt (lvl 43, ~3600 xp, sim lvl 45)
-    { "sethearth", 1444, 74.8, 45.18 }, -- lier la pierre de foyer
+    { "accept", 2975 }, -- The Ogres of Feralas (lvl 43, ~2700 xp, sim lvl 45)
+    { "accept", 3062 }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
+    { "accept", 2973 }, -- A New Cloak's Sheen (lvl 45, ~3900 xp, sim lvl 45)
     { "accept", 2862 }, -- War on the Woodpaw (lvl 42, ~2550 xp, sim lvl 45)
     { "accept", 2822 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
     { "accept", 3121 }, -- A Strange Request (lvl 45, ~1950 xp, sim lvl 45)
@@ -25,59 +25,60 @@ Q:RegisterGuide({
     { "complete", 2987, at = { 1444, 75.97, 33.44 } }, -- Gordunni Cobalt (lvl 43, ~3600 xp, sim lvl 45)
     { "complete", 2975, at = { 1444, 74.78, 26.47 } }, -- The Ogres of Feralas (lvl 43, ~2700 xp, sim lvl 45)
     { "accept", 2978, at = { 1444, 80.55, 34.29 }, note = "Loot Gordunni Scroll to start the quest" }, -- The Gordunni Scroll (lvl 43, ~1800 xp, sim lvl 45)
-    { "accept", 2973 }, -- A New Cloak's Sheen (lvl 45, ~3900 xp, sim lvl 45)
-    { "turnin", 2975, xp = 2700 }, -- The Ogres of Feralas (lvl 43, ~2700 xp, sim lvl 45)
-    { "turnin", 2978, xp = 1800 }, -- The Gordunni Scroll (lvl 43, ~1800 xp, sim lvl 45)
-    { "accept", 2980 }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
-    { "accept", 2979 }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
-    { "turnin", 2987, xp = 3600 }, -- Gordunni Cobalt (lvl 43, ~3600 xp, sim lvl 45)
     { "turnin", 2862, xp = 2550 }, -- War on the Woodpaw (lvl 42, ~2550 xp, sim lvl 45)
     { "accept", 2863 }, -- Alpha Strike (lvl 43, ~2700 xp, sim lvl 45)
-    { "complete", 2863, at = { 1444, 65.63, 52.47 } }, -- Alpha Strike (lvl 43, ~2700 xp, sim lvl 45)
-    { "complete", 2980, at = { 1444, 60.26, 66.29 } }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
-    { "complete", 2979, at = { 1444, 60.44, 69.41 } }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
-    { "complete", 2822, at = { 1444, 52.05, 58.58 } }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
     { "complete", 2973, at = { 1444, 66.91, 47.29 } }, -- A New Cloak's Sheen (lvl 45, ~3900 xp, sim lvl 45)
+    { "complete", 2822, at = { 1444, 52.05, 58.58 } }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
+    { "complete", 2863, at = { 1444, 65.63, 52.47 } }, -- Alpha Strike (lvl 43, ~2700 xp, sim lvl 45)
     { "turnin", 2822, xp = 4050 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
     { "accept", 7734 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
     { "turnin", 2863, xp = 2700 }, -- Alpha Strike (lvl 43, ~2700 xp, sim lvl 45)
     { "accept", 2902 }, -- Woodpaw Investigation (lvl 43, ~1800 xp, sim lvl 45)
+    { "accept", 92878 }, -- Lost for Words (lvl 43, ~4450 xp, sim lvl 45)
+    { "turnin", 2987, xp = 3600 }, -- Gordunni Cobalt (lvl 43, ~3600 xp, sim lvl 45)
+    { "turnin", 2975, xp = 2700 }, -- The Ogres of Feralas (lvl 43, ~2700 xp, sim lvl 45)
+    { "accept", 2980 }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
+    { "turnin", 2978, xp = 1800 }, -- The Gordunni Scroll (lvl 43, ~1800 xp, sim lvl 45)
+    { "accept", 2979 }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
     { "turnin", 2973, xp = 3900 }, -- A New Cloak's Sheen (lvl 45, ~3900 xp, sim lvl 45)
     { "accept", 2974 }, -- A Grim Discovery (lvl 45, ~3900 xp, sim lvl 45)
-    { "turnin", 2979, xp = 4050 }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
-    { "turnin", 2980, xp = 3750 }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
-    { "accept", 3002 }, -- The Gordunni Orb (lvl 47, ~2100 xp, sim lvl 45)
     { "turnin", 2902, xp = 1800 }, -- Woodpaw Investigation (lvl 43, ~1800 xp, sim lvl 45)
     { "accept", 2903 }, -- The Battle Plans (lvl 43, ~3600 xp, sim lvl 45)
-    { "complete", 7734, at = { 1444, 54.73, 32.76 } }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
-    { "complete", 3062, at = { 1444, 40.55, 8.6 } }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
-    { "hearth", 1444 }, -- pierre de foyer
-    { "complete", 2974, at = { 1444, 69.29, 39.31 } }, -- A Grim Discovery (lvl 45, ~3900 xp, sim lvl 45)
     { "turnin", 2903, xp = 3600 }, -- The Battle Plans (lvl 43, ~3600 xp, sim lvl 45)
-    { "accept", 7731 }, -- Stinglasher (lvl 47, ~4200 xp, sim lvl 45)
     { "accept", 7730 }, -- Zukk'ash Infestation (lvl 45, ~3900 xp, sim lvl 45)
-    { "turnin", 7734, xp = 4400 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
-    { "turnin", 2974, xp = 3900 }, -- A Grim Discovery (lvl 45, ~3900 xp, sim lvl 45)
-    { "accept", 2976 }, -- A Grim Discovery (lvl 45, ~4850 xp, sim lvl 45)
-    { "turnin", 3062, xp = 5900 }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
+    { "accept", 7731 }, -- Stinglasher (lvl 47, ~4200 xp, sim lvl 45)
     { "complete", 7731, at = { 1444, 75.58, 60.85 } }, -- Stinglasher (lvl 47, ~4200 xp, sim lvl 45)
     { "complete", 7730, at = { 1444, 73.68, 63.39 } }, -- Zukk'ash Infestation (lvl 45, ~3900 xp, sim lvl 45)
+    { "complete", 2979, at = { 1444, 60.44, 69.41 } }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
+    { "accept", 81924, classes = { "DRUID" } }, -- Wisdom of the Guardians (lvl 50, ~5900 xp, sim lvl 45)
+    { "turnin", 81924, xp = 5900, classes = { "DRUID" } }, -- Wisdom of the Guardians (lvl 50, ~5900 xp, sim lvl 45)
+    { "complete", 2980, at = { 1444, 60.26, 66.29 } }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
+    { "complete", 3062, at = { 1444, 40.55, 8.6 } }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
+    { "complete", 7734, at = { 1444, 54.73, 32.76 } }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
+    { "complete", 92878, at = { 1444, 67, 38.86 } }, -- Lost for Words (lvl 43, ~4450 xp, sim lvl 45)
+    { "complete", 2974, at = { 1444, 69.29, 39.31 } }, -- A Grim Discovery (lvl 45, ~3900 xp, sim lvl 45)
+    { "turnin", 7734, xp = 4400 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
     { "turnin", 7730, xp = 3900 }, -- Zukk'ash Infestation (lvl 45, ~3900 xp, sim lvl 45)
     { "turnin", 7731, xp = 4200 }, -- Stinglasher (lvl 47, ~4200 xp, sim lvl 45)
     { "accept", 7732 }, -- Zukk'ash Report (lvl 48, ~4400 xp, sim lvl 45)
+    { "turnin", 92878, xp = 4450 }, -- Lost for Words (lvl 43, ~4450 xp, sim lvl 45)
+    { "turnin", 3062, xp = 5900 }, -- Dark Heart (lvl 50, ~5900 xp, sim lvl 45)
+    { "turnin", 2979, xp = 4050 }, -- Dark Ceremony (lvl 46, ~4050 xp, sim lvl 45)
+    { "turnin", 2980, xp = 3750 }, -- The Ogres of Feralas (lvl 44, ~3750 xp, sim lvl 45)
+    { "accept", 3002 }, -- The Gordunni Orb (lvl 47, ~2100 xp, sim lvl 45)
+    { "turnin", 2974, xp = 3900 }, -- A Grim Discovery (lvl 45, ~3900 xp, sim lvl 45)
+    { "accept", 2976 }, -- A Grim Discovery (lvl 45, ~4850 xp, sim lvl 45)
     { "goto", 1444, 75.45, 44.36, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
     { "turnin", 3002, xp = 2100 }, -- The Gordunni Orb (lvl 47, ~2100 xp, sim lvl 45)
-    { "turnin", 3121, xp = 1950 }, -- A Strange Request (lvl 45, ~1950 xp, sim lvl 45)
-    { "turnin", 7732, xp = 4400 }, -- Zukk'ash Report (lvl 48, ~4400 xp, sim lvl 45)
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
     { "fly", 1444, node = 42, note = "Camp Mojache, Feralas" }, -- vol
     { "accept", 3380, optional = true, dungeon = "The Temple of Atal'Hakkar" }, -- The Sunken Temple (lvl 51, ~0 xp, sim lvl 46)
     { "goto", 1444, 75.45, 44.36, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
+    { "turnin", 3121, xp = 1950 }, -- A Strange Request (lvl 45, ~1950 xp, sim lvl 46)
+    { "turnin", 7732, xp = 4400 }, -- Zukk'ash Report (lvl 48, ~4400 xp, sim lvl 46)
     { "turnin", 2976, xp = 4850 }, -- A Grim Discovery (lvl 45, ~4850 xp, sim lvl 46)
-    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
-    { "fly", 1444, node = 42, note = "Camp Mojache, Feralas" }, -- vol
-    { "level", 47, at = { 1444, 77.9, 63.48 }, note = "About 456 more mobs here (Zukk'ash Tunneler, level 45)" }, -- farm de niveau
+    { "level", 47, at = { 1444, 69.29, 39.31 }, note = "About 438 more mobs near the last objective" }, -- farm de niveau
   },
 })

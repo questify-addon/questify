@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 50 étapes, niveau final 57.00, ~60656 xp/h, 186 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 52 étapes, niveau final 57.00, ~63065 xp/h, 179 min.
 Q:RegisterGuide({
   id = "A_27",
   title = "Felwood and Winterspring",
   faction = "Alliance",
   minLevel = 56, maxLevel = 57,
   next = "A_23",
-  sim = { steps = 50, endLevel = 57.00, xpPerHour = 60656, minutes = 186 },
+  sim = { steps = 52, endLevel = 57.00, xpPerHour = 63065, minutes = 179 },
   steps = {
     { "accept", 4809 }, -- Chillwind Horns (lvl 54, ~5450 xp, sim lvl 56)
     { "accept", 6028 }, -- The Everlook Report (lvl 52, ~0 xp, sim lvl 56)
@@ -18,6 +18,8 @@ Q:RegisterGuide({
     { "accept", 5601 }, -- Sister Pamela (lvl 55, ~0 xp, sim lvl 56)
     { "accept", 6604 }, -- Enraged Wildkin (lvl 59, ~640 xp, sim lvl 56)
     { "accept", 6603 }, -- Trouble in Winterspring! (lvl 56, ~580 xp, sim lvl 56)
+    { "accept", 92859 },
+    { "turnin", 92859, xp = 6600 },
     { "accept", 3783 }, -- Are We There, Yeti? (lvl 56, ~4350 xp, sim lvl 56)
     { "accept", 5244 }, -- The Ruins of Kel'Theril (lvl 56, ~580 xp, sim lvl 56)
     { "turnin", 6604, xp = 640 }, -- Enraged Wildkin (lvl 59, ~640 xp, sim lvl 56)
@@ -60,6 +62,6 @@ Q:RegisterGuide({
     { "complete", 5156, at = { 1448, 43.73, 40.16 } }, -- Verifying the Corruption (lvl 54, ~6800 xp, sim lvl 56)
     { "turnin", 5156, xp = 6800 }, -- Verifying the Corruption (lvl 54, ~6800 xp, sim lvl 56)
     { "turnin", 5385, xp = 7550 }, -- The Remains of Trey Lightforge (lvl 57, ~7550 xp, sim lvl 56)
-    { "level", 57, at = { 1448, 43.73, 40.16 }, note = "About 258 more mobs near the last objective" }, -- farm de niveau
+    { "level", 57, at = { 1448, 43.73, 40.16 }, note = "About 236 more mobs near the last objective" }, -- farm de niveau
   },
 })

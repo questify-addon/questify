@@ -1,18 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 44 étapes, niveau final 60.00, ~66609 xp/h, 189 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 46 étapes, niveau final 60.00, ~61820 xp/h, 204 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 44, endLevel = 60.00, xpPerHour = 66609, minutes = 189 },
+  sim = { steps = 46, endLevel = 60.00, xpPerHour = 61820, minutes = 204 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain, Vivian Lagrave", optional = true, dungeon = "Blackrock Depths" },
-    { "hearth", 1452 }, -- pierre de foyer
-    { "goto", 1452, 60.47, 36.3, note = "Flight master" }, -- déplacement
+    { "hearth", 1434 }, -- pierre de foyer
+    { "boat", 1434, 31.43, 29.91, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
+    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
     { "fly", 1444, node = 42, note = "Camp Mojache, Feralas" }, -- vol
     { "fp", 1451, 48.68, 36.67 }, -- point de vol
     { "accept", 8284 }, -- The Twilight Mystery (lvl 58, ~6200 xp, sim lvl 59)
@@ -49,10 +50,11 @@ Q:RegisterGuide({
     { "turnin", 8287, xp = 6600 }, -- A Terrible Purpose (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8304, xp = 6600 }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8283, xp = 8050 }, -- Wanted - Deathclasp, Terror of the Sands (lvl 59, ~8050 xp, sim lvl 59)
-    { "hearth", 1452 }, -- pierre de foyer
+    { "goto", 1451, 48.68, 36.67, note = "Flight master" }, -- déplacement
+    { "fly", 1452, node = 53, note = "Everlook, Winterspring" }, -- vol
     { "accept", 5055 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "complete", 5055, at = { 1452, 62.54, 57.9 } }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "turnin", 5055, xp = 6200 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
-    { "level", 60, at = { 1452, 62.54, 57.9 }, note = "About 64 more mobs near the last objective" }, -- farm de niveau
+    { "level", 60, at = { 1452, 62.54, 57.9 }, note = "About 65 more mobs near the last objective" }, -- farm de niveau
   },
 })

@@ -1,19 +1,18 @@
 # H_Undead_01 — Deathknell
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.02 |
-| Time | 45 min |
-| XP gained | 7662 |
-| XP/h | 10243 |
+| Simulated level | 1.00 -> 6.07 |
+| Time | 43 min |
+| XP gained | 7862 |
+| XP/h | 10863 |
 | Steps | 58 |
 | Quests turned in | 13 |
 | Hubs | 1 |
-| Median ratio (XP/s) | 3.20 |
-| Grinding (level steps) | ~1 mobs |
+| Median ratio (XP/s) | 3.29 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -28,13 +27,13 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 4 | 3901 | Rattling the Rattlecages | 3 | 250 | 4 |
 | 5 | 6395 | Marla's Last Wish | 5 | 450 | 4 |
 | 6 | 3902 | Scavenging Deathknell | 3 | 315 | 4 |
-| 7 | 98389 | A Light in the Darkness | 4 | 355 est. | 5 |
+| 7 | 98389 | A Light in the Darkness | 4 | 355 | 5 |
 | 8 | 380 | Night Web's Hollow | 4 | 355 | 5 |
 | 9 | 381 | The Scarlet Crusade | 4 | 355 | 5 |
 | 10 | 382 | The Red Messenger | 5 | 670 | 5 |
-| 11 | 96656 | The Adventurer | 6 | 135 est. | 5 |
-| 12 | 383 | Vital Intelligence | 5 | 335 | 5 |
-| 13 | 8 | A Rogue's Deal | 5 | 110 | 5 |
+| 11 | 96656 | The Adventurer | 6 | 405 | 5 |
+| 12 | 383 | Vital Intelligence | 5 | 335 | 6 |
+| 13 | 8 | A Rogue's Deal | 5 | 110 | 6 |
 
 ## Dropped quests
 
@@ -65,7 +64,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 3098 | Glyphic Scroll | 1 | MAGE | woven, detour 11 s |
 | 3099 | Tainted Scroll | 1 | WARLOCK | woven, detour 12 s |
 | 98601 | A Difficult Path | 1 | PALADIN | woven, detour 10 s |
-| 90902 | Rediscovering the Light | 2 | PALADIN | woven, detour 31 s |
+| 90902 | Rediscovering the Light | 2 | PALADIN | woven, detour 32 s |
 | 1470 | Piercing the Veil | 3 | WARLOCK | woven, detour 493 s |
 | 5651 | In Favor of Darkness | 4 | PRIEST | woven, detour 26 s |
 | 91208 | Coming to Terms | 4 | PALADIN | woven, detour 69 s |
@@ -82,16 +81,16 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 8 | A Rogue's Deal | 5 | 530 | 420 | 222 | 65 | 2.39 | 8.13 | 0 |  |
 | 363 | Rude Awakening | 1 | 105 | 65 | 63 | 63 | 2.57 | 2.77 | 0 |  |
 | 364 | The Mindless Ones | 2 | 970 | 0 | 371 | 349 | 2.71 | 2.95 | 1 |  |
-| 376 | The Damned | 2 | 1244 | 0 | 529 | 467 | 3.03 | 3.94 | 1 |  |
-| 380 | Night Web's Hollow | 4 | 1315 | 0 | 478 | 409 | 3.20 | 4.48 | 1 |  |
-| 381 | The Scarlet Crusade | 4 | 1290 | 0 | 429 | 365 | 3.64 | 6.36 | 1 |  |
-| 382 | The Red Messenger | 5 | 730 | 0 | 100 | 30 | 4.69 | 39.89 | 1 |  |
+| 376 | The Damned | 2 | 1244 | 0 | 529 | 467 | 3.08 | 4.00 | 1 |  |
+| 380 | Night Web's Hollow | 4 | 1315 | 0 | 478 | 410 | 3.29 | 4.61 | 1 |  |
+| 381 | The Scarlet Crusade | 4 | 1290 | 0 | 429 | 365 | 3.83 | 6.69 | 1 |  |
+| 382 | The Red Messenger | 5 | 730 | 0 | 100 | 30 | 5.20 | 44.19 | 1 |  |
 | 383 | Vital Intelligence | 5 | 866 | 531 | 208 | 10 | 4.16 | 86.69 | 0 |  |
 | 3901 | Rattling the Rattlecages | 3 | 874 | 0 | 304 | 265 | 2.87 | 3.29 | 1 |  |
 | 3902 | Scavenging Deathknell | 3 | 315 | 0 | 111 | 94 | 2.82 | 3.33 | 1 |  |
 | 6395 | Marla's Last Wish | 5 | 450 | 0 | 32 | 32 | 13.74 | 13.74 | 1 |  |
-| 96656 | The Adventurer | 6 | 597 | 462 | 183 | 10 | 3.27 | 59.78 | 0 |  |
-| 98389 | A Light in the Darkness | 4 | 355 | 0 | 106 | 33 | 3.35 | 10.75 | 1 |  |
+| 96656 | The Adventurer | 6 | 867 | 462 | 183 | 10 | 4.74 | 86.78 | 0 |  |
+| 98389 | A Light in the Darkness | 4 | 355 | 0 | 106 | 33 | 3.34 | 10.64 | 1 |  |
 
 ## Itinerary
 
@@ -112,16 +111,16 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 9 | O | 3901 | Rattling the Rattlecages | 1420 | 33.2, 62.0 | 160 |  |
 | 10 | T | 376 | The Damned | 1420 | 30.9, 66.0 | 160 |  |
 | 11 | A | 6395 | Marla's Last Wish | 1420 | 30.9, 66.0 | 0 |  |
-| 12 | A | 98389 | A Light in the Darkness | 1420 | 31.1, 66.4 | 15 |  |
-| 13 | A | 3902 | Scavenging Deathknell | 1420 | 31.6, 65.6 | 33 |  |
-| 14 | T | 3901 | Rattling the Rattlecages | 1420 | 30.8, 66.2 | 39 |  |
-| 15 | A | 380 | Night Web's Hollow | 1420 | 32.1, 66.0 | 59 |  |
+| 12 | T | 3901 | Rattling the Rattlecages | 1420 | 30.8, 66.2 | 4 |  |
+| 13 | A | 98389 | A Light in the Darkness | 1420 | 31.1, 66.4 | 13 |  |
+| 14 | A | 3902 | Scavenging Deathknell | 1420 | 31.6, 65.6 | 33 |  |
+| 15 | A | 380 | Night Web's Hollow | 1420 | 32.1, 66.0 | 27 |  |
 | 16 | O | 6395 | Marla's Last Wish | 1420 | 31.2, 65.1 | 52 |  |
 | 17 | T | 6395 | Marla's Last Wish | 1420 | 30.9, 66.0 | 32 |  |
 | 18 | O | 3902 | Scavenging Deathknell | 1420 | 33.0, 64.3 | 111 |  |
 | 19 | T | 3902 | Scavenging Deathknell | 1420 | 31.6, 65.6 | 75 |  |
-| 20 | O | 98389 | A Light in the Darkness | 1420 | 26.8, 59.6 | 282 |  |
-| 21 | O | 380 | Night Web's Hollow | 1420 | 28.4, 58.1 | 84 |  |
+| 20 | O | 98389 | A Light in the Darkness | 1420 | 26.8, 59.6 | 283 |  |
+| 21 | O | 380 | Night Web's Hollow | 1420 | 28.4, 58.1 | 85 |  |
 | 22 | T | 98389 | A Light in the Darkness | 1420 | 31.1, 66.4 | 278 |  |
 | 23 | T | 380 | Night Web's Hollow | 1420 | 32.1, 66.0 | 48 |  |
 | 24 | A | 381 | The Scarlet Crusade | 1420 | 32.1, 66.0 | 0 |  |
@@ -137,7 +136,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 34 | T | 383 | Vital Intelligence | 1420 | 60.6, 51.8 | 187 |  |
 | 35 | T | 8 | A Rogue's Deal | 1420 | 61.7, 52.0 | 51 |  |
 
-Walking between tasks: 4707 yd (~11 min at 7 yd/s).
+Walking between tasks: 4640 yd (~11 min at 7 yd/s).
 
 ## Qualité
 
