@@ -124,6 +124,8 @@ end)
 check("questiedb", "DIAG_QUESTIEDB", function()
   local status = Q.QDB:Status()
   if status == "ok" then
+    local old = Q.QDB.DataTooOld and Q.QDB:DataTooOld()
+    if old then return "warn", string.format(L.DIAG_QUESTIEDB_DATA_OLD, old, Q.QDB.MIN_DATA_VERSION) end
     return "ok", string.format(L.DIAG_QUESTIEDB_OK, metadata("QuestieDB", "Version") or "?")
   end
   if status == "old" then return "fail", L.QUESTIEDB_TOO_OLD end

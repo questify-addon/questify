@@ -63,6 +63,43 @@ function QDB:IsAvailable()
   return self:Status() == "ok"
 end
 
+-- Version de QuestieDB sur laquelle les routes livrées ont été générées (tools/routebuilder/build.lua).
+-- Avec une version plus ancienne, des quêtes des routes sont inconnues : étape sans flèche, à passer à la
+-- main. À relever à chaque régénération des routes sur une nouvelle version de QuestieDB.
+QDB.MIN_DATA_VERSION = "1.0.15"
+
+-- "1.0.15", "v1.0.15", "1.0.15-beta" -> { 1, 0, 15 } ; autre chose -> nil
+local function parseVersion(s)
+  if type(s) ~= "string" then return nil end
+  local a, b, c = s:match("^v?(%d+)%.(%d+)%.(%d+)")
+  if not a then return nil end
+  return { tonumber(a), tonumber(b), tonumber(c) }
+end
+
+-- Version déclarée par le TOC de QuestieDB, ou nil.
+function QDB:DataVersion()
+  local fn = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+  if type(fn) ~= "function" then return nil end
+  local ok, v = pcall(fn, "QuestieDB", "Version")
+  if ok and type(v) == "string" and v ~= "" then return v end
+  return nil
+end
+
+-- -> version installée si elle est connue et plus ancienne que MIN_DATA_VERSION, sinon nil
+-- (version absente ou illisible : aucun avertissement).
+function QDB:DataTooOld()
+  local installed = self:DataVersion()
+  local have, need = parseVersion(installed), parseVersion(self.MIN_DATA_VERSION)
+  if not have or not need then return nil end
+  for i = 1, 3 do
+    if have[i] ~= need[i] then
+      if have[i] < need[i] then return installed end
+      return nil
+    end
+  end
+  return nil
+end
+
 -- -> valeurs | nil, failed. Une erreur de lecture est signalée (une fois par message) et
 -- l'appelant ne met rien en cache : la lecture sera retentée.
 local function getAll(entity, id, fields)
