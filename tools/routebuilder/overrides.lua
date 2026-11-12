@@ -24,6 +24,11 @@ return {
     [1056] = "Journey to Stonetalon Peak: 1,133 yd detour for a flight path the route never uses",
   },
   pin = {
+    -- QuestieDB v1.0.15 : Chol'aruk (élite 20) et des Razormane Berserker (élites 19) relevés en 57.18, 28.79, à côté
+    -- du groupe de Plainstriders retenu jusque-là (57.1, 29.5) : quête écartée comme trop dangereuse avec Zhevra,
+    -- Prowlers et Echeyakee. Groupe le plus dense sans élite à moins de 2 % de carte : moyenne des apparitions de
+    -- Greater / Fleeting Plainstrider (3244, 3246) de la case 56-58 x 30-32. À vérifier en jeu.
+    [844] = { 1413, 57.05, 31.02 },
     [98071] = { 1424, 70.0, 79.0 }, -- Brewer's Trade : Dun Garok (aucune donnée d'objectif)
     [98059] = { 1424, 29.7, 41.6 }, -- Hillsbrad's Hoard : table de l'hôtel de ville de Hillsbrad
     [11] = { 1429, 26.46, 86.65 }, -- Riverpaw Gnoll Bounty : groupe ouest (apparition de Riverpaw Runt 97), près de Westbrook

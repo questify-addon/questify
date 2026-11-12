@@ -1,14 +1,14 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 38 étapes, niveau final 60.00, ~65618 xp/h, 192 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 38 étapes, niveau final 60.00, ~65507 xp/h, 192 min.
 Q:RegisterGuide({
   id = "A_30",
   title = "Silithus",
   faction = "Alliance",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 38, endLevel = 60.00, xpPerHour = 65618, minutes = 192 },
+  sim = { steps = 38, endLevel = 60.00, xpPerHour = 65507, minutes = 192 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain, Ragnar Thunderbrew", optional = true, dungeon = "Blackrock Depths" },
     { "hearth", 1452 }, -- pierre de foyer
@@ -47,6 +47,6 @@ Q:RegisterGuide({
     { "turnin", 8283, xp = 8050 }, -- Wanted - Deathclasp, Terror of the Sands (lvl 59, ~8050 xp, sim lvl 59)
     { "turnin", 8287, xp = 6600 }, -- A Terrible Purpose (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8304, xp = 6600 }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
-    { "level", 60, at = { 1451, 40.86, 42.22 }, note = "About 298 more mobs near the last objective" }, -- farm de niveau
+    { "level", 60, at = { 1451, 51.08, 28.78 }, note = "About 298 more mobs here (Silithid Darter, level 60)" }, -- farm de niveau
   },
 })

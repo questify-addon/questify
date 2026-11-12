@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeons.lua. Ne pas modifier à la main.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
 -- Donjons de WoW: Forever : zone, niveaux conseillés, factions autorisées, entrée (uiMapID, x, y en 0-100,
 -- entranceSource = questiedb ou manual), quêtes par faction : IDs, PNJ (giver) ou objet (obj) de départ et
 -- position (at), PNJ de fin (ender, endAt), niveaux, masques de races et de classes, préquêtes (pre = au
@@ -26,7 +26,7 @@ Q.DungeonData = {
     quests = {
       Alliance = {
         { id = 96393, giver = 264936, at = { 1426, 64.87, 58.47 }, ender = 2784, endAt = { 1455, 39.09, 56.2 }, level = 16, reqLevel = 9, races = 4294967373, pre = { 96391 } }, -- Old Ironforge Incursion
-        { id = 96394, giver = 264943, at = { 1455, 33.23, 48 }, ender = 264943, endAt = { 1455, 33.23, 48 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
+        { id = 96394, giver = 264943, at = { 1455, 33.23, 48.01 }, ender = 264943, endAt = { 1455, 33.23, 48.01 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
         { id = 96403, giver = 265003, at = { 1455, 32.18, 44.5 }, ender = 265003, endAt = { 1455, 32.18, 44.5 }, level = 15, reqLevel = 10, races = 4294967373 }, -- Important Heirlooms
       },
     },
@@ -101,7 +101,7 @@ Q.DungeonData = {
     factions = { "Alliance", "Horde" }, entrance = { 1440, 14.5, 14.2 }, entranceSource = "questiedb",
     quests = {
       Alliance = {
-        { id = 971, giver = 2786, at = { 1455, 50.83, 5.62 }, ender = 2786, endAt = { 1455, 50.83, 5.62 }, level = 23, reqLevel = 10, races = 4294967373 }, -- Knowledge in the Deeps
+        { id = 971, giver = 2786, at = { 1455, 50.83, 5.62 }, ender = 2786, endAt = { 1455, 50.83, 5.62 }, level = 23, reqLevel = 18, races = 4294967373 }, -- Knowledge in the Deeps
         { id = 1198, talk = true, giver = 4786, at = { 1457, 55.36, 25.03 }, level = 24, reqLevel = 18 }, -- In Search of Thaelrid
         { id = 1199, giver = 4784, at = { 1457, 55.24, 23.99 }, ender = 4784, endAt = { 1457, 55.24, 23.99 }, level = 25, reqLevel = 20, races = 4294967373 }, -- Twilight Falls
         { id = 1200, inside = true, ender = 4783, endAt = { 1457, 56.16, 24.39 }, level = 27, reqLevel = 18, races = 4294967373 }, -- Blackfathom Villainy
@@ -142,13 +142,13 @@ Q.DungeonData = {
         { id = 95772, talk = true, giver = 956, at = { 1433, 25.79, 46.44 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Songblade Search
         { id = 95810, inside = true, item = 270865, ender = 1077, endAt = { 1437, 38.81, 52.39 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Lost Relic Carry
         { id = 98815, giver = 2094, at = { 1437, 8.55, 55.74 }, ender = 2094, endAt = { 1437, 8.55, 55.74 }, level = 28, reqLevel = 24, races = 4294967373 }, -- Highland Hides
-        { id = 98824, giver = 1077, at = { 1437, 38.81, 52.39 }, ender = 5387, endAt = { 1455, 69.93, 18.55 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Prehistoric Prism
+        { id = 98824, talk = true, giver = 1077, at = { 1437, 38.81, 52.39 }, ender = 5387, endAt = { 1455, 69.93, 18.55 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Prehistoric Prism
       },
       Horde = {
         { id = 95663, talk = true, giver = 2787, at = { 1417, 74.54, 35.64 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Dragonmaw Rumors
         { id = 95664, inside = true, item = 270866, ender = 9087, endAt = { 1456, 71.06, 34.19 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Elder Knowledge
         { id = 95697, giver = 3368, at = { 1454, 57.2, 53.32 }, ender = 3368, endAt = { 1454, 57.2, 53.32 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Changing Tastes
-        { id = 98823, talk = true, giver = 9087, at = { 1456, 71.06, 34.19 }, ender = 259118, endAt = { 1412, 33.41, 22.58 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Earthen Echo
+        { id = 98823, talk = true, giver = 9087, at = { 1456, 71.06, 34.19 }, ender = 259118, endAt = { 1412, 33.42, 22.59 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Earthen Echo
       },
     },
   },
@@ -174,7 +174,7 @@ Q.DungeonData = {
       Alliance = {
         { id = 1050, giver = 3979, at = { 1455, 74.97, 12.48 }, ender = 3979, endAt = { 1455, 74.97, 12.48 }, level = 38, reqLevel = 28, races = 4294967373 }, -- Mythology of the Titans
         { id = 1053, giver = 3980, at = { 1424, 51.47, 58.35 }, ender = 3980, endAt = { 1424, 51.47, 58.35 }, level = 40, reqLevel = 34, races = 4294967373, pre = { 1052 } }, -- In the Name of the Light
-        { id = 96800, giver = 264265, at = { 1416, 9.75, 63.36 }, ender = 264265, endAt = { 1416, 9.75, 63.36 }, level = 38, reqLevel = 30, races = 4294967373 }, -- Past Due
+        { id = 96800, giver = 264265, at = { 1416, 9.51, 62.25 }, ender = 264265, endAt = { 1416, 9.51, 62.25 }, level = 38, reqLevel = 30, races = 4294967373 }, -- Past Due
         { id = 1052, bc = true, giver = 1182, at = { 1443, 66.52, 7.91 }, ender = 3980, endAt = { 1424, 51.47, 58.35 }, level = 40, reqLevel = 34, races = 4294967373, pre = { 261 } }, -- Down the Scarlet Path
       },
       Horde = {
@@ -272,12 +272,14 @@ Q.DungeonData = {
       Alliance = {
         { id = 3636, giver = 1284, at = { 1453, 50.31, 45.47 }, ender = 1284, endAt = { 1453, 50.31, 45.47 }, level = 42, reqLevel = 39, races = 4294967373 }, -- Bring the Light
         { id = 6626, giver = 12866, at = { 1413, 49.01, 94.94 }, ender = 12866, endAt = { 1413, 49.01, 94.94 }, level = 35, reqLevel = 28 }, -- A Host of Evil
+        { id = 96773, giver = 20735, at = { 1416, 15.3, 73.93 }, ender = 20735, endAt = { 1416, 15.3, 73.93 }, level = 41, reqLevel = 34, races = 4294967373 }, -- The Coldbringer's Eye
       },
       Horde = {
         { id = 3341, giver = 2308, at = { 1458, 74.05, 33.31 }, ender = 2308, endAt = { 1458, 74.05, 33.31 }, level = 42, reqLevel = 37, races = 8589934770 }, -- Bring the End
         { id = 6521, giver = 2425, at = { 1458, 56.25, 92.2 }, ender = 2425, endAt = { 1458, 56.25, 92.2 }, level = 36, reqLevel = 28, races = 8589934770, pre = { 6522 } }, -- An Unholy Alliance
         { id = 6522, inside = true, item = 17008, ender = 2425, endAt = { 1458, 56.25, 92.2 }, level = 36, reqLevel = 28, races = 8589934770 }, -- An Unholy Alliance
         { id = 6626, giver = 12866, at = { 1413, 49.01, 94.94 }, ender = 12866, endAt = { 1413, 49.01, 94.94 }, level = 35, reqLevel = 28 }, -- A Host of Evil
+        { id = 97196, giver = 264078, at = { 1412, 34.56, 23 }, ender = 264078, endAt = { 1412, 34.56, 23 }, level = 41, reqLevel = 34, races = 8589934770 }, -- The Coldbringer's Eye
       },
     },
   },
@@ -301,6 +303,7 @@ Q.DungeonData = {
         { id = 7066, inside = true, ender = 11832, endAt = { 1450, 36.18, 41.79 }, level = 51, reqLevel = 45 }, -- Seed of Life
         { id = 7067, giver = 13717, at = { 1443, 50.42, 86.65 }, ender = 13717, endAt = { 1443, 50.42, 86.65 }, level = 48, reqLevel = 39 }, -- The Pariah's Instructions
         { id = 7068, giver = 7311, at = { 1454, 39.16, 86.27 }, ender = 7311, endAt = { 1454, 39.16, 86.27 }, level = 42, reqLevel = 39, races = 8589934770 }, -- Shadowshard Fragments
+        { id = 96776, giver = 268557, at = { 1412, 32.63, 24.2 }, ender = 268557, endAt = { 1412, 32.63, 24.2 }, level = 51, reqLevel = 43, races = 8589934770 }, -- An'she's Radiance
       },
     },
   },
@@ -317,6 +320,7 @@ Q.DungeonData = {
         { id = 2991, giver = 8022, at = { 1419, 66.9, 19.47 }, ender = 8022, endAt = { 1419, 66.9, 19.47 }, level = 47, reqLevel = 40, races = 4294967373, pre = { 2990 } }, -- Nekrum's Medallion
         { id = 3042, giver = 7804, at = { 1446, 51.41, 28.75 }, ender = 7804, endAt = { 1446, 51.41, 28.75 }, level = 45, reqLevel = 40 }, -- Troll Temper
         { id = 3527, giver = 8579, at = { 1446, 66.99, 22.36 }, ender = 8579, endAt = { 1446, 66.99, 22.36 }, level = 47, reqLevel = 40, pre = { 3520 } }, -- The Prophecy of Mosh'aru
+        { id = 96770, giver = 20735, at = { 1416, 15.3, 73.93 }, ender = 20735, endAt = { 1416, 15.3, 73.93 }, level = 46, reqLevel = 39, races = 4294967373 }, -- The Witch Doctor's Head
         { id = 2990, bc = true, giver = 5636, at = { 1425, 9.75, 44.47 }, ender = 8022, endAt = { 1419, 66.9, 19.47 }, level = 47, reqLevel = 40, races = 4294967373, pre = { 2989 } }, -- Thadius Grimshade
       },
       Horde = {
@@ -329,6 +333,7 @@ Q.DungeonData = {
         { id = 2936, giver = 3188, at = { 1411, 55.95, 74.72 }, ender = 3188, endAt = { 1411, 55.95, 74.72 }, level = 45, reqLevel = 40, races = 8589934770, pre = { 2935 } }, -- The Spider God
         { id = 3042, giver = 7804, at = { 1446, 51.41, 28.75 }, ender = 7804, endAt = { 1446, 51.41, 28.75 }, level = 45, reqLevel = 40 }, -- Troll Temper
         { id = 3527, giver = 8579, at = { 1446, 66.99, 22.36 }, ender = 8579, endAt = { 1446, 66.99, 22.36 }, level = 47, reqLevel = 40, pre = { 3520 } }, -- The Prophecy of Mosh'aru
+        { id = 96775, giver = 264074, at = { 1412, 32.5, 20.66 }, ender = 264074, endAt = { 1412, 32.5, 20.66 }, level = 46, reqLevel = 42, races = 8589934770 }, -- Zum'rah's Head
         { id = 2935, bc = true, giver = 2216, at = { 1424, 61.44, 19.06 }, ender = 3188, endAt = { 1411, 55.95, 74.72 }, level = 45, reqLevel = 40, races = 8589934770, pre = { 2934 } }, -- Consult Master Gadrin
       },
     },
@@ -404,6 +409,7 @@ Q.DungeonData = {
         { id = 4324, talk = true, giver = 9706, at = { 1446, 67.04, 24.01 }, ender = 9544, endAt = { 1428, 66.06, 21.95 }, level = 53, reqLevel = 48 }, -- Yuka Screwspigot
         { id = 7201, giver = 9078, at = { 1418, 2.9, 47.76 }, ender = 9078, endAt = { 1418, 2.9, 47.76 }, level = 54, reqLevel = 48, races = 8589934770, pre = { 3906 } }, -- The Last Element
         { id = 9015, inside = true, ender = 16016, endAt = { 1423, 26.11, 11.3 }, level = 60, reqLevel = 58, pre = { 8950 } }, -- The Challenge
+        { id = 97197, giver = 259119, at = { 1412, 33.38, 22.51 }, level = 55, reqLevel = 46, races = 8589934770 }, -- Fragment of the Firelands
         { id = 4062, bc = true, giver = 9079, at = { 1418, 3.02, 47.81 }, ender = 2921, endAt = { 1418, 25.95, 44.87 }, level = 54, reqLevel = 52, races = 8589934770, pre = { 4061 } }, -- The Rise of the Machines
       },
     },
@@ -516,7 +522,7 @@ Q.QuestRewardData = {
   [356] = { xp = 660, items = {  } },
   [373] = { xp = 870, items = {  } },
   [377] = { xp = 1050, items = { 2033, 2906, 270029 } },
-  [378] = { xp = 1375, items = { 1264, 3562 } },
+  [378] = { xp = 1375, items = { 1264, 3562, 270036 } },
   [386] = { xp = 1000, items = { 1317, 3400, 270027 } },
   [387] = { xp = 1325, items = {  } },
   [388] = { xp = 1325, items = {  } },
@@ -526,7 +532,7 @@ Q.QuestRewardData = {
   [450] = { xp = 1350, items = {  } },
   [451] = { xp = 2050, items = { 2458, 2459, 3451, 3582, 276723 } },
   [704] = { xp = 1425, items = { 4980, 270059, 270060 } },
-  [709] = { xp = 1575, items = { 4746 } },
+  [709] = { xp = 1575, items = { 4746, 270074, 270075 } },
   [720] = { xp = 1350, items = {  } },
   [721] = { xp = 1375, items = {  } },
   [722] = { xp = 1575, items = {  } },
@@ -555,11 +561,11 @@ Q.QuestRewardData = {
   [1053] = { xp = 2350, items = { 6829, 6830, 6831, 11262 } },
   [1098] = { xp = 1000, items = { 3324, 270023, 270024 } },
   [1100] = { xp = 1350, items = {  } },
-  [1101] = { xp = 1675, items = { 4197, 6725, 6742 } },
-  [1102] = { xp = 2025, items = { 4197, 6725, 6742 } },
+  [1101] = { xp = 1675, items = { 4197, 6725, 6742, 274084 } },
+  [1102] = { xp = 2025, items = { 4197, 6725, 6742, 274084 } },
   [1109] = { xp = 1650, items = {  } },
   [1113] = { xp = 1650, items = {  } },
-  [1139] = { xp = 2925, items = { 6723 } },
+  [1139] = { xp = 2925, items = { 6723, 270095 } },
   [1142] = { xp = 1525, items = { 6751, 6752, 270047 } },
   [1149] = { xp = 1050, items = {  } },
   [1150] = { xp = 2450, items = {  } },
@@ -578,7 +584,7 @@ Q.QuestRewardData = {
   [1429] = { xp = 3750, items = {  } },
   [1444] = { xp = 3750, items = {  } },
   [1445] = { xp = 2950, items = { 1490 } },
-  [1446] = { xp = 3275, items = { 11123, 11124 } },
+  [1446] = { xp = 3275, items = { 11123, 11124, 270115 } },
   [1448] = { xp = 3600, items = {  } },
   [1449] = { xp = 1800, items = {  } },
   [1450] = { xp = 890, items = {  } },
@@ -598,7 +604,7 @@ Q.QuestRewardData = {
   [2201] = { xp = 1800, items = {  } },
   [2202] = { xp = 1725, items = { 9030 } },
   [2204] = { xp = 465, items = {  } },
-  [2240] = { xp = 1950, items = { 9626, 9627 } },
+  [2240] = { xp = 1950, items = { 9626, 9627, 270078 } },
   [2258] = { xp = 3000, items = {  } },
   [2278] = { xp = 2100, items = {  } },
   [2279] = { xp = 2625, items = {  } },
@@ -615,12 +621,12 @@ Q.QuestRewardData = {
   [2398] = { xp = 155, items = {  } },
   [2418] = { xp = 1750, items = { 9522, 10358, 10359, 270055 } },
   [2500] = { xp = 3000, items = {  } },
-  [2768] = { xp = 3150, items = { 9533, 9534 } },
+  [2768] = { xp = 3150, items = { 9533, 9534, 270099 } },
   [2770] = { xp = 3550, items = { 11122 } },
   [2841] = { xp = 1375, items = { 9623, 9624, 9625 } },
   [2842] = { xp = 135, items = {  } },
   [2843] = { xp = 1375, est = true, items = { 9173 } },
-  [2846] = { xp = 3025, items = { 9527, 9531 } },
+  [2846] = { xp = 3025, items = { 9527, 9531, 270098 } },
   [2861] = { xp = 200, items = {  } },
   [2864] = { xp = 195, items = {  } },
   [2865] = { xp = 1950, items = {  } },
@@ -648,7 +654,7 @@ Q.QuestRewardData = {
   [2990] = { xp = 2100, items = {  } },
   [2991] = { xp = 2625, items = {  } },
   [3042] = { xp = 1950, items = {  } },
-  [3341] = { xp = 2150, items = { 10823, 10824 } },
+  [3341] = { xp = 2150, items = { 10823, 10824, 270081 } },
   [3380] = { xp = 1825, items = {  } },
   [3441] = { xp = 440, items = {  } },
   [3442] = { xp = 4400, items = {  } },
@@ -666,7 +672,7 @@ Q.QuestRewardData = {
   [3520] = { xp = 3750, items = {  } },
   [3527] = { xp = 2625, items = {  } },
   [3528] = { xp = 3950, items = { 10749, 10750, 10751 } },
-  [3636] = { xp = 2150, items = { 10823, 10824 } },
+  [3636] = { xp = 2150, items = { 10823, 10824, 270081 } },
   [3701] = { xp = 5450, items = { 12102 } },
   [3702] = { xp = 540, items = {  } },
   [3801] = { xp = 255, items = {  } },
@@ -676,7 +682,7 @@ Q.QuestRewardData = {
   [3981] = { xp = 2550, items = {  } },
   [3982] = { xp = 2050, items = {  } },
   [4001] = { xp = 270, items = {  } },
-  [4002] = { xp = 1700, est = true, items = {  } },
+  [4002] = { xp = 2050, est = true, items = {  } },
   [4003] = { xp = 4025, items = {  } },
   [4004] = { xp = 4975, items = { 12544, 12545 } },
   [4022] = { xp = 5450, items = {  } },
@@ -775,7 +781,7 @@ Q.QuestRewardData = {
   [6561] = { xp = 825, items = { 7001, 7002, 270031, 270032 } },
   [6562] = { xp = 215, items = {  } },
   [6563] = { xp = 875, items = {  } },
-  [6564] = { xp = 875, items = {  } },
+  [6564] = { xp = 650, items = {  } },
   [6565] = { xp = 1325, items = { 17694, 17695 } },
   [6626] = { xp = 1725, items = {  } },
   [6627] = { xp = 245, items = {  } },
@@ -862,44 +868,50 @@ Q.QuestRewardData = {
   [92422] = { xp = 875, est = true, items = { 251533, 251534 } },
   [92456] = { xp = 1325, est = true, items = { 279835, 279836 } },
   [92457] = { xp = 1325, est = true, items = { 279837, 279838 } },
-  [92458] = { xp = 1325, est = true, items = {  } },
-  [92489] = { xp = 1325, est = true, items = {  } },
-  [92742] = { xp = 910, est = true, items = {  } },
-  [92744] = { xp = 910, est = true, items = {  } },
-  [92745] = { xp = 980, est = true, items = {  } },
-  [92747] = { xp = 1050, est = true, items = {  } },
-  [92748] = { xp = 580, est = true, items = {  } },
-  [92749] = { xp = 1150, est = true, items = {  } },
-  [92750] = { xp = 580, est = true, items = {  } },
-  [92751] = { xp = 580, est = true, items = {  } },
-  [92752] = { xp = 580, est = true, items = {  } },
+  [92458] = { xp = 1325, est = true, items = { 279839, 279840, 279841 } },
+  [92489] = { xp = 1325, est = true, items = { 251962, 279849 } },
+  [92742] = { xp = 455, items = {  } },
+  [92744] = { xp = 455, items = {  } },
+  [92745] = { xp = 490, items = {  } },
+  [92747] = { xp = 800, items = {  } },
+  [92748] = { xp = 580, items = {  } },
+  [92749] = { xp = 580, items = {  } },
+  [92750] = { xp = 115, items = {  } },
+  [92751] = { xp = 115, items = {  } },
+  [92752] = { xp = 580, items = {  } },
   [92753] = { xp = 675, est = true, items = {  } },
-  [95204] = { xp = 435, est = true, items = { 280567 } },
+  [95204] = { xp = 325, est = true, items = { 280567 } },
   [95216] = { xp = 875, est = true, items = { 279876, 279877 } },
   [95646] = { xp = 1250, est = true, items = { 271664 } },
-  [95647] = { xp = 470, est = true, items = {  } },
-  [95663] = { xp = 470, est = true, items = {  } },
+  [95647] = { xp = 625, est = true, items = {  } },
+  [95663] = { xp = 625, est = true, items = {  } },
   [95664] = { xp = 1250, est = true, items = {  } },
   [95697] = { xp = 1250, est = true, items = { 280766, 280805 } },
-  [95737] = { xp = 470, est = true, items = {  } },
-  [95772] = { xp = 470, est = true, items = {  } },
-  [95810] = { xp = 1250, est = true, items = {  } },
-  [96391] = { xp = 405, est = true, items = {  } },
+  [95737] = { xp = 625, items = {  } },
+  [95772] = { xp = 625, est = true, items = {  } },
+  [95810] = { xp = 625, items = {  } },
+  [96391] = { xp = 1050, items = {  } },
   [96393] = { xp = 575, est = true, items = { 279894, 279895, 279896 } },
   [96394] = { xp = 525, est = true, items = { 279897, 280095 } },
   [96403] = { xp = 525, est = true, items = { 279898, 280096 } },
+  [96770] = { xp = 2525, est = true, items = {  } },
+  [96773] = { xp = 1650, est = true, items = {  } },
+  [96775] = { xp = 2525, est = true, items = {  } },
+  [96776] = { xp = 2450, est = true, items = {  } },
   [96800] = { xp = 1425, est = true, items = {  } },
-  [96984] = { xp = 1325, est = true, items = { 279842, 279844 } },
+  [96984] = { xp = 1325, est = true, items = { 279842, 279843, 279844 } },
   [96986] = { xp = 1325, est = true, items = { 251963, 251965 } },
   [96988] = { xp = 1325, est = true, items = { 279847, 279848 } },
+  [97196] = { xp = 1650, est = true, items = {  } },
+  [97197] = { xp = 2100, est = true, items = {  } },
   [97288] = { xp = 415, est = true, items = {  } },
-  [97289] = { xp = 415, est = true, items = {  } },
-  [97290] = { xp = 830, est = true, items = { 279864, 279865, 279867 } },
-  [97291] = { xp = 825, est = true, items = {  } },
-  [97292] = { xp = 825, est = true, items = {  } },
-  [98815] = { xp = 1150, est = true, items = {  } },
-  [98823] = { xp = 470, est = true, items = { 271766, 271767 } },
-  [98824] = { xp = 1250, est = true, items = { 271766, 271767 } },
-  [99156] = { xp = 680, est = true, items = { 286742, 286743, 286744 } },
+  [97289] = { xp = 825, items = {  } },
+  [97290] = { xp = 1650, items = { 279864, 279865, 279867 } },
+  [97291] = { xp = 825, items = {  } },
+  [97292] = { xp = 825, items = {  } },
+  [98815] = { xp = 575, items = {  } },
+  [98823] = { xp = 625, est = true, items = { 271766, 271767 } },
+  [98824] = { xp = 625, est = true, items = { 271766, 271767 } },
+  [99156] = { xp = 910, items = { 286742, 286743, 286744 } },
 }
 

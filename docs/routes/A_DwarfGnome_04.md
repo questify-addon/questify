@@ -1,18 +1,18 @@
 # A_DwarfGnome_04 — Westfall
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
 | Level band | 13-16 |
-| Simulated level | 14.00 -> 16.98 |
+| Simulated level | 14.00 -> 16.96 |
 | Time | 133 min |
-| XP gained | 41074 |
-| XP/h | 18491 |
+| XP gained | 39330 |
+| XP/h | 17712 |
 | Steps | 60 |
 | Quests turned in | 18 |
 | Hubs | 5 |
-| Median ratio (XP/s) | 6.58 |
+| Median ratio (XP/s) | 6.39 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -23,22 +23,22 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 |---|---|---|---|---|---|
 | 1 | 36 | Westfall Stew | 10 | 420 | 14 |
 | 2 | 109 | Report to Gryan Stoutmantle | 10 | 630 | 14 |
-| 3 | 9 | The Killing Fields | 15 | 1050 | 14 |
-| 4 | 12 | The People's Militia | 12 | 910 | 14 |
-| 5 | 92742 | Testing the Wells | 12 | 910 est. | 14 |
-| 6 | 92744 | Murloc Gills | 12 | 910 est. | 14 |
-| 7 | 92909 | Harvesting the Harvesters | 15 | 1050 est. | 15 |
+| 3 | 12 | The People's Militia | 12 | 910 | 14 |
+| 4 | 92744 | Murloc Gills | 12 | 455 | 14 |
+| 5 | 92742 | Testing the Wells | 12 | 455 | 14 |
+| 6 | 153 | Red Leather Bandanas | 15 | 1050 | 15 |
+| 7 | 92909 | Harvesting the Harvesters | 15 | 800 | 15 |
 | 8 | 13 | The People's Militia | 14 | 980 | 16 |
 | 9 | 102 | Patrolling Westfall | 14 | 980 | 16 |
-| 10 | 153 | Red Leather Bandanas | 15 | 1050 | 16 |
-| 11 | 92745 | The State of the Mines | 14 | 980 est. | 16 |
-| 12 | 103 | Keeper of the Flame | 16 | 1150 | 16 |
-| 13 | 92747 | Moonbrook Espionage | 15 | 1050 est. | 16 |
-| 14 | 14 | The People's Militia | 17 | 1600 | 16 |
+| 10 | 92745 | The State of the Mines | 14 | 490 | 16 |
+| 11 | 103 | Keeper of the Flame | 16 | 1150 | 16 |
+| 12 | 92747 | Moonbrook Espionage | 15 | 800 | 16 |
+| 13 | 14 | The People's Militia | 17 | 1600 | 16 |
+| 14 | 9 | The Killing Fields | 15 | 1050 | 16 |
 | 15 | 22 | Goretusk Liver Pie | 12 | 910 | 16 |
 | 16 | 151 | Poor Old Blanchy | 14 | 1250 | 16 |
 | 17 | 64 | The Forgotten Heirloom | 12 | 910 | 16 |
-| 18 | 92748 | Explosive Consultation | 16 | 580 est. | 16 |
+| 18 | 92748 | Explosive Consultation | 16 | 580 | 16 |
 
 ## Dropped quests
 
@@ -130,13 +130,13 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 151 | Poor Old Blanchy | 14 | 1250 | 0 | 133 | 133 | 9.36 | 9.36 | 1 |  |
 | 152 | The Coast Isn't Clear | 19 | 4914 | 0 | 1255 | 768 | 3.91 | 6.39 | 4 | far |
 | 153 | Red Leather Bandanas | 15 | 5069 | 1463 | 961 | 800 | 5.27 | 6.33 | 1 |  |
-| 79008 | ... and that note you found | 22 | 870 | 0 | 82 | 10 | 10.60 | 87.00 | 0 |  |
-| 92742 | Testing the Wells | 12 | 2373 | 1463 | 283 | 33 | 7.39 | 21.10 | 2 |  |
-| 92744 | Murloc Gills | 12 | 3773 | 1463 | 592 | 370 | 6.67 | 12.44 | 1 |  |
-| 92745 | The State of the Mines | 14 | 3477 | 1463 | 560 | 324 | 6.95 | 15.32 | 2 |  |
-| 92747 | Moonbrook Espionage | 15 | 2513 | 1463 | 256 | 117 | 8.15 | 32.15 | 1 |  |
+| 79008 | ... and that note you found | 22 | 1750 | 0 | 82 | 10 | 21.32 | 175.00 | 0 |  |
+| 92742 | Testing the Wells | 12 | 1918 | 1463 | 283 | 33 | 6.39 | 18.25 | 2 |  |
+| 92744 | Murloc Gills | 12 | 3318 | 1463 | 592 | 370 | 5.92 | 11.04 | 1 |  |
+| 92745 | The State of the Mines | 14 | 2987 | 1463 | 560 | 324 | 6.22 | 13.71 | 2 |  |
+| 92747 | Moonbrook Espionage | 15 | 2263 | 1463 | 256 | 117 | 7.65 | 30.17 | 1 |  |
 | 92748 | Explosive Consultation | 16 | 2215 | 1635 | 346 | 12 | 6.39 | 174.07 | 0 |  |
-| 92909 | Harvesting the Harvesters | 15 | 4188 | 0 | 884 | 884 | 4.74 | 4.74 | 1 |  |
+| 92909 | Harvesting the Harvesters | 15 | 3938 | 0 | 886 | 886 | 4.44 | 4.44 | 1 |  |
 
 ## Itinerary
 
@@ -147,67 +147,67 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
 | 1 | A | 64 | The Forgotten Heirloom | 1436 | 60.0, 19.4 | 1459 |  |
-| 2 | A | 36 | Westfall Stew | 1436 | 59.9, 19.4 | 1 |  |
-| 3 | A | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 0 |  |
-| 4 | A | 22 | Goretusk Liver Pie | 1436 | 56.4, 30.5 | 286 |  |
-| 5 | T | 36 | Westfall Stew | 1436 | 56.4, 30.5 | 0 |  |
+| 2 | A | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 1 |  |
+| 3 | A | 36 | Westfall Stew | 1436 | 59.9, 19.4 | 0 |  |
+| 4 | T | 36 | Westfall Stew | 1436 | 56.4, 30.5 | 286 |  |
+| 5 | A | 22 | Goretusk Liver Pie | 1436 | 56.4, 30.5 | 0 |  |
 | 6 | A | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 21 |  |
 | 7 | A | 109 | Report to Gryan Stoutmantle | 1436 | 56.0, 31.2 | 0 |  |
 | 8 | A | 12 | The People's Militia | 1436 | 56.3, 47.5 | 380 |  |
-| 9 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 0 |  |
-| 10 | A | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
-| 11 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 186 |  |
-| 12 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 0 |  |
-| 13 | O | 9 | The Killing Fields | 1436 | 38.8, 51.5 | 480 |  |
-| 14 | A | 79008 | ... and that note you found | 1436 | 37.4, 50.7 | 51 |  |
-| 15 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 443 |  |
-| 16 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 404 |  |
-| 17 | O | 12 | The People's Militia | 1436 | 44.8, 26.0 | 415 |  |
-| 18 | O | 92742 | Testing the Wells | 1436 | 46.1, 38.1 | 287 |  |
-| 19 | A | 92909 | Harvesting the Harvesters | 1436 | 51.5, 32.3 | 234 |  |
-| 20 | O | 92742 | Testing the Wells | 1436 | 56.6, 18.7 | 364 | near #3 (went 1004 yd away) |
-| 21 | O | 151 | Poor Old Blanchy | 1436 | 57.3, 18.3 | 24 | near #3 (went 1026 yd away) |
-| 22 | T | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 304 | near #7 (went 857 yd away) |
-| 23 | T | 12 | The People's Militia | 1436 | 56.3, 47.5 | 380 | near #10 (went 1043 yd away) |
-| 24 | A | 13 | The People's Militia | 1436 | 56.3, 47.5 | 0 | near #10 (went 1043 yd away) |
-| 25 | A | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 151 | near #12 (went 1080 yd away) |
-| 26 | T | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 52 | near #12 (went 1048 yd away) |
-| 27 | T | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 |  |
-| 28 | A | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 0 |  |
-| 29 | O | 13 | The People's Militia | 1436 | 43.7, 68.9 | 482 |  |
+| 9 | A | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
+| 10 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 3 |  |
+| 11 | F |  | flight path | 1436 | 56.5, 52.6 | 119 |  |
+| 12 | A | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 90 |  |
+| 13 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 52 |  |
+| 14 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 |  |
+| 15 | O | 92742 | Testing the Wells | 1436 | 46.1, 38.1 | 412 |  |
+| 16 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 516 |  |
+| 17 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 404 |  |
+| 18 | O | 12 | The People's Militia | 1436 | 44.8, 26.0 | 415 |  |
+| 19 | O | 153 | Red Leather Bandanas | 1436 | 45.3, 22.8 | 76 |  |
+| 20 | O | 92742 | Testing the Wells | 1436 | 56.6, 18.7 | 406 | near #3 (went 943 yd away) |
+| 21 | O | 151 | Poor Old Blanchy | 1436 | 57.3, 18.3 | 24 | near #3 (went 967 yd away) |
+| 22 | A | 92909 | Harvesting the Harvesters | 1436 | 51.5, 32.3 | 383 |  |
+| 23 | T | 12 | The People's Militia | 1436 | 56.3, 47.5 | 392 | near #11 (went 1043 yd away) |
+| 24 | A | 13 | The People's Militia | 1436 | 56.3, 47.5 | 0 | near #11 (went 1043 yd away) |
+| 25 | T | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 185 | near #14 (went 1048 yd away) |
+| 26 | T | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 0 | near #14 (went 1048 yd away) |
+| 27 | A | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 0 |  |
+| 28 | T | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 52 |  |
+| 29 | O | 13 | The People's Militia | 1436 | 43.7, 68.9 | 517 |  |
 | 30 | A | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 623 |  |
 | 31 | O | 102 | Patrolling Westfall | 1436 | 31.0, 68.8 | 404 |  |
 | 32 | O | 92745 | The State of the Mines | 1436 | 30.0, 47.3 | 503 |  |
-| 33 | O | 153 | Red Leather Bandanas | 1436 | 45.3, 22.8 | 784 | near #17 (went 1570 yd away) |
-| 34 | O | 92745 | The State of the Mines | 1436 | 45.3, 20.0 | 63 | near #17 (went 1629 yd away) |
-| 35 | O | 64 | The Forgotten Heirloom | 1436 | 49.3, 19.3 | 142 |  |
-| 36 | O | 103 | Keeper of the Flame | 1436 | 52.8, 23.8 | 161 |  |
-| 37 | O | 92909 | Harvesting the Harvesters | 1436 | 53.1, 24.0 | 9 |  |
-| 38 | T | 92909 | Harvesting the Harvesters | 1436 | 51.5, 32.3 | 201 | near #19 (went 1462 yd away) |
-| 39 | O | 22 | Goretusk Liver Pie | 1436 | 53.7, 42.9 | 259 | near #24 (went 1302 yd away) |
-| 40 | T | 13 | The People's Militia | 1436 | 56.3, 47.5 | 141 | near #24 (went 1286 yd away) |
-| 41 | A | 14 | The People's Militia | 1436 | 56.3, 47.5 | 0 |  |
-| 42 | T | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
-| 43 | F |  | flight path | 1436 | 56.5, 52.6 | 117 |  |
-| 44 | T | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 90 | near #28 (went 1139 yd away) |
-| 45 | T | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 52 |  |
-| 46 | A | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 0 |  |
-| 47 | O | 92747 | Moonbrook Espionage | 1436 | 43.1, 68.8 | 494 | near #29 (went 1176 yd away) |
-| 48 | T | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 608 | near #30 (went 1697 yd away) |
-| 49 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 802 |  |
-| 50 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 551 | near #46 (went 1101 yd away) |
-| 51 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #46 (went 1101 yd away) |
-| 52 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 185 | near #43 (went 1286 yd away) |
-| 53 | T | 22 | Goretusk Liver Pie | 1436 | 56.4, 30.5 | 396 | near #22 (went 1591 yd away) |
+| 33 | A | 79008 | ... and that note you found | 1436 | 37.4, 50.7 | 272 |  |
+| 34 | O | 9 | The Killing Fields | 1436 | 38.8, 51.5 | 51 |  |
+| 35 | O | 92745 | The State of the Mines | 1436 | 45.3, 20.0 | 768 | near #19 (went 1629 yd away) |
+| 36 | O | 64 | The Forgotten Heirloom | 1436 | 49.3, 19.3 | 142 |  |
+| 37 | O | 103 | Keeper of the Flame | 1436 | 52.8, 23.8 | 161 |  |
+| 38 | O | 92909 | Harvesting the Harvesters | 1436 | 53.1, 24.0 | 9 |  |
+| 39 | T | 92909 | Harvesting the Harvesters | 1436 | 51.5, 32.3 | 201 | near #22 (went 1462 yd away) |
+| 40 | O | 22 | Goretusk Liver Pie | 1436 | 53.7, 42.9 | 259 | near #24 (went 1302 yd away) |
+| 41 | T | 13 | The People's Militia | 1436 | 56.3, 47.5 | 141 | near #24 (went 1286 yd away) |
+| 42 | A | 14 | The People's Militia | 1436 | 56.3, 47.5 | 0 |  |
+| 43 | T | 102 | Patrolling Westfall | 1436 | 56.4, 47.6 | 3 |  |
+| 44 | T | 92745 | The State of the Mines | 1436 | 52.5, 53.0 | 186 | near #28 (went 1101 yd away) |
+| 45 | A | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 0 | near #28 (went 1101 yd away) |
+| 46 | O | 92747 | Moonbrook Espionage | 1436 | 43.1, 68.8 | 494 | near #29 (went 1176 yd away) |
+| 47 | T | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 608 | near #30 (went 1697 yd away) |
+| 48 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 802 |  |
+| 49 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 551 | near #45 (went 1101 yd away) |
+| 50 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #45 (went 1101 yd away) |
+| 51 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 185 | near #43 (went 1286 yd away) |
+| 52 | T | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 380 | near #7 (went 1569 yd away) |
+| 53 | T | 22 | Goretusk Liver Pie | 1436 | 56.4, 30.5 | 21 | near #7 (went 1591 yd away) |
 | 54 | T | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 286 | near #21 (went 1873 yd away) |
 | 55 | T | 64 | The Forgotten Heirloom | 1436 | 60.0, 19.4 | 1 | near #21 (went 1875 yd away) |
 | 56 | F |  | flight path | 1453 | 71.3, 72.2 | 1107 |  |
-| 57 | A | 168 | Collecting Memories | 1453 | 70.3, 40.8 | 364 |  |
-| 58 | A | 167 | Oh Brother. . . | 1453 | 70.3, 40.8 | 0 |  |
+| 57 | A | 167 | Oh Brother. . . | 1453 | 70.3, 40.8 | 364 |  |
+| 58 | A | 168 | Collecting Memories | 1453 | 70.3, 40.8 | 0 |  |
 | 59 | A | 2040 | Underground Assault | 1453 | 62.6, 34.1 | 154 |  |
 | 60 | T | 92748 | Explosive Consultation | 1453 | 61.9, 30.6 | 43 |  |
 
-Walking between tasks: 14975 yd (~36 min at 7 yd/s).
+Walking between tasks: 14939 yd (~36 min at 7 yd/s).
 
 ## Qualité
 

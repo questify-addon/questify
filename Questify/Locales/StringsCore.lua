@@ -6,6 +6,7 @@ Q:RegisterStrings({
   enUS = {
     NEED_QUESTIEDB = "QuestieDB is required: install it from CurseForge.",
     QUESTIEDB_TOO_OLD = "Your QuestieDB is too old (contract 4 required): update it from CurseForge.",
+    QUESTIEDB_DATA_OLD = "Your QuestieDB (%s) is older than the one the routes were built on (%s): some steps will have no arrow and must be skipped by hand. Update QuestieDB from CurseForge.",
     ROUTE_END = "End of the route for now: the next chapters are coming soon.",
     ROUTE_NEXT = "Next chapter: %s.",
     GUIDE_INVALID = "Invalid guide %s: %s",
@@ -70,6 +71,7 @@ Q:RegisterStrings({
   frFR = {
     NEED_QUESTIEDB = "QuestieDB est requis : installe-le depuis CurseForge.",
     QUESTIEDB_TOO_OLD = "Ta version de QuestieDB est trop ancienne (contrat 4 requis) : mets-la à jour depuis CurseForge.",
+    QUESTIEDB_DATA_OLD = "Ta QuestieDB (%s) est plus ancienne que celle des routes (%s) : certaines étapes n'auront pas de flèche et seront à passer à la main. Mets QuestieDB à jour depuis CurseForge.",
     ROUTE_END = "Fin de la route pour l'instant : les chapitres suivants arrivent bientôt.",
     ROUTE_NEXT = "Chapitre suivant : %s.",
     GUIDE_INVALID = "Guide %s invalide : %s",

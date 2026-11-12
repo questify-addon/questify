@@ -496,6 +496,9 @@ plans.Horde = {
     id = "H_01", title = "The Barrens", faction = "Horde", zones = { BARRENS },
     minLevel = 12, maxLevel = 17, entry = { BARRENS, 52.0, 30.0 }, next = "H_02",
     flightPaths = { "Crossroads, The Barrens", "Ratchet, The Barrens", "Camp Taurajo, The Barrens" },
+    -- Echeyakee (3475) : niveau 16-60 dans QuestieDB depuis v1.0.14 (16-16 en v1.0.12, quête de niveau 16) ; le
+    -- niveau moyen 38 rendait l'objectif « dangereux » jusqu'au niveau 36. À vérifier en jeu.
+    safeLevel = { [881] = 16 },
     -- Chasse au trésor du Cozy Sleeping Bag : pas ici. Sa note (79007, Burned-Out Remains du sud des Tarides) se rend
     -- à la Nailed Plank de la Marche de l'Ouest, qui donne Stepping Stones, et la route Horde n'y passe qu'en H_09 :
     -- prise ici, la note resterait huit chapitres dans le journal (report limité à deux chapitres, build.lua). La

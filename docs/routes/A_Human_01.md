@@ -1,18 +1,18 @@
 # A_Human_01 — Northshire
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.22 |
+| Simulated level | 1.00 -> 6.19 |
 | Time | 44 min |
-| XP gained | 8383 |
-| XP/h | 11418 |
+| XP gained | 8275 |
+| XP/h | 11271 |
 | Steps | 71 |
 | Quests turned in | 21 |
 | Hubs | 2 |
-| Median ratio (XP/s) | 3.11 |
+| Median ratio (XP/s) | 2.86 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -22,26 +22,26 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
 | 1 | 783 | A Threat Within | 1 | 40 | 1 |
-| 2 | 91741 | Nibbled-On Book | 2 | 85 est. | 2 |
-| 3 | 92124 | Book Inventory | 2 | 85 est. | 2 |
+| 2 | 91741 | Nibbled-On Book | 2 | 85 | 2 |
+| 3 | 92124 | Book Inventory | 2 | 15 | 2 |
 | 4 | 7 | Kobold Camp Cleanup | 2 | 170 | 2 |
 | 5 | 5261 | Eagan Peltskinner | 2 | 85 | 2 |
 | 6 | 18 | Brotherhood of Thieves | 4 | 355 | 4 |
 | 7 | 3903 | Milly Osworth | 4 | 35 | 4 |
-| 8 | 91743 | Rascally Rodents | 2 | 170 est. | 4 |
+| 8 | 91743 | Rascally Rodents | 2 | 170 | 4 |
 | 9 | 15 | Investigate Echo Ridge | 3 | 250 | 4 |
 | 10 | 33 | Wolves Across the Border | 2 | 170 | 5 |
-| 11 | 91745 | Mining Consultant | 3 | 250 est. | 5 |
+| 11 | 91745 | Mining Consultant | 3 | 25 | 5 |
 | 12 | 21 | Skirmish at Echo Ridge | 5 | 450 | 5 |
-| 13 | 91752 | The Big Picture | 3 | 250 est. | 5 |
-| 14 | 91758 | Follow That Kobold! | 4 | 180 est. | 5 |
+| 13 | 91752 | The Big Picture | 3 | 315 | 5 |
+| 14 | 91758 | Follow That Kobold! | 4 | 35 | 5 |
 | 15 | 3904 | Milly's Harvest | 4 | 180 | 5 |
 | 16 | 3905 | Grape Manifest | 4 | 355 | 5 |
 | 17 | 6 | Bounty on Garrick Padfoot | 5 | 335 | 5 |
-| 18 | 96627 | The Adventurer | 6 | 135 est. | 6 |
+| 18 | 96627 | The Adventurer | 6 | 405 | 5 |
 | 19 | 2158 | Rest and Relaxation | 5 | 110 | 6 |
 | 20 | 54 | Report to Goldshire | 5 | 225 | 6 |
-| 21 | 91772 | Shhh! We're Hunting Kobolds | 4 | 355 est. | 6 |
+| 21 | 91772 | Shhh! We're Hunting Kobolds | 4 | 355 | 6 |
 
 ## Dropped quests
 
@@ -83,27 +83,27 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 6 | Bounty on Garrick Padfoot | 5 | 395 | 0 | 144 | 74 | 2.73 | 5.33 | 1 |  |
-| 7 | Kobold Camp Cleanup | 2 | 670 | 0 | 249 | 218 | 3.07 | 3.93 | 1 |  |
-| 15 | Investigate Echo Ridge | 3 | 800 | 0 | 264 | 234 | 3.31 | 4.55 | 1 |  |
-| 18 | Brotherhood of Thieves | 4 | 1510 | 0 | 511 | 496 | 2.67 | 3.11 | 1 |  |
-| 21 | Skirmish at Echo Ridge | 5 | 1110 | 0 | 341 | 262 | 3.53 | 5.91 | 1 |  |
+| 6 | Bounty on Garrick Padfoot | 5 | 395 | 0 | 144 | 70 | 2.73 | 5.57 | 1 |  |
+| 7 | Kobold Camp Cleanup | 2 | 670 | 0 | 249 | 218 | 3.21 | 4.20 | 1 |  |
+| 15 | Investigate Echo Ridge | 3 | 800 | 0 | 264 | 218 | 3.52 | 5.05 | 1 |  |
+| 18 | Brotherhood of Thieves | 4 | 1510 | 0 | 511 | 493 | 2.67 | 3.26 | 1 |  |
+| 21 | Skirmish at Echo Ridge | 5 | 1110 | 0 | 341 | 262 | 3.93 | 6.57 | 1 |  |
 | 33 | Wolves Across the Border | 2 | 920 | 0 | 345 | 327 | 2.66 | 2.81 | 1 |  |
-| 54 | Report to Goldshire | 5 | 459 | 234 | 99 | 14 | 4.63 | 32.72 | 0 |  |
-| 783 | A Threat Within | 1 | 40 | 0 | 25 | 25 | 2.81 | 3.31 | 0 |  |
-| 2158 | Rest and Relaxation | 5 | 272 | 162 | 98 | 34 | 2.76 | 7.82 | 0 |  |
-| 3903 | Milly Osworth | 4 | 81 | 46 | 44 | 44 | 2.08 | 2.57 | 0 |  |
-| 3904 | Milly's Harvest | 4 | 180 | 0 | 177 | 127 | 2.15 | 2.89 | 1 |  |
-| 3905 | Grape Manifest | 4 | 355 | 0 | 30 | 30 | 11.57 | 11.57 | 0 |  |
-| 5261 | Eagan Peltskinner | 2 | 111 | 26 | 31 | 31 | 2.77 | 2.89 | 0 |  |
-| 91741 | Nibbled-On Book | 2 | 345 | 0 | 143 | 116 | 2.91 | 3.57 | 0 |  |
-| 91743 | Rascally Rodents | 2 | 1002 | 0 | 376 | 343 | 3.11 | 3.84 | 1 |  |
-| 91745 | Mining Consultant | 3 | 250 | 0 | 43 | 16 | 4.55 | 9.42 | 0 |  |
-| 91752 | The Big Picture | 3 | 305 | 0 | 94 | 34 | 4.12 | 7.96 | 1 |  |
-| 91758 | Follow That Kobold! | 4 | 180 | 0 | 33 | 33 | 5.10 | 7.36 | 0 |  |
-| 91772 | Shhh! We're Hunting Kobolds | 4 | 609 | 254 | 121 | 69 | 5.00 | 8.74 | 1 |  |
-| 92124 | Book Inventory | 2 | 85 | 0 | 16 | 16 | 3.20 | 3.91 | 0 |  |
-| 96627 | The Adventurer | 6 | 335 | 200 | 86 | 14 | 3.88 | 23.91 | 0 |  |
+| 54 | Report to Goldshire | 5 | 457 | 232 | 99 | 14 | 4.61 | 32.55 | 0 |  |
+| 783 | A Threat Within | 1 | 40 | 0 | 25 | 25 | 2.86 | 3.48 | 0 |  |
+| 2158 | Rest and Relaxation | 5 | 270 | 160 | 98 | 34 | 2.75 | 7.77 | 0 |  |
+| 3903 | Milly Osworth | 4 | 80 | 45 | 44 | 35 | 2.07 | 3.02 | 0 |  |
+| 3904 | Milly's Harvest | 4 | 180 | 0 | 177 | 112 | 2.15 | 3.31 | 1 |  |
+| 3905 | Grape Manifest | 4 | 355 | 0 | 30 | 24 | 11.57 | 14.30 | 0 |  |
+| 5261 | Eagan Peltskinner | 2 | 111 | 26 | 31 | 25 | 2.76 | 2.96 | 0 |  |
+| 91741 | Nibbled-On Book | 2 | 345 | 0 | 143 | 116 | 2.57 | 3.15 | 0 |  |
+| 91743 | Rascally Rodents | 2 | 1002 | 0 | 376 | 343 | 2.75 | 3.40 | 1 |  |
+| 91745 | Mining Consultant | 3 | 25 | 0 | 43 | 16 | 3.05 | 6.37 | 0 |  |
+| 91752 | The Big Picture | 3 | 370 | 0 | 94 | 34 | 3.90 | 7.63 | 1 |  |
+| 91758 | Follow That Kobold! | 4 | 35 | 0 | 33 | 33 | 3.87 | 5.69 | 0 |  |
+| 91772 | Shhh! We're Hunting Kobolds | 4 | 606 | 251 | 121 | 67 | 4.98 | 8.98 | 1 |  |
+| 92124 | Book Inventory | 2 | 15 | 0 | 16 | 16 | 2.67 | 3.26 | 0 |  |
+| 96627 | The Adventurer | 6 | 603 | 198 | 86 | 14 | 6.97 | 42.97 | 0 |  |
 
 ## Itinerary
 

@@ -1090,6 +1090,7 @@ local function installApi()
     end,
     GetAddOnMetadata = function(name, field)
       if name == "Questify" then return Mock.tocMeta[field] end
+      if name == "QuestieDB" and Mock.addons.QuestieDB then return Mock.qdbMeta[field] end
       return nil
     end,
     GetNumAddOns = function() return 0 end,
@@ -1315,6 +1316,7 @@ function Mock.reset()
   Mock.titles = {}
   Mock.calls = {}
   Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false }
+  Mock.qdbMeta = {}                              -- métadonnées du TOC de QuestieDB (Version : aucune par défaut)
   Mock.errors = {}
   Mock.prints = {}
   Mock.missingFiles = {}

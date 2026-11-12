@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 68 étapes, niveau final 6.01, ~11756 xp/h, 39 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 68 étapes, niveau final 6.14, ~13093 xp/h, 37 min.
 Q:RegisterGuide({
   id = "H_OrcTroll_01",
   title = "Valley of Trials",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Orc", "Troll" },
   minLevel = 1, maxLevel = 6,
   next = "H_OrcTroll_02",
-  sim = { steps = 68, endLevel = 6.01, xpPerHour = 11756, minutes = 39 },
+  sim = { steps = 68, endLevel = 6.14, xpPerHour = 13093, minutes = 37 },
   steps = {
     { "accept", 4641 }, -- Your Place In The World (lvl 1, ~40 xp, sim lvl 1)
     { "accept", 97279 }, -- Wayward Weapons (lvl 2, ~170 xp, sim lvl 1)
@@ -66,7 +66,7 @@ Q:RegisterGuide({
     { "turnin", 6394, xp = 445 }, -- Thazz'ril's Pick (lvl 4, ~445 xp, sim lvl 4)
     { "turnin", 794, xp = 670 }, -- Burning Blade Medallion (lvl 5, ~670 xp, sim lvl 5)
     { "accept", 805 }, -- Report to Sen'jin Village (lvl 5, ~225 xp, sim lvl 5)
-    { "accept", 96652 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
+    { "accept", 96652 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "turnin", 3084, xp = 40, race = { "Troll" }, classes = { "SHAMAN" } }, -- Rune-Inscribed Tablet (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3086, xp = 40, race = { "Troll" }, classes = { "MAGE" } }, -- Glyphic Tablet (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3089, xp = 40, race = { "Orc" }, classes = { "SHAMAN" } }, -- Rune-Inscribed Parchment (lvl 1, ~40 xp, sim lvl 5)
@@ -74,11 +74,11 @@ Q:RegisterGuide({
     { "accept", 5649, race = { "Troll" }, classes = { "PRIEST" } }, -- In Favor of Spirituality (lvl 4, ~90 xp, sim lvl 5)
     { "accept", 99123 }, -- Lost in the Shadows (lvl 8, ~700 xp, sim lvl 5)
     { "complete", 99123, at = { 1411, 51.41, 79.29 } }, -- Lost in the Shadows (lvl 8, ~700 xp, sim lvl 5)
-    { "accept", 96876, at = { 1411, 50.99, 55.72 }, note = "Loot Ukor's Lost Pack to start the quest" }, -- Ukor's Lost Pack (lvl 8, ~530 xp, sim lvl 5)
-    { "turnin", 96652, xp = 135 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
+    { "accept", 96876, at = { 1411, 50.97, 55.52 }, note = "Loot Ukor's Lost Pack to start the quest" }, -- Ukor's Lost Pack (lvl 8, ~880 xp, sim lvl 5)
+    { "turnin", 96652, xp = 405 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "turnin", 5649, xp = 90, race = { "Troll" }, classes = { "PRIEST" } }, -- In Favor of Spirituality (lvl 4, ~90 xp, sim lvl 5)
-    { "turnin", 96876, xp = 530 }, -- Ukor's Lost Pack (lvl 8, ~530 xp, sim lvl 5)
+    { "turnin", 96876, xp = 880 }, -- Ukor's Lost Pack (lvl 8, ~880 xp, sim lvl 5)
     { "turnin", 99123, xp = 700 }, -- Lost in the Shadows (lvl 8, ~700 xp, sim lvl 5)
-    { "turnin", 805, xp = 225 }, -- Report to Sen'jin Village (lvl 5, ~225 xp, sim lvl 5)
+    { "turnin", 805, xp = 225 }, -- Report to Sen'jin Village (lvl 5, ~225 xp, sim lvl 6)
   },
 })

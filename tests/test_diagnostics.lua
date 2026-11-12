@@ -115,6 +115,22 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  check_questiedb_older_than_the_routes_warns = function(t)
+    Mock.qdbMeta.Version = "1.0.14"
+    local Q = load()
+    local r = run(Q)
+    t.eq(r.questiedb.status, "warn")
+    t.ok(r.questiedb.detail:find("1.0.14", 1, true), "installed version")
+    t.ok(r.questiedb.detail:find(Q.QDB.MIN_DATA_VERSION, 1, true), "routes version")
+    Mock.reset()
+    Mock.qdbMeta.Version = Q.QDB.MIN_DATA_VERSION
+    Q = load()
+    r = run(Q)
+    t.eq(r.questiedb.status, "ok")
+    t.ok(r.questiedb.detail:find(Q.QDB.MIN_DATA_VERSION, 1, true))
+    t.eq(#Mock.errors, 0)
+  end,
+
   check_unknown_client = function(t)
     local Q = load()
     GetBuildInfo = function() return "11.2.5", "63906", "Oct 7 2026", 110205 end

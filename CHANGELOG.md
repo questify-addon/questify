@@ -1,5 +1,50 @@
 # Changelog
 
+## 0.6.1 (2026-11-12)
+
+### English
+
+**Routes on QuestieDB v1.0.15**
+- Every route rebuilt on QuestieDB v1.0.15. With that version, the 0.6.0 routes broke in a few places: chain quests
+  taken out of order in Durotar (Rocks to Rests, Whuut's the Rush) and in The Barrens (Vrang Wildgore's chain),
+  Return the Statuette in the Wetlands (it now needs a Menethil chain), Desperate Prayer for human priests and Call
+  of Fire for gnome shamans (now dwarves only).
+- My Little Friends leaves the route: its three specimens are in Stranglethorn, Arathi and Desolace.
+- Quest XP comes from what players get in game (QuestieDB traces) instead of estimates. The Tauren start is longer
+  (the Longwalker quests give 80 XP each), most chapters above level 30 gain quests.
+- NPC levels: scenario NPCs with a placeholder level (9999) no longer count, which fixes the simulated Skyborne
+  starts. New elite spawns now keep some quests out (Thousand Needles, Wetlands): to check in game.
+- Dungeon quests updated (new givers, Prehistoric Prism).
+- Class quests: Storm, Earth, and Fire is for Alliance shamans only and the Horde chain Elemental Aid is listed apart;
+  Water Sapta is no longer offered alone (it comes after Call of Water).
+- Bag quests: races as in QuestieDB (Grace of An'she and Mu'sha for Tauren only).
+
+**QuestieDB**
+- These routes need QuestieDB 1.0.15 or newer. With an older QuestieDB, one chat line at login and /qf check say
+  so: some steps have no arrow and must be skipped by hand.
+
+### Français
+
+**Routes sur QuestieDB v1.0.15**
+- Toutes les routes refaites sur QuestieDB v1.0.15. Avec cette version, les routes de la 0.6.0 cassaient à quelques
+  endroits : quêtes de chaîne prises dans le désordre à Durotar (Rocks to Rests, Whuut's the Rush) et dans les
+  Tarides (chaîne de Vrang Wildgore), Return the Statuette dans les Paluns (il faut désormais une chaîne de
+  Menethil), Desperate Prayer pour les prêtres humains et Call of Fire pour les chamans gnomes (réservées aux nains).
+- My Little Friends sort de la route : ses trois spécimens sont en Strangleronce, en Arathi et en Désolace.
+- L'XP des quêtes vient de ce que les joueurs reçoivent en jeu (relevés de QuestieDB) au lieu d'estimations. Le
+  départ Tauren est plus long (les quêtes Longwalker donnent 80 XP chacune) ; la plupart des chapitres au-delà du
+  niveau 30 gagnent des quêtes.
+- Niveaux des PNJ : les PNJ de scénario au niveau factice (9999) ne comptent plus, ce qui corrige la simulation des
+  départs Skyborne. De nouveaux élites relevés écartent quelques quêtes (Mille Pointes, Paluns) : à vérifier en jeu.
+- Quêtes de donjon mises à jour (nouveaux donneurs, Prehistoric Prism).
+- Quêtes de classe : Storm, Earth, and Fire est réservée aux chamans de l'Alliance et la chaîne Horde Elemental Aid
+  est listée à part ; Water Sapta n'est plus proposée seule (elle suit Call of Water).
+- Quêtes de sac : races comme dans QuestieDB (Grace of An'she and Mu'sha pour les Taurens seulement).
+
+**QuestieDB**
+- Ces routes demandent QuestieDB 1.0.15 ou plus récent. Avec une QuestieDB plus ancienne, une ligne au login et
+  /qf check le signalent : certaines étapes n'ont pas de flèche et sont à passer à la main.
+
 ## 0.6.0 (2026-11-10)
 
 ### English

@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 75 étapes, niveau final 33.00, ~36339 xp/h, 90 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 78 étapes, niveau final 33.00, ~34588 xp/h, 95 min.
 Q:RegisterGuide({
   id = "A_07",
   title = "Duskwood",
   faction = "Alliance",
   minLevel = 32, maxLevel = 33,
   next = "A_09",
-  sim = { steps = 75, endLevel = 33.00, xpPerHour = 36339, minutes = 90 },
+  sim = { steps = 78, endLevel = 33.00, xpPerHour = 34588, minutes = 95 },
   steps = {
     { "note", "Not running Excavation Site: Wetlands? Abandon Highland Hides", optional = true, dungeon = "Excavation Site: Wetlands" },
     { "hearth", 1437 }, -- pierre de foyer
@@ -25,14 +25,16 @@ Q:RegisterGuide({
     { "turnin", 173, xp = 1150 }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
     { "accept", 221 }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
     { "complete", 221, at = { 1431, 64.06, 72.31 } }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
-    { "accept", 96138, at = { 1431, 43.94, 67.21 }, note = "Loot Merrick's Bow to start the quest" }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
+    { "accept", 81741 }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
     { "accept", 134 }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
     { "complete", 58, at = { 1431, 24.44, 33.35 } }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
     { "accept", 225 }, -- The Weathered Grave (lvl 35, ~690 xp, sim lvl 32)
     { "accept", 68 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
     { "complete", 134, at = { 1431, 33.42, 76.35 } }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
-    { "complete", 96138, at = { 1431, 34.66, 75.98 } }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
     { "complete", 181, at = { 1431, 38, 80 } }, -- Look To The Stars (lvl 30, ~2450 xp, sim lvl 32)
+    { "complete", 81741, at = { 1431, 48.37, 72.85 } }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 96138, at = { 1431, 43.37, 68.23 }, note = "Loot Merrick's Bow to start the quest" }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
+    { "complete", 96138, at = { 1431, 34.66, 75.98 } }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
     { "turnin", 134, xp = 1200 }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
     { "accept", 160 }, -- Note to the Mayor (lvl 30, ~610 xp, sim lvl 32)
     { "turnin", 160, xp = 610 }, -- Note to the Mayor (lvl 30, ~610 xp, sim lvl 32)
@@ -48,11 +50,12 @@ Q:RegisterGuide({
     { "accept", 253 }, -- Bride of the Embalmer (lvl 30, ~3650 xp, sim lvl 32)
     { "turnin", 68, xp = 1700 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
     { "accept", 69 }, -- The Legend of Stalvan (lvl 28, ~570 xp, sim lvl 32)
-    { "turnin", 58, xp = 2450 }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
     { "turnin", 227, xp = 275 }, -- Morgan Ladimore (lvl 35, ~275 xp, sim lvl 32)
+    { "turnin", 58, xp = 2450 }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
     { "turnin", 221, xp = 1750 }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
     { "accept", 222 }, -- Worgen in the Woods (lvl 31, ~1900 xp, sim lvl 32)
     { "complete", 222, at = { 1431, 72.52, 71.17 } }, -- Worgen in the Woods (lvl 31, ~1900 xp, sim lvl 32)
+    { "turnin", 81741, xp = 2200 }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
     { "complete", 253, at = { 1431, 28.82, 30.91 } }, -- Bride of the Embalmer (lvl 30, ~3650 xp, sim lvl 32)
     { "turnin", 69, xp = 570 }, -- The Legend of Stalvan (lvl 28, ~570 xp, sim lvl 32)
     { "accept", 70 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
@@ -85,6 +88,6 @@ Q:RegisterGuide({
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 32)
-    { "level", 33, at = { 1431, 77.35, 36.19 }, note = "About 31 more mobs near the last objective" }, -- farm de niveau
+    { "level", 33, at = { 1431, 77.35, 36.19 }, note = "About 20 more mobs near the last objective" }, -- farm de niveau
   },
 })

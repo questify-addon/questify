@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 74 étapes, niveau final 6.02, ~12667 xp/h, 36 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 74 étapes, niveau final 6.01, ~12885 xp/h, 36 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_01",
   title = "Coldridge Valley",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 1, maxLevel = 6,
   next = "A_DwarfGnome_02",
-  sim = { steps = 74, endLevel = 6.02, xpPerHour = 12667, minutes = 36 },
+  sim = { steps = 74, endLevel = 6.01, xpPerHour = 12885, minutes = 36 },
   steps = {
     { "accept", 179 }, -- Dwarven Outfitters (lvl 1, ~80 xp, sim lvl 1)
     { "complete", 179, at = { 1426, 28.87, 74.48 } }, -- Dwarven Outfitters (lvl 1, ~80 xp, sim lvl 1)
@@ -25,8 +25,8 @@ Q:RegisterGuide({
     { "turnin", 3364, xp = 225 }, -- Scalding Mornbrew Delivery (lvl 5, ~225 xp, sim lvl 4)
     { "accept", 3365 }, -- Bring Back the Mug (lvl 5, ~450 xp, sim lvl 4)
     { "accept", 1599, classes = { "WARLOCK" } }, -- Beginnings (lvl 4, ~355 xp, sim lvl 4)
-    { "accept", 94373, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~355 xp, sim lvl 4)
-    { "accept", 97277 }, -- Grund and Gozwin (lvl 6, ~540 xp, sim lvl 4)
+    { "accept", 94373, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~270 xp, sim lvl 4)
+    { "accept", 97277 }, -- Grund and Gozwin (lvl 6, ~405 xp, sim lvl 4)
     { "accept", 3361 }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 4)
     { "turnin", 179, xp = 80 }, -- Dwarven Outfitters (lvl 1, ~80 xp, sim lvl 4)
     { "accept", 3106, race = { "Dwarf" }, classes = { "WARRIOR" } }, -- Simple Rune (lvl 1, ~40 xp, sim lvl 4)
@@ -45,7 +45,7 @@ Q:RegisterGuide({
     { "complete", 170, at = { 1426, 31.05, 75.75 } }, -- A New Threat (lvl 2, ~170 xp, sim lvl 4)
     { "complete", 218, at = { 1426, 30.48, 80.15 } }, -- The Stolen Journal (lvl 5, ~560 xp, sim lvl 4)
     { "complete", 1599, at = { 1426, 29.67, 81.38 }, classes = { "WARLOCK" } }, -- Beginnings (lvl 4, ~355 xp, sim lvl 4)
-    { "complete", 94373, at = { 1426, 28.99, 80.42 }, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~355 xp, sim lvl 4)
+    { "complete", 94373, at = { 1426, 28.99, 80.42 }, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~270 xp, sim lvl 4)
     { "complete", 3361, obj = 3, at = { 1426, 26.33, 79.28 } }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 4)
     { "complete", 3361, obj = 2, at = { 1426, 22.78, 80 } }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 4)
     { "complete", 3361, at = { 1426, 20.88, 76.07 } }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 4)
@@ -55,8 +55,8 @@ Q:RegisterGuide({
     { "turnin", 218, xp = 560 }, -- The Stolen Journal (lvl 5, ~560 xp, sim lvl 4)
     { "turnin", 234, xp = 270 }, -- Coldridge Valley Mail Delivery (lvl 4, ~270 xp, sim lvl 4)
     { "accept", 282 }, -- Senir's Observations (lvl 5, ~335 xp, sim lvl 5)
-    { "complete", 97277, at = { 1426, 27.27, 62.86 } }, -- Grund and Gozwin (lvl 6, ~540 xp, sim lvl 5)
-    { "turnin", 97277, xp = 540 }, -- Grund and Gozwin (lvl 6, ~540 xp, sim lvl 5)
+    { "complete", 97277, at = { 1426, 27.27, 62.86 } }, -- Grund and Gozwin (lvl 6, ~405 xp, sim lvl 5)
+    { "turnin", 97277, xp = 405 }, -- Grund and Gozwin (lvl 6, ~405 xp, sim lvl 5)
     { "turnin", 3106, xp = 40, race = { "Dwarf" }, classes = { "WARRIOR" } }, -- Simple Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3108, xp = 40, race = { "Dwarf" }, classes = { "HUNTER" } }, -- Etched Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3110, xp = 40, race = { "Dwarf" }, classes = { "PRIEST" } }, -- Hallowed Rune (lvl 1, ~40 xp, sim lvl 5)
@@ -67,24 +67,24 @@ Q:RegisterGuide({
     { "turnin", 98581, xp = 40, race = { "Dwarf" }, classes = { "SHAMAN" } }, -- Archaic Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 1599, xp = 355, classes = { "WARLOCK" } }, -- Beginnings (lvl 4, ~355 xp, sim lvl 5)
     { "accept", 5626, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
-    { "turnin", 94373, xp = 355, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~355 xp, sim lvl 5)
-    { "accept", 94374, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~180 xp, sim lvl 5)
+    { "turnin", 94373, xp = 270, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~270 xp, sim lvl 5)
+    { "accept", 94374, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~270 xp, sim lvl 5)
     { "turnin", 3361, xp = 250 }, -- A Refugee's Quandary (lvl 3, ~250 xp, sim lvl 5)
     { "turnin", 3107, xp = 40, race = { "Dwarf" }, classes = { "PALADIN" } }, -- Consecrated Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3109, xp = 40, race = { "Dwarf" }, classes = { "ROGUE" } }, -- Encrypted Rune (lvl 1, ~40 xp, sim lvl 5)
     { "turnin", 3113, xp = 40, race = { "Gnome" }, classes = { "ROGUE" } }, -- Encrypted Memorandum (lvl 1, ~40 xp, sim lvl 5)
-    { "turnin", 94374, xp = 180, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~180 xp, sim lvl 5)
-    { "accept", 94375, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~180 xp, sim lvl 5)
-    { "turnin", 94375, xp = 180, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~180 xp, sim lvl 5)
+    { "turnin", 94374, xp = 270, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~270 xp, sim lvl 5)
+    { "accept", 94375, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~445 xp, sim lvl 5)
+    { "turnin", 94375, xp = 445, classes = { "SHAMAN" } }, -- Call of Earth (lvl 4, ~445 xp, sim lvl 5)
     { "turnin", 170, xp = 170 }, -- A New Threat (lvl 2, ~170 xp, sim lvl 5)
     { "turnin", 282, xp = 335 }, -- Senir's Observations (lvl 5, ~335 xp, sim lvl 5)
     { "accept", 420 }, -- Senir's Observations (lvl 5, ~335 xp, sim lvl 5)
-    { "accept", 96628 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
+    { "accept", 96628 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "accept", 2160 }, -- Supplies to Tannok (lvl 5, ~110 xp, sim lvl 5)
-    { "turnin", 96628, xp = 135 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
+    { "turnin", 96628, xp = 405 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "turnin", 420, xp = 335 }, -- Senir's Observations (lvl 5, ~335 xp, sim lvl 5)
     { "turnin", 2160, xp = 110 }, -- Supplies to Tannok (lvl 5, ~110 xp, sim lvl 5)
     { "turnin", 5626, xp = 90, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
-    { "level", 6, at = { 1426, 41.94, 47.66 }, note = "About 10 more mobs here (Wendigo, level 6)" }, -- farm de niveau
+    { "level", 6, at = { 1426, 41.94, 47.66 }, note = "About 8 more mobs here (Wendigo, level 6)" }, -- farm de niveau
   },
 })

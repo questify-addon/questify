@@ -1,19 +1,18 @@
 # H_OrcTroll_01 — Valley of Trials
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.01 |
-| Time | 39 min |
-| XP gained | 7624 |
-| XP/h | 11756 |
+| Simulated level | 1.00 -> 6.14 |
+| Time | 37 min |
+| XP gained | 8104 |
+| XP/h | 13093 |
 | Steps | 68 |
 | Quests turned in | 15 |
 | Hubs | 2 |
 | Median ratio (XP/s) | 2.79 |
-| Grinding (level steps) | ~2 mobs |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -23,7 +22,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
 | 1 | 4641 | Your Place In The World | 1 | 40 | 1 |
-| 2 | 97279 | Wayward Weapons | 2 | 170 est. | 2 |
+| 2 | 97279 | Wayward Weapons | 2 | 170 | 2 |
 | 3 | 788 | Cutting Teeth | 2 | 170 | 2 |
 | 4 | 790 | Sarkoth | 5 | 450 | 3 |
 | 5 | 789 | Sting of the Scorpid | 3 | 250 | 3 |
@@ -33,10 +32,10 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 9 | 4402 | Galgar's Cactus Apple Surprise | 3 | 380 | 4 |
 | 10 | 6394 | Thazz'ril's Pick | 4 | 445 | 5 |
 | 11 | 794 | Burning Blade Medallion | 5 | 670 | 5 |
-| 12 | 96652 | The Adventurer | 6 | 135 est. | 5 |
-| 13 | 96876 | Ukor's Lost Pack | 8 | 530 est. | 5 |
-| 14 | 99123 | Lost in the Shadows | 8 | 700 est. | 5 |
-| 15 | 805 | Report to Sen'jin Village | 5 | 225 | 5 |
+| 12 | 96652 | The Adventurer | 6 | 405 | 5 |
+| 13 | 96876 | Ukor's Lost Pack | 8 | 880 | 5 |
+| 14 | 99123 | Lost in the Shadows | 8 | 700 | 6 |
+| 15 | 805 | Report to Sen'jin Village | 5 | 225 | 6 |
 
 ## Dropped quests
 
@@ -95,7 +94,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 1526 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
 | 1527 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
 | 1485 | Vile Familiars | 4 | WARLOCK | detour 2731 s |
-| 1516 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
+| 1516 | Call of Earth | 4 | SHAMAN | detour 1128 s |
 | 1517 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 1518 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 
@@ -107,21 +106,21 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 788 | Cutting Teeth | 2 | 670 | 0 | 283 | 253 | 2.34 | 2.70 | 1 |  |
+| 788 | Cutting Teeth | 2 | 670 | 0 | 283 | 253 | 2.34 | 2.58 | 1 |  |
 | 789 | Sting of the Scorpid | 3 | 1185 | 0 | 425 | 374 | 2.79 | 3.16 | 1 |  |
 | 790 | Sarkoth | 5 | 507 | 0 | 72 | 51 | 5.53 | 8.72 | 1 |  |
-| 792 | Vile Familiars | 4 | 1105 | 0 | 395 | 303 | 3.12 | 5.72 | 1 |  |
-| 794 | Burning Blade Medallion | 5 | 730 | 0 | 199 | 57 | 3.59 | 16.92 | 1 |  |
+| 792 | Vile Familiars | 4 | 1105 | 0 | 395 | 303 | 3.39 | 6.22 | 1 |  |
+| 794 | Burning Blade Medallion | 5 | 730 | 0 | 199 | 57 | 4.27 | 20.11 | 1 |  |
 | 804 | Sarkoth | 5 | 110 | 0 | 46 | 21 | 2.35 | 5.09 | 0 |  |
-| 805 | Report to Sen'jin Village | 5 | 467 | 242 | 116 | 16 | 4.03 | 28.48 | 0 |  |
-| 4402 | Galgar's Cactus Apple Surprise | 3 | 380 | 0 | 247 | 198 | 1.54 | 1.91 | 1 |  |
-| 4641 | Your Place In The World | 1 | 62 | 22 | 28 | 28 | 2.33 | 2.67 | 0 |  |
-| 5441 | Lazy Peons | 4 | 445 | 0 | 155 | 90 | 2.60 | 5.42 | 1 |  |
+| 805 | Report to Sen'jin Village | 5 | 511 | 286 | 116 | 16 | 4.41 | 31.16 | 0 |  |
+| 4402 | Galgar's Cactus Apple Surprise | 3 | 380 | 0 | 247 | 240 | 1.54 | 1.58 | 1 |  |
+| 4641 | Your Place In The World | 1 | 66 | 26 | 28 | 28 | 2.34 | 2.57 | 0 |  |
+| 5441 | Lazy Peons | 4 | 445 | 0 | 155 | 92 | 2.60 | 5.34 | 1 |  |
 | 6394 | Thazz'ril's Pick | 4 | 445 | 0 | 193 | 70 | 2.30 | 6.29 | 1 |  |
-| 96652 | The Adventurer | 6 | 442 | 307 | 143 | 16 | 3.09 | 27.26 | 0 |  |
-| 96876 | Ukor's Lost Pack | 8 | 747 | 150 | 179 | 98 | 4.16 | 7.60 | 0 |  |
-| 97279 | Wayward Weapons | 2 | 170 | 0 | 191 | 129 | 0.89 | 1.31 | 1 |  |
-| 99123 | Lost in the Shadows | 8 | 879 | 179 | 158 | 158 | 5.55 | 5.55 | 1 |  |
+| 96652 | The Adventurer | 6 | 767 | 362 | 143 | 16 | 5.36 | 47.07 | 0 |  |
+| 96876 | Ukor's Lost Pack | 8 | 1127 | 180 | 180 | 98 | 6.24 | 11.51 | 0 |  |
+| 97279 | Wayward Weapons | 2 | 170 | 0 | 191 | 165 | 0.89 | 1.02 | 1 |  |
+| 99123 | Lost in the Shadows | 8 | 911 | 211 | 158 | 158 | 5.76 | 5.76 | 1 |  |
 
 ## Itinerary
 
@@ -163,11 +162,11 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 30 | T | 6394 | Thazz'ril's Pick | 1411 | 44.6, 68.7 | 562 |  |
 | 31 | T | 794 | Burning Blade Medallion | 1411 | 42.9, 69.2 | 95 |  |
 | 32 | A | 805 | Report to Sen'jin Village | 1411 | 42.9, 69.2 | 0 |  |
-| 33 | A | 96652 | The Adventurer | 1411 | 42.8, 69.1 | 3 |  |
-| 34 | A | 99123 | Lost in the Shadows | 1411 | 46.3, 78.6 | 383 |  |
+| 33 | A | 96652 | The Adventurer | 1411 | 42.8, 69.1 | 2 |  |
+| 34 | A | 99123 | Lost in the Shadows | 1411 | 46.3, 78.6 | 382 |  |
 | 35 | O | 99123 | Lost in the Shadows | 1411 | 51.4, 79.3 | 271 |  |
-| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.0, 55.7 | 831 |  |
-| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 302 |  |
+| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.0, 55.5 | 838 |  |
+| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 295 |  |
 | 38 | T | 96876 | Ukor's Lost Pack | 1411 | 52.1, 68.3 | 741 |  |
 | 39 | T | 99123 | Lost in the Shadows | 1411 | 55.9, 74.4 | 296 |  |
 | 40 | T | 805 | Report to Sen'jin Village | 1411 | 56.0, 74.7 | 11 |  |

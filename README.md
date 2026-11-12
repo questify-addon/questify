@@ -8,7 +8,7 @@ A **free and open-source** leveling guide for **World of Warcraft: Forever** (le
 | Addon | Statut / Status | Lien / Link |
 |---|---|---|
 | **Questify** | requis / required | [Télécharger / Download](https://github.com/questify-addon/questify/releases/tag/latest) (`Questify-<version>-forever.zip`) |
-| **QuestieDB** | **requis / required** | [CurseForge](https://www.curseforge.com/wow/addons/questiedb) |
+| **QuestieDB** (1.0.15+) | **requis / required** | [CurseForge](https://www.curseforge.com/wow/addons/questiedb) |
 | ShortestPath Forever | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/shortest-path-forever) |
 | WaypointUI | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/waypointui) |
 | TomTom | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/tomtom) |

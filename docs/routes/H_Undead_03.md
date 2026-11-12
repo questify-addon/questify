@@ -1,18 +1,18 @@
 # H_Undead_03 — Silverpine Forest
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Undead.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Undead.
 
 | Item | Value |
 |---|---|
 | Level band | 12-14 |
-| Simulated level | 12.00 -> 14.01 |
-| Time | 54 min |
-| XP gained | 15666 |
-| XP/h | 17478 |
-| Steps | 15 |
+| Simulated level | 12.00 -> 14.07 |
+| Time | 51 min |
+| XP gained | 16049 |
+| XP/h | 19054 |
+| Steps | 14 |
 | Quests turned in | 5 |
 | Hubs | 8 |
-| Median ratio (XP/s) | 9.08 |
+| Median ratio (XP/s) | 5.11 |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -203,7 +203,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 78148 | Runes of the Sorcerer-Kings | 20 | quest level 20 above the band |
 | 78149 | Fury of the Land | 20 | quest level 20 above the band |
 | 78150 | Friend of the Library | 20 | quest level 20 above the band |
-| 78261 | The Horn of Xelthos | 23 | quest level 23 above the band |
+| 78261 | The Horn of Xelthos | 23 | class quest (ClassQuestData.lua) |
 | 78676 | The Eye of Bhossca | 35 | class quest (ClassQuestData.lua) |
 | 79091 | Archmage Antonidas: The Unabridged Autobiography | 20 | quest level 20 above the band |
 | 79092 | Archmage Theocritus' Research Journal | 20 | quest level 20 above the band |
@@ -228,6 +228,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 81954 | Venomous Journeys | 45 | quest level 45 above the band |
 | 81955 | A Mind of Metal | 45 | quest level 45 above the band |
 | 81956 | Conjurer's Codex | 45 | quest level 45 above the band |
+| 82084 | A Lesson in Literacy | 45 | class quest (ClassQuestData.lua) |
 | 82208 | Greater Friend of the Library | 45 | quest level 45 above the band |
 | 84395 | Undead Potatoes | 60 | quest level 60 above the band |
 | 84396 | Magma or Lava? | 60 | quest level 60 above the band |
@@ -237,6 +238,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 84400 | The Knight and the Lady | 60 | quest level 60 above the band |
 | 84401 | Scourge: Undead Menace or Misunderstood? | 60 | quest level 60 above the band |
 | 84402 | Necromancy 101 | 60 | quest level 60 above the band |
+| 91734 | Remote Contact | 52 | quest level 52 above the band |
 | 91859 | A Curious Pair | 22 | class quest (ClassQuestData.lua) |
 | 91860 | A Grim Fate | 22 | class quest (ClassQuestData.lua) |
 | 91861 | Into Fenris Keep | 22 | class quest (ClassQuestData.lua) |
@@ -254,52 +256,57 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 96204 | The Windshaper's Wrath | 22 | class quest (ClassQuestData.lua) |
 | 96984 | Heart of Disruption | 33 | required level 24 above the band |
 | 96988 | Source of Power | 33 | required level 24 above the band |
+| 97022 | Report to Danitha | 40 | class quest (ClassQuestData.lua) |
 | 97286 | Research Access | 20 | class quest (ClassQuestData.lua) |
 | 97290 | Unending Torment | 21 | required level 15 above the band |
 | 97583 | WRIGGLE. | 1 | quest level 1 below the band |
+| 97884 | Armory of Sunnyglade | 40 | quest level 40 above the band |
 | 97985 | Thundering Hearts | 33 | quest level 33 above the band |
 | 98299 | Stop the Spread | 20 | quest level 20 above the band |
 | 98887 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
 | 98888 | Conflict at Darkspear Islands | 39 | quest level 39 above the band |
+| 98889 | Conflict at Darkspear Islands | 49 | quest level 49 above the band |
+| 98891 | Conflict at Darkspear Islands | 59 | quest level 59 above the band |
 | 95216 | The New Plague | 22 | prerequisite unavailable |
 | 97289 | Unending Torment | 21 | prerequisite unavailable |
 | 97291 | Unending Torment | 21 | prerequisite unavailable |
 | 97292 | Unending Torment | 21 | prerequisite unavailable |
-| 1358 | Sample for Helbrim | 15 | level band reached |
 | 440 | The Engraved Ring | 16 | level band reached |
+| 1358 | Sample for Helbrim | 15 | level band reached |
 | 6324 | Return to Podrig | 10 | level band reached |
-| 448 | Report to Hadrec | 16 | level band reached |
-| 446 | Thule Ravenclaw | 16 | level band reached |
-| 449 | The Deathstalkers' Report | 11 | level band reached |
-| 444 | Rot Hide Origins | 17 | level band reached |
-| 3221 | Speak with Renferrel | 12 | level band reached |
-| 6322 | Michael Garrett | 10 | level band reached |
 | 452 | Pyrewood Ambush | 15 | level band reached |
 | 1359 | Zinge's Delivery | 15 | level band reached |
-| 435 | Escorting Erland | 11 | level band reached |
-| 6321 | Supplying the Sepulcher | 10 | level band reached |
+| 448 | Report to Hadrec | 16 | level band reached |
+| 6322 | Michael Garrett | 10 | level band reached |
+| 97891 | Prompt Potion Runner | 16 | level band reached |
+| 449 | The Deathstalkers' Report | 11 | level band reached |
+| 446 | Thule Ravenclaw | 16 | level band reached |
+| 444 | Rot Hide Origins | 17 | level band reached |
 | 91921 | Return to Quinn (Again) | 11 | level band reached |
-| 477 | Border Crossings | 14 | level band reached |
+| 3221 | Speak with Renferrel | 12 | level band reached |
+| 435 | Escorting Erland | 11 | level band reached |
 | 6323 | Ride to the Undercity | 10 | level band reached |
-| 478 | Maps and Runes | 14 | level band reached |
-| 430 | Return to Quinn | 11 | level band reached |
-| 481 | Dalar's Analysis | 14 | level band reached |
-| 437 | The Dead Fields | 14 | level band reached |
 | 425 | Ivar the Foul | 12 | level band reached |
+| 477 | Border Crossings | 14 | level band reached |
+| 6321 | Supplying the Sepulcher | 10 | level band reached |
 | 438 | The Decrepit Ferry | 16 | level band reached |
+| 437 | The Dead Fields | 14 | level band reached |
+| 439 | Rot Hide Clues | 16 | level band reached |
+| 478 | Maps and Runes | 14 | level band reached |
 | 98298 | Arugal's Folly | 16 | level band reached |
 | 424 | Arugal's Folly | 15 | level band reached |
-| 421 | Prove Your Worth | 10 | level band reached |
-| 439 | Rot Hide Clues | 16 | level band reached |
-| 422 | Arugal's Folly | 11 | level band reached |
-| 482 | Dalaran's Intentions | 14 | level band reached |
-| 428 | Lost Deathstalkers | 12 | level band reached |
+| 430 | Return to Quinn | 11 | level band reached |
 | 99 | Arugal's Folly | 15 | level band reached |
-| 423 | Arugal's Folly | 14 | level band reached |
-| 91920 | Wild Eyes | 11 | level band reached |
 | 443 | Rot Hide Ichor | 17 | level band reached |
-| 429 | Wild Hearts | 11 | level band reached |
+| 428 | Lost Deathstalkers | 12 | level band reached |
+| 422 | Arugal's Folly | 11 | level band reached |
+| 423 | Arugal's Folly | 14 | level band reached |
+| 421 | Prove Your Worth | 10 | level band reached |
 | 479 | Ambermill Investigations | 16 | level band reached |
+| 91920 | Wild Eyes | 11 | level band reached |
+| 482 | Dalaran's Intentions | 14 | level band reached |
+| 481 | Dalar's Analysis | 14 | level band reached |
+| 429 | Wild Hearts | 11 | level band reached |
 | 92401 | A Frightened Request | 22 | dungeon quest: required level 15 not reached in this chapter |
 | 92421 | Light's Justice | 22 | dungeon quest: required level 15 not reached in this chapter |
 
@@ -345,7 +352,9 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 8419 | An Imp's Request | 52 | WARLOCK | quest level 52 above the band |
 | 65593 | Hearts of the Lovers | 20 | WARLOCK | quest level 20 above the band |
 | 65597 | The Binding | 20 | WARLOCK | quest level 20 above the band |
+| 78261 | The Horn of Xelthos | 23 | ROGUE | quest level 23 above the band |
 | 78676 | The Eye of Bhossca | 35 | ROGUE | quest level 35 above the band |
+| 82084 | A Lesson in Literacy | 45 | MAGE | quest level 45 above the band |
 | 91859 | A Curious Pair | 22 | PALADIN | quest level 22 above the band |
 | 91860 | A Grim Fate | 22 | PALADIN | quest level 22 above the band |
 | 91861 | Into Fenris Keep | 22 | PALADIN | quest level 22 above the band |
@@ -355,6 +364,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 95111 | An Underrated Talent | 25 | PALADIN | quest level 25 above the band |
 | 95140 | Old Fire-Eye | 26 | PALADIN | quest level 26 above the band |
 | 96204 | The Windshaper's Wrath | 22 | PALADIN | quest level 22 above the band |
+| 97022 | Report to Danitha | 40 | PALADIN | quest level 40 above the band |
 | 97286 | Research Access | 20 | MAGE | quest level 20 above the band |
 | 94435 | A Lesson in Divinity | 12 | PALADIN | detour 616 s |
 | 1471 | The Binding | 10 | WARLOCK | prerequisite or exclusive quest not done for the class |
@@ -373,46 +383,47 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 
 | Quest | Name | Lvl | Value | Bonus | Isolated s | Marginal s | Ratio | Marginal ratio | Sites | Dropped |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 99 | Arugal's Folly | 15 | 5176 | 1516 | 707 | 461 | 7.32 | 11.22 | 1 | level band reached |
-| 421 | Prove Your Worth | 10 | 2746 | 1516 | 312 | 189 | 9.70 | 13.26 | 1 | level band reached |
-| 422 | Arugal's Folly | 11 | 2396 | 1516 | 162 | 118 | 10.19 | 12.76 | 1 | level band reached |
-| 423 | Arugal's Folly | 14 | 4526 | 1516 | 483 | 483 | 9.11 | 11.19 | 1 | level band reached |
-| 424 | Arugal's Folly | 15 | 2686 | 1516 | 216 | 128 | 8.87 | 13.98 | 1 | level band reached |
+| 99 | Arugal's Folly | 15 | 3660 | 0 | 707 | 461 | 4.95 | 8.22 | 1 | level band reached |
+| 421 | Prove Your Worth | 10 | 1270 | 0 | 312 | 189 | 5.06 | 7.12 | 1 | level band reached |
+| 422 | Arugal's Folly | 11 | 880 | 0 | 162 | 118 | 5.52 | 7.27 | 1 | level band reached |
+| 423 | Arugal's Folly | 14 | 3010 | 0 | 483 | 483 | 5.53 | 7.24 | 1 | level band reached |
+| 424 | Arugal's Folly | 15 | 1170 | 0 | 216 | 128 | 5.05 | 8.42 | 1 | level band reached |
 | 425 | Ivar the Foul | 12 | 790 | 0 | 55 | 55 | 14.15 | 14.15 | 1 | level band reached |
-| 428 | Lost Deathstalkers | 12 | 857 | 632 | 138 | 14 | 6.31 | 11.48 | 0 | level band reached |
-| 429 | Wild Hearts | 11 | 3412 | 1516 | 541 | 413 | 6.34 | 9.33 | 1 | level band reached |
-| 430 | Return to Quinn | 11 | 660 | 0 | 147 | 22 | 6.51 | 19.80 | 0 | level band reached |
-| 435 | Escorting Erland | 11 | 880 | 0 | 69 | 69 | 12.81 | 33.99 | 1 | level band reached |
-| 437 | The Dead Fields | 14 | 2611 | 1516 | 213 | 105 | 8.28 | 16.08 | 1 | level band reached |
-| 438 | The Decrepit Ferry | 16 | 880 | 0 | 104 | 12 | 7.35 | 14.14 | 0 | level band reached |
-| 439 | Rot Hide Clues | 16 | 1806 | 1516 | 104 | 12 | 7.26 | 13.08 | 0 | level band reached |
-| 440 | The Engraved Ring | 16 | 2200 | 1620 | 332 | 12 | 6.62 | 172.84 | 0 | level band reached |
-| 443 | Rot Hide Ichor | 17 | 11019 | 1516 | 1578 | 1288 | 6.60 | 9.76 | 1 | level band reached |
-| 444 | Rot Hide Origins | 17 | 315 | 0 | 303 | 17 | 4.96 | 65.03 | 0 | level band reached |
-| 446 | Thule Ravenclaw | 16 | 1806 | 1516 | 303 | 17 | 10.31 | 102.34 | 0 | level band reached |
-| 447 | A Recipe For Death | 12 | 4907 | 0 | 1244 | 1002 | 3.94 | 4.89 | 2 |  |
-| 448 | Report to Hadrec | 16 | 2096 | 1516 | 20 | 20 | 100.98 | 102.64 | 0 | level band reached |
-| 449 | The Deathstalkers' Report | 11 | 1956 | 1516 | 138 | 14 | 12.86 | 86.00 | 0 | level band reached |
+| 428 | Lost Deathstalkers | 12 | 865 | 640 | 138 | 14 | 3.98 | 7.52 | 0 | level band reached |
+| 429 | Wild Hearts | 11 | 1896 | 0 | 541 | 413 | 3.52 | 5.73 | 1 | level band reached |
+| 430 | Return to Quinn | 11 | 660 | 0 | 147 | 22 | 3.54 | 8.26 | 0 | level band reached |
+| 435 | Escorting Erland | 11 | 880 | 0 | 69 | 69 | 5.85 | 15.43 | 1 | level band reached |
+| 437 | The Dead Fields | 14 | 1095 | 0 | 213 | 105 | 5.42 | 10.52 | 1 | level band reached |
+| 438 | The Decrepit Ferry | 16 | 880 | 0 | 104 | 12 | 5.48 | 10.55 | 0 | level band reached |
+| 439 | Rot Hide Clues | 16 | 290 | 0 | 104 | 12 | 5.23 | 9.42 | 0 | level band reached |
+| 440 | The Engraved Ring | 16 | 2218 | 1638 | 332 | 12 | 6.68 | 174.30 | 0 | level band reached |
+| 443 | Rot Hide Ichor | 17 | 9503 | 0 | 1578 | 1288 | 5.17 | 7.64 | 1 | level band reached |
+| 444 | Rot Hide Origins | 17 | 315 | 0 | 303 | 17 | 1.53 | 20.01 | 0 | level band reached |
+| 446 | Thule Ravenclaw | 16 | 290 | 0 | 303 | 17 | 2.19 | 21.75 | 0 | level band reached |
+| 447 | A Recipe For Death | 12 | 4907 | 0 | 1246 | 1006 | 3.94 | 4.87 | 2 |  |
+| 448 | Report to Hadrec | 16 | 580 | 0 | 20 | 20 | 27.93 | 28.39 | 0 | level band reached |
+| 449 | The Deathstalkers' Report | 11 | 440 | 0 | 138 | 14 | 3.36 | 21.99 | 0 | level band reached |
 | 452 | Pyrewood Ambush | 15 | 1455 | 0 | 152 | 30 | 9.54 | 48.50 | 1 | level band reached |
-| 460 | Resting in Pieces | 17 | 7180 | 0 | 1033 | 1014 | 7.44 | 8.25 | 0 |  |
-| 461 | The Hidden Niche | 18 | 680 | 0 | 39 | 13 | 12.21 | 89.73 | 0 |  |
-| 477 | Border Crossings | 14 | 980 | 0 | 97 | 14 | 14.47 | 28.44 | 0 | level band reached |
-| 478 | Maps and Runes | 14 | 2256 | 1516 | 97 | 14 | 16.13 | 24.99 | 0 | level band reached |
-| 479 | Ambermill Investigations | 16 | 5196 | 1516 | 719 | 579 | 7.22 | 8.96 | 1 | level band reached |
-| 481 | Dalar's Analysis | 14 | 1616 | 1516 | 21 | 21 | 13.62 | 16.52 | 0 | level band reached |
-| 482 | Dalaran's Intentions | 14 | 1616 | 1516 | 21 | 21 | 10.01 | 12.30 | 0 | level band reached |
-| 491 | Wand to Bethor | 18 | 1700 | 0 | 162 | 10 | 10.43 | 170.00 | 0 |  |
-| 1358 | Sample for Helbrim | 15 | 1050 | 0 | 5 | 5 | 183.46 | 183.46 | 0 | level band reached |
-| 1359 | Zinge's Delivery | 15 | 105 | 0 | 238 | 19 | 3.46 | 36.29 | 0 | level band reached |
-| 3221 | Speak with Renferrel | 12 | 1606 | 1516 | 20 | 20 | 11.50 | 59.91 | 0 | level band reached |
-| 6321 | Supplying the Sepulcher | 10 | 1726 | 1516 | 42 | 41 | 9.04 | 32.84 | 0 | level band reached |
-| 6322 | Michael Garrett | 10 | 210 | 0 | 23 | 23 | 9.62 | 53.32 | 0 | level band reached |
-| 6323 | Ride to the Undercity | 10 | 420 | 0 | 268 | 44 | 4.40 | 25.72 | 0 | level band reached |
-| 6324 | Return to Podrig | 10 | 2566 | 1516 | 264 | 20 | 9.70 | 125.26 | 0 | level band reached |
-| 79096 | Ataeric: On Arcane Curiosities | 20 | 3066 | 1516 | 303 | 64 | 10.12 | 47.66 | 1 |  |
-| 91920 | Wild Eyes | 11 | 3203 | 1516 | 547 | 306 | 5.85 | 10.45 | 1 | level band reached |
-| 91921 | Return to Quinn (Again) | 11 | 660 | 0 | 147 | 22 | 4.48 | 29.75 | 0 | level band reached |
-| 98298 | Arugal's Folly | 16 | 4106 | 1516 | 568 | 291 | 7.23 | 14.09 | 1 | level band reached |
+| 460 | Resting in Pieces | 17 | 7180 | 0 | 1033 | 1014 | 7.43 | 8.24 | 0 |  |
+| 461 | The Hidden Niche | 18 | 680 | 0 | 39 | 14 | 12.13 | 86.94 | 0 |  |
+| 477 | Border Crossings | 14 | 980 | 0 | 97 | 14 | 6.92 | 13.60 | 0 | level band reached |
+| 478 | Maps and Runes | 14 | 740 | 0 | 97 | 14 | 5.74 | 8.89 | 0 | level band reached |
+| 479 | Ambermill Investigations | 16 | 3680 | 0 | 719 | 579 | 5.12 | 6.35 | 1 | level band reached |
+| 481 | Dalar's Analysis | 14 | 100 | 0 | 21 | 21 | 5.07 | 6.16 | 0 | level band reached |
+| 482 | Dalaran's Intentions | 14 | 100 | 0 | 21 | 21 | 5.10 | 6.26 | 0 | level band reached |
+| 491 | Wand to Bethor | 18 | 1700 | 0 | 163 | 10 | 10.40 | 170.00 | 0 |  |
+| 1358 | Sample for Helbrim | 15 | 1050 | 0 | 6 | 6 | 162.53 | 162.53 | 0 | level band reached |
+| 1359 | Zinge's Delivery | 15 | 105 | 0 | 239 | 20 | 3.44 | 33.41 | 0 | level band reached |
+| 3221 | Speak with Renferrel | 12 | 90 | 0 | 20 | 20 | 3.54 | 17.83 | 0 | level band reached |
+| 6321 | Supplying the Sepulcher | 10 | 210 | 0 | 42 | 41 | 2.91 | 10.57 | 0 | level band reached |
+| 6322 | Michael Garrett | 10 | 210 | 0 | 23 | 23 | 4.53 | 25.11 | 0 | level band reached |
+| 6323 | Ride to the Undercity | 10 | 420 | 0 | 268 | 44 | 2.61 | 15.24 | 0 | level band reached |
+| 6324 | Return to Podrig | 10 | 1050 | 0 | 264 | 20 | 3.97 | 51.24 | 0 | level band reached |
+| 79096 | Ataeric: On Arcane Curiosities | 20 | 1550 | 0 | 303 | 64 | 5.11 | 24.09 | 1 |  |
+| 91920 | Wild Eyes | 11 | 1357 | 0 | 547 | 306 | 3.25 | 6.31 | 1 | level band reached |
+| 91921 | Return to Quinn (Again) | 11 | 660 | 0 | 147 | 22 | 6.51 | 19.80 | 0 | level band reached |
+| 97891 | Prompt Potion Runner | 16 | 1150 | 0 | 53 | 47 | 21.63 | 24.00 | 0 | level band reached |
+| 98298 | Arugal's Folly | 16 | 2590 | 0 | 568 | 291 | 4.56 | 8.89 | 1 | level band reached |
 
 ## Itinerary
 
@@ -422,22 +433,21 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 460 | Resting in Pieces | 1421 | 65.9, 24.7 | 468 |  |
-| 2 | T | 460 | Resting in Pieces | 1421 | 67.9, 24.9 | 83 |  |
-| 3 | A | 461 | The Hidden Niche | 1421 | 67.8, 24.7 | 4 |  |
-| 4 | T | 461 | The Hidden Niche | 1421 | 65.4, 24.8 | 101 |  |
-| 5 | A | 491 | Wand to Bethor | 1421 | 65.4, 24.8 | 0 |  |
-| 6 | F |  | flight path | 1421 | 45.6, 42.6 | 967 |  |
-| 7 | A | 79096 | Ataeric: On Arcane Curiosities | 1421 | 43.4, 41.2 | 101 |  |
-| 8 | A | 447 | A Recipe For Death | 1421 | 42.8, 40.9 | 26 |  |
-| 9 | O | 79096 | Ataeric: On Arcane Curiosities | 1421 | 43.4, 41.2 | 26 |  |
-| 10 | O | 447 | A Recipe For Death | 1421 | 35.4, 14.5 | 817 |  |
-| 11 | O | 447 | A Recipe For Death | 1421 | 49.9, 19.8 | 624 |  |
-| 12 | T | 447 | A Recipe For Death | 1458 | 48.8, 69.3 | 1002 |  |
-| 13 | T | 79096 | Ataeric: On Arcane Curiosities | 1458 | 73.4, 33.0 | 330 |  |
-| 14 | T | 491 | Wand to Bethor | 1458 | 84.1, 17.4 | 142 |  |
+| 1 | A | 447 | A Recipe For Death | 1421 | 42.8, 40.9 | 0 |  |
+| 2 | A | 79096 | Ataeric: On Arcane Curiosities | 1421 | 43.4, 41.2 | 26 |  |
+| 3 | O | 79096 | Ataeric: On Arcane Curiosities | 1421 | 43.4, 41.2 | 0 |  |
+| 4 | O | 447 | A Recipe For Death | 1421 | 35.4, 14.5 | 817 |  |
+| 5 | O | 447 | A Recipe For Death | 1421 | 49.9, 19.8 | 624 |  |
+| 6 | A | 460 | Resting in Pieces | 1421 | 65.9, 24.7 | 685 |  |
+| 7 | T | 460 | Resting in Pieces | 1421 | 67.9, 24.9 | 83 |  |
+| 8 | A | 461 | The Hidden Niche | 1421 | 67.8, 24.8 | 1 |  |
+| 9 | T | 461 | The Hidden Niche | 1421 | 65.4, 24.8 | 104 |  |
+| 10 | A | 491 | Wand to Bethor | 1421 | 65.3, 24.8 | 2 |  |
+| 11 | T | 447 | A Recipe For Death | 1458 | 48.8, 69.3 | 552 |  |
+| 12 | T | 79096 | Ataeric: On Arcane Curiosities | 1458 | 73.4, 33.0 | 330 |  |
+| 13 | T | 491 | Wand to Bethor | 1458 | 84.1, 17.4 | 142 |  |
 
-Walking between tasks: 4699 yd (~11 min at 7 yd/s).
+Walking between tasks: 3372 yd (~8 min at 7 yd/s).
 
 ## Qualité
 
@@ -457,8 +467,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 6: `fp 1421 45.62 42.6`
-- step 15: `boat 1420 60.7 58.9` — Take the zeppelin to Orgrimmar (Durotar)
+- step 14: `boat 1420 60.7 58.9` — Take the zeppelin to Orgrimmar (Durotar)
 
 ## Warnings
 

@@ -510,6 +510,18 @@ function qdb.load(opts)
     local m = {}
     qdb.runFile(P(supportDir .. "/QuestXP/xpDB-classic.lua"), qdb.makeEnv({ QuestieLoader = makeLoader(m) }, "questxp"))
     for id, v in pairs(m.QuestXP.db or {}) do xp[id] = { v[1], v[2] } end
+    -- XP observées en jeu (QuestieTrace, support/Forever/QuestXP/xpDB-traces.lua, chargé après xpDB-classic par
+    -- QuestieDB.toc) : elles remplacent la valeur classique ou l'estimation, comme en jeu. Fichier absent : ignoré.
+    local tf = P(supportDir .. "/QuestXP/xpDB-traces.lua")
+    local fh = io.open(tf)
+    if fh then
+      fh:close()
+      local t = { QuestXP = { db = {} } }
+      qdb.runFile(tf, qdb.makeEnv({ QuestieLoader = makeLoader(t) }, "questxp-traces"))
+      for id, v in pairs(t.QuestXP.db or {}) do
+        if type(v) == "table" and v[2] then xp[id] = { v[1], v[2] } end
+      end
+    end
   end
 
   ----------------------------------------------------------------------------
@@ -547,8 +559,14 @@ function qdb.load(opts)
 
   for id, n in pairs(db.Npc) do
     local flags = n[NK.npcFlags] or 0
+    -- Niveaux >= 100 (9999, 9997 : PNJ de scénario à niveau d'échelle, ex. Ylanthrius de « Duskwood Mission XIII »
+    -- 81742, QuestieDB 1.0.14) : inconnus, ramenés à 0 (aucune XP de monstre comptée, jamais lieu de farm). Sans
+    -- cela, 0.6.0 régénéré sur 1.0.14 fait passer A_07 de 32 à 43,7 en une quête (xp/h 2,6 M).
+    local lo, hi = n[NK.minLevel] or 0, n[NK.maxLevel] or 0
+    local scaled = lo >= 100 or hi >= 100
+    if scaled then lo, hi = 0, 0 end
     D.npcs[id] = {
-      id = id, name = n[NK.name], minLevel = n[NK.minLevel] or 0, maxLevel = n[NK.maxLevel] or 0,
+      id = id, name = n[NK.name], minLevel = lo, maxLevel = hi, scaledLevel = scaled or nil,
       rank = n[NK.rank] or 0, spawns = convSpawns(n[NK.spawns]), waypoints = convSpawns(n[NK.waypoints]),
       friendly = n[NK.friendlyToFaction], subName = n[NK.subName], npcFlags = flags, zoneID = nz(n[NK.zoneID]),
       questStarts = n[NK.questStarts] or {}, questEnds = n[NK.questEnds] or {},

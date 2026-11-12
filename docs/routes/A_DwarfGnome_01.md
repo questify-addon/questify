@@ -1,19 +1,19 @@
 # A_DwarfGnome_01 — Coldridge Valley
 
-Generated on 2026-11-10 from QuestieDB commit `4d31c10394b11bd133069ecf1662062cdf4d8691` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
-| Simulated level | 1.00 -> 6.02 |
+| Simulated level | 1.00 -> 6.01 |
 | Time | 36 min |
-| XP gained | 7660 |
-| XP/h | 12667 |
+| XP gained | 7649 |
+| XP/h | 12885 |
 | Steps | 74 |
 | Quests turned in | 15 |
 | Hubs | 5 |
-| Median ratio (XP/s) | 4.30 |
-| Grinding (level steps) | ~10 mobs |
+| Median ratio (XP/s) | 4.73 |
+| Grinding (level steps) | ~8 mobs |
 | Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
 
 ## Kept quests (turn-in order)
@@ -30,11 +30,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 6 | 3365 | Bring Back the Mug | 5 | 450 | 4 |
 | 7 | 218 | The Stolen Journal | 5 | 560 | 4 |
 | 8 | 234 | Coldridge Valley Mail Delivery | 4 | 270 | 5 |
-| 9 | 97277 | Grund and Gozwin | 6 | 540 est. | 5 |
+| 9 | 97277 | Grund and Gozwin | 6 | 405 | 5 |
 | 10 | 3361 | A Refugee's Quandary | 3 | 250 | 5 |
 | 11 | 170 | A New Threat | 2 | 170 | 5 |
 | 12 | 282 | Senir's Observations | 5 | 335 | 5 |
-| 13 | 96628 | The Adventurer | 6 | 135 est. | 5 |
+| 13 | 96628 | The Adventurer | 6 | 405 | 5 |
 | 14 | 420 | Senir's Observations | 5 | 335 | 5 |
 | 15 | 2160 | Supplies to Tannok | 5 | 110 | 5 |
 
@@ -96,19 +96,19 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 |---|---|---|---|---|---|---|---|---|---|---|
 | 170 | A New Threat | 2 | 782 | 0 | 298 | 285 | 2.62 | 2.74 | 1 |  |
 | 179 | Dwarven Outfitters | 1 | 730 | 0 | 305 | 305 | 2.68 | 2.97 | 1 |  |
-| 182 | The Troll Cave | 4 | 1125 | 0 | 358 | 315 | 3.78 | 6.11 | 1 |  |
+| 182 | The Troll Cave | 4 | 1125 | 0 | 358 | 315 | 3.95 | 6.37 | 1 |  |
 | 183 | The Boar Hunter | 3 | 910 | 0 | 266 | 266 | 3.42 | 3.42 | 1 |  |
-| 218 | The Stolen Journal | 5 | 620 | 0 | 117 | 33 | 4.87 | 27.27 | 1 |  |
+| 218 | The Stolen Journal | 5 | 620 | 0 | 117 | 33 | 5.31 | 29.72 | 1 |  |
 | 233 | Coldridge Valley Mail Delivery | 3 | 190 | 0 | 62 | 11 | 4.30 | 20.23 | 0 |  |
 | 234 | Coldridge Valley Mail Delivery | 4 | 270 | 0 | 36 | 10 | 7.31 | 25.27 | 0 |  |
-| 282 | Senir's Observations | 5 | 335 | 0 | 72 | 12 | 4.61 | 42.62 | 0 |  |
+| 282 | Senir's Observations | 5 | 335 | 0 | 72 | 12 | 5.33 | 49.24 | 0 |  |
 | 420 | Senir's Observations | 5 | 730 | 395 | 136 | 11 | 5.35 | 62.92 | 0 |  |
 | 2160 | Supplies to Tannok | 5 | 527 | 417 | 145 | 14 | 3.63 | 35.63 | 0 |  |
 | 3361 | A Refugee's Quandary | 3 | 250 | 0 | 204 | 124 | 1.22 | 2.01 | 3 |  |
 | 3364 | Scalding Mornbrew Delivery | 5 | 225 | 0 | 67 | 19 | 4.73 | 16.07 | 0 |  |
 | 3365 | Bring Back the Mug | 5 | 450 | 0 | 67 | 19 | 6.70 | 22.77 | 0 |  |
-| 96628 | The Adventurer | 6 | 528 | 393 | 136 | 11 | 3.88 | 45.53 | 0 |  |
-| 97277 | Grund and Gozwin | 6 | 602 | 0 | 87 | 87 | 6.85 | 6.85 | 1 |  |
+| 96628 | The Adventurer | 6 | 798 | 393 | 136 | 11 | 5.87 | 68.80 | 0 |  |
+| 97277 | Grund and Gozwin | 6 | 467 | 0 | 87 | 87 | 5.31 | 5.31 | 1 |  |
 
 ## Itinerary
 
@@ -177,7 +177,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 74: `level 6` — About 10 more mobs here (Wendigo, level 6)
+- step 74: `level 6` — About 8 more mobs here (Wendigo, level 6)
 
 ## Warnings
 

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit 4d31c10394b11bd133069ecf1662062cdf4d8691, généré le 2026-11-10.
--- Simulation : 71 étapes, niveau final 6.22, ~11418 xp/h, 44 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Simulation : 71 étapes, niveau final 6.19, ~11271 xp/h, 44 min.
 Q:RegisterGuide({
   id = "A_Human_01",
   title = "Northshire",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Human" },
   minLevel = 1, maxLevel = 6,
   next = "A_Human_02",
-  sim = { steps = 71, endLevel = 6.22, xpPerHour = 11418, minutes = 44 },
+  sim = { steps = 71, endLevel = 6.19, xpPerHour = 11271, minutes = 44 },
   steps = {
     { "accept", 783 }, -- A Threat Within (lvl 1, ~40 xp, sim lvl 1)
     { "turnin", 783, xp = 40 }, -- A Threat Within (lvl 1, ~40 xp, sim lvl 1)
@@ -19,8 +19,8 @@ Q:RegisterGuide({
     { "accept", 91741, at = { 1429, 48.47, 34.61 }, note = "Loot Nibbled-On Book to start the quest" }, -- Nibbled-On Book (lvl 2, ~85 xp, sim lvl 1)
     { "complete", 7, at = { 1429, 48.82, 36.18 } }, -- Kobold Camp Cleanup (lvl 2, ~170 xp, sim lvl 1)
     { "turnin", 91741, xp = 85 }, -- Nibbled-On Book (lvl 2, ~85 xp, sim lvl 2)
-    { "accept", 92124 }, -- Book Inventory (lvl 2, ~85 xp, sim lvl 2)
-    { "turnin", 92124, xp = 85 }, -- Book Inventory (lvl 2, ~85 xp, sim lvl 2)
+    { "accept", 92124 }, -- Book Inventory (lvl 2, ~15 xp, sim lvl 2)
+    { "turnin", 92124, xp = 15 }, -- Book Inventory (lvl 2, ~15 xp, sim lvl 2)
     { "accept", 91743 }, -- Rascally Rodents (lvl 2, ~170 xp, sim lvl 2)
     { "turnin", 7, xp = 170 }, -- Kobold Camp Cleanup (lvl 2, ~170 xp, sim lvl 2)
     { "accept", 3100, classes = { "WARRIOR" } }, -- Simple Letter (lvl 1, ~40 xp, sim lvl 2)
@@ -47,22 +47,22 @@ Q:RegisterGuide({
     { "turnin", 91743, xp = 170 }, -- Rascally Rodents (lvl 2, ~170 xp, sim lvl 4)
     { "turnin", 3103, xp = 40, classes = { "PRIEST" } }, -- Hallowed Letter (lvl 1, ~40 xp, sim lvl 4)
     { "turnin", 3104, xp = 40, classes = { "MAGE" } }, -- Glyphic Letter (lvl 1, ~40 xp, sim lvl 4)
-    { "accept", 91745 }, -- Mining Consultant (lvl 3, ~250 xp, sim lvl 4)
+    { "accept", 91745 }, -- Mining Consultant (lvl 3, ~25 xp, sim lvl 4)
     { "turnin", 15, xp = 250 }, -- Investigate Echo Ridge (lvl 3, ~250 xp, sim lvl 4)
     { "accept", 21 }, -- Skirmish at Echo Ridge (lvl 5, ~450 xp, sim lvl 4)
     { "turnin", 33, xp = 170 }, -- Wolves Across the Border (lvl 2, ~170 xp, sim lvl 4)
-    { "turnin", 91745, xp = 250 }, -- Mining Consultant (lvl 3, ~250 xp, sim lvl 5)
-    { "accept", 91752 }, -- The Big Picture (lvl 3, ~250 xp, sim lvl 5)
+    { "turnin", 91745, xp = 25 }, -- Mining Consultant (lvl 3, ~25 xp, sim lvl 5)
+    { "accept", 91752 }, -- The Big Picture (lvl 3, ~315 xp, sim lvl 5)
     { "complete", 21, at = { 1429, 48.87, 28.34 } }, -- Skirmish at Echo Ridge (lvl 5, ~450 xp, sim lvl 5)
-    { "complete", 91752, at = { 1429, 49.22, 28.01 } }, -- The Big Picture (lvl 3, ~250 xp, sim lvl 5)
+    { "complete", 91752, at = { 1429, 49.22, 28.01 } }, -- The Big Picture (lvl 3, ~315 xp, sim lvl 5)
     { "turnin", 21, xp = 450 }, -- Skirmish at Echo Ridge (lvl 5, ~450 xp, sim lvl 5)
     { "accept", 54 }, -- Report to Goldshire (lvl 5, ~225 xp, sim lvl 5)
-    { "turnin", 91752, xp = 250 }, -- The Big Picture (lvl 3, ~250 xp, sim lvl 5)
-    { "accept", 91758 }, -- Follow That Kobold! (lvl 4, ~180 xp, sim lvl 5)
-    { "accept", 96627 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
+    { "turnin", 91752, xp = 315 }, -- The Big Picture (lvl 3, ~315 xp, sim lvl 5)
+    { "accept", 91758 }, -- Follow That Kobold! (lvl 4, ~35 xp, sim lvl 5)
+    { "accept", 96627 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "complete", 3904, at = { 1429, 53.97, 48.63 } }, -- Milly's Harvest (lvl 4, ~180 xp, sim lvl 5)
     { "complete", 6, at = { 1429, 57.52, 48.25 } }, -- Bounty on Garrick Padfoot (lvl 5, ~335 xp, sim lvl 5)
-    { "turnin", 91758, xp = 180 }, -- Follow That Kobold! (lvl 4, ~180 xp, sim lvl 5)
+    { "turnin", 91758, xp = 35 }, -- Follow That Kobold! (lvl 4, ~35 xp, sim lvl 5)
     { "turnin", 92479, xp = 40, classes = { "HUNTER" } }, -- A Scribbled Letter (lvl 1, ~40 xp, sim lvl 5)
     { "accept", 91772 }, -- Shhh! We're Hunting Kobolds (lvl 4, ~355 xp, sim lvl 5)
     { "turnin", 3904, xp = 180 }, -- Milly's Harvest (lvl 4, ~180 xp, sim lvl 5)
@@ -78,9 +78,9 @@ Q:RegisterGuide({
     { "turnin", 6, xp = 335 }, -- Bounty on Garrick Padfoot (lvl 5, ~335 xp, sim lvl 5)
     { "complete", 91772, at = { 1429, 47.73, 45.86 } }, -- Shhh! We're Hunting Kobolds (lvl 4, ~355 xp, sim lvl 5)
     { "accept", 2158 }, -- Rest and Relaxation (lvl 5, ~110 xp, sim lvl 5)
-    { "turnin", 96627, xp = 135 }, -- The Adventurer (lvl 6, ~135 xp, sim lvl 5)
-    { "turnin", 2158, xp = 110 }, -- Rest and Relaxation (lvl 5, ~110 xp, sim lvl 6)
-    { "turnin", 5623, xp = 90, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 6)
+    { "turnin", 96627, xp = 405 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
+    { "turnin", 2158, xp = 110 }, -- Rest and Relaxation (lvl 5, ~110 xp, sim lvl 5)
+    { "turnin", 5623, xp = 90, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
     { "turnin", 54, xp = 225 }, -- Report to Goldshire (lvl 5, ~225 xp, sim lvl 6)
     { "turnin", 91772, xp = 355 }, -- Shhh! We're Hunting Kobolds (lvl 4, ~355 xp, sim lvl 6)
   },

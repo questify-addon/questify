@@ -290,6 +290,10 @@ Q:RegisterEvent("PLAYER_LOGIN", function()
   if not (Q.QDB and Q.QDB:IsAvailable()) then
     local status = Q.QDB and Q.QDB.Status and Q.QDB:Status() or "missing"
     if status == "old" then Q:Print(Q.L.QUESTIEDB_TOO_OLD) else Q:Print(Q.L.NEED_QUESTIEDB) end
+  else
+    -- QuestieDB plus ancienne que celle des routes : une ligne, le moteur reste actif.
+    local old = Q.QDB.DataTooOld and Q.QDB:DataTooOld()
+    if old then Q:Print(Q.L.QUESTIEDB_DATA_OLD, old, Q.QDB.MIN_DATA_VERSION) end
   end
   Q:Fire("LOGIN")
 end)

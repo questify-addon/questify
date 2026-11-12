@@ -20,6 +20,26 @@ return {
     t.eq(Mock.countPrinted("QuestieDB"), 1, "one chat line only")
   end,
 
+  warns_once_when_questiedb_is_older_than_the_routes = function(t)
+    Mock.qdbMeta.Version = "1.0.12"
+    local Q = Mock.loadAddon(TOC)
+    t.eq(Mock.countPrinted("QuestieDB"), 1, "one chat line only")
+    t.ok(Mock.printed("1.0.12"), "names the installed version")
+    t.ok(Mock.printed(Q.QDB.MIN_DATA_VERSION), "names the routes' version")
+    t.ok(Q.QDB:IsAvailable(), "engine stays on")
+    t.eq(#Mock.errors, 0, "no Lua error")
+  end,
+
+  no_questiedb_line_when_recent_or_unknown_version = function(t)
+    for _, v in ipairs({ "1.0.15", "1.0.16", "1.1.0", "v2.0.0", "dev" }) do
+      Mock.reset()
+      Mock.qdbMeta.Version = v
+      Mock.loadAddon(TOC)
+      t.eq(Mock.countPrinted("QuestieDB"), 0, "no QuestieDB line with " .. v)
+      t.eq(#Mock.errors, 0, "no Lua error with " .. v)
+    end
+  end,
+
   init_fires_before_login_and_saved_state = function(t)
     local order = {}
     local Q = Mock.loadAddon(TOC, {

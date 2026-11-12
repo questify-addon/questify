@@ -453,6 +453,56 @@ XP: 38 / 3 / 31). The quest XP compared there is lower in A_20, H_21 (forcings r
 reshuffled) and A_NightElf_03; H_29 is no longer behind. Still heavy: A_20 (727 mobs), A_21 (708), A_26 (633),
 H_18 (525), H_21 (417).
 
+## QuestieDB v1.0.15 (2026-11-12)
+
+The routes are generated from QuestieDB v1.0.15 (commit `c7ccd23`) with the same Questie blacklist. Full
+regeneration: `--faction all --date 2026-11-12` (interpreter, byte-for-byte reproducible). On v1.0.15 the 0.6.0
+guides gave 18 validator violations (chains taken out of order in H_01 and H_OrcTroll_02, 98189 in A_04, 5635 in
+A_Human_02, 94449 for the Gnome in A_DwarfGnome_02), and My Little Friends (93176) was accepted then turned in
+without its objectives in A_12 and H_14. The new guides give none.
+
+Generator changes kept (`tools/routebuilder`):
+
+- `qdb.lua`: NPC levels of 100 or more (9999, 9997: scenario NPCs with a scaled level) count as unknown (0). Without
+  this, A_07 jumps from 32 to 43.7 in one quest and H_Skyborne_01 is simulated at 122k XP instead of 78k.
+- `qdb.lua`: `support/Forever/QuestXP/xpDB-traces.lua` (XP seen in game) is read after `xpDB-classic.lua`, as the
+  game does. Turn-in XP is no longer an estimate for most Forever quests (Longwalker 99079, 99081, 99101: 80 XP,
+  780 estimated).
+- `overrides.lua` / `plans.lua`: Plainstrider Menace (844) pinned to the Plainstrider group away from the new elite
+  positions of v1.0.15 (57.05, 31.02), Echeyakee (881) safe at level 16 (QuestieDB gives 16-60 since v1.0.14). Both
+  to check in game.
+
+Tried and not kept: counting an elite with 8 recorded positions or fewer once per camp (`sim.lua`). It changes 17
+Alliance chapters for +19 min in all and splits an objective area of A_11 with no constraint (quality test).
+
+`ClassQuestData.lua` is not the full output of `build.lua` on v1.0.15: a full regeneration loses the Call of Earth
+letter (96243) and the Call of Fire chain (94449), and adds about forty class quest entries that are not reviewed
+yet. Only two fixes are kept on top of the 0.6.0 file: SHAMAN_79358 for the Alliance only with the Horde chain
+SHAMAN_79360 apart, and Water Sapta (94616, repeatable after 94501) removed. Restore this file after a build until
+the class quest generator is fixed (its three tests in `tools/routebuilder/tests/test_review.lua` fail on v1.0.15
+for the same reason). `BagQuestData.lua` and `DungeonData.lua` are the generator output on v1.0.15.
+
+The addon warns when the installed QuestieDB is older than `QDB.MIN_DATA_VERSION` (`Questify/Data/QDB.lua`): raise
+it with each regeneration on a newer QuestieDB.
+
+Generator minutes per race path (sum of the chapter headers; 0.6.0 used estimated XP, so part of the difference
+comes from the XP data):
+
+| Path | 1-30, 0.6.0 | 1-30, v1.0.15 | 1-60, 0.6.0 | 1-60, v1.0.15 |
+|---|---|---|---|---|
+| Human | 1 172 | 1 128 | 5 637 | 5 556 |
+| Dwarf / Gnome | 1 218 | 1 188 | 5 683 | 5 616 |
+| Night Elf | 1 174 | 1 102 | 5 639 | 5 530 |
+| Skyborne (Alliance) | 1 093 | 1 117 | 5 558 | 5 545 |
+| Orc / Troll | 1 224 | 1 270 | 5 644 | 5 537 |
+| Tauren | 1 226 | 1 359 | 5 646 | 5 626 |
+| Undead | 1 277 | 1 310 | 5 697 | 5 577 |
+| Skyborne (Horde) | 1 252 | 1 359 | 5 672 | 5 626 |
+
+To watch in game: A_17 (Stranglethorn 42-44, 378 min: its quests moved to A_12 once their objectives were no
+longer too dangerous), H_04 (Thousand Needles: 4841, 5064 and 1153 left out because of new elite positions),
+H_Tauren_02 (+94 min), the Wetlands elites that keep 289/290/292 out of A_04.
+
 ## QuestieDB v1.0.12 (2026-11-07)
 
 The routes are generated from QuestieDB v1.0.12 (commit `4d31c10`, the latest release; `master` after it only
