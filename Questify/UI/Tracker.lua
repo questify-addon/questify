@@ -487,6 +487,11 @@ function Tracker:Create()
     showTooltip(btn, { L.DGMODE_TRK_SKIP, L.DGMODE_TRK_SKIP_TIP })
   end)
   setButtonText(self.skipButton, L.DGMODE_TRK_SKIP)
+  -- « Quêtes supplémentaires » (mode automatique, Q.Dungeons:ExtraTarget) : à l'entrée du donjon, ajoute les
+  -- quêtes de l'échelon que la route ne prend pas ; sur leurs prises, les retire.
+  self.extraButton = smallButton(f, function() Tracker:ToggleExtras() end, function(btn)
+    Tracker:ExtraTooltip(btn)
+  end)
 
   -- Rappel « Revenir au donjon » (donjon passé, niveau dans sa tranche) : clic = reprendre le donjon
   local rs = CreateFrame("Button", nil, f)
@@ -931,14 +936,119 @@ function Tracker:LayoutSkip(entry, y)
   local D, b = Q.DungeonMode, self.skipButton
   local key = D and entry and D:SkipTarget(entry)
   self.skipKey = key
+  if key then
+    b:ClearAllPoints()
+    b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
+    b:Show()
+    y = y + MODE_H + 6
+  else
+    b:Hide()
+  end
+  return self:LayoutExtra(entry, y)
+end
+
+-- Bouton « Quêtes supplémentaires » sous l'étape courante (et sous « Passer ce donjon ») ; -> nouvelle hauteur.
+function Tracker:LayoutExtra(entry, y)
+  local D, b = Q.Dungeons, self.extraButton
+  local key, what, info
+  if D and D.ExtraTarget and entry then
+    local ok, k, w, i = pcall(D.ExtraTarget, D, entry)
+    if ok then key, what, info = k, w, i else Q:ReportError(k) end
+  end
+  self.extraKey, self.extraWhat = key, what
   if not key then
     b:Hide()
     return y
   end
+  if what == "add" then
+    setButtonText(b, string.format(L.DGMODE_TRK_EXTRA, info and #info.quests or 0))
+  else
+    setButtonText(b, L.DGMODE_TRK_EXTRA_REMOVE)
+  end
+  b:SetWidth(math.min(b:GetWidth() or 0, textWidth()))
   b:ClearAllPoints()
   b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
   b:Show()
   return y + MODE_H + 6
+end
+
+-- « ~4 min, vol, nouveau point de vol » : trajet de Q.Dungeons:Trip.
+local function tripText(trip)
+  local parts = { string.format(L.DGMODE_TRIP_MIN, math.max(1, math.floor(trip.seconds / 60 + 0.5))) }
+  if trip.flight then parts[#parts + 1] = L.DGMODE_TRIP_FLIGHT end
+  if trip.boat then parts[#parts + 1] = L.DGMODE_TRIP_BOAT end
+  if trip.tram then parts[#parts + 1] = L.DGMODE_TRIP_TRAM end
+  if trip.newFlightPath then parts[#parts + 1] = L.DGMODE_TRIP_NEW_FP end
+  return table.concat(parts, ", ")
+end
+Tracker.TripText = tripText
+
+-- Lignes de l'infobulle : quêtes en plus avec leur donneur, leurs préquêtes et le trajet depuis le point
+-- précédent (le joueur, puis le donneur de la quête d'avant), retour à l'entrée et total.
+function Tracker:ExtraLines()
+  local D, key = Q.Dungeons, self.extraKey
+  if not (D and key) then return nil end
+  if self.extraWhat == "remove" then return { L.DGMODE_TRK_EXTRA_REMOVE, L.DGMODE_TRK_EXTRA_REMOVE_TIP } end
+  local info = D:Extras(key)
+  if not info then return nil end
+  local lines = { L.DGMODE_TRK_EXTRA_TITLE, string.format(L.DGMODE_TRK_EXTRA_INTRO, rungName(info.rung)) }
+  local Popup = Q.UI.DungeonPopup
+  local m, x, y = Q.Maps:PlayerPos()
+  local total, complete, anyTrip = 0, true, false
+  local function trip(to)
+    local t = to and D:Trip(m, x, y, to[1], to[2], to[3])
+    if t then
+      total, anyTrip = total + t.seconds, true
+    else
+      complete = false
+    end
+    return t
+  end
+  for _, q in ipairs(info.quests) do
+    local row = { id = q.id, giver = q.giver, obj = q.obj, at = q.at, ok = true }
+    local text = "- " .. (Popup and Popup.QuestLine and Popup.QuestLine(row) or Q.QDB:QuestName(q.id))
+    local t = trip(q.start)
+    if t then text = text .. " |cffaaaaaa· " .. tripText(t) .. "|r" end
+    lines[#lines + 1] = text
+    if #q.pre > 0 then
+      local names = {}
+      for _, id in ipairs(q.pre) do
+        local rec = Q.QDB:Quest(id)
+        local name = Q.QDB:QuestName(id)
+        if rec and rec.level then name = string.format(L.DGMODE_TRK_EXTRA_PRE_LEVEL, name, rec.level) end
+        names[#names + 1] = name
+      end
+      lines[#lines + 1] = "   |cffaaaaaa" .. string.format(L.DGMODE_TRK_EXTRA_PRE, table.concat(names, ", ")) .. "|r"
+    end
+    if type(q.at) == "table" then m, x, y = q.at[1], q.at[2], q.at[3] end
+  end
+  local ent = info.dungeon.entrance
+  local back = trip(ent)
+  if back then lines[#lines + 1] = string.format(L.DGMODE_TRK_EXTRA_BACK, tripText(back)) end
+  if anyTrip and complete then
+    lines[#lines + 1] = string.format(L.DGMODE_TRK_EXTRA_TOTAL, math.max(1, math.floor(total / 60 + 0.5)))
+  elseif not anyTrip then
+    lines[#lines + 1] = "|cffaaaaaa" .. L.DGMODE_TRK_EXTRA_NOTRIP .. "|r"
+  end
+  lines[#lines + 1] = L.DGMODE_TRK_EXTRA_TIP
+  return lines
+end
+
+function Tracker:ExtraTooltip(btn)
+  local lines = self:ExtraLines()
+  if lines then showTooltip(btn, lines) end
+end
+
+function Tracker:ToggleExtras()
+  local D, key = Q.Dungeons, self.extraKey
+  if not (D and key) then return end
+  local r = Q.DungeonMode and Q.DungeonMode:Rung(key)
+  if self.extraWhat == "remove" then
+    if D:RemoveExtras(key) then Q:Print(L.DGMODE_EXTRA_REMOVED, rungName(r)) end
+  elseif D:AddExtras(key) then
+    Q:Print(L.DGMODE_EXTRA_ADDED, rungName(r))
+  end
+  hideTooltip()
 end
 
 function Tracker:SkipDungeon()
@@ -965,7 +1075,7 @@ function Tracker:ShowMessage(text)
   local f = self.frame
   self.entry, self.target = nil, nil
   for _, r in ipairs({ self.title, self.levels, self.bar, self.alert, self.trainerAlert, self.current, self.modeText,
-    self.modeButton, self.skipButton, self.resumeAlert }) do r:Hide() end
+    self.modeButton, self.skipButton, self.extraButton, self.resumeAlert }) do r:Hide() end
   self.trainerPulse:Stop()
   self.resumePulse:Stop()
   if self.dungeonAlert then

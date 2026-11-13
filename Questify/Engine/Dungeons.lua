@@ -434,8 +434,11 @@ end
 --                          -- ou prises dans le donjon)
 --   locked = { [id] = "level" | "prereq" },
 -- }
-local function plan(d)
+-- only = { [questId] = true } | nil : seulement ces quêtes du donjon (échelon du mode automatique, une aile) ;
+-- les autres servent encore de préquêtes de passage.
+local function plan(d, only)
   local list = questsOf(d, Q.Player.faction)
+  local function kept(e) return only == nil or only[e.id] == true end
   local byId, preOf = {}, {}
   for _, e in ipairs(list) do
     if isQuest(e) then
@@ -453,7 +456,7 @@ local function plan(d)
   local chainSteps, planned = {}, {}
   local level = Q.Player.level or 1
   for _, e in ipairs(list) do
-    if chosen[e.id] and chainCandidate(e) and not prereqsMet(e, planned) then
+    if chosen[e.id] and kept(e) and chainCandidate(e) and not prereqsMet(e, planned) then
       -- chaîne prête : toutes ses quêtes à la portée du niveau (sinon elle attend, PLAYER_LEVEL_UP plus bas)
       local miss = missingChain(e, planned, d)
       if miss and readyLevel(e, miss) <= level then
@@ -467,7 +470,7 @@ local function plan(d)
   if #chainSteps > 0 then
     local first
     for _, e in ipairs(list) do
-      if chainCandidate(e) and prereqsMet(e, planned) then
+      if kept(e) and chainCandidate(e) and prereqsMet(e, planned) then
         chainSteps[#chainSteps + 1] = { "accept", e.id }
         used[e.id] = true
         res.active[#res.active + 1] = e
@@ -482,7 +485,7 @@ local function plan(d)
     end
   end
   local function consider(e)
-    if used[e.id] or isTurnedIn(e.id) or not eligible(e) then return end
+    if used[e.id] or not kept(e) or isTurnedIn(e.id) or not eligible(e) then return end
     if Q.Progress:InLog(e.id) then
       used[e.id] = true
       res.active[#res.active + 1] = e
@@ -525,7 +528,7 @@ local function plan(d)
   end
   -- Quêtes prises dans le donjon : « faire » et « rendre » seulement (sautées hors du journal).
   for _, e in ipairs(list) do
-    if isQuest(e) and e.inside and not used[e.id] and not isTurnedIn(e.id) and eligible(e) then
+    if isQuest(e) and e.inside and kept(e) and not used[e.id] and not isTurnedIn(e.id) and eligible(e) then
       used[e.id] = true
       res.active[#res.active + 1] = e
     end
@@ -910,9 +913,46 @@ local function returnPoint(tag)
   return nil
 end
 
--- Add(key) : insère avant la route les quêtes à prendre et celles qui y mènent (la plus proche d'abord,
--- ville par ville), l'entrée du donjon, « faire » et « rendre » pour chaque quête, puis le retour au point
--- où la route en était (étape « goto » marquée du donjon).
+-- Étapes d'un donjon ajouté : les quêtes à prendre et celles qui y mènent (la plus proche d'abord, ville par
+-- ville), l'entrée du donjon, « faire » et « rendre » pour chaque quête. rung : échelon du mode automatique
+-- (Engine/DungeonMode.lua) : prises en phase « prep », entrée, objectifs et rendus en phase « run », pour que
+-- la case de l'échelon et « Passer ce donjon » s'y appliquent comme aux étapes de la route.
+local function blockSteps(d, p, rung)
+  local name = Dungeons:Name(d)
+  local steps = {}
+  local function add(st, phase)
+    if rung then st.rung, st.phase = rung, phase end
+    steps[#steps + 1] = st
+  end
+  local pm, px, py = Q.Maps:PlayerPos()
+  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+    for _, st in ipairs(u.steps) do add({ st[1], st[2], dungeon = name }, "prep") end
+  end
+  local ent = d.entrance
+  add({ "goto", ent[1], ent[2], ent[3], note = string.format(Q.L.DUNGEON_GOTO_NOTE, name) }, "run")
+  for _, e in ipairs(p.active) do
+    if not e.talk then add({ "complete", e.id, dungeon = name }, "run") end
+  end
+  -- Rendus : d'abord ceux qui se font dans le donjon (PNJ de fin sans position), puis du plus proche
+  -- de l'entrée au plus loin.
+  local inside, outside = {}, {}
+  for _, e in ipairs(p.active) do
+    if isPoint(e.endAt) then
+      outside[#outside + 1] = { start = e.endAt, quest = e }
+    else
+      inside[#inside + 1] = e
+    end
+  end
+  for _, e in ipairs(inside) do add({ "turnin", e.id, dungeon = name }, "run") end
+  for _, it in ipairs(orderNearest(outside, ent[1], ent[2], ent[3])) do
+    add({ "turnin", it.quest.id, dungeon = name }, "run")
+  end
+  return steps
+end
+
+-- Add(key) : insère avant la route les quêtes à prendre et celles qui y mènent, l'entrée du donjon, « faire »
+-- et « rendre » pour chaque quête (blockSteps), puis le retour au point où la route en était (étape « goto »
+-- marquée du donjon).
 function Dungeons:Add(key)
   local s = saved()
   if not s or not enabled() then return false end
@@ -926,32 +966,7 @@ function Dungeons:Add(key)
   if not hasQuest then return false end
   local name = self:Name(d)
   local back = returnPoint(TAG_PREFIX .. d.key)
-  local steps = {}
-  local pm, px, py = Q.Maps:PlayerPos()
-  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
-    for _, st in ipairs(u.steps) do
-      steps[#steps + 1] = { st[1], st[2], dungeon = name }
-    end
-  end
-  local ent = d.entrance
-  steps[#steps + 1] = { "goto", ent[1], ent[2], ent[3], note = string.format(Q.L.DUNGEON_GOTO_NOTE, name) }
-  for _, e in ipairs(p.active) do
-    if not e.talk then steps[#steps + 1] = { "complete", e.id, dungeon = name } end
-  end
-  -- Rendus : d'abord ceux qui se font dans le donjon (PNJ de fin sans position), puis du plus proche
-  -- de l'entrée au plus loin.
-  local inside, outside = {}, {}
-  for _, e in ipairs(p.active) do
-    if isPoint(e.endAt) then
-      outside[#outside + 1] = { start = e.endAt, quest = e }
-    else
-      inside[#inside + 1] = e
-    end
-  end
-  for _, e in ipairs(inside) do steps[#steps + 1] = { "turnin", e.id, dungeon = name } end
-  for _, it in ipairs(orderNearest(outside, ent[1], ent[2], ent[3])) do
-    steps[#steps + 1] = { "turnin", it.quest.id, dungeon = name }
-  end
+  local steps = blockSteps(d, p)
   if back then
     local note = back[4] and string.format(Q.L.DUNGEON_BACK_NOTE, back[4]) or Q.L.DUNGEON_BACK_NOTE_PLAIN
     steps[#steps + 1] = { "goto", back[1], back[2], back[3], dungeon = name, note = note }
@@ -985,6 +1000,133 @@ function Dungeons:Unignore(key)
   s.ignored[key] = nil
   notify()
   return true
+end
+
+---------------------------------------------------------------------------
+-- Mode automatique (Engine/DungeonMode.lua) : quêtes en plus d'un échelon
+---------------------------------------------------------------------------
+-- La route du mode ne prend que les quêtes de donjon dont le donneur est sur son chemin, telles que la
+-- simulation les a vues (un personnage qui joue toutes les alternatives). Un personnage qui a fait les donjons
+-- précédents passe ces alternatives et arrive à l'entrée sans certaines quêtes (la Prison sans « What Comes
+-- Around... » des Carmines, par exemple). Le suivi propose alors de les ajouter avant d'entrer : même bloc que
+-- Add (prises, entrée, objectifs, rendus), sans retour au point de départ, puisque la route reprend d'elle-même.
+
+-- Échelon coché du mode actif -> échelon, donjon des données, { [questId] = true } : quêtes de l'échelon.
+local function rungTarget(key)
+  local DM = Q.DungeonMode
+  if not (DM and DM:IsOn()) then return nil end
+  local r = DM:Rung(key)
+  if not r or DM:State(key) ~= "on" then return nil end
+  local d = findDungeon(r.dungeon)
+  if not d then return nil end
+  local only = {}
+  for _, id in ipairs(type(r.quests) == "table" and r.quests or {}) do only[id] = true end
+  return r, d, only
+end
+
+-- Extras(key) -> {
+--   rung, dungeon,
+--   quests = { { id, giver|nil, obj|nil, at = {m,x,y}, start = {m,x,y}, pre = { questId, ... } }, ... },
+--                     -- quêtes à prendre, dans l'ordre du bloc ; pre : préquêtes enchaînées avant elle
+--   plan,             -- plan(d) restreint à l'échelon
+-- } ou nil : rien à ajouter (mode éteint, échelon décoché ou contourné, toutes les quêtes prises ou
+-- bloquées, quêtes de donjon coupées dans les options).
+function Dungeons:Extras(key)
+  if not enabled() or Q.Settings:Get("dungeonQuests") == false then return nil end
+  local r, d, only = rungTarget(key)
+  if not r then return nil end
+  local p = plan(d, only)
+  if #p.units == 0 then return nil end
+  local pm, px, py = Q.Maps:PlayerPos()
+  local quests = {}
+  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+    local e = u.quest
+    local pre = {}
+    for _, st in ipairs(u.steps) do
+      if st[1] == "accept" and st[2] ~= e.id then pre[#pre + 1] = st[2] end
+    end
+    quests[#quests + 1] = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, start = u.start or e.at, pre = pre }
+  end
+  return { rung = r, dungeon = d, quests = quests, plan = p }
+end
+
+-- ExtrasAdded(key) -> vrai si le bloc de l'échelon est dans la route.
+function Dungeons:ExtrasAdded(key)
+  if type(key) ~= "string" or not Q.Progress then return false end
+  local tag = TAG_PREFIX .. key
+  for _, e in ipairs(Q.Progress:Entries()) do
+    if e.tag == tag then return true end
+  end
+  return false
+end
+
+-- AddExtras(key) : insère avant la route les quêtes en plus de l'échelon (et leurs préquêtes), l'entrée, les
+-- objectifs et les rendus de toutes les quêtes de l'échelon. -> vrai si fait.
+function Dungeons:AddExtras(key)
+  local info = self:Extras(key)
+  if not info then return false end
+  Q.Progress:InsertSteps(TAG_PREFIX .. key, blockSteps(info.dungeon, info.plan, key))
+  notify()
+  return true
+end
+
+-- RemoveExtras(key) : retire le bloc ; les étapes d'instance de la route restent. -> vrai si fait.
+function Dungeons:RemoveExtras(key)
+  if not self:ExtrasAdded(key) then return false end
+  Q.Progress:RemoveInserted(TAG_PREFIX .. key)
+  local s = saved()
+  if s then s.added[key] = nil end
+  notify()
+  return true
+end
+
+-- ExtraTarget(entry) -> échelon, "add" | "remove", Extras(échelon) pour "add" ; ou nil : bouton du suivi pour
+-- cette étape. "add" sur l'étape d'entrée d'un échelon (goto en phase « run » de la route) quand des quêtes sont
+-- à ajouter ; "remove" sur une prise du bloc déjà ajouté (une fois à l'entrée, « Passer ce donjon » reste le
+-- moyen de s'en passer).
+function Dungeons:ExtraTarget(entry)
+  local step = type(entry) == "table" and entry.step
+  if type(step) ~= "table" or type(step.rung) ~= "string" then return nil end
+  local DM = Q.DungeonMode
+  if not (DM and DM:IsOn()) then return nil end
+  if entry.source == "inserted" then
+    if entry.tag == TAG_PREFIX .. step.rung and step.phase == "prep" then return step.rung, "remove" end
+    return nil
+  end
+  if step.phase == "run" and step.action == "goto" then
+    local info = self:Extras(step.rung)
+    if info then return step.rung, "add", info end
+  end
+  return nil
+end
+
+-- Trip(m1, x1, y1, m2, x2, y2) -> { seconds, flight, boat, tram, newFlightPath } ou nil : trajet estimé par
+-- ShortestPathForever, qui connaît les points de vol découverts par le personnage, les bateaux et le tram.
+-- flight / boat / tram : le trajet en prend ; newFlightPath : il passe par un point de vol à découvrir. nil sans
+-- l'addon, pendant son chargement, en combat ou hors de ses cartes. Coordonnées en 0-100 (0-1 chez lui).
+function Dungeons:Trip(m1, x1, y1, m2, x2, y2)
+  local SP = type(ShortestPathForever) == "table" and ShortestPathForever.API
+  local fn = type(SP) == "table" and SP.EstimateDetail
+  if type(fn) ~= "function" then return nil end
+  for _, v in ipairs({ m1, x1, y1, m2, x2, y2 }) do
+    if type(v) ~= "number" then return nil end
+  end
+  local ok, res = pcall(fn, m1, x1 / 100, y1 / 100, m2, x2 / 100, y2 / 100)
+  if not ok or Q.Util.IsSecret(res) or type(res) ~= "table" or type(res.seconds) ~= "number" then return nil end
+  local out = { seconds = res.seconds }
+  for _, leg in ipairs(type(res.legs) == "table" and res.legs or {}) do
+    if type(leg) == "table" then
+      if leg.mode == "flight" then
+        out.flight = true
+      elseif leg.mode == "boat" or leg.mode == "zeppelin" then
+        out.boat = true
+      elseif leg.mode == "tram" then
+        out.tram = true
+      end
+      if leg.newFlightPath then out.newFlightPath = true end
+    end
+  end
+  return out
 end
 
 -- Rebâtit les étapes d'un donjon (chaînes ajoutées ou retirées) ; l'ajoute s'il ne l'était pas et que `add`.

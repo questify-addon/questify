@@ -32,6 +32,17 @@ Le mode s'appelle « mode automatique » en jeu.
   rappel « Revenir au donjon X » s'affiche en tête des objectifs ; un clic reprend le donjon (dans un
   chapitre suivant, ses étapes d'instance sont insérées en tête de la route, tag `dgresume:<échelon>`).
   Hors de la tranche, le rappel disparaît et le donjon reste passé.
+- Suivi, même étape d'entrée : bouton « + Quêtes supplémentaires (N) » quand des quêtes de l'échelon ne sont pas
+  dans le journal et peuvent être prises maintenant. La route ne prend que les quêtes vues par la simulation (un
+  personnage qui joue toutes les alternatives) : un personnage qui a fait les donjons précédents passe
+  l'alternative des Carmines et arrive à la Prison sans What Comes Around..., et The Fury Runs Deep (Paluns,
+  après The Dark Iron War) n'est jamais sur le chemin. L'infobulle donne chaque quête avec son donneur, ses
+  préquêtes (et leur niveau), le trajet estimé par ShortestPathForever depuis le point précédent (vol connu,
+  bateau, tram, point de vol à découvrir en chemin), le retour à l'entrée et le total. Un clic insère un bloc
+  `dg:<échelon>` (`Q.Dungeons:AddExtras`) : prises et préquêtes en phase `prep`, entrée, objectifs et rendus de
+  toutes les quêtes de l'échelon en phase `run` ; la case de l'échelon et « Passer ce donjon » s'y appliquent.
+  Sur les prises du bloc, le bouton devient « Retirer les quêtes en plus ». Les étapes d'instance de la route
+  qui suivent sont validées par les rendus du bloc.
 - Vue « Automatique » : un gros bouton centré lance ou arrête le mode ; dessous, le sous-menu repliable
   « Donjons » (une case et zéro à trois étoiles par donjon ou par aile, « Tout cocher » / « Tout
   décocher ») puis l'aperçu des zones à explorer, dans l'ordre, avec les donjons faits à la fin de chacune.
