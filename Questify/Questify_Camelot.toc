@@ -80,6 +80,7 @@ Engine\Dungeons.lua
 
 Nav\Caves.lua
 Nav\Navigation.lua
+Nav\PublicAPI.lua
 
 Automation\Rewards.lua
 Automation\SpecRole.lua
