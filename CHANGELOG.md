@@ -1,5 +1,70 @@
 # Changelog
 
+## 0.7.0 (2026-11-13)
+
+### English
+
+**Automatic route with dungeons (Alliance)**
+- A second route from level 12 to 60, next to the usual one (unchanged): it goes after the dungeon quests, runs
+  every 5-player dungeon (each wing included) and clears a zone between two of them. 35 chapters, taking over from
+  each race's usual start.
+- Pick it in the first-run wizard (new page 2, "Your route": automatic or manual) or in the journal: the Route tab
+  has two views, Manual (chapters and steps, as before) and Automatic (start or stop button, one checkbox and zero to
+  three stars per dungeon or wing, the zones to come in order). The Route tab opens on the route you chose.
+- An unchecked dungeon is skipped, with the detours that only lead to it; the outdoor alternative is played instead.
+- Tracker: a "Mode: Manual / Automatic" line. On a dungeon step, "Skip this dungeon" (no group): your quests stay in
+  the log, and "Back to dungeon X" shows at the top of the objectives while you are still in its level range.
+- At a dungeon's entrance, "+ Extra quests (N)" offers the dungeon quests your route did not pick up (Redridge and the
+  Wetlands for the Stockade, for instance). Its tooltip gives each quest with its giver, the quests to do first and
+  their level, and the travel time from ShortestPath Forever (known flights, boat, tram, new flight path on the way).
+  One click adds them before the dungeon; "Remove extra quests" takes them out.
+- While the automatic route is on, the tracker no longer suggests dungeons: they are in the route.
+
+**Alternative zone (both routes)**
+- Zone too hard or overrun by the other faction: "Alternative path" in the tracker (automatic route), the journal's
+  "Alternative zone" button or `/qf alt` move you to another zone for your level, then back to your route
+  (`/qf alt back`).
+
+**Quests started by a looted item**
+- A quest started by an item a monster drops waits for the item before it is offered: Ira's Dagger no longer sends you
+  to the Alterac Mountains. When the drop rate is high (30% or more), the route sends you to the monsters.
+
+**AzerothGPS**
+- AzerothGPS is now listed as an optional addon: its "Questify Route" button follows Questify's steps on its map.
+
+### Français
+
+**Route automatique avec les donjons (Alliance)**
+- Un second parcours du niveau 12 au 60, à côté de la route habituelle (inchangée) : il vise les quêtes de donjon,
+  enchaîne tous les donjons à 5 joueurs (chaque aile comprise) et vide une zone entre deux. 35 chapitres, qui
+  prennent la suite du départ habituel de chaque race.
+- À choisir dans l'assistant de premier démarrage (nouvelle page 2, « Ta route » : automatique ou manuelle) ou dans
+  le journal : l'onglet Route a deux vues, Manuel (chapitres et étapes, comme avant) et Automatique (bouton pour
+  lancer ou arrêter, une case et zéro à trois étoiles par donjon ou par aile, les zones à venir dans l'ordre).
+  L'onglet Route s'ouvre sur la route choisie.
+- Un donjon décoché est sauté, avec les détours qui ne servent qu'à lui ; l'alternative en extérieur est jouée.
+- Suivi : une ligne « Mode : Manuel / Automatique ». Sur une étape de donjon, « Passer ce donjon » (pas de groupe) :
+  tes quêtes restent dans le journal, et « Revenir au donjon X » s'affiche en tête des objectifs tant que tu es dans
+  sa tranche de niveau.
+- À l'entrée d'un donjon, « + Quêtes supplémentaires (N) » propose les quêtes du donjon que ta route n'a pas prises
+  (les Carmines et les Paluns pour la Prison, par exemple). L'infobulle donne chaque quête avec son donneur, les
+  quêtes à faire avant et leur niveau, et le temps de trajet de ShortestPath Forever (vols connus, bateau, tram,
+  nouveau point de vol en chemin). Un clic les ajoute avant le donjon ; « Retirer les quêtes en plus » les enlève.
+- Route automatique lancée : le suivi ne conseille plus de donjons, ils sont dans la route.
+
+**Zone alternative (les deux routes)**
+- Zone trop dure ou envahie par l'autre faction : « Chemin alternatif » dans le suivi (route automatique), le bouton
+  « Zone alternative » du journal ou `/qf alt` passent sur une autre zone de ton niveau, puis reviennent à ta route
+  (`/qf alt back`).
+
+**Quêtes lancées par un objet ramassé**
+- Une quête lancée par un objet lâché par un monstre attend l'objet avant d'être proposée : Ira's Dagger n'envoie plus
+  dans les montagnes d'Alterac. Quand le taux de butin est élevé (30 % ou plus), la route envoie vers les monstres.
+
+**AzerothGPS**
+- AzerothGPS fait partie des addons optionnels : son bouton « Itinéraire Questify » suit les étapes de Questify sur
+  sa carte.
+
 ## 0.6.1 (2026-11-12)
 
 ### English

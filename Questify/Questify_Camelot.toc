@@ -3,7 +3,7 @@
 ## Notes: Free leveling guide for World of Warcraft: Forever (1-60).
 ## Notes-frFR: Guide de leveling gratuit pour World of Warcraft: Forever (1-60).
 ## Author: Questify contributors
-## Version: 0.6.1
+## Version: 0.7.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## Category: Quests
 ## Category-deDE: Quests

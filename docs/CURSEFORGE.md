@@ -71,9 +71,16 @@ always shows you the next thing to do.
   grinding, one continent at a time. About 93 to 96 hours of simulated play from 1 to 60, depending on your race.
 - **Follows your quest log.** Steps tick themselves; steps your character cannot do are skipped.
   `/qf skip` and `/qf back` when you want to go your own way.
-- **Navigation your way.** Native 3D waypoint, or ShortestPath Forever, WaypointUI or TomTom. Flight paths, boats
-  and zeppelins are part of the route, caves are entered by their entrance, and the next steps are pinned on the
-  world map and minimap.
+- **Automatic route with dungeons (Alliance).** A second route from level 12 to 60 built around dungeon quests: it
+  goes through every 5-player dungeon (each wing included) and clears a zone between two of them. One checkbox per
+  dungeon; "Skip this dungeon" in the tracker when you have no group, with a reminder to come back while you are
+  still in its level range; "Alternative path" when a zone is too hard or overrun by the other faction. At a
+  dungeon's entrance, "+ Extra quests" offers the dungeon quests your route did not pick up, with the travel time
+  (with ShortestPath Forever) and the flight paths to learn on the way. Pick it in the first-run wizard or in the
+  journal's Route tab.
+- **Navigation your way.** Native 3D waypoint, or ShortestPath Forever, WaypointUI or TomTom; AzerothGPS follows
+  the guide too, with its "Questify Route" button. Flight paths, boats and zeppelins are part of the route, caves
+  are entered by their entrance, and the next steps are pinned on the world map and minimap.
 - **Zone mode and mob targeting.** When several quests share an area, their objectives are grouped into one
   visit; the monsters to kill are listed under the objective, and one click (or a key) targets them and marks
   them with a skull.
@@ -95,9 +102,11 @@ always shows you the next thing to do.
 ## Requirements
 - **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 or newer.
 - **Optional:** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
-  [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom).
+  [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps).
 
-The first-run wizard detects them and gives the link for the missing ones.
+The first-run wizard detects ShortestPath Forever, WaypointUI and TomTom and gives the link for the missing ones.
+AzerothGPS needs nothing in Questify: its "Questify Route" button makes each step the next stop on its map.
 
 ## Commands
 `/qf` journal · `/qf route` change route · `/qf class` class quests · `/qf options` options ·
@@ -121,9 +130,17 @@ t'indique toujours quoi faire ensuite.
   race.
 - **Suit ton journal** : les étapes se cochent seules ; celles que ton personnage ne peut pas faire sont sautées.
   `/qf skip` et `/qf back` quand tu veux faire à ta façon.
-- **Navigation au choix** : repère 3D du jeu, ou ShortestPath Forever, WaypointUI ou TomTom. Points de vol, bateaux
-  et zeppelins font partie de la route, les grottes se prennent par leur entrée, les étapes suivantes sont
-  épinglées sur la carte du monde et la minicarte.
+- **Route automatique avec les donjons (Alliance)** : un second parcours du niveau 12 au 60, construit autour des
+  quêtes de donjon : il passe par tous les donjons à 5 joueurs (chaque aile comprise) et vide une zone entre deux.
+  Une case par donjon ; « Passer ce donjon » dans le suivi quand tu n'as pas de groupe, avec un rappel pour y
+  revenir tant que tu es dans sa tranche de niveau ; « Chemin alternatif » quand une zone est trop dure ou envahie
+  par l'autre faction. À l'entrée d'un donjon, « + Quêtes supplémentaires » propose les quêtes du donjon que ta
+  route n'a pas prises, avec le temps de trajet (avec ShortestPath Forever) et les points de vol à découvrir en
+  chemin. À choisir dans l'assistant de premier démarrage ou dans l'onglet Route du journal.
+- **Navigation au choix** : repère 3D du jeu, ou ShortestPath Forever, WaypointUI ou TomTom ; AzerothGPS suit aussi
+  le guide, avec son bouton « Itinéraire Questify ». Points de vol, bateaux et zeppelins font partie de la route,
+  les grottes se prennent par leur entrée, les étapes suivantes sont épinglées sur la carte du monde et la
+  minicarte.
 - **Mode zone et ciblage** : quand plusieurs quêtes partagent un endroit, leurs objectifs sont regroupés en une
   visite ; les monstres à tuer sont listés sous l'objectif, un clic (ou une touche) les cible et pose le crâne.
 - **Tout à portée de clic** : quatre boutons dans le suivi ouvrent le journal sur la route, les donjons ou les quêtes
@@ -146,9 +163,12 @@ t'indique toujours quoi faire ensuite.
 ## Prérequis
 - **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 ou plus récent.
 - **Optionnels :** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
-  [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom).
+  [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps).
 
-L'assistant de premier démarrage les détecte et donne le lien de ceux qui manquent.
+L'assistant de premier démarrage détecte ShortestPath Forever, WaypointUI et TomTom et donne le lien de ceux qui
+manquent. AzerothGPS n'a besoin de rien dans Questify : son bouton « Itinéraire Questify » fait de chaque étape le
+prochain arrêt de sa carte.
 
 ## Commandes
 `/qf` journal · `/qf route` changer de route · `/qf classe` quêtes de classe · `/qf options` options ·

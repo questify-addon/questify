@@ -12,6 +12,7 @@ A **free and open-source** leveling guide for **World of Warcraft: Forever** (le
 | ShortestPath Forever | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/shortest-path-forever) |
 | WaypointUI | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/waypointui) |
 | TomTom | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/tomtom) |
+| AzerothGPS | optionnel / optional | [CurseForge](https://www.curseforge.com/wow/addons/azerothgps) |
 
 Décompresse chaque zip dans `World of Warcraft\_forever_\Interface\AddOns\`, relance le jeu, puis suis
 l'assistant. *Unzip each zip into `World of Warcraft\_forever_\Interface\AddOns\`, restart the game,
@@ -39,6 +40,12 @@ Captures et vidéos à venir : liste des prises de vue dans [docs/media/README.m
 - Les étapes se cochent toutes seules selon ton journal de quêtes ; les étapes impossibles pour ton
   personnage sont sautées.
 - Navigation vers chaque étape (marqueur natif du jeu, ou TomTom, WaypointUI, ShortestPath Forever).
+  AzerothGPS suit aussi le guide : son bouton « Itinéraire Questify » fait de chaque étape le prochain arrêt de
+  sa carte.
+- Route automatique (Alliance, niveaux 12 à 60) : un second parcours qui enchaîne les quêtes de donjon et les
+  donjons à 5 joueurs, avec une case par donjon, « Passer ce donjon » et « Chemin alternatif » dans le suivi.
+  À choisir dans l'assistant ou dans l'onglet Route du journal ; détails dans
+  [docs/dungeon-mode/README.md](docs/dungeon-mode/README.md).
 - Monstres à tuer sous chaque objectif (clic ou touche de ciblage auto : cible + crâne), quêtes de classe, acceptation et rendu automatiques (désactivables).
 - Quêtes de sac (non publié, option) : près du donneur d'une quête qui donne un sac plus grand que ton plus petit
   sac (ou s'il te reste un emplacement de sac vide), la route propose une étape « Quête de sac » ; un clic pour
@@ -69,7 +76,8 @@ Un seul zip, pour WoW: Forever, dans la dernière version publiée du dépôt Gi
    c'est une dépendance obligatoire (les données de quêtes viennent de là).
 3. Facultatif : installe [**ShortestPath Forever**](https://www.curseforge.com/wow/addons/shortest-path-forever)
    (calcul d'itinéraire), [**WaypointUI**](https://www.curseforge.com/wow/addons/waypointui) ou
-   [**TomTom**](https://www.curseforge.com/wow/addons/tomtom) (affichage de la destination).
+   [**TomTom**](https://www.curseforge.com/wow/addons/tomtom) (affichage de la destination), ou
+   [**AzerothGPS**](https://www.curseforge.com/wow/addons/azerothgps) (carte façon GPS qui suit les étapes).
 
 ### Dépendances
 | Addon | Rôle | Obligatoire |
@@ -78,11 +86,12 @@ Un seul zip, pour WoW: Forever, dans la dernière version publiée du dépôt Gi
 | ShortestPath Forever | Itinéraire entre zones (vols, bateaux) | non |
 | WaypointUI | Marqueur de destination | non |
 | TomTom | Flèche de destination | non |
+| AzerothGPS | Carte façon GPS : son bouton « Itinéraire Questify » suit les étapes | non |
 
 Sans addon de navigation, Questify utilise le marqueur 3D natif du jeu.
 
 ### Assistant de premier démarrage
-Il s'ouvre environ 3 secondes après la connexion (jamais en combat), en cinq pages. Chaque page a
+Il s'ouvre environ 3 secondes après la connexion (jamais en combat), en six pages. Chaque page a
 « Précédent », « Ignorer » (garde les réglages actuels de la page) et « Suivant » ; la dernière a
 « Terminer ».
 1. **Bienvenue et addons** : état de QuestieDB, ShortestPath Forever, WaypointUI et TomTom
@@ -94,10 +103,12 @@ Il s'ouvre environ 3 secondes après la connexion (jamais en combat), en cinq pa
    - Sans QuestieDB, le suivi affiche un bouton « Lien » qui ouvre cette page.
    - Un addon tout juste téléchargé n'apparaît qu'après un redémarrage complet du jeu, pas après
      `/reload`.
-2. **Calcul d'itinéraire** : ShortestPath Forever, s'il est chargé.
-3. **Affichage** : WaypointUI, TomTom ou le repère du jeu.
-4. **Automatisations** : accepter et rendre les quêtes, choisir la récompense, vendre la camelote.
-5. **Récapitulatif** : « Terminer » enregistre les choix.
+2. **Ta route** : automatique (avec les donjons, Alliance) ou manuelle ; l'automatique est grisée quand
+   elle n'existe pas pour le personnage.
+3. **Calcul d'itinéraire** : ShortestPath Forever, s'il est chargé.
+4. **Affichage** : WaypointUI, TomTom ou le repère du jeu.
+5. **Automatisations** : accepter et rendre les quêtes, choisir la récompense, vendre la camelote.
+6. **Récapitulatif** : « Terminer » enregistre les choix.
 
 L'assistant reprend où tu l'as laissé : après « Recharger l'interface », `/reload` ou une
 reconnexion, il se rouvre sur la même page tant qu'il n'est pas terminé (une fois par session).
@@ -191,6 +202,11 @@ Bibliothèques incluses dans `Questify/Libs/`, copiées sans modification :
   flight paths, hearthstone, boats.
 - Steps tick themselves off from your quest log; steps your character cannot do are skipped.
 - Navigation to every step (native in-game marker, or TomTom, WaypointUI, ShortestPath Forever).
+  AzerothGPS follows the guide too: its "Questify Route" button makes each step the next stop on its map.
+- Automatic route (Alliance, levels 12 to 60): a second route through the dungeon quests and the 5-player
+  dungeons, with one checkbox per dungeon, "Skip this dungeon" and "Alternative path" in the tracker. Pick it
+  in the wizard or in the journal's Route tab; details (in French) in
+  [docs/dungeon-mode/README.md](docs/dungeon-mode/README.md).
 - Monsters to kill under each objective in the tracker (click or auto-targeting key: target +
   skull), class quests, automatic accept and turn-in (can be turned off).
 - Bag quests (unreleased, can be turned off): near the giver of a quest that rewards a bag bigger than your smallest
@@ -222,7 +238,8 @@ A single zip, for WoW: Forever, in the GitHub repository's latest release:
    required dependency (quest data comes from it).
 3. Optional: install [**ShortestPath Forever**](https://www.curseforge.com/wow/addons/shortest-path-forever)
    (routing), [**WaypointUI**](https://www.curseforge.com/wow/addons/waypointui) or
-   [**TomTom**](https://www.curseforge.com/wow/addons/tomtom) (destination display).
+   [**TomTom**](https://www.curseforge.com/wow/addons/tomtom) (destination display), or
+   [**AzerothGPS**](https://www.curseforge.com/wow/addons/azerothgps) (a GPS-style map that follows the steps).
 
 ### Dependencies
 | Addon | Role | Required |
@@ -231,11 +248,12 @@ A single zip, for WoW: Forever, in the GitHub repository's latest release:
 | ShortestPath Forever | Routing between zones (flights, boats) | no |
 | WaypointUI | Destination marker | no |
 | TomTom | Destination arrow | no |
+| AzerothGPS | GPS-style map: its "Questify Route" button follows the steps | no |
 
 Without a navigation addon, Questify uses the game's native 3D waypoint.
 
 ### First-launch wizard
-It opens about 3 seconds after login (never in combat) and has five pages. Every page has
+It opens about 3 seconds after login (never in combat) and has six pages. Every page has
 "Previous", "Skip" (keeps the page's current settings) and "Next"; the last one has "Finish".
 1. **Welcome and addons**: state of QuestieDB, ShortestPath Forever, WaypointUI and TomTom
    (installed, disabled, enabled but not loaded yet, out of date, not installed).
@@ -244,10 +262,12 @@ It opens about 3 seconds after login (never in combat) and has five pages. Every
    - Disabled addon: "Enable" button (for this character), then "Reload UI".
    - Without QuestieDB, the tracker shows a "Link" button that opens this page.
    - A newly downloaded addon only shows up after a full game restart, not after `/reload`.
-2. **Route planning**: ShortestPath Forever, when loaded.
-3. **Display**: WaypointUI, TomTom or the game's own map pin.
-4. **Automations**: accept and turn in quests, choose the reward, sell junk.
-5. **Summary**: "Finish" saves your choices.
+2. **Your route**: automatic (with the dungeons, Alliance) or manual; automatic is greyed out when the
+   character has none.
+3. **Route planning**: ShortestPath Forever, when loaded.
+4. **Display**: WaypointUI, TomTom or the game's own map pin.
+5. **Automations**: accept and turn in quests, choose the reward, sell junk.
+6. **Summary**: "Finish" saves your choices.
 
 The wizard resumes where you left it: after "Reload UI", `/reload` or a new login, it reopens on
 the same page until it is finished (once per session). Closing it with the X does not finish it:

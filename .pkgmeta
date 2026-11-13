@@ -4,6 +4,7 @@
 # Dépendances CurseForge. Slug et ID confirmés le 2026-11-03 sur la page du projet :
 #   https://www.curseforge.com/wow/addons/questiedb  (ID 1696795, publié depuis github.com/Questie/QuestieDB)
 #   shortest-path-forever = 1708599, waypointui = 1275146, tomtom = 18808
+#   azerothgps = 1712208 (confirmé le 2026-11-13 ; son bouton « Questify Route » suit les étapes de Questify)
 package-as: Questify
 
 required-dependencies:
@@ -13,6 +14,7 @@ optional-dependencies:
   - shortest-path-forever
   - waypointui
   - tomtom
+  - azerothgps
 
 # Le fichier Questify_Camelot.toc (Interface 16xxx) est reconnu par le packager
 # comme la variante « Forever », le seul jeu visé. Le dépôt garde l'addon dans le sous-dossier Questify/ :
