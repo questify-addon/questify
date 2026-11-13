@@ -5,10 +5,12 @@ donjon, enchaîne tous les donjons 5 joueurs (chaque aile comprise) et vide une 
 Les guides Alliance et Horde existants, `ClassQuestData.lua` et `DungeonData.lua` ne sont ni modifiés ni
 régénérés.
 
-**État : infrastructure et échelle livrées, routes à écrire.** Tant qu'aucun chapitre du mode n'est livré,
-l'option et la fenêtre restent cachées en jeu : rien ne change pour les joueurs.
+**État : infrastructure, échelle et routes 12-60 livrées ; rien n'a été joué en jeu.** Le mode est proposé
+aux personnages de l'Alliance dans les options ; il est éteint par défaut et la route habituelle ne change pas.
 
 - Échelle (niveau × donjon ou aile × zones entre deux) : [ECHELLE.md](ECHELLE.md), généré.
+- Routes générées, niveaux simulés et quêtes prises par échelon : [routes/ROUTES.md](routes/ROUTES.md), généré,
+  avec un rapport par chapitre dans le même dossier.
 - Points à vérifier en jeu : [A-VERIFIER.md](A-VERIFIER.md).
 
 ## Ce que voit le joueur
@@ -35,26 +37,52 @@ l'option et la fenêtre restent cachées en jeu : rien ne change pour les joueur
 | `Questify/UI/DungeonModePanel.lua` | Fenêtre des cases et des étoiles. |
 | `Questify/Engine/Guides.lua` | Champ `mode` des chapitres ; champs `rung`, `phase`, `alt`, `below` des étapes. |
 | `Questify/Engine/Progress.lua` | Une ligne dans le filtre des étapes ; chapitre de départ selon le mode. |
-| `tools/validate_guides.lua` | Contrôle des nouveaux champs (`rungProblem`). |
+| `tools/routebuilder/plans_dungeon.lua` | La chaîne des chapitres du mode : copies des réglages des chapitres habituels (jamais modifiés), redécoupés autour des échelons. |
+| `tools/routebuilder/build_dungeon_guides.lua` | Génère les routes avec le simulateur habituel, ajoute les blocs « instance » et les étiquettes, écrit `AllianceDungeon/`, `DungeonGuides.xml` et les rapports. |
+| `tools/routebuilder/build.lua` | Deux crochets (`plan.before`, `plan.after`), sans effet sur les plans habituels. |
+| `tools/validate_guides.lua` | Contrôle des nouveaux champs (`rungProblem`) ; `--xml DungeonGuides.xml` rejoue les routes du mode à la suite des départs habituels, race par race. |
 
 ### Chapitres et étapes du mode
 
 Un chapitre du mode porte `mode = "dungeon"`. Il n'est jamais choisi, listé au journal ni proposé comme suite
-pour un personnage qui suit les guides habituels, et inversement. Les fichiers de routes iront dans
-`Questify/Guides/AllianceDungeon/` (identifiants `AD_<Départ>_<NN>` et `AD_<NN>`), à part des guides actuels.
+pour un personnage qui suit les guides habituels, et inversement. Les fichiers sont dans
+`Questify/Guides/AllianceDungeon/` (35 chapitres `AD_*`), chargés par `Guides/DungeonGuides.xml`, à part des
+guides actuels et de `Guides.xml`.
+
+Départs : les niveaux 1 à 15 sont ceux des guides habituels (mêmes chapitres, non dupliqués). Le champ
+`after` d'un chapitre du mode nomme les chapitres habituels dont il prend la suite : `AD_01` (Ironforge)
+après la Marche de l'Ouest des Humains et des Nains / Gnomes et après l'île de Zephras, `AD_NightElf_03`
+(Sombrivage jusqu'au niveau 16) après Teldrassil. Les trois départs se rejoignent en `AD_01`.
+
+Trois rôles de chapitre :
+
+- **zone** : toujours joué ; ses prises de quêtes de donjon et leurs suites d'accès sont des étapes `prep` ;
+- **instance** : chapitre de zone qui finit par un bloc `run` par échelon (aller à l'entrée, objectifs,
+  rendus) ; un rendu lointain est déplacé au début du prochain chapitre qui passe par la zone du PNJ ;
+- **alternative** : toutes ses étapes portent `alt = { échelons }` et `below = niveau visé`.
 
 | Champ d'étape | Sens |
 |---|---|
 | `rung = "<échelon>", phase = "prep"` | Suite, quête d'accès, prise d'une quête du donjon, détour qui ne sert qu'à lui. Passée si la case est décochée. |
 | `rung = "<échelon>", phase = "run"` | Aller à l'entrée, objectif dans l'instance, rendu. Passée si la case est décochée ou l'instance contournée. |
-| `alt = "<échelon>"` | Alternative en extérieur : jouée si la case est décochée ou l'instance contournée. |
-| `alt = "<échelon>", below = N` | Comme ci-dessus, et jouée aussi tant que le personnage est sous le niveau N. |
+| `alt = "<échelon>"` ou `{ "<échelon>", ... }` | Alternative en extérieur : jouée si la case de l'un de ces échelons est décochée ou son instance contournée. |
+| `alt = ..., below = N` | Comme ci-dessus, et jouée aussi tant que le personnage est sous le niveau N. |
 | `below = N` | Étape de rattrapage, passée dès le niveau N. |
+
+Une quête déjà dans le journal est toujours finie : ses étapes « faire » et « rendre » restent jouées même
+quand l'alternative ne l'est plus.
 
 `below` règle l'inconnue du mode : l'XP gagnée dans l'instance n'est pas connue d'avance (voir plus bas). La
 route garde donc des étapes en extérieur qui ne se jouent que si le personnage arrive sous le niveau prévu.
 
 ## Méthode
+
+### Simulation de référence
+
+Les routes sont simulées pour un personnage qui **contourne toutes les instances** et joue toutes les
+alternatives : c'est le seul parcours dont l'XP est connue. Les niveaux écrits dans les chapitres sont donc
+un plancher. Un personnage qui fait les donjons est au-dessus : les chapitres d'alternative se passent
+d'eux-mêmes (`below`), les chapitres de zone restent joués.
 
 ### Niveau d'entrée
 
@@ -138,7 +166,13 @@ elle ouvre une suite ou un donjon ; les élites de zone sont facultatifs.
 # Régénérer l'échelle après une modification de dungeon_ladder.lua ou de DungeonData.lua
 luajit tools/routebuilder/build_dungeon_route.lua
 
+# Régénérer les routes du mode (QuestieDB et Questie dans .cache/, environ 4 minutes)
+luajit tools/routebuilder/build_dungeon_guides.lua
+
+# Contrôler les routes du mode, rejouées à la suite des départs habituels
+luajit tools/validate_guides.lua --xml DungeonGuides.xml
+
 # Tests
 luajit tests/run.lua test_dungeonmode
-luajit tools/routebuilder/tests/run.lua dungeon_route
+luajit tools/routebuilder/tests/run.lua dungeon
 ```

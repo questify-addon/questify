@@ -71,6 +71,11 @@ function M.classesProblem(v)
   return nil
 end
 
+function M.contains(list, v)
+  for _, x in ipairs(list or {}) do if x == v then return true end end
+  return false
+end
+
 -- Mode « Donjons » (Engine/DungeonMode.lua) : échelons de <guides>/DungeonRouteData.lua.
 -- -> { [clé] = true }, ou nil sans le fichier (les clés ne sont alors pas contrôlées).
 function M.rungKeys(guidesDir)
@@ -101,8 +106,12 @@ function M.rungProblem(step, mode, keys)
     return "phase needs a rung"
   end
   if step.alt ~= nil then
-    if type(step.alt) ~= "string" or step.alt == "" then return "alt must be a rung key" end
-    if keys and not keys[step.alt] then return ("unknown rung '%s' in alt"):format(step.alt) end
+    local list = type(step.alt) == "string" and { step.alt } or step.alt
+    if type(list) ~= "table" or #list == 0 then return "alt must be a rung key or a list of rung keys" end
+    for _, k in ipairs(list) do
+      if type(k) ~= "string" or k == "" then return "alt must be a rung key or a list of rung keys" end
+      if keys and not keys[k] then return ("unknown rung '%s' in alt"):format(k) end
+    end
   end
   if step.below ~= nil and (type(step.below) ~= "number" or step.below < 2 or step.below > 60) then
     return "below must be a level between 2 and 60"
@@ -159,25 +168,41 @@ local function lineOf(text, pattern)
 end
 
 function M.run(argv)
-  local opts = { db = qdb.DEFAULT_DB, questie = qdb.DEFAULT_QUESTIE, guides = "Questify/Guides" }
+  local opts = { db = qdb.DEFAULT_DB, questie = qdb.DEFAULT_QUESTIE, guides = "Questify/Guides", xml = "Guides.xml" }
   local i = 1
   while i <= #argv do
     local a = argv[i]
     if a == "--db" then opts.db = argv[i + 1]; i = i + 1
     elseif a == "--questie" then opts.questie = argv[i + 1]; i = i + 1
     elseif a == "--guides" then opts.guides = argv[i + 1]; i = i + 1
+    -- liste de fichiers à contrôler, dans le dossier des guides (DungeonGuides.xml : mode « Donjons »)
+    elseif a == "--xml" then opts.xml = argv[i + 1]; i = i + 1
     else io.stderr:write("unknown argument " .. a .. "\n"); return 2 end
     i = i + 1
   end
   local violations = {}
-  local function bad(file, line, msg) violations[#violations + 1] = ("%s:%d %s"):format(file, line or 0, msg) end
+  -- context : guides habituels chargés seulement pour rejouer les parcours de race d'une autre liste
+  -- (--xml DungeonGuides.xml : le mode « Donjons » prend la suite des départs habituels) ; rien n'y est relevé.
+  local context = {}
+  local function bad(file, line, msg)
+    if context[file] then return end
+    violations[#violations + 1] = ("%s:%d %s"):format(file, line or 0, msg)
+  end
 
-  local xml = readFile(opts.guides .. "/Guides.xml")
+  local xml = readFile(opts.guides .. "/" .. opts.xml)
   if not xml then
-    print(opts.guides .. "/Guides.xml:0 missing Guides.xml")
+    print(opts.guides .. "/" .. opts.xml .. ":0 missing " .. opts.xml)
     return 1
   end
   local files = {}
+  if opts.xml ~= "Guides.xml" then
+    local base = readFile(opts.guides .. "/Guides.xml") or ""
+    for f in base:gmatch('<Script%s+file%s*=%s*"([^"]+)"') do
+      local rel = (f:gsub("\\", "/"))
+      files[#files + 1] = rel
+      context[opts.guides .. "/" .. rel] = true
+    end
+  end
   for f in xml:gmatch('<Script%s+file%s*=%s*"([^"]+)"') do files[#files + 1] = (f:gsub("\\", "/")) end
 
   local W = world.load(here .. "/routebuilder/data")
@@ -304,8 +329,19 @@ function M.run(argv)
           seen[cur.def.id] = true
           chain[#chain + 1] = cur
           onPath[cur.def.id] = true
+          -- chapitre d'un mode qui prend la suite de celui-ci (champ after), sinon la suite habituelle
+          local handoff
+          if cur.def.mode == nil then
+            for _, og in ipairs(guides) do
+              local od = og.def
+              if od.mode and type(od.after) == "table" and (not od.races or M.contains(od.races, race))
+                and M.contains(od.after, cur.def.id) and (not handoff or od.id < handoff.def.id) then
+                handoff = og
+              end
+            end
+          end
           local nid = (cur.def.nextByRace and cur.def.nextByRace[race]) or cur.def.next
-          cur = nid and byId[nid] or nil
+          cur = handoff or (nid and byId[nid]) or nil
         end
         local chapters = {}
         for _, cg in ipairs(chain) do

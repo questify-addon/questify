@@ -21,10 +21,12 @@ local addonName, Q = ...
 --       prep : suites, quêtes d'accès et prises des quêtes du donjon, détours qui ne servent qu'à lui ;
 --       run  : aller à l'entrée, objectifs dans l'instance, rendus.
 --       Case décochée : toutes passées. Instance contournée : seules les étapes « run » sont passées.
---   alt = "<échelon>" : alternative en extérieur, jouée quand la case est décochée ou l'instance
---       contournée ; avec below = N, jouée aussi tant que le personnage est sous le niveau N (l'instance
---       n'a pas donné assez d'XP pour l'échelon suivant).
+--   alt = "<échelon>" ou { "<échelon>", ... } : alternative en extérieur, jouée quand la case de l'un de
+--       ces échelons est décochée ou son instance contournée ; avec below = N, jouée aussi tant que le
+--       personnage est sous le niveau N (les instances n'ont pas donné assez d'XP pour la suite).
 --   below = N (sans alt) : étape de rattrapage, passée dès le niveau N.
+--   Une quête déjà dans le journal n'est jamais laissée en plan : ses étapes « faire » et « rendre »
+--   restent jouées même si l'alternative ou le rattrapage ne l'est plus.
 -- Le donjon ne bloque donc jamais la route.
 local DungeonMode = {}
 Q.DungeonMode = DungeonMode
@@ -185,12 +187,26 @@ function DungeonMode:StepSkip(step, level)
     if state == "bypassed" and step.phase == "run" then return "rung-bypass" end
     return nil
   end
+  -- quête en cours : on la finit
+  local function inLog()
+    local a = step.action
+    return (a == "complete" or a == "turnin") and Q.Progress ~= nil and Q.Progress.InLog ~= nil
+      and Q.Progress:InLog(step.questId) == true
+  end
   if step.alt ~= nil then
-    if not self:Rung(step.alt) then return nil end
-    if self:State(step.alt) ~= "on" then return nil end
+    local keys = type(step.alt) == "table" and step.alt or { step.alt }
+    local known = false
+    for _, key in ipairs(keys) do
+      if self:Rung(key) then
+        known = true
+        if self:State(key) ~= "on" then return nil end
+      end
+    end
+    if not known then return nil end
     if type(step.below) == "number" and level < step.below then return nil end
+    if inLog() then return nil end
     return "rung-alt"
   end
-  if type(step.below) == "number" and level >= step.below then return "rung-level" end
+  if type(step.below) == "number" and level >= step.below and not inLog() then return "rung-level" end
   return nil
 end

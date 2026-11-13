@@ -114,5 +114,6 @@ UI\Demo.lua
 UI\Slash.lua
 
 Guides\Guides.xml
+Guides\DungeonGuides.xml
 Guides\DungeonData.lua
 Guides\DungeonRouteData.lua

@@ -233,10 +233,13 @@ function build.simulateFaction(D, W, faction, ov, only)
     end
   end
   local function run(plan, state, race, exitTo)
+    -- plan.before / plan.after : crochets du mode « Donjons » (plans_dungeon.lua) ; aucun plan habituel n'en a
+    if plan.before then plan.before(plan, state, D, W) end
     local steps, report = sim.chapter(D, W, plan, state, { overrides = ov, carryZones = carryZones(plan, race),
       exitTo = exitTo, nextEntry = exitTo or nextEntry(plan, race) })
     build.applyInserts(plan.id, steps, ov)
     build.applyNotes(steps, ov)
+    if plan.after then plan.after(plan, state, steps, report, D, W) end
     report.simRace = race
     results[plan.id] = { plan = plan, steps = steps, report = report }
     order[#order + 1] = plan.id
@@ -593,6 +596,8 @@ function build.writeXml(out)
   writeFile(out .. "/Guides.xml", table.concat(lines, "\n") .. "\n")
   return #entries
 end
+
+build.folderFor, build.writeFile, build.mkdir = folderFor, writeFile, mkdir
 
 function build.main(argv)
   local o = parseArgs(argv)

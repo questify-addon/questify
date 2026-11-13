@@ -72,7 +72,12 @@ function tests.step_fields_are_normalized(t)
   local s = Q.Guides:Normalize({ "accept", 166, rung = "DM", phase = "prep" })
   t.eq(s.rung, "DM"); t.eq(s.phase, "prep")
   s = Q.Guides:Normalize({ "note", "x", alt = "DM", below = 21 })
-  t.eq(s.alt, "DM"); t.eq(s.below, 21)
+  t.eq(#s.alt, 1); t.eq(s.alt[1], "DM"); t.eq(s.below, 21)
+  s = Q.Guides:Normalize({ "note", "x", alt = { "DM", "SM_LIB" } })
+  t.eq(#s.alt, 2); t.eq(s.alt[2], "SM_LIB")
+  t.eq(Q.Guides:Normalize({ "note", "x", alt = {} }), nil)
+  t.eq(Q.Guides:Normalize({ "note", "x", alt = { "" } }), nil)
+  t.eq(Q.Guides:Normalize({ "note", "x", alt = 3 }), nil)
   local bad, err = Q.Guides:Normalize({ "accept", 166, rung = "DM" })
   t.eq(bad, nil); t.ok(err:find("phase", 1, true), err)
   bad = Q.Guides:Normalize({ "accept", 166, rung = "DM", phase = "later" })
@@ -194,6 +199,62 @@ function tests.catch_up_steps_follow_the_level(t)
   t.eq(live(Q), "zone quest,pick up,enter,catch up,end")
   setLevel(12)
   t.eq(live(Q), "zone quest,pick up,enter,end")
+end
+
+function tests.shared_alternative_plays_when_any_of_its_dungeons_is_skipped(t)
+  local Q = load()
+  local D = Q.DungeonMode
+  local step = { action = "note", alt = { "DM", "SM_LIB" }, below = 20 }
+  t.eq(D:StepSkip(step, 25), "rung-alt", "both dungeons done, level reached")
+  t.eq(D:StepSkip(step, 19), nil, "under the level")
+  D:SetBypassed("SM_LIB", true)
+  t.eq(D:StepSkip(step, 25), nil, "one instance skipped")
+  D:SetBypassed("SM_LIB", false)
+  D:SetChecked("DM", false)
+  t.eq(D:StepSkip(step, 25), nil, "one dungeon unticked")
+  -- un échelon inconnu dans la liste est ignoré, pas bloquant
+  D:SetChecked("DM", true)
+  t.eq(D:StepSkip({ action = "note", alt = { "NOPE", "DM" } }, 25), "rung-alt")
+end
+
+function tests.a_quest_in_the_log_is_always_finished(t)
+  local Q = load()
+  local D = Q.DungeonMode
+  local turnin = { action = "turnin", questId = 4242, alt = "DM", below = 20 }
+  local complete = { action = "complete", questId = 4242, below = 20 }
+  local accept = { action = "accept", questId = 4242, alt = "DM", below = 20 }
+  t.eq(D:StepSkip(turnin, 25), "rung-alt")
+  t.eq(D:StepSkip(complete, 25), "rung-level")
+  Mock.quests.log[4242] = { complete = false, objectives = {} }
+  Mock.fire("QUEST_LOG_UPDATE")
+  Mock.advance(1)
+  t.eq(D:StepSkip(turnin, 25), nil, "turn in the quest you carry")
+  t.eq(D:StepSkip(complete, 25), nil, "finish the quest you carry")
+  t.eq(D:StepSkip(accept, 25), "rung-alt", "no new quest")
+end
+
+function tests.mode_takes_over_after_a_usual_start_chapter(t)
+  local Q = load({ guides = {
+    { id = "T_START", faction = "Alliance", races = { "Dwarf" }, minLevel = 1, maxLevel = 5, next = "T_USUAL",
+      choices = { { id = "T_USUAL" }, { id = "T_OTHER" } }, steps = { { "note", "start" } } },
+    { id = "T_USUAL", faction = "Alliance", minLevel = 5, maxLevel = 9, steps = { { "note", "usual" } } },
+    { id = "T_OTHER", faction = "Alliance", minLevel = 5, maxLevel = 9, steps = { { "note", "other" } } },
+    { id = "AD_T2", faction = "Alliance", mode = "dungeon", after = { "T_START" }, minLevel = 5, maxLevel = 9,
+      steps = { { "note", "dungeon" } } },
+    { id = "AD_T3", faction = "Alliance", mode = "dungeon", races = { "Human" }, after = { "T_START" }, minLevel = 5,
+      maxLevel = 9, steps = { { "note", "human" } } },
+  } })
+  local start = Q.Guides:Get("T_START")
+  t.eq(Q.Guides:Next(start, "Dwarf").id, "T_USUAL", "mode off: usual next chapter")
+  t.eq(#Q.Guides:Choices(start, "Dwarf", "Alliance"), 2)
+  Q.DungeonMode:SetOn(true)
+  t.eq(Q.Guides:Next(start, "Dwarf").id, "AD_T2", "mode on: the dungeon route takes over")
+  local opts = Q.Guides:Choices(start, "Dwarf", "Alliance")
+  t.eq(#opts, 1); t.eq(opts[1].guide.id, "AD_T2"); t.ok(opts[1].default)
+  t.eq(Q.Guides:Handoff(start, "Human", "dungeon").id, "AD_T2", "smallest id among the matching chapters")
+  t.eq(Q.Guides:Handoff(Q.Guides:Get("AD_T2"), "Dwarf", "dungeon"), nil, "no handoff from a mode chapter")
+  -- after sans mode : refusé
+  t.eq(Q:RegisterGuide({ id = "X_BAD2", faction = "Alliance", after = { "T_START" }, steps = {} }), false)
 end
 
 function tests.unknown_rung_never_blocks_the_route(t)
@@ -378,9 +439,68 @@ function tests.shipped_guides_load_with_the_mode_files(t)
   -- chargement complet (guides livrés) : aucun guide rejeté, aucune erreur, route habituelle inchangée
   local Q = Mock.loadAddon(TOC, {})
   t.eq(#Mock.errors, 0)
+  t.eq(Mock.countPrinted("AD_"), 0, "no dungeon chapter rejected")
   t.ok(Q.DungeonRouteData ~= nil and #Q.DungeonRouteData.rungs > 20)
   t.ok(Q.Progress:Guide().mode == nil)
   t.eq(Q.Progress:Guide().id, "A_DwarfGnome_01")
+  t.ok(Q.DungeonMode:Available(), "dungeon chapters are shipped")
+end
+
+-- Chapitres livrés du mode : chaque échelon a son bloc « instance » puis une alternative, toutes les
+-- étiquettes nomment un échelon connu, la chaîne va jusqu'au niveau 60.
+function tests.shipped_dungeon_chapters_cover_every_rung(t)
+  local Q = Mock.loadAddon(TOC, {})
+  local known, ran, alt = {}, {}, {}
+  for _, r in ipairs(Q.DungeonRouteData.rungs) do known[r.key] = true end
+  local g, seen, n, last = Q.Guides:Get("AD_01"), {}, 0, nil
+  t.ok(g ~= nil, "AD_01 is shipped")
+  while g and not seen[g.id] do
+    seen[g.id] = true
+    n = n + 1
+    last = g
+    t.eq(g.mode, "dungeon")
+    t.eq(g.faction, "Alliance")
+    for i, s in ipairs(g.steps) do
+      if s.rung then
+        t.ok(known[s.rung], ("%s step %d: unknown rung %s"):format(g.id, i, s.rung))
+        if s.phase == "run" and s.action == "goto" then
+          t.ok(not alt[s.rung], "instance after its alternative: " .. s.rung)
+          ran[s.rung] = true
+        end
+      end
+      for _, k in ipairs(s.alt or {}) do
+        t.ok(known[k], ("%s step %d: unknown rung %s in alt"):format(g.id, i, k))
+        t.ok(ran[k], ("%s: alternative of %s before its instance"):format(g.id, k))
+        alt[k] = true
+      end
+    end
+    g = Q.Guides:Next(g, "Human")
+  end
+  t.ok(n >= 30, "chapters in the chain: " .. n)
+  t.eq(last.maxLevel, 60)
+  for key in pairs(known) do
+    t.ok(ran[key], "no instance block for " .. key)
+    t.ok(alt[key], "no open-world alternative for " .. key)
+  end
+end
+
+function tests.shipped_mode_joins_after_the_race_starts(t)
+  local Q = Mock.loadAddon(TOC, {})
+  local G = Q.Guides
+  -- sous le niveau des chapitres du mode : les départs habituels
+  t.eq(G:ForPlayer("Alliance", "Human", 5, "dungeon").mode, nil)
+  t.eq(G:ForPlayer("Alliance", "NightElf", 13, "dungeon").id, "AD_NightElf_03")
+  t.eq(G:ForPlayer("Alliance", "Human", 13, "dungeon").mode, nil, "the night elf chapter is not for humans")
+  t.eq(G:ForPlayer("Alliance", "Human", 30, "dungeon").mode, "dungeon")
+  t.eq(G:ForPlayer("Alliance", "Human", 30).mode, nil, "usual route untouched")
+  t.eq(G:ForPlayer("Horde", "Orc", 30, "dungeon").mode, nil, "Horde: usual route")
+  Q.DungeonMode:SetOn(true)
+  t.eq(G:Next(G:Get("A_Human_03"), "Human").id, "AD_01")
+  t.eq(G:Next(G:Get("A_DwarfGnome_04"), "Dwarf").id, "AD_01")
+  t.eq(G:Next(G:Get("A_NightElf_02"), "NightElf").id, "AD_NightElf_03")
+  t.eq(G:Next(G:Get("AD_NightElf_03"), "NightElf").id, "AD_01")
+  Q.DungeonMode:SetOn(false)
+  t.eq(G:Next(G:Get("A_Human_03"), "Human").id, "A_01")
 end
 
 return tests

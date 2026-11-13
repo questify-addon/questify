@@ -105,7 +105,8 @@ function M.build(ladder, data)
     table.sort(quests)
     out[#out + 1] = { key = r.key, dungeon = r.dungeon, wing = r.wing, name = d.name, areaId = d.areaId,
       minLevel = min, maxLevel = max, entry = entry, entryWhy = r.entryWhy, quests = quests, xp = xp, est = est,
-      pct = pct, stars = M.stars(ladder, pct, #quests), order = order, rung = r }
+      pct = pct, stars = M.stars(ladder, pct, #quests), order = order, rung = r, entrance = d.entrance,
+      entranceSource = d.entranceSource }
   end
   -- un donjon découpé en ailes : chaque quête Alliance va dans une aile (ou est écartée)
   for key, a in pairs(assigned) do

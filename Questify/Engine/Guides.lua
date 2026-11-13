@@ -140,9 +140,14 @@ function Guides:Normalize(raw)
     return nil, action .. ": phase needs a rung"
   end
   if raw.alt ~= nil then
-    if type(raw.alt) ~= "string" or raw.alt == "" then return nil, action .. ": alt must be a rung key" end
+    -- un échelon ou une liste d'échelons (chapitre d'alternative commun à plusieurs donjons)
+    local alt = stringList(raw.alt)
+    if not alt or #alt == 0 then return nil, action .. ": alt must be a rung key or a list of rung keys" end
+    for _, k in ipairs(alt) do
+      if k == "" then return nil, action .. ": alt must be a rung key or a list of rung keys" end
+    end
     if raw.rung ~= nil then return nil, action .. ": alt and rung are exclusive" end
-    step.alt = raw.alt
+    step.alt = alt
   end
   if raw.below ~= nil then
     if not isNum(raw.below) then return nil, action .. ": below must be a level" end
@@ -247,6 +252,10 @@ function Q:RegisterGuide(def)
   if def.next ~= nil and type(def.next) ~= "string" then return invalid(id, "next must be a guide id") end
   -- mode : parcours auquel le chapitre appartient (absent : guides habituels ; "dungeon" : mode « Donjons »)
   if def.mode ~= nil and def.mode ~= "dungeon" then return invalid(id, "mode must be dungeon") end
+  -- after : chapitres habituels dont ce chapitre du mode prend la suite (départs par race)
+  local after = stringList(def.after)
+  if after == false then return invalid(id, "after must be a list of guide ids") end
+  if after and def.mode == nil then return invalid(id, "after needs a mode") end
   if def.nextByRace ~= nil and type(def.nextByRace) ~= "table" then return invalid(id, "nextByRace must be a table") end
   local choices, choiceErr = choiceList(def.choices)
   if choices == false then return invalid(id, choiceErr) end
@@ -265,6 +274,7 @@ function Q:RegisterGuide(def)
   guide.steps = steps
   guide.races = races
   guide.choices = choices
+  guide.after = after
   guide.sim = sim
   guide.minLevel = def.minLevel or 1
   guide.maxLevel = def.maxLevel or 61
@@ -343,9 +353,29 @@ function Guides:ForPlayer(faction, raceKey, level, mode)
   return found
 end
 
--- Chapitre suivant : nextByRace[raceKey], sinon next.
+-- Handoff(guide, raceKey, mode) -> chapitre du parcours `mode` qui prend la suite d'un chapitre habituel
+-- (champ after), ou nil. Le mode « Donjons » reprend ainsi la route à la fin des départs par race.
+function Guides:Handoff(guide, raceKey, mode)
+  if type(guide) ~= "table" or mode == nil or guide.mode ~= nil then return nil end
+  local found
+  for _, g in pairs(registry) do
+    if g.mode == mode and g.after and Q.Util.Contains(g.after, guide.id) and racesMatch(g, raceKey)
+      and (found == nil or g.id < found.id) then
+      found = g
+    end
+  end
+  return found
+end
+
+local function currentMode()
+  return Q.DungeonMode and Q.DungeonMode:Mode() or nil
+end
+
+-- Chapitre suivant : la suite du mode choisi (Handoff), sinon nextByRace[raceKey], sinon next.
 function Guides:Next(guide, raceKey)
   if type(guide) ~= "table" then return nil end
+  local handoff = self:Handoff(guide, raceKey, currentMode())
+  if handoff then return handoff end
   local id = guide.nextByRace and raceKey and guide.nextByRace[raceKey]
   if id and registry[id] then return registry[id] end
   if guide.next then return registry[guide.next] end
@@ -379,6 +409,7 @@ local ZONE_MAPS = {
   ["Stonetalon Mountains"] = 1442, ["Teldrassil"] = 1438, ["The Barrens"] = 1413,
   ["Thousand Needles"] = 1441, ["Tirisfal Glades"] = 1420, ["Westfall"] = 1436, ["Wetlands"] = 1437,
   ["Zephras Isle"] = 2521,
+  ["Ironforge"] = 1455, ["Stormwind City"] = 1453,
   -- zones 30-60 (uiMapID Classic, tirés de QuestieDB)
   ["Alterac Mountains"] = 1416, ["Arathi Highlands"] = 1417, ["Badlands"] = 1418, ["Blasted Lands"] = 1419,
   ["Western Plaguelands"] = 1422, ["Eastern Plaguelands"] = 1423, ["The Hinterlands"] = 1425,
@@ -505,6 +536,11 @@ function Guides:Choices(guide, raceKey, faction)
   local out = {}
   if type(guide) ~= "table" then return out end
   local def = self:Next(guide, raceKey)
+  -- le mode choisi prend la suite de ce chapitre : pas d'autre choix
+  if def and self:Handoff(guide, raceKey, currentMode()) then
+    out[1] = { guide = def, default = true }
+    return out
+  end
   if not guide.choices then
     if def then out[1] = { guide = def, default = true } end
     return out
