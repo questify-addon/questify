@@ -242,6 +242,58 @@ local function prereqsBlockedForever(ctx, q)
   return false
 end
 
+---------------------------------------------------------------------------
+-- Quête lancée par un objet ramassé
+---------------------------------------------------------------------------
+-- Taux de butin à partir duquel la route envoie tuer le monstre qui lâche l'objet de départ (36 % : 3 tués
+-- en moyenne). En dessous, ou sans taux connu, la quête attend que l'objet soit ramassé.
+Progress.STARTER_MIN_DROP = 0.3
+
+-- Exemplaires d'un objet dans les sacs (0 si inconnu ou secret).
+local function itemCount(id)
+  local fn = (C_Item and C_Item.GetItemCount) or GetItemCount
+  if type(fn) ~= "function" or type(id) ~= "number" then return 0 end
+  local ok, n = pcall(fn, id)
+  if not ok or Q.Util.IsSecret(n) then return 0 end
+  return tonumber(n) or 0
+end
+
+-- Progress:StarterState(step) -> état, itemId. Le générateur ne pose `at` sur une étape « accept » que
+-- pour une quête lancée par un objet ramassé : ce point passe alors avant les donneurs de QuestieDB
+-- (un PNJ de départ ajouté par erreur à la quête ne détourne plus la route).
+--   nil      : étape ordinaire (pas un « accept » avec `at`, ou quête sans objet de départ)
+--   "held"   : l'objet est dans les sacs, il reste à l'utiliser
+--   "pickup" : l'objet se prend sur un objet du monde (coffre, parchemin) : on y va
+--   "farm"   : l'objet tombe d'un monstre avec un taux connu d'au moins STARTER_MIN_DROP (step.drop,
+--              Wowhead) : la route envoie tuer ce monstre
+--   "drop"   : l'objet tombe d'un monstre, taux faible ou inconnu : l'étape attend qu'il soit ramassé
+function Progress:StarterState(step)
+  if type(step) ~= "table" or step.action ~= "accept" or type(step.at) ~= "table" then return nil end
+  local q = Q.QDB:Quest(step.questId)
+  local items = q and q.starters.items
+  if not items or #items == 0 then return nil end
+  for _, id in ipairs(items) do
+    if itemCount(id) > 0 then return "held", id end
+  end
+  for _, id in ipairs(items) do
+    local item = Q.QDB:Item(id)
+    if not item or #item.objectDrops > 0 then return "pickup", id end
+  end
+  if type(step.drop) == "number" and step.drop >= Progress.STARTER_MIN_DROP then return "farm", items[1] end
+  return "drop", items[1]
+end
+
+-- Objets de départ présents dans les sacs, pour les étapes de la route : "id,id,…" (voir BAG_UPDATE_DELAYED).
+local heldSig
+local function heldStarters()
+  local ids = {}
+  for _, e in ipairs(Progress:Entries()) do
+    local state, id = Progress:StarterState(e.step)
+    if state == "held" then ids[#ids + 1] = id end
+  end
+  return table.concat(ids, ",")
+end
+
 local function filterSkip(step)
   local P = Q.Player
   if not Q.Guides.StepForClass(step, P.classFile) then return "class" end   -- hors des entrées d'habitude
@@ -272,6 +324,8 @@ local function evaluate(ctx, e)
     if not Q.QDB:PrereqsMet(id, isTurnedIn) and prereqsBlockedForever(ctx, q) then
       return "skipped", "prereq"
     end
+    -- objet de départ lâché par un monstre : la quête n'entre dans la route qu'une fois l'objet ramassé
+    if Progress:StarterState(step) == "drop" then return "skipped", "starter" end
     if q.reqLevel and q.reqLevel > (P.level or 1) then return "blocked", "level " .. q.reqLevel end
     return "active"
   elseif a == "complete" then
@@ -940,6 +994,14 @@ Q:RegisterEvent("QUEST_LOG_UPDATE", function()
     logPending = false
     Progress:Update()
   end)
+end)
+-- Objet de départ ramassé ou perdu : l'étape « accept » qui l'attendait entre dans la route ou en sort.
+Q:RegisterEvent("BAG_UPDATE_DELAYED", function()
+  if not Progress:IsEnabled() then return end
+  local ok, sig = pcall(heldStarters)
+  if not ok or sig == heldSig then return end
+  heldSig = sig
+  Progress:Update()
 end)
 Q:RegisterEvent("PLAYER_LEVEL_UP", function(_, level)
   refreshPlayer(level)

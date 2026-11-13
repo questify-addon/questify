@@ -184,7 +184,13 @@ local function compute(entry)
   if a == "accept" or a == "turnin" then
     local q = Q.QDB:Quest(step.questId)
     if not q then return nil end
-    mapId, x, y, kind, id = nearest(givers(a == "accept" and q.starters or q.finishers))
+    -- quête lancée par un objet ramassé (Q.Progress:StarterState) : le point du générateur passe avant
+    -- les donneurs ; objet déjà dans les sacs : il reste à l'utiliser, aucun lieu à rejoindre
+    local starter = Q.Progress:StarterState(step)
+    if starter == "held" then return nil end
+    if not starter then
+      mapId, x, y, kind, id = nearest(givers(a == "accept" and q.starters or q.finishers))
+    end
     -- donneur sans position connue : le point choisi par le générateur, s'il existe
     if not mapId and step.at then
       mapId, x, y, kind = step.at[1], step.at[2], step.at[3], "area"

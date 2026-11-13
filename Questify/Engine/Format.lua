@@ -117,6 +117,10 @@ local function mainText(entry, step)
     local name = Q.QDB:QuestName(step.questId)
     local who, kind = giverName(entry, step, q and (a == "accept" and q.starters or q.finishers))
     if a == "accept" then
+      -- quête lancée par un objet ramassé : l'objet, pas un donneur de QuestieDB
+      local starter, item
+      if Q.Progress and Q.Progress.StarterState then starter, item = Q.Progress:StarterState(step) end
+      if starter then return fmt(L.STEP_ACCEPT_ITEM, name, Q.QDB:ItemName(item)) end
       if kind == "npc" then return fmt(L.STEP_ACCEPT, name, who) end
       if kind == "object" then return fmt(L.STEP_ACCEPT_OBJECT, name, who) end
       if kind == "item" then return fmt(L.STEP_ACCEPT_ITEM, name, who) end
