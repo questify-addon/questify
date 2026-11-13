@@ -129,7 +129,7 @@ function M.runBlock(D, ix, data, r, state, steps, zones)
   end
   if r.entrance then
     tag({ "goto", r.entrance[1], r.entrance[2], r.entrance[3],
-          note = ("Dungeon: %s (5 players). No group? Skip the instance in /qf dungeons"):format(rungLabel(r)) })
+          note = ("Dungeon: %s (5 players). No group? Untick it in /qf dungeons"):format(rungLabel(r)) })
   end
   local entranceMap = r.entrance and r.entrance[1]
   local function endMap(id)

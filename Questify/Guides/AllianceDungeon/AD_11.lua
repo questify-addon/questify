@@ -21,7 +21,7 @@ Q:RegisterGuide({
     { "accept", 2926, optional = true, dungeon = "Gnomeregan", phase = "prep", rung = "GNOMER" }, -- Gnogaine (lvl 27, ~0 xp, sim lvl 31)
     { "accept", 1179, phase = "prep", rung = "GNOMER" }, -- The Brassbolts Brothers (lvl 30, ~0 xp, sim lvl 31)
     { "accept", 1050, optional = true, dungeon = "Scarlet Monastery", phase = "prep", rung = "SM_LIB" }, -- Mythology of the Titans (lvl 38, ~0 xp, sim lvl 31)
-    { "goto", 1426, 24.3, 39.8, optional = true, dungeon = "Gnomeregan", note = "Dungeon: Gnomeregan (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "GNOMER" }, -- déplacement
+    { "goto", 1426, 24.3, 39.8, optional = true, dungeon = "Gnomeregan", note = "Dungeon: Gnomeregan (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "GNOMER" }, -- déplacement
     { "complete", 2924, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Essential Artificials (lvl 30, ~1525 xp, sim lvl 31)
     { "complete", 2926, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Gnogaine (lvl 27, ~1100 xp, sim lvl 31)
     { "complete", 2928, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Gyrodrillmatic Excavationators (lvl 30, ~1225 xp, sim lvl 31)

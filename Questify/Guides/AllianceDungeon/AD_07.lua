@@ -64,7 +64,7 @@ Q:RegisterGuide({
     { "accept", 1009 }, -- Ruuzel (lvl 25, ~2550 xp, sim lvl 26)
     { "complete", 1009, at = { 1440, 7.22, 13.06 } }, -- Ruuzel (lvl 25, ~2550 xp, sim lvl 26)
     { "turnin", 1009, xp = 2550 }, -- Ruuzel (lvl 25, ~2550 xp, sim lvl 26)
-    { "goto", 1440, 14.5, 14.2, optional = true, dungeon = "Blackfathom Deeps", note = "Dungeon: Blackfathom Deeps (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "BFD" }, -- déplacement
+    { "goto", 1440, 14.5, 14.2, optional = true, dungeon = "Blackfathom Deeps", note = "Dungeon: Blackfathom Deeps (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "BFD" }, -- déplacement
     { "complete", 1275, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Researching the Corruption (lvl 24, ~1200 xp, sim lvl 27)
     { "turnin", 1275, xp = 1200, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Researching the Corruption (lvl 24, ~1200 xp, sim lvl 27)
     { "accept", 1200, optional = true, dungeon = "Blackfathom Deeps", note = "Starts inside the dungeon", phase = "run", rung = "BFD" }, -- Blackfathom Villainy (lvl 27, ~825 xp, sim lvl 27)

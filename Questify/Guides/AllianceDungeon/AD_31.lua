@@ -62,7 +62,7 @@ Q:RegisterGuide({
     { "accept", 5142 }, -- Little Pamela (lvl 55, ~0 xp, sim lvl 57)
     { "accept", 5382, optional = true, dungeon = "Scholomance", phase = "prep", rung = "SCHOLO" }, -- Doctor Theolen Krastinov, the Butcher (lvl 60, ~0 xp, sim lvl 57)
     { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 366 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
-    { "goto", 1422, 69.7, 73.2, optional = true, dungeon = "Scholomance", note = "Dungeon: Scholomance (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SCHOLO" }, -- déplacement
+    { "goto", 1422, 69.7, 73.2, optional = true, dungeon = "Scholomance", note = "Dungeon: Scholomance (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SCHOLO" }, -- déplacement
     { "complete", 5343, optional = true, dungeon = "Scholomance", phase = "run", rung = "SCHOLO" }, -- Barov Family Fortune (lvl 60, ~3300 xp, sim lvl 58)
     { "complete", 5382, optional = true, dungeon = "Scholomance", phase = "run", rung = "SCHOLO" }, -- Doctor Theolen Krastinov, the Butcher (lvl 60, ~3300 xp, sim lvl 58)
     { "turnin", 5343, xp = 3300, optional = true, dungeon = "Scholomance", phase = "run", rung = "SCHOLO" }, -- Barov Family Fortune (lvl 60, ~3300 xp, sim lvl 58)

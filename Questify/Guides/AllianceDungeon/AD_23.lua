@@ -71,7 +71,7 @@ Q:RegisterGuide({
     { "turnin", 2781, xp = 5050 }, -- WANTED: Caliph Scorpidsting (lvl 46, ~5050 xp, sim lvl 46)
     { "turnin", 82, xp = 3150 }, -- Noxious Lair Investigation (lvl 47, ~3150 xp, sim lvl 46)
     { "level", 47, at = { 1446, 67.35, 23.98 }, note = "About 116 more mobs near the last objective" }, -- farm de niveau
-    { "goto", 1446, 38.7, 20.1, optional = true, dungeon = "Zul'Farrak", note = "Dungeon: Zul'Farrak (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "ZF" }, -- déplacement
+    { "goto", 1446, 38.7, 20.1, optional = true, dungeon = "Zul'Farrak", note = "Dungeon: Zul'Farrak (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "ZF" }, -- déplacement
     { "complete", 2768, optional = true, dungeon = "Zul'Farrak", phase = "run", rung = "ZF" }, -- Divino-matic Rod (lvl 47, ~3150 xp, sim lvl 47)
     { "complete", 2770, optional = true, dungeon = "Zul'Farrak", phase = "run", rung = "ZF" }, -- Gahz'rilla (lvl 50, ~3550 xp, sim lvl 47)
     { "complete", 2846, optional = true, dungeon = "Zul'Farrak", phase = "run", rung = "ZF" }, -- Tiara of the Deep (lvl 46, ~3025 xp, sim lvl 47)

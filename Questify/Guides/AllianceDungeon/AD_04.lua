@@ -77,7 +77,7 @@ Q:RegisterGuide({
     { "turnin", 1069, xp = 1950 }, -- Deepmoss Spider Eggs (lvl 20, ~1950 xp, sim lvl 21)
     { "accept", 1486, optional = true, dungeon = "Wailing Caverns", phase = "prep", rung = "WC" }, -- Deviate Hides (lvl 17, ~0 xp, sim lvl 21)
     { "accept", 1487, optional = true, dungeon = "Wailing Caverns", phase = "prep", rung = "WC" }, -- Deviate Eradication (lvl 21, ~0 xp, sim lvl 21)
-    { "goto", 1413, 46, 36.5, optional = true, dungeon = "Wailing Caverns", note = "Dungeon: Wailing Caverns (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "WC" }, -- déplacement
+    { "goto", 1413, 46, 36.5, optional = true, dungeon = "Wailing Caverns", note = "Dungeon: Wailing Caverns (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "WC" }, -- déplacement
     { "complete", 959, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Trouble at the Docks (lvl 18, ~675 xp, sim lvl 21)
     { "complete", 1486, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Hides (lvl 17, ~800 xp, sim lvl 21)
     { "complete", 1487, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Eradication (lvl 21, ~1025 xp, sim lvl 21)

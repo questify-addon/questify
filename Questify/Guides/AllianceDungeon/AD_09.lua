@@ -27,14 +27,14 @@ Q:RegisterGuide({
     { "turnin", 510, xp = 1350 }, -- Foreboding Plans (lvl 34, ~1350 xp, sim lvl 28)
     { "turnin", 98059, xp = 2200 }, -- Hillsbrad's Hoard (lvl 27, ~2200 xp, sim lvl 28)
     { "level", 30, at = { 1416, 15.76, 68.24 }, note = "About 430 more mobs here (Adorean Lew, level 28)" }, -- farm de niveau
-    { "goto", 1416, 8.46, 59.21, optional = true, dungeon = "City of Dalaran", note = "Dungeon: City of Dalaran (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "DALARAN" }, -- déplacement
+    { "goto", 1416, 8.46, 59.21, optional = true, dungeon = "City of Dalaran", note = "Dungeon: City of Dalaran (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "DALARAN" }, -- déplacement
     { "complete", 92456, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- A Green Sample (lvl 33, ~1325 xp, sim lvl 30)
     { "complete", 92457, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Starving Arcane (lvl 33, ~1325 xp, sim lvl 30)
     { "complete", 92458, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Heart of Disruption (lvl 33, ~1325 xp, sim lvl 30)
     { "complete", 92489, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Power Overwhelming (lvl 33, ~1325 xp, sim lvl 30)
     { "turnin", 92457, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Starving Arcane (lvl 33, ~1325 xp, sim lvl 30)
     { "turnin", 92458, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Heart of Disruption (lvl 33, ~1325 xp, sim lvl 30)
-    { "goto", 1421, 44.8, 67.8, optional = true, dungeon = "Shadowfang Keep", note = "Dungeon: Shadowfang Keep (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SFK" }, -- déplacement
-    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Graveyard (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SM_GY" }, -- déplacement
+    { "goto", 1421, 44.8, 67.8, optional = true, dungeon = "Shadowfang Keep", note = "Dungeon: Shadowfang Keep (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SFK" }, -- déplacement
+    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Graveyard (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SM_GY" }, -- déplacement
   },
 })

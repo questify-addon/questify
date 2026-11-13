@@ -61,7 +61,7 @@ Q:RegisterGuide({
     { "turnin", 294, xp = 1950 }, -- Ormer's Revenge (lvl 24, ~1950 xp, sim lvl 27)
     { "turnin", 98216, xp = 3150, optional = true, dungeon = "Group quest: Goaz Warder, level 32 elite" }, -- Understanding Our Present (lvl 31, ~3150 xp, sim lvl 27)
     { "level", 28, at = { 1437, 46.1, 45.29 }, note = "About 17 more mobs here (Dragonmaw Raider, level 26)" }, -- farm de niveau
-    { "goto", 1437, 47.79, 56.16, optional = true, dungeon = "Excavation Site: Wetlands", note = "Dungeon: Excavation Site: Wetlands (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "EXCAVATION" }, -- déplacement
+    { "goto", 1437, 47.79, 56.16, optional = true, dungeon = "Excavation Site: Wetlands", note = "Dungeon: Excavation Site: Wetlands (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "EXCAVATION" }, -- déplacement
     { "complete", 95646, optional = true, dungeon = "Excavation Site: Wetlands", phase = "run", rung = "EXCAVATION" }, -- Horrors in the Highland (lvl 31, ~1250 xp, sim lvl 28)
     { "complete", 98815, optional = true, dungeon = "Excavation Site: Wetlands", phase = "run", rung = "EXCAVATION" }, -- Highland Hides (lvl 28, ~575 xp, sim lvl 28)
     { "turnin", 95647, xp = 625, optional = true, dungeon = "Excavation Site: Wetlands", phase = "run", rung = "EXCAVATION" }, -- Lost in the Thicket Things (lvl 31, ~625 xp, sim lvl 28)

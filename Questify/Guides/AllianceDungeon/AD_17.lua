@@ -42,7 +42,7 @@ Q:RegisterGuide({
     { "turnin", 703, xp = 2350 }, -- Barbecued Buzzard Wings (lvl 40, ~2350 xp, sim lvl 38)
     { "turnin", 711, xp = 3000 }, -- Study of the Elements: Rock (lvl 39, ~3000 xp, sim lvl 38)
     { "level", 39, at = { 1418, 42.03, 29.15 }, note = "About 31 more mobs here (Shadowforge Warrior, level 38)" }, -- farm de niveau
-    { "goto", 1418, 44.6, 12.1, optional = true, dungeon = "Uldaman", note = "Dungeon: Uldaman (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "ULDAMAN" }, -- déplacement
+    { "goto", 1418, 44.6, 12.1, optional = true, dungeon = "Uldaman", note = "Dungeon: Uldaman (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "ULDAMAN" }, -- déplacement
     { "complete", 709, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 39)
     { "complete", 2418, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~1750 xp, sim lvl 39)
     { "turnin", 709, xp = 1575, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 39)

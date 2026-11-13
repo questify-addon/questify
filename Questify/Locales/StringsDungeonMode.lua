@@ -1,29 +1,42 @@
 local addonName, Q = ...
 
--- Textes du mode « Donjons » (Engine/DungeonMode.lua, UI/DungeonModePanel.lua, options). Toutes les clés
+-- Textes du mode automatique, ou mode « Donjons » (Engine/DungeonMode.lua, UI/DungeonModePanel.lua, options). Toutes les clés
 -- commencent par DGMODE_.
 Q:RegisterStrings({
   enUS = {
-    DGMODE_OPT = "Dungeon mode: level through every 5-player dungeon",
+    DGMODE_OPT = "Automatic mode: full route with every 5-player dungeon",
     DGMODE_OPT_TIP = "A second route for this character: it picks up the dungeon quests first, then runs each "
-      .. "dungeon and wing, and clears a zone between two dungeons. The usual route is kept and you can come back to it.",
-    DGMODE_OPT_OPEN = "Choose the dungeons of the route",
-    DGMODE_OPT_OPEN_TIP = "One box per dungeon or wing, with its stars. Untick a dungeon to skip it and take "
-      .. "the open-world alternative.",
-    DGMODE_TITLE = "Dungeon mode",
-    DGMODE_ENABLE = "Use the dungeon route for this character",
-    DGMODE_UNAVAILABLE = "The dungeon route does not exist for this character yet.",
-    DGMODE_HELP = "Ticked: the route takes every quest of the dungeon, then sends you inside. "
-      .. "Unticked: the dungeon and its detours are skipped, and the open-world alternative is played.",
+      .. "dungeon and wing, and clears a zone between two dungeons. The manual route is kept and you can come back to it.",
+    DGMODE_OPT_OPEN = "Open the automatic route",
+    DGMODE_OPT_OPEN_TIP = "Zones in order and one box per dungeon or wing, with its stars. Untick a dungeon to "
+      .. "skip it and take the open-world alternative.",
+    DETOUR_BTN = "Alternative zone",
+    DETOUR_BTN_BACK = "Back to my route",
+    DETOUR_TIP = "Zone too hard, or overrun by the other faction? Switch to another zone for your level, a bit "
+      .. "less rewarding. You come back to your route at the end of that zone, or with this button.",
+    DETOUR_TIP_BACK = "Leave the alternative zone and go back to your route, at the chapter for your level.",
+    DETOUR_STARTED = "Alternative zone: %s (level %d-%d). Your route resumes afterwards.",
+    DETOUR_NONE = "No other zone fits your level right now.",
+    DETOUR_BACK = "Back to your route: %s.",
+    DETOUR_NOT_ACTIVE = "You are not on an alternative zone.",
+    DGMODE_TAB_MANUAL = "Manual",
+    DGMODE_TAB_AUTO = "Automatic",
+    DGMODE_START = "Start automatic mode",
+    DGMODE_STOP = "Stop automatic mode",
+    DGMODE_STATUS_ON = "Automatic mode is on: the route follows the zones below.",
+    DGMODE_STATUS_OFF = "Automatic mode is off: you follow the manual route.",
+    DGMODE_UNAVAILABLE = "The automatic route does not exist for this character yet.",
+    DGMODE_HELP = "One route from your level to 60: it clears a zone, picks up the quests of the next dungeon, "
+      .. "then sends you inside. An unticked dungeon is skipped with its detours, and an open-world zone is played instead.",
     DGMODE_STARS_HELP = "Stars: share of a level given by the quests of the dungeon (monster XP not counted).",
+    DGMODE_FOLD_CLOSED = "+ Dungeons (%d of %d in the route)",
+    DGMODE_FOLD_OPEN = "- Dungeons (%d of %d in the route)",
+    DGMODE_ZONES = "Zones to explore, in order",
+    DGMODE_ZONE_LEVELS = "%d-%d",
+    DGMODE_ZONE_ALT = "only if needed",
     DGMODE_ROW_WING = "%s: %s",
     DGMODE_ROW_LEVEL = "lvl %d",
     DGMODE_ROW_QUESTS = "%d/%d",
-    DGMODE_BYPASS = "Skip instance",
-    DGMODE_RESUME = "Run it",
-    DGMODE_BYPASS_TIP = "No group? Keep the quests you picked up and move on: the instance steps are skipped "
-      .. "and the open-world alternative is played. Click again to run the dungeon after all.",
-    DGMODE_STATE_BYPASSED = "instance skipped",
     DGMODE_ROW_TIP_XP = "Quest XP: %d (%d%% of level %d)",
     DGMODE_ROW_TIP_XP_EST = "Quest XP: about %d (%d%% of level %d)",
     DGMODE_ROW_TIP_NOQUEST = "No quest for your faction.",
@@ -35,26 +48,39 @@ Q:RegisterStrings({
     DGMODE_WING_North = "North", DGMODE_WING_Live = "Live side", DGMODE_WING_Undead = "Undead side",
   },
   frFR = {
-    DGMODE_OPT = "Mode Donjons : monter de niveau par tous les donjons 5 joueurs",
+    DGMODE_OPT = "Mode automatique : parcours complet avec tous les donjons 5 joueurs",
     DGMODE_OPT_TIP = "Un second parcours pour ce personnage : il prend d'abord les quêtes de donjon, enchaîne "
-      .. "chaque donjon et chaque aile, et vide une zone entre deux donjons. Le parcours habituel est gardé, tu peux y revenir.",
-    DGMODE_OPT_OPEN = "Choisir les donjons du parcours",
-    DGMODE_OPT_OPEN_TIP = "Une case par donjon ou par aile, avec ses étoiles. Décoche un donjon pour le "
-      .. "contourner et prendre l'alternative en extérieur.",
-    DGMODE_TITLE = "Mode Donjons",
-    DGMODE_ENABLE = "Suivre le parcours Donjons avec ce personnage",
-    DGMODE_UNAVAILABLE = "Le parcours Donjons n'existe pas encore pour ce personnage.",
-    DGMODE_HELP = "Case cochée : la route prend toutes les quêtes du donjon, puis t'y envoie. "
-      .. "Case décochée : le donjon et ses détours sont sautés, et l'alternative en extérieur est jouée.",
+      .. "chaque donjon et chaque aile, et vide une zone entre deux donjons. Le parcours manuel est gardé, tu peux y revenir.",
+    DGMODE_OPT_OPEN = "Ouvrir le parcours automatique",
+    DGMODE_OPT_OPEN_TIP = "Les zones dans l'ordre et une case par donjon ou par aile, avec ses étoiles. Décoche "
+      .. "un donjon pour le sauter et prendre l'alternative en extérieur.",
+    DETOUR_BTN = "Zone alternative",
+    DETOUR_BTN_BACK = "Revenir à ma route",
+    DETOUR_TIP = "Zone trop dure, ou envahie par l'autre faction ? Passe sur une autre zone de ton niveau, un peu "
+      .. "moins rentable. Tu reviens à ta route à la fin de cette zone, ou avec ce bouton.",
+    DETOUR_TIP_BACK = "Quitte la zone alternative et reprends ta route, au chapitre de ton niveau.",
+    DETOUR_STARTED = "Zone alternative : %s (niveau %d-%d). Ta route reprend ensuite.",
+    DETOUR_NONE = "Aucune autre zone ne convient à ton niveau pour l'instant.",
+    DETOUR_BACK = "Retour à ta route : %s.",
+    DETOUR_NOT_ACTIVE = "Tu n'es pas sur une zone alternative.",
+    DGMODE_TAB_MANUAL = "Manuel",
+    DGMODE_TAB_AUTO = "Automatique",
+    DGMODE_START = "Lancer le mode automatique",
+    DGMODE_STOP = "Arrêter le mode automatique",
+    DGMODE_STATUS_ON = "Mode automatique actif : la route suit les zones ci-dessous.",
+    DGMODE_STATUS_OFF = "Mode automatique arrêté : tu suis le parcours manuel.",
+    DGMODE_UNAVAILABLE = "Le parcours automatique n'existe pas encore pour ce personnage.",
+    DGMODE_HELP = "Un seul parcours de ton niveau jusqu'à 60 : il vide une zone, prend les quêtes du donjon "
+      .. "suivant, puis t'y envoie. Un donjon décoché est sauté avec ses détours, et une zone en extérieur est jouée à la place.",
     DGMODE_STARS_HELP = "Étoiles : part d'un niveau que donnent les quêtes du donjon (XP des monstres non comptée).",
+    DGMODE_FOLD_CLOSED = "+ Donjons (%d sur %d dans la route)",
+    DGMODE_FOLD_OPEN = "- Donjons (%d sur %d dans la route)",
+    DGMODE_ZONES = "Zones à explorer, dans l'ordre",
+    DGMODE_ZONE_LEVELS = "%d-%d",
+    DGMODE_ZONE_ALT = "seulement si besoin",
     DGMODE_ROW_WING = "%s : %s",
     DGMODE_ROW_LEVEL = "niv. %d",
     DGMODE_ROW_QUESTS = "%d/%d",
-    DGMODE_BYPASS = "Contourner",
-    DGMODE_RESUME = "Le faire",
-    DGMODE_BYPASS_TIP = "Pas de groupe ? Garde les quêtes prises et continue : les étapes de l'instance sont "
-      .. "passées et l'alternative en extérieur est jouée. Clique à nouveau pour faire le donjon quand même.",
-    DGMODE_STATE_BYPASSED = "instance contournée",
     DGMODE_ROW_TIP_XP = "XP de quêtes : %d (%d %% du niveau %d)",
     DGMODE_ROW_TIP_XP_EST = "XP de quêtes : environ %d (%d %% du niveau %d)",
     DGMODE_ROW_TIP_NOQUEST = "Aucune quête pour ta faction.",

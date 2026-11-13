@@ -79,6 +79,7 @@ Schema.CHAR_STATE = {
   guideId = true, manual = true, skipped = true, inserted = true, classQuests = true, telemetry = true,
   wizardDone = true, specRoleAnswered = true,
   routeChoices = true, routeChoiceLast = true,
+  detour = true,        -- Engine/Detour.lua
   dungeonMode = true,   -- Engine/DungeonMode.lua (le choix du mode a son entrée : route.dungeonMode)
 }
 

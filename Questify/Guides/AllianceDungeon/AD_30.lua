@@ -72,12 +72,12 @@ Q:RegisterGuide({
     { "turnin", 7721, xp = 1760 }, -- Fuel for the Zapping (lvl 48, ~1760 xp, sim lvl 56)
     { "turnin", 7003, xp = 1760 }, -- Zapped Giants (lvl 48, ~1760 xp, sim lvl 56)
     { "level", 57, at = { 1444, 38.68, 22.35 }, note = "About 214 more mobs near the last objective" }, -- farm de niveau
-    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: East (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "DM_EAST" }, -- déplacement
+    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: East (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "DM_EAST" }, -- déplacement
     { "complete", 7441, optional = true, dungeon = "Dire Maul", phase = "run", rung = "DM_EAST" }, -- Pusillin and the Elder Azj'Tordin (lvl 58, ~3875 xp, sim lvl 57)
     { "complete", 7488, optional = true, dungeon = "Dire Maul", phase = "run", rung = "DM_EAST" }, -- Lethtendris's Web (lvl 57, ~3775 xp, sim lvl 57)
     { "turnin", 7441, xp = 3875, optional = true, dungeon = "Dire Maul", phase = "run", rung = "DM_EAST" }, -- Pusillin and the Elder Azj'Tordin (lvl 58, ~3875 xp, sim lvl 57)
     { "turnin", 7488, xp = 3775, optional = true, dungeon = "Dire Maul", phase = "run", rung = "DM_EAST" }, -- Lethtendris's Web (lvl 57, ~3775 xp, sim lvl 57)
-    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: West (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "DM_WEST" }, -- déplacement
-    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: North (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "DM_NORTH" }, -- déplacement
+    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: West (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "DM_WEST" }, -- déplacement
+    { "goto", 1444, 59.2, 45.1, optional = true, dungeon = "Dire Maul", note = "Dungeon: Dire Maul: North (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "DM_NORTH" }, -- déplacement
   },
 })

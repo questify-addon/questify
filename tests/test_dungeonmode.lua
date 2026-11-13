@@ -306,35 +306,101 @@ function tests.options_entry_follows_availability(t)
   t.ok(not Q.OptionsSchema:Entry("openDungeonMode").visible())
 end
 
-function tests.panel_shows_rows_and_acts(t)
+-- Vue « Automatique » de l'onglet Route du journal.
+local function openAuto(Q)
+  Q.UI.Journal:ShowRouteMode("auto")
+  return Q.UI.DungeonModePanel, Q.UI.Journal
+end
+
+function tests.route_tab_has_manual_and_automatic_views(t)
   local Q = load()
-  local P = Q.UI.DungeonModePanel
-  P:Show()
-  t.ok(P.frame:IsShown())
+  local J = Q.UI.Journal
+  J:ShowTab("route")
+  t.eq(J:RouteMode(), "manual", "manual view by default")
+  t.ok(J.routePanels.manual:IsShown() and not J.routePanels.auto:IsShown())
+  t.ok(J.routeModeButtons.manual:IsShown() and J.routeModeButtons.auto:IsShown())
+  t.ok(not J.routeModeButtons.manual:IsEnabled(), "open view: pressed button")
+  Mock.click(J.routeModeButtons.auto)
+  t.eq(J:RouteMode(), "auto")
+  t.ok(J.routePanels.auto:IsShown() and not J.routePanels.manual:IsShown())
+  t.ok(not J.routeModeButtons.auto:IsEnabled() and J.routeModeButtons.manual:IsEnabled())
+  -- les boutons ne sont que sur l'onglet Route
+  J:ShowTab("class")
+  t.ok(not J.routeModeButtons.auto:IsShown())
+  J:ShowTab("route")
+  t.ok(J.routeModeButtons.auto:IsShown())
+  t.eq(J:RouteMode(), "auto", "view kept")
+  Mock.click(J.routeModeButtons.manual)
+  t.ok(J.routePanels.manual:IsShown())
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.automatic_view_starts_and_stops_the_mode(t)
+  local Q = load()
+  local P = openAuto(Q)
+  t.eq(P.startButton:GetText(), Q.L.DGMODE_START)
+  t.eq(P.status:GetText(), Q.L.DGMODE_STATUS_OFF)
+  Mock.click(P.startButton)
+  t.ok(Q.DungeonMode:IsOn())
+  t.eq(P.startButton:GetText(), Q.L.DGMODE_STOP)
+  t.eq(P.status:GetText(), Q.L.DGMODE_STATUS_ON)
+  t.eq(Q.Progress:Guide().id, "AD_T1")
+  Mock.click(P.startButton)
+  t.ok(not Q.DungeonMode:IsOn())
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.automatic_view_folds_the_dungeons(t)
+  local Q = load()
+  local P = openAuto(Q)
+  -- replié par défaut : compteur dans l'en-tête, aucune ligne
+  t.eq(P.fold.text:GetText(), string.format(Q.L.DGMODE_FOLD_CLOSED, 3, 3))
+  t.eq(#P.rows, 0)
+  t.ok(not P.allButton:IsShown())
+  Mock.click(P.fold)
+  t.eq(P.fold.text:GetText(), string.format(Q.L.DGMODE_FOLD_OPEN, 3, 3))
   t.eq(#P.rows, 3)
+  t.ok(P.allButton:IsShown() and P.noneButton:IsShown())
   t.eq(P.rows[2].name:GetText(), "Scarlet Monastery: Library")
   t.ok(P.rows[1].check:GetChecked())
-  t.ok(not P.enable:GetChecked())
-  -- mode
-  P.enable:SetChecked(true)
-  Mock.click(P.enable)
-  t.ok(Q.DungeonMode:IsOn())
-  -- case d'un échelon
+  t.eq(P.rows[1].bypass, nil, "no skip button: an unticked dungeon is skipped")
+  -- une case décochée : donjon sauté
   P.rows[1].check:SetChecked(false)
   Mock.click(P.rows[1].check)
   t.eq(Q.DungeonMode:State("DM"), "off")
-  t.ok(not P.rows[1].bypass:IsShown(), "no bypass button on an unticked dungeon")
-  -- contournement
-  Mock.click(P.rows[2].bypass)
-  t.eq(Q.DungeonMode:State("SM_LIB"), "bypassed")
-  t.eq(P.rows[2].bypass:GetText(), Q.L.DGMODE_RESUME)
-  Mock.click(P.rows[2].bypass)
-  t.eq(Q.DungeonMode:State("SM_LIB"), "on")
-  -- tout décocher, tout cocher
+  t.eq(P.fold.text:GetText(), string.format(Q.L.DGMODE_FOLD_OPEN, 2, 3))
   Mock.click(P.noneButton)
   for _, it in ipairs(Q.DungeonMode:Rungs()) do t.eq(it.state, "off") end
   Mock.click(P.allButton)
   for _, it in ipairs(Q.DungeonMode:Rungs()) do t.eq(it.state, "on") end
+  Mock.click(P.fold)
+  t.ok(not P.rows[1]:IsShown(), "folded again")
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.automatic_view_lists_the_zones_in_order(t)
+  local Q = load({ guides = {
+    { id = "T_START", faction = "Alliance", minLevel = 1, maxLevel = 5, next = "T_USUAL", steps = { { "note", "s" } } },
+    { id = "T_USUAL", faction = "Alliance", minLevel = 5, maxLevel = 9, steps = { { "note", "u" } } },
+    { id = "AD_T1", title = "Westfall", faction = "Alliance", mode = "dungeon", after = { "T_START" }, minLevel = 5,
+      maxLevel = 9, next = "AD_T2", steps = { { "note", "zone" }, { "goto", 1436, 42.5, 71.7, rung = "DM", phase = "run" },
+        { "goto", 1436, 42.5, 71.7, rung = "SM_LIB", phase = "run" } } },
+    { id = "AD_T2", title = "Redridge Mountains", faction = "Alliance", mode = "dungeon", minLevel = 9, maxLevel = 12,
+      steps = { { "note", "alt", alt = { "DM", "SM_LIB" }, below = 12 } } },
+  } })
+  local chain = Q.DungeonMode:Chain("Dwarf")
+  t.eq(#chain, 2)
+  t.eq(chain[1].guide.id, "AD_T1"); t.eq(table.concat(chain[1].runs, ","), "DM,SM_LIB"); t.eq(chain[1].alt, nil)
+  t.eq(chain[2].guide.id, "AD_T2"); t.eq(#chain[2].runs, 0); t.eq(chain[2].alt, true)
+  local P = openAuto(Q)
+  t.eq(#P.zoneRows, 2)
+  t.eq(P.zoneRows[1].level:GetText(), "5-9")
+  t.eq(P.zoneRows[1].name:GetText(), "Westfall")
+  t.eq(P.zoneRows[1].detail:GetText(), "The Deadmines, Scarlet Monastery: Library")
+  t.eq(P.zoneRows[2].detail:GetText(), Q.L.DGMODE_ZONE_ALT)
+  -- un donjon décoché n'est plus annoncé dans sa zone
+  Q.DungeonMode:SetChecked("DM", false)
+  t.eq(P.zoneRows[1].detail:GetText(), "Scarlet Monastery: Library")
   t.eq(#Mock.errors, 0)
 end
 
@@ -349,28 +415,55 @@ function tests.panel_tooltip_lines(t)
   t.eq(P.RungTip(data[3])[3], Q.L.DGMODE_ROW_TIP_NOQUEST)
 end
 
-function tests.panel_without_chapters_is_safe(t)
+function tests.automatic_view_is_hidden_without_the_mode(t)
   local Q = load({ guides = {} })
-  local P = Q.UI.DungeonModePanel
-  P:Show()
-  t.ok(not P.enable:IsEnabled(), "mode cannot be turned on")
-  t.ok(P.help:GetText():find(Q.L.DGMODE_UNAVAILABLE, 1, true))
+  local J = Q.UI.Journal
+  J:ShowRouteMode("auto")
+  t.eq(J:RouteMode(), "manual", "no automatic route for this character")
+  t.ok(J.routePanels.manual:IsShown() and not J.routePanels.auto:IsShown())
+  t.ok(not J.routeModeButtons.auto:IsShown() and not J.routeModeButtons.manual:IsShown())
+  -- la vue elle-même reste sûre
+  Q.UI.DungeonModePanel:Refresh()
+  t.ok(not Q.UI.DungeonModePanel.startButton:IsEnabled())
+  t.eq(Q.UI.DungeonModePanel.status:GetText(), Q.L.DGMODE_UNAVAILABLE)
   t.eq(#Mock.errors, 0)
 end
 
-function tests.slash_opens_the_panel(t)
+function tests.slash_opens_the_automatic_view(t)
   local Q = load()
   SlashCmdList.QUESTIFY("donjons")
-  t.ok(Q.UI.DungeonModePanel.frame:IsShown())
-  Q.UI.DungeonModePanel:Hide()
+  t.ok(Q.UI.Journal:IsShown())
+  t.eq(Q.UI.Journal.tab, "route"); t.eq(Q.UI.Journal:RouteMode(), "auto")
+  Q.UI.Journal.frame:Hide()
+  Q.UI.Journal.routeMode = "manual"
   SlashCmdList.QUESTIFY("dungeons")
-  t.ok(Q.UI.DungeonModePanel.frame:IsShown())
+  t.ok(Q.UI.Journal:IsShown())
+  t.eq(Q.UI.Journal:RouteMode(), "auto")
+end
+
+-- Mode automatique : les donjons sont dans la route, plus de donjon suggéré.
+function tests.no_suggested_dungeon_in_automatic_mode(t)
+  local Q = load()
+  local calls = 0
+  local list = Q.Dungeons.List
+  Q.Dungeons.List = function(self) calls = calls + 1; return list(self) end
+  Q.Dungeons:Suggested()
+  t.ok(calls > 0, "manual mode: dungeons are looked up")
+  calls = 0
+  local fired = 0
+  Q:On("DUNGEONS_CHANGED", function() fired = fired + 1 end)
+  Q.DungeonMode:SetOn(true)
+  t.ok(fired > 0, "the tracker alert is refreshed")
+  calls = 0
+  t.eq(#Q.Dungeons:Suggested(), 0)
+  t.eq(#Q.Dungeons:Alerts(), 0)
+  t.eq(calls, 0, "automatic mode: nothing is suggested")
 end
 
 function tests.french_strings_cover_english(t)
   Mock.locale = "frFR"
   local Q = load()
-  t.eq(Q.L.DGMODE_TITLE, "Mode Donjons")
+  t.eq(Q.L.DGMODE_TAB_AUTO, "Automatique")
   t.eq(Q.UI.DungeonModePanel.RungName(Q.DungeonRouteData.rungs[2]), "Scarlet Monastery : Bibliothèque")
 end
 

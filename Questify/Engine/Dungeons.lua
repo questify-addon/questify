@@ -633,6 +633,8 @@ end
 function Dungeons:Suggested()
   local out = {}
   if Q.Settings:Get("dungeonSuggest") == false then return out end
+  -- mode automatique (Engine/DungeonMode.lua) : les donjons sont dans la route, rien à suggérer
+  if Q.DungeonMode and Q.DungeonMode:IsOn() then return out end
   if not (enabled() and saved()) then return out end
   local set
   for _, row in ipairs(self:List()) do
@@ -1111,3 +1113,6 @@ end)
 Q:On("SETTINGS_CHANGED", function(path)
   if path == "dungeonSuggest" then Q:Fire("DUNGEONS_CHANGED") end
 end)
+
+-- Mode automatique allumé ou éteint : l'alerte des donjons suggérés disparaît ou revient.
+Q:On("DUNGEON_MODE_CHANGED", function() Q:Fire("DUNGEONS_CHANGED") end)

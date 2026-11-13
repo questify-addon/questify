@@ -55,7 +55,7 @@ Q:RegisterGuide({
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 81953, xp = 195 }, -- Stonewrought Design (lvl 45, ~195 xp, sim lvl 54)
     { "level", 55, at = { 1428, 36, 60.37 }, note = "About 318 more mobs here (Flamekin Rager, level 55)" }, -- farm de niveau
-    { "goto", 1427, 34.8, 85.3, optional = true, dungeon = "Blackrock Depths", note = "Dungeon: Blackrock Depths (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "BRD" }, -- déplacement
+    { "goto", 1427, 34.8, 85.3, optional = true, dungeon = "Blackrock Depths", note = "Dungeon: Blackrock Depths (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "BRD" }, -- déplacement
     { "complete", 4024, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Taste of Flame (lvl 58, ~3100 xp, sim lvl 55)
     { "complete", 4123, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 55)
     { "complete", 4136, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 55)

@@ -23,7 +23,7 @@ Q:RegisterGuide({
     { "accept", 104 }, -- The Coastal Menace (lvl 20, ~1550 xp, sim lvl 19)
     { "complete", 104, at = { 1436, 29.27, 75.95 } }, -- The Coastal Menace (lvl 20, ~1550 xp, sim lvl 19)
     { "turnin", 104, xp = 1550 }, -- The Coastal Menace (lvl 20, ~1550 xp, sim lvl 19)
-    { "goto", 1436, 42.5, 71.7, optional = true, dungeon = "The Deadmines", note = "Dungeon: The Deadmines (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "DM" }, -- déplacement
+    { "goto", 1436, 42.5, 71.7, optional = true, dungeon = "The Deadmines", note = "Dungeon: The Deadmines (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "DM" }, -- déplacement
     { "complete", 167, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Oh Brother. . . (lvl 20, ~775 xp, sim lvl 19)
     { "complete", 168, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Collecting Memories (lvl 18, ~675 xp, sim lvl 19)
     { "complete", 2040, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Underground Assault (lvl 20, ~775 xp, sim lvl 19)

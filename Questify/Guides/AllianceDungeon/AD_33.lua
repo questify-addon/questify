@@ -67,7 +67,7 @@ Q:RegisterGuide({
     { "turnin", 5845, xp = 6200 }, -- Of Lost Honor (lvl 58, ~6200 xp, sim lvl 59)
     { "turnin", 6164, xp = 1400 }, -- Augustus' Receipt Book (lvl 55, ~1400 xp, sim lvl 59)
     { "level", 60, at = { 1423, 61.96, 11.11 }, note = "About 320 more mobs near the last objective" }, -- farm de niveau
-    { "goto", 1423, 26.52, 10.36, optional = true, dungeon = "Stratholme", note = "Dungeon: Stratholme: Live (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "STRAT_LIVE" }, -- déplacement
+    { "goto", 1423, 26.52, 10.36, optional = true, dungeon = "Stratholme", note = "Dungeon: Stratholme: Live (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "STRAT_LIVE" }, -- déplacement
     { "complete", 5214, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_LIVE" }, -- The Great Ezra Grimm (lvl 60, ~4150 xp, sim lvl 60)
     { "complete", 5243, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_LIVE" }, -- Houses of the Holy (lvl 60, ~3300 xp, sim lvl 60)
     { "complete", 5251, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_LIVE" }, -- The Archivist (lvl 60, ~4150 xp, sim lvl 60)
@@ -78,7 +78,7 @@ Q:RegisterGuide({
     { "turnin", 5282, xp = 4150, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_LIVE" }, -- The Restless Souls (lvl 60, ~4150 xp, sim lvl 60)
     { "accept", 5262, optional = true, dungeon = "Stratholme", note = "Starts inside the dungeon", phase = "run", rung = "STRAT_LIVE" }, -- The Truth Comes Crashing Down (lvl 60, ~4150 xp, sim lvl 60)
     { "turnin", 5262, xp = 4150, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_LIVE" }, -- The Truth Comes Crashing Down (lvl 60, ~4150 xp, sim lvl 60)
-    { "goto", 1423, 26.52, 10.36, optional = true, dungeon = "Stratholme", note = "Dungeon: Stratholme: Undead (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "STRAT_UD" }, -- déplacement
+    { "goto", 1423, 26.52, 10.36, optional = true, dungeon = "Stratholme", note = "Dungeon: Stratholme: Undead (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "STRAT_UD" }, -- déplacement
     { "complete", 5212, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_UD" }, -- The Flesh Does Not Lie (lvl 60, ~3300 xp, sim lvl 60)
     { "turnin", 5212, xp = 3300, optional = true, dungeon = "Stratholme", phase = "run", rung = "STRAT_UD" }, -- The Flesh Does Not Lie (lvl 60, ~3300 xp, sim lvl 60)
   },

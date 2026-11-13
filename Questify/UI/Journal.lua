@@ -154,7 +154,32 @@ function Journal:Create()
   end
   if PanelTemplates_SetNumTabs then pcall(PanelTemplates_SetNumTabs, f, #TAB_NAMES) end
 
-  self:BuildRoute(self.panels.route)
+  -- Onglet Route : deux vues. « Manuel » : chapitres et étapes ; « Automatique » : parcours complet avec les
+  -- donjons (UI/DungeonModePanel.lua), proposé seulement quand il existe pour le personnage.
+  local routePanel = self.panels.route
+  self.routePanels = {}
+  for _, mode in ipairs({ "manual", "auto" }) do
+    local sub = CreateFrame("Frame", nil, routePanel)
+    sub:SetAllPoints(routePanel)
+    sub:Hide()
+    self.routePanels[mode] = sub
+  end
+  self:BuildRoute(self.routePanels.manual)
+  local auto = Q.UI.DungeonModePanel
+  if auto and auto.Build then auto:Build(self.routePanels.auto) end
+  self.routeModeButtons = {}
+  for i, mode in ipairs({ "manual", "auto" }) do
+    local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    b:SetSize(112, 22)
+    b:SetPoint("TOPLEFT", f, "TOPLEFT", 62 + (i - 1) * 116, -34)
+    b:SetText(mode == "manual" and L.DGMODE_TAB_MANUAL or L.DGMODE_TAB_AUTO)
+    b:SetScript("OnClick", safe(function()
+      playSound("IG_CHARACTER_INFO_TAB")
+      Journal:ShowRouteMode(mode)
+    end))
+    b:Hide()
+    self.routeModeButtons[mode] = b
+  end
   self:BuildDungeons(self.panels.dungeons)
   self:BuildClass(self.panels.class)
   -- Options : fenêtre à part (UI/Options.lua)
@@ -178,6 +203,23 @@ function Journal:Create()
     if P then P:OpenForPlayer() end
   end))
   self.routeButton = route
+  -- Zone de secours (Engine/Detour.lua) : autre zone du niveau du personnage, puis retour à la route
+  local alt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+  alt:SetSize(140, 22)
+  alt:SetPoint("RIGHT", route, "LEFT", -6, 0)
+  alt:SetText(L.DETOUR_BTN)
+  alt:SetScript("OnClick", safe(function()
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+    local go = Q.UI.Detour
+    if go then go(Q.Detour ~= nil and Q.Detour:Current() ~= nil) end
+    Journal:UpdateDetourButton()
+  end))
+  alt:SetScript("OnEnter", safe(function(self)
+    local back = Q.Detour and Q.Detour:Current()
+    showTooltip(self, { back and L.DETOUR_BTN_BACK or L.DETOUR_BTN, back and L.DETOUR_TIP_BACK or L.DETOUR_TIP })
+  end))
+  alt:SetScript("OnLeave", hideTooltip)
+  self.detourButton = alt
   f:Hide()
   -- Sons d'ouverture et de fermeture branchés après le Hide() initial (pas de son à la création).
   f:HookScript("OnShow", function() playSound("IG_CHARACTER_INFO_OPEN") end)
@@ -219,7 +261,48 @@ function Journal:ShowTab(name)
     if n == name then panel:Show() else panel:Hide() end
   end
   self.frame:Show()
+  self:UpdateDetourButton()
+  self:UpdateRouteMode()
   self:RefreshTab(name, true)
+end
+
+-- Bouton de la zone de secours : « Zone alternative », ou « Revenir à ma route » sur une zone de secours.
+function Journal:UpdateDetourButton()
+  if not self.detourButton then return end
+  local back = Q.Detour and Q.Detour:Current()
+  self.detourButton:SetText(back and L.DETOUR_BTN_BACK or L.DETOUR_BTN)
+end
+
+-- Vue de l'onglet Route réellement affichée : "auto" seulement si le mode automatique existe pour le
+-- personnage, sinon "manual".
+function Journal:RouteMode()
+  local D = Q.DungeonMode
+  if self.routeMode == "auto" and D and D:Available() then return "auto" end
+  return "manual"
+end
+
+-- Boutons « Manuel » / « Automatique » (visibles sur l'onglet Route quand le mode automatique existe) et
+-- vue affichée.
+function Journal:UpdateRouteMode()
+  if not self.frame then return end
+  local D = Q.DungeonMode
+  local mode = self:RouteMode()
+  local show = self.tab == "route" and D ~= nil and D:Available()
+  for m, b in pairs(self.routeModeButtons) do
+    if show then b:Show() else b:Hide() end
+    -- vue ouverte : bouton enfoncé
+    if m == mode then b:Disable() else b:Enable() end
+  end
+  for m, sub in pairs(self.routePanels) do
+    if m == mode then sub:Show() else sub:Hide() end
+  end
+end
+
+-- ShowRouteMode("manual" | "auto") : ouvre le journal sur l'onglet Route, dans cette vue.
+function Journal:ShowRouteMode(mode)
+  self:Create()
+  self.routeMode = mode == "auto" and "auto" or "manual"
+  self:ShowTab("route")
 end
 
 function Journal:RefreshTab(name, scroll)
@@ -496,6 +579,12 @@ local function setStepRow(row, e, cur)
 end
 
 function Journal:RefreshRoute(scrollToCurrent)
+  self:UpdateRouteMode()
+  if self:RouteMode() == "auto" then
+    local auto = Q.UI.DungeonModePanel
+    if auto and auto.Refresh then auto:Refresh() end
+    return
+  end
   if not self.frame then return end
   local available = Q.QDB and Q.QDB:IsAvailable()
   -- Chapitres, groupés
@@ -1389,3 +1478,4 @@ Q:On("GUIDE_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("STEP_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("CLASSQUESTS_CHANGED", function() refreshIfShown("class") end)
 Q:On("DUNGEONS_CHANGED", function() refreshIfShown("dungeons") end)
+Q:On("DETOUR_CHANGED", function() if Journal:IsShown() then Journal:UpdateDetourButton() end end)

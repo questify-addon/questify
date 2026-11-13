@@ -19,7 +19,7 @@ Q:RegisterGuide({
     { "accept", 7041, optional = true, dungeon = "Maraudon", phase = "prep", rung = "MARAUDON" }, -- Vyletongue Corruption (lvl 47, ~0 xp, sim lvl 43)
     { "accept", 7028, optional = true, dungeon = "Maraudon", phase = "prep", rung = "MARAUDON" }, -- Twisted Evils (lvl 47, ~0 xp, sim lvl 43)
     { "accept", 7044, optional = true, dungeon = "Maraudon", phase = "prep", rung = "MARAUDON" }, -- Legends of Maraudon (lvl 49, ~0 xp, sim lvl 43)
-    { "goto", 1443, 29.1, 62.5, optional = true, dungeon = "Maraudon", note = "Dungeon: Maraudon (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "MARAUDON" }, -- déplacement
+    { "goto", 1443, 29.1, 62.5, optional = true, dungeon = "Maraudon", note = "Dungeon: Maraudon (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "MARAUDON" }, -- déplacement
     { "complete", 7028, optional = true, dungeon = "Maraudon", phase = "run", rung = "MARAUDON" }, -- Twisted Evils (lvl 47, ~2625 xp, sim lvl 43)
     { "complete", 7041, optional = true, dungeon = "Maraudon", phase = "run", rung = "MARAUDON" }, -- Vyletongue Corruption (lvl 47, ~2625 xp, sim lvl 43)
     { "complete", 7044, optional = true, dungeon = "Maraudon", phase = "run", rung = "MARAUDON" }, -- Legends of Maraudon (lvl 49, ~1700 xp, sim lvl 43)

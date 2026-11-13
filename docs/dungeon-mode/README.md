@@ -15,16 +15,32 @@ aux personnages de l'Alliance dans les options ; il est éteint par défaut et l
 
 ## Ce que voit le joueur
 
-- Options, section Parcours : « Mode Donjons » (par personnage) et « Choisir les donjons du parcours ».
-  Aussi `/qf donjons`.
-- Une case par donjon ou par aile, toutes cochées par défaut, avec zéro à trois étoiles.
-- Case cochée : la route prend toutes les quêtes du donjon (suites et quêtes d'accès d'abord), puis envoie
-  dans l'instance. Bouton « Contourner » : pas de groupe, on garde les quêtes prises, les étapes de
-  l'instance sont passées et l'alternative en extérieur est jouée. Le donjon ne bloque jamais la route.
-- Case décochée : le donjon et les détours qui ne servent qu'à lui sont sautés, l'alternative en extérieur
-  est jouée.
+Le mode s'appelle « mode automatique » en jeu.
+
+- Journal, onglet Route : deux vues, « Manuel » (chapitres et étapes, comme avant) et « Automatique ».
+  Aussi `/qf donjons` et les Options, section Parcours. Les deux boutons n'apparaissent que si le mode
+  existe pour le personnage (Alliance).
+- Vue « Automatique » : un gros bouton centré lance ou arrête le mode ; dessous, le sous-menu repliable
+  « Donjons » (une case et zéro à trois étoiles par donjon ou par aile, « Tout cocher » / « Tout
+  décocher ») puis l'aperçu des zones à explorer, dans l'ordre, avec les donjons faits à la fin de chacune.
+- Case cochée : la route prend les quêtes du donjon (suites et quêtes d'accès d'abord), puis envoie dans
+  l'instance. Case décochée : le donjon et les détours qui ne servent qu'à lui sont sautés, la zone
+  alternative en extérieur est jouée. Il n'y a pas de bouton « Contourner » : décocher suffit, à tout moment.
+- Mode automatique actif : plus de « donjons suggérés » dans le suivi (ils sont dans la route).
 - Les quêtes de classe restent dans `ClassQuestData.lua` et sont proposées chez le donneur ou le maître,
   comme dans les guides habituels.
+
+### Zone alternative (les deux modes)
+
+Zone trop dure ou envahie par l'autre faction : le bouton « Zone alternative » du journal (ou `/qf alt`)
+passe sur une autre zone adaptée au niveau du personnage, un peu moins rentable. Un second appel passe à la
+suivante. « Revenir à ma route » (ou `/qf alt back`), ou la fin de la zone alternative, ramène au chemin.
+
+- Choix (`Questify/Engine/Detour.lua`) : chapitres de la faction et de la race, hors zones du chapitre
+  quitté, hors chapitres finis, dont la tranche convient au niveau **avec la barre d'XP** (au plus un niveau
+  sous le début de la tranche, deux au-dessus de sa fin). Classement : XP/h simulée du chapitre × part des
+  quêtes restantes, moins 0,5 par niveau manquant et 0,35 par niveau en trop.
+- Retour : le chapitre quitté s'il est encore à la portée du personnage, sinon le chapitre de son niveau.
 
 ## Architecture
 
@@ -34,7 +50,8 @@ aux personnages de l'Alliance dans les options ; il est éteint par défaut et l
 | `tools/routebuilder/build_dungeon_route.lua` | Génère `Questify/Guides/DungeonRouteData.lua` et `ECHELLE.md` à partir de l'échelle et de `DungeonData.lua` (sans QuestieDB). Refuse une échelle incohérente. |
 | `Questify/Guides/DungeonRouteData.lua` | Échelons dans l'ordre joué : niveau d'entrée, quêtes, XP, étoiles. |
 | `Questify/Engine/DungeonMode.lua` | Choix du mode, cases, contournement, filtre des étapes. État par personnage : `Q.char.dungeonMode`. |
-| `Questify/UI/DungeonModePanel.lua` | Fenêtre des cases et des étoiles. |
+| `Questify/UI/DungeonModePanel.lua` | Vue « Automatique » de l'onglet Route du journal. |
+| `Questify/Engine/Detour.lua` | Zone alternative : choix selon le niveau, retour au chemin. |
 | `Questify/Engine/Guides.lua` | Champ `mode` des chapitres ; champs `rung`, `phase`, `alt`, `below` des étapes. |
 | `Questify/Engine/Progress.lua` | Une ligne dans le filtre des étapes ; chapitre de départ selon le mode. |
 | `tools/routebuilder/plans_dungeon.lua` | La chaîne des chapitres du mode : copies des réglages des chapitres habituels (jamais modifiés), redécoupés autour des échelons. |

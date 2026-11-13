@@ -86,12 +86,12 @@ Q:RegisterGuide({
     { "complete", 562, at = { 1424, 58.14, 71.42 } }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 37)
     { "turnin", 562, xp = 1950 }, -- Stormwind Ho! (lvl 32, ~1950 xp, sim lvl 37)
     { "accept", 563 }, -- Reassignment (lvl 32, ~0 xp, sim lvl 37)
-    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Library (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SM_LIB" }, -- déplacement
+    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Library (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SM_LIB" }, -- déplacement
     { "complete", 1050, optional = true, dungeon = "Scarlet Monastery", phase = "run", rung = "SM_LIB" }, -- Mythology of the Titans (lvl 38, ~1775 xp, sim lvl 37)
     { "complete", 96800, optional = true, dungeon = "Scarlet Monastery", phase = "run", rung = "SM_LIB" }, -- Past Due (lvl 38, ~1425 xp, sim lvl 37)
     { "turnin", 96800, xp = 1425, optional = true, dungeon = "Scarlet Monastery", phase = "run", rung = "SM_LIB" }, -- Past Due (lvl 38, ~1425 xp, sim lvl 37)
     { "turnin", 1050, xp = 1775, optional = true, dungeon = "Scarlet Monastery", phase = "run", rung = "SM_LIB" }, -- Mythology of the Titans (lvl 38, ~1775 xp, sim lvl 37)
-    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Armory (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SM_ARM" }, -- déplacement
-    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Cathedral (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "SM_CATH" }, -- déplacement
+    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Armory (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SM_ARM" }, -- déplacement
+    { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Cathedral (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SM_CATH" }, -- déplacement
   },
 })

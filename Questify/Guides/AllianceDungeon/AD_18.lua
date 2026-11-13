@@ -92,7 +92,7 @@ Q:RegisterGuide({
     { "accept", 1320 }, -- The Black Shield (lvl 35, ~1350 xp, sim lvl 40)
     { "turnin", 1320, xp = 1350 }, -- The Black Shield (lvl 35, ~1350 xp, sim lvl 40)
     { "turnin", 1287, xp = 2850 }, -- The Deserters (lvl 38, ~2850 xp, sim lvl 40)
-    { "goto", 1413, 49, 93.9, optional = true, dungeon = "Razorfen Downs", note = "Dungeon: Razorfen Downs (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "RFD" }, -- déplacement
+    { "goto", 1413, 49, 93.9, optional = true, dungeon = "Razorfen Downs", note = "Dungeon: Razorfen Downs (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFD" }, -- déplacement
     { "complete", 96773, optional = true, dungeon = "Razorfen Downs", phase = "run", rung = "RFD" }, -- The Coldbringer's Eye (lvl 41, ~1650 xp, sim lvl 40)
     { "turnin", 96773, xp = 1650, optional = true, dungeon = "Razorfen Downs", phase = "run", rung = "RFD" }, -- The Coldbringer's Eye (lvl 41, ~1650 xp, sim lvl 40)
   },

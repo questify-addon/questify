@@ -96,7 +96,7 @@ Q:RegisterGuide({
     { "accept", 388, optional = true, dungeon = "The Stockade", phase = "prep", rung = "STOCKADE" }, -- The Color of Blood (lvl 26, ~0 xp, sim lvl 26)
     { "accept", 387, optional = true, dungeon = "The Stockade", phase = "prep", rung = "STOCKADE" }, -- Quell The Uprising (lvl 26, ~0 xp, sim lvl 26)
     { "turnin", 78090, xp = 1200, race = { "Human", "Dwarf" }, classes = { "PALADIN" } }, -- A Second Opinion (lvl 30, ~1200 xp, sim lvl 26)
-    { "goto", 1453, 52.41, 70.01, optional = true, dungeon = "The Stockade", note = "Dungeon: The Stockade (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "STOCKADE" }, -- déplacement
+    { "goto", 1453, 52.41, 70.01, optional = true, dungeon = "The Stockade", note = "Dungeon: The Stockade (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "STOCKADE" }, -- déplacement
     { "complete", 377, optional = true, dungeon = "The Stockade", phase = "run", rung = "STOCKADE" }, -- Crime and Punishment (lvl 26, ~1050 xp, sim lvl 26)
     { "complete", 386, optional = true, dungeon = "The Stockade", phase = "run", rung = "STOCKADE" }, -- What Comes Around... (lvl 25, ~1000 xp, sim lvl 26)
     { "complete", 387, optional = true, dungeon = "The Stockade", phase = "run", rung = "STOCKADE" }, -- Quell The Uprising (lvl 26, ~1325 xp, sim lvl 26)

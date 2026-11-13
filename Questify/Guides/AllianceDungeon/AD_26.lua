@@ -13,7 +13,7 @@ Q:RegisterGuide({
   next = "AD_27",
   sim = { steps = 3, endLevel = 51.00, xpPerHour = 0, minutes = 3 },
   steps = {
-    { "goto", 1435, 69.9, 53.5, optional = true, dungeon = "The Temple of Atal'Hakkar", note = "Dungeon: The Temple of Atal'Hakkar (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "ST" }, -- déplacement
+    { "goto", 1435, 69.9, 53.5, optional = true, dungeon = "The Temple of Atal'Hakkar", note = "Dungeon: The Temple of Atal'Hakkar (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "ST" }, -- déplacement
     { "complete", 1446, optional = true, dungeon = "The Temple of Atal'Hakkar", phase = "run", rung = "ST" }, -- Jammal'an the Prophet (lvl 53, ~3275 xp, sim lvl 51)
     { "turnin", 1446, xp = 3275, optional = true, dungeon = "The Temple of Atal'Hakkar", phase = "run", rung = "ST" }, -- Jammal'an the Prophet (lvl 53, ~3275 xp, sim lvl 51)
   },

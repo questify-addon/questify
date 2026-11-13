@@ -374,6 +374,9 @@ end
 -- Chapitre suivant : la suite du mode choisi (Handoff), sinon nextByRace[raceKey], sinon next.
 function Guides:Next(guide, raceKey)
   if type(guide) ~= "table" then return nil end
+  -- zone de secours finie : retour au chemin, selon le niveau du personnage (Engine/Detour.lua)
+  local back = Q.Detour and Q.Detour:NextAfter(guide)
+  if back then return back end
   local handoff = self:Handoff(guide, raceKey, currentMode())
   if handoff then return handoff end
   local id = guide.nextByRace and raceKey and guide.nextByRace[raceKey]
@@ -536,8 +539,8 @@ function Guides:Choices(guide, raceKey, faction)
   local out = {}
   if type(guide) ~= "table" then return out end
   local def = self:Next(guide, raceKey)
-  -- le mode choisi prend la suite de ce chapitre : pas d'autre choix
-  if def and self:Handoff(guide, raceKey, currentMode()) then
+  -- le mode choisi prend la suite de ce chapitre, ou c'est le retour d'une zone de secours : pas d'autre choix
+  if def and (self:Handoff(guide, raceKey, currentMode()) or (Q.Detour and Q.Detour:NextAfter(guide))) then
     out[1] = { guide = def, default = true }
     return out
   end

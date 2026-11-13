@@ -63,6 +63,7 @@ Engine\Guides.lua
 Engine\DungeonMode.lua
 Engine\Progress.lua
 Engine\RouteChoice.lua
+Engine\Detour.lua
 Engine\Targets.lua
 Engine\ZoneMode.lua
 Engine\Format.lua

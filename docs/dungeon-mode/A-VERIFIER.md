@@ -57,9 +57,14 @@ sont aussi listés dans [ECHELLE.md](ECHELLE.md).
 
 ## Interface
 
-- Fenêtre `/qf donjons` : gabarit `ButtonFrameTemplate`, cases `UICheckButtonTemplate`, étoiles
-  (`tradeskills-star`), hauteur avec 26 lignes sur un petit écran.
-- Option « Mode Donjons » visible seulement pour un personnage de l'Alliance, une fois les routes livrées.
+- Onglet Route du journal : boutons « Manuel » / « Automatique » dans le bandeau du haut, à droite du
+  portrait (position et largeur à vérifier dans les deux langues).
+- Vue « Automatique » : bouton central, sous-menu des donjons replié par défaut, liste des zones ; étoiles
+  éteintes grisées (le premier essai en jeu montrait trois étoiles pleines partout).
+- Bouton « Zone alternative » en bas du journal, à gauche de « Changer de route » : largeur des trois
+  boutons en français. Il n'y a pas encore de bouton dans le suivi lui-même.
+- Zone alternative : la zone proposée dépend des chapitres existants à ce niveau ; à certains niveaux il
+  n'y en a aucune (message « Aucune autre zone ne convient »).
 
 ## Outillage
 

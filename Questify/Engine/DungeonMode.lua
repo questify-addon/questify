@@ -175,6 +175,42 @@ function DungeonMode:Rungs()
   return out
 end
 
+-- Chain(raceKey) -> chapitres du mode dans l'ordre joué par cette race (celle du personnage par défaut) :
+--   { { guide, runs = { échelon, ... }, alt = vrai | nil }, ... }
+-- runs : échelons dont l'instance est faite dans le chapitre ; alt : chapitre d'alternative en extérieur.
+-- Départ : le chapitre du mode qui prend la suite d'un chapitre habituel (champ after) pour cette race, de
+-- plus bas niveau ; puis les suites (next).
+function DungeonMode:Chain(raceKey)
+  local out = {}
+  local G = Q.Guides
+  if not G then return out end
+  raceKey = raceKey or (Q.Player and Q.Player.raceKey)
+  local first
+  for _, g in ipairs(G:All()) do
+    if g.mode == MODE and g.after and (g.races == nil or Q.Util.Contains(g.races, raceKey)) then
+      if not first or (g.minLevel or 1) < (first.minLevel or 1)
+        or ((g.minLevel or 1) == (first.minLevel or 1) and g.id < first.id) then
+        first = g
+      end
+    end
+  end
+  local seen, g = {}, first
+  while g and not seen[g.id] and g.mode == MODE do
+    seen[g.id] = true
+    local runs, got, alt = {}, {}, nil
+    for _, s in ipairs(g.steps or {}) do
+      if s.rung and s.phase == "run" and s.action == "goto" and not got[s.rung] then
+        got[s.rung] = true
+        runs[#runs + 1] = s.rung
+      end
+      if s.alt then alt = true end
+    end
+    out[#out + 1] = { guide = g, runs = runs, alt = alt }
+    g = g.next and G:Get(g.next) or nil
+  end
+  return out
+end
+
 -- StepSkip(step, level) -> raison pour laquelle l'étape est passée ("rung-off", "rung-bypass", "rung-alt",
 -- "rung-level"), ou nil. Un échelon inconnu des données ne passe rien (la route reste jouable).
 function DungeonMode:StepSkip(step, level)

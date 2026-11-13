@@ -40,7 +40,7 @@ Q:RegisterGuide({
     { "turnin", 1110, xp = 2500 }, -- Rocket Car Parts (lvl 31, ~2500 xp, sim lvl 31)
     { "accept", 1115 }, -- The Rumormonger (lvl 36, ~0 xp, sim lvl 31)
     { "level", 33, at = { 1441, 87.86, 65.44 }, note = "About 444 more mobs near the last objective" }, -- farm de niveau
-    { "goto", 1413, 42.9, 90.2, optional = true, dungeon = "Razorfen Kraul", note = "Dungeon: Razorfen Kraul (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "RFK" }, -- déplacement
+    { "goto", 1413, 42.9, 90.2, optional = true, dungeon = "Razorfen Kraul", note = "Dungeon: Razorfen Kraul (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFK" }, -- déplacement
     { "accept", 1142, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)
     { "complete", 1142, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)
     { "turnin", 1142, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)

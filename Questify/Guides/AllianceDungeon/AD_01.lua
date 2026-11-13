@@ -18,7 +18,7 @@ Q:RegisterGuide({
     { "fp", 1455, 55.5, 47.74, phase = "prep", rung = "THANES" }, -- point de vol
     { "turnin", 968, xp = 1700, race = { "NightElf" }, phase = "prep", rung = "THANES" }, -- The Powers Below (lvl 18, ~1700 xp, sim lvl 15)
     { "accept", 2041, phase = "prep", rung = "THANES" }, -- Speak with Shoni (lvl 15, ~0 xp, sim lvl 15)
-    { "goto", 1455, 27.63, 47.83, optional = true, dungeon = "The Hall of Thanes", note = "Dungeon: The Hall of Thanes (5 players). No group? Skip the instance in /qf dungeons", phase = "run", rung = "THANES" }, -- déplacement
+    { "goto", 1455, 27.63, 47.83, optional = true, dungeon = "The Hall of Thanes", note = "Dungeon: The Hall of Thanes (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "THANES" }, -- déplacement
     { "complete", 96393, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Old Ironforge Incursion (lvl 16, ~575 xp, sim lvl 15)
     { "complete", 96394, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Restless Dead (lvl 15, ~525 xp, sim lvl 15)
     { "complete", 96403, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Important Heirlooms (lvl 15, ~525 xp, sim lvl 15)
