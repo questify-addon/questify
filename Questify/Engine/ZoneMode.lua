@@ -127,10 +127,11 @@ local function killCreditNamed(questId)
 end
 
 -- Quête lancée par un objet ramassé (sur un monstre ou un objet du monde) : -> liste d'objets.
-local function startItems(questId)
+-- Une étape avec `at` est un départ par objet choisi par le générateur, même si la quête a aussi un donneur.
+local function startItems(questId, step)
   local q = Q.QDB:Quest(questId)
   if not q or #q.starters.items == 0 then return nil end
-  if #q.starters.npcs > 0 or #q.starters.objects > 0 then return nil end
+  if not (step and step.at) and (#q.starters.npcs > 0 or #q.starters.objects > 0) then return nil end
   return q.starters.items
 end
 
@@ -154,7 +155,7 @@ local function zoneable(entry)
   local step = entry.step
   if type(step.questId) ~= "number" then return false end
   if step.action == "complete" then return true end
-  return step.action == "accept" and startItems(step.questId) ~= nil
+  return step.action == "accept" and startItems(step.questId, step) ~= nil
 end
 
 -- Cibles d'une étape : { { kind = "npc"|"object", id, questId, objIndex, viaItem, done, start, forceNamed } },
@@ -176,7 +177,7 @@ local function entryTargets(entry)
     end
     return out
   elseif step.action == "accept" then
-    local items = startItems(questId)
+    local items = startItems(questId, step)
     if not items then return nil end
     for _, itemId in ipairs(items) do
       local item = Q.QDB:Item(itemId)

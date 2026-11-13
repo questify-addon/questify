@@ -573,4 +573,64 @@ return {
     t.eq(Q.Progress:Current(), list[2])
     t.eq(#Mock.errors, 0)
   end,
+  -- Quête lancée par un objet lâché par un monstre (Ira's Dagger) : QuestieDB lui donne aussi, à tort, un PNJ
+  -- de départ sur une autre carte. Elle n'entre dans la route qu'une fois l'objet dans les sacs.
+  dropped_starter_waits_for_the_item = function(t)
+    local bags = {}
+    local Q = load({ qdb = {
+      quests = { [96137] = { name = "Ira's Dagger", startedBy = { { 6176 }, nil, { 281143 } }, finishedBy = { { 658 } },
+        requiredLevel = 1, questLevel = 5, objectives = { { { 705 } } } } },
+      npcs = {
+        [6176] = { name = "Bath'rah the Windwatcher", minLevel = 40, maxLevel = 40, zoneID = 36,
+          spawns = { [36] = { { 80.4, 66.8 } } } },
+        [272260] = { name = "Lost Stalker", minLevel = 24, maxLevel = 24, zoneID = 1, spawns = { [1] = { { 48, 63.6 } } } },
+      },
+      items = { [281143] = { name = "Ira's Dagger", npcDrops = { 272260 }, class = 15 } },
+    } })
+    C_Item.GetItemCount = function(id) return bags[id] or 0 end
+    local list = useGuide(Q, "T_Dagger", {
+      { "accept", 96137, at = { 1426, 54.57, 62.04 }, note = "Loot Ira's Dagger to start the quest" },
+      { "complete", 96137, at = { 1426, 54.53, 64.18 } },
+      { "note", "after" },
+    })
+    local s, why = Q.Progress:State(list[1])
+    t.eq(s, "skipped", "no dagger: the quest is not proposed"); t.eq(why, "starter")
+    t.eq(Q.Progress:State(list[2]), "skipped")
+    t.eq(Q.Progress:Current(), list[3], "the route goes on without it")
+    t.eq(Q.Progress:StarterState(list[1].step), "drop")
+
+    bags[281143] = 1
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(Q.Progress:State(list[1]), "active", "dagger looted: the quest joins the route")
+    t.eq(Q.Progress:Current(), list[1])
+    t.eq(Q.Targets:ForEntry(list[1]), nil, "nowhere to go: the item is used from the bags")
+    local text = Q.Format:StepText(list[1])
+    t.ok(text:find("Ira's Dagger", 1, true), "names the item")
+    t.ok(not text:find("Bath'rah", 1, true), "not the stray starter NPC")
+
+    bags[281143] = nil
+    Mock.fire("BAG_UPDATE_DELAYED")
+    t.eq(Q.Progress:State(list[1]), "skipped", "dagger gone: out of the route again")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Objet de départ pris sur un objet du monde : étape gardée, et le point du guide passe avant un PNJ de départ.
+  picked_up_starter_goes_to_the_guide_point = function(t)
+    local Q = load({ qdb = {
+      quests = { [90050] = { name = "The Parcel", startedBy = { { 6176 }, nil, { 7010 } }, finishedBy = { { 658 } },
+        requiredLevel = 1, questLevel = 5 } },
+      npcs = { [6176] = { name = "Bath'rah the Windwatcher", minLevel = 40, maxLevel = 40, zoneID = 1,
+        spawns = { [1] = { { 80.4, 66.8 } } } } },
+      objects = { [9010] = { name = "Crate", zoneID = 1, spawns = { [1] = { { 12, 34 } } } } },
+      items = { [7010] = { name = "Undelivered Parcel", objectDrops = { 9010 }, class = 12 } },
+    } })
+    C_Item.GetItemCount = function() return 0 end
+    local list = useGuide(Q, "T_Parcel", { { "accept", 90050, at = { 1426, 12, 34 } } })
+    t.eq(Q.Progress:State(list[1]), "active")
+    t.eq(Q.Progress:StarterState(list[1].step), "pickup")
+    local tg = Q.Targets:ForEntry(list[1])
+    t.eq(tg.kind, "area"); t.eq(tg.x, 12); t.eq(tg.y, 34)
+    t.ok(Q.Format:StepText(list[1]):find("Undelivered Parcel", 1, true), "names the item")
+    t.eq(#Mock.errors, 0)
+  end,
 }
