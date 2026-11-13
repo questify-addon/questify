@@ -129,6 +129,25 @@ function Guides:Normalize(raw)
   if classes == false then return nil, action .. ": " .. classesErr end
   step.classes = classes
   if raw.optional then step.optional = true end
+  -- Mode « Donjons » (Engine/DungeonMode.lua) : échelon et phase de l'étape, alternative en extérieur,
+  -- étape de rattrapage sous un niveau.
+  if raw.rung ~= nil then
+    if type(raw.rung) ~= "string" or raw.rung == "" then return nil, action .. ": rung must be a rung key" end
+    step.rung = raw.rung
+    if raw.phase ~= "prep" and raw.phase ~= "run" then return nil, action .. ": phase must be prep or run" end
+    step.phase = raw.phase
+  elseif raw.phase ~= nil then
+    return nil, action .. ": phase needs a rung"
+  end
+  if raw.alt ~= nil then
+    if type(raw.alt) ~= "string" or raw.alt == "" then return nil, action .. ": alt must be a rung key" end
+    if raw.rung ~= nil then return nil, action .. ": alt and rung are exclusive" end
+    step.alt = raw.alt
+  end
+  if raw.below ~= nil then
+    if not isNum(raw.below) then return nil, action .. ": below must be a level" end
+    step.below = raw.below
+  end
   if raw.dungeon ~= nil then
     if type(raw.dungeon) ~= "string" then return nil, action .. ": dungeon must be a string" end
     step.dungeon = raw.dungeon
@@ -226,6 +245,8 @@ function Q:RegisterGuide(def)
   if def.minLevel ~= nil and not isNum(def.minLevel) then return invalid(id, "minLevel must be a number") end
   if def.maxLevel ~= nil and not isNum(def.maxLevel) then return invalid(id, "maxLevel must be a number") end
   if def.next ~= nil and type(def.next) ~= "string" then return invalid(id, "next must be a guide id") end
+  -- mode : parcours auquel le chapitre appartient (absent : guides habituels ; "dungeon" : mode « Donjons »)
+  if def.mode ~= nil and def.mode ~= "dungeon" then return invalid(id, "mode must be dungeon") end
   if def.nextByRace ~= nil and type(def.nextByRace) ~= "table" then return invalid(id, "nextByRace must be a table") end
   local choices, choiceErr = choiceList(def.choices)
   if choices == false then return invalid(id, choiceErr) end
@@ -287,12 +308,27 @@ local function better(a, b)
   return a.id < b.id
 end
 
--- Chapitre de départ pour un personnage.
-function Guides:ForPlayer(faction, raceKey, level)
+-- HasMode(mode, faction) -> vrai si au moins un chapitre de la faction appartient à ce parcours.
+function Guides:HasMode(mode, faction)
+  for _, g in pairs(registry) do
+    if g.mode == mode and (faction == nil or g.faction == nil or g.faction == faction) then return true end
+  end
+  return false
+end
+
+-- InMode(guide, mode) -> le chapitre appartient au parcours (mode nil : guides habituels).
+function Guides:InMode(g, mode)
+  g = type(g) == "table" and g or registry[g]
+  return g ~= nil and g.mode == mode
+end
+
+-- Chapitre de départ pour un personnage. mode : parcours voulu (nil : guides habituels, "dungeon" : mode
+-- « Donjons ») ; sans chapitre de ce parcours pour le personnage, les guides habituels.
+function Guides:ForPlayer(faction, raceKey, level, mode)
   level = level or 1
   local inBand, best
   for _, g in ipairs(self:All()) do
-    if g.faction == faction and racesMatch(g, raceKey) then
+    if g.mode == mode and g.faction == faction and racesMatch(g, raceKey) then
       if g.minLevel <= level and level < g.maxLevel then
         if not inBand or better(g, inBand) then inBand = g end
       elseif g.minLevel <= level then
@@ -302,7 +338,9 @@ function Guides:ForPlayer(faction, raceKey, level)
       end
     end
   end
-  return inBand or best
+  local found = inBand or best
+  if not found and mode ~= nil then return self:ForPlayer(faction, raceKey, level, nil) end
+  return found
 end
 
 -- Chapitre suivant : nextByRace[raceKey], sinon next.
@@ -474,7 +512,8 @@ function Guides:Choices(guide, raceKey, faction)
   local seen = {}
   for _, entry in ipairs(guide.choices) do
     local target = registry[entry.id]
-    if not seen[entry.id] and eligible(target, entry, raceKey, faction) then
+    -- une suite reste dans le parcours du chapitre (guides habituels ou mode « Donjons »)
+    if not seen[entry.id] and target and target.mode == guide.mode and eligible(target, entry, raceKey, faction) then
       seen[entry.id] = true
       out[#out + 1] = { guide = target, entry = entry, default = def ~= nil and target == def }
     end

@@ -1,0 +1,386 @@
+-- Tests du mode « Donjons » : champs des étapes et des chapitres (Engine/Guides.lua), choix du mode, cases
+-- des échelons, contournement de l'instance et alternative en extérieur (Engine/DungeonMode.lua,
+-- Engine/Progress.lua), options, fenêtre (UI/DungeonModePanel.lua), /qf donjons, et contrôle des données
+-- générées (Guides/DungeonRouteData.lua).
+local TOC = "Questify/Questify.toc"
+local GUIDES = "tests/fixtures/guide_fixture.lua"
+local DATA_FILE = "Questify/Guides/DungeonRouteData.lua"
+local DUNGEON_FILE = "Questify/Guides/DungeonData.lua"
+
+local function testData()
+  return { faction = "Alliance", entryOffset = 2, entryCap = 58, rungs = {
+    { key = "DM", dungeon = "DM", name = "The Deadmines", areaId = 1581, minLevel = 17, maxLevel = 26, entry = 19,
+      quests = { 166, 167 }, xp = 2075, pct = 0.098, stars = 1 },
+    { key = "SM_LIB", dungeon = "SM", wing = "Library", name = "Scarlet Monastery", areaId = 796, minLevel = 29,
+      maxLevel = 39, entry = 31, quests = { 1050 }, xp = 1775, est = true, pct = 0.35, stars = 3 },
+    { key = "SFK", dungeon = "SFK", name = "Shadowfang Keep", areaId = 209, minLevel = 22, maxLevel = 30, entry = 27,
+      quests = {}, xp = 0, pct = 0, stars = 0 },
+  } }
+end
+
+-- Chapitre du mode : prises (prep), instance (run), alternative en extérieur, rattrapage.
+local function dungeonGuide(extra)
+  local g = { id = "AD_T1", title = "Westfall", faction = "Alliance", mode = "dungeon", minLevel = 1, maxLevel = 20,
+    steps = {
+      { "note", "zone quest" },
+      { "note", "pick up", rung = "DM", phase = "prep" },
+      { "note", "enter", rung = "DM", phase = "run" },
+      { "note", "open world", alt = "DM" },
+      { "note", "catch up", alt = "DM", below = 12 },
+      { "note", "filler", below = 5 },
+      { "note", "end" },
+    } }
+  for k, v in pairs(extra or {}) do g[k] = v end
+  return g
+end
+
+local function load(opts)
+  opts = opts or {}
+  opts.extraFiles = opts.extraFiles or { GUIDES }
+  if opts.skipGuides == nil then opts.skipGuides = true end
+  local data = opts.data == nil and testData() or opts.data
+  local guides = opts.guides
+  opts.data, opts.guides = nil, nil
+  opts.beforeLogin = function(Q)
+    Q.DungeonRouteData = data or nil
+    for _, g in ipairs(guides or { dungeonGuide() }) do Q:RegisterGuide(g) end
+  end
+  return Mock.loadAddon(TOC, opts)
+end
+
+-- Texte des étapes « note » du chapitre courant qui ne sont pas passées.
+local function live(Q)
+  local out = {}
+  for _, e in ipairs(Q.Progress:Entries()) do
+    if e.source == "guide" and e.step.action == "note" then
+      local st = Q.Progress:State(e)
+      if st ~= "skipped" then out[#out + 1] = e.step.text end
+    end
+  end
+  return table.concat(out, ",")
+end
+
+local function setLevel(level)
+  Mock.player.level = level
+  Mock.fire("PLAYER_LEVEL_UP", level)
+end
+
+local tests = {}
+
+function tests.step_fields_are_normalized(t)
+  local Q = load()
+  local s = Q.Guides:Normalize({ "accept", 166, rung = "DM", phase = "prep" })
+  t.eq(s.rung, "DM"); t.eq(s.phase, "prep")
+  s = Q.Guides:Normalize({ "note", "x", alt = "DM", below = 21 })
+  t.eq(s.alt, "DM"); t.eq(s.below, 21)
+  local bad, err = Q.Guides:Normalize({ "accept", 166, rung = "DM" })
+  t.eq(bad, nil); t.ok(err:find("phase", 1, true), err)
+  bad = Q.Guides:Normalize({ "accept", 166, rung = "DM", phase = "later" })
+  t.eq(bad, nil)
+  bad = Q.Guides:Normalize({ "accept", 166, phase = "prep" })
+  t.eq(bad, nil)
+  bad = Q.Guides:Normalize({ "note", "x", alt = "DM", rung = "DM", phase = "run" })
+  t.eq(bad, nil)
+  bad = Q.Guides:Normalize({ "note", "x", below = "ten" })
+  t.eq(bad, nil)
+end
+
+function tests.guide_mode_is_validated(t)
+  local Q = load()
+  t.eq(Q:RegisterGuide({ id = "X_BAD", faction = "Alliance", mode = "raid", steps = {} }), false)
+  t.ok(Q.Guides:Get("AD_T1").mode == "dungeon")
+  t.ok(Q.Guides:HasMode("dungeon", "Alliance"))
+  t.ok(not Q.Guides:HasMode("dungeon", "Horde"))
+end
+
+function tests.usual_route_ignores_dungeon_chapters(t)
+  local Q = load()
+  t.ok(not Q.DungeonMode:IsOn(), "mode is off by default")
+  t.eq(Q.DungeonMode:Mode(), nil)
+  local g = Q.Guides:ForPlayer("Alliance", "Dwarf", 1)
+  t.ok(g ~= nil and g.mode == nil, "usual chapter chosen")
+  t.ok(Q.Progress:Guide().mode == nil, "login chapter is a usual chapter")
+end
+
+function tests.turning_the_mode_on_switches_route_and_back(t)
+  local Q = load()
+  local usual = Q.Progress:Guide().id
+  t.ok(Q.DungeonMode:SetOn(true))
+  t.ok(Q.DungeonMode:IsOn())
+  t.eq(Q.Progress:Guide().id, "AD_T1")
+  t.ok(not Q.DungeonMode:SetOn(true), "no change the second time")
+  t.ok(Q.DungeonMode:SetOn(false))
+  t.eq(Q.Progress:Guide().id, usual)
+end
+
+function tests.mode_survives_reload(t)
+  local Q = load()
+  Q.DungeonMode:SetOn(true)
+  Q.DungeonMode:SetChecked("DM", false)
+  Q = Mock.reload()
+  t.ok(Q.DungeonMode:IsOn())
+  t.eq(Q.DungeonMode:State("DM"), "off")
+  t.eq(Q.Progress:Guide().id, "AD_T1")
+end
+
+function tests.mode_needs_chapters_and_matching_faction(t)
+  local Q = load({ guides = {} })
+  t.ok(not Q.DungeonMode:Available(), "no dungeon chapter")
+  t.ok(not Q.DungeonMode:SetOn(true))
+  t.ok(not Q.DungeonMode:IsOn())
+  Mock.reset()
+  Mock.player.faction, Mock.player.raceId = "Horde", 2
+  Q = load()
+  t.ok(not Q.DungeonMode:Available(), "Alliance data, Horde character")
+  t.ok(not Q.DungeonMode:SetOn(true))
+  Mock.reset()
+  Q = load({ data = false })
+  t.ok(not Q.DungeonMode:Available(), "no data")
+  t.eq(#Q.DungeonMode:Rungs(), 0)
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.dungeon_mode_falls_back_to_usual_chapters(t)
+  local Q = load()
+  -- chapitre du mode réservé aux Humains : un Nain reste sur les guides habituels
+  local g = Q.Guides:ForPlayer("Alliance", "Dwarf", 1, "dungeon")
+  t.eq(g.id, "AD_T1")
+  Q:RegisterGuide(dungeonGuide({ id = "AD_T1", races = { "Human" } }))
+  g = Q.Guides:ForPlayer("Alliance", "Dwarf", 1, "dungeon")
+  t.ok(g ~= nil and g.mode == nil, "falls back to a usual chapter")
+end
+
+function tests.checked_rung_plays_dungeon_steps_and_hides_alternative(t)
+  local Q = load()
+  setLevel(15)
+  Q.DungeonMode:SetOn(true)
+  t.eq(live(Q), "zone quest,pick up,enter,end")
+end
+
+function tests.unchecked_rung_skips_dungeon_and_plays_alternative(t)
+  local Q = load()
+  setLevel(15)
+  Q.DungeonMode:SetOn(true)
+  t.ok(Q.DungeonMode:SetChecked("DM", false))
+  t.eq(Q.DungeonMode:State("DM"), "off")
+  t.eq(live(Q), "zone quest,open world,catch up,end")
+  Q.DungeonMode:SetChecked("DM", true)
+  t.eq(live(Q), "zone quest,pick up,enter,end")
+end
+
+function tests.bypass_keeps_pickups_and_skips_instance(t)
+  local Q = load()
+  setLevel(15)
+  Q.DungeonMode:SetOn(true)
+  t.ok(Q.DungeonMode:SetBypassed("DM", true))
+  t.eq(Q.DungeonMode:State("DM"), "bypassed")
+  t.eq(live(Q), "zone quest,pick up,open world,catch up,end")
+  Q.DungeonMode:SetBypassed("DM", false)
+  t.eq(live(Q), "zone quest,pick up,enter,end")
+  -- pas de contournement d'un échelon décoché ; recocher efface le contournement
+  Q.DungeonMode:SetBypassed("DM", true)
+  Q.DungeonMode:SetChecked("DM", false)
+  t.ok(not Q.DungeonMode:SetBypassed("DM", false))
+  Q.DungeonMode:SetChecked("DM", true)
+  t.eq(Q.DungeonMode:State("DM"), "on")
+end
+
+function tests.catch_up_steps_follow_the_level(t)
+  local Q = load()
+  setLevel(3)
+  Q.DungeonMode:SetOn(true)
+  t.eq(live(Q), "zone quest,pick up,enter,catch up,filler,end")
+  setLevel(5)
+  t.eq(live(Q), "zone quest,pick up,enter,catch up,end")
+  setLevel(12)
+  t.eq(live(Q), "zone quest,pick up,enter,end")
+end
+
+function tests.unknown_rung_never_blocks_the_route(t)
+  local Q = load()
+  local D = Q.DungeonMode
+  t.eq(D:StepSkip({ rung = "NOPE", phase = "run" }, 10), nil)
+  t.eq(D:StepSkip({ alt = "NOPE" }, 10), nil)
+  t.ok(not D:SetChecked("NOPE", false))
+  t.ok(not D:SetBypassed("NOPE", true))
+  t.eq(D:StepSkip({}, 10), nil)
+  t.eq(D:StepSkip(nil, 10), nil)
+end
+
+function tests.rungs_list_states_stars_and_progress(t)
+  local Q = load()
+  Mock.quests.completed[166] = true
+  Mock.fire("QUEST_TURNED_IN", 166)
+  Q.DungeonMode:SetChecked("SFK", false)
+  local list = Q.DungeonMode:Rungs()
+  t.eq(#list, 3)
+  t.eq(list[1].key, "DM"); t.eq(list[1].stars, 1); t.eq(list[1].done, 1); t.eq(list[1].total, 2)
+  t.eq(list[2].stars, 3); t.eq(list[2].state, "on")
+  t.eq(list[3].stars, 0); t.eq(list[3].state, "off"); t.eq(list[3].total, 0)
+end
+
+function tests.route_choices_stay_in_their_route(t)
+  local Q = load()
+  Q:RegisterGuide({ id = "T_USUAL", faction = "Alliance", minLevel = 1, maxLevel = 5, next = "T_NEXT",
+    choices = { { id = "T_NEXT" }, { id = "AD_T1" } }, steps = { { "note", "a" } } })
+  Q:RegisterGuide({ id = "T_NEXT", faction = "Alliance", minLevel = 5, maxLevel = 9, steps = { { "note", "b" } } })
+  local opts = Q.Guides:Choices(Q.Guides:Get("T_USUAL"), "Dwarf", "Alliance")
+  t.eq(#opts, 1)
+  t.eq(opts[1].guide.id, "T_NEXT")
+end
+
+function tests.options_entry_follows_availability(t)
+  local Q = load()
+  local S = Q.OptionsSchema
+  local e = S:Entry("route.dungeonMode")
+  t.ok(e ~= nil and e.visible(), "visible with dungeon chapters")
+  t.eq(S:Get(e), false)
+  t.ok(S:Set(e, true))
+  t.ok(Q.DungeonMode:IsOn())
+  t.eq(S:Get(e), true)
+  t.ok(S:Entry("openDungeonMode") ~= nil)
+  Mock.reset()
+  Q = load({ guides = {} })
+  t.ok(not Q.OptionsSchema:Entry("route.dungeonMode").visible(), "hidden without dungeon chapters")
+  t.ok(not Q.OptionsSchema:Entry("openDungeonMode").visible())
+end
+
+function tests.panel_shows_rows_and_acts(t)
+  local Q = load()
+  local P = Q.UI.DungeonModePanel
+  P:Show()
+  t.ok(P.frame:IsShown())
+  t.eq(#P.rows, 3)
+  t.eq(P.rows[2].name:GetText(), "Scarlet Monastery: Library")
+  t.ok(P.rows[1].check:GetChecked())
+  t.ok(not P.enable:GetChecked())
+  -- mode
+  P.enable:SetChecked(true)
+  Mock.click(P.enable)
+  t.ok(Q.DungeonMode:IsOn())
+  -- case d'un échelon
+  P.rows[1].check:SetChecked(false)
+  Mock.click(P.rows[1].check)
+  t.eq(Q.DungeonMode:State("DM"), "off")
+  t.ok(not P.rows[1].bypass:IsShown(), "no bypass button on an unticked dungeon")
+  -- contournement
+  Mock.click(P.rows[2].bypass)
+  t.eq(Q.DungeonMode:State("SM_LIB"), "bypassed")
+  t.eq(P.rows[2].bypass:GetText(), Q.L.DGMODE_RESUME)
+  Mock.click(P.rows[2].bypass)
+  t.eq(Q.DungeonMode:State("SM_LIB"), "on")
+  -- tout décocher, tout cocher
+  Mock.click(P.noneButton)
+  for _, it in ipairs(Q.DungeonMode:Rungs()) do t.eq(it.state, "off") end
+  Mock.click(P.allButton)
+  for _, it in ipairs(Q.DungeonMode:Rungs()) do t.eq(it.state, "on") end
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.panel_tooltip_lines(t)
+  local Q = load()
+  local P = Q.UI.DungeonModePanel
+  local data = Q.DungeonRouteData.rungs
+  local lines = P.RungTip(data[1])
+  t.eq(lines[1], "The Deadmines")
+  t.ok(lines[3]:find("2075", 1, true), lines[3])
+  t.ok(P.RungTip(data[2])[3]:find("about", 1, true), "estimated XP is flagged")
+  t.eq(P.RungTip(data[3])[3], Q.L.DGMODE_ROW_TIP_NOQUEST)
+end
+
+function tests.panel_without_chapters_is_safe(t)
+  local Q = load({ guides = {} })
+  local P = Q.UI.DungeonModePanel
+  P:Show()
+  t.ok(not P.enable:IsEnabled(), "mode cannot be turned on")
+  t.ok(P.help:GetText():find(Q.L.DGMODE_UNAVAILABLE, 1, true))
+  t.eq(#Mock.errors, 0)
+end
+
+function tests.slash_opens_the_panel(t)
+  local Q = load()
+  SlashCmdList.QUESTIFY("donjons")
+  t.ok(Q.UI.DungeonModePanel.frame:IsShown())
+  Q.UI.DungeonModePanel:Hide()
+  SlashCmdList.QUESTIFY("dungeons")
+  t.ok(Q.UI.DungeonModePanel.frame:IsShown())
+end
+
+function tests.french_strings_cover_english(t)
+  Mock.locale = "frFR"
+  local Q = load()
+  t.eq(Q.L.DGMODE_TITLE, "Mode Donjons")
+  t.eq(Q.UI.DungeonModePanel.RungName(Q.DungeonRouteData.rungs[2]), "Scarlet Monastery : Bibliothèque")
+end
+
+---------------------------------------------------------------------------
+-- Données livrées
+---------------------------------------------------------------------------
+local function shipped()
+  local Q = {}
+  assert(loadfile(Mock.root .. "/" .. DATA_FILE))("Questify", Q)
+  assert(loadfile(Mock.root .. "/" .. DUNGEON_FILE))("Questify", Q)
+  return Q
+end
+
+function tests.shipped_data_is_consistent(t)
+  local Q = shipped()
+  local d = Q.DungeonRouteData
+  t.eq(d.faction, "Alliance")
+  local byKey, quests = {}, {}
+  for _, dg in ipairs(Q.DungeonData) do
+    byKey[dg.key] = dg
+    quests[dg.key] = {}
+    for _, q in ipairs(dg.quests.Alliance or {}) do quests[dg.key][q.id] = true end
+  end
+  local seenKey, seenQuest, last = {}, {}, 0
+  for _, r in ipairs(d.rungs) do
+    t.ok(not seenKey[r.key], "duplicate rung " .. r.key)
+    seenKey[r.key] = true
+    local dg = byKey[r.dungeon]
+    t.ok(dg ~= nil, "unknown dungeon of " .. r.key)
+    t.eq(r.areaId, dg.areaId)
+    t.ok(r.entry >= r.minLevel and r.entry <= r.maxLevel, "entry inside the range: " .. r.key)
+    t.ok(r.entry >= last, "rungs in entry order: " .. r.key)
+    last = r.entry
+    t.ok(r.stars >= 0 and r.stars <= 3)
+    t.eq(r.stars == 0, #r.quests == 0)
+    local xp = 0
+    for _, id in ipairs(r.quests) do
+      t.ok(quests[r.dungeon][id], ("quest %d of %s is an Alliance quest of %s"):format(id, r.key, r.dungeon))
+      t.ok(not seenQuest[id], "quest in two rungs: " .. id)
+      seenQuest[id] = true
+      xp = xp + ((Q.QuestRewardData[id] or {}).xp or 0)
+    end
+    t.eq(r.xp, xp)
+  end
+  -- tous les donjons 5 joueurs ouverts à l'Alliance ont un échelon ; les Horde seulement n'en ont pas
+  for _, key in ipairs({ "THANES", "WC", "DM", "SFK", "BFD", "STOCKADE", "EXCAVATION", "DALARAN", "GNOMER", "RFK",
+                         "ULDAMAN", "RFD", "MARAUDON", "ZF", "ST", "BRD", "SCHOLO" }) do
+    t.ok(seenKey[key], "missing rung " .. key)
+  end
+  for _, key in ipairs({ "SM_GY", "SM_LIB", "SM_ARM", "SM_CATH", "DM_EAST", "DM_WEST", "DM_NORTH", "STRAT_LIVE",
+                         "STRAT_UD" }) do
+    t.ok(seenKey[key], "missing wing " .. key)
+  end
+  t.ok(not seenKey.RFC and not seenKey.LORDAERON, "Horde-only dungeons are left out")
+end
+
+function tests.shipped_wings_have_strings(t)
+  local Q = load()
+  local d = shipped().DungeonRouteData
+  for _, r in ipairs(d.rungs) do
+    if r.wing then t.ok(rawget(Q.L, "DGMODE_WING_" .. r.wing) ~= nil, "no text for wing " .. r.wing) end
+  end
+end
+
+function tests.shipped_guides_load_with_the_mode_files(t)
+  -- chargement complet (guides livrés) : aucun guide rejeté, aucune erreur, route habituelle inchangée
+  local Q = Mock.loadAddon(TOC, {})
+  t.eq(#Mock.errors, 0)
+  t.ok(Q.DungeonRouteData ~= nil and #Q.DungeonRouteData.rungs > 20)
+  t.ok(Q.Progress:Guide().mode == nil)
+  t.eq(Q.Progress:Guide().id, "A_DwarfGnome_01")
+end
+
+return tests

@@ -41,6 +41,33 @@ local function guideSource(id, races, steps)
 end
 
 return {
+  -- champs du mode « Donjons » : seulement dans un chapitre du mode, échelon connu, phase, alt, below
+  rung_fields_check = function(t)
+    local V = validator()
+    local keys = { DM = true, SM_LIB = true }
+    t.eq(V.rungProblem({ "accept", 166 }, nil, keys), nil, "usual step")
+    t.eq(V.rungProblem({ "accept", 166, rung = "DM", phase = "prep" }, "dungeon", keys), nil)
+    t.eq(V.rungProblem({ "goto", 1436, 42.5, 71.7, rung = "DM", phase = "run" }, "dungeon", keys), nil)
+    t.eq(V.rungProblem({ "accept", 1, alt = "SM_LIB", below = 33 }, "dungeon", keys), nil)
+    t.eq(V.rungProblem({ "accept", 1, below = 20 }, "dungeon", keys), nil)
+    t.eq(V.rungProblem({ "accept", 166, rung = "DM", phase = "prep" }, nil, keys),
+      "rung, phase, alt and below are only allowed in a dungeon mode chapter")
+    t.eq(V.rungProblem({ "accept", 1, below = 20 }, nil, keys),
+      "rung, phase, alt and below are only allowed in a dungeon mode chapter")
+    t.eq(V.rungProblem({ "accept", 166, rung = "DM" }, "dungeon", keys), "phase must be prep or run")
+    t.eq(V.rungProblem({ "accept", 166, rung = "NOPE", phase = "run" }, "dungeon", keys), "unknown rung 'NOPE'")
+    t.eq(V.rungProblem({ "accept", 166, rung = "NOPE", phase = "run" }, "dungeon", nil), nil, "keys unknown: not checked")
+    t.eq(V.rungProblem({ "accept", 166, phase = "run" }, "dungeon", keys), "phase needs a rung")
+    t.eq(V.rungProblem({ "accept", 1, alt = "NOPE" }, "dungeon", keys), "unknown rung 'NOPE' in alt")
+    t.eq(V.rungProblem({ "accept", 1, rung = "DM", phase = "run", alt = "DM" }, "dungeon", keys), "alt and rung are exclusive")
+    t.eq(V.rungProblem({ "accept", 1, below = 61 }, "dungeon", keys), "below must be a level between 2 and 60")
+    t.eq(V.rungProblem({ "accept", 1, below = "x" }, "dungeon", keys), "below must be a level between 2 and 60")
+    -- clés lues dans le fichier livré
+    local shipped = V.rungKeys(ROOT .. "/Questify/Guides")
+    t.ok(shipped ~= nil and shipped.DM and shipped.STRAT_UD and shipped.SM_CATH, "shipped rung keys")
+    t.eq(V.rungKeys(ROOT .. "/tests/fixtures"), nil, "no data file")
+  end,
+
   classes_field_check = function(t)
     local V = validator()
     t.eq(V.classesProblem(nil), nil, "absent: every class")

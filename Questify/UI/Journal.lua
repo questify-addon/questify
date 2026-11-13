@@ -395,8 +395,10 @@ end
 local function factionChapters()
   local faction = Q.Player and Q.Player.faction
   local list = {}
+  -- chapitres du parcours du personnage : guides habituels, ou ceux du mode « Donjons » quand il est choisi
+  local mode = Q.DungeonMode and Q.DungeonMode:Mode() or nil
   for _, g in ipairs(Q.Guides:All()) do
-    if g.faction == nil or g.faction == faction then list[#list + 1] = g end
+    if (g.faction == nil or g.faction == faction) and g.mode == mode then list[#list + 1] = g end
   end
   table.sort(list, function(a, b)
     if (a.minLevel or 1) ~= (b.minLevel or 1) then return (a.minLevel or 1) < (b.minLevel or 1) end

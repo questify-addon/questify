@@ -248,6 +248,8 @@ local function filterSkip(step)
   if step.race and not Q.Util.Contains(step.race, P.raceKey) then return "race" end
   if step.class and not Q.Util.Contains(step.class, P.classFile) then return "class" end
   if step.optional and Q.Settings:Get("dungeonQuests") == false then return "optional" end
+  -- mode « Donjons » : échelon décoché ou contourné, alternative en extérieur, rattrapage
+  if (step.rung or step.alt or step.below) and Q.DungeonMode then return Q.DungeonMode:StepSkip(step, P.level) end
   return nil
 end
 
@@ -775,7 +777,8 @@ function Progress:RouteTurnins()
   if not g then return set end
   local P = Q.Player or {}
   local sig = table.concat({ g.id, Q.Guides:Serial(), tostring(P.classFile), tostring(P.raceKey),
-    tostring(P.faction), tostring(Q.Settings:Get("dungeonQuests")) }, "|")
+    tostring(P.faction), tostring(Q.Settings:Get("dungeonQuests")),
+    tostring(Q.DungeonMode and Q.DungeonMode:Serial()), tostring(P.level) }, "|")
   if not (aheadCache and aheadCache.sig == sig) then
     aheadCache = { sig = sig, set = turninsAfter(g) }
   end
@@ -899,7 +902,7 @@ Q:On("LOGIN", function()
   local c = charState()
   if not (c.guideId and Q.Guides:Get(c.guideId)) then
     local P = Q.Player
-    local g = Q.Guides:ForPlayer(P.faction, P.raceKey, P.level)
+    local g = Q.Guides:ForPlayer(P.faction, P.raceKey, P.level, Q.DungeonMode and Q.DungeonMode:Mode())
     if g then
       Progress:SetGuide(g.id)
       return
@@ -915,6 +918,13 @@ Q:On("SETTINGS_CHANGED", function(path)
     aheadCache = nil
     Progress:Update()
   end
+end)
+
+-- Mode « Donjons » : case d'un échelon cochée ou décochée, instance contournée.
+Q:On("DUNGEON_MODE_CHANGED", function()
+  cache = nil
+  aheadCache = nil
+  Progress:Update()
 end)
 
 Q:RegisterEvent("QUEST_ACCEPTED", update)

@@ -79,6 +79,7 @@ Schema.CHAR_STATE = {
   guideId = true, manual = true, skipped = true, inserted = true, classQuests = true, telemetry = true,
   wizardDone = true, specRoleAnswered = true,
   routeChoices = true, routeChoiceLast = true,
+  dungeonMode = true,   -- Engine/DungeonMode.lua (le choix du mode a son entrée : route.dungeonMode)
 }
 
 -- Réglages de Settings.defaults dont le contrôle est ailleurs que dans les Options (sans entrée au schéma).
@@ -156,6 +157,25 @@ add({ id = "zoneMode", section = "route", category = "path", type = "toggle", pa
 add({ id = "route.choicePopup", section = "route", category = "path", type = "toggle",
   path = "route.choicePopup", label = "OPT_ROUTE_CHOICE", tip = "OPT_TIP_ROUTE_CHOICE",
   keywords = "choix suite cartes chapitre suivant zone bifurcation route choice next chapter cards branch" })
+-- Mode « Donjons » : propre au personnage (Q.char.dungeonMode, par Q.DungeonMode), hors profils d'options.
+-- Visible seulement quand la faction du personnage a des chapitres de ce mode.
+local function dungeonModeAvailable()
+  return Q.DungeonMode ~= nil and Q.DungeonMode:Available()
+end
+add({ id = "route.dungeonMode", section = "route", category = "path", type = "toggle",
+  label = "DGMODE_OPT", tip = "DGMODE_OPT_TIP", perCharacter = true, noExport = true,
+  keywords = "mode donjon donjons instance parcours aile dungeon dungeons route wing leveling",
+  visible = dungeonModeAvailable,
+  get = function() return Q.DungeonMode ~= nil and Q.DungeonMode:IsOn() end,
+  set = function(value) if Q.DungeonMode then Q.DungeonMode:SetOn(value) end end })
+add({ id = "openDungeonMode", section = "route", category = "path", type = "action",
+  label = "DGMODE_OPT_OPEN", tip = "DGMODE_OPT_OPEN_TIP",
+  keywords = "mode donjon donjons cases cocher etoiles contourner dungeon dungeons checkbox stars skip",
+  visible = dungeonModeAvailable,
+  run = function()
+    local P = ui("DungeonModePanel")
+    if P then P:Show() end
+  end })
 add({ id = "openJournal", section = "route", category = "path", type = "action",
   label = "OPT_OPEN_JOURNAL", tip = "OPT_TIP_OPEN_JOURNAL",
   keywords = "journal chapitre chapitres etapes chapter chapters steps liste",

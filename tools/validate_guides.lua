@@ -71,6 +71,45 @@ function M.classesProblem(v)
   return nil
 end
 
+-- Mode « Donjons » (Engine/DungeonMode.lua) : échelons de <guides>/DungeonRouteData.lua.
+-- -> { [clé] = true }, ou nil sans le fichier (les clés ne sont alors pas contrôlées).
+function M.rungKeys(guidesDir)
+  local fn = loadfile(guidesDir .. "/DungeonRouteData.lua")
+  if not fn then return nil end
+  local Q = {}
+  setfenv(fn, {})
+  if not pcall(fn, "Questify", Q) then return nil end
+  local keys = {}
+  for _, r in ipairs(type(Q.DungeonRouteData) == "table" and Q.DungeonRouteData.rungs or {}) do
+    if type(r) == "table" and type(r.key) == "string" then keys[r.key] = true end
+  end
+  return keys
+end
+
+-- rungProblem(étape, mode du chapitre, clés connues) -> nil si les champs du mode « Donjons » (rung, phase,
+-- alt, below) sont valides ou absents, sinon le message. Même règle que Q.Guides:Normalize, plus : ces champs
+-- n'existent que dans un chapitre du mode, et l'échelon doit être dans DungeonRouteData.lua.
+function M.rungProblem(step, mode, keys)
+  if step.rung == nil and step.alt == nil and step.below == nil and step.phase == nil then return nil end
+  if mode ~= "dungeon" then return "rung, phase, alt and below are only allowed in a dungeon mode chapter" end
+  if step.rung ~= nil then
+    if type(step.rung) ~= "string" or step.rung == "" then return "rung must be a rung key" end
+    if step.phase ~= "prep" and step.phase ~= "run" then return "phase must be prep or run" end
+    if step.alt ~= nil then return "alt and rung are exclusive" end
+    if keys and not keys[step.rung] then return ("unknown rung '%s'"):format(step.rung) end
+  elseif step.phase ~= nil then
+    return "phase needs a rung"
+  end
+  if step.alt ~= nil then
+    if type(step.alt) ~= "string" or step.alt == "" then return "alt must be a rung key" end
+    if keys and not keys[step.alt] then return ("unknown rung '%s' in alt"):format(step.alt) end
+  end
+  if step.below ~= nil and (type(step.below) ~= "number" or step.below < 2 or step.below > 60) then
+    return "below must be a level between 2 and 60"
+  end
+  return nil
+end
+
 -- Variantes de classe d'un parcours et étapes vues par une classe : tools/routebuilder/paths.lua (aussi utilisé
 -- par build.raceFilters).
 M.classVariants = paths.classVariants
@@ -311,10 +350,12 @@ function M.run(argv)
     bad(it.path, it.line, ("%s (race path: %s%s)"):format(it.msg, table.concat(it.races, ","), cls))
   end
 
+  local rungKeys = M.rungKeys(opts.guides)
   for _, g in ipairs(guides) do
     local def, path = g.def, g.path
     local faction = def.faction
     if faction ~= "Alliance" and faction ~= "Horde" then bad(path, 0, "invalid faction " .. tostring(faction)) end
+    if def.mode ~= nil and def.mode ~= "dungeon" then bad(path, 0, "invalid mode " .. tostring(def.mode)) end
     local d = D(faction == "Horde" and "Horde" or "Alliance")
     local chapterRaces = def.races or FACTION_RACES[faction] or FACTION_RACES.Alliance
     local seenAccept, seenTurnin = {}, {}
@@ -335,6 +376,8 @@ function M.run(argv)
           end
           local classesErr = M.classesProblem(s.classes)
           if classesErr then bad(path, line, classesErr) end
+          local rungErr = M.rungProblem(s, def.mode, rungKeys)
+          if rungErr then bad(path, line, rungErr) end
           if s.at then checkPoint(s.at[1], s.at[2], s.at[3], "at") end
           if POINT_ACTIONS[action] then checkPoint(s[2], s[3], s[4], action) end
           if (action == "hearth" or action == "fly") and (type(s[2]) ~= "number" or not W.maps[s[2]]) then

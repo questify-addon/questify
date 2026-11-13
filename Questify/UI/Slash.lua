@@ -83,6 +83,13 @@ COMMANDS.route = function()
 end
 
 -- Quêtes de classe : retrouver une quête en retard et l'ajouter à la route.
+-- Mode « Donjons » : cases des échelons, étoiles, contournement (UI/DungeonModePanel.lua).
+COMMANDS.donjons = function()
+  local P = Q.UI and Q.UI.DungeonModePanel
+  if P then P:Show() end
+end
+COMMANDS.dungeons = COMMANDS.donjons
+
 COMMANDS.classe = function()
   local J = journal()
   if J then J:ShowTab("class") end
