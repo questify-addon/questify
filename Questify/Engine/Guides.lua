@@ -119,6 +119,19 @@ function Guides:Normalize(raw)
     if type(raw.note) ~= "string" then return nil, action .. ": note must be a string" end
     step.note = raw.note
   end
+  -- Taux de butin de l'objet qui lance la quête (0-1, Wowhead) : champ `drop`, sinon lu dans la note du
+  -- générateur « Loot X to start the quest (15.8 % drop: about 7 kills) ». Absent : taux inconnu.
+  if action == "accept" then
+    local drop = raw.drop
+    if drop == nil and step.note then
+      local pct = tonumber(step.note:match("%(([%d%.]+) %% drop"))
+      drop = pct and pct / 100 or nil
+    end
+    if drop ~= nil then
+      if type(drop) ~= "number" or drop <= 0 or drop > 1 then return nil, action .. ": drop must be a rate in ]0, 1]" end
+      step.drop = drop
+    end
+  end
   local race = stringList(raw.race)
   if race == false then return nil, action .. ": race must be a list of strings" end
   step.race = race

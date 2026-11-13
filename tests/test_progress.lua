@@ -611,6 +611,20 @@ return {
     bags[281143] = nil
     Mock.fire("BAG_UPDATE_DELAYED")
     t.eq(Q.Progress:State(list[1]), "skipped", "dagger gone: out of the route again")
+
+    -- taux de butin connu (note du générateur ou champ `drop`) : élevé, la route envoie tuer le monstre
+    list = useGuide(Q, "T_DaggerRates", {
+      { "accept", 96137, at = { 1426, 54.57, 62.04 }, note = "Loot Ira's Dagger to start the quest (83.9 % drop: about 2 kills)" },
+      { "accept", 96137, at = { 1426, 54.57, 62.04 }, note = "Loot Ira's Dagger to start the quest (7.3 % drop: about 14 kills)" },
+      { "accept", 96137, at = { 1426, 54.57, 62.04 }, drop = 0.5 },
+    })
+    t.near(list[1].step.drop, 0.839, 1e-9); t.near(list[2].step.drop, 0.073, 1e-9); t.eq(list[3].step.drop, 0.5)
+    t.eq(Q.Progress:StarterState(list[1].step), "farm")
+    t.eq(Q.Progress:State(list[1]), "active", "high drop rate: go and kill")
+    local tg = Q.Targets:ForEntry(list[1])
+    t.eq(tg.kind, "area", "the guide point, not the stray NPC"); t.eq(tg.mapId, 1426); t.eq(tg.x, 54.57)
+    t.eq(Q.Progress:State(list[2]), "skipped", "low drop rate: wait for the item")
+    t.eq(Q.Progress:State(list[3]), "active", "drop field")
     t.eq(#Mock.errors, 0)
   end,
 

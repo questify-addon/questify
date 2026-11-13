@@ -245,6 +245,10 @@ end
 ---------------------------------------------------------------------------
 -- Quête lancée par un objet ramassé
 ---------------------------------------------------------------------------
+-- Taux de butin à partir duquel la route envoie tuer le monstre qui lâche l'objet de départ (36 % : 3 tués
+-- en moyenne). En dessous, ou sans taux connu, la quête attend que l'objet soit ramassé.
+Progress.STARTER_MIN_DROP = 0.3
+
 -- Exemplaires d'un objet dans les sacs (0 si inconnu ou secret).
 local function itemCount(id)
   local fn = (C_Item and C_Item.GetItemCount) or GetItemCount
@@ -260,7 +264,9 @@ end
 --   nil      : étape ordinaire (pas un « accept » avec `at`, ou quête sans objet de départ)
 --   "held"   : l'objet est dans les sacs, il reste à l'utiliser
 --   "pickup" : l'objet se prend sur un objet du monde (coffre, parchemin) : on y va
---   "drop"   : l'objet tombe d'un monstre : butin incertain, l'étape attend qu'il soit ramassé
+--   "farm"   : l'objet tombe d'un monstre avec un taux connu d'au moins STARTER_MIN_DROP (step.drop,
+--              Wowhead) : la route envoie tuer ce monstre
+--   "drop"   : l'objet tombe d'un monstre, taux faible ou inconnu : l'étape attend qu'il soit ramassé
 function Progress:StarterState(step)
   if type(step) ~= "table" or step.action ~= "accept" or type(step.at) ~= "table" then return nil end
   local q = Q.QDB:Quest(step.questId)
@@ -273,6 +279,7 @@ function Progress:StarterState(step)
     local item = Q.QDB:Item(id)
     if not item or #item.objectDrops > 0 then return "pickup", id end
   end
+  if type(step.drop) == "number" and step.drop >= Progress.STARTER_MIN_DROP then return "farm", items[1] end
   return "drop", items[1]
 end
 
