@@ -83,6 +83,37 @@ COMMANDS.route = function()
 end
 
 -- Quêtes de classe : retrouver une quête en retard et l'ajouter à la route.
+-- Zone de secours (Engine/Detour.lua) : /qf alt passe sur une autre zone du niveau du personnage (ou sur la
+-- suivante), /qf alt back revient à la route.
+local function detour(back)
+  local D = Q.Detour
+  if not D then return end
+  if back then
+    local g = D:Return()
+    if g then Q:Print(L.DETOUR_BACK, Q.Guides:DisplayTitle(g)) else Q:Print(L.DETOUR_NOT_ACTIVE) end
+    return
+  end
+  local g = D:Start()
+  if g then
+    Q:Print(L.DETOUR_STARTED, Q.Guides:DisplayTitle(g), tonumber(g.minLevel) or 1, tonumber(g.maxLevel) or 60)
+  else
+    Q:Print(L.DETOUR_NONE)
+  end
+end
+Q.UI = Q.UI or {}
+Q.UI.Detour = detour
+COMMANDS.alt = function(rest)
+  local arg = tostring(rest or ""):lower():match("^%s*(%S*)")
+  detour(arg == "back" or arg == "retour")
+end
+
+-- Mode « Donjons » : cases des échelons, étoiles, contournement (UI/DungeonModePanel.lua).
+COMMANDS.donjons = function()
+  local P = Q.UI and Q.UI.DungeonModePanel
+  if P then P:Show() end
+end
+COMMANDS.dungeons = COMMANDS.donjons
+
 COMMANDS.classe = function()
   local J = journal()
   if J then J:ShowTab("class") end

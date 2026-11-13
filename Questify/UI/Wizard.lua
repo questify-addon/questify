@@ -1,14 +1,16 @@
 local addonName, Q = ...
 
--- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en cinq pages :
+-- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en six pages :
 --   1. bienvenue et addons (QuestieDB, ShortestPath Forever, WaypointUI, TomTom) : état de chacun
 --      (chargé, désactivé, activé mais pas encore chargé, périmé, absent, QuestieDB trop ancien),
 --      lien CurseForge à copier pour les absents et pour QuestieDB trop ancien (le jeu n'ouvre pas
 --      de navigateur), bouton « Activer » pour les désactivés ;
---   2. calcul d'itinéraire par ShortestPath Forever (case active seulement s'il est chargé) ;
---   3. affichage : WaypointUI, TomTom ou repère du jeu (les absents sont désactivés) ;
---   4. automatisations (accepter/rendre, choix de la récompense, vente de la camelote) ;
---   5. récapitulatif et « Terminer ».
+--   2. route : automatique (avec les donjons, Engine/DungeonMode.lua) ou manuelle ; l'automatique est
+--      grisée quand elle n'existe pas pour le personnage ;
+--   3. calcul d'itinéraire par ShortestPath Forever (case active seulement s'il est chargé) ;
+--   4. affichage : WaypointUI, TomTom ou repère du jeu (les absents sont désactivés) ;
+--   5. automatisations (accepter/rendre, choix de la récompense, vente de la camelote) ;
+--   6. récapitulatif et « Terminer ».
 -- Chaque page a « Précédent », « Ignorer » (remet les choix de la page à leur valeur actuelle et
 -- passe à la suivante) et « Suivant » ; la dernière a « Terminer ». « Recharger l'interface » est
 -- visible sur la page des addons, et sur toutes les pages après « Activer ».
@@ -29,7 +31,7 @@ local INNER = WIDTH - 48
 local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
-local PAGE_ADDONS, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_RECAP = 1, 2, 3, 4, 5
+local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_RECAP = 1, 2, 3, 4, 5, 6
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
 
@@ -53,6 +55,8 @@ local ADDONS = {
 Wizard.ADDONS = ADDONS
 
 local DISPLAYS = { "waypointui", "tomtom", "native" }
+-- Page 2 : route automatique (mode « Donjons ») ou manuelle (chapitres habituels).
+local ROUTES = { { "auto", "DGMODE_WIZ_AUTO", "DGMODE_WIZ_AUTO_DESC" }, { "manual", "DGMODE_WIZ_MANUAL", "DGMODE_WIZ_MANUAL_DESC" } }
 local PROVIDER_TEXT = {
   shortestpath = { "UI_NAV_SHORTESTPATH", "UI_NAV_SHORTESTPATH_DESC" },
   waypointui = { "UI_NAV_WAYPOINTUI", "UI_NAV_WAYPOINTUI_DESC" },
@@ -66,6 +70,7 @@ local AUTOMATIONS = {
 }
 -- Choix de chaque page : « Ignorer » les remet à leur valeur de départ.
 local PAGE_KEYS = {
+  [PAGE_ROUTE] = { "route" },
   [PAGE_ROUTING] = { "routing" },
   [PAGE_DISPLAY] = { "display" },
   [PAGE_AUTO] = { "autoQuest", "autoReward", "sellJunk", "rewardRole" },
@@ -295,6 +300,45 @@ function Wizard:BuildAddonsPage(page)
   self.reloadText:Hide()
 end
 
+-- Vrai si la route automatique existe pour le personnage.
+local function autoAvailable()
+  return Q.DungeonMode ~= nil and Q.DungeonMode:Available() == true
+end
+
+function Wizard:BuildRoutePage(page)
+  local title = pageTitle(page, "DGMODE_WIZ_TITLE")
+  local anchor = paragraph(page, L.DGMODE_WIZ_TEXT, title, 10)
+  local gap = 14
+  self.routeRadios = {}
+  for _, def in ipairs(ROUTES) do
+    local r = newButton("CheckButton", page, "UIRadioButtonTemplate")
+    r:SetSize(16, 16)
+    r:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -gap)
+    r.id = def[1]
+    r.label = labelFor(r, L[def[2]])
+    r.desc = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    r.desc:SetPoint("TOPLEFT", r, "BOTTOMLEFT", 20, -2)
+    r.desc:SetWidth(INNER - 20)
+    r.desc:SetJustifyH("LEFT")
+    r.desc:SetText(L[def[3]])
+    r:SetScript("OnClick", safe(function(self)
+      if not self:IsEnabled() then return end
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      Wizard:SelectRoute(self.id)
+      Wizard:SetChoice("route", Wizard.choice.route)
+    end))
+    self.routeRadios[def[1]] = r
+    anchor = r.desc
+    gap = 12
+  end
+  local missing = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  missing:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", -20, -18)
+  missing:SetWidth(INNER)
+  missing:SetJustifyH("LEFT")
+  missing:SetText(L.DGMODE_WIZ_AUTO_MISSING)
+  self.routeMissing = missing
+end
+
 function Wizard:BuildRoutingPage(page)
   local title = pageTitle(page, "UI_WIZ_P2_TITLE")
   local text = paragraph(page, L.UI_WIZ_P2_TEXT, title, 10)
@@ -383,7 +427,7 @@ function Wizard:BuildRecapPage(page)
   local title = pageTitle(page, "UI_WIZ_RECAP_TITLE")
   local anchor = paragraph(page, L.UI_WIZ_RECAP_TEXT, title, 10)
   local gap = 14
-  for _, key in ipairs({ "routing", "display", "autoQuest", "autoReward", "sellJunk" }) do
+  for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk" }) do
     local line = paragraph(page, "", anchor, gap)
     self.recap[key] = line
     anchor = line
@@ -420,6 +464,7 @@ function Wizard:Create()
     self.pages[i] = page
   end
   self:BuildAddonsPage(self.pages[PAGE_ADDONS])
+  self:BuildRoutePage(self.pages[PAGE_ROUTE])
   self:BuildRoutingPage(self.pages[PAGE_ROUTING])
   self:BuildDisplayPage(self.pages[PAGE_DISPLAY])
   self:BuildAutoPage(self.pages[PAGE_AUTO])
@@ -468,6 +513,12 @@ local function setEnabled(widget, enabled, label)
   if label then
     if enabled then label:SetTextColor(1, 1, 1) else label:SetTextColor(0.5, 0.5, 0.5) end
   end
+end
+
+function Wizard:SelectRoute(id)
+  if id ~= "auto" or not autoAvailable() then id = "manual" end
+  self.choice.route = id
+  for rid, r in pairs(self.routeRadios) do r:SetChecked(rid == id) end
 end
 
 function Wizard:SelectDisplay(id)
@@ -520,6 +571,10 @@ end
 -- Cases et boutons d'après self.choice.
 function Wizard:Refresh()
   local d, c = self.detected, self.choice
+  local auto = autoAvailable()
+  setEnabled(self.routeRadios.auto, auto, self.routeRadios.auto.label)
+  if auto then self.routeMissing:Hide() else self.routeMissing:Show() end
+  self:SelectRoute(c.route)
   local routing = self.checks.routing
   setEnabled(routing, d.shortestpath, routing.label)
   routing:SetChecked(c.routing)
@@ -562,7 +617,12 @@ function Wizard:Load()
     display = (d.waypointui and "waypointui") or (d.tomtom and "tomtom") or "native"
   end
   if not d[display] then display = "native" end
+  -- Route : celle du personnage ; au premier passage, l'automatique quand elle existe.
+  local D = Q.DungeonMode
+  local route = "manual"
+  if autoAvailable() and (D:IsOn() or not (Q.char and Q.char.wizardDone)) then route = "auto" end
   local initial = {
+    route = route,
     routing = d.shortestpath and Q.Settings:Get("nav.routing") == true or false,
     display = display,
     autoQuest = Q.Settings:Get("autoQuest") ~= false,
@@ -589,6 +649,7 @@ function Wizard:Load()
     if not ok then choice.rewardRole = initial.rewardRole end
   end
   if not d.shortestpath then choice.routing = false end
+  if choice.route ~= "auto" or not autoAvailable() then choice.route = "manual" end
   if not d[choice.display] then choice.display = initial.display end
   self.choice = choice
   self:UpdateAddons()
@@ -599,6 +660,7 @@ function Wizard:UpdateRecap()
   self:ReadWidgets()
   local c, r = self.choice, self.recap
   local function onOff(v) return v and L.UI_WIZ_ON or L.UI_WIZ_OFF end
+  r.route:SetFormattedText(L.DGMODE_WIZ_RECAP, c.route == "auto" and L.DGMODE_TAB_AUTO or L.DGMODE_TAB_MANUAL)
   r.routing:SetFormattedText(L.UI_WIZ_RECAP_ROUTING, c.routing and L.UI_NAV_SHORTESTPATH or L.UI_WIZ_OFF)
   local display = PROVIDER_TEXT[c.display] or PROVIDER_TEXT.native
   r.display:SetFormattedText(L.UI_WIZ_RECAP_DISPLAY, L[display[1]])
@@ -701,6 +763,8 @@ function Wizard:Finish()
   -- profil de butin : propre au personnage (Q.char.rewardRole), hors profils d'options
   if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
   if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then Q.char.rewardRoleChosen = true end
+  -- route : le mode automatique est par personnage (Q.char.dungeonMode) ; SetOn relance le choix du chapitre
+  if Q.DungeonMode and autoAvailable() then Q.DungeonMode:SetOn(c.route == "auto") end
   if Q.char then
     Q.char.wizardDone = true
     Q.char.wizardPage = nil

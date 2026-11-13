@@ -122,7 +122,7 @@ return {
       [1426] = "Dun Morogh", [1432] = "Loch Modan", [1436] = "Marche de l'Ouest", [1429] = "Forêt d'Elwynn",
       [1438] = "Teldrassil", [1413] = "Les Tarides", [1441] = "Mille pointes", [1411] = "Durotar",
       [1412] = "Mulgore", [1420] = "Clairières de Tirisfal", [1421] = "Forêt des Pins-Argentés",
-      [2521] = "Île de Zephras",
+      [2521] = "Île de Zephras", [1455] = "Forgefer", [1453] = "Hurlevent",
       -- zones des chapitres 30-60 (noms du client français)
       [1434] = "Vallée de Strangleronce", [1443] = "Désolace", [1435] = "Marais des Chagrins",
       [1416] = "Montagnes d'Alterac", [1417] = "Hautes-terres d'Arathi", [1445] = "Marécage d'Âprefange",
@@ -161,6 +161,11 @@ return {
       H_Undead_02 = "Clairières de Tirisfal",
       H_Undead_03 = "Forêt des Pins-Argentés",
       A_Skyborne_01 = "Île de Zephras",
+      -- chapitres du mode « Donjons » sous le niveau 30
+      AD_NightElf_03 = "Sombrivage", AD_01 = "Forgefer", AD_02 = "Sombrivage", AD_03 = "Marche de l'Ouest",
+      AD_04 = "Orneval et Les Serres-Rocheuses", AD_05 = "Les Carmines", AD_06 = "Bois de la Pénombre",
+      AD_07 = "Orneval", AD_08 = "Les Paluns", AD_09 = "Contreforts de Hautebrande et Montagnes d'Alterac",
+      AD_10 = "Bois de la Pénombre",
       H_Skyborne_01 = "Île de Zephras",
     }
     -- Chapitres 30-60 (lot H) : titres faits de noms de zones. Une zone connue du moteur
@@ -198,7 +203,8 @@ return {
         end
       end
     end
-    t.eq(#all - high, 29, "29 chapters 1-30")
+    -- 29 chapitres habituels et les 11 chapitres du mode « Donjons » sous le niveau 30
+    t.eq(#all - high, 40, "40 chapters 1-30")
     t.eq(#Mock.errors, 0)
   end,
 

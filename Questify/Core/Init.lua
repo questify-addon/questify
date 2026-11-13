@@ -258,6 +258,9 @@ Q.charDefaults = {
   specRoleAnswered = {}, -- Automation/SpecRole.lua : spécialisations pour lesquelles « Non » a été répondu
   routeChoices = {},     -- Engine/Progress.lua : [chapitre] = suite choisie (choix de suite)
   routeChoiceLast = nil, -- dernier chapitre où une suite a été choisie (/qf route)
+  -- Engine/DungeonMode.lua : mode « Donjons » choisi (on), cases décochées (off), instances contournées
+  dungeonMode = { off = {}, bypassed = {} },
+  detour = nil,          -- Engine/Detour.lua : zone de secours en cours { from, to }
 }
 
 local function onAddonLoaded(event, name)

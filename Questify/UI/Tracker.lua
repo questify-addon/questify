@@ -35,6 +35,7 @@ local PAD = 8
 local ICON = 22             -- icône de l'action courante
 local ICON_COL = 38         -- colonne de l'icône et de la distance
 local NEXT_HEIGHT = 15
+local MODE_H = 18           -- ligne « Mode : … » et petits boutons (route automatique)
 local MAX_NEXT = 10
 local DIST_INTERVAL = 0.5   -- secondes entre deux calculs de distance
 local TARGET_INTERVAL = 2   -- secondes entre deux recherches du point le plus proche
@@ -209,6 +210,34 @@ end
 ---------------------------------------------------------------------------
 -- Déplacement
 ---------------------------------------------------------------------------
+-- Petit bouton du suivi (mode de la route, « Passer ce donjon ») : texte en petite police, largeur ajustée.
+local function smallButton(parent, onClick, onEnter)
+  local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+  b:SetSize(110, MODE_H)
+  if b.SetNormalFontObject then b:SetNormalFontObject("GameFontNormalSmall") end
+  if b.SetHighlightFontObject then b:SetHighlightFontObject("GameFontHighlightSmall") end
+  b:SetScript("OnClick", function(btn) Q.SafeCall(onClick, btn) end)
+  b:SetScript("OnEnter", function(btn) Q.SafeCall(onEnter, btn) end)
+  b:SetScript("OnLeave", hideTooltip)
+  b:Hide()
+  return b
+end
+
+local function setButtonText(b, text)
+  b:SetText(text)
+  local fs = b.GetFontString and b:GetFontString()
+  local w = fs and fs.GetStringWidth and fs:GetStringWidth()
+  b:SetWidth(math.max(60, math.floor((tonumber(w) or 90) + 18)))
+end
+
+-- Nom d'un échelon du mode automatique (« Scarlet Monastery : Library »).
+local function rungName(r)
+  local P = Q.UI.DungeonModePanel
+  if P and P.RungName then return P.RungName(r) end
+  return tostring(r and r.name or "?")
+end
+Tracker.RungName = function(r) return rungName(r) end
+
 local function startMoving()
   local f = Tracker.frame
   if not f or setting("tracker.locked") then return end
@@ -440,7 +469,66 @@ function Tracker:Create()
   tr:Hide()
   self.trainerAlert, self.trainerText, self.trainerPulse = tr, trText, trPulse
 
-  self.glows = { glow, dgGlow, trGlow }
+  -- Route : « Mode : Manuel / Automatique » ; en automatique, bouton du chemin alternatif (Engine/Detour.lua)
+  local modeText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  modeText:SetJustifyH("LEFT")
+  modeText:SetWordWrap(false)
+  modeText:Hide()
+  self.modeText = modeText
+  self.modeButton = smallButton(f, function()
+    local go = Q.UI.Detour
+    if go then go(Q.Detour ~= nil and Q.Detour:Current() ~= nil) end
+  end, function(btn)
+    local back = Q.Detour and Q.Detour:Current()
+    showTooltip(btn, { btn:GetText() or "", back and L.DETOUR_TIP_BACK or L.DETOUR_TIP })
+  end)
+  -- « Passer ce donjon », sous l'étape d'instance du mode automatique
+  self.skipButton = smallButton(f, function() Tracker:SkipDungeon() end, function(btn)
+    showTooltip(btn, { L.DGMODE_TRK_SKIP, L.DGMODE_TRK_SKIP_TIP })
+  end)
+  setButtonText(self.skipButton, L.DGMODE_TRK_SKIP)
+  -- « Quêtes supplémentaires » (mode automatique, Q.Dungeons:ExtraTarget) : à l'entrée du donjon, ajoute les
+  -- quêtes de l'échelon que la route ne prend pas ; sur leurs prises, les retire.
+  self.extraButton = smallButton(f, function() Tracker:ToggleExtras() end, function(btn)
+    Tracker:ExtraTooltip(btn)
+  end)
+
+  -- Rappel « Revenir au donjon » (donjon passé, niveau dans sa tranche) : clic = reprendre le donjon
+  local rs = CreateFrame("Button", nil, f)
+  rs:SetHeight(20)
+  rs:RegisterForClicks("LeftButtonUp")
+  local rsGlow = rs:CreateTexture(nil, "BACKGROUND")
+  rsGlow:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+  rsGlow:SetBlendMode("ADD")
+  rsGlow:SetVertexColor(1, 0.5, 0.2)
+  rsGlow:SetAllPoints(rs)
+  local rsPulse = rsGlow:CreateAnimationGroup()
+  rsPulse:SetLooping("BOUNCE")
+  local rsFade = rsPulse:CreateAnimation("Alpha")
+  rsFade:SetFromAlpha(0.15)
+  rsFade:SetToAlpha(0.9)
+  rsFade:SetDuration(0.8)
+  local rsIcon = rs:CreateTexture(nil, "ARTWORK")
+  rsIcon:SetTexture("Interface\\Icons\\INV_Misc_Bone_HumanSkull_01")
+  rsIcon:SetSize(16, 16)
+  rsIcon:SetPoint("LEFT", rs, "LEFT", 2, 0)
+  local rsText = rs:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  rsText:SetPoint("LEFT", rsIcon, "RIGHT", 4, 0)
+  rsText:SetPoint("RIGHT", rs, "RIGHT", -2, 0)
+  rsText:SetJustifyH("LEFT")
+  rsText:SetWordWrap(false)
+  rs:SetScript("OnClick", function() Q.SafeCall(function() Tracker:ResumeDungeon() end) end)
+  rs:SetScript("OnEnter", function(btn)
+    Q.SafeCall(function()
+      local r = Tracker.resumeRung
+      showTooltip(btn, { rsText:GetText() or "", string.format(L.DGMODE_TRK_RESUME_TIP, tonumber(r and r.maxLevel) or 60) })
+    end)
+  end)
+  rs:SetScript("OnLeave", hideTooltip)
+  rs:Hide()
+  self.resumeAlert, self.resumeText, self.resumePulse = rs, rsText, rsPulse
+
+  self.glows = { glow, dgGlow, trGlow, rsGlow }
 
   -- Étape courante
   local cur = CreateFrame("Button", nil, f)
@@ -508,6 +596,7 @@ end
 local TEXT_ROLES = {
   message = "body", title = "title", levels = "levels", barText = "bar", xpLine = "xp",
   alertText = "classAlert", dungeonText = "dungeonAlert", trainerText = "trainerAlert",
+  modeText = "title", resumeText = "dungeonAlert",
   distance = "distance",
 }
 
@@ -790,6 +879,191 @@ function Tracker:LayoutTrainerAlert(y)
 end
 
 ---------------------------------------------------------------------------
+-- Route automatique (Engine/DungeonMode.lua) : mode, chemin alternatif, donjon passé
+---------------------------------------------------------------------------
+-- Ligne « Mode : … » à la hauteur y quand le personnage a le choix de la route ; -> nouvelle hauteur.
+function Tracker:LayoutMode(y)
+  local D, f = Q.DungeonMode, self.frame
+  local text, btn = self.modeText, self.modeButton
+  if not (D and D:Available()) then
+    text:Hide()
+    btn:Hide()
+    return y
+  end
+  local auto = D:IsOn()
+  local detour = Q.Detour and Q.Detour:Current()
+  local W = curWidth()
+  if auto then
+    text:SetText(detour and L.DGMODE_TRK_MODE_ALT or string.format(L.DGMODE_TRK_MODE, L.DGMODE_TAB_AUTO))
+    setButtonText(btn, detour and L.DGMODE_TRK_NORMAL or L.DGMODE_TRK_ALT)
+    btn:ClearAllPoints()
+    btn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+    btn:Show()
+  else
+    text:SetText(string.format(L.DGMODE_TRK_MODE, L.DGMODE_TAB_MANUAL))
+    btn:Hide()
+  end
+  text:ClearAllPoints()
+  text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 2, -y - 3)
+  text:SetWidth(W - 2 * PAD - 4 - (auto and (btn:GetWidth() or 0) + 4 or 0))
+  text:Show()
+  return y + MODE_H + 4
+end
+
+-- Rappel du premier donjon passé dont le personnage est dans la tranche de niveaux ; -> nouvelle hauteur.
+function Tracker:LayoutResume(y)
+  local D, rs = Q.DungeonMode, self.resumeAlert
+  local list = D and D:Reminders() or {}
+  local r = list[1]
+  self.resumeRung = r
+  if not r then
+    rs:Hide()
+    self.resumePulse:Stop()
+    return y
+  end
+  self.resumeText:SetFormattedText(L.DGMODE_TRK_RESUME, rungName(r))
+  local f = self.frame
+  rs:ClearAllPoints()
+  rs:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -y)
+  rs:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+  rs:Show()
+  if not self.resumePulse:IsPlaying() then self.resumePulse:Play() end
+  return y + 20 + 4
+end
+
+-- Bouton « Passer ce donjon » sous l'étape courante quand c'est une étape d'instance ; -> nouvelle hauteur.
+function Tracker:LayoutSkip(entry, y)
+  local D, b = Q.DungeonMode, self.skipButton
+  local key = D and entry and D:SkipTarget(entry)
+  self.skipKey = key
+  if key then
+    b:ClearAllPoints()
+    b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
+    b:Show()
+    y = y + MODE_H + 6
+  else
+    b:Hide()
+  end
+  return self:LayoutExtra(entry, y)
+end
+
+-- Bouton « Quêtes supplémentaires » sous l'étape courante (et sous « Passer ce donjon ») ; -> nouvelle hauteur.
+function Tracker:LayoutExtra(entry, y)
+  local D, b = Q.Dungeons, self.extraButton
+  local key, what, info
+  if D and D.ExtraTarget and entry then
+    local ok, k, w, i = pcall(D.ExtraTarget, D, entry)
+    if ok then key, what, info = k, w, i else Q:ReportError(k) end
+  end
+  self.extraKey, self.extraWhat = key, what
+  if not key then
+    b:Hide()
+    return y
+  end
+  if what == "add" then
+    setButtonText(b, string.format(L.DGMODE_TRK_EXTRA, info and #info.quests or 0))
+  else
+    setButtonText(b, L.DGMODE_TRK_EXTRA_REMOVE)
+  end
+  b:SetWidth(math.min(b:GetWidth() or 0, textWidth()))
+  b:ClearAllPoints()
+  b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
+  b:Show()
+  return y + MODE_H + 6
+end
+
+-- « ~4 min, vol, nouveau point de vol » : trajet de Q.Dungeons:Trip.
+local function tripText(trip)
+  local parts = { string.format(L.DGMODE_TRIP_MIN, math.max(1, math.floor(trip.seconds / 60 + 0.5))) }
+  if trip.flight then parts[#parts + 1] = L.DGMODE_TRIP_FLIGHT end
+  if trip.boat then parts[#parts + 1] = L.DGMODE_TRIP_BOAT end
+  if trip.tram then parts[#parts + 1] = L.DGMODE_TRIP_TRAM end
+  if trip.newFlightPath then parts[#parts + 1] = L.DGMODE_TRIP_NEW_FP end
+  return table.concat(parts, ", ")
+end
+Tracker.TripText = tripText
+
+-- Lignes de l'infobulle : quêtes en plus avec leur donneur, leurs préquêtes et le trajet depuis le point
+-- précédent (le joueur, puis le donneur de la quête d'avant), retour à l'entrée et total.
+function Tracker:ExtraLines()
+  local D, key = Q.Dungeons, self.extraKey
+  if not (D and key) then return nil end
+  if self.extraWhat == "remove" then return { L.DGMODE_TRK_EXTRA_REMOVE, L.DGMODE_TRK_EXTRA_REMOVE_TIP } end
+  local info = D:Extras(key)
+  if not info then return nil end
+  local lines = { L.DGMODE_TRK_EXTRA_TITLE, string.format(L.DGMODE_TRK_EXTRA_INTRO, rungName(info.rung)) }
+  local Popup = Q.UI.DungeonPopup
+  local m, x, y = Q.Maps:PlayerPos()
+  local total, complete, anyTrip = 0, true, false
+  local function trip(to)
+    local t = to and D:Trip(m, x, y, to[1], to[2], to[3])
+    if t then
+      total, anyTrip = total + t.seconds, true
+    else
+      complete = false
+    end
+    return t
+  end
+  for _, q in ipairs(info.quests) do
+    local row = { id = q.id, giver = q.giver, obj = q.obj, at = q.at, ok = true }
+    local text = "- " .. (Popup and Popup.QuestLine and Popup.QuestLine(row) or Q.QDB:QuestName(q.id))
+    local t = trip(q.start)
+    if t then text = text .. " |cffaaaaaa· " .. tripText(t) .. "|r" end
+    lines[#lines + 1] = text
+    if #q.pre > 0 then
+      local names = {}
+      for _, id in ipairs(q.pre) do
+        local rec = Q.QDB:Quest(id)
+        local name = Q.QDB:QuestName(id)
+        if rec and rec.level then name = string.format(L.DGMODE_TRK_EXTRA_PRE_LEVEL, name, rec.level) end
+        names[#names + 1] = name
+      end
+      lines[#lines + 1] = "   |cffaaaaaa" .. string.format(L.DGMODE_TRK_EXTRA_PRE, table.concat(names, ", ")) .. "|r"
+    end
+    if type(q.at) == "table" then m, x, y = q.at[1], q.at[2], q.at[3] end
+  end
+  local ent = info.dungeon.entrance
+  local back = trip(ent)
+  if back then lines[#lines + 1] = string.format(L.DGMODE_TRK_EXTRA_BACK, tripText(back)) end
+  if anyTrip and complete then
+    lines[#lines + 1] = string.format(L.DGMODE_TRK_EXTRA_TOTAL, math.max(1, math.floor(total / 60 + 0.5)))
+  elseif not anyTrip then
+    lines[#lines + 1] = "|cffaaaaaa" .. L.DGMODE_TRK_EXTRA_NOTRIP .. "|r"
+  end
+  lines[#lines + 1] = L.DGMODE_TRK_EXTRA_TIP
+  return lines
+end
+
+function Tracker:ExtraTooltip(btn)
+  local lines = self:ExtraLines()
+  if lines then showTooltip(btn, lines) end
+end
+
+function Tracker:ToggleExtras()
+  local D, key = Q.Dungeons, self.extraKey
+  if not (D and key) then return end
+  local r = Q.DungeonMode and Q.DungeonMode:Rung(key)
+  if self.extraWhat == "remove" then
+    if D:RemoveExtras(key) then Q:Print(L.DGMODE_EXTRA_REMOVED, rungName(r)) end
+  elseif D:AddExtras(key) then
+    Q:Print(L.DGMODE_EXTRA_ADDED, rungName(r))
+  end
+  hideTooltip()
+end
+
+function Tracker:SkipDungeon()
+  local D, key = Q.DungeonMode, self.skipKey
+  if not (D and key) then return end
+  if D:Skip(key) then Q:Print(L.DGMODE_SKIPPED, rungName(D:Rung(key))) end
+end
+
+function Tracker:ResumeDungeon()
+  local D, r = Q.DungeonMode, self.resumeRung
+  if not (D and r) then return end
+  if D:Resume(r.key) then Q:Print(L.DGMODE_RESUMED, rungName(r)) end
+end
+
+---------------------------------------------------------------------------
 -- Rafraîchissement
 ---------------------------------------------------------------------------
 local function setShown(region, shown)
@@ -800,8 +1074,10 @@ end
 function Tracker:ShowMessage(text)
   local f = self.frame
   self.entry, self.target = nil, nil
-  for _, r in ipairs({ self.title, self.levels, self.bar, self.alert, self.trainerAlert, self.current }) do r:Hide() end
+  for _, r in ipairs({ self.title, self.levels, self.bar, self.alert, self.trainerAlert, self.current, self.modeText,
+    self.modeButton, self.skipButton, self.extraButton, self.resumeAlert }) do r:Hide() end
   self.trainerPulse:Stop()
+  self.resumePulse:Stop()
   if self.dungeonAlert then
     self.dungeonAlert:Hide()
     self.dungeonPulse:Stop()
@@ -1208,6 +1484,8 @@ function Tracker:Refresh()
   self.bar:Show()
   local y = PAD + 18 + 12 + 6
   y = self:LayoutXPLine(y)
+  y = self:LayoutMode(y)
+  y = self:LayoutResume(y)
 
   -- Alerte de quête de classe
   local alerts = classAlerts()
@@ -1263,6 +1541,7 @@ function Tracker:Refresh()
   cur_:SetHeight(h)
   cur_:Show()
   y = y + h + 6
+  y = self:LayoutSkip(cur, y)
   y = self:LayoutWarnings(y)
 
   -- Étapes suivantes
@@ -1328,6 +1607,8 @@ Q:On("CLASSQUESTS_CHANGED", refresh)
 Q:On("BAGQUESTS_CHANGED", refresh)
 Q:On("DUNGEONS_CHANGED", refresh)
 Q:On("TRAINER_CHANGED", refresh)
+Q:On("DUNGEON_MODE_CHANGED", refresh)
+Q:On("DETOUR_CHANGED", refresh)
 -- Mode zone : entrée ou sortie, objectif en tête changé : nouvelle cible, nouvelle liste.
 Q:On("ZONEMODE_CHANGED", function()
   if not Tracker.frame then return end

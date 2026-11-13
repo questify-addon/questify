@@ -119,6 +119,19 @@ function Guides:Normalize(raw)
     if type(raw.note) ~= "string" then return nil, action .. ": note must be a string" end
     step.note = raw.note
   end
+  -- Taux de butin de l'objet qui lance la quête (0-1, Wowhead) : champ `drop`, sinon lu dans la note du
+  -- générateur « Loot X to start the quest (15.8 % drop: about 7 kills) ». Absent : taux inconnu.
+  if action == "accept" then
+    local drop = raw.drop
+    if drop == nil and step.note then
+      local pct = tonumber(step.note:match("%(([%d%.]+) %% drop"))
+      drop = pct and pct / 100 or nil
+    end
+    if drop ~= nil then
+      if type(drop) ~= "number" or drop <= 0 or drop > 1 then return nil, action .. ": drop must be a rate in ]0, 1]" end
+      step.drop = drop
+    end
+  end
   local race = stringList(raw.race)
   if race == false then return nil, action .. ": race must be a list of strings" end
   step.race = race
@@ -129,6 +142,30 @@ function Guides:Normalize(raw)
   if classes == false then return nil, action .. ": " .. classesErr end
   step.classes = classes
   if raw.optional then step.optional = true end
+  -- Mode « Donjons » (Engine/DungeonMode.lua) : échelon et phase de l'étape, alternative en extérieur,
+  -- étape de rattrapage sous un niveau.
+  if raw.rung ~= nil then
+    if type(raw.rung) ~= "string" or raw.rung == "" then return nil, action .. ": rung must be a rung key" end
+    step.rung = raw.rung
+    if raw.phase ~= "prep" and raw.phase ~= "run" then return nil, action .. ": phase must be prep or run" end
+    step.phase = raw.phase
+  elseif raw.phase ~= nil then
+    return nil, action .. ": phase needs a rung"
+  end
+  if raw.alt ~= nil then
+    -- un échelon ou une liste d'échelons (chapitre d'alternative commun à plusieurs donjons)
+    local alt = stringList(raw.alt)
+    if not alt or #alt == 0 then return nil, action .. ": alt must be a rung key or a list of rung keys" end
+    for _, k in ipairs(alt) do
+      if k == "" then return nil, action .. ": alt must be a rung key or a list of rung keys" end
+    end
+    if raw.rung ~= nil then return nil, action .. ": alt and rung are exclusive" end
+    step.alt = alt
+  end
+  if raw.below ~= nil then
+    if not isNum(raw.below) then return nil, action .. ": below must be a level" end
+    step.below = raw.below
+  end
   if raw.dungeon ~= nil then
     if type(raw.dungeon) ~= "string" then return nil, action .. ": dungeon must be a string" end
     step.dungeon = raw.dungeon
@@ -226,6 +263,12 @@ function Q:RegisterGuide(def)
   if def.minLevel ~= nil and not isNum(def.minLevel) then return invalid(id, "minLevel must be a number") end
   if def.maxLevel ~= nil and not isNum(def.maxLevel) then return invalid(id, "maxLevel must be a number") end
   if def.next ~= nil and type(def.next) ~= "string" then return invalid(id, "next must be a guide id") end
+  -- mode : parcours auquel le chapitre appartient (absent : guides habituels ; "dungeon" : mode « Donjons »)
+  if def.mode ~= nil and def.mode ~= "dungeon" then return invalid(id, "mode must be dungeon") end
+  -- after : chapitres habituels dont ce chapitre du mode prend la suite (départs par race)
+  local after = stringList(def.after)
+  if after == false then return invalid(id, "after must be a list of guide ids") end
+  if after and def.mode == nil then return invalid(id, "after needs a mode") end
   if def.nextByRace ~= nil and type(def.nextByRace) ~= "table" then return invalid(id, "nextByRace must be a table") end
   local choices, choiceErr = choiceList(def.choices)
   if choices == false then return invalid(id, choiceErr) end
@@ -244,6 +287,7 @@ function Q:RegisterGuide(def)
   guide.steps = steps
   guide.races = races
   guide.choices = choices
+  guide.after = after
   guide.sim = sim
   guide.minLevel = def.minLevel or 1
   guide.maxLevel = def.maxLevel or 61
@@ -287,12 +331,27 @@ local function better(a, b)
   return a.id < b.id
 end
 
--- Chapitre de départ pour un personnage.
-function Guides:ForPlayer(faction, raceKey, level)
+-- HasMode(mode, faction) -> vrai si au moins un chapitre de la faction appartient à ce parcours.
+function Guides:HasMode(mode, faction)
+  for _, g in pairs(registry) do
+    if g.mode == mode and (faction == nil or g.faction == nil or g.faction == faction) then return true end
+  end
+  return false
+end
+
+-- InMode(guide, mode) -> le chapitre appartient au parcours (mode nil : guides habituels).
+function Guides:InMode(g, mode)
+  g = type(g) == "table" and g or registry[g]
+  return g ~= nil and g.mode == mode
+end
+
+-- Chapitre de départ pour un personnage. mode : parcours voulu (nil : guides habituels, "dungeon" : mode
+-- « Donjons ») ; sans chapitre de ce parcours pour le personnage, les guides habituels.
+function Guides:ForPlayer(faction, raceKey, level, mode)
   level = level or 1
   local inBand, best
   for _, g in ipairs(self:All()) do
-    if g.faction == faction and racesMatch(g, raceKey) then
+    if g.mode == mode and g.faction == faction and racesMatch(g, raceKey) then
       if g.minLevel <= level and level < g.maxLevel then
         if not inBand or better(g, inBand) then inBand = g end
       elseif g.minLevel <= level then
@@ -302,12 +361,37 @@ function Guides:ForPlayer(faction, raceKey, level)
       end
     end
   end
-  return inBand or best
+  local found = inBand or best
+  if not found and mode ~= nil then return self:ForPlayer(faction, raceKey, level, nil) end
+  return found
 end
 
--- Chapitre suivant : nextByRace[raceKey], sinon next.
+-- Handoff(guide, raceKey, mode) -> chapitre du parcours `mode` qui prend la suite d'un chapitre habituel
+-- (champ after), ou nil. Le mode « Donjons » reprend ainsi la route à la fin des départs par race.
+function Guides:Handoff(guide, raceKey, mode)
+  if type(guide) ~= "table" or mode == nil or guide.mode ~= nil then return nil end
+  local found
+  for _, g in pairs(registry) do
+    if g.mode == mode and g.after and Q.Util.Contains(g.after, guide.id) and racesMatch(g, raceKey)
+      and (found == nil or g.id < found.id) then
+      found = g
+    end
+  end
+  return found
+end
+
+local function currentMode()
+  return Q.DungeonMode and Q.DungeonMode:Mode() or nil
+end
+
+-- Chapitre suivant : la suite du mode choisi (Handoff), sinon nextByRace[raceKey], sinon next.
 function Guides:Next(guide, raceKey)
   if type(guide) ~= "table" then return nil end
+  -- zone de secours finie : retour au chemin, selon le niveau du personnage (Engine/Detour.lua)
+  local back = Q.Detour and Q.Detour:NextAfter(guide)
+  if back then return back end
+  local handoff = self:Handoff(guide, raceKey, currentMode())
+  if handoff then return handoff end
   local id = guide.nextByRace and raceKey and guide.nextByRace[raceKey]
   if id and registry[id] then return registry[id] end
   if guide.next then return registry[guide.next] end
@@ -341,6 +425,7 @@ local ZONE_MAPS = {
   ["Stonetalon Mountains"] = 1442, ["Teldrassil"] = 1438, ["The Barrens"] = 1413,
   ["Thousand Needles"] = 1441, ["Tirisfal Glades"] = 1420, ["Westfall"] = 1436, ["Wetlands"] = 1437,
   ["Zephras Isle"] = 2521,
+  ["Ironforge"] = 1455, ["Stormwind City"] = 1453,
   -- zones 30-60 (uiMapID Classic, tirés de QuestieDB)
   ["Alterac Mountains"] = 1416, ["Arathi Highlands"] = 1417, ["Badlands"] = 1418, ["Blasted Lands"] = 1419,
   ["Western Plaguelands"] = 1422, ["Eastern Plaguelands"] = 1423, ["The Hinterlands"] = 1425,
@@ -467,6 +552,11 @@ function Guides:Choices(guide, raceKey, faction)
   local out = {}
   if type(guide) ~= "table" then return out end
   local def = self:Next(guide, raceKey)
+  -- le mode choisi prend la suite de ce chapitre, ou c'est le retour d'une zone de secours : pas d'autre choix
+  if def and (self:Handoff(guide, raceKey, currentMode()) or (Q.Detour and Q.Detour:NextAfter(guide))) then
+    out[1] = { guide = def, default = true }
+    return out
+  end
   if not guide.choices then
     if def then out[1] = { guide = def, default = true } end
     return out
@@ -474,7 +564,8 @@ function Guides:Choices(guide, raceKey, faction)
   local seen = {}
   for _, entry in ipairs(guide.choices) do
     local target = registry[entry.id]
-    if not seen[entry.id] and eligible(target, entry, raceKey, faction) then
+    -- une suite reste dans le parcours du chapitre (guides habituels ou mode « Donjons »)
+    if not seen[entry.id] and target and target.mode == guide.mode and eligible(target, entry, raceKey, faction) then
       seen[entry.id] = true
       out[#out + 1] = { guide = target, entry = entry, default = def ~= nil and target == def }
     end

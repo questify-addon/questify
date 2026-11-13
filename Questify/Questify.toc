@@ -3,7 +3,7 @@
 ## Notes: Free leveling guide for World of Warcraft: Forever (1-60).
 ## Notes-frFR: Guide de leveling gratuit pour World of Warcraft: Forever (1-60).
 ## Author: Questify contributors
-## Version: 0.6.1
+## Version: 0.7.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## Category: Quests
 ## Category-deDE: Quests
@@ -35,6 +35,7 @@ Locales\StringsDiag.lua
 Locales\StringsWizard.lua
 Locales\StringsComfort.lua
 Locales\StringsDungeons.lua
+Locales\StringsDungeonMode.lua
 Locales\StringsMap.lua
 Locales\StringsZone.lua
 Locales\StringsVersion.lua
@@ -59,8 +60,10 @@ Data\Caves.lua
 Data\ZoneArt.lua
 
 Engine\Guides.lua
+Engine\DungeonMode.lua
 Engine\Progress.lua
 Engine\RouteChoice.lua
+Engine\Detour.lua
 Engine\Targets.lua
 Engine\ZoneMode.lua
 Engine\Format.lua
@@ -99,6 +102,7 @@ UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
 UI\DungeonPopup.lua
 UI\DungeonChainPopup.lua
+UI\DungeonModePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
 UI\MinimapButton.lua
@@ -111,4 +115,6 @@ UI\Demo.lua
 UI\Slash.lua
 
 Guides\Guides.xml
+Guides\DungeonGuides.xml
 Guides\DungeonData.lua
+Guides\DungeonRouteData.lua

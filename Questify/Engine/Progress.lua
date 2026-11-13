@@ -242,12 +242,66 @@ local function prereqsBlockedForever(ctx, q)
   return false
 end
 
+---------------------------------------------------------------------------
+-- Quête lancée par un objet ramassé
+---------------------------------------------------------------------------
+-- Taux de butin à partir duquel la route envoie tuer le monstre qui lâche l'objet de départ (36 % : 3 tués
+-- en moyenne). En dessous, ou sans taux connu, la quête attend que l'objet soit ramassé.
+Progress.STARTER_MIN_DROP = 0.3
+
+-- Exemplaires d'un objet dans les sacs (0 si inconnu ou secret).
+local function itemCount(id)
+  local fn = (C_Item and C_Item.GetItemCount) or GetItemCount
+  if type(fn) ~= "function" or type(id) ~= "number" then return 0 end
+  local ok, n = pcall(fn, id)
+  if not ok or Q.Util.IsSecret(n) then return 0 end
+  return tonumber(n) or 0
+end
+
+-- Progress:StarterState(step) -> état, itemId. Le générateur ne pose `at` sur une étape « accept » que
+-- pour une quête lancée par un objet ramassé : ce point passe alors avant les donneurs de QuestieDB
+-- (un PNJ de départ ajouté par erreur à la quête ne détourne plus la route).
+--   nil      : étape ordinaire (pas un « accept » avec `at`, ou quête sans objet de départ)
+--   "held"   : l'objet est dans les sacs, il reste à l'utiliser
+--   "pickup" : l'objet se prend sur un objet du monde (coffre, parchemin) : on y va
+--   "farm"   : l'objet tombe d'un monstre avec un taux connu d'au moins STARTER_MIN_DROP (step.drop,
+--              Wowhead) : la route envoie tuer ce monstre
+--   "drop"   : l'objet tombe d'un monstre, taux faible ou inconnu : l'étape attend qu'il soit ramassé
+function Progress:StarterState(step)
+  if type(step) ~= "table" or step.action ~= "accept" or type(step.at) ~= "table" then return nil end
+  local q = Q.QDB:Quest(step.questId)
+  local items = q and q.starters.items
+  if not items or #items == 0 then return nil end
+  for _, id in ipairs(items) do
+    if itemCount(id) > 0 then return "held", id end
+  end
+  for _, id in ipairs(items) do
+    local item = Q.QDB:Item(id)
+    if not item or #item.objectDrops > 0 then return "pickup", id end
+  end
+  if type(step.drop) == "number" and step.drop >= Progress.STARTER_MIN_DROP then return "farm", items[1] end
+  return "drop", items[1]
+end
+
+-- Objets de départ présents dans les sacs, pour les étapes de la route : "id,id,…" (voir BAG_UPDATE_DELAYED).
+local heldSig
+local function heldStarters()
+  local ids = {}
+  for _, e in ipairs(Progress:Entries()) do
+    local state, id = Progress:StarterState(e.step)
+    if state == "held" then ids[#ids + 1] = id end
+  end
+  return table.concat(ids, ",")
+end
+
 local function filterSkip(step)
   local P = Q.Player
   if not Q.Guides.StepForClass(step, P.classFile) then return "class" end   -- hors des entrées d'habitude
   if step.race and not Q.Util.Contains(step.race, P.raceKey) then return "race" end
   if step.class and not Q.Util.Contains(step.class, P.classFile) then return "class" end
   if step.optional and Q.Settings:Get("dungeonQuests") == false then return "optional" end
+  -- mode « Donjons » : échelon décoché ou contourné, alternative en extérieur, rattrapage
+  if (step.rung or step.alt or step.below) and Q.DungeonMode then return Q.DungeonMode:StepSkip(step, P.level) end
   return nil
 end
 
@@ -270,6 +324,8 @@ local function evaluate(ctx, e)
     if not Q.QDB:PrereqsMet(id, isTurnedIn) and prereqsBlockedForever(ctx, q) then
       return "skipped", "prereq"
     end
+    -- objet de départ lâché par un monstre : la quête n'entre dans la route qu'une fois l'objet ramassé
+    if Progress:StarterState(step) == "drop" then return "skipped", "starter" end
     if q.reqLevel and q.reqLevel > (P.level or 1) then return "blocked", "level " .. q.reqLevel end
     return "active"
   elseif a == "complete" then
@@ -775,7 +831,8 @@ function Progress:RouteTurnins()
   if not g then return set end
   local P = Q.Player or {}
   local sig = table.concat({ g.id, Q.Guides:Serial(), tostring(P.classFile), tostring(P.raceKey),
-    tostring(P.faction), tostring(Q.Settings:Get("dungeonQuests")) }, "|")
+    tostring(P.faction), tostring(Q.Settings:Get("dungeonQuests")),
+    tostring(Q.DungeonMode and Q.DungeonMode:Serial()), tostring(P.level) }, "|")
   if not (aheadCache and aheadCache.sig == sig) then
     aheadCache = { sig = sig, set = turninsAfter(g) }
   end
@@ -899,7 +956,7 @@ Q:On("LOGIN", function()
   local c = charState()
   if not (c.guideId and Q.Guides:Get(c.guideId)) then
     local P = Q.Player
-    local g = Q.Guides:ForPlayer(P.faction, P.raceKey, P.level)
+    local g = Q.Guides:ForPlayer(P.faction, P.raceKey, P.level, Q.DungeonMode and Q.DungeonMode:Mode())
     if g then
       Progress:SetGuide(g.id)
       return
@@ -917,6 +974,13 @@ Q:On("SETTINGS_CHANGED", function(path)
   end
 end)
 
+-- Mode « Donjons » : case d'un échelon cochée ou décochée, instance contournée.
+Q:On("DUNGEON_MODE_CHANGED", function()
+  cache = nil
+  aheadCache = nil
+  Progress:Update()
+end)
+
 Q:RegisterEvent("QUEST_ACCEPTED", update)
 Q:RegisterEvent("QUEST_REMOVED", update)
 Q:RegisterEvent("QUEST_TURNED_IN", function(_, questId)
@@ -930,6 +994,14 @@ Q:RegisterEvent("QUEST_LOG_UPDATE", function()
     logPending = false
     Progress:Update()
   end)
+end)
+-- Objet de départ ramassé ou perdu : l'étape « accept » qui l'attendait entre dans la route ou en sort.
+Q:RegisterEvent("BAG_UPDATE_DELAYED", function()
+  if not Progress:IsEnabled() then return end
+  local ok, sig = pcall(heldStarters)
+  if not ok or sig == heldSig then return end
+  heldSig = sig
+  Progress:Update()
 end)
 Q:RegisterEvent("PLAYER_LEVEL_UP", function(_, level)
   refreshPlayer(level)
