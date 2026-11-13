@@ -246,3 +246,73 @@ function DungeonMode:StepSkip(step, level)
   if type(step.below) == "number" and level >= step.below and not inLog() then return "rung-level" end
   return nil
 end
+
+---------------------------------------------------------------------------
+-- Donjon passé pour un temps (suivi) : bouton « Passer ce donjon » sur l'étape d'instance, rappel
+-- « Revenir au donjon » tant que le personnage est dans la tranche de niveaux du donjon.
+---------------------------------------------------------------------------
+local RESUME_TAG = "dgresume:"
+DungeonMode.RESUME_TAG = RESUME_TAG
+
+-- SkipTarget(entry) -> échelon que le joueur peut passer depuis cette étape, ou nil : mode actif, étape
+-- d'instance (phase « run ») d'un échelon coché et pas encore contourné.
+function DungeonMode:SkipTarget(entry)
+  local step = type(entry) == "table" and entry.step or nil
+  if type(step) ~= "table" or step.rung == nil or step.phase ~= "run" then return nil end
+  if not self:IsOn() or not self:Rung(step.rung) or self:State(step.rung) ~= "on" then return nil end
+  return step.rung
+end
+
+-- Skip(key) : passe l'instance de l'échelon (ses quêtes restent prises). -> vrai si fait.
+function DungeonMode:Skip(key)
+  if not self:IsOn() or self:State(key) ~= "on" then return false end
+  return self:SetBypassed(key, true)
+end
+
+-- Reminders(level) -> { échelon, ... } passés (contournés) dans l'ordre joué, tant que le niveau du personnage
+-- est dans la tranche du donjon et que ses quêtes ne sont pas toutes rendues.
+function DungeonMode:Reminders(level)
+  local out = {}
+  if not self:IsOn() then return out end
+  level = tonumber(level) or tonumber(Q.Player and Q.Player.level) or 1
+  for _, row in ipairs(self:Rungs()) do
+    local r = row.rung
+    if row.state == "bypassed" and level >= (tonumber(r.minLevel) or 1) and level <= (tonumber(r.maxLevel) or 60)
+      and not (row.total > 0 and row.done >= row.total) then
+      out[#out + 1] = r
+    end
+  end
+  return out
+end
+
+-- Étapes d'instance de l'échelon dans les chapitres du mode (copies), pour les rejouer depuis un autre chapitre.
+local function runSteps(self, key)
+  for _, item in ipairs(self:Chain()) do
+    local list = {}
+    for _, s in ipairs(item.guide.steps or {}) do
+      if s.rung == key and s.phase == "run" then
+        local copy = {}
+        for k, v in pairs(s) do copy[k] = v end
+        list[#list + 1] = copy
+      end
+    end
+    if #list > 0 then return list, item.guide end
+  end
+  return nil
+end
+
+-- Resume(key) : reprend le donjon passé. Dans son chapitre, ses étapes d'instance reviennent d'elles-mêmes ;
+-- depuis un autre chapitre, elles sont insérées en tête de la route. -> vrai si fait.
+function DungeonMode:Resume(key)
+  if not self:IsBypassed(key) then return false end
+  self:SetBypassed(key, false)
+  local Pr = Q.Progress
+  local g = Pr and Pr:IsEnabled() and Pr:Guide()
+  if not g then return true end
+  for _, s in ipairs(g.steps or {}) do
+    if s.rung == key and s.phase == "run" then return true end
+  end
+  local steps = runSteps(self, key)
+  if steps then Pr:InsertSteps(RESUME_TAG .. key, steps) end
+  return true
+end

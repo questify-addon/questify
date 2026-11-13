@@ -335,6 +335,31 @@ function tests.route_tab_has_manual_and_automatic_views(t)
   t.eq(#Mock.errors, 0)
 end
 
+function tests.journal_opens_on_the_chosen_route(t)
+  local Q = load()
+  local J = Q.UI.Journal
+  J:ShowTab("route")
+  t.eq(J:RouteMode(), "manual", "manual route: manual view")
+  J.frame:Hide()
+  Q.DungeonMode:SetOn(true)
+  J:Toggle()
+  t.eq(J:RouteMode(), "auto", "automatic route: opens on the automatic view")
+  t.ok(J.routePanels.auto:IsShown())
+  -- vue choisie à la main : gardée tant que le journal reste ouvert, oubliée à la fermeture
+  Mock.click(J.routeModeButtons.manual)
+  J:ShowTab("class")
+  J:ShowTab("route")
+  t.eq(J:RouteMode(), "manual", "view kept while open")
+  J.frame:Hide()
+  J:ShowTab("route")
+  t.eq(J:RouteMode(), "auto", "reopened on the chosen route")
+  J.frame:Hide()
+  Q.DungeonMode:SetOn(false)
+  J:ShowRouteMode("auto")
+  t.eq(J:RouteMode(), "auto", "explicit view wins")
+  t.eq(#Mock.errors, 0)
+end
+
 function tests.automatic_view_starts_and_stops_the_mode(t)
   local Q = load()
   local P = openAuto(Q)
@@ -594,6 +619,85 @@ function tests.shipped_mode_joins_after_the_race_starts(t)
   t.eq(G:Next(G:Get("AD_NightElf_03"), "NightElf").id, "AD_01")
   Q.DungeonMode:SetOn(false)
   t.eq(G:Next(G:Get("A_Human_03"), "Human").id, "A_01")
+end
+
+-- Donjon passé pour un temps depuis le suivi : « Passer ce donjon », rappel, reprise.
+local function entryWith(Q, text)
+  for _, e in ipairs(Q.Progress:Entries()) do
+    if e.step.action == "note" and e.step.text == text then return e end
+  end
+end
+
+function tests.skip_target_only_on_instance_steps(t)
+  local Q = load()
+  setLevel(15)
+  t.eq(Q.DungeonMode:SkipTarget(entryWith(Q, "enter")), nil, "mode off: nothing to skip")
+  Q.DungeonMode:SetOn(true)
+  t.eq(Q.DungeonMode:SkipTarget(entryWith(Q, "enter")), "DM")
+  t.eq(Q.DungeonMode:SkipTarget(entryWith(Q, "pick up")), nil, "not while picking up the quests")
+  t.eq(Q.DungeonMode:SkipTarget(entryWith(Q, "zone quest")), nil)
+  t.ok(Q.DungeonMode:Skip("DM"))
+  t.eq(Q.DungeonMode:State("DM"), "bypassed")
+  t.eq(Q.DungeonMode:SkipTarget(entryWith(Q, "enter")), nil, "already skipped")
+  t.ok(not Q.DungeonMode:Skip("DM"))
+  Q.DungeonMode:SetChecked("DM", false)
+  t.ok(not Q.DungeonMode:Skip("DM"), "an unticked dungeon is not skipped")
+end
+
+function tests.reminder_follows_the_dungeon_levels(t)
+  local Q = load()
+  setLevel(15)
+  Q.DungeonMode:SetOn(true)
+  t.eq(#Q.DungeonMode:Reminders(), 0)
+  Q.DungeonMode:Skip("DM")
+  t.eq(#Q.DungeonMode:Reminders(16), 0, "under the dungeon levels")
+  t.eq(Q.DungeonMode:Reminders(17)[1].key, "DM")
+  t.eq(Q.DungeonMode:Reminders(26)[1].key, "DM")
+  t.eq(#Q.DungeonMode:Reminders(27), 0, "past the dungeon levels")
+  -- toutes ses quêtes rendues : plus de rappel
+  Mock.quests.completed[166], Mock.quests.completed[167] = true, true
+  Q.Progress:Update()
+  t.eq(#Q.DungeonMode:Reminders(20), 0)
+  Q.DungeonMode:SetOn(false)
+  t.eq(#Q.DungeonMode:Reminders(20), 0, "mode off: no reminder")
+end
+
+function tests.resume_in_the_same_chapter(t)
+  local Q = load()
+  setLevel(15)
+  Q.DungeonMode:SetOn(true)
+  Q.DungeonMode:Skip("DM")
+  t.eq(live(Q), "zone quest,pick up,open world,catch up,end")
+  t.ok(Q.DungeonMode:Resume("DM"))
+  t.eq(Q.DungeonMode:State("DM"), "on")
+  t.eq(live(Q), "zone quest,pick up,enter,end")
+  t.ok(not Q.DungeonMode:Resume("DM"), "nothing to resume")
+end
+
+function tests.resume_from_a_later_chapter_inserts_the_instance(t)
+  local Q = load({ guides = {
+    { id = "T_START", faction = "Alliance", minLevel = 1, maxLevel = 5, next = "T_USUAL", steps = { { "note", "s" } } },
+    { id = "T_USUAL", faction = "Alliance", minLevel = 5, maxLevel = 9, steps = { { "note", "u" } } },
+    { id = "AD_T1", title = "Westfall", faction = "Alliance", mode = "dungeon", after = { "T_START" }, minLevel = 5,
+      maxLevel = 9, next = "AD_T2", steps = { { "note", "zone" },
+        { "goto", 1436, 42.5, 71.7, rung = "DM", phase = "run" }, { "complete", 166, rung = "DM", phase = "run" } } },
+    { id = "AD_T2", title = "Redridge Mountains", faction = "Alliance", mode = "dungeon", minLevel = 9, maxLevel = 12,
+      steps = { { "note", "next zone" } } },
+  } })
+  setLevel(18)
+  Q.DungeonMode:SetOn(true)
+  Q.DungeonMode:Skip("DM")
+  Q.Progress:SetGuide("AD_T2", true)
+  t.ok(Q.DungeonMode:Resume("DM"))
+  local inserted = {}
+  for _, e in ipairs(Q.Progress:Entries()) do
+    if e.source ~= "guide" then inserted[#inserted + 1] = e.step.action end
+  end
+  t.eq(table.concat(inserted, ","), "goto,complete", "instance steps put back at the top of the route")
+  t.eq(Q.Progress:Current().step.action, "goto")
+  t.eq(Q.DungeonMode:SkipTarget(Q.Progress:Current()), "DM", "the inserted steps can be skipped again")
+  t.ok(Q.DungeonMode:Skip("DM"))
+  t.eq(Q.Progress:Current().step.text, "next zone")
 end
 
 return tests

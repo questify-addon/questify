@@ -17,15 +17,28 @@ aux personnages de l'Alliance dans les options ; il est éteint par défaut et l
 
 Le mode s'appelle « mode automatique » en jeu.
 
+- Assistant du premier lancement, page 2 « Ta route » : route automatique (présélectionnée quand elle
+  existe pour le personnage) ou manuelle. « Terminer » lance ou arrête le mode.
 - Journal, onglet Route : deux vues, « Manuel » (chapitres et étapes, comme avant) et « Automatique ».
   Aussi `/qf donjons` et les Options, section Parcours. Les deux boutons n'apparaissent que si le mode
-  existe pour le personnage (Alliance).
+  existe pour le personnage (Alliance). À chaque ouverture du journal, l'onglet Route s'ouvre sur la vue
+  de la route choisie.
+- Suivi : ligne « Mode : Manuel » ou « Mode : Automatique » sous la barre (si le mode existe pour le
+  personnage). En automatique, bouton « Chemin alternatif » (zone alternative, ci-dessous), qui devient
+  « Chemin normal » sur la zone alternative.
+- Suivi, étape d'instance (phase « run ») : bouton « Passer ce donjon » (pas de groupe). L'instance est
+  contournée (`bypassed`), les quêtes prises restent dans le journal, l'alternative en extérieur est
+  jouée. Tant que le niveau est dans la tranche du donjon et que ses quêtes ne sont pas toutes rendues, le
+  rappel « Revenir au donjon X » s'affiche en tête des objectifs ; un clic reprend le donjon (dans un
+  chapitre suivant, ses étapes d'instance sont insérées en tête de la route, tag `dgresume:<échelon>`).
+  Hors de la tranche, le rappel disparaît et le donjon reste passé.
 - Vue « Automatique » : un gros bouton centré lance ou arrête le mode ; dessous, le sous-menu repliable
   « Donjons » (une case et zéro à trois étoiles par donjon ou par aile, « Tout cocher » / « Tout
   décocher ») puis l'aperçu des zones à explorer, dans l'ordre, avec les donjons faits à la fin de chacune.
 - Case cochée : la route prend les quêtes du donjon (suites et quêtes d'accès d'abord), puis envoie dans
   l'instance. Case décochée : le donjon et les détours qui ne servent qu'à lui sont sautés, la zone
-  alternative en extérieur est jouée. Il n'y a pas de bouton « Contourner » : décocher suffit, à tout moment.
+  alternative en extérieur est jouée. Pas de bouton « Contourner » dans le journal : décocher suffit, à tout
+  moment (« Passer ce donjon » du suivi est le contournement temporaire).
 - Mode automatique actif : plus de « donjons suggérés » dans le suivi (ils sont dans la route).
 - Les quêtes de classe restent dans `ClassQuestData.lua` et sont proposées chez le donneur ou le maître,
   comme dans les guides habituels.

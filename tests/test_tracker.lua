@@ -13,6 +13,22 @@ end
 
 local function plain(s) return (tostring(s or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) end
 
+-- Route automatique : données d'un échelon et chapitre du mode avec une étape d'instance.
+local function loadAuto()
+  Ext.install()
+  return Mock.loadAddon(TOC, { extraFiles = { GUIDES }, skipGuides = true, beforeLogin = function(Q)
+    Q.DungeonRouteData = { faction = "Alliance", entryOffset = 2, entryCap = 58, rungs = {
+      { key = "DM", dungeon = "DM", name = "The Deadmines", areaId = 1581, minLevel = 17, maxLevel = 26, entry = 19,
+        quests = { 166 }, xp = 1000, pct = 0.1, stars = 1 } } }
+    Q:RegisterGuide({ id = "AD_T1", title = "Westfall", faction = "Alliance", mode = "dungeon", minLevel = 1,
+      maxLevel = 30, steps = {
+        { "goto", 1436, 42.5, 71.7, rung = "DM", phase = "run", note = "enter" },
+        { "complete", 166, rung = "DM", phase = "run" },
+        { "note", "open world", alt = "DM" },
+      } })
+  end })
+end
+
 return {
   tracker_shows_current_step = function(t)
     local Q = load()
@@ -348,6 +364,77 @@ return {
     t.eq(Q2.UI.Tracker.frame:GetWidth(), 480, "kept after /reload")
     Q2.Settings:Set("tracker.locked", true)
     t.ok(not Q2.UI.Tracker.grip:IsShown(), "no grip when locked")
+    t.eq(#Mock.errors, 0)
+  end,
+  tracker_mode_line_follows_the_route = function(t)
+    local Q = loadAuto()
+    local T = Q.UI.Tracker
+    t.ok(Q.DungeonMode:Available())
+    t.ok(T.modeText:IsShown(), "mode line shown when the character can choose")
+    t.eq(T.modeText:GetText(), string.format(Q.L.DGMODE_TRK_MODE, Q.L.DGMODE_TAB_MANUAL))
+    t.ok(not T.modeButton:IsShown(), "no alternative-path button in manual mode")
+    Q.DungeonMode:SetOn(true)
+    t.eq(T.modeText:GetText(), string.format(Q.L.DGMODE_TRK_MODE, Q.L.DGMODE_TAB_AUTO))
+    t.ok(T.modeButton:IsShown())
+    t.eq(T.modeButton:GetText(), Q.L.DGMODE_TRK_ALT)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  tracker_mode_line_hidden_without_automatic_route = function(t)
+    local Q = load()
+    t.ok(not Q.UI.Tracker.modeText:IsShown())
+    t.ok(not Q.UI.Tracker.modeButton:IsShown())
+  end,
+
+  tracker_alternative_path_button = function(t)
+    local Q = loadAuto()
+    local T = Q.UI.Tracker
+    Q.DungeonMode:SetOn(true)
+    local calls = {}
+    Q.UI.Detour = function(back) calls[#calls + 1] = back end
+    Mock.click(T.modeButton, "LeftButton")
+    t.eq(#calls, 1); t.eq(calls[1], false, "go to the alternative path")
+    -- sur le chemin alternatif : texte du mode et bouton « Chemin normal »
+    Q.Detour.Current = function() return { from = "AD_T1", to = "X" } end
+    T:Refresh()
+    t.eq(T.modeText:GetText(), Q.L.DGMODE_TRK_MODE_ALT)
+    t.eq(T.modeButton:GetText(), Q.L.DGMODE_TRK_NORMAL)
+    Mock.click(T.modeButton, "LeftButton")
+    t.eq(calls[2], true, "back to the normal path")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  tracker_skip_dungeon_then_reminder = function(t)
+    local Q = loadAuto()
+    local T = Q.UI.Tracker
+    Mock.player.level = 18
+    Mock.fire("PLAYER_LEVEL_UP", 18)
+    t.ok(not T.skipButton:IsShown(), "mode off: no skip button")
+    Q.DungeonMode:SetOn(true)
+    Q.Progress:SetGuide("AD_T1", true)
+    t.eq(Q.Progress:Current().step.rung, "DM")
+    t.ok(T.skipButton:IsShown(), "instance step: skip button")
+    t.ok(not T.resumeAlert:IsShown())
+    Mock.click(T.skipButton, "LeftButton")
+    t.eq(Q.DungeonMode:State("DM"), "bypassed")
+    t.ok(not T.skipButton:IsShown())
+    t.eq(Q.Progress:Current().step.text, "open world", "route goes on with the open-world alternative")
+    t.ok(T.resumeAlert:IsShown(), "reminder at the top of the objectives")
+    t.eq(plain(T.resumeText:GetText()), string.format(Q.L.DGMODE_TRK_RESUME, "The Deadmines"))
+    -- hors de la tranche du donjon : plus de rappel, le donjon reste passé
+    Mock.player.level = 27
+    Mock.fire("PLAYER_LEVEL_UP", 27)
+    T:Refresh()
+    t.ok(not T.resumeAlert:IsShown())
+    t.eq(Q.DungeonMode:State("DM"), "bypassed")
+    Mock.player.level = 20
+    Mock.fire("PLAYER_LEVEL_UP", 20)
+    T:Refresh()
+    Mock.click(T.resumeAlert, "LeftButton")
+    t.eq(Q.DungeonMode:State("DM"), "on", "click resumes the dungeon")
+    t.ok(not T.resumeAlert:IsShown())
+    t.eq(Q.Progress:Current().step.rung, "DM", "back on the instance step")
+    t.ok(T.skipButton:IsShown())
     t.eq(#Mock.errors, 0)
   end,
 }

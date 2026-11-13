@@ -247,14 +247,16 @@ function Journal:ResolveTab(name)
 end
 
 -- ShowTab("route" | "class" | "dungeons") : ouvre le journal sur cet onglet. "options" ouvre la
--- fenêtre d'options (l'ancien onglet Options).
-function Journal:ShowTab(name)
+-- fenêtre d'options (l'ancien onglet Options). À l'ouverture du journal, l'onglet Route revient sur la vue
+-- de la route choisie (Automatique si le mode automatique est actif), sauf keepRouteMode (ShowRouteMode).
+function Journal:ShowTab(name, keepRouteMode)
   if name == "options" then
     if Q.UI.Options then Q.UI.Options:Open() end
     return
   end
   name = self:ResolveTab(name)
   self:Create()
+  if not keepRouteMode and not self.frame:IsShown() then self.routeMode = nil end
   self.tab = name
   if PanelTemplates_SetTab then pcall(PanelTemplates_SetTab, self.frame, TAB_INDEX[name]) end
   for n, panel in pairs(self.panels) do
@@ -273,11 +275,12 @@ function Journal:UpdateDetourButton()
   self.detourButton:SetText(back and L.DETOUR_BTN_BACK or L.DETOUR_BTN)
 end
 
--- Vue de l'onglet Route réellement affichée : "auto" seulement si le mode automatique existe pour le
--- personnage, sinon "manual".
+-- Vue de l'onglet Route réellement affichée : celle choisie par les boutons, sinon celle de la route du
+-- personnage ; "auto" seulement si le mode automatique existe pour le personnage, sinon "manual".
 function Journal:RouteMode()
   local D = Q.DungeonMode
-  if self.routeMode == "auto" and D and D:Available() then return "auto" end
+  local want = self.routeMode or (D and D:IsOn() and "auto" or "manual")
+  if want == "auto" and D and D:Available() then return "auto" end
   return "manual"
 end
 
@@ -302,7 +305,7 @@ end
 function Journal:ShowRouteMode(mode)
   self:Create()
   self.routeMode = mode == "auto" and "auto" or "manual"
-  self:ShowTab("route")
+  self:ShowTab("route", true)
 end
 
 function Journal:RefreshTab(name, scroll)
