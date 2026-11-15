@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.8.0 (2026-11-15)
+
+### English
+
+**Automatic route with dungeons: Horde**
+- The automatic route now exists for the Horde: 33 chapters from level 12 to 60, taking over from the usual start
+  (Durotar, Mulgore, Silverpine Forest, Zephras Isle). Same tools as for the Alliance: one checkbox per dungeon,
+  "Skip this dungeon", "Alternative path", "+ Extra quests".
+- 25 dungeons and wings, from Ragefire Chasm and the Ruins of Lordaeron to Stratholme.
+- Riverglades is in the route (levels 39 to 43), as the outdoor alternative to Uldaman and Razorfen Downs, as it
+  already is for the Alliance.
+- This route was built and checked offline but not played yet: please report a step that sends you the wrong way.
+- Known limits: Riverglades has no computed travel (a note tells you to go there); levels 47 to 51 and Stratholme
+  end with a lot of grinding, the Horde has few quests there; Gnomeregan goes through Scooty in Booty Bay.
+- The Alliance route is unchanged.
+
+### Français
+
+**Route automatique avec les donjons : Horde**
+- La route automatique existe maintenant pour la Horde : 33 chapitres du niveau 12 au 60, qui prennent la suite du
+  départ habituel (Durotar, Mulgore, forêt des Pins-Argentés, île de Zephras). Mêmes outils que pour l'Alliance :
+  une case par donjon, « Passer ce donjon », « Chemin alternatif », « + Quêtes supplémentaires ».
+- 25 donjons et ailes, de Ragefire Chasm et des Ruines de Lordaeron à Stratholme.
+- Riverglades est dans la route (niveaux 39 à 43), en alternative en extérieur d'Uldaman et de Razorfen Downs,
+  comme c'est déjà le cas pour l'Alliance.
+- Cette route a été construite et vérifiée hors jeu, pas encore jouée : signale une étape qui t'envoie au mauvais
+  endroit.
+- Limites connues : pas de trajet calculé vers Riverglades (une note dit d'y aller) ; les niveaux 47 à 51 et
+  Stratholme finissent par beaucoup de farm, la Horde y a peu de quêtes ; Gnomeregan passe par Scooty à Booty Bay.
+- La route Alliance ne change pas.
+
 ## 0.7.0 (2026-11-13)
 
 ### English
