@@ -1,4 +1,4 @@
--- tools/routebuilder/plans_dungeon.lua : chapitres du mode « Donjons » (Alliance).
+-- tools/routebuilder/plans_dungeon.lua : chapitres du mode « Donjons » (Alliance et Horde).
 --
 -- Les chapitres réutilisent les réglages des chapitres habituels (plans.lua : zones, rectangles, point
 -- d'entrée, points de vol, quêtes forcées ou écartées) par copie : plans.lua n'est jamais modifié et ses
@@ -20,6 +20,9 @@
 -- pour rejoindre Stormwind au niveau 16 au lieu de 20).
 --
 -- Ordre : un échelon est toujours fait avant son chapitre d'alternative. Contrôlé par M.check.
+--
+-- Horde : HORDE_STARTS et HORDE_TRUNK, mêmes champs (chapitres HD_*, copies des chapitres H_* de plans.lua).
+-- Les départs se rejoignent aux Tarides (HD_01) au niveau 12.
 local plansm = require("plans")
 
 local M = {}
@@ -28,6 +31,7 @@ local IRONFORGE, STORMWIND, DUN_MOROGH, REDRIDGE, DUSKWOOD = 1455, 1453, 1426, 1
 local HILLSBRAD, ALTERAC, ARATHI, WETLANDS, LOCH_MODAN = 1424, 1416, 1417, 1437, 1432
 local SWAMP, WINTERSPRING = 1435, 1452
 local RIVERGLADES = 2548
+local ORGRIMMAR, UNDERCITY, SILVERPINE, BADLANDS, SEARING, BURNING = 1454, 1458, 1421, 1418, 1427, 1428
 local GIVER_MARGIN = 2   -- demi-côté (en % de carte) du rectangle ajouté autour d'un donneur
 
 local function deepcopy(v)
@@ -117,29 +121,124 @@ M.TRUNK = {
   { id = "AD_34", base = "A_30", title = "Silithus", min = 59, max = 60, alt = { "STRAT_LIVE", "STRAT_UD" } },
 }
 
+-- Horde : départs habituels simulés sans être réécrits, et leur suite dans le mode.
+local HORDE_STARTS = {
+  { id = "H_OrcTroll_01" }, { id = "H_OrcTroll_02", next = "HD_01" },
+  { id = "H_Tauren_01" }, { id = "H_Tauren_02", next = "HD_01" },
+  { id = "H_Undead_01" }, { id = "H_Undead_02" }, { id = "H_Undead_03", next = "HD_01" },
+  { id = "H_Skyborne_01", next = "HD_01" },
+}
+
+M.HORDE_TRUNK = {
+  { id = "HD_01", base = "H_01", title = "The Barrens", min = 12, max = 15,
+    after = { "H_OrcTroll_02", "H_Tauren_02", "H_Undead_03", "H_Skyborne_01" } },
+  { id = "HD_02", zones = { ORGRIMMAR }, entryRung = "RFC", title = "Orgrimmar", min = 15, max = 16, noLevel = true,
+    prepFor = "RFC", run = { "RFC" } },
+  -- Tarides : la suite, jusqu'à l'entrée des Cavernes des lamentations
+  { id = "HD_03", base = "H_01", title = "The Barrens", min = 15, max = 19, run = { "WC" } },
+  { id = "HD_04", base = "H_02", title = "Stonetalon Mountains and The Barrens", min = 19, max = 21,
+    alt = { "RFC", "WC" } },
+  -- Fossoyeuse par le zeppelin d'Orgrimmar : quêtes des Ruines de Lordaeron prises en ville, puis retour
+  { id = "HD_05", zones = { UNDERCITY }, entryRung = "LORDAERON", title = "Undercity", min = 20, max = 21,
+    noLevel = true, prepFor = "LORDAERON", run = { "LORDAERON" } },
+  -- logCap : un Tauren paladin (quêtes de classe en cours) remplissait le journal à Shadumbra's Head (24)
+  { id = "HD_06", base = "H_03", title = "Ashenvale", min = 21, max = 25, run = { "BFD" }, set = { logCap = 18 } },
+  { id = "HD_07", base = "H_04", title = "Southern Barrens and Thousand Needles", min = 25, max = 27,
+    alt = { "LORDAERON", "BFD" } },
+  -- Contreforts d'Hautebrande, avec Fossoyeuse et le Sépulcre pour les quêtes du Donjon d'Ombrecroc
+  { id = "HD_08", base = "H_05", title = "Hillsbrad Foothills", min = 27, max = 29, run = { "SFK" },
+    set = { zones = { HILLSBRAD, UNDERCITY, SILVERPINE }, bounds = { [SILVERPINE] = { 40, 37, 47, 44 } } } },
+  -- Alterac et Arathi, avec Fossoyeuse pour les quêtes du Monastère ; instances du sud au nord
+  { id = "HD_09", base = "H_06", title = "Alterac Mountains and Arathi Highlands", min = 29, max = 31,
+    run = { "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB" },
+    -- Going, Going, Guano! (1109, Kraal de Tranchebauge) : prise et rendue à Fossoyeuse, où la route ne repasse
+    -- qu'en HD_14, après son abandon (quête de donjon de niveau 33, chapitre de niveau 37)
+    set = { zones = { HILLSBRAD, ALTERAC, ARATHI, UNDERCITY },
+            drop = { [1109] = "turned in at Undercity, off the route after Razorfen Kraul" } } },
+  { id = "HD_10", base = "H_07", title = "Thousand Needles", min = 31, max = 33, run = { "RFK" } },
+  { id = "HD_11", base = "H_08", title = "Desolace", min = 33, max = 35,
+    alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" } },
+  -- Strangleronce : Gnomeregan par le transpondeur de Booty Bay
+  { id = "HD_12", base = "H_09", title = "Stranglethorn Vale", min = 35, max = 37, run = { "GNOMER" } },
+  { id = "HD_13", base = "H_10", title = "Dustwallow Marsh", min = 37, max = 38, run = { "RFD" } },
+  -- Arathi, avec Fossoyeuse pour Into The Scarlet Monastery (1048)
+  { id = "HD_14", base = "H_11", title = "Arathi Highlands", min = 38, max = 39, run = { "SM_ARM", "SM_CATH" },
+    -- Hearts of Zeal (1113) : suite de Going, Going, Guano! (1109), et le Cimetière est fait en HD_09
+    set = { zones = { ARATHI, HILLSBRAD, ALTERAC, LOCH_MODAN, UNDERCITY },
+            drop = { [1109] = "turned in at Undercity, off the route after Razorfen Kraul",
+                     [1113] = "follows Going, Going, Guano! (1109); the Graveyard is run in HD_09" } } },
+  { id = "HD_15", base = "H_12", title = "Badlands", min = 39, max = 40, run = { "ULDAMAN" } },
+  -- Riverglades (Forever, quêtes de niveau 38-44) : zone absente des guides habituels
+  { id = "HD_16", zones = { RIVERGLADES }, entryHub = RIVERGLADES, title = "Riverglades", min = 39, max = 43,
+    alt = { "RFD", "ULDAMAN" }, set = { logCap = 17 } },
+  { id = "HD_17", base = "H_13", title = "Stranglethorn Vale", min = 40, max = 42,
+    alt = { "GNOMER", "SM_ARM", "SM_CATH" } },
+  -- Désolace : déjà faite en HD_11 ; restes et quêtes de Maraudon
+  { id = "HD_18", base = "H_08", title = "Desolace", min = 42, max = 44, noLevel = true, prepFor = "MARAUDON",
+    run = { "MARAUDON" } },
+  { id = "HD_19", base = "H_16", title = "Tanaris", min = 44, max = 45, run = { "ZF" } },
+  { id = "HD_20", base = "H_17", title = "Feralas", min = 45, max = 47, alt = { "MARAUDON", "ZF" } },
+  { id = "HD_21", base = "H_18", title = "Stranglethorn Vale", min = 47, max = 49 },
+  { id = "HD_22", base = "H_21", title = "The Hinterlands", min = 49, max = 51 },
+  { id = "HD_23", base = "H_14", title = "Swamp of Sorrows", min = 50, max = 52, noLevel = true,
+    prepFor = "ST", run = { "ST" } },
+  { id = "HD_24", base = "H_23", title = "Blasted Lands", min = 51, max = 52, alt = { "ST" } },
+  -- Gorge des Vents brûlants et Steppes ardentes, avec Kargath pour les quêtes des Profondeurs de Rochenoire
+  { id = "HD_25", base = "H_24", title = "Searing Gorge and Burning Steppes", min = 52, max = 53, run = { "BRD" },
+    set = { zones = { SEARING, BURNING, BADLANDS }, bounds = { [BADLANDS] = { 1, 43, 8, 51 } } } },
+  { id = "HD_26", base = "H_25", title = "Azshara", min = 53, max = 54, alt = { "BRD" } },
+  { id = "HD_27", base = "H_26", title = "Felwood", min = 54, max = 55 },
+  { id = "HD_28", base = "H_27", title = "Un'Goro Crater", min = 55, max = 56 },
+  -- Féralas : déjà faite en HD_20 ; restes et quêtes de Hache-Tripes
+  { id = "HD_29", base = "H_17", title = "Feralas", min = 56, max = 57, noLevel = true,
+    run = { "DM_EAST", "DM_WEST", "DM_NORTH" } },
+  { id = "HD_30", base = "H_29", title = "Western Plaguelands", min = 57, max = 58, run = { "SCHOLO" } },
+  { id = "HD_31", base = "H_28", title = "Felwood and Winterspring", min = 57, max = 58,
+    alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" } },
+  { id = "HD_32", base = "H_29", title = "Eastern Plaguelands", min = 58, max = 59, run = { "STRAT_LIVE", "STRAT_UD" } },
+  { id = "HD_33", base = "H_30", title = "Silithus", min = 59, max = 60, alt = { "STRAT_LIVE", "STRAT_UD" } },
+}
+
+-- Départs et tronc d'une faction. M.TRUNK (Alliance) est relu à chaque appel : les tests le remplacent.
+function M.startsOf(faction)
+  if faction == "Horde" then return HORDE_STARTS end
+  return STARTS
+end
+
+function M.trunkOf(faction)
+  if faction == "Horde" then return M.HORDE_TRUNK end
+  return M.TRUNK
+end
+
+-- Dossier des guides du mode pour une faction.
+M.FOLDER = { Alliance = "AllianceDungeon", Horde = "HordeDungeon" }
+
 -- Champs d'un chapitre habituel qui ne passent pas dans sa copie (suites et choix de la route habituelle).
 local DROP = { "next", "nextByRace", "choices", "id", "title", "minLevel", "maxLevel" }
 
 -- build(classicList, rungs) -> liste de plans du mode (départs noEmit puis tronc), prête pour
 -- build.simulateFaction. rungs : échelons de build_dungeon_route.build (clé -> entrée du donjon).
 -- giverAt(questId) -> { mapId, x, y } du donneur d'une quête de donjon (DungeonData.lua), ou nil.
-function M.build(classicList, rungs, giverAt)
+-- faction : "Alliance" par défaut.
+function M.build(classicList, rungs, giverAt, faction)
+  faction = faction or "Alliance"
+  local trunk = M.trunkOf(faction)
   M.classicList = classicList
   local byKey = {}
   for _, r in ipairs(rungs) do byKey[r.key] = r end
   local out = {}
-  for _, s in ipairs(STARTS) do
+  for _, s in ipairs(M.startsOf(faction)) do
     local p = deepcopy(classic(s.id))
     p.noEmit = true
     p.choices = nil
     if s.next then p.next, p.nextByRace = s.next, nil end
     out[#out + 1] = p
   end
-  for i, t in ipairs(M.TRUNK) do
-    local p = t.base and deepcopy(classic(t.base)) or { faction = "Alliance" }
+  for i, t in ipairs(trunk) do
+    local p = t.base and deepcopy(classic(t.base)) or { faction = faction }
     for _, k in ipairs(DROP) do p[k] = nil end
     p.id, p.title, p.minLevel, p.maxLevel = t.id, t.title, t.min, t.max
-    p.faction = "Alliance"
+    p.faction = faction
     if t.zones then p.zones = deepcopy(t.zones) end
     for k, v in pairs(t.set or {}) do p[k] = deepcopy(v) end
     for _, k in ipairs(t.unset or {}) do p[k] = nil end
@@ -178,7 +277,7 @@ function M.build(classicList, rungs, giverAt)
         p.bounds[m] = b
       end
     end
-    local nxt = M.TRUNK[i + 1]
+    local nxt = trunk[i + 1]
     -- AD_NightElf_03 est le premier du tronc mais propre à une race : sa suite est AD_01
     p.next = nxt and nxt.id or nil
     out[#out + 1] = p
@@ -188,10 +287,10 @@ end
 
 -- check(rungs) -> liste d'erreurs : échelon inconnu, fait deux fois, jamais fait, sans alternative, ou
 -- alternative placée avant l'échelon.
-function M.check(rungs)
+function M.check(rungs, faction)
   local errs, known, ranAt, altAt = {}, {}, {}, {}
   for _, r in ipairs(rungs) do known[r.key] = true end
-  for i, t in ipairs(M.TRUNK) do
+  for i, t in ipairs(M.trunkOf(faction)) do
     for _, k in ipairs(t.run or {}) do
       if not known[k] then errs[#errs + 1] = ("%s: unknown rung %s"):format(t.id, k) end
       if ranAt[k] then errs[#errs + 1] = ("%s: rung %s is run twice"):format(t.id, k) end

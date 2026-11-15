@@ -4,9 +4,10 @@ local addonName, Q = ...
 -- guides habituels (qui ne changent pas). Sans interface (UI/DungeonModePanel.lua l'affiche).
 --
 -- Données : Q.DungeonRouteData (Guides\DungeonRouteData.lua, généré par
--- tools/routebuilder/build_dungeon_route.lua, relu à chaque appel) : un échelon par donjon ou par aile,
--- dans l'ordre joué, avec son niveau d'entrée, ses quêtes et ses étoiles (part d'un niveau que donnent ses
--- quêtes ; méthode dans docs/dungeon-mode/README.md).
+-- tools/routebuilder/build_dungeon_route.lua, relu à chaque appel) : par faction (Q.DungeonRouteData.Alliance,
+-- Q.DungeonRouteData.Horde), un échelon par donjon ou par aile, dans l'ordre joué, avec son niveau d'entrée,
+-- ses quêtes et ses étoiles (part d'un niveau que donnent ses quêtes ; méthode dans
+-- docs/dungeon-mode/README.md). Ancienne forme encore lue : une seule échelle, { faction = ..., rungs = ... }.
 --
 -- Chapitres : ceux dont le champ mode vaut "dungeon" (Q:RegisterGuide). Le mode n'existe pour un
 -- personnage que si sa faction a de tels chapitres : sinon tout se passe comme avant.
@@ -45,10 +46,15 @@ local function saved()
   return s
 end
 
-local function data()
+-- Échelle de la faction (celle du personnage par défaut), ou nil.
+local function data(faction)
   local d = Q.DungeonRouteData
-  if type(d) ~= "table" or type(d.rungs) ~= "table" then return nil end
-  return d
+  if type(d) ~= "table" then return nil end
+  if type(d.rungs) == "table" then return d end   -- une seule échelle, pour d.faction
+  faction = faction or (Q.Player and Q.Player.faction)
+  local f = type(faction) == "string" and d[faction] or nil
+  if type(f) ~= "table" or type(f.rungs) ~= "table" then return nil end
+  return f
 end
 
 local function validRung(r)
@@ -78,8 +84,8 @@ end
 -- de l'échelle pour elle et au moins un chapitre du mode.
 function DungeonMode:Available(faction)
   faction = faction or (Q.Player and Q.Player.faction)
-  local d = data()
-  if not d or faction == nil or d.faction ~= faction then return false end
+  local d = data(faction)
+  if not d or faction == nil or (d.faction ~= nil and d.faction ~= faction) then return false end
   return Q.Guides ~= nil and Q.Guides:HasMode(MODE, faction)
 end
 

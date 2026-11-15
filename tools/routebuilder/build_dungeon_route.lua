@@ -1,13 +1,14 @@
--- tools/routebuilder/build_dungeon_route.lua : échelle du mode « Donjons » (Alliance) pour l'addon.
+-- tools/routebuilder/build_dungeon_route.lua : échelles du mode « Donjons » (Alliance et Horde) pour l'addon.
 -- Lua 5.1 / LuaJIT, hors jeu, lancé depuis la racine du projet :
 --   luajit tools/routebuilder/build_dungeon_route.lua [--data FILE] [--out FILE] [--plan FILE] [--date YYYY-MM-DD]
 --
 -- Lit l'échelle écrite à la main (dungeon_ladder.lua) et les faits déjà générés de
 -- Questify/Guides/DungeonData.lua (donjons, quêtes Alliance, XP de base de Q.QuestRewardData), sans
 -- QuestieDB. Écrit :
---   * Questify/Guides/DungeonRouteData.lua : échelons dans l'ordre joué, niveau d'entrée, quêtes, XP et
---     étoiles (cases à cocher de l'addon, Engine/DungeonMode.lua) ;
---   * docs/dungeon-mode/ECHELLE.md : le plan écrit (niveau × donjon ou aile × zones entre deux).
+--   * Questify/Guides/DungeonRouteData.lua : par faction, échelons dans l'ordre joué, niveau d'entrée, quêtes,
+--     XP et étoiles (cases à cocher de l'addon, Engine/DungeonMode.lua) ;
+--   * docs/dungeon-mode/ECHELLE.md (Alliance) et ECHELLE-HORDE.md : le plan écrit (niveau × donjon ou aile ×
+--     zones entre deux).
 -- Ne touche à aucun guide existant ni à DungeonData.lua.
 --
 -- Étoiles (rentabilité en XP de quêtes) : somme de l'XP de base des quêtes de l'échelon (XP de
@@ -57,8 +58,10 @@ function M.stars(ladder, pct, questCount)
   return 1
 end
 
--- build(ladder, data) -> échelons dans l'ordre joué ; lève une erreur sur une échelle incohérente.
-function M.build(ladder, data)
+-- build(ladder, data, faction) -> échelons dans l'ordre joué (faction : "Alliance" par défaut) ; lève une
+-- erreur sur une échelle incohérente.
+function M.build(ladder, data, faction)
+  faction = faction or "Alliance"
   local byKey = {}
   for _, d in ipairs(data.dungeons) do byKey[d.key] = d end
   local assigned, seenKey, out = {}, {}, {}
@@ -66,13 +69,13 @@ function M.build(ladder, data)
     assert(type(r.key) == "string" and not seenKey[r.key], "duplicate or missing rung key " .. tostring(r.key))
     seenKey[r.key] = true
     local d = assert(byKey[r.dungeon], ("rung %s: unknown dungeon %s"):format(r.key, tostring(r.dungeon)))
-    local all, known = d.quests and d.quests.Alliance or {}, {}
+    local all, known = d.quests and d.quests[faction] or {}, {}
     for _, q in ipairs(all) do known[q.id] = q end
     assert((r.wing ~= nil) == (r.quests ~= nil), ("rung %s: a wing lists its quests, a whole dungeon does not"):format(r.key))
     local ids = {}
     if r.quests then
       for _, id in ipairs(r.quests) do
-        assert(known[id], ("rung %s: quest %d is not an Alliance quest of %s"):format(r.key, id, r.dungeon))
+        assert(known[id], ("rung %s: quest %d is not an %s quest of %s"):format(r.key, id, faction, r.dungeon))
         ids[#ids + 1] = id
       end
     else
@@ -80,7 +83,7 @@ function M.build(ladder, data)
     end
     local skip = r.skip or {}
     for id in pairs(skip) do
-      assert(known[id], ("rung %s: skipped quest %d is not an Alliance quest of %s"):format(r.key, id, r.dungeon))
+      assert(known[id], ("rung %s: skipped quest %d is not an %s quest of %s"):format(r.key, id, faction, r.dungeon))
     end
     assigned[r.dungeon] = assigned[r.dungeon] or { skip = {}, wings = 0 }
     local a = assigned[r.dungeon]
@@ -105,13 +108,13 @@ function M.build(ladder, data)
     table.sort(quests)
     out[#out + 1] = { key = r.key, dungeon = r.dungeon, wing = r.wing, name = d.name, areaId = d.areaId,
       minLevel = min, maxLevel = max, entry = entry, entryWhy = r.entryWhy, quests = quests, xp = xp, est = est,
-      pct = pct, stars = M.stars(ladder, pct, #quests), order = order, rung = r, entrance = d.entrance,
-      entranceSource = d.entranceSource }
+      pct = pct, stars = M.stars(ladder, pct, #quests), order = order, rung = r, entrance = r.entrance or d.entrance,
+      entranceSource = r.entrance and "ladder" or d.entranceSource }
   end
-  -- un donjon découpé en ailes : chaque quête Alliance va dans une aile (ou est écartée)
+  -- un donjon découpé en ailes : chaque quête de la faction va dans une aile (ou est écartée)
   for key, a in pairs(assigned) do
     if a.wings > 0 then
-      for _, q in ipairs(byKey[key].quests and byKey[key].quests.Alliance or {}) do
+      for _, q in ipairs(byKey[key].quests and byKey[key].quests[faction] or {}) do
         assert(a[q.id], ("quest %d of %s is in no wing"):format(q.id, key))
       end
     end
@@ -129,28 +132,33 @@ local function list(ids)
   return table.concat(parts, ", ")
 end
 
-function M.emitLua(rungs, ladder, data, date)
+-- emitLua({ { faction = "Alliance", rungs = ... }, { faction = "Horde", rungs = ... } }, ladder, data, date)
+function M.emitLua(sets, ladder, data, date)
   local o = {}
   local function w(s) o[#o + 1] = s end
   w("local addonName, Q = ...")
   w("-- Généré par tools/routebuilder/build_dungeon_route.lua. Ne pas modifier à la main :")
   w("-- corriger tools/routebuilder/dungeon_ladder.lua, puis relancer le script.")
   w(("-- Source : Questify/Guides/DungeonData.lua (QuestieDB commit %s), généré le %s."):format(data.source or "?", date))
-  w("-- Échelle du mode « Donjons » (Alliance) : un échelon par donjon 5 joueurs ou par aile, dans l'ordre joué.")
-  w("-- entry = niveau d'entrée conseillé ; quests = quêtes Alliance de l'échelon ; xp = somme de leur XP de base")
-  w("-- (est = au moins une valeur estimée) ; pct = part du niveau d'entrée ; stars = 0 à 3 (0 : aucune quête).")
+  w("-- Échelles du mode « Donjons », par faction : un échelon par donjon 5 joueurs ou par aile, dans l'ordre joué.")
+  w("-- entry = niveau d'entrée conseillé ; quests = quêtes de l'échelon pour la faction ; xp = somme de leur XP de")
+  w("-- base (est = au moins une valeur estimée) ; pct = part du niveau d'entrée ; stars = 0 à 3 (0 : aucune quête).")
   w("-- Méthode : docs/dungeon-mode/README.md. L'XP des monstres de l'instance n'est pas comptée.")
   w("Q.DungeonRouteData = {")
-  w(("  faction = \"Alliance\", entryOffset = %d, entryCap = %d,"):format(ladder.ENTRY_OFFSET, ladder.ENTRY_CAP))
-  w("  rungs = {")
-  for _, r in ipairs(rungs) do
-    w(("    { key = %q, dungeon = %q,%s name = %q, areaId = %d, minLevel = %d, maxLevel = %d, entry = %d,")
-      :format(r.key, r.dungeon, r.wing and (" wing = %q,"):format(r.wing) or "", r.name, r.areaId, r.minLevel,
-              r.maxLevel, r.entry))
-    w(("      quests = { %s }, xp = %d,%s pct = %.3f, stars = %d },")
-      :format(list(r.quests), r.xp, r.est and " est = true," or "", r.pct, r.stars))
+  w(("  entryOffset = %d, entryCap = %d,"):format(ladder.ENTRY_OFFSET, ladder.ENTRY_CAP))
+  for _, set in ipairs(sets) do
+    w(("  %s = {"):format(set.faction))
+    w("    rungs = {")
+    for _, r in ipairs(set.rungs) do
+      w(("      { key = %q, dungeon = %q,%s name = %q, areaId = %d, minLevel = %d, maxLevel = %d, entry = %d,")
+        :format(r.key, r.dungeon, r.wing and (" wing = %q,"):format(r.wing) or "", r.name, r.areaId, r.minLevel,
+                r.maxLevel, r.entry))
+      w(("        quests = { %s }, xp = %d,%s pct = %.3f, stars = %d },")
+        :format(list(r.quests), r.xp, r.est and " est = true," or "", r.pct, r.stars))
+    end
+    w("    },")
+    w("  },")
   end
-  w("  },")
   w("}")
   w("")
   return table.concat(o, "\n")
@@ -167,16 +175,17 @@ local function blocks(bl)
   return table.concat(parts, " ; ")
 end
 
-function M.emitPlan(rungs, ladder, data, date)
+function M.emitPlan(rungs, ladder, data, date, faction)
+  faction = faction or "Alliance"
   local o = {}
   local function w(s) o[#o + 1] = s or "" end
-  w("# Mode « Donjons » Alliance : échelle 1-60")
+  w(("# Mode « Donjons » %s : échelle 1-60"):format(faction))
   w()
   w(("Généré par `tools/routebuilder/build_dungeon_route.lua` le %s à partir de"):format(date))
   w(("`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `%s`)."):format(data.source or "?"))
   w("Ne pas modifier à la main. Méthode et limites : [README.md](README.md).")
   w()
-  w("## Départs par race (1-15)")
+  w(("## Départs par race (1-%d)"):format(ladder.startsTo or 15))
   w()
   w("| Races | Zones (niveaux) | Remarque |")
   w("|---|---|---|")
@@ -188,7 +197,7 @@ function M.emitPlan(rungs, ladder, data, date)
     w(("| %s | %s | %s |"):format(table.concat(s.races, ", "), table.concat(parts, " ; "), s.note or ""))
   end
   w()
-  w("Les trois départs se rejoignent à Stormwind au niveau 15 (tram d'Ironforge, bateau d'Auberdine).")
+  w(ladder.meet or "")
   w()
   w("## Échelle")
   w()
@@ -212,7 +221,7 @@ function M.emitPlan(rungs, ladder, data, date)
     w(("### %s%s (`%s`, entrée %d)"):format(r.name, r.wing and (" : " .. r.wing) or "", r.key, r.entry))
     w()
     if r.entryWhy then w("Niveau d'entrée imposé : " .. r.entryWhy .. "."); w() end
-    if #r.quests == 0 then w("Aucune quête Alliance."); w() end
+    if #r.quests == 0 then w(("Aucune quête %s."):format(faction)); w() end
     for _, id in ipairs(r.quests) do
       local rw = data.rewards[id] or {}
       w(("- %d %s : %s%d XP"):format(id, data.names[id] or "?", rw.est and "~" or "", rw.xp or 0))
@@ -240,17 +249,31 @@ local function writeFile(path, text)
   f:close()
 end
 
+-- Fichier du plan écrit d'une faction : ECHELLE.md (Alliance), ECHELLE-HORDE.md.
+function M.planPath(path, faction)
+  if faction == "Alliance" then return path end
+  return (path:gsub("%.md$", "-" .. faction:upper() .. ".md"))
+end
+
 function M.main(argv)
   local o = parseArgs(argv)
   local ladder = require("dungeon_ladder")
   local data = M.loadData(o.data)
-  local rungs = M.build(ladder, data)
-  writeFile(o.out, M.emitLua(rungs, ladder, data, o.date))
-  writeFile(o.plan, M.emitPlan(rungs, ladder, data, o.date))
-  for _, r in ipairs(rungs) do
-    print(("%-11s entry %2d  quests %2d  xp %6d  %5.1f %%  stars %d"):format(r.key, r.entry, #r.quests, r.xp, r.pct * 100, r.stars))
+  local sets = {}
+  for _, faction in ipairs(ladder.FACTIONS) do
+    local fl = ladder.forFaction(faction)
+    local rungs = M.build(fl, data, faction)
+    sets[#sets + 1] = { faction = faction, rungs = rungs }
+    local plan = M.planPath(o.plan, faction)
+    writeFile(plan, M.emitPlan(rungs, fl, data, o.date, faction))
+    print(faction)
+    for _, r in ipairs(rungs) do
+      print(("%-11s entry %2d  quests %2d  xp %6d  %5.1f %%  stars %d"):format(r.key, r.entry, #r.quests, r.xp, r.pct * 100, r.stars))
+    end
+    print(("wrote %s (%d rungs)"):format(plan, #rungs))
   end
-  print(("wrote %s and %s (%d rungs)"):format(o.out, o.plan, #rungs))
+  writeFile(o.out, M.emitLua(sets, ladder, data, o.date))
+  print("wrote " .. o.out)
 end
 
 -- Lancé comme script (pas chargé par un test).

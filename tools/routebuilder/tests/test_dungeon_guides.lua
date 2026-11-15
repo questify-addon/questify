@@ -72,6 +72,39 @@ return {
     t.eq(plansm.find("A_Human_03").next, "A_01")
   end,
 
+  shipped_horde_chain_is_consistent = function(t)
+    local PD = dofile(H.ROOT .. "/plans_dungeon.lua")
+    local B = br()
+    local L = dofile(H.ROOT .. "/dungeon_ladder.lua")
+    local rungs = B.build(L.forFaction("Horde"), B.loadData(PROJECT .. "/Questify/Guides/DungeonData.lua"), "Horde")
+    local errs = PD.check(rungs, "Horde")
+    t.eq(#errs, 0, table.concat(errs, "; "))
+    local plansm = require("plans")
+    local list = PD.build(plansm.Horde, rungs, nil, "Horde")
+    local emitted, riverglades = 0, nil
+    for _, p in ipairs(list) do
+      if not p.noEmit then
+        emitted = emitted + 1
+        t.eq(p.mode, "dungeon"); t.eq(p.faction, "Horde")
+        t.ok(p.id:match("^HD_"), "Horde dungeon chapters are named HD_*: " .. p.id)
+        t.ok(p.entry or p.entryHub, "no entry point for " .. p.id)
+        t.ok(p.choices == nil and p.nextByRace == nil, "no usual branching in " .. p.id)
+        if p.title == "Riverglades" then riverglades = p end
+      end
+    end
+    t.eq(emitted, #PD.HORDE_TRUNK)
+    t.ok(riverglades ~= nil and riverglades.alt ~= nil, "Riverglades is an open-world alternative")
+    for _, race in ipairs({ "Orc", "Troll", "Tauren", "Undead", "Skyborne" }) do
+      local path = plansm.pathIn(list, race)
+      t.ok(#path > 30, race .. " path length " .. #path)
+      t.eq(path[#path].maxLevel, 60, race .. " reaches level 60")
+    end
+    for _, p in ipairs(plansm.Horde) do
+      t.ok(p.mode == nil and p.noEmit == nil, "usual plan modified: " .. p.id)
+    end
+    t.eq(plansm.find("H_OrcTroll_02").nextByRace.Orc, "H_01")
+  end,
+
   chain_check_refuses_bad_orders = function(t)
     local PD = dofile(H.ROOT .. "/plans_dungeon.lua")
     local rungs = { { key = "A" }, { key = "B" } }
@@ -170,6 +203,9 @@ return {
 
   guide_text_carries_the_mode = function(t)
     local G = bg()
+    local horde = G.guideText({ id = "HD_99", title = "Test", faction = "Horde", minLevel = 20, maxLevel = 22 },
+      { { "accept", 1 } }, {}, { commit = "abc", date = "2026-01-01" })
+    t.ok(horde:find('faction = "Horde",\n  mode = "dungeon",', 1, true), "mode after the Horde faction line")
     local plan = { id = "AD_99", title = "Test", faction = "Alliance", minLevel = 20, maxLevel = 22, next = "AD_100",
                    after_ = { "A_Human_03" } }
     local text = G.guideText(plan, { { "accept", 1, rung = "DG", phase = "prep" },
@@ -188,14 +224,17 @@ return {
     local PD = dofile(H.ROOT .. "/plans_dungeon.lua")
     local f = assert(io.open(PROJECT .. "/Questify/Guides/DungeonGuides.xml", "rb"))
     local xml = f:read("*a"); f:close()
-    local listed = {}
-    for id in xml:gmatch('AllianceDungeon\\(AD_[%w_]+)%.lua') do listed[#listed + 1] = id end
-    t.eq(#listed, #PD.TRUNK, "one file per chapter of the chain")
-    for i, tr in ipairs(PD.TRUNK) do
-      t.eq(listed[i], tr.id)
-      local g = io.open(PROJECT .. "/Questify/Guides/AllianceDungeon/" .. tr.id .. ".lua", "rb")
-      t.ok(g ~= nil, "missing file " .. tr.id)
-      if g then g:close() end
+    for _, faction in ipairs({ "Alliance", "Horde" }) do
+      local folder, trunk = PD.FOLDER[faction], PD.trunkOf(faction)
+      local listed = {}
+      for id in xml:gmatch(folder .. '\\([%w_]+)%.lua') do listed[#listed + 1] = id end
+      t.eq(#listed, #trunk, faction .. ": one file per chapter of the chain")
+      for i, tr in ipairs(trunk) do
+        t.eq(listed[i], tr.id)
+        local g = io.open(PROJECT .. "/Questify/Guides/" .. folder .. "/" .. tr.id .. ".lua", "rb")
+        t.ok(g ~= nil, "missing file " .. tr.id)
+        if g then g:close() end
+      end
     end
   end,
 }

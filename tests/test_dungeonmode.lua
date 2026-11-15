@@ -504,15 +504,18 @@ end
 
 function tests.shipped_data_is_consistent(t)
   local Q = shipped()
-  local d = Q.DungeonRouteData
-  t.eq(d.faction, "Alliance")
+  local seenBy = {}
+  for _, faction in ipairs({ "Alliance", "Horde" }) do
+  local d = Q.DungeonRouteData[faction]
+  t.ok(type(d) == "table" and type(d.rungs) == "table", "no ladder for " .. faction)
   local byKey, quests = {}, {}
   for _, dg in ipairs(Q.DungeonData) do
     byKey[dg.key] = dg
     quests[dg.key] = {}
-    for _, q in ipairs(dg.quests.Alliance or {}) do quests[dg.key][q.id] = true end
+    for _, q in ipairs(dg.quests[faction] or {}) do quests[dg.key][q.id] = true end
   end
   local seenKey, seenQuest, last = {}, {}, 0
+  seenBy[faction] = seenKey
   for _, r in ipairs(d.rungs) do
     t.ok(not seenKey[r.key], "duplicate rung " .. r.key)
     seenKey[r.key] = true
@@ -526,30 +529,38 @@ function tests.shipped_data_is_consistent(t)
     t.eq(r.stars == 0, #r.quests == 0)
     local xp = 0
     for _, id in ipairs(r.quests) do
-      t.ok(quests[r.dungeon][id], ("quest %d of %s is an Alliance quest of %s"):format(id, r.key, r.dungeon))
+      t.ok(quests[r.dungeon][id], ("quest %d of %s is a %s quest of %s"):format(id, r.key, faction, r.dungeon))
       t.ok(not seenQuest[id], "quest in two rungs: " .. id)
       seenQuest[id] = true
       xp = xp + ((Q.QuestRewardData[id] or {}).xp or 0)
     end
     t.eq(r.xp, xp)
   end
-  -- tous les donjons 5 joueurs ouverts à l'Alliance ont un échelon ; les Horde seulement n'en ont pas
-  for _, key in ipairs({ "THANES", "WC", "DM", "SFK", "BFD", "STOCKADE", "EXCAVATION", "DALARAN", "GNOMER", "RFK",
+  -- les donjons 5 joueurs ouverts aux deux factions et toutes les ailes ont un échelon
+  for _, key in ipairs({ "WC", "SFK", "BFD", "EXCAVATION", "DALARAN", "GNOMER", "RFK",
                          "ULDAMAN", "RFD", "MARAUDON", "ZF", "ST", "BRD", "SCHOLO" }) do
-    t.ok(seenKey[key], "missing rung " .. key)
+    t.ok(seenKey[key], faction .. ": missing rung " .. key)
   end
   for _, key in ipairs({ "SM_GY", "SM_LIB", "SM_ARM", "SM_CATH", "DM_EAST", "DM_WEST", "DM_NORTH", "STRAT_LIVE",
                          "STRAT_UD" }) do
-    t.ok(seenKey[key], "missing wing " .. key)
+    t.ok(seenKey[key], faction .. ": missing wing " .. key)
   end
-  t.ok(not seenKey.RFC and not seenKey.LORDAERON, "Horde-only dungeons are left out")
+  end
+  -- donjons d'une seule faction
+  local A, Ho = seenBy.Alliance, seenBy.Horde
+  t.ok(A.THANES and A.DM and A.STOCKADE, "Alliance-only dungeons")
+  t.ok(not A.RFC and not A.LORDAERON, "Horde-only dungeons are left out of the Alliance ladder")
+  t.ok(Ho.RFC and Ho.LORDAERON, "Horde-only dungeons")
+  t.ok(not Ho.THANES and not Ho.DM and not Ho.STOCKADE, "Alliance-only dungeons are left out of the Horde ladder")
 end
 
 function tests.shipped_wings_have_strings(t)
   local Q = load()
   local d = shipped().DungeonRouteData
-  for _, r in ipairs(d.rungs) do
-    if r.wing then t.ok(rawget(Q.L, "DGMODE_WING_" .. r.wing) ~= nil, "no text for wing " .. r.wing) end
+  for _, faction in ipairs({ "Alliance", "Horde" }) do
+    for _, r in ipairs(d[faction].rungs) do
+      if r.wing then t.ok(rawget(Q.L, "DGMODE_WING_" .. r.wing) ~= nil, "no text for wing " .. r.wing) end
+    end
   end
 end
 
@@ -558,7 +569,9 @@ function tests.shipped_guides_load_with_the_mode_files(t)
   local Q = Mock.loadAddon(TOC, {})
   t.eq(#Mock.errors, 0)
   t.eq(Mock.countPrinted("AD_"), 0, "no dungeon chapter rejected")
-  t.ok(Q.DungeonRouteData ~= nil and #Q.DungeonRouteData.rungs > 20)
+  t.eq(Mock.countPrinted("HD_"), 0, "no Horde dungeon chapter rejected")
+  t.ok(Q.DungeonRouteData ~= nil and #Q.DungeonRouteData.Alliance.rungs > 20 and #Q.DungeonRouteData.Horde.rungs > 20)
+  t.ok(Q.DungeonMode:Available("Horde"), "Horde dungeon chapters are shipped")
   t.ok(Q.Progress:Guide().mode == nil)
   t.eq(Q.Progress:Guide().id, "A_DwarfGnome_01")
   t.ok(Q.DungeonMode:Available(), "dungeon chapters are shipped")
@@ -566,18 +579,18 @@ end
 
 -- Chapitres livrés du mode : chaque échelon a son bloc « instance » puis une alternative, toutes les
 -- étiquettes nomment un échelon connu, la chaîne va jusqu'au niveau 60.
-function tests.shipped_dungeon_chapters_cover_every_rung(t)
+local function coverEveryRung(t, faction, first, race)
   local Q = Mock.loadAddon(TOC, {})
   local known, ran, alt = {}, {}, {}
-  for _, r in ipairs(Q.DungeonRouteData.rungs) do known[r.key] = true end
-  local g, seen, n, last = Q.Guides:Get("AD_01"), {}, 0, nil
-  t.ok(g ~= nil, "AD_01 is shipped")
+  for _, r in ipairs(Q.DungeonRouteData[faction].rungs) do known[r.key] = true end
+  local g, seen, n, last = Q.Guides:Get(first), {}, 0, nil
+  t.ok(g ~= nil, first .. " is shipped")
   while g and not seen[g.id] do
     seen[g.id] = true
     n = n + 1
     last = g
     t.eq(g.mode, "dungeon")
-    t.eq(g.faction, "Alliance")
+    t.eq(g.faction, faction)
     for i, s in ipairs(g.steps) do
       if s.rung then
         t.ok(known[s.rung], ("%s step %d: unknown rung %s"):format(g.id, i, s.rung))
@@ -592,13 +605,37 @@ function tests.shipped_dungeon_chapters_cover_every_rung(t)
         alt[k] = true
       end
     end
-    g = Q.Guides:Next(g, "Human")
+    g = Q.Guides:Next(g, race)
   end
   t.ok(n >= 30, "chapters in the chain: " .. n)
   t.eq(last.maxLevel, 60)
   for key in pairs(known) do
     t.ok(ran[key], "no instance block for " .. key)
     t.ok(alt[key], "no open-world alternative for " .. key)
+  end
+end
+
+function tests.shipped_dungeon_chapters_cover_every_rung(t)
+  coverEveryRung(t, "Alliance", "AD_01", "Human")
+end
+
+function tests.shipped_horde_dungeon_chapters_cover_every_rung(t)
+  coverEveryRung(t, "Horde", "HD_01", "Orc")
+end
+
+-- Riverglades (Forever) : zone alternative d'Uldaman et de Razorfen Downs dans les deux routes.
+function tests.shipped_riverglades_is_in_both_routes(t)
+  local Q = Mock.loadAddon(TOC, {})
+  for _, id in ipairs({ "AD_19", "HD_16" }) do
+    local g = Q.Guides:Get(id)
+    t.ok(g ~= nil, id .. " is shipped")
+    t.eq(g.title, "Riverglades")
+    local quests = 0
+    for _, s in ipairs(g.steps) do
+      t.ok(s.alt ~= nil and s.below == 43, id .. ": every step is an alternative below 43")
+      if s.action == "turnin" then quests = quests + 1 end
+    end
+    t.ok(quests >= 40, id .. ": quests turned in: " .. quests)
   end
 end
 
@@ -611,7 +648,14 @@ function tests.shipped_mode_joins_after_the_race_starts(t)
   t.eq(G:ForPlayer("Alliance", "Human", 13, "dungeon").mode, nil, "the night elf chapter is not for humans")
   t.eq(G:ForPlayer("Alliance", "Human", 30, "dungeon").mode, "dungeon")
   t.eq(G:ForPlayer("Alliance", "Human", 30).mode, nil, "usual route untouched")
-  t.eq(G:ForPlayer("Horde", "Orc", 30, "dungeon").mode, nil, "Horde: usual route")
+  t.eq(G:ForPlayer("Horde", "Orc", 5, "dungeon").mode, nil, "Horde: usual starts")
+  t.eq(G:ForPlayer("Horde", "Orc", 30, "dungeon").mode, "dungeon", "Horde: dungeon route")
+  t.eq(G:ForPlayer("Horde", "Orc", 30).mode, nil, "Horde: usual route untouched")
+  for _, pair in ipairs({ { "H_OrcTroll_02", "Orc" }, { "H_OrcTroll_02", "Troll" }, { "H_Tauren_02", "Tauren" },
+                          { "H_Undead_03", "Undead" }, { "H_Skyborne_01", "Skyborne" } }) do
+    t.eq(G:Handoff(G:Get(pair[1]), pair[2], "dungeon").id, "HD_01", pair[2] .. " joins the Horde dungeon route")
+    t.eq(G:Next(G:Get(pair[1]), pair[2]).id, "H_01", pair[2] .. ": usual route while the mode is off")
+  end
   Q.DungeonMode:SetOn(true)
   t.eq(G:Next(G:Get("A_Human_03"), "Human").id, "AD_01")
   t.eq(G:Next(G:Get("A_DwarfGnome_04"), "Dwarf").id, "AD_01")

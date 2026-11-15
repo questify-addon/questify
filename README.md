@@ -42,7 +42,7 @@ Captures et vidéos à venir : liste des prises de vue dans [docs/media/README.m
 - Navigation vers chaque étape (marqueur natif du jeu, ou TomTom, WaypointUI, ShortestPath Forever).
   AzerothGPS suit aussi le guide : son bouton « Itinéraire Questify » fait de chaque étape le prochain arrêt de
   sa carte.
-- Route automatique (Alliance, niveaux 12 à 60) : un second parcours qui enchaîne les quêtes de donjon et les
+- Route automatique (Alliance et Horde, niveaux 12 à 60) : un second parcours qui enchaîne les quêtes de donjon et les
   donjons à 5 joueurs, avec une case par donjon, « Passer ce donjon » et « Chemin alternatif » dans le suivi.
   À choisir dans l'assistant ou dans l'onglet Route du journal ; détails dans
   [docs/dungeon-mode/README.md](docs/dungeon-mode/README.md).
@@ -103,7 +103,7 @@ Il s'ouvre environ 3 secondes après la connexion (jamais en combat), en six pag
    - Sans QuestieDB, le suivi affiche un bouton « Lien » qui ouvre cette page.
    - Un addon tout juste téléchargé n'apparaît qu'après un redémarrage complet du jeu, pas après
      `/reload`.
-2. **Ta route** : automatique (avec les donjons, Alliance) ou manuelle ; l'automatique est grisée quand
+2. **Ta route** : automatique (avec les donjons) ou manuelle ; l'automatique est grisée quand
    elle n'existe pas pour le personnage.
 3. **Calcul d'itinéraire** : ShortestPath Forever, s'il est chargé.
 4. **Affichage** : WaypointUI, TomTom ou le repère du jeu.
@@ -203,7 +203,7 @@ Bibliothèques incluses dans `Questify/Libs/`, copiées sans modification :
 - Steps tick themselves off from your quest log; steps your character cannot do are skipped.
 - Navigation to every step (native in-game marker, or TomTom, WaypointUI, ShortestPath Forever).
   AzerothGPS follows the guide too: its "Questify Route" button makes each step the next stop on its map.
-- Automatic route (Alliance, levels 12 to 60): a second route through the dungeon quests and the 5-player
+- Automatic route (Alliance and Horde, levels 12 to 60): a second route through the dungeon quests and the 5-player
   dungeons, with one checkbox per dungeon, "Skip this dungeon" and "Alternative path" in the tracker. Pick it
   in the wizard or in the journal's Route tab; details (in French) in
   [docs/dungeon-mode/README.md](docs/dungeon-mode/README.md).
@@ -262,7 +262,7 @@ It opens about 3 seconds after login (never in combat) and has six pages. Every 
    - Disabled addon: "Enable" button (for this character), then "Reload UI".
    - Without QuestieDB, the tracker shows a "Link" button that opens this page.
    - A newly downloaded addon only shows up after a full game restart, not after `/reload`.
-2. **Your route**: automatic (with the dungeons, Alliance) or manual; automatic is greyed out when the
+2. **Your route**: automatic (with the dungeons) or manual; automatic is greyed out when the
    character has none.
 3. **Route planning**: ShortestPath Forever, when loaded.
 4. **Display**: WaypointUI, TomTom or the game's own map pin.

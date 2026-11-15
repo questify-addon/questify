@@ -55,6 +55,26 @@ sont aussi listés dans [ECHELLE.md](ECHELLE.md).
   qui passe par sa zone (nombre dans ROUTES.md) ; les autres rendus lointains restent juste après l'instance.
 - **Riverglades** (`AD_19`) : point d'entrée calculé (PNJ qui donne le plus de quêtes), accès à vérifier.
 
+## Horde (route du 2026-11-15)
+
+Rien n'a été relu ni joué. En plus des points par échelon de [ECHELLE-HORDE.md](ECHELLE-HORDE.md) :
+
+- **Ordre des chapitres** : tiré des plages des donjons et des chapitres `H_*`, sans mesure de variantes.
+  Trois allers-retours entre continents avant le niveau 40 (Fossoyeuse au niveau 20, Royaumes de l'Est de 27
+  à 31, puis Arathi et les Terres ingrates de 38 à 40).
+- **Ruines de Lordaeron** au niveau 20-21 (plage 15-22) : chapitre de passage à Fossoyeuse (`HD_05`), 3 quêtes
+  sur 10 prises ; les autres donneurs sont à Tirisfal et au Sépulcre.
+- **Excavation Site: Wetlands** : accès Horde depuis Hammerfall à travers les Paluns, zone Alliance.
+- **Gnomeregan** : la route envoie à Scooty (Booty Bay) ; position du transpondeur et suite 2842-2843 à voir.
+- **Riverglades** (`HD_16`) : point d'entrée calculé (PNJ Horde qui donne le plus de quêtes), accès à
+  vérifier ; 51 quêtes rendues, puis environ 470 mobs de farm pour le niveau 43.
+- **Farm de niveau** : Strangleronce 47-49 (`HD_21`), Hinterlands 49-51 (`HD_22`), Stratholme (`HD_32`), comme
+  dans les chapitres `H_18` et `H_21` habituels : la Horde manque de quêtes entre 47 et 51.
+- **Quêtes de donjon hors route** : tableau de [routes/ROUTES-HORDE.md](routes/ROUTES-HORDE.md) ; Profondeurs
+  de Rochenoire 4 sur 23, Uldaman, Scholomance et le côté mort-vivant de Stratholme surtout.
+- **Tauren paladin** : `HD_06` (Orneval) plafonne le journal à 18 quêtes pour laisser la place aux quêtes de
+  classe.
+
 ## Interface
 
 - Onglet Route du journal : boutons « Manuel » / « Automatique » dans le bandeau du haut, à droite du

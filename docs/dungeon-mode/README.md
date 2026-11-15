@@ -1,16 +1,18 @@
-# Mode « Donjons » (Alliance, 1-60)
+# Mode « Donjons » (Alliance et Horde, 1-60)
 
-Un second parcours de montée de niveau, à côté des guides Alliance habituels : il vise d'abord les quêtes de
+Un second parcours de montée de niveau, à côté des guides habituels : il vise d'abord les quêtes de
 donjon, enchaîne tous les donjons 5 joueurs (chaque aile comprise) et vide une zone entre deux donjons.
 Les guides Alliance et Horde existants, `ClassQuestData.lua` et `DungeonData.lua` ne sont ni modifiés ni
 régénérés.
 
-**État : infrastructure, échelle et routes 12-60 livrées ; rien n'a été joué en jeu.** Le mode est proposé
-aux personnages de l'Alliance dans les options ; il est éteint par défaut et la route habituelle ne change pas.
+**État : infrastructure, échelles et routes 12-60 livrées pour les deux factions ; rien n'a été joué en jeu.**
+Le mode est proposé à tous les personnages ; il est éteint par défaut et la route habituelle ne change pas.
+La route Horde (2026-11-15) n'a encore été ni relue ni jouée : voir la section Horde plus bas.
 
-- Échelle (niveau × donjon ou aile × zones entre deux) : [ECHELLE.md](ECHELLE.md), généré.
-- Routes générées, niveaux simulés et quêtes prises par échelon : [routes/ROUTES.md](routes/ROUTES.md), généré,
-  avec un rapport par chapitre dans le même dossier.
+- Échelle (niveau × donjon ou aile × zones entre deux) : [ECHELLE.md](ECHELLE.md) pour l'Alliance,
+  [ECHELLE-HORDE.md](ECHELLE-HORDE.md) pour la Horde, générés.
+- Routes générées, niveaux simulés et quêtes prises par échelon : [routes/ROUTES.md](routes/ROUTES.md) et
+  [routes/ROUTES-HORDE.md](routes/ROUTES-HORDE.md), générés, avec un rapport par chapitre dans le même dossier.
 - Points à vérifier en jeu : [A-VERIFIER.md](A-VERIFIER.md).
 
 ## Ce que voit le joueur
@@ -21,7 +23,7 @@ Le mode s'appelle « mode automatique » en jeu.
   existe pour le personnage) ou manuelle. « Terminer » lance ou arrête le mode.
 - Journal, onglet Route : deux vues, « Manuel » (chapitres et étapes, comme avant) et « Automatique ».
   Aussi `/qf donjons` et les Options, section Parcours. Les deux boutons n'apparaissent que si le mode
-  existe pour le personnage (Alliance). À chaque ouverture du journal, l'onglet Route s'ouvre sur la vue
+  existe pour le personnage. À chaque ouverture du journal, l'onglet Route s'ouvre sur la vue
   de la route choisie.
 - Suivi : ligne « Mode : Manuel » ou « Mode : Automatique » sous la barre (si le mode existe pour le
   personnage). En automatique, bouton « Chemin alternatif » (zone alternative, ci-dessous), qui devient
@@ -72,14 +74,14 @@ suivante. « Revenir à ma route » (ou `/qf alt back`), ou la fin de la zone al
 |---|---|
 | `tools/routebuilder/dungeon_ladder.lua` | L'échelle, écrite à la main : échelons, ailes et leurs quêtes, zones avant chaque échelon, alternative, contenu écarté, points à vérifier. |
 | `tools/routebuilder/build_dungeon_route.lua` | Génère `Questify/Guides/DungeonRouteData.lua` et `ECHELLE.md` à partir de l'échelle et de `DungeonData.lua` (sans QuestieDB). Refuse une échelle incohérente. |
-| `Questify/Guides/DungeonRouteData.lua` | Échelons dans l'ordre joué : niveau d'entrée, quêtes, XP, étoiles. |
+| `Questify/Guides/DungeonRouteData.lua` | Par faction (`Q.DungeonRouteData.Alliance`, `.Horde`), échelons dans l'ordre joué : niveau d'entrée, quêtes, XP, étoiles. |
 | `Questify/Engine/DungeonMode.lua` | Choix du mode, cases, contournement, filtre des étapes. État par personnage : `Q.char.dungeonMode`. |
 | `Questify/UI/DungeonModePanel.lua` | Vue « Automatique » de l'onglet Route du journal. |
 | `Questify/Engine/Detour.lua` | Zone alternative : choix selon le niveau, retour au chemin. |
 | `Questify/Engine/Guides.lua` | Champ `mode` des chapitres ; champs `rung`, `phase`, `alt`, `below` des étapes. |
 | `Questify/Engine/Progress.lua` | Une ligne dans le filtre des étapes ; chapitre de départ selon le mode. |
 | `tools/routebuilder/plans_dungeon.lua` | La chaîne des chapitres du mode : copies des réglages des chapitres habituels (jamais modifiés), redécoupés autour des échelons. |
-| `tools/routebuilder/build_dungeon_guides.lua` | Génère les routes avec le simulateur habituel, ajoute les blocs « instance » et les étiquettes, écrit `AllianceDungeon/`, `DungeonGuides.xml` et les rapports. |
+| `tools/routebuilder/build_dungeon_guides.lua` | Génère les routes avec le simulateur habituel, ajoute les blocs « instance » et les étiquettes, écrit `AllianceDungeon/`, `HordeDungeon/`, `DungeonGuides.xml` et les rapports (`--faction` pour une seule faction). |
 | `tools/routebuilder/build.lua` | Deux crochets (`plan.before`, `plan.after`), sans effet sur les plans habituels. |
 | `tools/validate_guides.lua` | Contrôle des nouveaux champs (`rungProblem`) ; `--xml DungeonGuides.xml` rejoue les routes du mode à la suite des départs habituels, race par race. |
 
@@ -87,13 +89,33 @@ suivante. « Revenir à ma route » (ou `/qf alt back`), ou la fin de la zone al
 
 Un chapitre du mode porte `mode = "dungeon"`. Il n'est jamais choisi, listé au journal ni proposé comme suite
 pour un personnage qui suit les guides habituels, et inversement. Les fichiers sont dans
-`Questify/Guides/AllianceDungeon/` (35 chapitres `AD_*`), chargés par `Guides/DungeonGuides.xml`, à part des
-guides actuels et de `Guides.xml`.
+`Questify/Guides/AllianceDungeon/` (35 chapitres `AD_*`) et `Questify/Guides/HordeDungeon/` (33 chapitres
+`HD_*`), chargés par `Guides/DungeonGuides.xml`, à part des guides actuels et de `Guides.xml`.
 
 Départs : les niveaux 1 à 15 sont ceux des guides habituels (mêmes chapitres, non dupliqués). Le champ
 `after` d'un chapitre du mode nomme les chapitres habituels dont il prend la suite : `AD_01` (Ironforge)
 après la Marche de l'Ouest des Humains et des Nains / Gnomes et après l'île de Zephras, `AD_NightElf_03`
 (Sombrivage jusqu'au niveau 16) après Teldrassil. Les trois départs se rejoignent en `AD_01`.
+
+### Horde
+
+Même mécanique, mêmes champs. L'échelle Horde est dans `dungeon_ladder.lua` (`L.Horde`), la chaîne dans
+`plans_dungeon.lua` (`HORDE_STARTS`, `HORDE_TRUNK`) ; les chapitres copient les réglages des chapitres `H_*`.
+
+- Départs : les chapitres habituels jusqu'au niveau 12 (15 pour l'île de Zephras). `HD_01` (Tarides) prend
+  la suite de Durotar, de Mulgore, de la forêt des Pins-Argentés et de l'île de Zephras.
+- 25 échelons : Ragefire Chasm et Ruins of Lordaeron (Horde seulement), puis les mêmes donjons et ailes que
+  l'Alliance, sans The Hall of Thanes, les Mortemines ni la Prison.
+- Ordre : Tarides et Orgrimmar (Ragefire, Lamentations), aller-retour en zeppelin à Fossoyeuse pour les Ruines
+  de Lordaeron (niveau 20), Orneval (Profondeurs de Brassenoire), puis Hautebrande, Alterac et Arathi
+  (Ombrecroc, Excavation, Dalaran, Cimetière et Bibliothèque), Mille pointes (Kraal), Strangleronce
+  (Gnomeregan par le transpondeur de Booty Bay), Âprefange (Souilles), Arathi (Armurerie, Cathédrale),
+  Terres ingrates (Uldaman), et la suite des chapitres habituels jusqu'à Silithus.
+- **Riverglades** (`HD_16`, 39-43) : alternative en extérieur d'Uldaman et de Razorfen Downs, comme `AD_19`.
+- Gnomeregan : l'échelle remplace l'entrée de `DungeonData.lua` (Dun Morogh) par Scooty, à Booty Bay
+  (champ `entrance` de l'échelon).
+- Going, Going, Guano! (1109) et sa suite Hearts of Zeal (1113) sont hors route : prises et rendues à
+  Fossoyeuse, où la route ne repasse qu'après l'abandon des quêtes de donjon de ce niveau.
 
 Trois rôles de chapitre :
 
@@ -141,7 +163,7 @@ Rentabilité en XP de quêtes, calculée, jamais saisie :
   divisée par deux pour une quête de donjon (règle de Forever). Une valeur estimée par le générateur est
   marquée `est` (« ~ » dans le plan, « environ » en jeu).
 - XP du niveau : table `LEVEL_XP` de `tools/routebuilder/xp.lua`.
-- Trois étoiles à partir de 30 %, deux à partir de 12 %, une en dessous, aucune sans quête Alliance
+- Trois étoiles à partir de 30 %, deux à partir de 12 %, une en dessous, aucune sans quête de la faction
   (`STARS` dans l'échelle).
 
 Limites, à lire avant de s'y fier :
@@ -207,8 +229,10 @@ elle ouvre une suite ou un donjon ; les élites de zone sont facultatifs.
 # Régénérer l'échelle après une modification de dungeon_ladder.lua ou de DungeonData.lua
 luajit tools/routebuilder/build_dungeon_route.lua
 
-# Régénérer les routes du mode (QuestieDB et Questie dans .cache/, environ 4 minutes)
-luajit tools/routebuilder/build_dungeon_guides.lua
+# Régénérer les routes du mode (QuestieDB et Questie dans .cache/, environ 4 minutes par faction)
+luajit tools/routebuilder/build_dungeon_guides.lua [--faction Alliance|Horde]
+
+# Sous Windows, créer d'abord Questify/Guides/HordeDungeon : build.mkdir appelle `mkdir -p`
 
 # Contrôler les routes du mode, rejouées à la suite des départs habituels
 luajit tools/validate_guides.lua --xml DungeonGuides.xml

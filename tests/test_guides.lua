@@ -122,7 +122,8 @@ return {
       [1426] = "Dun Morogh", [1432] = "Loch Modan", [1436] = "Marche de l'Ouest", [1429] = "Forêt d'Elwynn",
       [1438] = "Teldrassil", [1413] = "Les Tarides", [1441] = "Mille pointes", [1411] = "Durotar",
       [1412] = "Mulgore", [1420] = "Clairières de Tirisfal", [1421] = "Forêt des Pins-Argentés",
-      [2521] = "Île de Zephras", [1455] = "Forgefer", [1453] = "Hurlevent",
+      [2521] = "Île de Zephras", [1455] = "Forgefer", [1453] = "Hurlevent", [1454] = "Orgrimmar",
+      [1458] = "Fossoyeuse",
       -- zones des chapitres 30-60 (noms du client français)
       [1434] = "Vallée de Strangleronce", [1443] = "Désolace", [1435] = "Marais des Chagrins",
       [1416] = "Montagnes d'Alterac", [1417] = "Hautes-terres d'Arathi", [1445] = "Marécage d'Âprefange",
@@ -166,6 +167,9 @@ return {
       AD_04 = "Orneval et Les Serres-Rocheuses", AD_05 = "Les Carmines", AD_06 = "Bois de la Pénombre",
       AD_07 = "Orneval", AD_08 = "Les Paluns", AD_09 = "Contreforts de Hautebrande et Montagnes d'Alterac",
       AD_10 = "Bois de la Pénombre",
+      HD_01 = "Les Tarides", HD_02 = "Orgrimmar", HD_03 = "Les Tarides", HD_04 = "Les Serres-Rocheuses et Les Tarides",
+      HD_05 = "Fossoyeuse", HD_06 = "Orneval", HD_07 = "Tarides du Sud et Mille pointes",
+      HD_08 = "Contreforts de Hautebrande", HD_09 = "Montagnes d'Alterac et Hautes-terres d'Arathi",
       H_Skyborne_01 = "Île de Zephras",
     }
     -- Chapitres 30-60 (lot H) : titres faits de noms de zones. Une zone connue du moteur
@@ -203,8 +207,8 @@ return {
         end
       end
     end
-    -- 29 chapitres habituels et les 11 chapitres du mode « Donjons » sous le niveau 30
-    t.eq(#all - high, 40, "40 chapters 1-30")
+    -- 29 chapitres habituels et les 20 chapitres du mode « Donjons » sous le niveau 30 (11 Alliance, 9 Horde)
+    t.eq(#all - high, 49, "49 chapters 1-30")
     t.eq(#Mock.errors, 0)
   end,
 
