@@ -425,7 +425,7 @@ local ZONE_MAPS = {
   ["Stonetalon Mountains"] = 1442, ["Teldrassil"] = 1438, ["The Barrens"] = 1413,
   ["Thousand Needles"] = 1441, ["Tirisfal Glades"] = 1420, ["Westfall"] = 1436, ["Wetlands"] = 1437,
   ["Zephras Isle"] = 2521,
-  ["Ironforge"] = 1455, ["Stormwind City"] = 1453,
+  ["Ironforge"] = 1455, ["Stormwind City"] = 1453, ["Orgrimmar"] = 1454, ["Undercity"] = 1458,
   -- zones 30-60 (uiMapID Classic, tirés de QuestieDB)
   ["Alterac Mountains"] = 1416, ["Arathi Highlands"] = 1417, ["Badlands"] = 1418, ["Blasted Lands"] = 1419,
   ["Western Plaguelands"] = 1422, ["Eastern Plaguelands"] = 1423, ["The Hinterlands"] = 1425,

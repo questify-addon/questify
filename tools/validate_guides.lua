@@ -85,8 +85,12 @@ function M.rungKeys(guidesDir)
   setfenv(fn, {})
   if not pcall(fn, "Questify", Q) then return nil end
   local keys = {}
-  for _, r in ipairs(type(Q.DungeonRouteData) == "table" and Q.DungeonRouteData.rungs or {}) do
-    if type(r) == "table" and type(r.key) == "string" then keys[r.key] = true end
+  local d = type(Q.DungeonRouteData) == "table" and Q.DungeonRouteData or {}
+  -- une échelle par faction (Alliance, Horde) ; ancienne forme : une seule échelle dans rungs
+  for _, set in ipairs({ d, d.Alliance or {}, d.Horde or {} }) do
+    for _, r in ipairs(type(set) == "table" and type(set.rungs) == "table" and set.rungs or {}) do
+      if type(r) == "table" and type(r.key) == "string" then keys[r.key] = true end
+    end
   end
   return keys
 end

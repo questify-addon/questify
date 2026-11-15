@@ -17,6 +17,8 @@
 --   alt      alternative en extérieur quand la case est décochée ou l'instance contournée
 --   races    départs concernés quand l'échelon ou un bloc ne vaut pas pour tous
 --   verify   points à vérifier en jeu
+--   entrance { uiMapID, x, y } : point où la route envoie le joueur, quand ce n'est pas l'entrée de
+--            DungeonData.lua (Gnomeregan côté Horde : transpondeur de Booty Bay)
 --
 --   skip     { [questId] = "raison" } : quêtes du donjon laissées hors route (hors étoiles)
 --
@@ -169,5 +171,166 @@ L.omitted = {
   { name = "Upper Blackrock Spire", why = "raid de 10, pas un donjon 5 joueurs" },
   { name = "Raids (Molten Core, Onyxia, Zul'Gurub, Ahn'Qiraj, Naxxramas)", why = "pas des donjons 5 joueurs" },
 }
+
+L.startsTo = 15
+L.meet = "Les trois départs se rejoignent à Stormwind au niveau 15 (tram d'Ironforge, bateau d'Auberdine)."
+
+------------------------------------------------------------------------------
+-- Horde (1-60). Mêmes champs, mêmes règles. Les quêtes d'une aile sont les quêtes Horde de DungeonData.lua.
+-- Rien n'a été joué en jeu : ordre tiré des plages des donjons et des chapitres Horde habituels (plans.lua).
+------------------------------------------------------------------------------
+local H = {}
+L.Horde = H
+
+H.startsTo = 12
+H.meet = "Les départs se rejoignent aux Tarides au niveau 12 (zeppelin de Fossoyeuse à Orgrimmar pour les Morts-vivants)."
+
+H.starts = {
+  { races = { "Orc", "Troll" }, blocks = {
+      { zone = "Valley of Trials", from = 1, to = 6 }, { zone = "Durotar", from = 6, to = 12 } } },
+  { races = { "Tauren" }, blocks = {
+      { zone = "Camp Narache", from = 1, to = 6 }, { zone = "Mulgore", from = 6, to = 12 } } },
+  { races = { "Undead" }, blocks = {
+      { zone = "Deathknell", from = 1, to = 6 }, { zone = "Tirisfal Glades", from = 6, to = 12 },
+      { zone = "Silverpine Forest", from = 12, to = 14, note = "puis le zeppelin de Fossoyeuse à Orgrimmar" } } },
+  { races = { "Skyborne" }, blocks = { { zone = "Zephras Isle", from = 1, to = 15 } } },
+}
+
+H.rungs = {
+  { key = "RFC", dungeon = "RFC",
+    before = { { zone = "The Barrens", from = 12, to = 15, role = "zone" },
+               { zone = "Orgrimmar", from = 15, to = 15, role = "prep" } },
+    alt = { zone = "The Barrens", from = 15, to = 17 },
+    verify = { "The Power to Destroy... (5725) se prend à Fossoyeuse : hors route pour les départs de Kalimdor" } },
+  { key = "WC", dungeon = "WC",
+    before = { { zone = "The Barrens", from = 15, to = 19, role = "zone" } },
+    alt = { zone = "Stonetalon Mountains", from = 19, to = 21 } },
+  { key = "LORDAERON", dungeon = "LORDAERON", entry = 20,
+    entryWhy = "un seul aller-retour en zeppelin à Fossoyeuse, après les Cavernes des lamentations plutôt qu'à 17",
+    before = { { zone = "Undercity", from = 20, to = 20, role = "prep" } },
+    alt = { zone = "Thousand Needles", from = 20, to = 27 },
+    verify = { "plage 15-22 annoncée par Blizzard", "donneurs à Fossoyeuse, à Tirisfal et au Sépulcre",
+               "trajet : zeppelin d'Orgrimmar à Fossoyeuse et retour" } },
+  { key = "BFD", dungeon = "BFD",
+    before = { { zone = "Ashenvale", from = 21, to = 26, role = "zone" } },
+    alt = { zone = "Thousand Needles", from = 25, to = 27 } },
+  { key = "SFK", dungeon = "SFK", entry = 27,
+    entryWhy = "joué à l'arrivée à Fossoyeuse, avant les Contreforts d'Hautebrande, plutôt qu'à 24 par un aller-retour de plus",
+    before = { { zone = "Hillsbrad Foothills", from = 27, to = 29, role = "zone" } },
+    alt = { zone = "Desolace", from = 28, to = 35 },
+    verify = { "donneurs à Fossoyeuse et au Sépulcre, long trajet depuis Tarren Mill" } },
+  { key = "EXCAVATION", dungeon = "EXCAVATION", entry = 28,
+    entryWhy = "joué depuis Hammerfall, au passage des Hautes-terres d'Arathi",
+    before = { { zone = "Arathi Highlands", from = 29, to = 31, role = "zone" } },
+    alt = { zone = "Desolace", from = 28, to = 35 },
+    verify = { "plage 24-29 annoncée, quêtes de niveau 31", "accès Horde par Arathi puis les Paluns à pied (zone Alliance)",
+               "donneurs à Orgrimmar, aux Pitons-du-Tonnerre et à Hammerfall" } },
+  { key = "DALARAN", dungeon = "DALARAN",
+    before = { { zone = "Alterac Mountains", from = 29, to = 31, role = "zone" } },
+    alt = { zone = "Desolace", from = 31, to = 35 },
+    verify = { "plage 28-33 annoncée, quêtes de niveau 33" } },
+  { key = "SM_GY", dungeon = "SM", wing = "Graveyard", min = 28, max = 38, quests = { 1051, 1113 },
+    before = { { zone = "Alterac Mountains", from = 29, to = 31, role = "zone" } },
+    alt = { zone = "Desolace", from = 31, to = 35 },
+    skip = { [1113] = "suite de Going, Going, Guano! (1109), laissée hors route" },
+    verify = { "plage de l'aile", "Vorrel's Revenge (1051) : prise dans le Cimetière" } },
+  { key = "SM_LIB", dungeon = "SM", wing = "Library", min = 29, max = 39, quests = { 1049, 1159, 1160 },
+    before = { { zone = "Arathi Highlands", from = 30, to = 31, role = "zone" } },
+    alt = { zone = "Desolace", from = 32, to = 35 },
+    verify = { "plage de l'aile", "Compendium of the Fallen (1049) : Pitons-du-Tonnerre, fermée aux Morts-vivants",
+               "Test of Lore (1159, 1160) : suite de Brackenwall (6627)" } },
+  { key = "RFK", dungeon = "RFK",
+    before = { { zone = "Thousand Needles", from = 31, to = 33, role = "zone" } },
+    alt = { zone = "Desolace", from = 32, to = 35 },
+    skip = { [1109] = "prise et rendue à Fossoyeuse, loin de la route après le Kraal" } },
+  { key = "GNOMER", dungeon = "GNOMER", entry = 35, entrance = { 1434, 27.6, 77.48 },
+    entryWhy = "accès Horde par le transpondeur de Booty Bay, au passage de Strangleronce",
+    before = { { zone = "Stranglethorn Vale", from = 35, to = 37, role = "zone" } },
+    alt = { zone = "Stranglethorn Vale", from = 36, to = 42 },
+    verify = { "Chief Engineer Scooty (2842) puis Gnomer-gooooone! (2843) ouvrent le transpondeur de Booty Bay",
+               "la route envoie à Scooty (Booty Bay), pas à l'entrée de Dun Morogh : position du transpondeur à vérifier" } },
+  { key = "SM_ARM", dungeon = "SM", wing = "Armory", min = 32, max = 42, quests = {},
+    before = { { zone = "Arathi Highlands", from = 37, to = 38, role = "zone" } },
+    alt = { zone = "Stranglethorn Vale", from = 35, to = 42 },
+    verify = { "plage de l'aile", "Herod (Into The Scarlet Monastery, 1048) est compté avec la Cathédrale" } },
+  { key = "SM_CATH", dungeon = "SM", wing = "Cathedral", min = 35, max = 45, quests = { 1048 },
+    before = { { zone = "Arathi Highlands", from = 37, to = 38, role = "zone" } },
+    alt = { zone = "Stranglethorn Vale", from = 38, to = 42 },
+    verify = { "plage de l'aile", "Into The Scarlet Monastery (1048) : niveau requis 33, Loksey, Herod, Mograine et Whitemane" } },
+  { key = "ULDAMAN", dungeon = "ULDAMAN",
+    before = { { zone = "Badlands", from = 38, to = 40, role = "zone" } },
+    alt = { zone = "Riverglades", from = 39, to = 43 } },
+  { key = "RFD", dungeon = "RFD",
+    before = { { zone = "Dustwallow Marsh", from = 38, to = 40, role = "zone" } },
+    alt = { zone = "Riverglades", from = 39, to = 43 } },
+  { key = "MARAUDON", dungeon = "MARAUDON",
+    before = { { zone = "Riverglades", from = 39, to = 43, role = "zone" },
+               { zone = "Desolace", from = 42, to = 44, role = "prep" } },
+    alt = { zone = "Feralas", from = 45, to = 47 },
+    verify = { "Maraudon en un seul échelon (une seule zone 2100 dans QuestieDB)" } },
+  { key = "ZF", dungeon = "ZF",
+    before = { { zone = "Tanaris", from = 44, to = 46, role = "zone" } },
+    alt = { zone = "Feralas", from = 45, to = 47 } },
+  { key = "ST", dungeon = "ST",
+    before = { { zone = "Stranglethorn Vale", from = 47, to = 49, role = "zone" },
+               { zone = "The Hinterlands", from = 49, to = 51, role = "zone" },
+               { zone = "Swamp of Sorrows", from = 50, to = 52, role = "prep" } },
+    alt = { zone = "Blasted Lands", from = 51, to = 53 },
+    skip = { [8733] = "niveau requis 60" } },
+  { key = "BRD", dungeon = "BRD",
+    before = { { zone = "Searing Gorge", from = 52, to = 54, role = "zone" },
+               { zone = "Burning Steppes", from = 53, to = 54, role = "prep" } },
+    alt = { zone = "Azshara", from = 53, to = 55 },
+    skip = { [9015] = "niveau requis 58, suite de l'ensemble de donjon" },
+    verify = { "donneurs à Kargath (Badlands) : détour depuis la Gorge des Vents brûlants" } },
+  { key = "DM_EAST", dungeon = "DIREMAUL", wing = "East", min = 55, max = 60, quests = { 7441, 7489, 7492 },
+    before = { { zone = "Felwood", from = 54, to = 56, role = "zone" },
+               { zone = "Un'Goro Crater", from = 55, to = 56, role = "zone" },
+               { zone = "Feralas", from = 56, to = 57, role = "prep" } },
+    alt = { zone = "Winterspring", from = 57, to = 58 },
+    verify = { "plage de l'aile", "Pusillin et Lethtendris : aile Est" } },
+  { key = "SCHOLO", dungeon = "SCHOLO",
+    before = { { zone = "Western Plaguelands", from = 57, to = 58, role = "zone" } },
+    alt = { zone = "Winterspring", from = 57, to = 58 } },
+  { key = "DM_WEST", dungeon = "DIREMAUL", wing = "West", min = 56, max = 60, quests = { 7481 },
+    before = { { zone = "Feralas", from = 56, to = 57, role = "prep" } },
+    alt = { zone = "Winterspring", from = 57, to = 58 },
+    verify = { "plage de l'aile", "Elven Legends (7481) : aile Ouest" } },
+  { key = "DM_NORTH", dungeon = "DIREMAUL", wing = "North", min = 56, max = 60, quests = { 8948 },
+    before = { { zone = "Feralas", from = 56, to = 57, role = "prep" } },
+    alt = { zone = "Winterspring", from = 57, to = 58 },
+    verify = { "plage de l'aile", "Anthion's Old Friend (8948) : niveau requis 58, suite 8947 ; aile à confirmer" } },
+  { key = "STRAT_LIVE", dungeon = "STRAT", wing = "Live", quests = { 5214, 5243, 5251, 5262, 5281, 5282, 5846, 5848 },
+    before = { { zone = "Eastern Plaguelands", from = 58, to = 59, role = "zone" } },
+    alt = { zone = "Silithus", from = 59, to = 60 },
+    verify = { "répartition des quêtes entre les deux côtés de Stratholme" } },
+  { key = "STRAT_UD", dungeon = "STRAT", wing = "Undead", quests = { 5212, 5213, 5263, 5462, 5463, 6163, 8930, 8945 },
+    before = { { zone = "Eastern Plaguelands", from = 58, to = 59, role = "prep" } },
+    alt = { zone = "Silithus", from = 59, to = 60 },
+    verify = { "répartition des quêtes entre les deux côtés de Stratholme",
+               "Ramstein (6163) : suite de Nathanos Blightcaller, facultative",
+               "Dead Man's Plea (8945) : niveau requis 58, suite 8930, facultative" } },
+}
+
+H.omitted = {
+  { name = "The Hall of Thanes", why = "entrée à Ironforge, aucune quête Horde dans QuestieDB : Alliance seulement" },
+  { name = "The Deadmines", why = "aucune quête Horde dans QuestieDB : Alliance seulement" },
+  { name = "The Stockade", why = "entrée à Stormwind, aucune quête Horde dans QuestieDB : Alliance seulement" },
+  { name = "Lower Blackrock Spire", why = "hors route à la demande ; QuestieDB ne sépare pas le bas du haut du Pic (zone 1583)" },
+  { name = "Upper Blackrock Spire", why = "raid de 10, pas un donjon 5 joueurs" },
+  { name = "Raids (Molten Core, Onyxia, Zul'Gurub, Ahn'Qiraj, Naxxramas)", why = "pas des donjons 5 joueurs" },
+}
+
+setmetatable(H, { __index = function(_, k)
+  if k == "ENTRY_OFFSET" or k == "ENTRY_CAP" or k == "STARS" then return L[k] end
+end })
+
+L.FACTIONS = { "Alliance", "Horde" }
+
+-- forFaction("Alliance" | "Horde") -> échelle de la faction (mêmes champs : starts, rungs, omitted...).
+function L.forFaction(faction)
+  if faction == "Horde" then return H end
+  return L
+end
 
 return L

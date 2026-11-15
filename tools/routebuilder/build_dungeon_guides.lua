@@ -1,13 +1,14 @@
--- tools/routebuilder/build_dungeon_guides.lua : génère les routes du mode « Donjons » (Alliance).
+-- tools/routebuilder/build_dungeon_guides.lua : génère les routes du mode « Donjons » (Alliance et Horde).
 -- Lua 5.1 / LuaJIT, hors jeu, lancé depuis la racine du projet :
 --   luajit tools/routebuilder/build_dungeon_guides.lua [--db PATH] [--questie PATH] [--out DIR] [--report DIR]
---          [--date AAAA-MM-JJ] [--jit]
+--          [--date AAAA-MM-JJ] [--faction Alliance|Horde|all] [--jit]
 --
--- Écrit <out>/AllianceDungeon/AD_*.lua, <out>/DungeonGuides.xml et <report>/*.md (un rapport par chapitre
--- et ROUTES.md). N'écrit ni les guides habituels, ni Guides.xml, ni ClassQuestData.lua, ni BagQuestData.lua.
+-- Écrit <out>/AllianceDungeon/AD_*.lua, <out>/HordeDungeon/HD_*.lua, <out>/DungeonGuides.xml et <report>/*.md
+-- (un rapport par chapitre, ROUTES.md pour l'Alliance et ROUTES-HORDE.md). Avec --faction, seule cette faction
+-- est régénérée ; DungeonGuides.xml liste toujours les chapitres des deux factions présents sur le disque. N'écrit ni les guides habituels, ni Guides.xml, ni ClassQuestData.lua, ni BagQuestData.lua.
 --
 -- Principe : les chapitres de plans_dungeon.lua sont simulés par le générateur habituel (build.lua, sim.lua),
--- à la place des plans de l'Alliance. La simulation de référence est celle d'un personnage qui contourne
+-- à la place des plans de la faction. La simulation de référence est celle d'un personnage qui contourne
 -- toutes les instances et joue toutes les alternatives : aucune XP d'instance n'est supposée. Puis :
 --   * en fin de chapitre, un bloc « instance » par échelon (plan.after) : aller à l'entrée, objectifs et
 --     rendus des quêtes de l'échelon qui sont dans le journal (étapes rung + phase = "run") ;
@@ -22,6 +23,7 @@ local world = require("world")
 local plansm = require("plans")
 local emit = require("emit")
 local PD = require("plans_dungeon")
+local pathsm = require("paths")
 local build = assert(loadfile(here .. "/build.lua"))("--as-module")
 local BR = assert(loadfile(here .. "/build_dungeon_route.lua"))("--as-module")
 
@@ -35,13 +37,14 @@ local CHAIN_DEPTH = 6     -- niveaux de préquêtes remontés depuis une quête 
 local function parseArgs(argv)
   local o = { db = qdb.DEFAULT_DB, questie = qdb.DEFAULT_QUESTIE, out = "Questify/Guides",
               report = "docs/dungeon-mode/routes", data = "Questify/Guides/DungeonData.lua",
-              overrides = here .. "/overrides.lua", date = os.date("%Y-%m-%d") }
+              overrides = here .. "/overrides.lua", date = os.date("%Y-%m-%d"), faction = "all" }
   local i = 1
   while i <= #argv do
     local a, v = argv[i], argv[i + 1]
     if a == "--db" then o.db = v elseif a == "--questie" then o.questie = v
     elseif a == "--out" then o.out = v elseif a == "--report" then o.report = v
     elseif a == "--date" then o.date = v elseif a == "--data" then o.data = v
+    elseif a == "--faction" then o.faction = v
     elseif a == "--jit" then o.jit = true; i = i - 1
     else error("unknown argument " .. tostring(a)) end
     i = i + 2
@@ -56,10 +59,11 @@ end
 
 -- Index des échelons : quête -> échelon, préquête d'une quête d'échelon -> échelon, nom de donjon -> échelons,
 -- quête -> entrée de DungeonData (inside, endAt...).
-function M.index(D, rungs, data)
+function M.index(D, rungs, data, faction)
+  faction = faction or "Alliance"
   local ix = { byKey = {}, questRung = {}, prereqRung = {}, byName = {}, dq = {} }
   for _, d in ipairs(data.dungeons) do
-    for _, q in ipairs(d.quests and d.quests.Alliance or {}) do ix.dq[q.id] = q end
+    for _, q in ipairs(d.quests and d.quests[faction] or {}) do ix.dq[q.id] = q end
   end
   for _, r in ipairs(rungs) do
     ix.byKey[r.key] = r
@@ -247,7 +251,8 @@ function M.tagSteps(ix, plan, steps)
 end
 
 -- Déplace les rendus lointains d'un bloc « instance » au début du prochain chapitre joué d'office (pas une
--- alternative) qui passe par la zone du PNJ. -> nombre de rendus déplacés.
+-- alternative) qui passe par la zone du PNJ, sans dépasser un chapitre en tête duquel la quête de donjon quitte
+-- le journal (règle de paths.replay : DUNGEON_RELEASE_FROM, DUNGEON_RELEASE_GAP). -> nombre de rendus déplacés.
 function M.deferTurnins(chapters)
   local moved = 0
   for i, ch in ipairs(chapters) do
@@ -257,6 +262,8 @@ function M.deferTurnins(chapters)
       if s._far and s[1] == "turnin" and s._endMap then
         for j = i + 1, math.min(i + DEFER_SPAN, #chapters) do
           local c = chapters[j]
+          local min, level = c.plan.minLevel or 0, s._c and s._c.level
+          if level and min >= pathsm.DUNGEON_RELEASE_FROM and level <= min - pathsm.DUNGEON_RELEASE_GAP then break end
           if not c.plan.alt and (contains(c.plan.zones, s._endMap) or contains(c.plan.endZones, s._endMap)) then
             target = c
             break
@@ -287,32 +294,57 @@ function M.guideText(plan, steps, report, meta)
   local extra = '  mode = "dungeon",\n'
   if plan.after_ then extra = extra .. ("  after = %s,\n"):format(emit.value(plan.after_)) end
   local n
-  text, n = text:gsub('(\n  faction = "Alliance",\n)', function(l) return l .. extra end, 1)
+  text, n = text:gsub('(\n  faction = "' .. (plan.faction or "Alliance") .. '",\n)', function(l) return l .. extra end, 1)
   assert(n == 1, "faction line not found in " .. plan.id)
   return text
 end
 
 local function fmtMin(s) return math.floor((s or 0) / 60 + 0.5) end
 
-function M.main(argv)
-  local o = parseArgs(argv)
-  if jit and not o.jit then jit.off() end
-  local ladder = require("dungeon_ladder")
-  local data = BR.loadData(o.data)
-  local rungs = BR.build(ladder, data)
-  local errs = PD.check(rungs)
+-- Fichier ROUTES d'une faction : ROUTES.md (Alliance), ROUTES-HORDE.md.
+local function routesFile(faction)
+  return faction == "Alliance" and "ROUTES.md" or ("ROUTES-" .. faction:upper() .. ".md")
+end
+
+local function exists(path)
+  local f = io.open(path, "rb")
+  if f then f:close() end
+  return f ~= nil
+end
+
+-- DungeonGuides.xml : chapitres des deux factions présents sur le disque, dans l'ordre des troncs.
+function M.writeXml(out)
+  local xml = { '<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+                '    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\\FrameXML\\UI.xsd">',
+                '  <!-- Fichier réécrit par tools/routebuilder/build_dungeon_guides.lua : chapitres du mode « Donjons ». -->' }
+  for _, faction in ipairs({ "Alliance", "Horde" }) do
+    local folder = PD.FOLDER[faction]
+    for _, t in ipairs(PD.trunkOf(faction)) do
+      if exists(out .. "/" .. folder .. "/" .. t.id .. ".lua") then
+        xml[#xml + 1] = ('  <Script file="%s\\%s.lua"/>'):format(folder, t.id)
+      end
+    end
+  end
+  xml[#xml + 1] = "</Ui>"
+  build.writeFile(out .. "/DungeonGuides.xml", table.concat(xml, "\n") .. "\n")
+end
+
+-- Génère les routes d'une faction. -> 0, ou 1 sur une chaîne incohérente.
+function M.runFaction(o, faction, data, ov, W)
+  local ladder = require("dungeon_ladder").forFaction(faction)
+  local rungs = BR.build(ladder, data, faction)
+  local errs = PD.check(rungs, faction)
   if #errs > 0 then
-    for _, e in ipairs(errs) do io.stderr:write("plans_dungeon.lua: " .. e .. "\n") end
+    for _, e in ipairs(errs) do io.stderr:write(("plans_dungeon.lua (%s): %s\n"):format(faction, e)) end
     return 1
   end
-  local ov = build.loadOverrides(o.overrides)
-  local W = world.load(here .. "/data")
-  local D = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = "Alliance" }), ov.pre)
-  local ix = M.index(D, rungs, data)
-  local list = PD.build(plansm.Alliance, rungs, function(id)
+  local D = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = faction }), ov.pre)
+  local ix = M.index(D, rungs, data, faction)
+  local classic = { Alliance = plansm.Alliance, Horde = plansm.Horde }
+  local list = PD.build(classic[faction], rungs, function(id)
     local e = ix.dq[id]
     return e and e.at or nil
-  end)
+  end, faction)
   local runInfo, notes = {}, {}
   for _, p in ipairs(list) do
     if not p.noEmit then
@@ -346,37 +378,34 @@ function M.main(argv)
       end
     end
   end
-  local classicAlliance, classicHorde = plansm.Alliance, plansm.Horde
-  plansm.Alliance, plansm.Horde = list, {}
-  local results, order = build.simulateFaction(D, W, "Alliance", ov)
-  plansm.Alliance, plansm.Horde = classicAlliance, classicHorde
+  plansm.Alliance, plansm.Horde = {}, {}
+  plansm[faction] = list
+  local ok, results, order = pcall(build.simulateFaction, D, W, faction, ov)
+  plansm.Alliance, plansm.Horde = classic.Alliance, classic.Horde
+  if not ok then error(results, 0) end
 
   local chapters = {}
   for _, id in ipairs(order) do
     local r = results[id]
     if not r.plan.noEmit then chapters[#chapters + 1] = r end
   end
-  -- ordre du tronc (le parcours de l'Elfe de la nuit est simulé après les autres départs)
+  -- ordre du tronc (les autres départs sont simulés après le premier)
   local pos = {}
-  for i, t in ipairs(PD.TRUNK) do pos[t.id] = i end
+  for i, t in ipairs(PD.trunkOf(faction)) do pos[t.id] = i end
   table.sort(chapters, function(a, b) return pos[a.plan.id] < pos[b.plan.id] end)
   for _, ch in ipairs(chapters) do M.tagSteps(ix, ch.plan, ch.steps) end
   local moved = M.deferTurnins(chapters)
 
-  local dir = o.out .. "/AllianceDungeon"
+  local dir = o.out .. "/" .. PD.FOLDER[faction]
   build.mkdir(dir)
   build.mkdir(o.report)
   local meta = { commit = D.commit, date = o.date }
-  local xml = { '<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
-                '    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\\FrameXML\\UI.xsd">',
-                '  <!-- Fichier réécrit par tools/routebuilder/build_dungeon_guides.lua : chapitres du mode « Donjons ». -->' }
   local rows = {}
   for _, ch in ipairs(chapters) do
     local plan, rep = ch.plan, ch.report
     rep.steps = #ch.steps
     build.writeFile(dir .. "/" .. plan.id .. ".lua", M.guideText(plan, ch.steps, rep, meta))
     build.writeFile(o.report .. "/" .. plan.id .. ".md", build.reportText(D, plan, ch.steps, rep, meta))
-    xml[#xml + 1] = ('  <Script file="AllianceDungeon\\%s.lua"/>'):format(plan.id)
     local role = plan.alt and ("alternative de " .. table.concat(plan.alt, ", "))
       or plan.run and ("instance : " .. table.concat(plan.run, ", ")) or "zone"
     rows[#rows + 1] = ("| %s | %s | %d-%d | %.2f → %.2f | %d | %d | %d | %s | %s |"):format(plan.id, plan.title,
@@ -386,12 +415,10 @@ function M.main(argv)
       rep.startLevel or 0, rep.endLevel or 0, fmtMin(rep.time), role,
       (rep.endLevel or 0) < plan.maxLevel - 1 and "  [below maxLevel-1]" or ""))
   end
-  xml[#xml + 1] = "</Ui>"
-  build.writeFile(o.out .. "/DungeonGuides.xml", table.concat(xml, "\n") .. "\n")
 
   local doc = {}
   local function w(s) doc[#doc + 1] = s or "" end
-  w("# Mode « Donjons » Alliance : routes générées")
+  w(("# Mode « Donjons » %s : routes générées"):format(faction))
   w()
   w(("Généré par `tools/routebuilder/build_dungeon_guides.lua` le %s (QuestieDB commit `%s`). Ne pas modifier à la main."):format(o.date, D.commit or "?"))
   w()
@@ -423,8 +450,27 @@ function M.main(argv)
   w()
   w(("Rendus lointains déplacés vers un chapitre suivant : %d."):format(moved))
   w()
-  build.writeFile(o.report .. "/ROUTES.md", table.concat(doc, "\n"))
-  print(("wrote %d chapter(s) in %s, DungeonGuides.xml, reports in %s; %d far turn-in(s) moved"):format(#chapters, dir, o.report, moved))
+  build.writeFile(o.report .. "/" .. routesFile(faction), table.concat(doc, "\n"))
+  print(("%s: wrote %d chapter(s) in %s, reports in %s; %d far turn-in(s) moved"):format(faction, #chapters, dir, o.report, moved))
+  return 0
+end
+
+function M.main(argv)
+  local o = parseArgs(argv)
+  if jit and not o.jit then jit.off() end
+  local factions = o.faction == "all" and { "Alliance", "Horde" } or { o.faction }
+  for _, f in ipairs(factions) do
+    if f ~= "Alliance" and f ~= "Horde" then error("unknown faction " .. tostring(f)) end
+  end
+  local data = BR.loadData(o.data)
+  local ov = build.loadOverrides(o.overrides)
+  local W = world.load(here .. "/data")
+  for _, faction in ipairs(factions) do
+    local code = M.runFaction(o, faction, data, ov, W)
+    if code ~= 0 then return code end
+  end
+  M.writeXml(o.out)
+  print("wrote DungeonGuides.xml")
   return 0
 end
 

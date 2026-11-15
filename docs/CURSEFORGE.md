@@ -71,7 +71,7 @@ always shows you the next thing to do.
   grinding, one continent at a time. About 93 to 96 hours of simulated play from 1 to 60, depending on your race.
 - **Follows your quest log.** Steps tick themselves; steps your character cannot do are skipped.
   `/qf skip` and `/qf back` when you want to go your own way.
-- **Automatic route with dungeons (Alliance).** A second route from level 12 to 60 built around dungeon quests: it
+- **Automatic route with dungeons (Alliance and Horde).** A second route from level 12 to 60 built around dungeon quests: it
   goes through every 5-player dungeon (each wing included) and clears a zone between two of them. One checkbox per
   dungeon; "Skip this dungeon" in the tracker when you have no group, with a reminder to come back while you are
   still in its level range; "Alternative path" when a zone is too hard or overrun by the other faction. At a
@@ -130,7 +130,7 @@ t'indique toujours quoi faire ensuite.
   race.
 - **Suit ton journal** : les étapes se cochent seules ; celles que ton personnage ne peut pas faire sont sautées.
   `/qf skip` et `/qf back` quand tu veux faire à ta façon.
-- **Route automatique avec les donjons (Alliance)** : un second parcours du niveau 12 au 60, construit autour des
+- **Route automatique avec les donjons (Alliance et Horde)** : un second parcours du niveau 12 au 60, construit autour des
   quêtes de donjon : il passe par tous les donjons à 5 joueurs (chaque aile comprise) et vide une zone entre deux.
   Une case par donjon ; « Passer ce donjon » dans le suivi quand tu n'as pas de groupe, avec un rappel pour y
   revenir tant que tu es dans sa tranche de niveau ; « Chemin alternatif » quand une zone est trop dure ou envahie

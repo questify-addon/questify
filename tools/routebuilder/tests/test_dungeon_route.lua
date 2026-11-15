@@ -87,11 +87,14 @@ return {
     local B = br()
     local L = ladder({ { key = "DM", dungeon = "DM" },
                        { key = "SM_LIB", dungeon = "SM", wing = "Library", min = 29, max = 39, quests = { 1050, 1053 } } })
-    local text = B.emitLua(B.build(L, data()), L, data(), "2026-01-01")
+    local text = B.emitLua({ { faction = "Alliance", rungs = B.build(L, data()) },
+                             { faction = "Horde", rungs = B.build(ladder({ { key = "SFK", dungeon = "SFK" } }), data(), "Horde") } },
+                           L, data(), "2026-01-01")
     local Q = {}
     assert(loadstring(text))("Questify", Q)
-    local d = Q.DungeonRouteData
-    t.eq(d.faction, "Alliance"); t.eq(d.entryOffset, 2)
+    t.eq(Q.DungeonRouteData.entryOffset, 2)
+    t.eq(#Q.DungeonRouteData.Horde.rungs, 1); t.eq(Q.DungeonRouteData.Horde.rungs[1].quests[1], 9)
+    local d = Q.DungeonRouteData.Alliance
     t.eq(#d.rungs, 2)
     t.eq(d.rungs[1].key, "DM"); t.eq(d.rungs[1].areaId, 1581); t.eq(d.rungs[1].stars, 3)
     t.eq(d.rungs[2].wing, "Library"); t.eq(d.rungs[2].est, true); t.eq(#d.rungs[2].quests, 2)
@@ -103,20 +106,39 @@ return {
     local B = br()
     local L = dofile(H.ROOT .. "/dungeon_ladder.lua")
     local D = B.loadData(PROJECT .. "/Questify/Guides/DungeonData.lua")
-    local rungs = B.build(L, D)
-    t.ok(#rungs >= 26, "every 5-player dungeon and wing")
-    local f = assert(io.open(PROJECT .. "/Questify/Guides/DungeonRouteData.lua", "rb"))
-    local shipped = f:read("*a"); f:close()
-    local date = shipped:match("généré le (%d+%-%d+%-%d+)")
-    t.eq(B.emitLua(rungs, L, D, date), shipped, "DungeonRouteData.lua is stale: run build_dungeon_route.lua")
-    local p = assert(io.open(PROJECT .. "/docs/dungeon-mode/ECHELLE.md", "rb"))
-    local plan = p:read("*a"); p:close()
-    t.eq(B.emitPlan(rungs, L, D, plan:match("le (%d+%-%d+%-%d+) à partir")), plan, "ECHELLE.md is stale")
-    -- chaque échelon a ses zones d'avant et son alternative en extérieur
-    for _, r in ipairs(rungs) do
-      t.ok(type(r.rung.before) == "table" and #r.rung.before > 0, "no zone before " .. r.key)
-      t.ok(type(r.rung.alt) == "table" and r.rung.alt.zone, "no open-world alternative for " .. r.key)
-      t.ok(r.rung.alt.from <= r.entry + 1, "alternative too high for " .. r.key)
+    local function read(path)
+      local f = assert(io.open(path, "rb"))
+      local text = f:read("*a"); f:close()
+      return (text:gsub("\r\n", "\n"))   -- copie de travail Windows (autocrlf)
     end
+    local sets = {}
+    for _, faction in ipairs(L.FACTIONS) do
+      local fl = L.forFaction(faction)
+      local rungs = B.build(fl, D, faction)
+      t.ok(#rungs >= 25, faction .. ": every 5-player dungeon and wing")
+      sets[#sets + 1] = { faction = faction, rungs = rungs }
+      local plan = read(B.planPath(PROJECT .. "/docs/dungeon-mode/ECHELLE.md", faction))
+      t.eq(B.emitPlan(rungs, fl, D, plan:match("le (%d+%-%d+%-%d+) à partir"), faction), plan,
+        B.planPath("ECHELLE.md", faction) .. " is stale")
+      -- chaque échelon a ses zones d'avant et son alternative en extérieur
+      for _, r in ipairs(rungs) do
+        t.ok(type(r.rung.before) == "table" and #r.rung.before > 0, "no zone before " .. r.key)
+        t.ok(type(r.rung.alt) == "table" and r.rung.alt.zone, "no open-world alternative for " .. r.key)
+        t.ok(r.rung.alt.from <= r.entry + 1, "alternative too high for " .. r.key)
+      end
+    end
+    local shipped = read(PROJECT .. "/Questify/Guides/DungeonRouteData.lua")
+    local date = shipped:match("généré le (%d+%-%d+%-%d+)")
+    t.eq(B.emitLua(sets, L, D, date), shipped, "DungeonRouteData.lua is stale: run build_dungeon_route.lua")
+  end,
+
+  -- Horde : les quêtes d'un échelon sont celles de la faction ; l'entrée peut être remplacée dans l'échelle
+  horde_ladder_uses_horde_quests = function(t)
+    local B = br()
+    local out = B.build(ladder({ { key = "SFK", dungeon = "SFK", entrance = { 1, 2, 3 } } }), data(), "Horde")
+    t.eq(#out[1].quests, 1); t.eq(out[1].quests[1], 9)
+    t.eq(out[1].entrance[1], 1); t.eq(out[1].entranceSource, "ladder")
+    local ok, err = pcall(B.build, ladder({ { key = "DM", dungeon = "DM", skip = { [166] = "x" } } }), data(), "Horde")
+    t.ok(not ok and tostring(err):find("not an Horde quest", 1, true), tostring(err))
   end,
 }
