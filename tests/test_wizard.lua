@@ -554,4 +554,59 @@ return {
     t.eq(plain(W.recap.hideBlizzard:GetText()), "Suivi du jeu : affiché")
     t.eq(#Mock.errors, 0)
   end,
+
+  wizard_objectives_page_previews_and_saves = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    t.ok(W.pages[W.PAGE_OBJECTIVES]:IsShown(), "objectives page")
+    t.ok(W.objRadios.objLayout.list:GetChecked() and W.objRadios.objDetail.mobs:GetChecked(), "defaults checked")
+    local Rows = Q.UI.ObjectiveRows
+    local host = W.preview.host
+    local function shownBars()
+      local n = 0
+      for _, r in ipairs(host.objRows or {}) do if r.barBg:IsShown() then n = n + 1 end end
+      return n
+    end
+    local function shownMobs()
+      local n = 0
+      for _, r in ipairs(host.mobRows or {}) do if r.name:IsShown() then n = n + 1 end end
+      return n
+    end
+    t.eq(shownBars(), 0, "list: no bars")
+    t.eq(shownMobs(), 2, "mobs under their objectives")
+    local h1 = W.preview.frame:GetHeight()
+    -- chaque clic redessine l'aperçu
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    t.eq(W.choice.objLayout, "bars")
+    t.ok(W.objRadios.objLayout.bars:GetChecked() and not W.objRadios.objLayout.list:GetChecked())
+    t.eq(shownBars(), 3, "one bar per objective")
+    t.ok(W.preview.frame:GetHeight() > h1, "taller with bars")
+    Mock.click(W.objRadios.objDetail.count, "LeftButton")
+    t.eq(shownMobs(), 0, "counter only: no mob lines")
+    Mock.click(W.objRadios.objDetail.distance, "LeftButton")
+    t.ok(Rows:VisibleText(host):find("64 yd", 1, true), "distance shown: " .. Rows:VisibleText(host))
+    Mock.click(W.objRadios.objLayout.quest, "LeftButton")
+    t.ok(Rows:VisibleText(host):find(Q.L.UI_WIZ_OBJ_SAMPLE_QUEST .. " · 1/4", 1, true), "quest heading")
+    t.eq(Q.char.wizardDraft.objLayout, "quest", "draft kept")
+    -- récapitulatif puis « Terminer » : réglages enregistrés
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.objectives:GetText()):find(Q.L.OBJ_LAYOUT_QUEST, 1, true), "recap line")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.objLayout"), "quest")
+    t.eq(Q.Settings:Get("tracker.objDetail"), "distance")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_objectives_skip_restores = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    Mock.click(W.skipButton, "LeftButton")
+    t.eq(W.choice.objLayout, "list", "skip keeps the starting choice")
+    t.eq(W.page, W.NUM_PAGES)
+  end,
 }

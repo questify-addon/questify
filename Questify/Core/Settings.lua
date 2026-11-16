@@ -16,7 +16,8 @@ Settings.defaults = {
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
     theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
     foldBlizzard = true,                    -- UI/BlizzardTracker.lua : suivi de Blizzard replié
-    hideBlizzard = false },                 -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
+    hideBlizzard = false,                 -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
+    objLayout = "list", objDetail = "mobs" },   -- Engine/Objectives.lua : objectifs de l'étape
   nameplates = true,
   objectGlow = true,
   trainerAlert = true,
@@ -38,6 +39,7 @@ Settings.defaults = {
   bagQuestOffer = true,     -- Engine/BagQuestOffer.lua
   -- Repères des étapes sur la carte du monde et la minicarte
   mapPins = true,           -- UI/MapPins.lua
+  zoneOverlay = true,       -- UI/ZoneOverlay.lua : zone du mode zone tracée sur la carte et la minicarte
   -- Objectifs proches de plusieurs quêtes regroupés en une seule visite
   zoneMode = true,          -- Engine/ZoneMode.lua
   -- Fin de chapitre à plusieurs suites : cartes à choisir (sinon la suite par défaut, sans demander)

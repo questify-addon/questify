@@ -10,7 +10,8 @@ local addonName, Q = ...
 -- grands. La minicarte ne montre que l'étape courante. Survol : texte de l'étape ; clic : cible
 -- de navigation (Q.Nav:SetManualTarget : prioritaire jusqu'à l'étape suivante).
 -- Mode zone (Engine/ZoneMode.lua) : un repère vert au centre de la zone, en plus des repères
--- numérotés (sur la minicarte seulement hors de la zone).
+-- numérotés (sur la minicarte seulement hors de la zone). Zone tracée sur la carte du monde
+-- (UI/ZoneOverlay.lua, option zoneOverlay) : pas de repère au centre sur la carte du monde.
 -- Rien ici n'est protégé, mais le calcul attend la fin du combat (rien d'utile à redessiner
 -- pendant). Option « mapPins ». Sans QuestieDB ou sans les bibliothèques : rien, en silence.
 -- Coordonnées : 0-100 dans l'addon, 0-1 chez HereBeDragons.
@@ -412,7 +413,9 @@ function MapPins:PlaceZone(lib)
   if type(c.mapId) ~= "number" or not validCoord(c.x) or not validCoord(c.y) then return end
   local title = Z:Title(z)
   local p = { mapId = c.mapId, x = c.x, y = c.y, name = title, zone = z }
-  place(lib, "world", cur, 1, "zone", p, title)
+  -- zone tracée sur la carte du monde (UI/ZoneOverlay.lua) : pas de repère au centre en plus
+  local ZO = Q.UI.ZoneOverlay
+  if not (ZO and ZO.DrawsWorld and ZO:DrawsWorld()) then place(lib, "world", cur, 1, "zone", p, title) end
   if not z.inside then place(lib, "mini", cur, 1, "zone", p, title, true) end
 end
 
@@ -473,6 +476,10 @@ end
 
 -- Option coupée : tout est retiré tout de suite (même en combat, c'est sans calcul).
 Q:On("SETTINGS_CHANGED", function(path)
+  if path == "zoneOverlay" then
+    if enabled() then schedule() end
+    return
+  end
   if path ~= "mapPins" then return end
   if enabled() then schedule() else MapPins:Clear() end
 end)

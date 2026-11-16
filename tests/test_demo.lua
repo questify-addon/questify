@@ -443,15 +443,18 @@ return {
     stubItems(Q)
     local D = Q.UI.Demo
     t.eq(D.SCENES[1], "tracker")
-    t.eq(D.SCENES[2], "classquest")
+    t.eq(D.SCENES[2], "zone")
+    t.eq(D.SCENES[3], "classquest")
     qf("demo all")
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[1], 1, #D.SCENES)), "first scene named")
     qf("demo next")
-    t.ok(shown(Q.UI.ClassQuestPopup.frame), "class quest scene shown")
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[2], 2, #D.SCENES)))
     qf("demo next")
+    t.ok(shown(Q.UI.ClassQuestPopup.frame), "class quest scene shown")
+    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[3], 3, #D.SCENES)))
+    qf("demo next")
     t.ok(not shown(Q.UI.ClassQuestPopup.frame), "previous scene closed")
-    for _ = 4, #D.SCENES do qf("demo next") end
+    for _ = 5, #D.SCENES do qf("demo next") end
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[#D.SCENES], #D.SCENES, #D.SCENES)))
     qf("demo next")
     t.ok(Mock.printed(Q.L.UI_DEMO_LAST), "end of the sequence")
@@ -501,5 +504,26 @@ return {
     local src = f:read("*a"); f:close()
     t.ok(not src:find("/Users/", 1, true))
     t.ok(not src:find("@", 1, true) or not src:find("%w@%w"), "no address")
+  end,
+
+  -- Zone d'exemple : suivi dedans (pastille, groupes, numéros), contour sur la carte, tout revient.
+  zone_scene_draws_tracker_and_map = function(t)
+    local Q = load()
+    Minimap:SetSize(140, 140)   -- taille de la minicarte du jeu (le mock part de 0)
+    qf("demo zone")
+    local T = Q.UI.Tracker
+    local text = T:CurrentText()
+    t.ok(text:find(Q.L.UI_DEMO_ZONE_NAME, 1, true), "zone pill: " .. text)
+    t.ok(text:find("OBJECTS", 1, true) and text:find("MONSTERS", 1, true), "groups")
+    t.eq(T.currentIcon:GetTexture(), T.ZONE_ICON)
+    t.ok(T.host.objRows[1].num:IsShown(), "numbered objectives")
+    Mock.advance(0.3)
+    t.ok(Q.UI.ZoneOverlay:DrawsWorld(), "outline on the world map")
+    t.ok((Q.UI.ZoneOverlay.active.mini.dots or 0) > 0, "dots on the minimap")
+    qf("demo off")
+    Mock.advance(0.3)
+    t.ok(not T:CurrentText():find(Q.L.UI_DEMO_ZONE_NAME, 1, true), "tracker back to the step")
+    t.ok(not Q.UI.ZoneOverlay:DrawsWorld(), "outline gone")
+    noErrors(t)
   end,
 }

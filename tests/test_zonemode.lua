@@ -92,11 +92,7 @@ local function plain(s) return (tostring(s or ""):gsub("|c%x%x%x%x%x%x%x%x", "")
 
 -- Texte complet de l'étape courante du suivi (morceaux de texte et lignes de monstres, dans l'ordre).
 local function trackerText(T)
-  local parts = {}
-  for _, chunk in ipairs(T.textChunks) do
-    if chunk:IsShown() then parts[#parts + 1] = plain(chunk:GetText()) end
-  end
-  return table.concat(parts, "\n")
+  return T:CurrentText()
 end
 
 local function mobLines(T)
@@ -172,24 +168,33 @@ return {
     t.eq(tg.title, "Zone: Durotar")
     local T = Q.UI.Tracker
     local text = trackerText(T)
-    t.ok(text:find("Zone: Durotar — 4 objectives (2 quests)", 1, true), "zone line: " .. text)
+    t.ok(text:find("Durotar 4 objectives · 2 quests", 1, true), "zone pill: " .. text)
     t.ok(text:find("Vanquish the Betrayers", 1, true) and text:find("The Admiral's Orders", 1, true), "quests listed")
     t.eq(T.currentIcon:GetTexture(), T.ZONE_ICON, "green dot")
     t.eq(#mobLines(T), 0, "no mob rows outside")
     -- étapes regroupées dans la zone : pas répétées dans les étapes suivantes
     local nextText = plain(T.nextLines[1].text:GetText())
     t.ok(not nextText:find("Admiral", 1, true), "accept 830 inside the zone: " .. nextText)
-    -- repère vert au centre, en plus des repères numérotés
-    local zonePins, numbered = 0, 0
+    -- repère vert au centre de la minicarte, en plus des repères numérotés ; sur la carte du monde,
+    -- la zone est tracée (UI/ZoneOverlay.lua) : pas de repère au centre
+    local zonePins, numbered = {}, 0
     for _, p in ipairs(Q.UI.MapPins.active) do
       if p.style == "zone" then
-        zonePins = zonePins + 1
+        zonePins[#zonePins + 1] = p.where
         t.near(p.x, z.center.x, 0.01)
       else
         numbered = numbered + 1
       end
     end
-    t.eq(zonePins, 2, "world map and minimap")
+    t.eq(zonePins, { "minimap" }, "minimap only")
+    t.ok(Q.UI.ZoneOverlay:DrawsWorld(), "zone drawn on the world map")
+    Q.Settings:Set("zoneOverlay", false)
+    Mock.advance(0.3)
+    local world = 0
+    for _, p in ipairs(Q.UI.MapPins.active) do
+      if p.style == "zone" and p.where ~= "minimap" then world = world + 1 end
+    end
+    t.eq(world, 1, "outline off: centre pin back on the world map")
     t.ok(numbered > 0, "numbered pins kept")
     t.eq(#Mock.errors, 0)
   end,
@@ -213,9 +218,9 @@ return {
     -- suivi : groupes dans l'ordre à suivre, monstres ciblables (nommé d'abord)
     local T = Q.UI.Tracker
     local text = trackerText(T)
-    local gNamed = text:find("Elites and named", 1, true)
-    local gObj = text:find("Objects", 1, true)
-    local gMobs = text:find("Monsters", 1, true)
+    local gNamed = text:find("ELITES AND NAMED", 1, true)
+    local gObj = text:find("OBJECTS", 1, true)
+    local gMobs = text:find("MONSTERS", 1, true)
     t.ok(gNamed and gObj and gMobs and gNamed < gObj and gObj < gMobs, "groups in order: " .. text)
     t.ok(text:find("Loot Aged Envelope (Benedict's Chest) (needs Benedict's Key)", 1, true), "chest line: " .. text)
     t.ok(text:find("Kul Tiras Sailor slain: 0/10", 1, true), "progress text")
@@ -364,7 +369,7 @@ return {
     t.eq(z.inside, false, "left the zone")
     local m, x, y = waypoint()
     t.near(x, z.center.x, 0.01); t.near(y, z.center.y, 0.01)
-    t.ok(trackerText(Q.UI.Tracker):find("objectives (2 quests)", 1, true))
+    t.ok(trackerText(Q.UI.Tracker):find("objectives · 2 quests", 1, true))
     t.eq(#Mock.errors, 0)
   end,
 
@@ -374,7 +379,7 @@ return {
     place({ Q.ZoneMode:Current().center.x, Q.ZoneMode:Current().center.y })
     Mock.advance(1.1)
     t.eq(Q.ZoneMode:Current().name, "Tiragarde Keep")
-    t.ok(trackerText(Q.UI.Tracker):find("Zone: Tiragarde Keep", 1, true))
+    t.ok(trackerText(Q.UI.Tracker):find("Tiragarde Keep", 1, true))
     t.eq(#Mock.errors, 0)
   end,
 
@@ -459,10 +464,10 @@ return {
     Mock.locale = "frFR"
     local Q = load()
     local text = trackerText(Q.UI.Tracker)
-    t.ok(text:find("Zone : Durotar — 4 objectifs (2 quêtes)", 1, true), "French zone line: " .. text)
+    t.ok(text:find("Durotar 4 objectifs · 2 quêtes", 1, true), "French zone pill: " .. text)
     goInside()
     text = trackerText(Q.UI.Tracker)
-    t.ok(text:find("Élites et nommés", 1, true) and text:find("Objets", 1, true) and text:find("Monstres", 1, true),
+    t.ok(text:find("ÉLITES ET NOMMÉS", 1, true) and text:find("OBJETS", 1, true) and text:find("MONSTRES", 1, true),
       "French groups: " .. text)
     t.eq(#Mock.errors, 0)
   end,

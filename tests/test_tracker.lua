@@ -213,7 +213,7 @@ return {
     local T = Q.UI.Tracker
     Mock.quests.log[179] = { objectives = { { text = "Tough Wolf Meat: 2/8", finished = false } } }
     Mock.fire("QUEST_ACCEPTED", 179)
-    local txt = plain(T.currentText:GetText())
+    local txt = T:CurrentText()
     t.ok(txt:find("Tough Wolf Meat: 2/8", 1, true), "complete step with objectives: " .. txt)
     t.eq(T.currentIcon:GetTexture(), Q.Format:ActionIcon("complete"))
     Mock.quests.log[179] = nil
