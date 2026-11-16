@@ -1,5 +1,7 @@
 # Textures des thèmes : cahier des charges pour le designer
 
+Thèmes de couleur seulement depuis le 2026-11-16 : plus de bandeaux illustrés, de coins ni de cadres.
+
 Les fichiers actuels de `Questify/Media/Themes/` et `Questify/Media/Icon.tga` sont des brouillons
 générés depuis la maquette (`tools/themes/`). Ils seront remplacés par les fichiers du designer,
 sous les mêmes noms.
@@ -17,8 +19,6 @@ sous les mêmes noms.
 
 | Fichier | Taille | Type | Affiché à | Rôle |
 |---|---|---|---|---|
-| `banner-<thème>.tga` × 14 | 1024 × 128 | couleur, alpha | 352 × 44 à 416 × 52 | Bandeau illustré en haut des fenêtres |
-| `corner.tga` | 128 × 128 | gris, teinté | 22 × 22 | Coin de cadre en filigrane |
 | `ring.tga` | 128 × 128 | gris, teinté | 28 à 34 px | Anneau de métal autour du blason |
 | `logo.tga` | 256 × 256 | couleur | 28 à 34 px | Blason du thème neutre « Questify » (boussole) |
 | `Icon.tga` (dans `Media/`) | 256 × 256 | couleur | 16 à 64 px | Icône de l'addon (minicarte, liste des addons) |
@@ -32,20 +32,7 @@ sous les mêmes noms.
 | `arrow.tga` | 256 × 256 | blanc, teinté | ~64 px | Flèche flottante, pointe vers le haut |
 | `arrow-glow.tga` | 256 × 256 | blanc flou, teinté | ~64 px | Halo de la flèche |
 
-Thèmes des bandeaux : `neutral`, `contrast`, `alliance`, `human`, `dwarf`, `nightelf`, `gnome`, `skyborneA`,
-`horde`, `orc`, `troll`, `tauren`, `undead`, `skyborneH`.
-
 ## Détails
-
-**Bandeaux (1024 × 128, ratio 8:1).** Silhouette de la terre natale (Hurlevent, Forgefer, Teldrassil,
-Gnomeregan, îles flottantes, Orgrimmar, jungle troll, Mulgore, Fossoyeuse…), Questify : montagnes et
-chemin pointillé ; Contraste élevé : décor très discret, le texte prime. Calé en bas à droite ; la fenêtre coupe ce qui dépasse à gauche. Les **45 % de gauche
-s'effacent vers le transparent** : le blason et le titre y sont posés. Ciel transparent (le jeu peint
-un dégradé dessous). Tons sombres proches du fond du thème, un ou deux points lumineux de la couleur
-« liseré ».
-
-**Coin (128 × 128).** Coin haut-gauche seulement (les trois autres par symétrie) : équerre double,
-volute, petit losange à la pointe. Gris clair à gris foncé pour le relief.
 
 **Anneau (128 × 128).** Anneau plein bord à bord (diamètre extérieur = 100 %), intérieur vide à ~82 %
 du diamètre (le portrait rond est dessous). Relief en niveaux de gris.
