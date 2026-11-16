@@ -37,6 +37,16 @@ return {
     t.ok(sw.x > 0 and sw.x < 100 and sw.y > 0 and sw.y < 100, "coords 0-100")
   end,
 
+  taxi_nodes_on_real_zone = function(t)
+    local T = build()
+    local want = { ["Ratchet, The Barrens"] = 1413, ["Aerie Peak, The Hinterlands"] = 1425,
+                   ["Crossroads, The Barrens"] = 1413, ["Tarren Mill, Hillsbrad"] = 1424,
+                   ["Northshire Abbey"] = 1429 }
+    local got = {}
+    for _, n in pairs(T.taxi) do if want[n.name] then got[n.name] = n.m end end
+    for name, m in pairs(want) do t.eq(got[name], m, name) end
+  end,
+
   edges_symmetric_positive = function(t)
     local T = build()
     local n = 0
