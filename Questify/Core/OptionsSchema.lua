@@ -27,7 +27,9 @@ local Schema = {}
 Q.OptionsSchema = Schema
 
 ---------------------------------------------------------------------------
--- Sections (ordre de la barre latérale) et catégories (ordre dans la section)
+-- Sections (ordre de la barre latérale) et catégories (ordre dans la section). panel : nom d'un panneau
+-- de Q.UI affiché à la place de la liste (méthodes Attach(parent), Detach()) ; icon = "class" : icône
+-- de la classe du joueur devant le nom.
 ---------------------------------------------------------------------------
 Schema.SECTIONS = {
   { id = "route", label = "OPT_SEC_ROUTE", categories = {
@@ -44,6 +46,8 @@ Schema.SECTIONS = {
   { id = "loot", label = "OPT_SEC_LOOT", categories = {
     { id = "auto", label = "OPT_CAT_LOOT_AUTO" },
     { id = "profile", label = "OPT_CAT_LOOT_PROFILE" } } },
+  -- Classe : panneau propre (UI/ClassPanel.lua, Talents et Macros) à la place de la liste des options.
+  { id = "classguide", label = "OPT_SEC_CLASSGUIDE", panel = "ClassPanel", icon = "class", categories = {} },
   { id = "class", label = "OPT_SEC_CLASS", categories = {
     { id = "spells", label = "OPT_CAT_CLASS_SPELLS" },
     { id = "professions", label = "OPT_CAT_CLASS_PROFESSIONS" },
@@ -291,6 +295,23 @@ add({ id = "oldRanksForget", section = "class", category = "spells", type = "act
       Q.ActionRanks:ForgetIgnored()
       Q:Print(Q.L.RANKS_FORGOTTEN)
     end
+  end })
+add({ id = "classGuide.levelUp", section = "class", category = "spells", type = "toggle", path = "classGuide.levelUp",
+  label = "OPT_CLASSGUIDE_LEVELUP", tip = "OPT_TIP_CLASSGUIDE_LEVELUP",
+  keywords = "talent conseil niveau encart guide point talent advice level up box guide point" })
+add({ id = "openClassTalents", section = "class", category = "spells", type = "action",
+  label = "OPT_OPEN_TALENTS", tip = "OPT_TIP_OPEN_TALENTS",
+  keywords = "talents arbre specialisation guide build classicwowforever talent tree spec guide build",
+  run = function()
+    local P = ui("ClassPanel")
+    if P then P:Open("talents") end
+  end })
+add({ id = "openClassMacros", section = "class", category = "spells", type = "action",
+  label = "OPT_OPEN_MACROS", tip = "OPT_TIP_OPEN_MACROS",
+  keywords = "macros macro creer touche classicwowforever macros macro create key",
+  run = function()
+    local P = ui("ClassPanel")
+    if P then P:Open("macros") end
   end })
 add({ id = "professions", section = "class", category = "professions", type = "action",
   label = "UI_OPT_PROFESSIONS", tip = "OPT_TIP_PROFESSIONS",

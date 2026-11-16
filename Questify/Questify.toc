@@ -45,6 +45,7 @@ Locales\StringsTrainer.lua
 Locales\StringsAuction.lua
 Locales\StringsQuestValue.lua
 Locales\StringsPace.lua
+Locales\StringsClass.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -62,6 +63,11 @@ Data\ClassTrainers.lua
 Data\ClassSpells.lua
 Data\Caves.lua
 Data\ZoneArt.lua
+Data\ClassGuides.lua
+Data\ClassMacros.lua
+Data\ClassText_frFR.lua
+Data\ClassText_deDE.lua
+Data\ClassText_esES.lua
 
 Engine\Guides.lua
 Engine\DungeonMode.lua
@@ -89,6 +95,10 @@ Engine\Supplies.lua
 Engine\AuctionItems.lua
 Engine\Dungeons.lua
 Engine\QuestValue.lua
+Engine\Talents.lua
+Engine\TalentTree.lua
+Engine\ClassGuide.lua
+Engine\ClassMacros.lua
 
 Nav\Caves.lua
 Nav\Navigation.lua
@@ -128,6 +138,8 @@ UI\Wizard.lua
 UI\QuestItemButton.lua
 UI\Report.lua
 UI\AuctionPanel.lua
+UI\ClassPanel.lua
+UI\TalentAdvice.lua
 UI\Options.lua
 UI\Demo.lua
 UI\Slash.lua
