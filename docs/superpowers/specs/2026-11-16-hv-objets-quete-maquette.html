@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questify — objets de quête à l'hôtel des ventes (maquette)</title>
+<style>
+  :root { --gold:#ffd100; --gold2:#c9a34a; --edge:#6d5a3a; --txt:#eadfc8; --dim:#8c8170; --ok:#58b85c; --qf:#33ccff;
+    --ink:#2b1a0a; --ink-dim:#6b5636; --ink-hint:#5c4a2e; --white:#fff; --green:#1eff00; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--txt); font:14px/1.35 "Segoe UI", system-ui, sans-serif; padding:16px 16px 60px;
+    background:radial-gradient(ellipse at 30% 20%, #3c4a33 0%, #1c241a 45%, #0b0e0a 100%); min-height:100vh; }
+  .serif { font-family:"Friz Quadrata", Georgia, "Times New Roman", serif; }
+  h1 { font-size:17px; margin:0 0 4px; color:var(--gold2); }
+  h2 { font-size:14px; margin:26px 0 6px; color:var(--gold2); font-weight:600; }
+  .note { color:#b6ab97; font-size:12.5px; margin:0 0 10px; max-width:980px; }
+  .scene { display:flex; flex-wrap:wrap; gap:26px; align-items:flex-start; }
+  .ico { width:18px; height:18px; border-radius:3px; border:1px solid #000; background-size:cover; flex:none; }
+  .ico.big { width:28px; height:28px; border-radius:4px; }
+
+  /* ---------- A. suivi (thème parchemin) ---------- */
+  .tracker { position:relative; width:330px; padding:8px 10px 10px; border:1px solid #b08a3c; border-radius:6px;
+    background:linear-gradient(#e9d8ae,#d9c08a); color:var(--ink); box-shadow:0 6px 24px #000a; font-size:13px; }
+  .tracker .title { font:600 14px/1.2 "Friz Quadrata", Georgia, serif; color:#5a2e00; }
+  .tracker .bar { height:12px; margin:6px 0 8px; border-radius:3px; background:#5a4528; overflow:hidden; position:relative; }
+  .tracker .bar i { position:absolute; inset:0 62% 0 0; background:linear-gradient(#e7b84a,#a86f12); }
+  .tracker .bar span { position:absolute; inset:0; text-align:center; font-size:9.5px; line-height:12px; color:#fff; text-shadow:0 1px 1px #000; }
+  .alert { display:flex; align-items:center; gap:6px; height:20px; padding:0 6px; margin-bottom:4px; border-radius:4px;
+    background:#00000014; border:1px solid #b08a3c88; cursor:pointer; position:relative; }
+  .alert:hover { background:#ffffff40; }
+  .alert .coin { width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3a8, #d9a400 60%, #8a6200); border:1px solid #6b4a00; }
+  .alert b { font-weight:600; color:#7a4a00; }
+  .cur { display:grid; grid-template-columns:20px 1fr; gap:4px; margin-top:6px; }
+  .cur .arrow { width:16px; height:16px; margin-top:1px; border-radius:3px; background:linear-gradient(#ffe27a,#c9a34a); }
+  .cur .head { font-weight:600; }
+  .cur .obj { color:var(--ink); padding-left:8px; }
+  .cur .obj::before { content:"- "; }
+  .hint { display:flex; align-items:center; gap:5px; margin:1px 0 0 8px; font-size:11.5px; color:var(--ink-hint);
+    cursor:default; position:relative; width:max-content; max-width:100%; padding-right:4px; border-radius:3px; }
+  .hint:hover { background:#ffffff40; }
+  .hint .ico { width:14px; height:14px; }
+  .next { color:var(--ink-dim); margin-top:6px; font-size:12px; }
+  .next div::before { content:"› "; }
+
+  /* infobulle façon jeu */
+  .tip { display:none; position:absolute; z-index:30; left:calc(100% + 8px); top:-6px; width:260px; background:rgba(4,6,18,.97);
+    border:2px solid #6f7487; border-radius:5px; padding:7px 9px; font:400 12.5px/1.35 "Friz Quadrata", Georgia, serif;
+    pointer-events:none; box-shadow:0 2px 10px #000; color:#fff; font-style:normal; }
+  .hint:hover .tip, .alert:hover .tip, .row:hover .tip, .shop .it:hover .tip { display:block; }
+  .tip .n { font-size:14px; } .tip .w { color:#fff; } .tip .y { color:#ffd100; } .tip .g { color:#9d9d9d; }
+  .tip .sep { border-top:1px solid #2f3a50; margin:5px 0 4px; }
+  .tip .dl { display:flex; justify-content:space-between; gap:8px; }
+  .tip .dl span:last-child { color:#fff; }
+  .tip .src { color:#9fc5ff; } .tip .loa { color:#7fd17f; } .tip .qf { color:var(--qf); }
+
+  /* pièces */
+  .m { white-space:nowrap; }
+  .m .gc, .m .sc, .m .cc { display:inline-block; width:9px; height:9px; border-radius:50%; margin:0 3px 0 1px; vertical-align:0; }
+  .m .gc { background:#e8b923; } .m .sc { background:#c7c7cf; } .m .cc { background:#b8733f; }
+
+  /* ---------- fenêtre façon jeu ---------- */
+  .win { position:relative; border:2px solid var(--edge); outline:3px solid #15110c; border-radius:5px; background:#0e0c0a; box-shadow:0 10px 40px #000c; }
+  .win-title { height:28px; line-height:28px; text-align:center; color:var(--gold); background:linear-gradient(#3a2f22,#1a140e); border-bottom:1px solid var(--edge); font-size:14.5px; }
+  .close { position:absolute; right:6px; top:3px; width:21px; height:21px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #d23a2a, #4a0d08); border:1px solid var(--gold2); color:#fff; font-size:11px; text-align:center; line-height:19px; }
+  .win-body { padding:10px 12px 12px; background:radial-gradient(ellipse at top, #1f1b16, #0c0b09); }
+  button.b { background:linear-gradient(#7a1c14,#4c0f0a); color:#f5e6c4; border:1px solid #b08a3c; border-radius:4px; padding:3px 10px; font:inherit; font-size:12.5px; cursor:pointer; }
+  button.b.alt { background:linear-gradient(#3a3026,#241d16); }
+  button.b.small { padding:1px 8px; font-size:12px; }
+  button.b:disabled { opacity:.4; cursor:default; }
+
+  /* ---------- B. liste ---------- */
+  .list { width:560px; }
+  .scope .pill { display:inline-block; margin:0 4px 4px 0; }
+  .scope { display:block; margin-bottom:8px; font-size:12.5px; color:#b6ab97; flex-wrap:wrap; }
+  .pill { white-space:nowrap; flex:none; padding:2px 10px; border-radius:11px; border:1px solid #5a4a30; background:#1e1812; color:var(--txt); }
+  .pill.cur { border-color:var(--gold2); color:var(--gold); }
+  .thead, .row { display:grid; grid-template-columns:22px 30px 1fr 74px 92px 92px; gap:6px; align-items:center; }
+  .thead { font-size:11.5px; color:var(--dim); padding:0 4px 4px; border-bottom:1px solid #3a3228; }
+  .thead span:nth-child(n+4) { text-align:right; }
+  .row { position:relative; padding:5px 4px; border-bottom:1px solid #241e17; font-size:12.5px; }
+  .row:hover { background:#ffffff08; }
+  .row .nm { color:var(--white); }
+  .row .qs { color:var(--dim); font-size:11.5px; }
+  .row .qty, .row .pu, .row .tot { text-align:right; }
+  .row .qty small { display:block; color:var(--dim); font-size:11px; }
+  .row.off { opacity:.45; }
+  .row .tip { left:auto; right:calc(100% + 10px); }
+  input[type=checkbox] { accent-color:#c9a34a; width:15px; height:15px; margin:0; }
+  .chap { font-size:11.5px; color:var(--gold2); padding:7px 4px 3px; }
+  .foot { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12.5px; }
+  .foot .sum { margin-right:auto; }
+  .foot .sum b { color:var(--gold); font-weight:600; }
+  .explain { margin-top:8px; font-size:11.5px; color:#9c917e; }
+  .src-badge { display:inline-block; padding:0 6px; border-radius:8px; border:1px solid #3d5f7a; color:#9fc5ff; font-size:11px; }
+
+  /* ---------- C. hôtel des ventes + panneau ---------- */
+  .ah-wrap { display:flex; align-items:flex-start; }
+  .ah { width:430px; height:330px; }
+  .ah .win-body { height:calc(100% - 28px); }
+  .ah .search { display:flex; gap:6px; margin-bottom:8px; }
+  .ah .search .box { flex:1; padding:3px 8px; border:1px solid #8a6d2c; border-radius:4px; background:#0d0b08; color:#fff; font-size:12.5px; }
+  .ah .res { border:1px solid #3a3228; border-radius:4px; height:240px; font-size:12px; }
+  .ah .res div { display:grid; grid-template-columns:1fr 70px 90px; padding:4px 8px; border-bottom:1px solid #241e17; }
+  .ah .res .h { color:var(--dim); font-size:11px; }
+  .ah .res .hi { background:#3a2f1a; }
+  .shop { width:250px; margin-left:4px; }
+  .shop .it { position:relative; display:grid; grid-template-columns:20px 1fr auto; gap:6px; align-items:center; padding:5px 2px; border-bottom:1px solid #241e17; font-size:12.5px; }
+  .shop .it .p { color:var(--dim); font-size:11.5px; }
+  .shop .it.done .nm { color:var(--dim); }
+  .shop .it.done .p { color:var(--ok); }
+  .shop .it .tip { left:auto; right:calc(100% + 10px); }
+  .shop .sub { color:#9c917e; font-size:11.5px; margin:0 0 6px; }
+  .shop .foot2 { color:#9c917e; font-size:11px; margin-top:8px; }
+
+  /* ---------- D. discussion ---------- */
+  .chat { width:560px; padding:8px 10px; border-radius:4px; background:#00000088; font:13px/1.4 "Segoe UI", sans-serif; }
+  .chat .qf { color:var(--qf); } .chat a { color:#ffd100; text-decoration:none; }
+</style>
+</head>
+<body>
+<h1 class="serif">Questify — objets de quête achetables à l'hôtel des ventes</h1>
+<p class="note">Maquette des quatre éléments. Survolez les lignes d'objets : l'infobulle est celle du jeu (comme un objet du sac),
+donc Auctionator, TSM ou LifeOnAzeroth: Market y ajoutent leurs lignes de prix. Les prix de la liste viennent du premier de ces
+addons trouvé (ici Auctionator, LifeOnAzeroth en exemple dans l'infobulle). Couleurs du suivi : celles du thème actif.</p>
+
+<h2>A. Suivi — alerte « hôtel des ventes » et ligne d'indice sous l'étape</h2>
+<p class="note">L'alerte apparaît au début d'un chapitre et près d'un encanteur, tant qu'il reste des objets cochés à acheter.
+Clic : ouvre la liste (B). La ligne en petit (grisée : les polices du jeu n'ont pas d'italique) suit chaque étape « Prendre » ou « Terminer » d'une quête qui demande un
+objet achetable ; elle disparaît quand les sacs couvrent la quantité.</p>
+<div class="scene">
+  <div class="tracker">
+    <div class="title">Redridge Mountains and Duskwood</div>
+    <div class="bar"><i></i><span>57/151 · niv. 22-26</span></div>
+    <div class="alert">
+      <span class="coin"></span><span><b>3 objets de quête</b> à l'hôtel des ventes</span>
+      <div class="tip"><div class="n y">Hôtel des ventes</div>
+        <div class="w">3 objets de ce chapitre et du suivant s'achètent à l'hôtel des ventes au lieu d'être farmés.</div>
+        <div class="sep"></div><div class="g">Clic : choisir les objets à acheter</div><div class="g">Clic droit : masquer jusqu'au prochain chapitre</div></div>
+    </div>
+    <div class="cur">
+      <div class="arrow"></div>
+      <div>
+        <div class="head">Terminer : Dusky Crab Cakes</div>
+        <div class="obj">Gooey Spider Leg : 2/6</div>
+        <div class="hint"><span class="ico" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_food_62.jpg)"></span>ou à l'hôtel des ventes : 4 × Gooey Spider Leg
+          <div class="tip">
+            <div class="n w">Gooey Spider Leg</div>
+            <div class="w">Artisanat</div>
+            <div class="w">Maximum : 20 par pile</div>
+            <div class="dl"><span class="g">Prix de vente :</span><span class="m">4<i class="cc"></i></span></div>
+            <div class="sep"></div>
+            <div class="dl src"><span>Auctionator</span><span class="m">38<i class="cc"></i></span></div>
+            <div class="dl loa"><span>Typical price</span><span class="m">41<i class="cc"></i></span></div>
+            <div class="sep"></div>
+            <div class="qf">Questify : 4 manquants pour Dusky Crab Cakes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="next"><div>Rendre : Dusky Crab Cakes</div><div>Aller à Darkshire (73.8, 44.4)</div></div>
+  </div>
+</div>
+
+<h2>B. Liste — chapitre en cours et suivant</h2>
+<p class="note">Ouverte par l'alerte, au début d'un chapitre (une fois, si l'option est active), par <code>/qf hv</code> ou à côté de l'HV.
+Les cases cochées forment la liste d'achats du panneau C. Une case décochée est retenue (l'objet n'est plus proposé).</p>
+<div class="scene">
+  <div class="win list">
+    <div class="win-title serif">Questify — hôtel des ventes</div><div class="close">✕</div>
+    <div class="win-body">
+      <div class="scope"><span class="pill cur">Redridge Mountains and Duskwood</span><span class="pill">Westfall</span></div>
+      <div class="thead"><span></span><span></span><span>Objet · quête</span><span>À acheter</span><span>Prix unitaire</span><span>Total</span></div>
+      <div class="chap">Chapitre en cours</div>
+      <div class="row" data-tot="152">
+        <input type="checkbox" checked>
+        <span class="ico big" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_food_62.jpg)"></span>
+        <span><span class="nm">Gooey Spider Leg</span><br><span class="qs">Dusky Crab Cakes</span></span>
+        <span class="qty">4<small>2 dans les sacs</small></span>
+        <span class="pu m">38<i class="cc"></i></span>
+        <span class="tot m">1<i class="sc"></i>52<i class="cc"></i></span>
+        <div class="tip"><div class="n w">Gooey Spider Leg</div><div class="w">Artisanat</div><div class="sep"></div>
+          <div class="dl src"><span>Auctionator</span><span class="m">38<i class="cc"></i></span></div></div>
+      </div>
+      <div class="row" data-tot="2400">
+        <input type="checkbox" checked>
+        <span class="ico big" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_fabric_silk_01.jpg)"></span>
+        <span><span class="nm">Silk Cloth</span><br><span class="qs">The Bolt of Silk</span></span>
+        <span class="qty">10<small>0 dans les sacs</small></span>
+        <span class="pu m">2<i class="sc"></i>40<i class="cc"></i></span>
+        <span class="tot m">24<i class="sc"></i></span>
+        <div class="tip"><div class="n w">Silk Cloth</div><div class="w">Artisanat</div><div class="w">Maximum : 20 par pile</div><div class="sep"></div>
+          <div class="dl src"><span>Auctionator</span><span class="m">2<i class="sc"></i>40<i class="cc"></i></span></div></div>
+      </div>
+      <div class="chap">Chapitre suivant</div>
+      <div class="row" data-tot="1680">
+        <input type="checkbox" checked>
+        <span class="ico big" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_food_59.jpg)"></span>
+        <span><span class="nm">Turtle Meat</span><br><span class="qs">Apprentice's Duties</span></span>
+        <span class="qty">10<small>0 dans les sacs</small></span>
+        <span class="pu m">1<i class="sc"></i>68<i class="cc"></i></span>
+        <span class="tot m">16<i class="sc"></i>80<i class="cc"></i></span>
+        <div class="tip"><div class="n w">Turtle Meat</div><div class="w">Artisanat</div><div class="sep"></div>
+          <div class="dl src"><span>Auctionator</span><span class="m">1<i class="sc"></i>68<i class="cc"></i></span></div></div>
+      </div>
+      <div class="row off" data-tot="0">
+        <input type="checkbox">
+        <span class="ico big" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_gear_05.jpg)"></span>
+        <span><span class="nm">Bronze Tube</span><br><span class="qs">Look To The Stars</span></span>
+        <span class="qty">1<small>0 dans les sacs</small></span>
+        <span class="pu">—</span>
+        <span class="tot">—</span>
+        <div class="tip"><div class="n w">Bronze Tube</div><div class="w">Artisanat</div><div class="sep"></div><div class="g">Aucun prix connu</div></div>
+      </div>
+      <div class="foot">
+        <span class="sum">Sélection : <b class="m" id="sum">42<i class="sc"></i>32<i class="cc"></i></b> · prix <span class="src-badge">Auctionator</span></span>
+        <button class="b alt">Tout décocher</button><button class="b">Fermer</button>
+      </div>
+      <div class="explain">Les objets achetés valident l'objectif dès que la quête est prise. Un achat partiel laisse l'étape de
+        collecte avec le reste à farmer. Les achats se font dans l'hôtel des ventes, par vos clics.</div>
+    </div>
+  </div>
+</div>
+
+<h2>C. Hôtel des ventes ouvert — panneau « liste d'achats » accroché à droite</h2>
+<p class="note">S'ouvre avec la fenêtre de l'HV s'il reste des objets cochés. « Chercher » remplit la recherche de l'HV et la lance
+(nom exact) ; le joueur choisit l'enchère et achète lui-même. La quantité se met à jour avec les sacs.</p>
+<div class="scene">
+  <div class="ah-wrap">
+    <div class="win ah">
+      <div class="win-title serif">Hôtel des ventes</div><div class="close">✕</div>
+      <div class="win-body">
+        <div class="search"><span class="box">"Gooey Spider Leg"</span><button class="b small">Rechercher</button></div>
+        <div class="res">
+          <div class="h"><span>Objet</span><span>Disponibles</span><span>Prix unitaire</span></div>
+          <div class="hi"><span>Gooey Spider Leg</span><span>37</span><span class="m">38<i class="cc"></i></span></div>
+          <div><span>Gooey Spider Leg</span><span>12</span><span class="m">45<i class="cc"></i></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="win shop">
+      <div class="win-title serif">Questify — liste d'achats</div>
+      <div class="win-body">
+        <p class="sub">Chapitre en cours et suivant · 3 objets</p>
+        <div class="it"><span class="ico" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_food_62.jpg)"></span>
+          <span><span class="nm">Gooey Spider Leg</span><br><span class="p">2/6 dans les sacs</span></span><button class="b small">Chercher</button>
+          <div class="tip"><div class="n w">Gooey Spider Leg</div><div class="sep"></div><div class="dl src"><span>Auctionator</span><span class="m">38<i class="cc"></i></span></div></div></div>
+        <div class="it"><span class="ico" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_fabric_silk_01.jpg)"></span>
+          <span><span class="nm">Silk Cloth</span><br><span class="p">0/10 dans les sacs</span></span><button class="b small">Chercher</button>
+          <div class="tip"><div class="n w">Silk Cloth</div><div class="sep"></div><div class="dl src"><span>Auctionator</span><span class="m">2<i class="sc"></i>40<i class="cc"></i></span></div></div></div>
+        <div class="it done"><span class="ico" style="background-image:url(https://wow.zamimg.com/images/wow/icons/medium/inv_misc_food_59.jpg)"></span>
+          <span><span class="nm">Turtle Meat</span><br><span class="p">10/10 <span style="color:var(--ok)">✔</span></span></span><button class="b small" disabled>Chercher</button>
+          <div class="tip"><div class="n w">Turtle Meat</div></div></div>
+        <div style="display:flex;gap:6px;margin-top:8px"><button class="b alt small">Modifier la liste</button></div>
+        <p class="foot2">Questify n'achète rien : chaque achat reste votre clic dans l'hôtel des ventes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>D. Discussion — début de chapitre</h2>
+<div class="chat"><span class="qf">[Questify]</span> 3 objets de ce chapitre et du suivant s'achètent à l'hôtel des ventes (Gooey Spider Leg, Silk Cloth, Turtle Meat). <a href="#">[Voir la liste]</a> ou <span style="color:#fff">/qf hv</span></div>
+
+<script>
+  // total de la sélection (B)
+  const rows = [...document.querySelectorAll('.list .row')];
+  const sum = document.getElementById('sum');
+  const fmt = c => { const g = Math.floor(c/10000), s = Math.floor(c%10000/100), k = c%100; let o = '';
+    if (g) o += g + '<i class="gc"></i>'; if (s) o += s + '<i class="sc"></i>'; if (k || !o) o += k + '<i class="cc"></i>'; return o; };
+  const base = { 0:152, 1:2400, 2:1680, 3:0 };
+  function upd() { let t = 0; rows.forEach((r, i) => { const on = r.querySelector('input').checked; r.classList.toggle('off', !on); if (on) t += base[i]; }); sum.innerHTML = fmt(t); }
+  rows.forEach(r => r.querySelector('input').addEventListener('change', upd)); upd();
+</script>
+</body>
+</html>

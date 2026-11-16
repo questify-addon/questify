@@ -803,6 +803,19 @@ local function nextOnRoute(g)
   return options[1].guide
 end
 
+-- NextGuide() -> chapitre qui suit le chapitre courant sur la route du joueur (sans rien demander), ou nil.
+function Progress:NextGuide()
+  local g = self:Guide()
+  return g and nextOnRoute(g) or nil
+end
+
+-- FilterSkip(step) -> raison ("race", "class", "optional"…) quand l'étape ne concerne pas le personnage,
+-- sinon nil (mêmes filtres que l'évaluation des étapes, pour un chapitre qui n'est pas le courant).
+function Progress:FilterSkip(step)
+  if type(step) ~= "table" then return nil end
+  return filterSkip(step)
+end
+
 -- Rendus (étapes « turnin » qui concernent le personnage) des chapitres qui suivent g sur la route.
 local function turninsAfter(g)
   local set, visited = {}, { [g.id] = true }

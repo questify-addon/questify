@@ -41,6 +41,7 @@ Locales\StringsZone.lua
 Locales\StringsVersion.lua
 Locales\StringsMinimap.lua
 Locales\StringsOptions.lua
+Locales\StringsAuction.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -79,6 +80,7 @@ Engine\XPRate.lua
 Engine\Hearth.lua
 Engine\Danger.lua
 Engine\Supplies.lua
+Engine\AuctionItems.lua
 Engine\Dungeons.lua
 
 Nav\Caves.lua
@@ -110,6 +112,7 @@ UI\Journal.lua
 UI\Wizard.lua
 UI\QuestItemButton.lua
 UI\Report.lua
+UI\AuctionPanel.lua
 UI\Options.lua
 UI\Demo.lua
 UI\Slash.lua

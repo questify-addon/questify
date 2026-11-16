@@ -6,6 +6,7 @@ local addonName, Q = ...
 --   /qf back       rouvre l'étape précédente
 --   /qf classe     journal sur l'onglet Quêtes de classe (alias /qf class)
 --   /qf sacs       quêtes qui donnent un sac, avec leur état (alias /qf bags) ; /qf sacs reset repropose les ignorées
+--   /qf hv         objets de quête achetables à l'hôtel des ventes (alias /qf ah) ; /qf hv reset recoche tout
 --   /qf options    fenêtre d'options (/qf options <texte> : avec cette recherche)
 --   /qf wizard     assistant de navigation
 --   /qf export     mesures de temps, prêtes à copier
@@ -151,6 +152,22 @@ COMMANDS.sacs = function(rest)
   Q:Print(L.UI_BAGS_HINT)
 end
 COMMANDS.bags = COMMANDS.sacs
+
+-- Objets achetables à l'hôtel des ventes (Engine/AuctionItems.lua) : liste ; « reset » recoche les objets.
+COMMANDS.hv = function(rest)
+  local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+  if not (AI and P) then return end
+  if rest == "reset" then
+    Q:Print(L.AH_SLASH_RESET, AI:ResetChoices())
+    return
+  end
+  if not AI:Enabled() then
+    Q:Print(L.AH_SLASH_OFF)
+    return
+  end
+  P:ToggleList()
+end
+COMMANDS.ah = COMMANDS.hv
 
 COMMANDS.options = function(rest)
   local O = Q.UI and Q.UI.Options

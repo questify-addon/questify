@@ -67,6 +67,7 @@ other chapters from the XML.
 | `emit.lua` | Guide file writer (spec § 5.2 format, one step per line with a comment). |
 | `classquests.lua` | Class quest chains (level ≤ 60) for `ClassQuestData.lua`. |
 | `bagquests.lua` | Quests that reward a bag, with their prerequisite chain, for `BagQuestData.lua` (see "Bag quests"). |
+| `auctionitems.lua`, `build_auction_items.lua` | Collect items of the shipped routes that can be bought at the auction house, and the auctioneers, for `AuctionItemData.lua` (see "Auction house items"). |
 | `overrides.lua` | Hand fixes applied at build time. |
 | `build.lua` | CLI. |
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
@@ -884,3 +885,19 @@ objective instead.
   type, × 0.5 for dungeon quests, × 0.25 for the Forever book quests).
 - Trunk chapters are simulated for the primary race path only.
 - Only the default successor is simulated and validated; other `choices` are not replayed.
+
+## Auction house items (`auctionitems.lua`, 2026-11-16)
+
+`luajit tools/routebuilder/build_auction_items.lua` reads the guides listed by `Questify/Guides/Guides.xml` and writes
+`Questify/Guides/AuctionItemData.lua`. Run it after `build.lua` whenever the routes change (build.lua lists the file in
+`Guides.xml` but does not write it).
+
+- One entry per "item" objective of a quest the chapter progresses (`complete` or `turnin` step): item, quest,
+  objective rank in the client's journal (`obj`) and the count read from the objective text (`sim.parseCounts`,
+  absent when the text gives none).
+- Left out: quest items (class 12), items sold by a vendor, items given by the quest itself. QuestieDB has no bind
+  type: the game (`Engine/AuctionItems.lua`) reads it with `GetItemInfo` and drops bind-on-pickup and quest items.
+- Auctioneers: NPCs with the AUCTIONEER flag (4096) and at least one spawn, by friendly faction. Positions are read
+  again from the player's QuestieDB at run time.
+- `tools/validate_guides.lua` checks the file: known guides, quests with a `complete` or `turnin` step in that guide,
+  known items and auctioneers.

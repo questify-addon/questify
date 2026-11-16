@@ -592,6 +592,8 @@ function build.writeXml(out)
   for _, rel in ipairs(entries) do lines[#lines + 1] = ('  <Script file="%s"/>'):format((rel:gsub("/", "\\"))) end
   lines[#lines + 1] = '  <Script file="ClassQuestData.lua"/>'
   lines[#lines + 1] = '  <Script file="BagQuestData.lua"/>'
+  -- objets achetables à l'hôtel des ventes : tools/routebuilder/build_auction_items.lua, à relancer après build.lua
+  lines[#lines + 1] = '  <Script file="AuctionItemData.lua"/>'
   lines[#lines + 1] = "</Ui>"
   writeFile(out .. "/Guides.xml", table.concat(lines, "\n") .. "\n")
   return #entries

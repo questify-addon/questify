@@ -251,7 +251,7 @@ Q:RegisterStrings({
     UI_NAV_NATIVE_DESC = "The game's own map pin and 3D marker, always available.",
 
     -- Commandes
-    UI_SLASH_HELP = "/qf: journal. /qf skip, /qf back, /qf route, /qf class, /qf bags, /qf options, /qf wizard, /qf export, /qf check, /qf bug, /qf theme <name>, /qf opacity <0-100>, /qf debug, /qf reset.",
+    UI_SLASH_HELP = "/qf: journal. /qf skip, /qf back, /qf route, /qf class, /qf bags, /qf ah, /qf options, /qf wizard, /qf export, /qf check, /qf bug, /qf theme <name>, /qf opacity <0-100>, /qf debug, /qf reset.",
     UI_SLASH_NO_STEP = "There is no current step.",
     UI_SLASH_THEME_SET = "Tracker theme: %s.",
     UI_SLASH_THEME_LIST = "Tracker themes: %s. Current theme: %s. Type /qf theme <name>.",
@@ -561,7 +561,7 @@ Q:RegisterStrings({
     UI_NAV_NATIVE_DESC = "Le repère de carte et le marqueur 3D du jeu, toujours disponibles.",
 
     -- Commandes
-    UI_SLASH_HELP = "/qf : journal. /qf skip, /qf back, /qf route, /qf classe, /qf sacs, /qf options, /qf wizard, /qf export, /qf check, /qf bug, /qf theme <nom>, /qf opacity <0-100>, /qf debug, /qf reset.",
+    UI_SLASH_HELP = "/qf : journal. /qf skip, /qf back, /qf route, /qf classe, /qf sacs, /qf hv, /qf options, /qf wizard, /qf export, /qf check, /qf bug, /qf theme <nom>, /qf opacity <0-100>, /qf debug, /qf reset.",
     UI_SLASH_NO_STEP = "Aucune étape en cours.",
     UI_SLASH_THEME_SET = "Thème du suivi : %s.",
     UI_SLASH_THEME_LIST = "Thèmes du suivi : %s. Thème actuel : %s. Tape /qf theme <nom>.",

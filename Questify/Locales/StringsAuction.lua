@@ -1,0 +1,105 @@
+local addonName, Q = ...
+
+-- Textes des objets de collecte achetables à l'hôtel des ventes (Engine/AuctionItems.lua,
+-- UI/AuctionPanel.lua, alerte et ligne d'indice du suivi). Toutes les clés commencent par AH_.
+Q:RegisterStrings({
+  enUS = {
+    -- Options
+    AH_OPT = "Quest items you can buy at the auction house (tracker alert, list, panel beside the auction house)",
+    OPT_TIP_AH = "Lists the items the route asks you to collect that can be bought at the auction house, for the current and next chapter. You choose what to buy; Questify only fills in the auction house search, every purchase stays your own click.",
+
+    -- Suivi
+    AH_ALERT_ONE = "1 quest item at the auction house",
+    AH_ALERT = "%d quest items at the auction house",
+    AH_ALERT_TIP = "These items from this chapter and the next can be bought at the auction house instead of farmed.",
+    AH_ALERT_CLICK = "Click: choose the items to buy",
+    AH_ALERT_RIGHT = "Right-click: hide until the next chapter",
+    AH_HINT = "or at the auction house: %d × %s",
+    AH_HINT_APPROX = "or at the auction house: %s",
+    AH_TIP_MISSING = "Questify: %d missing for %s",
+
+    -- Liste
+    AH_LIST_TITLE = "Questify — auction house",
+    AH_COL_ITEM = "Item · quest",
+    AH_COL_BUY = "To buy",
+    AH_COL_UNIT = "Unit price",
+    AH_COL_TOTAL = "Total",
+    AH_CHAPTER_CURRENT = "Current chapter",
+    AH_CHAPTER_NEXT = "Next chapter",
+    AH_IN_BAGS = "%d in bags",
+    AH_SELECTION = "Selection: %s",
+    AH_PRICES_FROM = "prices: %s",
+    AH_NO_PRICE_SOURCE = "no price addon",
+    AH_NO_PRICE = "No known price",
+    AH_UNCHECK_ALL = "Uncheck all",
+    AH_CHECK_ALL = "Check all",
+    AH_CLOSE = "Close",
+    AH_EMPTY = "Nothing to buy for this chapter and the next.",
+    AH_LOADING = "Loading item data…",
+    AH_EXPLAIN = "Bought items fill the objective as soon as the quest is accepted. A partial purchase keeps the collect step with the rest to farm. Purchases are made in the auction house, by your own clicks.",
+
+    -- Panneau à côté de l'hôtel des ventes
+    AH_SHOP_TITLE = "Questify — shopping list",
+    AH_SHOP_SUB = "Current and next chapter · %d items",
+    AH_SEARCH = "Search",
+    AH_SHOP_PROGRESS = "%d/%d in bags",
+    AH_SHOP_DONE = "%d/%d |TInterface\\RaidFrame\\ReadyCheck-Ready:12|t",
+    AH_EDIT_LIST = "Edit the list",
+    AH_SHOP_FOOT = "Questify buys nothing: every purchase stays your click in the auction house.",
+    AH_SEARCH_FAILED = "Could not start the auction house search: type %s in the search box.",
+
+    -- Discussion et /qf hv
+    AH_CHAT_OFFER = "%d items from this chapter and the next can be bought at the auction house (%s).",
+    AH_CHAT_LINK = "[See the list]",
+    AH_CHAT_HINT = "or /qf ah",
+    AH_SLASH_RESET = "Auction house list: %d unchecked item(s) offered again.",
+    AH_SLASH_OFF = "The auction house list is turned off in the options (Automation, Merchants).",
+  },
+  frFR = {
+    AH_OPT = "Objets de quête achetables à l'hôtel des ventes (alerte du suivi, liste, panneau à côté de l'HV)",
+    OPT_TIP_AH = "Liste les objets que la route demande de collecter et qui s'achètent à l'hôtel des ventes, pour le chapitre en cours et le suivant. Tu choisis quoi acheter ; Questify ne fait que remplir la recherche de l'HV, chaque achat reste ton clic.",
+
+    AH_ALERT_ONE = "1 objet de quête à l'hôtel des ventes",
+    AH_ALERT = "%d objets de quête à l'hôtel des ventes",
+    AH_ALERT_TIP = "Ces objets de ce chapitre et du suivant s'achètent à l'hôtel des ventes au lieu d'être farmés.",
+    AH_ALERT_CLICK = "Clic : choisir les objets à acheter",
+    AH_ALERT_RIGHT = "Clic droit : masquer jusqu'au prochain chapitre",
+    AH_HINT = "ou à l'hôtel des ventes : %d × %s",
+    AH_HINT_APPROX = "ou à l'hôtel des ventes : %s",
+    AH_TIP_MISSING = "Questify : %d manquants pour %s",
+
+    AH_LIST_TITLE = "Questify — hôtel des ventes",
+    AH_COL_ITEM = "Objet · quête",
+    AH_COL_BUY = "À acheter",
+    AH_COL_UNIT = "Prix unitaire",
+    AH_COL_TOTAL = "Total",
+    AH_CHAPTER_CURRENT = "Chapitre en cours",
+    AH_CHAPTER_NEXT = "Chapitre suivant",
+    AH_IN_BAGS = "%d dans les sacs",
+    AH_SELECTION = "Sélection : %s",
+    AH_PRICES_FROM = "prix %s",
+    AH_NO_PRICE_SOURCE = "aucun addon de prix",
+    AH_NO_PRICE = "Aucun prix connu",
+    AH_UNCHECK_ALL = "Tout décocher",
+    AH_CHECK_ALL = "Tout cocher",
+    AH_CLOSE = "Fermer",
+    AH_EMPTY = "Rien à acheter pour ce chapitre et le suivant.",
+    AH_LOADING = "Chargement des objets…",
+    AH_EXPLAIN = "Les objets achetés valident l'objectif dès que la quête est prise. Un achat partiel laisse l'étape de collecte avec le reste à farmer. Les achats se font dans l'hôtel des ventes, par tes clics.",
+
+    AH_SHOP_TITLE = "Questify — liste d'achats",
+    AH_SHOP_SUB = "Chapitre en cours et suivant · %d objets",
+    AH_SEARCH = "Chercher",
+    AH_SHOP_PROGRESS = "%d/%d dans les sacs",
+    AH_SHOP_DONE = "%d/%d |TInterface\\RaidFrame\\ReadyCheck-Ready:12|t",
+    AH_EDIT_LIST = "Modifier la liste",
+    AH_SHOP_FOOT = "Questify n'achète rien : chaque achat reste ton clic dans l'hôtel des ventes.",
+    AH_SEARCH_FAILED = "Impossible de lancer la recherche de l'HV : tape %s dans la zone de recherche.",
+
+    AH_CHAT_OFFER = "%d objets de ce chapitre et du suivant s'achètent à l'hôtel des ventes (%s).",
+    AH_CHAT_LINK = "[Voir la liste]",
+    AH_CHAT_HINT = "ou /qf hv",
+    AH_SLASH_RESET = "Liste de l'HV : %d objet(s) décoché(s) de nouveau proposé(s).",
+    AH_SLASH_OFF = "La liste de l'HV est désactivée dans les options (Automatisation, Marchands).",
+  },
+})
