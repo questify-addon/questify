@@ -196,6 +196,23 @@ return {
     t.eq(Q2.Settings:Get("nav.router"), "questify")
   end,
 
+  -- Ancien défaut « Repère du jeu » passé à la flèche : le repère laissé par l'ancienne version est
+  -- retiré une fois par personnage, à la connexion.
+  migrated_native_pin_cleared_once = function(t)
+    local Q = loadSavedNav({ routing = false, display = "native" })
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "old game pin removed")
+    t.eq(Q.char.navPinCleared, true)
+    Mock.reload()
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "once per character")
+    -- autre affichage gardé : son repère reste
+    Mock.reset()
+    Mock.addons.TomTom = true
+    loadSavedNav({ routing = false, display = "tomtom" })
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 0)
+    noNavErrors(t)
+  end,
+
   -- Tous les profils, et les réglages d'avant les profils (QuestifyDB.settings).
   migrate_every_profile = function(t)
     local Q = Mock.loadAddon(TOC, { extraFiles = { GUIDES }, savedVariables = {

@@ -205,6 +205,18 @@ function Profiles:Setup()
   migrateLegacyRoles()
 end
 
+-- Repère du jeu laissé par l'ancienne version (affichage « Repère du jeu », ancien défaut, passé à
+-- la flèche par migrateNav) : retiré une fois par personnage (Q.char.navPinCleared), à la connexion.
+-- La flèche ne pose rien dans le jeu ; un autre affichage garde son repère.
+local function clearOldNativePin()
+  local c = Q.char
+  if type(c) ~= "table" or c.navPinCleared then return end
+  c.navPinCleared = true
+  if Q.Settings:Get("nav.display") == "arrow" and Q.API and Q.API.ClearNativeWaypoint then
+    Q.API.ClearNativeWaypoint()
+  end
+end
+
 -- À la connexion : nom du personnage enfin connu, ou classe connue pour la migration.
 Q:On("LOGIN", function()
   if not db() or not db().profiles then return end
@@ -214,6 +226,7 @@ Q:On("LOGIN", function()
     if name ~= active then Profiles:SetActive(name) end
   end
   migrateLegacyRoles()
+  clearOldNativePin()
 end)
 
 ---------------------------------------------------------------------------

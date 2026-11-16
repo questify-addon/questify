@@ -116,6 +116,8 @@ return {
   glow_with_the_default_arrow_display = function(t)
     local Q = load({ beforeLogin = function() end })
     t.eq(select(2, Q.Nav:Active()), "arrow")
+    -- première connexion du personnage avec la flèche : le repère d'une version d'avant est retiré
+    local cleared = Mock.countCalls("C_Map.ClearUserWaypoint")
     local tg = Q.UI.Tracker.target
     t.eq(tg.kind, "object")
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0, "far from the chest: no game pin")
@@ -132,7 +134,7 @@ return {
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1, "posed once")
     Mock.player.x = tg.x + 3   -- ~150 yd
     Mock.advance(0.2)
-    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "removed out of range")
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), cleared + 1, "removed out of range")
     t.ok(not glowing(Q))
     -- de retour à portée puis option coupée : retiré aussi
     Mock.player.x = tg.x + 0.4
@@ -140,7 +142,7 @@ return {
     t.ok(glowing(Q))
     Q.Settings:Set("objectGlow", false)
     Mock.advance(0.2)
-    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 2, "removed with the option")
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), cleared + 2, "removed with the option")
     t.ok(not glowing(Q))
     t.eq(#Mock.errors, 0)
   end,
