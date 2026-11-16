@@ -410,6 +410,129 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  -- Trajet sans écran de chargement (portail de Rut'theran, bateau d'Auberdine) : le joueur passe
+  -- la fenêtre d'arrivée du trajet en cours (monté, minuterie d'une seconde) ; le trajet suivant
+  -- dont le départ ou l'arrivée est à portée est repris, sans replanifier.
+  leg_jump_without_loading_screen = function(t)
+    local Q = load()
+    local WESTFALL = 1436
+    local legs = {
+      { kind = "walk", from = { mapId = ELWYNN, x = 40, y = 50 }, to = { mapId = ELWYNN, x = 45, y = 50 } },
+      { kind = "portal", from = { mapId = ELWYNN, x = 45, y = 50 }, to = { mapId = WESTFALL, x = 50, y = 50 } },
+      { kind = "walk", from = { mapId = WESTFALL, x = 52, y = 50 }, to = { mapId = WESTFALL, x = 60, y = 50 } },
+    }
+    local plans = 0
+    Q.Travel.Plan = function() plans = plans + 1; return legs end
+    Q.Nav:SetTarget(WESTFALL, 60, 50, "Far")
+    t.eq(Q.Walk:Route().leg, 1)
+    -- de l'autre côté du portail, au départ de la marche suivante (70 yd de l'arrivée du portail)
+    Mock.player.map, Mock.player.x, Mock.player.y = WESTFALL, 52, 50
+    Mock.advance(1.1)
+    t.eq(Q.Walk:Route().leg, 3, "later leg taken up from its start")
+    t.eq(plans, 1, "no replan")
+    -- arrivée d'un trajet suivant à portée : trajet d'après
+    plans = 0
+    Mock.player.map, Mock.player.x, Mock.player.y = ELWYNN, 40, 50
+    Q.Nav:SetTarget(WESTFALL, 61, 50, "Far 2")
+    t.eq(Q.Walk:Route().leg, 1)
+    Mock.player.map, Mock.player.x, Mock.player.y = WESTFALL, 50.5, 50
+    Mock.advance(1.1)
+    t.eq(Q.Walk:Route().leg, 3, "portal end in reach: next walk")
+    t.eq(plans, 1)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Saut de position de plus de 150 yd entre deux relevés (téléportation sans écran de chargement,
+  -- vol sauté) : tout est replanifié depuis la nouvelle position.
+  replan_on_position_jump = function(t)
+    local Q = load()
+    local plans = 0
+    local orig = Q.Travel.Plan
+    Q.Travel.Plan = function(...) plans = plans + 1; return orig(...) end
+    routeEast(Q)
+    t.eq(plans, 1)
+    Mock.advance(1.1)
+    t.eq(plans, 1, "standing still: no replan")
+    Mock.player.y = 50 - 200 / YARD_Y        -- 200 yd plus au nord d'un coup
+    Mock.advance(1.1)
+    t.eq(plans, 2, "replanned after the jump")
+    Mock.advance(1.1)
+    local last = finds()[#finds()]
+    t.near(last.from.y, world(Q, ELWYNN, 40, 50 - 200 / YARD_Y).y, 0.01, "search from the new position")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Marche impossible (unreachable, outside) loin de l'endroit du plan : le voyage est replanifié
+  -- une fois depuis la position du joueur ; pas de boucle au même endroit.
+  replan_on_unreachable_walk = function(t)
+    local Q = load()
+    local plans = 0
+    local orig = Q.Travel.Plan
+    Q.Travel.Plan = function(...) plans = plans + 1; return orig(...) end
+    routeEast(Q)
+    Mock.player.x, Mock.player.y = 42, 50 + 40 / YARD_Y     -- 40 yd du chemin
+    Mock.advance(1.1)
+    t.eq(#finds(), 2, "off path: new search")
+    Mock.navEngine.fail(finds()[2], "unreachable")
+    t.eq(plans, 2, "replanned from the player")
+    Mock.advance(1.1)
+    t.eq(#finds(), 3, "search of the new plan")
+    Mock.navEngine.fail(finds()[3], "outside")
+    t.eq(plans, 2, "same place: no replan loop")
+    Mock.advance(3)
+    t.eq(#finds(), 3, "no search loop")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Pierre de foyer : rien à rejoindre à pied, le prochain point est l'arrivée de la pierre.
+  hearth_next_point_is_destination = function(t)
+    local Q = load()
+    local WESTFALL = 1436
+    local legs = {
+      { kind = "hearth", from = { mapId = ELWYNN, x = 40, y = 50 }, to = { mapId = WESTFALL, x = 50, y = 50 },
+        caption = "Hearthstone to Sentinel Hill" },
+      { kind = "walk", from = { mapId = WESTFALL, x = 50, y = 50 }, to = { mapId = WESTFALL, x = 60, y = 50 } },
+    }
+    Q.Travel.Plan = function() return legs end
+    Q.Nav:SetTarget(WESTFALL, 60, 50, "Far")
+    samePoint(t, Q.Walk:Route().nextPoint, world(Q, WESTFALL, 50, 50), "at once")
+    Mock.player.x = 43                          -- 104 yd de l'endroit du plan
+    samePoint(t, Q.Walk:Route().nextPoint, world(Q, WESTFALL, 50, 50), "no walk back to cast")
+    Mock.advance(0.3)
+    t.eq(Q.Arrow:Frame().caption:GetText(), "Hearthstone to Sentinel Hill", "arrow: hearth caption")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Écran de chargement vers un autre continent : sa partie des cartes est chargée tout de suite,
+  -- derrière l'écran ; le temps de chargement n'entre pas dans la pire image (loadMs à part).
+  preload_part_behind_loading_screen = function(t)
+    local Q = load()
+    routeEast(Q)
+    Mock.onLoadAddOn.Questify_Nav_Kalimdor = function() Mock.cpuMs = Mock.cpuMs + 80 end
+    Q.Walk:ResetPerf()
+    Mock.player.map, Mock.player.x, Mock.player.y = 1411, 50, 50
+    Mock.fire("PLAYER_ENTERING_WORLD", false, false)
+    t.eq(loads(), { "Questify_Nav", "Questify_Nav_EK", "Questify_Nav_Kalimdor" }, "Kalimdor part loaded at once")
+    Mock.advance(0.1)
+    local p = Q.Walk:Perf()
+    t.ok(p.worstMs < 80, "load time not in the worst frame (" .. p.worstMs .. ")")
+    t.ok(p.loadMs >= 80, "load time reported apart (" .. tostring(p.loadMs) .. ")")
+    Q.Walk:ResetPerf()
+    t.eq(Q.Walk:Perf().loadMs, 0)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  perf_memory_of_map_parts = function(t)
+    local Q = load()
+    Mock.addonMemory.Questify_Nav_EK, Mock.addonMemory.Questify_Nav_Kalimdor = 16384, 15360
+    local p = Q.Walk:Perf()
+    t.eq(p.memKB.Questify_Nav_EK, 16384)
+    t.eq(p.memKB.Questify_Nav_Kalimdor, 15360)
+    SlashCmdList.QUESTIFY("navperf")
+    t.ok(Mock.printed("maps 31.0 MB"), "map parts in /qf navperf")
+    t.eq(#Mock.errors, 0)
+  end,
+
   diagnostics_report_walk = function(t)
     local Q = load()
     local function walkCheck()

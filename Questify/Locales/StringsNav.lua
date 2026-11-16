@@ -66,7 +66,7 @@ Q:RegisterStrings({
     NAV_TRAVEL_HEARTH = "Hearthstone to %s",
 
     -- /qf navperf (Nav/Walk.lua) : mesures du routeur et du pont depuis la dernière remise à zéro
-    UI_NAVPERF = "Questify Nav: worst frame %.1f ms, average %.2f ms over %d frames, %d searches. Memory: Questify %.1f MB, Questify Nav %.1f MB. /qf navperf reset starts over.",
+    UI_NAVPERF = "Questify Nav: worst frame %.1f ms, average %.2f ms over %d frames, %d searches. Memory: Questify %.1f MB, Questify Nav %.1f MB, maps %.1f MB. Map loading %.0f ms (outside the frames). /qf navperf reset starts over.",
     UI_NAVPERF_RESET = "Questify Nav: measures reset.",
 
     REWARD_UPGRADE = "Reward: %s (an upgrade over your equipped item)",
@@ -136,7 +136,7 @@ Q:RegisterStrings({
     NAV_TRAVEL_PORTAL = "Portail vers %s",
     NAV_TRAVEL_HEARTH = "Pierre de foyer vers %s",
 
-    UI_NAVPERF = "Questify Nav : pire image %.1f ms, moyenne %.2f ms sur %d images, %d calculs. Mémoire : Questify %.1f Mo, Questify Nav %.1f Mo. /qf navperf reset remet à zéro.",
+    UI_NAVPERF = "Questify Nav : pire image %.1f ms, moyenne %.2f ms sur %d images, %d calculs. Mémoire : Questify %.1f Mo, Questify Nav %.1f Mo, cartes %.1f Mo. Chargement des cartes %.0f ms (hors images). /qf navperf reset remet à zéro.",
     UI_NAVPERF_RESET = "Questify Nav : mesures remises à zéro.",
 
     REWARD_UPGRADE = "Récompense : %s (meilleure que ton objet équipé)",

@@ -29,7 +29,9 @@ local addonName, Q = ...
 --
 --   Q.Walk:Status() -> { loaded, maps = { [0] = bool, [1] = bool }, reason, search } (/qf check)
 --   Q.Walk:DangerTable(fromMap, toMap) -> { [uiMapID] = 2 | 4 } | nil
---   Q.Walk:Perf() -> { worstMs, avgMs, frames, searches, memKB = { Questify, Questify_Nav } }
+--   Q.Walk:Perf() -> { worstMs, avgMs, frames, searches, loadMs,
+--                      memKB = { Questify, Questify_Nav, Questify_Nav_EK, Questify_Nav_Kalimdor } }
+--     loadMs : temps passé à charger Questify_Nav et ses parties (hors images mesurées)
 --   Q.Walk:ResetPerf()
 --
 -- Règles : Questify_Nav puis la partie du continent se chargent à la première route, jamais en combat
@@ -37,6 +39,11 @@ local addonName, Q = ...
 -- en cours annulé avant d'en lancer un ; relance quand la cible change, quand le joueur s'écarte de
 -- plus de OFF_PATH yd du chemin, à la fin d'un trajet et après un écran de chargement. En combat, le
 -- routeur met lui-même ses calculs en pause (Routing/PathJobs.lua) et les reprend après.
+-- Trajets sans écran de chargement (portails de Rut'theran, bateau d'Auberdine) : la fenêtre
+-- d'arrivée peut être sautée en une seconde ; tout trajet suivant dont le départ ou l'arrivée est à
+-- portée est donc repris. Saut de plus de JUMP yd entre deux relevés, ou marche impossible loin de
+-- l'endroit du plan : le voyage est replanifié depuis le joueur. Après un écran de chargement, la
+-- partie des cartes du continent est chargée tout de suite, encore derrière l'écran.
 local Walk = {}
 Q.Walk = Walk
 
@@ -46,6 +53,7 @@ local MIN_INTERVAL = 1       -- secondes entre deux calculs (comme la minuterie 
 local CHECK_EVERY = 1        -- secondes : écart au chemin, fin de trajet, arrêts de grotte
 local ARRIVE_WALK = 15       -- yards : bout d'un trajet à pied atteint
 local ARRIVE_RIDE = 60       -- yards : bout d'un vol, d'un bateau, d'une pierre atteint
+local JUMP = 150             -- yards entre deux relevés : au-delà, téléporté (voyage replanifié)
 local LEVEL_X2, LEVEL_X4 = 5, 10   -- écart de niveau d'une zone : coût ×2, ×4 (style « safe »)
 local SAMPLE = 40            -- yards entre deux points testés pour les zones traversées
 local ROUTER = "Questify_Nav"
@@ -53,6 +61,10 @@ local ROUTER = "Questify_Nav"
 local PARTS = { [0] = "Questify_Nav_EK", [1] = "Questify_Nav_Kalimdor" }
 -- Raisons qui tiennent à l'installation : inutile de relancer un calcul.
 local FINAL = { noaddon = true, noengine = true, nodata = true, cave = true }
+-- Échecs de la marche qui peuvent venir d'un plan dépassé (joueur passé de l'autre côté de l'eau).
+local STRANDED = { unreachable = true, outside = true }
+-- Mémoire rapportée par Perf : Questify, le routeur et les parties des cartes.
+local MEM_ADDONS = { ROUTER, PARTS[0], PARTS[1] }
 
 Walk.OFF_PATH, Walk.LOOKAHEAD = OFF_PATH, LOOKAHEAD
 
@@ -68,6 +80,8 @@ local loadReason      -- pourquoi le routeur ou les cartes manquent (nil : rien 
 local lastSearch      -- raison du dernier calcul échoué (nil : réussi)
 local maps = {}       -- [instance] = true (cartes prêtes) | false (absentes) ; nil : pas encore tenté
 local measuredAfter   -- routeur dont la planification par image est mesurée (voir wrapAfter)
+local plannedAt       -- position du joueur au dernier plan (Q.Travel:Plan)
+local lastPos         -- position du joueur au dernier relevé de la minuterie
 
 local sqrt, huge = math.sqrt, math.huge
 local unpack = unpack or table.unpack
@@ -77,9 +91,11 @@ local unpack = unpack or table.unpack
 -- routeur est chronométré (debugprofilestop) ; une mesure imbriquée dans une autre n'est comptée
 -- qu'une fois (profondeur) ; les mesures d'une même image (même GetTime(), constant pendant une
 -- image) s'additionnent dans un seau, fermé quand l'image change. Pire image et moyenne portent sur
--- les seaux fermés.
+-- les seaux fermés. Le chargement des addons (des dizaines de Mo de chaînes, une fois par continent)
+-- est retiré de la mesure qui l'englobe et compté à part (loadMs).
 ---------------------------------------------------------------------------
-local perf = { worst = 0, total = 0, frames = 0, searches = 0 }
+local perf = { worst = 0, total = 0, frames = 0, searches = 0, loadMs = 0 }
+local loadSpent = 0         -- ms de chargement depuis le démarrage (jamais remis à zéro)
 local depth = 0             -- mesures en cours (seule la plus externe compte)
 local bucketKey             -- image du seau ouvert (GetTime), nil : aucun
 local bucketMs = 0          -- millisecondes accumulées dans cette image
@@ -111,10 +127,10 @@ local function pack(...) return { n = select("#", ...), ... } end
 local function measured(fn)
   return function(...)
     depth = depth + 1
-    local t0 = clock()
+    local t0, l0 = clock(), loadSpent
     local res = pack(Q.SafeCall(fn, ...))
     depth = depth - 1
-    if depth == 0 then sample(clock() - t0) end
+    if depth == 0 then sample(clock() - t0 - (loadSpent - l0)) end
     if not res[1] then return nil end
     return unpack(res, 2, res.n)
   end
@@ -206,7 +222,13 @@ end
 local function loadAddOn(name)
   local load = C_AddOns and C_AddOns.LoadAddOn
   if type(load) ~= "function" then return false end
+  local t0 = clock()
   local ok, loaded = pcall(load, name)
+  local ms = clock() - t0
+  if ms > 0 then
+    loadSpent = loadSpent + ms
+    perf.loadMs = perf.loadMs + ms
+  end
   return ok and loaded == true
 end
 
@@ -407,7 +429,7 @@ local function straight(reason)
   r.origin = playerWorld()
 end
 
-local launch
+local launch, replan
 
 -- Un calcul pour le trajet à pied en cours : tout de suite, ou à la seconde suivante au plus tôt.
 local function request()
@@ -438,6 +460,12 @@ local function onResult(points, cost, j, warnDanger)
   r.computing = nil
   if type(points) ~= "table" or #points == 0 then
     lastSearch = type(cost) == "string" and cost or "error"
+    -- marche impossible loin de l'endroit du plan : plan dépassé, replanifié une fois d'ici
+    local me = STRANDED[lastSearch] and playerWorld()
+    if me and not (plannedAt and plannedAt.instance == me.instance and dist(me, plannedAt) <= OFF_PATH) then
+      replan()
+      return
+    end
     straight(lastSearch)
     publish()
     return
@@ -529,6 +557,7 @@ local function startLeg(legs, index)
   local L = legs[index]
   local r = { legs = legs, leg = index, target = target, warnings = {}, path = {}, straight = true }
   route = r
+  lastPos = nil
   startTicker()
   if L.kind == "walk" then
     r.goal = walkGoal(r)
@@ -544,15 +573,17 @@ local function startLeg(legs, index)
   if a then r.path[#r.path + 1] = a end
   if b then r.path[#r.path + 1] = b end
   r.straight, r.reason = false, nil
-  r.nextPoint = a or b
+  -- pierre : lancée où l'on est, rien à rejoindre à pied
+  r.nextPoint = (L.kind ~= "hearth" and a) or b
   publish()
 end
 
-local function replan()
+replan = function()
   stopTimer()
   cancelJob()
   if not (target and active()) then return end
   local me = playerWorld()
+  plannedAt = me
   startLeg(plan(target, me), 1)
 end
 
@@ -566,7 +597,24 @@ local function reset()
   if had then publish() end
 end
 
--- Chaque seconde : fin du trajet en cours, arrêt de grotte changé, écart au chemin.
+local function within(p, me, yards)
+  local w = worldOf(p)
+  return w ~= nil and w.instance == me.instance and dist(me, w) <= yards
+end
+
+-- Trajet à reprendre : le plus avancé dont le trajet d'avant est arrivé (arrivée à portée), ou dont
+-- le départ est à portée (pas celui d'une pierre, lancée n'importe où) ; nil : le trajet en cours.
+local function laterLeg(r, me)
+  local legs = r.legs
+  for k = #legs, r.leg + 1, -1 do
+    local P, L = legs[k - 1], legs[k]
+    if within(P.to, me, P.kind == "walk" and ARRIVE_WALK or ARRIVE_RIDE) then return k end
+    if k > r.leg + 1 and L.kind ~= "hearth" and within(L.from, me, ARRIVE_WALK) then return k end
+  end
+  return nil
+end
+
+-- Chaque seconde : trajet suivant à portée, saut de position, arrêt de grotte changé, écart au chemin.
 tick = function()
   local r = route
   if not r then
@@ -575,13 +623,16 @@ tick = function()
   end
   local me = playerWorld()
   local L = r.legs[r.leg]
-  if me and L and r.leg < #r.legs then
-    local to = worldOf(L.to)
-    local near = L.kind == "walk" and ARRIVE_WALK or ARRIVE_RIDE
-    if to and to.instance == me.instance and dist(me, to) <= near then
-      startLeg(r.legs, r.leg + 1)
-      return
-    end
+  local k = me and laterLeg(r, me)
+  if k then
+    startLeg(r.legs, k)
+    return
+  end
+  local last = lastPos
+  lastPos = me
+  if me and last and (last.instance ~= me.instance or dist(me, last) > JUMP) then
+    replan()
+    return
   end
   if not (L and L.kind == "walk") then return end
   local goal = walkGoal(r)
@@ -616,7 +667,8 @@ local function follow()
   if not me or me.instance ~= path[1].instance then return r end
   local L = r.legs[r.leg]
   if not (L and L.kind == "walk") then
-    r.nextPoint = dist(me, path[1]) > ARRIVE_RIDE and path[1] or path[n]
+    -- départ à rejoindre d'abord, sauf pour la pierre (lancée où l'on est)
+    r.nextPoint = L.kind ~= "hearth" and dist(me, path[1]) > ARRIVE_RIDE and path[1] or path[n]
     return r
   end
   -- segment le plus proche (le plus avancé à égalité), puis premier point au-delà de LOOKAHEAD
@@ -654,7 +706,7 @@ function Walk:Perf()
   local update = (C_AddOns and C_AddOns.UpdateAddOnMemoryUsage) or UpdateAddOnMemoryUsage
   local get = (C_AddOns and C_AddOns.GetAddOnMemoryUsage) or GetAddOnMemoryUsage
   if type(update) == "function" then pcall(update) end
-  for _, name in ipairs({ addonName, ROUTER }) do
+  for _, name in ipairs({ addonName, unpack(MEM_ADDONS) }) do
     local ok, kb = false, nil
     if type(get) == "function" then ok, kb = pcall(get, name) end
     mem[name] = ok and tonumber(kb) or 0
@@ -665,12 +717,13 @@ function Walk:Perf()
     avgMs = perf.frames > 0 and perf.total / perf.frames or 0,
     frames = perf.frames,
     searches = perf.searches,
+    loadMs = perf.loadMs,
     memKB = mem,
   }
 end
 
 function Walk:ResetPerf()
-  perf.worst, perf.total, perf.frames, perf.searches = 0, 0, 0, 0
+  perf.worst, perf.total, perf.frames, perf.searches, perf.loadMs = 0, 0, 0, 0, 0
   bucketKey, bucketMs = nil, 0
 end
 
@@ -717,6 +770,9 @@ Q:RegisterEvent("PLAYER_ENTERING_WORLD", measured(function()
   route = nil
   if had then publish() end
   if not target then return end
+  -- partie des cartes du nouveau continent chargée maintenant, derrière l'écran de chargement
+  local me = active() and playerWorld()
+  if me then ensureEngine(me.instance) end
   pending = "replan"
   timer = C_Timer.NewTimer(MIN_INTERVAL, measured(function()
     timer = nil
