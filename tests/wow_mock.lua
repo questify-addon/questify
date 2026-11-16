@@ -361,6 +361,10 @@ function Object:RegisterForDrag(...) rawset(self, "_drag", { ... }) end
 function Object:EnableMouse(b) rawset(self, "_mouse", b ~= false) end
 function Object:IsMouseEnabled() return self._mouse == true end
 function Object:SetMovable(b) rawset(self, "_movable", b and true or false) end
+function Object:StartMoving() rawset(self, "_moving", true); record("StartMoving", self) end
+function Object:StopMovingOrSizing() rawset(self, "_moving", false); record("StopMovingOrSizing", self) end
+function Object:SetRotation(r) rawset(self, "_rotation", r) end
+function Object:GetRotation() return self._rotation or 0 end
 function Object:IsMovable() return self._movable == true end
 function Object:GetChildren() return unpack(self._children) end
 function Object:GetNumChildren() return #self._children end
@@ -1138,6 +1142,7 @@ local function installApi()
   end
   UnitExists = function(unit) return unit == "player" or Mock.units[unit] ~= nil end
   UnitIsDead = function(unit) local u = Mock.units[unit]; return u and u.dead or false end
+  UnitOnTaxi = function(unit) return unit == "player" and P().onTaxi == true end
   UnitCanAttack = function(_, unit) local u = Mock.units[unit]; return u and u.hostile ~= false end
   UnitIsPlayer = function(unit) return unit == "player" end
   UnitAffectingCombat = function(unit) return unit == "player" and P().combat end

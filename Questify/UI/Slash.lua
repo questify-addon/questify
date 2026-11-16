@@ -11,6 +11,7 @@ local addonName, Q = ...
 --   /qf export     mesures de temps, prêtes à copier
 --   /qf debug      messages de débogage (QuestifyDB.debug)
 --   /qf navperf    mesures du routeur intégré (pire image, moyenne, calculs, mémoire) ; « reset » : à zéro
+--   /qf arrow reset     flèche Questify (UI/Arrow.lua) remise à sa place par défaut
 --   /qf check      autodiagnostic du client (API, QuestieDB, navigation, route) ; alias /qf diag
 --   /qf bug        rapport de bug prêt à copier (alias /qf report) ; /qf bug clear vide les erreurs gardées
 --   /qf theme <clé>     thème du suivi (parchment, dark, transparent, gradient) ; seul : la liste
@@ -227,6 +228,18 @@ COMMANDS.navperf = function(rest)
   local p = W:Perf()
   Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (p.memKB.Questify or 0) / 1024,
     (p.memKB.Questify_Nav or 0) / 1024)
+end
+
+-- Flèche Questify (UI/Arrow.lua) : « reset » la remet à sa place par défaut.
+COMMANDS.arrow = function(rest)
+  local A = Q.Arrow
+  if not A then return end
+  if rest == "reset" then
+    A:ResetPosition()
+    Q:Print(L.UI_ARROW_RESET)
+    return
+  end
+  Q:Print(L.UI_ARROW_HELP)
 end
 
 COMMANDS.check = function()

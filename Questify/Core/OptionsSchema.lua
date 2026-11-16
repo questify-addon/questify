@@ -248,6 +248,25 @@ add({ id = "nav.lineStyle", section = "navigation", category = "display", type =
 add({ id = "nav.arrowLocked", section = "navigation", category = "display", type = "toggle",
   path = "nav.arrowLocked", label = "OPT_NAV_ARROW_LOCKED", tip = "OPT_TIP_NAV_ARROW_LOCKED",
   keywords = "fleche verrouiller bloquer deplacer arrow lock move position" })
+add({ id = "arrow.show", section = "navigation", category = "display", type = "toggle", path = "arrow.show",
+  label = "OPT_ARROW_SHOW", tip = "OPT_TIP_ARROW_SHOW",
+  keywords = "fleche afficher montrer direction distance navigation arrow show floating direction distance" })
+add({ id = "arrow.color", section = "navigation", category = "display", type = "select", style = "dropdown",
+  path = "arrow.color", label = "OPT_ARROW_COLOR", tip = "OPT_TIP_ARROW_COLOR",
+  keywords = "fleche couleur cyan theme or vert blanc rose arrow colour color gold green white pink",
+  values = { "cyan", "theme", "gold", "green", "white", "pink" },
+  enabled = function() return Q.Settings:Get("arrow.show") ~= false end,
+  choices = function()
+    local Lx = L()
+    return {
+      { value = "cyan", text = Lx.OPT_ARROW_CYAN },
+      { value = "theme", text = Lx.OPT_ARROW_THEME },
+      { value = "gold", text = Lx.OPT_ARROW_GOLD },
+      { value = "green", text = Lx.OPT_ARROW_GREEN },
+      { value = "white", text = Lx.OPT_ARROW_WHITE },
+      { value = "pink", text = Lx.OPT_ARROW_PINK },
+    }
+  end })
 -- position de la flèche Questify (UI/Arrow.lua) : { point, point relatif, x, y }, comme celle du suivi
 add({ id = "nav.arrowPos", section = "navigation", category = "display", type = "hidden", path = "nav.arrowPos",
   position = true })

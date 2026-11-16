@@ -15,6 +15,9 @@ Settings.defaults = {
   -- dont la position (nav.arrowPos = { point, point relatif, x, y }) n'a pas de défaut.
   -- Migration des anciens réglages (nav.routing) : Core/Profiles.lua.
   nav = { router = "questify", display = "arrow", routeStyle = "safe", lineStyle = "dots", arrowLocked = false },
+  -- Flèche Questify (UI/Arrow.lua) : affichée, couleur ("cyan" | "theme" | "gold" | "green" | "white" |
+  -- "pink"). Mêmes réglages que la session ui-themes (Options › Thème chez elle).
+  arrow = { show = true, color = "cyan" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
     theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
     foldBlizzard = true },                  -- UI/BlizzardTracker.lua : suivi de Blizzard replié

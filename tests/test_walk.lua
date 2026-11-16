@@ -241,7 +241,8 @@ return {
   -- Budget par image : deux mesures dans la même image n'en font qu'une (leur somme) ; une mesure
   -- imbriquée dans une autre n'est comptée qu'une fois.
   perf_per_frame = function(t)
-    local Q = load()
+    -- la flèche (UI/Arrow.lua) lit aussi la route à sa minuterie : coupée, seules les lectures du test comptent
+    local Q = load({ settings = { ["arrow.show"] = false } })
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
     local job = finds()[1]
     Mock.advance(1)

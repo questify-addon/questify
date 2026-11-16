@@ -108,6 +108,7 @@ UI\DungeonChainPopup.lua
 UI\DungeonModePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
+UI\Arrow.lua
 UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua
