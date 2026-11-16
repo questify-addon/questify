@@ -1,6 +1,6 @@
 local addonName, Q = ...
 
--- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en six pages :
+-- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en sept pages :
 --   1. bienvenue et addons (QuestieDB, ShortestPath Forever, WaypointUI, TomTom) : état de chacun
 --      (chargé, désactivé, activé mais pas encore chargé, périmé, absent, QuestieDB trop ancien),
 --      lien CurseForge à copier pour les absents et pour QuestieDB trop ancien (le jeu n'ouvre pas
@@ -10,7 +10,9 @@ local addonName, Q = ...
 --   3. calcul d'itinéraire par ShortestPath Forever (case active seulement s'il est chargé) ;
 --   4. affichage : WaypointUI, TomTom ou repère du jeu (les absents sont désactivés) ;
 --   5. automatisations (accepter/rendre, choix de la récompense, vente de la camelote) ;
---   6. récapitulatif et « Terminer ».
+--   6. suivi des quêtes : masquer le suivi d'objectifs du jeu (tracker.hideBlizzard,
+--      UI/BlizzardTracker.lua) ;
+--   7. récapitulatif et « Terminer ».
 -- Chaque page a « Précédent », « Ignorer » (remet les choix de la page à leur valeur actuelle et
 -- passe à la suivante) et « Suivant » ; la dernière a « Terminer ». « Recharger l'interface » est
 -- visible sur la page des addons, et sur toutes les pages après « Activer ».
@@ -31,7 +33,7 @@ local INNER = WIDTH - 48
 local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
-local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_RECAP = 1, 2, 3, 4, 5, 6
+local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_TRACKER, PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
 
@@ -74,6 +76,7 @@ local PAGE_KEYS = {
   [PAGE_ROUTING] = { "routing" },
   [PAGE_DISPLAY] = { "display" },
   [PAGE_AUTO] = { "autoQuest", "autoReward", "sellJunk", "rewardRole" },
+  [PAGE_TRACKER] = { "hideBlizzard" },
 }
 
 local READY = "Interface\\RaidFrame\\ReadyCheck-Ready"
@@ -423,11 +426,31 @@ function Wizard:BuildAutoPage(page)
   self.rewardRoleButton = b
 end
 
+-- Page « Suivi des quêtes » : une case, réglage tracker.hideBlizzard (UI/BlizzardTracker.lua).
+function Wizard:BuildTrackerPage(page)
+  local title = pageTitle(page, "UI_WIZ_TRACKER_TITLE")
+  local text = paragraph(page, L.UI_WIZ_TRACKER_TEXT, title, 10)
+  local cb = newButton("CheckButton", page, "UICheckButtonTemplate")
+  cb:SetSize(26, 26)
+  cb:SetPoint("TOPLEFT", text, "BOTTOMLEFT", -4, -14)
+  cb.label = labelFor(cb, L.UI_WIZ_HIDE_BLIZZARD)
+  cb:SetScript("OnClick", safe(function(self)
+    Wizard:SetChoice("hideBlizzard", self:GetChecked() and true or false)
+  end))
+  self.checks.hideBlizzard = cb
+  local note = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  note:SetPoint("TOPLEFT", cb, "BOTTOMLEFT", 30, -2)
+  note:SetWidth(INNER - 30)
+  note:SetJustifyH("LEFT")
+  note:SetFormattedText(L.UI_WIZ_HIDE_BLIZZARD_NOTE, L.OPT_SEC_TRACKER, L.OPT_CAT_TRACKER_CONTENT)
+  self.hideBlizzardNote = note
+end
+
 function Wizard:BuildRecapPage(page)
   local title = pageTitle(page, "UI_WIZ_RECAP_TITLE")
   local anchor = paragraph(page, L.UI_WIZ_RECAP_TEXT, title, 10)
   local gap = 14
-  for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk" }) do
+  for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk", "hideBlizzard" }) do
     local line = paragraph(page, "", anchor, gap)
     self.recap[key] = line
     anchor = line
@@ -468,6 +491,7 @@ function Wizard:Create()
   self:BuildRoutingPage(self.pages[PAGE_ROUTING])
   self:BuildDisplayPage(self.pages[PAGE_DISPLAY])
   self:BuildAutoPage(self.pages[PAGE_AUTO])
+  self:BuildTrackerPage(self.pages[PAGE_TRACKER])
   self:BuildRecapPage(self.pages[PAGE_RECAP])
 
   local step = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -585,6 +609,7 @@ function Wizard:Refresh()
   end
   self:SelectDisplay(c.display)
   for _, def in ipairs(AUTOMATIONS) do self.checks[def[1]]:SetChecked(c[def[1]]) end
+  self.checks.hideBlizzard:SetChecked(c.hideBlizzard)
   local rb, Rw = self.rewardRoleButton, Q.Rewards
   if rb and Rw then
     local classFile = Q.Player and Q.Player.classFile
@@ -605,6 +630,7 @@ function Wizard:ReadWidgets()
   for _, def in ipairs(AUTOMATIONS) do
     c[def[1]] = self.checks[def[1]]:GetChecked() and true or false
   end
+  c.hideBlizzard = self.checks.hideBlizzard:GetChecked() and true or false
 end
 
 -- Lit la détection et les réglages actuels, reprend le brouillon, puis prépare chaque page.
@@ -628,6 +654,7 @@ function Wizard:Load()
     autoQuest = Q.Settings:Get("autoQuest") ~= false,
     autoReward = Q.Settings:Get("autoReward") ~= false,
     sellJunk = Q.Settings:Get("sellJunk") ~= false,
+    hideBlizzard = Q.Settings:Get("tracker.hideBlizzard") == true,
     rewardRole = Q.Rewards and Q.Rewards:Role() or "auto",
   }
   self.initial = initial
@@ -667,6 +694,7 @@ function Wizard:UpdateRecap()
   r.autoQuest:SetFormattedText(L.UI_WIZ_RECAP_AUTOQUEST, onOff(c.autoQuest))
   r.autoReward:SetFormattedText(L.UI_WIZ_RECAP_AUTOREWARD, onOff(c.autoReward))
   r.sellJunk:SetFormattedText(L.UI_WIZ_RECAP_SELLJUNK, onOff(c.sellJunk))
+  r.hideBlizzard:SetFormattedText(L.UI_WIZ_RECAP_HIDE_BLIZZARD, c.hideBlizzard and L.UI_WIZ_HIDDEN or L.UI_WIZ_SHOWN)
 end
 
 -- Affiche la page n et la garde dans Q.char.wizardPage (reprise après /reload).
@@ -760,6 +788,7 @@ function Wizard:Finish()
   Q.Settings:Set("autoQuest", c.autoQuest)
   Q.Settings:Set("autoReward", c.autoReward)
   Q.Settings:Set("sellJunk", c.sellJunk)
+  Q.Settings:Set("tracker.hideBlizzard", c.hideBlizzard)
   -- profil de butin : propre au personnage (Q.char.rewardRole), hors profils d'options
   if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
   if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then Q.char.rewardRoleChosen = true end
