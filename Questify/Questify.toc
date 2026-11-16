@@ -66,6 +66,7 @@ Engine\RouteChoice.lua
 Engine\Detour.lua
 Engine\Targets.lua
 Engine\ZoneMode.lua
+Engine\Objectives.lua
 Engine\Format.lua
 Engine\ClassQuests.lua
 Engine\Trainer.lua
@@ -91,6 +92,7 @@ Automation\SellJunk.lua
 Automation\Taxi.lua
 
 UI\Themes.lua
+UI\ObjectiveRows.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
 UI\BlizzardTracker.lua
@@ -105,6 +107,7 @@ UI\DungeonChainPopup.lua
 UI\DungeonModePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
+UI\ZoneOverlay.lua
 UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua

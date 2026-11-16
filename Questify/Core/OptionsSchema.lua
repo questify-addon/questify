@@ -292,6 +292,9 @@ add({ id = "openClassQuests", section = "class", category = "dungeons", type = "
 add({ id = "mapPins", section = "map", category = "worldmap", type = "toggle", path = "mapPins",
   label = "MAP_OPT_PINS", tip = "OPT_TIP_MAPPINS",
   keywords = "carte monde minicarte reperes epingles map world minimap pins markers" })
+add({ id = "zoneOverlay", section = "map", category = "worldmap", type = "toggle", path = "zoneOverlay",
+  label = "ZONE_OPT_OVERLAY", tip = "OPT_TIP_ZONE_OVERLAY",
+  keywords = "zone enveloppe contour carte minicarte cercle hull area outline map minimap" })
 add({ id = "nameplates", section = "map", category = "markers", type = "toggle", path = "nameplates",
   label = "UI_OPT_NAMEPLATES", tip = "OPT_TIP_NAMEPLATES",
   keywords = "barres de nom icone monstre objectif nameplates icon monster objective" })
@@ -323,9 +326,27 @@ add({ id = "trackerResetPosition", section = "tracker", category = "layout", typ
   label = "OPT_TRACKER_RESET_POS", tip = "OPT_TIP_TRACKER_RESET_POS",
   keywords = "suivi position replacer origine deplacer tracker reset position move",
   run = function() Q.Settings:Set("tracker.point", nil) end })
-add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "toggle",
-  path = "tracker.showMobs", label = "UI_OPT_SHOWMOBS", tip = "OPT_TIP_SHOWMOBS",
-  keywords = "suivi monstres liste tuer tracker monsters mobs list kill" })
+-- Ancien réglage des monstres du suivi, remplacé par tracker.objDetail (gardé pour les profils).
+add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "hidden", path = "tracker.showMobs" })
+-- Objectifs de l'étape (Engine/Objectives.lua) : aussi choisis dans l'assistant, avec un aperçu.
+add({ id = "tracker.objLayout", section = "tracker", category = "content", type = "select", style = "dropdown",
+  path = "tracker.objLayout", label = "OPT_OBJ_LAYOUT", tip = "OPT_TIP_OBJ_LAYOUT",
+  keywords = "suivi objectifs mise en page liste barres quete tracker objectives layout list bars quest",
+  values = { "list", "bars", "quest" },
+  choices = function()
+    local l = L()
+    return { { value = "list", text = l.OBJ_LAYOUT_LIST }, { value = "bars", text = l.OBJ_LAYOUT_BARS },
+      { value = "quest", text = l.OBJ_LAYOUT_QUEST } }
+  end })
+add({ id = "tracker.objDetail", section = "tracker", category = "content", type = "select", style = "dropdown",
+  path = "tracker.objDetail", label = "OPT_OBJ_DETAIL", tip = "OPT_TIP_OBJ_DETAIL",
+  keywords = "suivi objectifs detail monstres distance compteur tracker objectives detail monsters mobs distance count",
+  values = { "count", "mobs", "distance" },
+  choices = function()
+    local l = L()
+    return { { value = "count", text = l.OBJ_DETAIL_COUNT }, { value = "mobs", text = l.OBJ_DETAIL_MOBS },
+      { value = "distance", text = l.OBJ_DETAIL_DISTANCE } }
+  end })
 add({ id = "tracker.foldBlizzard", section = "tracker", category = "content", type = "toggle",
   path = "tracker.foldBlizzard", label = "OPT_TRACKER_FOLD_BLIZZARD", tip = "OPT_TIP_TRACKER_FOLD_BLIZZARD",
   keywords = "suivi blizzard objectifs replier masquer cacher objective tracker blizzard fold collapse hide" })
