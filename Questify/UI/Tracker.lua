@@ -1690,6 +1690,7 @@ function Tracker:Refresh()
   cur_:Show()
   y = y + h + 6
   y = self:LayoutSkip(cur, y)
+  y = self:LayoutAdvice(cur, y)
   y = self:LayoutWarnings(y)
 
   -- Étapes suivantes

@@ -420,6 +420,9 @@ add({ id = "hearthHints", section = "comfort", category = "hearth", type = "togg
 add({ id = "dangerAlert", section = "comfort", category = "warnings", type = "toggle", path = "dangerAlert",
   label = "COMFORT_OPT_DANGER", tip = "OPT_TIP_DANGER",
   keywords = "danger elite elites alerte monstres niveau warning elite level" })
+add({ id = "questValue", section = "comfort", category = "warnings", type = "toggle", path = "questValue",
+  label = "QV_OPT", tip = "OPT_TIP_QUESTVALUE",
+  keywords = "passer quete grise groupe elite trop haute bash rentable skip gray grey quest group elite high worth" })
 add({ id = "supplyReminders", section = "comfort", category = "warnings", type = "toggle", path = "supplyReminders",
   label = "COMFORT_OPT_SUPPLIES", tip = "OPT_TIP_SUPPLIES",
   keywords = "vendre reparer sacs ville avant-poste auberge nourriture boisson rappel sell repair bags town outpost inn food drink reminder" })

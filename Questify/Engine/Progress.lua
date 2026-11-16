@@ -63,13 +63,17 @@ local function refreshPlayer(level)
 end
 Progress.RefreshPlayer = function(_, level) refreshPlayer(level) end
 
-local EMPTY_CHAR = { manual = {}, skipped = {}, inserted = {} }
+-- Q.char.dropped[questId] = quête racine : quêtes passées parce qu'elles ne rapportent plus assez
+-- (Engine/QuestValue.lua). Toutes leurs étapes sont passées, et les quêtes qui en dépendent aussi
+-- (préquête jamais faite) ; la racine sert à tout rouvrir d'un coup (Progress:UndropQuests).
+local EMPTY_CHAR = { manual = {}, skipped = {}, inserted = {}, dropped = {} }
 local function charState()
   local c = Q.char
   if not c then return EMPTY_CHAR end
   c.manual = c.manual or {}
   c.skipped = c.skipped or {}
   c.inserted = c.inserted or {}
+  if type(c.dropped) ~= "table" then c.dropped = {} end
   return c
 end
 
@@ -192,6 +196,7 @@ local computeBase
 
 -- Un prérequis est « en cours » s'il est dans le journal ou prévu par une étape non sautée.
 local function prereqPending(ctx, p)
+  if charState().dropped[p] then return false end   -- quête passée : même dans le journal, sans suite
   if Progress:InLog(p) then return true end
   local list = ctx.byQuest[p]
   if list then
@@ -312,6 +317,7 @@ local function evaluate(ctx, e)
   local P = Q.Player
   if c.manual[e.key] then return "done", "manual" end
   if c.skipped[e.key] then return "skipped", "manual" end
+  if step.questId ~= nil and c.dropped[step.questId] then return "skipped", "dropped" end
   local f = filterSkip(step)
   if f then return "skipped", f end
 
@@ -639,6 +645,43 @@ function Progress:MarkDone(key)
   self:Update()
 end
 
+-- Passe les quêtes `ids` (liste d'IDs, la racine en tête) : leurs étapes deviennent « passées »
+-- (raison "dropped"). -> vrai si fait.
+function Progress:DropQuests(ids)
+  if type(ids) ~= "table" or type(ids[1]) ~= "number" or not Q.char then return false end
+  local c = charState()
+  local root = ids[1]
+  for _, id in ipairs(ids) do
+    if type(id) == "number" then c.dropped[id] = root end
+  end
+  cache = nil
+  self:Update()
+  return true
+end
+
+-- Rouvre les quêtes passées avec la racine `root`. -> vrai si une quête a été rouverte.
+function Progress:UndropQuests(root)
+  if type(root) ~= "number" or not Q.char then return false end
+  local c = charState()
+  local found = false
+  for id, r in pairs(c.dropped) do
+    if r == root then
+      c.dropped[id] = nil
+      found = true
+    end
+  end
+  if found then
+    cache = nil
+    self:Update()
+  end
+  return found
+end
+
+-- Quête racine du saut qui a passé `questId`, ou nil.
+function Progress:DroppedRoot(questId)
+  return charState().dropped[questId]
+end
+
 -- Revient en arrière : rouvre l'étape la plus proche avant l'étape courante que le joueur a
 -- cochée, passée, ou qui a été validée par la position.
 function Progress:Back()
@@ -654,6 +697,11 @@ function Progress:Back()
   for i = start, 1, -1 do
     local e = entries[i]
     local k = e.key
+    local root = e.step.questId ~= nil and c.dropped[e.step.questId]
+    if root then
+      self:UndropQuests(root)
+      return e
+    end
     if c.manual[k] or c.skipped[k] or reached[k] then
       c.manual[k] = nil
       c.skipped[k] = nil
@@ -678,8 +726,15 @@ function Progress:JumpTo(key)
     if e.key == key then target = e; break end
   end
   if not target then return false end
-  if not cache then self:Recompute() end
   local c = charState()
+  local root = target.step.questId ~= nil and c.dropped[target.step.questId]
+  if root then
+    for id, r in pairs(c.dropped) do
+      if r == root then c.dropped[id] = nil end
+    end
+    cache = nil
+  end
+  if not cache then self:Recompute() end
   local before = true
   for _, e in ipairs(entries) do
     local k = e.key
@@ -724,6 +779,17 @@ function Progress:ResetGuide(guideId)
   local id = guideId or charState().guideId
   if type(id) ~= "string" or id == "" then return false end
   clearKeys("g:" .. id .. ":")
+  -- quêtes passées (peu rentables) du chapitre : rouvertes avec toute leur chaîne
+  local g = Q.Guides:Get(id)
+  local c = charState()
+  for _, step in ipairs(g and g.steps or {}) do
+    local root = step.questId ~= nil and c.dropped[step.questId]
+    if root then
+      for qid, r in pairs(c.dropped) do
+        if r == root then c.dropped[qid] = nil end
+      end
+    end
+  end
   endPrinted[id] = nil
   cache = nil
   self:Update()

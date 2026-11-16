@@ -31,6 +31,7 @@ Settings.defaults = {
   autoFly = true,           -- Automation/Taxi.lua
   hearthHints = true,       -- Engine/Hearth.lua
   dangerAlert = true,       -- Engine/Danger.lua
+  questValue = true,        -- Engine/QuestValue.lua : passer une quête devenue peu rentable
   supplyReminders = true,   -- Engine/Supplies.lua
   showXPRate = true,        -- Engine/XPRate.lua
   -- Donjons selon le niveau et la faction (alerte du suivi)

@@ -37,6 +37,29 @@ function API.QuestTitle(id)
   return nil
 end
 
+-- Abandonne une quête du journal (C_QuestLog.SetSelectedQuest, SetAbandonQuest, AbandonQuest, sinon les
+-- fonctions de Classic par index). -> vrai si l'abandon a été demandé.
+function API.AbandonQuest(id)
+  local idx = API.QuestLogIndex(id)
+  if not idx then return false end
+  local QL = C_QuestLog
+  if QL and QL.SetSelectedQuest and QL.SetAbandonQuest and QL.AbandonQuest then
+    return pcall(function()
+      QL.SetSelectedQuest(id)
+      QL.SetAbandonQuest()
+      QL.AbandonQuest()
+    end) == true
+  end
+  if SelectQuestLogEntry and SetAbandonQuest and AbandonQuest then
+    return pcall(function()
+      SelectQuestLogEntry(idx)
+      SetAbandonQuest()
+      AbandonQuest()
+    end) == true
+  end
+  return false
+end
+
 ---------------------------------------------------------------------------
 -- Objets
 ---------------------------------------------------------------------------

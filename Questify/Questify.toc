@@ -43,6 +43,7 @@ Locales\StringsMinimap.lua
 Locales\StringsOptions.lua
 Locales\StringsTrainer.lua
 Locales\StringsAuction.lua
+Locales\StringsQuestValue.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -85,6 +86,7 @@ Engine\Danger.lua
 Engine\Supplies.lua
 Engine\AuctionItems.lua
 Engine\Dungeons.lua
+Engine\QuestValue.lua
 
 Nav\Caves.lua
 Nav\Navigation.lua
@@ -99,6 +101,7 @@ UI\Themes.lua
 UI\ObjectiveRows.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
+UI\QuestValue.lua
 UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
