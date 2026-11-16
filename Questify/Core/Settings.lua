@@ -13,7 +13,8 @@ Settings.defaults = {
   nav = { routing = false, display = "native" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
     theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
-    foldBlizzard = true },                  -- UI/BlizzardTracker.lua : suivi de Blizzard replié
+    foldBlizzard = true,                    -- UI/BlizzardTracker.lua : suivi de Blizzard replié
+    hideBlizzard = false },                 -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
   nameplates = true,
   objectGlow = true,
   trainerAlert = true,

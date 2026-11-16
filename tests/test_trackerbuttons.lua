@@ -23,14 +23,22 @@ end
 
 local function row(state, key) return { state = state, chain = { key = key or state }, dungeon = { key = key or state } } end
 
--- Faux suivi d'objectifs de Blizzard (SetCollapsed du conteneur moderne).
+-- Faux suivi d'objectifs de Blizzard (SetCollapsed du conteneur moderne ; Update affiche le cadre
+-- comme le gestionnaire du jeu quand il a des quêtes à montrer).
 local function blizzardTracker()
   local otf = CreateFrame("Frame", "ObjectiveTrackerFrame", UIParent)
   otf.isCollapsed = false
   otf.calls = 0
+  otf.updates = 0
   function otf:SetCollapsed(c) self.isCollapsed = c; self.calls = self.calls + 1 end
   function otf:IsCollapsed() return self.isCollapsed end
+  function otf:Update() self.updates = self.updates + 1; self:Show() end
   return otf
+end
+
+-- Chargement avec tracker.hideBlizzard déjà coché dans le profil (comme après un /reload).
+local function loadHidden()
+  return load({ beforeLogin = function(Q) Q.Settings:Set("tracker.hideBlizzard", true) end })
 end
 
 return {
@@ -237,6 +245,115 @@ return {
     Mock.fire("PLAYER_ENTERING_WORLD", true, false)
     Mock.advance(2)
     t.eq(otf.calls, 0)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_shown_by_default = function(t)
+    local otf = blizzardTracker()
+    local Q = load()
+    t.eq(Q.Settings:Get("tracker.hideBlizzard"), false, "off by default")
+    t.ok(otf:IsShown(), "left alone")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    t.eq(otf.updates, 0, "nothing handed back when never hidden")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_hidden_at_login_and_kept_hidden = function(t)
+    local otf = blizzardTracker()
+    local Q = loadHidden()
+    t.ok(not otf:IsShown(), "hidden at login")
+    t.ok(Q.UI.BlizzardTracker:IsHidden())
+    otf:Show()   -- le jeu le réaffiche (nouvelle quête suivie, changement de zone)
+    t.ok(not otf:IsShown(), "hidden again each time the game shows it")
+    Mock.fire("PLAYER_ENTERING_WORLD", true, false)
+    Mock.advance(2)
+    t.eq(otf.calls, 0, "no fold while hidden")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_hidden_again_after_reload = function(t)
+    blizzardTracker()
+    local Q = load()
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(not ObjectiveTrackerFrame:IsShown(), "hidden as soon as ticked")
+    local otf2
+    local Q2 = Mock.reload({ skipGuides = true, extraFiles = { GUIDES },
+      beforeLogin = function() otf2 = blizzardTracker() end })
+    t.eq(Q2.Settings:Get("tracker.hideBlizzard"), true, "kept in the profile")
+    t.ok(not otf2:IsShown(), "hidden again after /reload")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_comes_back_when_option_off = function(t)
+    local otf = blizzardTracker()
+    local Q = loadHidden()
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    t.ok(otf:IsShown(), "back")
+    t.eq(otf.updates, 1, "handed back to the game's own Update")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    otf:Hide()
+    otf:Show()
+    t.ok(otf:IsShown(), "the OnShow hook no longer hides it")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_protected_waits_for_combat_end = function(t)
+    local otf = blizzardTracker()
+    function otf:IsProtected() return true end
+    local Q = load()
+    Mock.player.combat = true
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(otf:IsShown(), "not touched in combat")
+    Mock.player.combat = false
+    Mock.fire("PLAYER_REGEN_ENABLED")
+    t.ok(not otf:IsShown(), "hidden once combat ends")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_not_hidden_with_gamepad_interface = function(t)
+    local otf = blizzardTracker()
+    Enum = Enum or {}
+    Enum.InputDeviceInterfaceType = { KeyboardAndMouse = 0, Gamepad = 1 }
+    C_InputInterfaceStyle = { GetCurrentStyle = function() return 1 end }
+    local Q = loadHidden()
+    t.ok(otf:IsShown(), "gamepad HUD navigation starts at the tracker")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_without_frame_is_silent = function(t)
+    local Q = loadHidden()
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  questify_tracker_takes_the_place_of_the_hidden_one = function(t)
+    blizzardTracker()
+    local Q = load()
+    local f = Q.UI.Tracker.frame
+    local p, rel, rp, x = f:GetPoint(1)
+    t.eq({ p, rp, x }, { "TOPRIGHT", "TOPLEFT", -8 }, "beside it while shown")
+    t.ok(rel == ObjectiveTrackerFrame)
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    p, rel, rp, x = f:GetPoint(1)
+    t.eq({ p, rp, x }, { "TOPRIGHT", "TOPRIGHT", 0 }, "in its place while hidden")
+    t.ok(rel == ObjectiveTrackerFrame)
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    p, rel, rp = f:GetPoint(1)
+    t.eq({ p, rp }, { "TOPRIGHT", "TOPLEFT" }, "beside it again")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  fold_option_greyed_while_hidden = function(t)
+    local Q = load()
+    local S = Q.OptionsSchema
+    local fold = S:Entry("tracker.foldBlizzard")
+    t.ok(S:Enabled(fold), "available by default")
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(not S:Enabled(fold), "greyed while the tracker is hidden")
+    t.ok(S:Entry("tracker.hideBlizzard"), "hide option in the schema")
+    t.eq(S:Entry("tracker.hideBlizzard").section, "tracker")
     t.eq(#Mock.errors, 0)
   end,
 }

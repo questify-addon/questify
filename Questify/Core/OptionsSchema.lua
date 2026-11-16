@@ -326,8 +326,13 @@ add({ id = "trackerResetPosition", section = "tracker", category = "layout", typ
 add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "toggle",
   path = "tracker.showMobs", label = "UI_OPT_SHOWMOBS", tip = "OPT_TIP_SHOWMOBS",
   keywords = "suivi monstres liste tuer tracker monsters mobs list kill" })
+add({ id = "tracker.hideBlizzard", section = "tracker", category = "content", type = "toggle",
+  path = "tracker.hideBlizzard", label = "OPT_TRACKER_HIDE_BLIZZARD", tip = "OPT_TIP_TRACKER_HIDE_BLIZZARD",
+  keywords = "suivi blizzard jeu objectifs masquer cacher objective tracker blizzard game hide" })
+-- Grisé tant que le suivi de Blizzard est masqué : le replier n'aurait aucun effet.
 add({ id = "tracker.foldBlizzard", section = "tracker", category = "content", type = "toggle",
   path = "tracker.foldBlizzard", label = "OPT_TRACKER_FOLD_BLIZZARD", tip = "OPT_TIP_TRACKER_FOLD_BLIZZARD",
+  enabled = function() return Q.Settings:Get("tracker.hideBlizzard") ~= true end,
   keywords = "suivi blizzard objectifs replier masquer cacher objective tracker blizzard fold collapse hide" })
 add({ id = "showXPRate", section = "tracker", category = "content", type = "toggle", path = "showXPRate",
   label = "COMFORT_OPT_XPRATE", tip = "OPT_TIP_XPRATE",

@@ -107,7 +107,8 @@ end
 -- Position :
 --   settings.tracker.point = { point, relativePoint, x, y } par rapport à UIParent, x et y en
 --   unités d'UIParent (indépendants de la taille du suivi) ;
---   sinon à gauche du suivi d'objectifs de Blizzard (placé sous la minimap) ;
+--   sinon à gauche du suivi d'objectifs de Blizzard (placé sous la minimap), ou à sa place quand
+--   Questify le masque (UI/BlizzardTracker.lua) ;
 --   sinon sous la minimap.
 local function applyPosition(f)
   f:ClearAllPoints()
@@ -117,7 +118,12 @@ local function applyPosition(f)
     f:SetPoint(p[1], UIParent, type(p[2]) == "string" and p[2] or p[1], (tonumber(p[3]) or 0) / k,
       (tonumber(p[4]) or 0) / k)
   elseif ObjectiveTrackerFrame then
-    f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPLEFT", -8, 0)
+    local B = Q.UI.BlizzardTracker
+    if B and B:IsHidden() then
+      f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPRIGHT", 0, 0)
+    else
+      f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPLEFT", -8, 0)
+    end
   elseif MinimapCluster then
     f:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", 0, -10)
   else
@@ -1621,6 +1627,11 @@ Q:On("COMFORT_CHANGED", function(kind)
   if kind == "xp" and Tracker:UpdateXPLine() then return end
   Tracker:Refresh()
 end)
+-- Suivi de Blizzard masqué ou rendu : le suivi prend sa place ou revient à sa gauche.
+Q:On("BLIZZARD_TRACKER_HIDDEN", function()
+  if Tracker.frame and not Tracker.moving then applyPosition(Tracker.frame) end
+end)
+
 Q:On("SETTINGS_CHANGED", function(path)
   if not Tracker.frame then return end
   if path == "tracker.point" and not Tracker.moving then applyPosition(Tracker.frame) end
