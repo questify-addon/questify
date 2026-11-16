@@ -14,7 +14,8 @@ local addonName, Q = ...
 --     Nav/Walk.lua) ; elle pointe vers route.nextPoint, rafraîchi par Q.Walk:Route() ;
 --   * sans routeur (« none », ou Questify_Nav absent) : la cible (message NAV_TARGET, ou
 --     Q.Nav:Status().target), droit dessus, pour que le joueur soit toujours guidé.
--- Visible seulement si l'affichage effectif est la flèche (nav.display == "arrow", hors SPF),
+-- Visible seulement si l'affichage effectif est la flèche (nav.display == "arrow", ou affichage choisi
+-- absent ; hors SPF),
 -- arrow.show n'est pas désactivé, une route ou une cible existe, le joueur n'est pas en vol (taxi) et
 -- sa position est connue.
 --
@@ -592,6 +593,14 @@ Q:On("SETTINGS_CHANGED", function(path)
     if path == nil or path == "nav" or path == "nav.arrowLocked" then applyLock() end
   end
   if path == nil or path == "nav" or path == "arrow" or tostring(path):find("^nav%.") or path == "arrow.show" then
+    syncTicker()
+    Arrow:Update()
+  end
+end)
+
+-- TomTom ou WaypointUI chargé après nous : l'affichage effectif change (la flèche le remplaçait).
+Q:RegisterEvent("ADDON_LOADED", function(_, name)
+  if name == "TomTom" or name == "WaypointUI" then
     syncTicker()
     Arrow:Update()
   end

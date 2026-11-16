@@ -91,7 +91,7 @@ return {
     noNavErrors(t)
   end,
 
-  -- Routeur Questify, affichage TomTom : TomTom reçoit la cible (la tâche 5 y mettra le prochain virage).
+  -- Routeur Questify, affichage TomTom : TomTom reçoit le prochain virage, ici la cible (calcul en cours).
   questify_with_tomtom_display = function(t)
     Mock.addons.TomTom = true
     local Q, seen = loadWatching({ ["nav.router"] = "questify", ["nav.display"] = "tomtom" })
@@ -283,17 +283,23 @@ return {
     noNavErrors(t)
   end,
 
-  missing_provider_falls_back_native = function(t)
+  -- Affichage choisi absent : la flèche Questify le remplace (pas le repère du jeu).
+  missing_provider_falls_back_arrow = function(t)
     local Q = load({ ["nav.display"] = "tomtom" })
-    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
     t.eq(Mock.countCalls("TomTom:AddWaypoint"), 0)
     local routing, display = Q.Nav:Active()
-    t.eq(routing, "questify"); t.eq(display, "native")
+    t.eq(routing, "questify"); t.eq(display, "arrow")
     -- WaypointUI absent : même repli
     Mock.reset()
     local Q2 = load({ ["nav.display"] = "waypointui" })
-    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
-    t.eq(select(2, Q2.Nav:Active()), "native")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
+    t.eq(select(2, Q2.Nav:Active()), "arrow")
+    -- avec SPF, qui calcule : le repère du jeu (la flèche ne suit pas ses trajets)
+    Mock.reset()
+    Mock.addons.ShortestPathForever = true
+    local Q3 = load({ ["nav.router"] = "spf", ["nav.display"] = "tomtom" })
+    t.eq(select(2, Q3.Nav:Active()), "native")
   end,
 
   shortestpath_retries_after_combat = function(t)
@@ -450,10 +456,73 @@ return {
     t.eq(call.x, 0.5); t.eq(call.y, 0.5)
   end,
 
-  routing_without_shortestpath_uses_display = function(t)
+  -- SPF choisi mais absent : le routeur Questify le remplace (s'il est installé), sinon aucun.
+  routing_without_shortestpath_falls_back_questify = function(t)
     local Q = loadNative({ ["nav.router"] = "spf" })
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
-    t.eq((Q.Nav:Active()), nil)
+    t.eq((Q.Nav:Active()), "questify")
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 0)
+    Mock.reset()
+    Mock.addons.Questify_Nav = false
+    local Q2 = loadNative({ ["nav.router"] = "spf" })
+    t.eq((Q2.Nav:Active()), nil)
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
+  end,
+
+  -- Routeur Questify, affichage TomTom : TomTom reçoit le prochain virage du trajet (en point de
+  -- carte, titre de l'étape), reposé seulement quand il bouge de plus de 12 yd.
+  questify_router_turns_to_display = function(t)
+    Mock.addons.TomTom = true
+    Mock.addons.Questify_Nav = "demand"
+    Mock.player.map, Mock.player.x, Mock.player.y = 1429, 40, 50
+    local Q = load({ ["nav.display"] = "tomtom" })
+    Q.Nav:SetTarget(1429, 60, 50, "East")
+    local add = Mock.callsTo("TomTom:AddWaypoint")
+    local before = #add
+    t.eq(add[before].args[1], 1429); t.near(add[before].args[2], 0.60, 0.001, "straight: the target")
+    Mock.advance(1.1)                           -- calcul lancé (un par seconde)
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), before, "same turn while computing")
+    local job = Mock.navEngine.finds[#Mock.navEngine.finds]
+    local function w(x, y) local c, X, Y = Q.Maps:WorldPos(1429, x, y); return { map = c, x = X, y = Y } end
+    Mock.navEngine.resolve(job, { w(40, 50), w(45, 50), w(60, 50) }, 700)
+    add = Mock.callsTo("TomTom:AddWaypoint")
+    t.eq(#add, before + 1, "next turn posted")
+    local a = add[#add].args
+    t.eq(a[1], 1429); t.near(a[2], 0.45, 0.0001); t.near(a[3], 0.50, 0.0001)
+    t.eq(a[4].title, "East", "step title")
+    Mock.player.x = 40.2                        -- 7 yd : même virage
+    Mock.advance(1)
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), before + 1, "not reposted")
+    Mock.player.x = 45.2                        -- virage passé : la cible
+    Mock.advance(1)
+    add = Mock.callsTo("TomTom:AddWaypoint")
+    t.eq(#add, before + 2, "next turn")
+    t.near(add[#add].args[2], 0.60, 0.0001)
+    Mock.advance(3)
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), before + 2, "throttled")
+    noNavErrors(t)
+  end,
+
+  -- Repère du jeu : le virage du trajet en cours, puis celui du trajet suivant.
+  questify_router_turns_to_native = function(t)
+    Mock.addons.Questify_Nav = "demand"
+    Mock.player.map, Mock.player.x, Mock.player.y = 1429, 40, 50
+    local Q = loadNative()
+    Q.Travel.Plan = function() return {
+      { kind = "walk", from = { mapId = 1429, x = 40, y = 50 }, to = { mapId = 1429, x = 45, y = 50 } },
+      { kind = "fly", from = { mapId = 1429, x = 45, y = 50 }, to = { mapId = 1436, x = 50, y = 50 } },
+    } end
+    Q.Nav:SetTarget(1436, 50, 50, "Far")
+    local p = Mock.lastCall("C_Map.SetUserWaypoint").args[1]
+    t.eq(p.uiMapID, 1429, "flight master first"); t.near(p.position.x, 0.45, 0.0001)
+    local before = Mock.countCalls("C_Map.SetUserWaypoint")
+    Mock.player.x = 45
+    Mock.advance(1.1)
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), before + 1, "flight leg")
+    p = Mock.lastCall("C_Map.SetUserWaypoint").args[1]
+    t.eq(p.uiMapID, 1436, "at the flight master: the landing"); t.near(p.position.x, 0.50, 0.0001)
+    t.near(p.position.y, 0.50, 0.0001)
+    noNavErrors(t)
   end,
 
   dedupe_same_target = function(t)

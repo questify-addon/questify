@@ -285,6 +285,27 @@ return {
     noErrors(t)
   end,
 
+  -- TomTom choisi mais chargé après Questify : la flèche le remplace, puis lui laisse la place à
+  -- son chargement (ADDON_LOADED) ; la cible lui est alors posée.
+  late_display_addon_takes_over = function(t)
+    local Q = load({ ["nav.display"] = "tomtom" })
+    Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
+    t.eq(select(2, Q.Nav:Active()), "arrow", "TomTom missing: the arrow")
+    t.eq(Q.Arrow:Ticking(), true)
+    Mock.advance(0.3)
+    t.eq(shown(Q), true)
+    TomTom = {
+      AddWaypoint = function(_, ...) Mock.record("TomTom:AddWaypoint", ...); return { uid = 1 } end,
+      RemoveWaypoint = function(_, uid) Mock.record("TomTom:RemoveWaypoint", uid) end,
+    }
+    Mock.fire("ADDON_LOADED", "TomTom")
+    t.eq(select(2, Q.Nav:Active()), "tomtom")
+    t.eq(Q.Arrow:Ticking(), false, "TomTom loaded: arrow ticker stopped")
+    t.eq(shown(Q), false, "arrow hidden")
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), 1, "target posted to TomTom")
+    noErrors(t)
+  end,
+
   -- Distances localisées : virgule décimale en français.
   french_decimal_separator = function(t)
     Mock.locale = "frFR"
