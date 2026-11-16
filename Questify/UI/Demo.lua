@@ -3,8 +3,8 @@ local addonName, Q = ...
 -- Commande cachée /qf demo : montre les vraies fenêtres et alertes de l'addon avec des données
 -- d'exemple, pour prendre des captures en jeu. Absente de /qf help, des options et du menu de la
 -- minicarte ; /qf demo seul liste les scènes dans la discussion.
---   /qf demo <scène>   une scène : tracker, classquest, classlate, dungeon, upgrade, pair, route, supplies,
---                      cave, profession, questitem, theme (thème suivant à chaque appel), options
+--   /qf demo <scène>   une scène : tracker, zone, classquest, classlate, dungeon, upgrade, pair, route,
+--                      supplies, cave, profession, questitem, theme (thème suivant à chaque appel), options
 --   /qf demo all       enchaîne les scènes ; /qf demo next passe à la suivante
 --   /qf demo off       ferme tout et rétablit l'état d'avant (repère, lignes du suivi, alertes)
 -- Aucun effet de bord : rien n'est écrit dans Q.char ni dans Q.db, aucune quête n'est ajoutée, ignorée
@@ -24,7 +24,7 @@ Q.UI.Demo = Demo
 local L = Q.L
 
 -- Ordre de /qf demo all.
-Demo.SCENES = { "tracker", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
+Demo.SCENES = { "tracker", "zone", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
   "profession", "questitem", "theme", "options" }
 
 -- Objets d'exemple (ID de WoW Classic) : par liste, le premier que le client connaît est pris.
@@ -51,6 +51,7 @@ local patches = {}         -- fonctions remplacées : { table, clé, original }
 local extraLines = {}      -- lignes ajoutées au suivi (zone des avertissements)
 local savedNav             -- { target = ... } : repère d'avant la scène
 local coverActive          -- étape « tuer » simulée : la route est recalculée à la fermeture
+local zoneActive           -- zone d'exemple : suivi, carte et minicarte redessinés à la fermeture
 local optionsOpened        -- fenêtre d'options ouverte par la scène « options »
 Demo.themeIndex = 0        -- dernier thème montré par la scène « theme » (le suivant au prochain appel)
 local seq                  -- { i = scène courante de /qf demo all }
@@ -435,6 +436,73 @@ function SCENE.tracker()
   return true
 end
 
+-- Zone d'exemple autour du joueur (mode zone, Engine/ZoneMode.lua) : un objet du monde, un nommé et
+-- deux sortes de monstres, dans le suivi (dedans : objectifs groupés et numérotés) et sur la carte
+-- du monde et la minicarte (UI/ZoneOverlay.lua). Positions : décalages fixes (en % de la carte) autour
+-- du joueur ; textes d'exemple (Q.L) ; le journal de quêtes n'est pas lu.
+Demo.ZONE_SAMPLE = {
+  { kind = "object", targetKind = "object", name = "UI_DEMO_ZONE_OBJECT", text = "UI_DEMO_ZONE_OBJECT_TEXT",
+    pts = { { -1.2, -1.0 }, { -0.9, -1.3 } } },
+  { kind = "named", targetKind = "npc", name = "UI_DEMO_ZONE_NAMED", text = "UI_DEMO_ZONE_NAMED_TEXT",
+    pts = { { 1.4, -1.6 } }, minLevel = 5, maxLevel = 5 },
+  { kind = "mob", targetKind = "npc", name = "UI_DEMO_ZONE_MOB_1", text = "UI_DEMO_ZONE_MOB_1_TEXT",
+    pts = { { -1.6, 0.8 }, { -0.6, 1.5 }, { 0.3, 1.1 }, { -2.0, -0.2 } }, minLevel = 1, maxLevel = 2 },
+  { kind = "mob", targetKind = "npc", name = "UI_DEMO_ZONE_MOB_2", text = "UI_DEMO_ZONE_MOB_2_TEXT",
+    pts = { { 1.2, 0.3 }, { 1.8, 1.0 }, { 2.2, -0.5 }, { 0.6, -0.4 } }, minLevel = 2, maxLevel = 2 },
+}
+local ZONE_PRIORITY = { object = 1, named = 2, mob = 3 }
+
+local function demoZone(entry)
+  local pm, px, py = Q.Maps:PlayerPos()
+  if not pm then return nil, WHY_API end
+  local cont = Q.Maps:WorldPos(pm, px, py)
+  if cont == nil then return nil, WHY_API end
+  local objectives, quests = {}, {}
+  local questId = entry.step.questId
+  for i, s in ipairs(Demo.ZONE_SAMPLE) do
+    local points = {}
+    for _, d in ipairs(s.pts) do
+      local x, y = px + d[1], py + d[2]
+      local c, wx, wy = Q.Maps:WorldPos(pm, x, y)
+      if c == cont then points[#points + 1] = { mapId = pm, x = x, y = y, wx = wx, wy = wy } end
+    end
+    objectives[#objectives + 1] = { kind = s.kind, targetKind = s.targetKind, id = -i, name = L[s.name],
+      questId = questId, objIndex = i, done = false, priority = ZONE_PRIORITY[s.kind], points = points,
+      entryKey = entry.key, minLevel = s.minLevel, maxLevel = s.maxLevel, demoText = L[s.text], seq = i }
+    quests[questId] = true
+  end
+  return {
+    ownerKey = entry.key, entries = { entry }, entryKeys = { [entry.key] = true },
+    center = { pm, px, py, mapId = pm, x = px, y = py }, radius = 120, continent = cont,
+    objectives = objectives, questCount = 3, inside = true, name = L.UI_DEMO_ZONE_NAME,
+  }
+end
+
+function SCENE.zone()
+  local ok, why = coverSetup()
+  if not ok then return false, why end
+  local entry = Q.Progress:Current()
+  local Z = Q.ZoneMode
+  if not (Z and Z.Current) then return false, WHY_API end
+  local z, why2 = demoZone(entry)
+  if not z then return false, why2 end
+  zoneActive = true
+  -- la navigation suit la zone d'exemple : le repère d'avant revient à la fermeture
+  local N = Q.Nav
+  if N and N.Status then savedNav = savedNav or { target = N:Status().target } end
+  patch(Z, "Current", function() return function() return z end end)
+  patch(Z, "IsOwner", function() return function(_, e) return type(e) == "table" and e.key == z.ownerKey end end)
+  patch(Z, "ProgressText", function(orig)
+    return function(self, o, ...)
+      if o and o.demoText then return o.demoText end
+      return orig(self, o, ...)
+    end
+  end)
+  Q:Fire("ZONEMODE_CHANGED", z)
+  refreshTracker()
+  return true
+end
+
 -- Bouton de l'objet de quête à gauche du suivi (objet d'exemple Demo.ITEMS.quest, icône en couleur).
 function SCENE.questitem()
   local B = Q.UI.QuestItemButton
@@ -506,6 +574,10 @@ function Demo:Reset()
   end
   unpatch()
   extraLines = {}
+  if zoneActive then
+    zoneActive = nil
+    Q:Fire("ZONEMODE_CHANGED", Q.ZoneMode and Q.ZoneMode:Current())
+  end
   if optionsOpened then
     optionsOpened = nil
     if Q.UI.Options and Q.UI.Options.Close then Q.UI.Options:Close() end
