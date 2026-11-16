@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 75 étapes, niveau final 56.00, ~64523 xp/h, 168 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 75 étapes, niveau final 56.00, ~64545 xp/h, 168 min.
 Q:RegisterGuide({
   id = "H_27",
   title = "Un'Goro Crater",
   faction = "Horde",
   minLevel = 55, maxLevel = 56,
   next = "H_28",
-  sim = { steps = 75, endLevel = 56.00, xpPerHour = 64523, minutes = 168 },
+  sim = { steps = 75, endLevel = 56.00, xpPerHour = 64545, minutes = 168 },
   steps = {
     { "note", "Not running The Temple of Atal'Hakkar? Abandon The Sunken Temple", optional = true, dungeon = "The Temple of Atal'Hakkar" },
     { "goto", 1440, 73.18, 61.59, note = "Flight master" }, -- déplacement
@@ -85,6 +85,6 @@ Q:RegisterGuide({
     { "turnin", 4491, xp = 5650 }, -- A Little Help From My Friends (lvl 55, ~5650 xp, sim lvl 55)
     { "turnin", 4503, xp = 4900 }, -- Shizzle's Flyer (lvl 51, ~4900 xp, sim lvl 55)
     { "turnin", 4301, xp = 5650 }, -- The Mighty U'cha (lvl 55, ~5650 xp, sim lvl 55)
-    { "level", 56, at = { 1449, 56.96, 10.21 }, note = "About 153 more mobs near the last objective" }, -- farm de niveau
+    { "level", 56, at = { 1449, 56.96, 10.21 }, note = "About 152 more mobs near the last objective" }, -- farm de niveau
   },
 })

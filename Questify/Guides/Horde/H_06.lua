@@ -1,77 +1,152 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 62 étapes, niveau final 32.23, ~36339 xp/h, 182 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 137 étapes, niveau final 33.94, ~34505 xp/h, 510 min.
 Q:RegisterGuide({
   id = "H_06",
   title = "Alterac Mountains and Arathi Highlands",
   faction = "Horde",
-  minLevel = 30, maxLevel = 32,
-  next = "H_07",
-  sim = { steps = 62, endLevel = 32.23, xpPerHour = 36339, minutes = 182 },
+  minLevel = 30, maxLevel = 33,
+  next = "H_09",
+  sim = { steps = 137, endLevel = 33.94, xpPerHour = 34505, minutes = 510 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Trouble in the Deeps, The Essence of Aku'Mai", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running Ragefire Chasm? Abandon Hidden Enemies, Slaying the Beast", optional = true, dungeon = "Ragefire Chasm" },
     { "note", "Not running Razorfen Kraul? Abandon Blueleaf Tubers", optional = true, dungeon = "Razorfen Kraul" },
     { "note", "Not running Wailing Caverns? Abandon Trouble at the Docks, Deviate Hides, Deviate Eradication, Hamuul Runetotem, Smart Drinks", optional = true, dungeon = "Wailing Caverns" },
-    { "hearth", 1424 }, -- pierre de foyer
-    { "accept", 556 }, -- Stone Tokens (lvl 33, ~2650 xp, sim lvl 30)
-    { "accept", 95126, classes = { "PALADIN" } }, -- The Moonsilver Blade (lvl 25, ~600 xp, sim lvl 30)
-    { "turnin", 95126, xp = 600, classes = { "PALADIN" } }, -- The Moonsilver Blade (lvl 25, ~600 xp, sim lvl 30)
+    { "fp", 1454, 45.12, 63.89 }, -- point de vol
+    { "boat", 1411, 50.8, 13.5, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
+    { "fp", 1458, 63.25, 48.56 }, -- point de vol
+    { "fp", 1424, 60.14, 18.62 }, -- point de vol
+    { "accept", 501 }, -- Elixir of Pain (lvl 24, ~1560 xp, sim lvl 28)
+    { "accept", 509 }, -- Elixir of Agony (lvl 28, ~2300 xp, sim lvl 28)
+    { "level", 30, note = "About 483 mobs" }, -- farm de niveau
     { "accept", 544 }, -- Prison Break In (lvl 33, ~3300 xp, sim lvl 30)
-    { "accept", 541 }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 30)
+    { "accept", 556 }, -- Stone Tokens (lvl 33, ~2650 xp, sim lvl 30)
+    { "accept", 95111, race = { "Undead" }, classes = { "PALADIN" } }, -- An Underrated Talent (lvl 25, ~400 xp, sim lvl 30)
+    { "turnin", 95111, xp = 400, race = { "Undead" }, classes = { "PALADIN" } }, -- An Underrated Talent (lvl 25, ~400 xp, sim lvl 30)
+    { "accept", 95125, classes = { "PALADIN" } }, -- Ott's Masterwork (lvl 25, ~400 xp, sim lvl 30)
+    { "turnin", 95125, xp = 400, classes = { "PALADIN" } }, -- Ott's Masterwork (lvl 25, ~400 xp, sim lvl 30)
+    { "accept", 95126, classes = { "PALADIN" } }, -- The Moonsilver Blade (lvl 25, ~400 xp, sim lvl 30)
+    { "turnin", 95126, xp = 400, classes = { "PALADIN" } }, -- The Moonsilver Blade (lvl 25, ~400 xp, sim lvl 30)
     { "accept", 676 }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 30)
-    { "accept", 533 }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
+    { "accept", 98094 }, -- Scout Support (lvl 25, ~1000 xp, sim lvl 30)
+    { "accept", 527 }, -- Battle of Hillsbrad (lvl 24, ~1560 xp, sim lvl 30)
+    { "accept", 96986, optional = true, dungeon = "City of Dalaran" }, -- The Grave Knight (lvl 33, ~0 xp, sim lvl 30)
+    { "accept", 567 }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 30)
+    { "sethearth", 1424, 62.78, 19.03 }, -- lier la pierre de foyer
+    { "accept", 547 }, -- Humbert's Sword (lvl 30, ~3050 xp, sim lvl 30)
+    { "accept", 498 }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
+    { "accept", 552 }, -- Helcular's Revenge (lvl 33, ~2650 xp, sim lvl 30)
     { "accept", 79364, classes = { "SHAMAN" } }, -- Eyes on the Sky (lvl 33, ~265 xp, sim lvl 30)
     { "turnin", 79364, xp = 265, classes = { "SHAMAN" } }, -- Eyes on the Sky (lvl 33, ~265 xp, sim lvl 30)
-    { "accept", 1361 }, -- Regthar Deathgate (lvl 32, ~0 xp, sim lvl 30)
+    { "complete", 527, at = { 1424, 33.86, 37.58 } }, -- Battle of Hillsbrad (lvl 24, ~1560 xp, sim lvl 30)
+    { "hearth", 1424 }, -- pierre de foyer
+    { "turnin", 527, xp = 1560 }, -- Battle of Hillsbrad (lvl 24, ~1560 xp, sim lvl 30)
+    { "accept", 528 }, -- Battle of Hillsbrad (lvl 25, ~2000 xp, sim lvl 30)
+    { "complete", 498, at = { 1424, 75.33, 41.5 } }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
+    { "accept", 96779, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~390 xp, sim lvl 30)
+    { "complete", 96779, at = { 1424, 79.84, 45.76 }, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~390 xp, sim lvl 30)
+    { "turnin", 96779, xp = 390, classes = { "ROGUE" } }, -- Syndicate Sabotage (lvl 24, ~390 xp, sim lvl 30)
+    { "accept", 96781, classes = { "ROGUE" } }, -- What's the Big Idea? (lvl 36, ~2800 xp, sim lvl 30)
+    { "accept", 98095 }, -- Valuable Vantages (lvl 25, ~2000 xp, sim lvl 30)
+    { "turnin", 98094, xp = 1000 }, -- Scout Support (lvl 25, ~1000 xp, sim lvl 30)
+    { "turnin", 98095, xp = 2000 }, -- Valuable Vantages (lvl 25, ~2000 xp, sim lvl 30)
+    { "complete", 509, at = { 1424, 64.39, 61.33 } }, -- Elixir of Agony (lvl 28, ~2300 xp, sim lvl 30)
+    { "accept", 96984, optional = true, dungeon = "City of Dalaran" }, -- Heart of Disruption (lvl 33, ~0 xp, sim lvl 30)
+    { "complete", 528, at = { 1424, 35, 45.59 } }, -- Battle of Hillsbrad (lvl 25, ~2000 xp, sim lvl 30)
+    { "complete", 567, obj = 4, at = { 1424, 35.88, 46.57 } }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 30)
+    { "complete", 501, at = { 1424, 51.78, 34.17 } }, -- Elixir of Pain (lvl 24, ~1560 xp, sim lvl 30)
+    { "turnin", 528, xp = 2000 }, -- Battle of Hillsbrad (lvl 25, ~2000 xp, sim lvl 30)
+    { "accept", 529 }, -- Battle of Hillsbrad (lvl 26, ~2100 xp, sim lvl 30)
+    { "turnin", 498, xp = 880 }, -- The Rescue (lvl 22, ~880 xp, sim lvl 30)
+    { "accept", 533 }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
+    { "turnin", 501, xp = 1560 }, -- Elixir of Pain (lvl 24, ~1560 xp, sim lvl 30)
+    { "turnin", 509, xp = 2300 }, -- Elixir of Agony (lvl 28, ~2300 xp, sim lvl 30)
+    { "accept", 502 }, -- Elixir of Pain (lvl 24, ~1740 xp, sim lvl 30)
+    { "accept", 513 }, -- Elixir of Agony (lvl 28, ~1150 xp, sim lvl 30)
+    { "complete", 529, at = { 1424, 32.11, 44.42 } }, -- Battle of Hillsbrad (lvl 26, ~2100 xp, sim lvl 30)
+    { "complete", 567, at = { 1424, 29.51, 42.41 } }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 30)
+    { "complete", 552, at = { 1424, 44.16, 29.07 } }, -- Helcular's Revenge (lvl 33, ~2650 xp, sim lvl 30)
     { "accept", 535 }, -- Valik (lvl 34, ~270 xp, sim lvl 30)
-    { "complete", 533, at = { 1416, 58.3, 67.96 } }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 30)
-    { "level", 31, at = { 1416, 41.6, 78.56 }, note = "About 41 mobs here (High Order Mage, level 30)" }, -- farm de niveau
+    { "level", 31, at = { 1416, 41.6, 78.56 }, note = "About 2 mobs here (High Order Mage, level 30)" }, -- farm de niveau
+    { "complete", 533, at = { 1416, 58.3, 67.96 } }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 31)
     { "complete", 535, at = { 1416, 58.98, 68.49 } }, -- Valik (lvl 34, ~270 xp, sim lvl 31)
     { "turnin", 535, xp = 270 }, -- Valik (lvl 34, ~270 xp, sim lvl 31)
+    { "turnin", 552, xp = 2650 }, -- Helcular's Revenge (lvl 33, ~2650 xp, sim lvl 31)
+    { "accept", 553 }, -- Helcular's Revenge (lvl 33, ~3300 xp, sim lvl 31)
+    { "turnin", 529, xp = 2100 }, -- Battle of Hillsbrad (lvl 26, ~2100 xp, sim lvl 31)
     { "turnin", 533, xp = 2700 }, -- Infiltration (lvl 34, ~2700 xp, sim lvl 31)
-    { "complete", 676, at = { 1417, 35.32, 42.95 } }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 31)
-    { "fp", 1417, 73.02, 32.7 }, -- point de vol
-    { "accept", 655 }, -- Hammerfall (lvl 34, ~270 xp, sim lvl 31)
-    { "turnin", 676, xp = 2550 }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 31)
-    { "turnin", 655, xp = 270 }, -- Hammerfall (lvl 34, ~270 xp, sim lvl 31)
-    { "accept", 672 }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 31)
-    { "complete", 672, at = { 1417, 66.71, 38.36 } }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 31)
-    { "turnin", 672, xp = 2700 }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 31)
-    { "accept", 674 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 31)
-    { "turnin", 674, xp = 270 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 31)
-    { "accept", 675 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 31)
-    { "turnin", 675, xp = 270 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 31)
-    { "accept", 79949 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 31)
-    { "hearth", 1424 }, -- pierre de foyer
-    { "complete", 544, at = { 1416, 19.91, 85.97 } }, -- Prison Break In (lvl 33, ~3300 xp, sim lvl 31)
+    { "accept", 532 }, -- Battle of Hillsbrad (lvl 26, ~1680 xp, sim lvl 31)
+    { "complete", 553, at = { 1424, 43.89, 28.06 } }, -- Helcular's Revenge (lvl 33, ~3300 xp, sim lvl 31)
+    { "turnin", 502, xp = 1740 }, -- Elixir of Pain (lvl 24, ~1740 xp, sim lvl 31)
+    { "complete", 532, at = { 1424, 29.67, 41.64 } }, -- Battle of Hillsbrad (lvl 26, ~1680 xp, sim lvl 31)
     { "complete", 556, at = { 1416, 19.4, 84.93 } }, -- Stone Tokens (lvl 33, ~2650 xp, sim lvl 31)
-    { "turnin", 556, xp = 2650 }, -- Stone Tokens (lvl 33, ~2650 xp, sim lvl 31)
-    { "accept", 557 }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 31)
-    { "turnin", 544, xp = 3300 }, -- Prison Break In (lvl 33, ~3300 xp, sim lvl 31)
-    { "accept", 545 }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 31)
-    { "complete", 557, at = { 1416, 21.03, 58.34 } }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 31)
-    { "complete", 545, at = { 1416, 21.01, 58.98 } }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 31)
-    { "turnin", 557, xp = 2650 }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 31)
-    { "turnin", 545, xp = 2050 }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 31)
-    { "accept", 79948 }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 31)
-    { "level", 32, at = { 1416, 37.51, 70.87 }, note = "About 12 mobs here (Mountain Yeti, level 32)" }, -- farm de niveau
-    { "complete", 79948, at = { 1416, 48.45, 57.65 } }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 32)
-    { "complete", 541, at = { 1424, 71.28, 79.49 } }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 32)
-    { "turnin", 541, xp = 2450 }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 32)
-    { "accept", 550 }, -- Battle of Hillsbrad (lvl 32, ~2550 xp, sim lvl 32)
-    { "goto", 1424, 60.14, 18.62, note = "Flight master" }, -- déplacement
-    { "fly", 1458, node = 11, note = "Undercity, Tirisfal" }, -- vol
-    { "turnin", 550, xp = 2550 }, -- Battle of Hillsbrad (lvl 32, ~2550 xp, sim lvl 32)
-    { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
-    { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
-    { "complete", 79949, at = { 1417, 73.6, 65.2 } }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 32)
+    { "complete", 544, at = { 1416, 19.91, 85.97 } }, -- Prison Break In (lvl 33, ~3300 xp, sim lvl 32)
     { "hearth", 1424 }, -- pierre de foyer
-    { "goto", 1424, 60.14, 18.62, note = "Flight master" }, -- déplacement
-    { "fly", 1458, node = 11, note = "Undercity, Tirisfal" }, -- vol
-    { "turnin", 79949, xp = 2750 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 32)
-    { "turnin", 79948, xp = 2750 }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 32)
+    { "turnin", 532, xp = 1680 }, -- Battle of Hillsbrad (lvl 26, ~1680 xp, sim lvl 32)
+    { "accept", 539 }, -- Battle of Hillsbrad (lvl 28, ~2300 xp, sim lvl 32)
+    { "turnin", 544, xp = 3300 }, -- Prison Break In (lvl 33, ~3300 xp, sim lvl 32)
+    { "accept", 545 }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 32)
+    { "turnin", 556, xp = 2650 }, -- Stone Tokens (lvl 33, ~2650 xp, sim lvl 32)
+    { "accept", 557 }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 32)
+    { "complete", 567, at = { 1424, 31.8, 52.7 } }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 32)
+    { "complete", 539, at = { 1424, 31.21, 56.01 } }, -- Battle of Hillsbrad (lvl 28, ~2300 xp, sim lvl 32)
+    { "complete", 545, at = { 1416, 21.01, 58.98 } }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 32)
+    { "complete", 557, at = { 1416, 21.03, 58.34 } }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 32)
+    { "complete", 553, at = { 1416, 37.55, 66.24 } }, -- Helcular's Revenge (lvl 33, ~3300 xp, sim lvl 32)
+    { "accept", 95534, at = { 1416, 61.77, 43.22 }, note = "Loot Singed Note to start the quest (20.0 % drop: about 5 kills)" }, -- Strahnbrad Mystery (lvl 36, ~2800 xp, sim lvl 32)
+    { "complete", 96781, at = { 1416, 62.51, 45.3 }, classes = { "ROGUE" } }, -- What's the Big Idea? (lvl 36, ~2800 xp, sim lvl 32)
+    { "turnin", 539, xp = 2300 }, -- Battle of Hillsbrad (lvl 28, ~2300 xp, sim lvl 32)
+    { "accept", 541 }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 32)
+    { "turnin", 545, xp = 2050 }, -- Dalaran Patrols (lvl 35, ~2050 xp, sim lvl 32)
+    { "turnin", 557, xp = 2650 }, -- Bracers of Binding (lvl 33, ~2650 xp, sim lvl 32)
+    { "turnin", 567, xp = 2300 }, -- Dangerous! (lvl 28, ~2300 xp, sim lvl 32)
+    { "turnin", 95534, xp = 2800 }, -- Strahnbrad Mystery (lvl 36, ~2800 xp, sim lvl 32)
+    { "turnin", 96781, xp = 2800, classes = { "ROGUE" } }, -- What's the Big Idea? (lvl 36, ~2800 xp, sim lvl 32)
+    { "turnin", 553, xp = 3300 }, -- Helcular's Revenge (lvl 33, ~3300 xp, sim lvl 32)
+    { "complete", 547, at = { 1424, 71.27, 79.23 } }, -- Humbert's Sword (lvl 30, ~3050 xp, sim lvl 32)
+    { "complete", 541, at = { 1424, 71.28, 79.49 } }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 32)
+    { "complete", 676, at = { 1417, 35.32, 42.95 } }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 32)
+    { "fp", 1417, 73.02, 32.7 }, -- point de vol
+    { "accept", 655 }, -- Hammerfall (lvl 34, ~270 xp, sim lvl 33)
+    { "turnin", 676, xp = 2550 }, -- The Hammer May Fall (lvl 32, ~2550 xp, sim lvl 33)
+    { "accept", 677 }, -- Call to Arms (lvl 32, ~2550 xp, sim lvl 33)
+    { "turnin", 655, xp = 270 }, -- Hammerfall (lvl 34, ~270 xp, sim lvl 33)
+    { "accept", 672 }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 33)
+    { "accept", 671 }, -- Foul Magics (lvl 33, ~2650 xp, sim lvl 33)
+    { "accept", 97539 }, -- Silky Sutures (lvl 36, ~2800 xp, sim lvl 33)
+    { "complete", 672, at = { 1417, 66.71, 38.36 } }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 33)
+    { "complete", 671, at = { 1417, 32.11, 28.4 } }, -- Foul Magics (lvl 33, ~2650 xp, sim lvl 33)
+    { "accept", 96784, classes = { "ROGUE" } }, -- Master of Disguise (lvl 36, ~2800 xp, sim lvl 33)
+    { "turnin", 96784, xp = 2800, classes = { "ROGUE" } }, -- Master of Disguise (lvl 36, ~2800 xp, sim lvl 33)
+    { "complete", 97539, at = { 1417, 58.71, 65.84 } }, -- Silky Sutures (lvl 36, ~2800 xp, sim lvl 33)
+    { "complete", 677, at = { 1417, 62.26, 71.04 } }, -- Call to Arms (lvl 32, ~2550 xp, sim lvl 33)
+    { "complete", 677, at = { 1417, 68.8, 76.69 } }, -- Call to Arms (lvl 32, ~2550 xp, sim lvl 33)
+    { "accept", 79949 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 33)
+    { "complete", 79949, at = { 1417, 73.6, 65.2 } }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 33)
+    { "turnin", 672, xp = 2700 }, -- Raising Spirits (lvl 34, ~2700 xp, sim lvl 33)
+    { "accept", 674 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 33)
+    { "turnin", 677, xp = 2550 }, -- Call to Arms (lvl 32, ~2550 xp, sim lvl 33)
+    { "turnin", 671, xp = 2650 }, -- Foul Magics (lvl 33, ~2650 xp, sim lvl 33)
+    { "turnin", 97539, xp = 2800 }, -- Silky Sutures (lvl 36, ~2800 xp, sim lvl 33)
+    { "turnin", 674, xp = 270 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 33)
+    { "accept", 675 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 33)
+    { "turnin", 675, xp = 270 }, -- Raising Spirits (lvl 34, ~270 xp, sim lvl 33)
+    { "hearth", 1424 }, -- pierre de foyer
+    { "turnin", 547, xp = 3050 }, -- Humbert's Sword (lvl 30, ~3050 xp, sim lvl 33)
+    { "turnin", 541, xp = 2450 }, -- Battle of Hillsbrad (lvl 30, ~2450 xp, sim lvl 33)
+    { "accept", 550 }, -- Battle of Hillsbrad (lvl 32, ~2550 xp, sim lvl 33)
+    { "accept", 79948 }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 33)
+    { "complete", 79948, at = { 1416, 48.45, 57.65 } }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 33)
+    { "turnin", 550, xp = 2550 }, -- Battle of Hillsbrad (lvl 32, ~2550 xp, sim lvl 33)
+    { "turnin", 513, xp = 1150 }, -- Elixir of Agony (lvl 28, ~1150 xp, sim lvl 33)
+    { "turnin", 78149, xp = 155 }, -- Fury of the Land (lvl 20, ~155 xp, sim lvl 33)
+    { "turnin", 79949, xp = 2750 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~2750 xp, sim lvl 33)
+    { "turnin", 79097, xp = 155 }, -- Baxtan: On Destructive Magics (lvl 20, ~155 xp, sim lvl 33)
+    { "turnin", 78143, xp = 155 }, -- Secrets of the Dreamers (lvl 20, ~155 xp, sim lvl 33)
+    { "turnin", 79948, xp = 2750 }, -- Defensive Magics 101 (lvl 35, ~2750 xp, sim lvl 33)
+    { "turnin", 78145, xp = 155 }, -- Arcanic Systems Manual (lvl 20, ~155 xp, sim lvl 33)
   },
 })

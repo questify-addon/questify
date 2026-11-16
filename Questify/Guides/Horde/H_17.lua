@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 69 étapes, niveau final 47.00, ~47918 xp/h, 302 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 69 étapes, niveau final 47.00, ~47920 xp/h, 301 min.
 Q:RegisterGuide({
   id = "H_17",
   title = "Feralas",
   faction = "Horde",
   minLevel = 45, maxLevel = 47,
   next = "H_18",
-  sim = { steps = 69, endLevel = 47.00, xpPerHour = 47918, minutes = 302 },
+  sim = { steps = 69, endLevel = 47.00, xpPerHour = 47920, minutes = 301 },
   steps = {
     { "goto", 1446, 51.6, 25.44, note = "Flight master" }, -- déplacement
     { "fly", 1441, node = 30, note = "Freewind Post, Thousand Needles" }, -- vol
@@ -79,6 +79,6 @@ Q:RegisterGuide({
     { "turnin", 3121, xp = 1950 }, -- A Strange Request (lvl 45, ~1950 xp, sim lvl 46)
     { "turnin", 7732, xp = 4400 }, -- Zukk'ash Report (lvl 48, ~4400 xp, sim lvl 46)
     { "turnin", 2976, xp = 4850 }, -- A Grim Discovery (lvl 45, ~4850 xp, sim lvl 46)
-    { "level", 47, at = { 1444, 69.29, 39.31 }, note = "About 438 more mobs near the last objective" }, -- farm de niveau
+    { "level", 47, at = { 1444, 69.29, 39.31 }, note = "About 437 more mobs near the last objective" }, -- farm de niveau
   },
 })

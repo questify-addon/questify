@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.8.1 (2026-11-16)
+
+### English
+
+**Riverglades in the usual routes**
+- Alliance: Riverglades (levels 40 to 43) now follows the Arathi Highlands, instead of Dustwallow Marsh and the
+  Badlands. Its quests are close together and give more XP per hour: the simulated route from 15 to 60 is about
+  3 h 20 shorter, with less grinding.
+- Horde: Riverglades (levels 37 to 40) now follows Stranglethorn Vale. Hillsbrad Foothills (now done with Alterac
+  and Arathi), Thousand Needles, Desolace, Dustwallow Marsh, Arathi Highlands and the Badlands leave the usual
+  route: about 1 h 50 shorter from 15 to 60, with less grinding.
+- If you were on one of the removed chapters, Questify picks the chapter for your level.
+- The automatic route with dungeons is unchanged.
+- Not played yet: please report a step that sends you the wrong way.
+
+### Français
+
+**Riverglades dans les routes habituelles**
+- Alliance : Riverglades (niveaux 40 à 43) suit maintenant les Hautes-terres d'Arathi, à la place du marais
+  d'Âprefange et des Terres ingrates. Ses quêtes sont groupées et rapportent plus d'XP par heure : la route simulée
+  du niveau 15 au 60 est plus courte d'environ 3 h 20, avec moins de farm.
+- Horde : Riverglades (niveaux 37 à 40) suit maintenant la vallée de Strangleronce. Les contreforts de Hautebrande
+  (faits désormais avec Alterac et Arathi), Mille pointes, Désolace, le marais d'Âprefange, les Hautes-terres
+  d'Arathi et les Terres ingrates sortent de la route habituelle : environ 1 h 50 de moins du niveau 15 au 60, avec
+  moins de farm.
+- Si tu étais sur un des chapitres retirés, Questify choisit le chapitre de ton niveau.
+- La route automatique avec les donjons ne change pas.
+- Pas encore jouées : signale une étape qui t'envoie au mauvais endroit.
+
 ## 0.8.0 (2026-11-15)
 
 ### English

@@ -131,6 +131,7 @@ return {
       [1419] = "Terres foudroyées", [1422] = "Maleterres de l'Ouest", [1448] = "Gangrebois", [1447] = "Azshara",
       [1449] = "Cratère d'Un'Goro", [1452] = "Berceau-de-l'Hiver", [1428] = "Steppes ardentes",
       [1423] = "Maleterres de l'Est", [1451] = "Silithus", [1425] = "Les Hinterlands",
+      [2548] = "Riverglades",   -- zone de Forever : aucun nom français connu, le client donne celui de la carte
     }
     C_Map.GetMapInfo = function(id) return FR[id] and { mapID = id, name = FR[id] } or nil end
     local expected = {
@@ -153,7 +154,6 @@ return {
       H_02 = "Les Serres-Rocheuses et Les Tarides",
       H_03 = "Orneval et Les Serres-Rocheuses",
       H_04 = "Tarides du Sud et Mille pointes",
-      H_05 = "Contreforts de Hautebrande",
       H_OrcTroll_01 = "Vallée des Épreuves",
       H_OrcTroll_02 = "Durotar",
       H_Tauren_01 = "Camp Narache",
@@ -207,8 +207,9 @@ return {
         end
       end
     end
-    -- 29 chapitres habituels et les 20 chapitres du mode « Donjons » sous le niveau 30 (11 Alliance, 9 Horde)
-    t.eq(#all - high, 49, "49 chapters 1-30")
+    -- 28 chapitres habituels (Hillsbrad H_05 retiré de la route Horde) et les 20 chapitres du mode « Donjons »
+    -- sous le niveau 30 (11 Alliance, 9 Horde)
+    t.eq(#all - high, 48, "48 chapters 1-30")
     t.eq(#Mock.errors, 0)
   end,
 

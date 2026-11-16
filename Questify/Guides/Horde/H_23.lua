@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 34 étapes, niveau final 52.00, ~61878 xp/h, 149 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 34 étapes, niveau final 52.00, ~61889 xp/h, 149 min.
 Q:RegisterGuide({
   id = "H_23",
   title = "Blasted Lands",
   faction = "Horde",
   minLevel = 51, maxLevel = 52,
   next = "H_24",
-  sim = { steps = 34, endLevel = 52.00, xpPerHour = 61878, minutes = 149 },
+  sim = { steps = 34, endLevel = 52.00, xpPerHour = 61889, minutes = 149 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Divino-matic Rod, Tiara of the Deep", optional = true, dungeon = "Zul'Farrak" },
     { "hearth", 1434 }, -- pierre de foyer
@@ -44,6 +44,6 @@ Q:RegisterGuide({
     { "turnin", 2583, xp = 4700 }, -- A Boar's Vitality (lvl 50, ~4700 xp, sim lvl 51)
     { "turnin", 2585, xp = 4700 }, -- The Decisive Striker (lvl 50, ~4700 xp, sim lvl 51)
     { "turnin", 2581, xp = 4700 }, -- Snickerfang Jowls (lvl 50, ~4700 xp, sim lvl 51)
-    { "level", 52, at = { 1419, 45.89, 36.17 }, note = "About 192 more mobs here (Helboar, level 52)" }, -- farm de niveau
+    { "level", 52, at = { 1419, 45.89, 36.17 }, note = "About 191 more mobs here (Helboar, level 52)" }, -- farm de niveau
   },
 })

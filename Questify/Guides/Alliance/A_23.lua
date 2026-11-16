@@ -1,22 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 64 étapes, niveau final 58.00, ~57572 xp/h, 203 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 63 étapes, niveau final 58.00, ~59758 xp/h, 196 min.
 Q:RegisterGuide({
   id = "A_23",
   title = "Western Plaguelands",
   faction = "Alliance",
   minLevel = 57, maxLevel = 58,
   next = "A_29",
-  sim = { steps = 64, endLevel = 58.00, xpPerHour = 57572, minutes = 203 },
+  sim = { steps = 63, endLevel = 58.00, xpPerHour = 59758, minutes = 196 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
-    { "hearth", 1452 }, -- pierre de foyer
-    { "goto", 1452, 62.33, 36.61, note = "Flight master" }, -- déplacement
-    { "fly", 1439, node = 26, note = "Auberdine, Darkshore" }, -- vol
-    { "boat", 1439, 32.4, 43.8, note = "Take the boat to Menethil Harbor" }, -- bateau
-    { "goto", 1437, 9.49, 59.69, note = "Flight master" }, -- déplacement
+    { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "fp", 1422, 42.92, 85.06 }, -- point de vol
     { "accept", 5092 }, -- Clear the Way (lvl 52, ~5100 xp, sim lvl 57)
@@ -68,12 +65,14 @@ Q:RegisterGuide({
     { "complete", 84402, at = { 1422, 69.41, 72.84 } }, -- Necromancy 101 (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 4985, xp = 4350 }, -- The Wildlife Suffers Too (lvl 56, ~4350 xp, sim lvl 57)
     { "turnin", 5220, xp = 2800 }, -- Return to Chillwind Camp (lvl 55, ~2800 xp, sim lvl 57)
+    { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 84402, xp = 1650 }, -- Necromancy 101 (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 84395, xp = 1650 }, -- Undead Potatoes (lvl 60, ~1650 xp, sim lvl 57)
     { "turnin", 5022, xp = 2550 }, -- Better Late Than Never (lvl 52, ~2550 xp, sim lvl 57)
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1422, node = 66, note = "Chillwind Camp, Western Plaguelands" }, -- vol
-    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 341 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
+    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 340 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
   },
 })

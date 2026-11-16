@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 50 étapes, niveau final 54.00, ~52761 xp/h, 190 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 50 étapes, niveau final 54.00, ~52767 xp/h, 190 min.
 Q:RegisterGuide({
   id = "A_24",
   title = "Felwood",
   faction = "Alliance",
   minLevel = 53, maxLevel = 54,
   next = "A_26",
-  sim = { steps = 50, endLevel = 54.00, xpPerHour = 52761, minutes = 190 },
+  sim = { steps = 50, endLevel = 54.00, xpPerHour = 52767, minutes = 190 },
   steps = {
     { "boat", 1453, 24.1, 55.4, note = "Take the boat to Auberdine (Stormwind Harbor)" }, -- bateau
     { "fp", 1448, 62.49, 24.24 }, -- point de vol
@@ -60,6 +60,6 @@ Q:RegisterGuide({
     { "turnin", 5157, xp = 3800 }, -- Collection of the Corrupt Water (lvl 52, ~3800 xp, sim lvl 53)
     { "turnin", 5203, xp = 5650 }, -- Rescue From Jaedenar (lvl 55, ~5650 xp, sim lvl 53)
     { "turnin", 5882, xp = 4200 }, -- Salve via Hunting (lvl 55, ~4200 xp, sim lvl 53)
-    { "level", 54, at = { 1448, 62.07, 8.44 }, note = "About 31 more mobs near the last objective" }, -- farm de niveau
+    { "level", 54, at = { 1448, 62.07, 8.44 }, note = "About 32 more mobs near the last objective" }, -- farm de niveau
   },
 })

@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 47 étapes, niveau final 57.00, ~48297 xp/h, 233 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 47 étapes, niveau final 57.00, ~48306 xp/h, 234 min.
 Q:RegisterGuide({
   id = "H_28",
   title = "Felwood and Winterspring",
   faction = "Horde",
   minLevel = 56, maxLevel = 57,
   next = "H_29",
-  sim = { steps = 47, endLevel = 57.00, xpPerHour = 48297, minutes = 233 },
+  sim = { steps = 47, endLevel = 57.00, xpPerHour = 48306, minutes = 234 },
   steps = {
     { "goto", 1446, 51.6, 25.44, note = "Flight master" }, -- déplacement
     { "fly", 1440, node = 61, note = "Splintertree Post, Ashenvale" }, -- vol
@@ -57,6 +57,6 @@ Q:RegisterGuide({
     { "turnin", 5082, xp = 5800 }, -- Threat of the Winterfall (lvl 56, ~5800 xp, sim lvl 56)
     { "turnin", 4721, xp = 6400 }, -- Wild Guardians (lvl 59, ~6400 xp, sim lvl 56)
     { "turnin", 4882, xp = 3200 }, -- Guarding Secrets (lvl 59, ~3200 xp, sim lvl 56)
-    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 234 more mobs near the last objective" }, -- farm de niveau
+    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 235 more mobs near the last objective" }, -- farm de niveau
   },
 })

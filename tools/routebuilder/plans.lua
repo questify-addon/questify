@@ -44,6 +44,7 @@ local DUROTAR, MULGORE, TIRISFAL, SILVERPINE, BARRENS, NEEDLES, ZEPHRAS = 1411, 
 local IRONFORGE, STORMWIND, DARNASSUS, ORGRIMMAR, THUNDERBLUFF, UNDERCITY = 1455, 1453, 1457, 1454, 1456, 1458
 local ALTERAC, ARATHI, BADLANDS, BLASTED, WPL, EPL, HINTERLANDS = 1416, 1417, 1418, 1419, 1422, 1423, 1425
 local SEARING, BURNING, STV, SWAMP = 1427, 1428, 1434, 1435
+local RIVERGLADES = 2548
 local DESOLACE, FERALAS, DUSTWALLOW, TANARIS, AZSHARA, FELWOOD, UNGORO, SILITHUS, WINTERSPRING =
   1443, 1444, 1445, 1446, 1447, 1448, 1449, 1451, 1452
 
@@ -291,11 +292,23 @@ plans.Alliance = {
   },
   {
     id = "A_13", title = "Arathi Highlands", faction = "Alliance", zones = { ALTERAC, ARATHI },
-    minLevel = 39, maxLevel = 40, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { ARATHI, 45.73, 46.10 }, next = "A_15",
+    minLevel = 39, maxLevel = 40, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { ARATHI, 45.73, 46.10 }, next = "A_31",
     -- titre : aucune étape mesurée dans les Montagnes d'Alterac (zone gardée pour les candidates)
     flightPaths = { "Refuge Pointe, Arathi" },
   },
   {
+    -- Riverglades (Forever, 150 quêtes de niveau 38-44, très groupées) à la place de Dustwallow (A_15) et des
+    -- Badlands (A_16), mesuré 2026-11-16 sur QuestieDB 1.0.15 : tronc 15-60 -201 min (5 247 -> 5 046), -268 mobs.
+    -- Placée après les Badlands (42-45) : -88 min ; après Dustwallow (41-44) : -94 min ; après Arathi en gardant
+    -- Dustwallow et les Badlands : -140 min (ils n'avaient plus que 0 et 4 quêtes). Entrée : Watcher Cornelius,
+    -- le donneur qui a le plus de quêtes de la tranche (comme AD_19).
+    id = "A_31", title = "Riverglades", faction = "Alliance", zones = { RIVERGLADES },
+    minLevel = 40, maxLevel = 43, entry = { RIVERGLADES, 59.53, 63.97 }, next = "A_17", logCap = 17,
+    flightPaths = { "Farholde Keep, Riverglades" },
+  },
+  {
+    -- A_15 et A_16 : hors du parcours depuis Riverglades (A_31), gardés comme modèles du mode « Donjons »
+    -- (AD_17, AD_18 dans plans_dungeon.lua) ; leurs guides ne sont plus générés.
     id = "A_15", title = "Dustwallow Marsh", faction = "Alliance", zones = { DUSTWALLOW, DESOLACE },
     minLevel = 40, maxLevel = 41, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DUSTWALLOW, 67.48, 51.30 }, next = "A_16",
     -- titre : aucune quête de Désolace retenue (mesuré) ; zone gardée pour les candidates
@@ -518,7 +531,7 @@ plans.Horde = {
   },
   {
     id = "H_04", title = "Southern Barrens and Thousand Needles", faction = "Horde", zones = { BARRENS, NEEDLES },
-    minLevel = 25, maxLevel = 28, levelSlack = 0, levelBelow = 6, far = 1600, entry = { BARRENS, 44.5, 59.1 }, next = "H_05",
+    minLevel = 25, maxLevel = 28, levelSlack = 0, levelBelow = 6, far = 1600, entry = { BARRENS, 44.5, 59.1 }, next = "H_06",
     -- Egg Hunt (868) faite dans le sud des Tarides avant Mille pointes, sans y revenir. Mesuré : Horde -11 min.
     precede = { { "O868", "O1153" }, { "O868", "A1149" }, { "O868", "A5147" }, { "O868", "A4821" } },
     -- QuestieDB v1.0.12 : son objectif est plus loin (1 543 s isolée au lieu de 982), écartée pour « low ratio »
@@ -528,6 +541,7 @@ plans.Horde = {
     flightPaths = { "Freewind Post, Thousand Needles" },
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_05", title = "Hillsbrad Foothills", faction = "Horde", zones = { HILLSBRAD },
     minLevel = 28, maxLevel = 30, levelSlack = 0, levelBelow = 6, far = 1600, entry = { HILLSBRAD, 62.0, 20.0 }, endZones = { UNDERCITY },
     next = "H_06",
@@ -554,13 +568,14 @@ plans.Horde = {
   -- +10 à +97 min.
   {
     id = "H_06", title = "Alterac Mountains and Arathi Highlands", faction = "Horde", zones = { HILLSBRAD, ALTERAC, ARATHI },
-    minLevel = 30, maxLevel = 32, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { HILLSBRAD, 60.14, 18.62 }, endZones = { UNDERCITY }, next = "H_07",
+    minLevel = 30, maxLevel = 33, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { HILLSBRAD, 60.14, 18.62 }, endZones = { UNDERCITY }, next = "H_09",
     flightPaths = { "Hammerfall, Arathi" },
     -- plan « meta paths » : accroches de Tarren Mill (Prison Break In, Stone Tokens, Infiltration,
     -- Dalaran Patrols, The Hammer May Fall) ; lot L : +53 min sans ce forçage (gardé)
     force = { [544] = true, [556] = true, [533] = true, [545] = true, [676] = true },
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_07", title = "Thousand Needles", faction = "Horde", zones = { NEEDLES, BARRENS, ORGRIMMAR },
     -- Carrefour et Bastion : The Swarm Grows, The Kolkar of Desolace ; second rectangle : tour brûlée au sud de Camp
     -- Taurajo, en remontant du Grand Élévateur
@@ -576,13 +591,14 @@ plans.Horde = {
     minLevel = 32, maxLevel = 33, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { NEEDLES, 45.14, 49.11 }, next = "H_08",
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_08", title = "Desolace", faction = "Horde", zones = { DESOLACE }, endZones = { ORGRIMMAR, THUNDERBLUFF },
     minLevel = 33, maxLevel = 35, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DESOLACE, 21.60, 74.13 }, next = "H_09",
     flightPaths = { "Shadowprey Village, Desolace" },
   },
   {
     id = "H_09", title = "Stranglethorn Vale", faction = "Horde", zones = { STV, WESTFALL },
-    minLevel = 35, maxLevel = 37, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { STV, 32.54, 29.35 }, next = "H_10",
+    minLevel = 33, maxLevel = 37, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { STV, 32.54, 29.35 }, next = "H_31",
     flightPaths = { "Grom'gol, Stranglethorn" },
     -- Cozy Sleeping Bag : la note de H_07 rendue à la ferme d'Alexston (Marche de l'Ouest limitée à elle), où la Nailed
     -- Plank donne Stepping Stones (79192), rendue aux Serres-Rocheuses en H_10. Aller-retour depuis Grom'gol compté en
@@ -591,6 +607,7 @@ plans.Horde = {
     force = { [79192] = true },
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_10", title = "Dustwallow Marsh", faction = "Horde", zones = { DUSTWALLOW, STONETALON },
     minLevel = 37, maxLevel = 38, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { DUSTWALLOW, 35.56, 31.88 }, next = "H_11",
     flightPaths = { "Brackenwall Village, Dustwallow Marsh" },
@@ -600,6 +617,7 @@ plans.Horde = {
     force = { [79980] = true, [79974] = true },
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_11", title = "Arathi Highlands", faction = "Horde", zones = { ARATHI, HILLSBRAD, ALTERAC, LOCH_MODAN },
     -- Fin du Cozy Sleeping Bag : Wet Job rendue et Eagle's Fist prise au barrage du Loch Modan (limité à lui), rendue
     -- au nord-ouest d'Arathi, puis This Must Be The Place, qui donne le sac. Barrage atteint en ligne droite depuis
@@ -610,6 +628,7 @@ plans.Horde = {
     -- The Crown of Will (518-521, Tarren Mill) : objectifs dans les Montagnes d'Alterac
   },
   {
+    -- hors du parcours depuis le lot du 2026-11-16 (voir H_31) : modèle du mode « Donjons » (plans_dungeon_horde.lua)
     id = "H_12", title = "Badlands", faction = "Horde", zones = { BADLANDS },
     minLevel = 39, maxLevel = 40, levelSlack = 0, levelBelow = 8, far = 1600, widen = false, entry = { BADLANDS, 3.99, 44.78 }, next = "H_13",
     flightPaths = { "Kargath, Badlands" },
@@ -707,6 +726,17 @@ plans.Horde = {
     -- simulation depuis le lot L ; l'écart manuel est retiré (mesuré identique).
     minLevel = 57, maxLevel = 59, levelSlack = 0, levelBelow = 10, far = 1600, widen = false, entry = { WPL, 38.40, 54.05 }, next = "H_30",
     flightPaths = { "Light's Hope Chapel, Eastern Plaguelands" },
+  },
+  {
+    -- Riverglades (Forever, 72 quêtes Horde de niveau 36-46), mesuré 2026-11-16 sur QuestieDB 1.0.15 sans --jit :
+    -- placée après Stranglethorn (H_09) à la place de Dustwallow, Arathi et des Badlands (H_10-H_12), puis sans
+    -- Hillsbrad (H_05, repris par H_06 qui couvre Hillsbrad), Mille pointes (H_07) ni Désolace (H_08) : tronc 15-60
+    -- 5 320 -> 5 212 min, 4 627 -> 4 475 mobs de farm. Tranches H_06 30-33 et H_09 33-37 (niveaux simulés) : les
+    -- tranches d'origine (30-32, 35-37) donnaient 5 218 min ; 28-33 : 5 213. Entrée : Jezap Jinglesprocket, le
+    -- donneur qui a le plus de quêtes Horde de la tranche.
+    id = "H_31", title = "Riverglades", faction = "Horde", zones = { RIVERGLADES },
+    minLevel = 37, maxLevel = 40, entry = { RIVERGLADES, 65.58, 21.45 }, next = "H_13", logCap = 17,
+    flightPaths = { "Rog'mar, Riverglades", "Powderfuse Port, Riverglades" },
   },
   {
     id = "H_30", title = "Silithus", faction = "Horde", zones = { WINTERSPRING, SILITHUS },

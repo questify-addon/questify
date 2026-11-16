@@ -433,6 +433,7 @@ local ZONE_MAPS = {
   ["Swamp of Sorrows"] = 1435, ["Desolace"] = 1443, ["Feralas"] = 1444, ["Dustwallow Marsh"] = 1445,
   ["Tanaris"] = 1446, ["Azshara"] = 1447, ["Felwood"] = 1448, ["Un'Goro Crater"] = 1449, ["Silithus"] = 1451,
   ["Winterspring"] = 1452,
+  ["Riverglades"] = 2548,   -- Forever
 }
 Guides.ZONE_MAPS = ZONE_MAPS
 
