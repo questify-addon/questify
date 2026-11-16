@@ -438,6 +438,90 @@ function Travel:Plan(from, to)
 end
 
 ---------------------------------------------------------------------------
+-- Lignes du suivi (UI/Tracker.lua : comfort("Travel", "Lines", entry))
+-- Sous l'étape courante, un trajet par ligne (icône, légende, durée) : le trajet en cours en couleur
+-- titre, les suivants en gris, comme la maquette ; puis les avertissements de la route, une fois par
+-- cible. Rien quand le plan est tout à pied, hors routeur Questify ou pour une autre étape.
+---------------------------------------------------------------------------
+local TITLE_COLOR, DIM_COLOR, WARN_COLOR = "|cffffd100", "|cffaaaaaa", "|cffffb040"
+local ICON_SIZE = 14
+
+local lastRoute, lastSig
+local warned, warnedKey = {}, nil   -- avertissements déjà notés pour la cible : { texte, ... }
+
+local function targetKey(t)
+  if type(t) ~= "table" then return "" end
+  return table.concat({ tostring(t.mapId), tostring(t.x), tostring(t.y), tostring(t.title or "") }, "|")
+end
+
+local function warningText(w)
+  if type(w) ~= "table" then return nil end
+  if w.kind == "hostile" and w.name then return string.format(L.NAV_WARN_HOSTILE, tostring(w.name)) end
+  if w.kind == "level" and tonumber(w.level) then return string.format(L.NAV_WARN_LEVEL, tonumber(w.level)) end
+  return nil
+end
+
+-- Mémorise les avertissements de la route (une fois par cible, dans l'ordre d'arrivée).
+local function noteWarnings(r)
+  local key = targetKey(r.target)
+  if key ~= warnedKey then warned, warnedKey = {}, key end
+  for _, w in ipairs(r.warnings or {}) do
+    local text = warningText(w)
+    if text then
+      local dup = false
+      for _, t in ipairs(warned) do if t == text then dup = true; break end end
+      if not dup then warned[#warned + 1] = text end
+    end
+  end
+end
+
+local function isCurrent(entry)
+  local P = Q.Progress
+  local cur = P and P:IsEnabled() and P:Current()
+  if not (cur and type(entry) == "table" and entry.key == cur.key) then return false end
+  return not (Q.Nav and Q.Nav.HasManualTarget and Q.Nav:HasManualTarget())
+end
+
+function Travel:Lines(entry)
+  local W = Q.Walk
+  local r = W and W.Route and W:Route()
+  if not (r and type(r.legs) == "table" and isCurrent(entry)) then return nil end
+  if not (Q.Nav and Q.Nav.Active and Q.Nav:Active() == "questify") then return nil end
+  local ride = false
+  for _, leg in ipairs(r.legs) do if leg.kind ~= "walk" then ride = true; break end end
+  if not ride then return nil end
+  local C = Q.Comfort
+  local out = {}
+  for i = r.leg or 1, #r.legs do
+    local leg = r.legs[i]
+    local text = tostring(leg.caption or "")
+    if C and C.FormatDuration and tonumber(leg.seconds) then text = text .. " · " .. C.FormatDuration(leg.seconds) end
+    local icon = leg.icon and ("|T" .. leg.icon .. ":" .. ICON_SIZE .. "|t ") or ""
+    out[#out + 1] = (i == (r.leg or 1) and TITLE_COLOR or DIM_COLOR) .. icon .. text .. "|r"
+  end
+  if warnedKey == targetKey(r.target) then
+    for _, text in ipairs(warned) do out[#out + 1] = WARN_COLOR .. text .. "|r" end
+  end
+  return out
+end
+
+-- Route changée : le suivi se redessine quand ses lignes (trajets, trajet en cours, avertissements)
+-- changent.
+Q:On("NAV_ROUTE", function(r)
+  if r then noteWarnings(r) end
+  local sig = ""
+  if r and type(r.legs) == "table" then
+    local parts = { tostring(r.leg), #warned }
+    for _, leg in ipairs(r.legs) do parts[#parts + 1] = tostring(leg.kind) .. ":" .. tostring(leg.caption) end
+    sig = table.concat(parts, "|")
+  end
+  if sig ~= lastSig then
+    lastSig = sig
+    if Q.Comfort and Q.Comfort.Notify then Q.Comfort.Notify("travel") end
+  end
+end)
+
+---------------------------------------------------------------------------
 -- Évènements
 ---------------------------------------------------------------------------
 local function refresh() Travel:Refresh() end
