@@ -168,6 +168,7 @@ return {
     t.eq(opts.profile, "Alliance")
     t.eq(opts.style, "balanced")
     t.eq(opts.danger, { [1436] = 4, [1432] = 2 })
+    t.eq(finds()[1].danger, { [1436] = 4, [1432] = 2 }, "job as the router starts it")
     -- style changé : nouveau calcul, sans danger
     Q.Settings:Set("nav.routeStyle", "fastest")
     Mock.advance(1.1)
@@ -175,6 +176,8 @@ return {
     t.eq(last.opts.style, "fastest")
     t.eq(last.opts.profile, "Alliance")
     t.eq(last.opts.danger, nil)
+    -- le job, tel que le routeur le lit au début du calcul (après le retour du pont) : sans danger
+    t.eq(last.danger, nil, "fastest: no zone pricing")
     t.eq(finds()[1].cancelled, true)
     Q.Settings:Set("nav.routeStyle", "roads")
     Mock.advance(1.1)
@@ -232,6 +235,57 @@ return {
     t.eq(p.searches, 0)
     t.eq(p.frames, 0)
     t.eq(p.worstMs, 0)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Budget par image : deux mesures dans la même image n'en font qu'une (leur somme) ; une mesure
+  -- imbriquée dans une autre n'est comptée qu'une fois.
+  perf_per_frame = function(t)
+    local Q = load()
+    Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
+    local job = finds()[1]
+    Mock.advance(1)
+    Q.Walk:ResetPerf()
+    local orig = Q.Maps.PlayerPos
+    local slow = function(...) Mock.cpuMs = Mock.cpuMs + 3; return orig(...) end
+    -- un abonné de NAV_ROUTE (appelé dans le rappel mesuré) lit la route : mesure imbriquée
+    Q:On("NAV_ROUTE", function()
+      Mock.cpuMs = Mock.cpuMs + 2
+      Q.Maps.PlayerPos = slow
+      Q.Walk:Route()
+      Q.Maps.PlayerPos = orig
+    end)
+    Mock.navEngine.resolve(job, { world(Q, ELWYNN, 40, 50), world(Q, ELWYNN, 45, 50), world(Q, ELWYNN, 60, 50) })
+    Mock.advance(0.1)
+    local p = Q.Walk:Perf()
+    t.eq(p.frames, 1, "one frame")
+    t.near(p.worstMs, 5, 1e-6, "nested Route counted once: 2 + 3 ms")
+    -- deux lectures dans une même image : une image, la somme
+    Q.Walk:ResetPerf()
+    Q.Maps.PlayerPos = slow
+    Q.Walk:Route()
+    Q.Walk:Route()
+    Q.Maps.PlayerPos = orig
+    Mock.advance(0.1)
+    p = Q.Walk:Perf()
+    t.eq(p.frames, 1)
+    t.near(p.worstMs, 6, 1e-6, "3 + 3 ms in one frame")
+    t.near(p.avgMs, 6, 1e-6)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Cartes livrées entières (pas de champ part) : aucune partie chargée.
+  whole_data_loads_no_part = function(t)
+    local Q = load()
+    Mock.onLoadAddOn.Questify_Nav = function()
+      Mock.navEngine = Mock.newNavEngine()
+      Questify_NavEngine = Mock.navEngine
+      QuestifyPathData = { [0] = {} }
+    end
+    Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
+    t.eq(loads(), { "Questify_Nav" })
+    t.eq(Q.Walk:Status().maps[0], true)
+    t.eq(#finds(), 1)
     t.eq(#Mock.errors, 0)
   end,
 

@@ -73,18 +73,36 @@ local sqrt, huge = math.sqrt, math.huge
 local unpack = unpack or table.unpack
 
 ---------------------------------------------------------------------------
--- Mesure (spec § 3 bis) : chaque rappel et chaque image du pont, et chaque image du routeur
+-- Mesure (spec § 3 bis) : le budget se compte par image. Chaque rappel du pont et chaque tranche du
+-- routeur est chronométré (debugprofilestop) ; une mesure imbriquée dans une autre n'est comptée
+-- qu'une fois (profondeur) ; les mesures d'une même image (même GetTime(), constant pendant une
+-- image) s'additionnent dans un seau, fermé quand l'image change. Pire image et moyenne portent sur
+-- les seaux fermés.
 ---------------------------------------------------------------------------
 local perf = { worst = 0, total = 0, frames = 0, searches = 0 }
+local depth = 0             -- mesures en cours (seule la plus externe compte)
+local bucketKey             -- image du seau ouvert (GetTime), nil : aucun
+local bucketMs = 0          -- millisecondes accumulées dans cette image
 
 local function clock() return debugprofilestop and debugprofilestop() or 0 end
 local function now() return GetTime and GetTime() or 0 end
 
+local function closeBucket()
+  if bucketKey == nil then return end
+  perf.frames = perf.frames + 1
+  perf.total = perf.total + bucketMs
+  if bucketMs > perf.worst then perf.worst = bucketMs end
+  bucketKey, bucketMs = nil, 0
+end
+
 local function sample(ms)
   if type(ms) ~= "number" or ms < 0 then ms = 0 end
-  perf.frames = perf.frames + 1
-  perf.total = perf.total + ms
-  if ms > perf.worst then perf.worst = ms end
+  local key = now()
+  if bucketKey ~= key then
+    closeBucket()
+    bucketKey = key
+  end
+  bucketMs = bucketMs + ms
 end
 
 local function pack(...) return { n = select("#", ...), ... } end
@@ -92,9 +110,11 @@ local function pack(...) return { n = select("#", ...), ... } end
 -- fn protégée et mesurée ; renvoie ce que fn renvoie (rien en cas d'erreur).
 local function measured(fn)
   return function(...)
+    depth = depth + 1
     local t0 = clock()
     local res = pack(Q.SafeCall(fn, ...))
-    sample(clock() - t0)
+    depth = depth - 1
+    if depth == 0 then sample(clock() - t0) end
     if not res[1] then return nil end
     return unpack(res, 2, res.n)
   end
@@ -108,9 +128,12 @@ local function wrapAfter(E)
   local original = E.after
   E.after = function(fn)
     return original(function(...)
+      depth = depth + 1
       local t0 = clock()
-      fn(...)
-      sample(clock() - t0)
+      local ok, err = pcall(fn, ...)
+      depth = depth - 1
+      if depth == 0 then sample(clock() - t0) end
+      if not ok then error(err, 0) end    -- l'erreur du routeur suit son cours, comme sans mesure
     end)
   end
 end
@@ -213,7 +236,10 @@ local function ensureEngine(instance)
     local ok, has = pcall(E.Available, instance)
     if ok and has then
       local D = type(QuestifyPathData) == "table" and QuestifyPathData[instance] or nil
-      local part = type(D) == "table" and D.part or PARTS[instance]
+      -- partie nommée par les données ; nom par défaut seulement si les données manquent (cartes
+      -- livrées entières : aucune partie à charger)
+      local part
+      if type(D) == "table" then part = D.part else part = PARTS[instance] end
       if part then loadAddOn(part) end
       ok, has = pcall(E.Available, instance)
       if ok and has and type(E.Resident) == "function" then ok, has = pcall(E.Resident, instance) end
@@ -403,7 +429,9 @@ local function request()
   end))
 end
 
-local function onResult(points, cost, j)
+-- warnDanger : table de danger des avertissements, gardée ici (jamais dans le job du routeur, qui lit
+-- job.danger au début du calcul).
+local function onResult(points, cost, j, warnDanger)
   if j ~= job or not route then return end
   job = nil
   local r = route
@@ -421,7 +449,7 @@ local function onResult(points, cost, j)
   end
   r.path, r.straight, r.reason = path, false, nil
   local E = engine()
-  r.warnings = E and warningsOf(E, j, path, j.danger) or {}
+  r.warnings = E and warningsOf(E, j, path, warnDanger) or {}
   r.yards = j.yards
   r.origin = nil
   r.nextPoint = path[#path]
@@ -470,13 +498,12 @@ launch = function()
   perf.searches = perf.searches + 1
   local cb = measured(onResult)
   local j = E.Find(me.instance, { x = me.x, y = me.y }, { x = r.goal.x, y = r.goal.y },
-    function(...) cb(...) end, opts)
+    function(points, cost, jj) cb(points, cost, jj, danger) end, opts)
   if type(j) ~= "table" then
     straight("error")
     publish()
     return
   end
-  j.danger = danger
   j.urgent = true      -- le trajet que suit la flèche passe avant tout autre calcul (PathJobs.lua)
   job = j
   r.computing = true
@@ -621,6 +648,8 @@ function Walk:Status()
 end
 
 function Walk:Perf()
+  -- l'image du seau ouvert est finie si le temps a changé
+  if bucketKey ~= nil and bucketKey ~= now() then closeBucket() end
   local mem = {}
   local update = (C_AddOns and C_AddOns.UpdateAddOnMemoryUsage) or UpdateAddOnMemoryUsage
   local get = (C_AddOns and C_AddOns.GetAddOnMemoryUsage) or GetAddOnMemoryUsage
@@ -642,6 +671,7 @@ end
 
 function Walk:ResetPerf()
   perf.worst, perf.total, perf.frames, perf.searches = 0, 0, 0, 0
+  bucketKey, bucketMs = nil, 0
 end
 
 ---------------------------------------------------------------------------

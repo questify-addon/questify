@@ -23,6 +23,7 @@
 --   Mock.navEngine                       routeur factice (Mock.newNavEngine), posé par
 --                                        C_AddOns.LoadAddOn("Questify_Nav") ; Mock.onLoadAddOn[nom]
 --   Mock.addonMemory[nom], Mock.areaNames[id]   GetAddOnMemoryUsage, C_Map.GetAreaInfo
+--   Mock.cpuMs                           millisecondes ajoutées à debugprofilestop (travail simulé)
 
 Mock = Mock or {}
 Mock.root = Mock.root or "."
@@ -642,7 +643,10 @@ end
 function Mock.newNavEngine()
   local E = { finds = {}, cancels = {}, available = {}, zones = nil }
   function E.Find(map, from, to, callback, opts)
-    local job = { map = map, from = from, to = to, callback = callback, opts = opts }
+    -- comme Path.Find : les options sont recopiées dans le job, lues au début du calcul
+    local o = type(opts) == "table" and opts or {}
+    local job = { map = map, from = from, to = to, callback = callback, opts = opts,
+      profile = o.profile, style = o.style, danger = o.danger }
     E.finds[#E.finds + 1] = job
     record("NavEngine.Find", map, from, to, opts)
     return job
@@ -1038,7 +1042,7 @@ local function installApi()
   canaccessvalue = function(v) return secrets[v] ~= true end
   GetTime = function() return Mock.now end
   -- Horloge en millisecondes (Mock.now) ; mémoire des addons en Ko (Mock.addonMemory[nom]).
-  debugprofilestop = function() return Mock.now * 1000 end
+  debugprofilestop = function() return Mock.now * 1000 + Mock.cpuMs end
   UpdateAddOnMemoryUsage = function() record("UpdateAddOnMemoryUsage") end
   GetAddOnMemoryUsage = function(name) return Mock.addonMemory[name] or 0 end
   time = function() return 1762300800 + floor(Mock.now) end
@@ -1413,6 +1417,7 @@ function Mock.reset()
   Mock.onLoadAddOn = { Questify_Nav = defaultNavLoad }
   Mock.navEngine = nil                           -- routeur factice (Mock.newNavEngine), créé au chargement
   Mock.addonMemory = {}
+  Mock.cpuMs = 0                                 -- ms ajoutées à debugprofilestop (travail simulé)
   Mock.areaNames = {}
   Mock.qdbMeta = {}                              -- métadonnées du TOC de QuestieDB (Version : aucune par défaut)
   Mock.errors = {}
