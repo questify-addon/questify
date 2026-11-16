@@ -5,14 +5,18 @@ local addonName, Q = ...
 --   quêtes de classe, options), puis barre de progression « faites/total · niveaux » ;
 --   alerte de quête de classe (lueur pulsée) quand une chaîne devient disponible ;
 --   alerte de donjon conseillé (Engine/Dungeons.lua), clic = fenêtre du donjon ;
---   étape courante en gros : icône d'action, texte coloré, distance (mise à jour toutes les 0,5 s),
---   et sous chaque ligne d'objectif les monstres à tuer (crâne, nom, niveau) ;
+--   étape courante en gros : icône d'action, texte coloré, distance (mise à jour toutes les 0,5 s) ;
+--   étape « Faire » : un objectif par ligne (Engine/Objectives.lua, rendu UI/ObjectiveRows.lua) :
+--   icône du type, libellé, compteur à droite (vert une fois fait, puis replié dans « ✓ N faits »),
+--   trait sur l'objectif visé par la flèche ; mise en page (liste, barres, par quête) et détail
+--   (compteur seul, monstres ciblables, monstres et distance) au choix du joueur ;
 --   les étapes suivantes en petit et en gris.
 -- Mode zone (Engine/ZoneMode.lua) : l'étape qui porte la zone est remplacée par la zone (pastille
--- verte). Hors de la zone : « Zone : <nom> — N objectifs (Q quêtes) » et les quêtes concernées ;
--- dedans : tous les objectifs de la zone groupés par priorité (objets, élites et nommés,
--- monstres), chacun avec son avancement, les monstres sous forme de lignes ciblables (nommés
--- d'abord). Les étapes regroupées dans la zone ne sont pas répétées dans les étapes suivantes.
+-- arrondie : nom, N objectifs · Q quêtes). Hors de la zone : les quêtes concernées ; dedans : tous
+-- les objectifs de la zone groupés par priorité (objets, élites et nommés, monstres), numérotés
+-- dans l'ordre à suivre (numéros des points de la carte, UI/ZoneOverlay.lua), chacun avec son
+-- avancement et ses monstres ciblables. Les étapes regroupées dans la zone ne sont pas répétées
+-- dans les étapes suivantes.
 -- Confort de jeu (Engine/XPRate, Hearth, Danger, Supplies) : ligne XP/h sous la barre, XP restante
 -- du chapitre dans la barre, lignes de la pierre de foyer sous l'étape, avertissements (danger,
 -- sacs, réparation, nourriture, boisson) sous l'étape courante. Chaque module est lu sous pcall : absent ou en erreur,
@@ -633,6 +637,11 @@ end
 function Tracker:UpdateDistance(retarget)
   if not self.frame then return end
   local entry = self.entry
+  -- détail « distance » : les distances des objectifs suivent le joueur (toutes les 2 s, avec la cible)
+  if retarget and entry and Q.Objectives and Q.Objectives:Detail() == "distance" then
+    self.target = Q.Targets:ForEntry(entry)
+    return self:Refresh()
+  end
   if retarget and entry then self.target = Q.Targets:ForEntry(entry) end
   local tg = self.target
   local text = ""
