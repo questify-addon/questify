@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 95 étapes, niveau final 21.00, ~23728 xp/h, 164 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 94 étapes, niveau final 21.00, ~24004 xp/h, 162 min.
 Q:RegisterGuide({
   id = "H_02",
   title = "Stonetalon Mountains and The Barrens",
   faction = "Horde",
   minLevel = 17, maxLevel = 21,
   next = "H_03",
-  sim = { steps = 95, endLevel = 21.00, xpPerHour = 23728, minutes = 164 },
+  sim = { steps = 94, endLevel = 21.00, xpPerHour = 24004, minutes = 162 },
   steps = {
     { "hearth", 1413 }, -- pierre de foyer
     { "accept", 3281 }, -- Stolen Silver (lvl 18, ~1350 xp, sim lvl 17)
@@ -44,7 +44,6 @@ Q:RegisterGuide({
     { "accept", 3261 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 18)
     { "complete", 95774, at = { 1413, 50.37, 53.6 } }, -- Her Name Is Olgra (lvl 20, ~1550 xp, sim lvl 18)
     { "turnin", 3261, xp = 135 }, -- Jorn Skyseer (lvl 18, ~135 xp, sim lvl 18)
-    { "sethearth", 1413, 45.58, 59.04 }, -- lier la pierre de foyer
     { "accept", 882 }, -- Ishamuhale (lvl 19, ~1800 xp, sim lvl 18)
     { "accept", 897, at = { 1413, 42, 70 }, note = "Loot Harvester's Head to start the quest (93.6 % drop: about 2 kills)" }, -- The Harvester (lvl 24, ~2400 xp, sim lvl 18)
     { "accept", 885, at = { 1413, 44.81, 74.93 }, note = "Loot Washte Pawne's Feather to start the quest (90.1 % drop: about 2 kills)" }, -- Washte Pawne (lvl 25, ~1500 xp, sim lvl 18)
@@ -85,7 +84,7 @@ Q:RegisterGuide({
     { "turnin", 1060, xp = 1550 }, -- Letter to Jin'Zil (lvl 20, ~1550 xp, sim lvl 19)
     { "turnin", 6629, xp = 1350 }, -- Kill Grundig Darkcloud (lvl 18, ~1350 xp, sim lvl 19)
     { "hearth", 1413 }, -- pierre de foyer
-    { "goto", 1413, 44.45, 59.15, note = "Flight master" }, -- déplacement
+    { "goto", 1413, 51.5, 30.34, note = "Flight master" }, -- déplacement
     { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
     { "accept", 1221, optional = true, dungeon = "Razorfen Kraul" }, -- Blueleaf Tubers (lvl 26, ~0 xp, sim lvl 20)
     { "complete", 92706, at = { 1413, 64.24, 40.32 } }, -- WANTED: Bruuz (lvl 20, ~1950 xp, sim lvl 20)

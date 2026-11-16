@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questify — guidage intégré (maquette)</title>
+<style>
+  /* Couleurs des thèmes : valeurs de Questify/UI/Themes.lua (rôles title, body, dim). */
+  :root { --gold:#ffd100; --gold2:#c9a34a; --edge:#6d5a3a; --txt:#eadfc8; --mute:#b6ab97; }
+  .th-parchment { --bg:#decb99; --border:#b88c40; --title:#4d2100; --body:#2b1a08; --dim:#5c4529; --distance:#40260d; --bar-fill:#8c591a; --bar-bg:#331f0a8c; --shadow:none; --accent:var(--title); }
+  .th-dark { --bg:#000; --border:#808080cc; --title:#ffd100; --body:#fff; --dim:#808080; --distance:#fff; --bar-fill:#428ff2; --bar-bg:#00000080; --shadow:1px -1px 1px #000; --accent:var(--title); }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--txt); font:14px/1.35 "Segoe UI", system-ui, sans-serif; padding:16px 16px 60px;
+    background:radial-gradient(ellipse at 30% 20%, #3c4a33 0%, #1c241a 45%, #0b0e0a 100%); min-height:100vh; }
+  h1 { font-size:17px; margin:0 0 4px; color:var(--gold2); }
+  h2 { font-size:14px; margin:26px 0 6px; color:var(--gold2); font-weight:600; }
+  .note { color:var(--mute); font-size:12.5px; margin:0 0 10px; max-width:980px; }
+  .row { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:6px; }
+  .cap { font-size:11.5px; color:var(--mute); }
+  .serif { font-family:"Friz Quadrata", Georgia, "Times New Roman", serif; }
+  .ico { width:18px; height:18px; border-radius:3px; border:1px solid #0008; vertical-align:middle; background:#3a3026; flex:none; }
+
+  /* cadre façon jeu (thème) */
+  .panel { background:var(--bg); border:3px solid; border-color:var(--border); border-radius:6px; padding:10px 12px; font-family:"Friz Quadrata", Georgia, serif; color:var(--body); text-shadow:var(--shadow); box-shadow:0 4px 14px #0008; }
+
+  /* flèche */
+  .arrow { width:210px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 12px 8px; position:relative; }
+  .arrow svg { width:64px; height:64px; filter:drop-shadow(0 1px 2px #0008); }
+  .arrow .dist { font-size:19px; color:var(--distance); }
+  .arrow .eta { font-size:12px; color:var(--dim); }
+  .arrow .leg { display:flex; gap:6px; align-items:center; margin-top:4px; font-size:12.5px; color:var(--body); }
+  .arrow .lock { position:absolute; right:7px; top:6px; font-size:12px; opacity:.85; color:var(--dim); }
+  .arrow .lock.off { opacity:.35; }
+
+  /* suivi */
+  .trk { width:300px; }
+  .trk .ch { color:var(--title); font-size:14px; display:flex; justify-content:space-between; }
+  .trk .ch span { color:var(--dim); font-size:12px; }
+  .trk .step { margin:6px 0 0; color:var(--body); font-size:13px; }
+  .trk .step.cur::before { content:"\25B6 "; color:var(--title); font-size:10px; }
+  .trk .step.nx { color:var(--dim); }
+  .trk .leg { display:flex; gap:6px; align-items:center; margin:3px 0 0 14px; font-size:12px; color:var(--dim); }
+  .trk .leg .ico { width:15px; height:15px; }
+  .trk .leg.on { color:var(--title); }
+  .trk .bar { height:7px; margin-top:8px; border-radius:3px; background:var(--bar-bg); overflow:hidden; }
+  .trk .bar i { display:block; height:100%; width:42%; background:var(--bar-fill); }
+
+  /* cartes */
+  .map { position:relative; width:430px; height:300px; border:2px solid var(--edge); border-radius:4px; overflow:hidden;
+    background:radial-gradient(ellipse at 25% 70%, #6b8f4a 0, #587a3d 30%, #4a6a33 55%, #3d5a2b 100%); }
+  .map .road { position:absolute; inset:0; }
+  .map .poi { position:absolute; font-size:11px; color:#fff; text-shadow:0 1px 2px #000, 0 0 3px #000; transform:translate(-50%,-50%); white-space:nowrap; }
+  .map .poi::before { content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:#ffd100; border:1px solid #000; margin-right:4px; }
+  .map .you { position:absolute; width:16px; height:16px; transform:translate(-50%,-50%) rotate(35deg); }
+  .mini { position:relative; width:150px; height:150px; border-radius:50%; border:3px solid #444; overflow:hidden;
+    background:radial-gradient(circle at 40% 60%, #6b8f4a, #4a6a33 70%); box-shadow:0 0 0 2px #0008; }
+  .mini svg { position:absolute; inset:0; width:100%; height:100%; }
+
+  /* lignes de route, trois styles, couleur = rôle title */
+  .ln { fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; }
+  .ln.dots { stroke-dasharray:0.1 9; stroke-width:4.4; }
+  .ln.solid { }
+  .ln.dashes { stroke-dasharray:10 7; }
+  .ln.fly { stroke-dasharray:3 6; opacity:.9; }
+  .halo { fill:none; stroke:#000a; stroke-width:6.5; stroke-linecap:round; stroke-linejoin:round; }
+  .halo.dots { stroke-dasharray:0.1 9; stroke-width:7.6; }
+  .halo.dashes { stroke-dasharray:10 7; }
+  .halo.fly { stroke-dasharray:3 6; }
+  .map.th-parchment, .mini.th-parchment { --accent:#7a2e00; }   /* rendu sur carte : title du thème, éclairci pour rester lisible */
+  .map.th-dark, .mini.th-dark { --accent:#ffd100; }
+
+  /* options */
+  .opts { width:330px; }
+  .opts h4 { margin:0 0 3px; font-size:13px; color:var(--title); font-weight:400; }
+  .opts .grp { margin-bottom:9px; }
+  .opts .opt { display:flex; align-items:center; gap:7px; font-size:12.5px; padding:1px 0; color:var(--body); }
+  .opts .opt.off { color:var(--dim); }
+  .opts .rd { width:12px; height:12px; border-radius:50%; border:2px solid var(--title); display:inline-block; flex:none; }
+  .opts .rd.on { background:radial-gradient(var(--title) 40%, transparent 45%); }
+  .opts .ck { width:13px; height:13px; border:2px solid var(--title); border-radius:2px; display:inline-block; text-align:center; line-height:9px; font-size:11px; color:var(--title); flex:none; }
+  .opts .hint { font-size:11px; color:var(--dim); margin-left:19px; }
+  .tabs { display:flex; gap:8px; margin:0 0 14px; }
+  .tabs button { background:#241d16; color:var(--txt); border:1px solid var(--edge); border-radius:4px; padding:4px 12px; cursor:pointer; font:inherit; }
+  .tabs button.on { border-color:var(--gold2); color:var(--gold); }
+  .legend { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:var(--mute); }
+  .legend span { display:flex; gap:5px; align-items:center; }
+</style>
+</head>
+<body>
+<h1>Questify — guidage intégré (maquette)</h1>
+<p class="note">Exemple : Villebranche (Goldshire) vers Sentinel Hill. Marche 1 min, vol 2 min, marche. Chaque bloc est montré dans les deux thèmes, <b>parchemin</b> et <b>sombre</b>. Les couleurs viennent de <code>Themes.lua</code> (rôles <code>title</code>, <code>body</code>, <code>dim</code>). L'accent de la flèche et de la ligne est la couleur <code>title</code> du thème.</p>
+<div class="tabs" id="tabs"></div>
+<div id="out"></div>
+
+<script>
+const ICONBASE = "https://wow.zamimg.com/images/wow/icons/large/";
+const IC = {
+  walk: "inv_boots_cloth_03", fly: "ability_mount_gryphon_01", boat: "inv_misc_anchor" ,
+  zep: "inv_misc_enggizmos_30", tram: "inv_misc_gear_01", portal: "spell_arcane_portalstormwind",
+  hearth: "inv_misc_rune_01"
+};
+const FALLBACK = "this.style.background='#3a3026';this.removeAttribute('src')";
+const ico = k => `<img class="ico" src="${ICONBASE}${IC[k]}.jpg" alt="" onerror="${FALLBACK}">`;
+
+const arrowSvg = rot => `<svg viewBox="0 0 64 64" style="transform:rotate(${rot}deg)"><path d="M32 4 L52 54 L32 43 L12 54 Z" fill="var(--accent)" stroke="#000" stroke-opacity=".6" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+
+function arrow(locked) {
+  return `<div class="panel arrow">
+    <span class="lock ${locked ? "" : "off"}">${locked ? "&#128274;" : "&#128275;"}</span>
+    ${arrowSvg(38)}
+    <div class="dist">412 m</div>
+    <div class="eta">environ 1 min</div>
+    <div class="leg">${ico("walk")}<span>Marche vers le maître de vol</span></div>
+  </div>`;
+}
+function legs(k) { return `<div class="leg on">${ico(k)}<span>Marche vers Villebranche · 1 min</span></div>`; }
+function tracker() {
+  const L = (k, t, on) => `<div class="leg ${on ? "on" : ""}">${ico(k)}<span>${t}</span></div>`;
+  return `<div class="panel trk">
+    <div class="ch"><span style="color:var(--title)">Forêt d'Elwynn</span><span>12 - 14</span></div>
+    <div class="step cur">Parlez à Gryan Stoutmantle (Sentinel Hill)</div>
+    ${L("walk", "Marche jusqu'au maître de vol · 1 min", true)}
+    ${L("fly", "Vol vers Sentinel Hill · 2 min", false)}
+    ${L("walk", "Marche jusqu'à Gryan Stoutmantle · 30 s", false)}
+    <div class="step nx">Tuez 8 Défias Bandits</div>
+    <div class="step nx">Rapportez-vous à Mère Lasalle</div>
+    <div class="bar"><i></i></div>
+  </div>`;
+}
+
+function mapSvg(style, mini) {
+  const walk1 = mini ? "M75 140 L75 110 L88 82" : "M110 250 C120 215 140 200 165 190";
+  const fly   = mini ? "M88 82 C100 60 120 40 140 20" : "M165 190 C230 130 300 90 350 70";
+  const walk2 = mini ? "" : "M350 70 C356 55 372 48 385 44";
+  const w = mini ? 150 : 430, h = mini ? 150 : 300;
+  const paths = (cls, extra) => `
+      <path class="${extra}${cls}" d="${walk1}"/>
+      <path class="${extra}${cls === "" ? "" : ""}${extra ? "fly" : "ln fly"}" d="${fly}"/>
+      ${walk2 ? `<path class="${extra}${cls}" d="${walk2}"/>` : ""}`;
+  return `<svg viewBox="0 0 ${w} ${h}">
+      <g>${[walk1, walk2].filter(Boolean).map(d => `<path class="halo ${style}" d="${d}"/>`).join("")}<path class="halo fly" d="${fly}"/></g>
+      <g>${[walk1, walk2].filter(Boolean).map(d => `<path class="ln ${style}" d="${d}"/>`).join("")}<path class="ln fly" d="${fly}"/></g>
+      ${mini ? "" : ""}
+    </svg>`;
+}
+const you = `<svg class="you" viewBox="0 0 16 16"><path d="M8 1 L14 14 L8 11 L2 14 Z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+function worldMap(theme, style) {
+  return `<div class="map th-${theme}">
+    ${mapSvg(style, false).replace("<svg ", '<svg class="road" ')}
+    <span class="poi" style="left:25%;top:84%">Goldshire</span>
+    <span class="poi" style="left:38%;top:63%">Maître de vol</span>
+    <span class="poi" style="left:81%;top:23%">Sentinel Hill</span>
+    <div class="you" style="left:26%;top:83%;position:absolute;width:16px;height:16px">${you.replace('class="you"', 'style="position:static;transform:rotate(35deg)"')}</div>
+  </div>`;
+}
+function miniMap(theme, style) {
+  return `<div class="mini th-${theme}">${mapSvg(style, true)}
+    <div style="position:absolute;left:50%;top:60%;width:16px;height:16px;margin:-8px">${you.replace('class="you"', 'style="position:static;transform:rotate(-25deg)"')}</div></div>`;
+}
+
+function opts() {
+  const R = (t, on, hint) => `<div class="opt ${on ? "" : "off"}"><span class="rd ${on ? "on" : ""}"></span>${t}</div>${hint ? `<div class="hint">${hint}</div>` : ""}`;
+  return `<div class="panel opts">
+    <div class="grp"><h4>Routeur</h4>
+      ${R("Questify", true, "Calcule le trajet, trace la ligne.")}
+      ${R("Shortest Path Forever", false, "Installé : il calcule et dessine à la place.")}
+      ${R("Aucun", false)}
+    </div>
+    <div class="grp"><h4>Affichage</h4>
+      ${R("Flèche Questify", true)}${R("WaypointUI", false)}${R("TomTom", false)}${R("Repère du jeu", false)}
+    </div>
+    <div class="grp"><h4>Style de ligne</h4>
+      ${R("Pointillés", true)}${R("Trait plein", false)}${R("Tirets", false)}
+    </div>
+    <div class="opt"><span class="ck">&#10003;</span>Verrouiller la flèche</div>
+  </div>`;
+}
+
+const legend = `<div class="legend"><span>${ico("walk")}Marche</span><span>${ico("fly")}Vol</span><span>${ico("boat")}Bateau</span><span>${ico("zep")}Zeppelin</span><span>${ico("tram")}Tramway</span><span>${ico("portal")}Portail</span><span>${ico("hearth")}Pierre de foyer</span></div>`;
+
+function block(theme) {
+  const label = theme === "parchment" ? "Thème parchemin (défaut)" : "Thème sombre";
+  const lines = [["dots", "Pointillés (défaut)"], ["solid", "Trait plein"], ["dashes", "Tirets"]];
+  return `<section class="th-${theme}" style="--x:0">
+    <h2 style="font-size:16px;margin-top:34px">${label}</h2>
+    <h2>Flèche (déplaçable, cadenas = verrouillée)</h2>
+    <div class="row">
+      <div class="col">${arrow(false)}<span class="cap">déverrouillée</span></div>
+      <div class="col">${arrow(true)}<span class="cap">verrouillée</span></div>
+    </div>
+    <h2>Suivi : une ligne par trajet sous l'étape</h2>
+    <div class="row"><div class="col">${tracker()}<span class="cap">le trajet en cours est en couleur titre, les suivants en gris</span></div></div>
+    <h2>Ligne de route : carte du monde et minicarte</h2>
+    <div class="row">${lines.map(([s, n]) => `<div class="col">${worldMap(theme, s)}<span class="cap">${n}</span></div>`).join("")}</div>
+    <div class="row" style="margin-top:14px">${lines.map(([s, n]) => `<div class="col">${miniMap(theme, s)}<span class="cap">minicarte, ${n.toLowerCase()}</span></div>`).join("")}</div>
+    <p class="cap" style="margin-top:6px">Le vol entre deux maîtres de vol est un trait en pointillés fins, quel que soit le style.</p>
+    <h2>Options</h2>
+    <div class="row"><div class="col">${opts()}</div></div>
+  </section>`;
+}
+
+const tabs = [["both", "Les deux thèmes"], ["parchment", "Parchemin"], ["dark", "Sombre"]];
+function render(sel) {
+  document.getElementById("tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === sel ? "on" : ""}" data-k="${k}">${n}</button>`).join("");
+  document.getElementById("out").innerHTML = (sel === "both" ? ["parchment", "dark"] : [sel]).map(block).join("") + legend;
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => render(b.dataset.k));
+}
+render("both");
+</script>
+</body>
+</html>

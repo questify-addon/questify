@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 60 étapes, niveau final 16.96, ~17712 xp/h, 133 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 62 étapes, niveau final 16.96, ~17717 xp/h, 133 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_04",
   title = "Westfall",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 13, maxLevel = 16,
   next = "A_01",
-  sim = { steps = 60, endLevel = 16.96, xpPerHour = 17712, minutes = 133 },
+  sim = { steps = 62, endLevel = 16.96, xpPerHour = 17717, minutes = 133 },
   steps = {
     { "fp", 1453, 71.29, 72.23 }, -- point de vol
     { "accept", 64 }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 14)
@@ -26,6 +26,7 @@ Q:RegisterGuide({
     { "turnin", 109, xp = 630 }, -- Report to Gryan Stoutmantle (lvl 10, ~630 xp, sim lvl 14)
     { "accept", 153 }, -- Red Leather Bandanas (lvl 15, ~1050 xp, sim lvl 14)
     { "accept", 92742 }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
+    { "sethearth", 1436, 52.86, 53.71 }, -- lier la pierre de foyer
     { "accept", 92744 }, -- Murloc Gills (lvl 12, ~455 xp, sim lvl 14)
     { "complete", 92742, obj = 2, at = { 1436, 46.08, 38.14 } }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
     { "complete", 12, obj = 1, at = { 1436, 31.61, 33.78 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
@@ -60,9 +61,10 @@ Q:RegisterGuide({
     { "accept", 92747 }, -- Moonbrook Espionage (lvl 15, ~800 xp, sim lvl 16)
     { "complete", 92747, at = { 1436, 43.11, 68.85 } }, -- Moonbrook Espionage (lvl 15, ~800 xp, sim lvl 16)
     { "turnin", 103, xp = 1150 }, -- Keeper of the Flame (lvl 16, ~1150 xp, sim lvl 16)
-    { "complete", 14, at = { 1436, 52.07, 76.61 } }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
+    { "hearth", 1436 }, -- pierre de foyer
     { "turnin", 92747, xp = 800 }, -- Moonbrook Espionage (lvl 15, ~800 xp, sim lvl 16)
     { "accept", 92748 }, -- Explosive Consultation (lvl 16, ~580 xp, sim lvl 16)
+    { "complete", 14, at = { 1436, 52.07, 76.61 } }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
     { "turnin", 14, xp = 1600 }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
     { "turnin", 9, xp = 1050 }, -- The Killing Fields (lvl 15, ~1050 xp, sim lvl 16)
     { "turnin", 22, xp = 910 }, -- Goretusk Liver Pie (lvl 12, ~910 xp, sim lvl 16)

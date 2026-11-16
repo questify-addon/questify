@@ -1,6 +1,6 @@
 # H_Skyborne_01 — Zephras Isle
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Skyborne.
 
 | Item | Value |
 |---|---|
@@ -15,7 +15,7 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Median ratio (XP/s) | 3.56 |
 | Grinding (level steps) | ~91 mobs |
 | Level band | grinding 91 mobs with quests up to level 18: band widened to level 21 |
-| Hearthstone | bound to Donaal Downbreeze after task 135; 1 return(s) planned, 0 bundle(s) |
+| Hearthstone | bound to Donaal Downbreeze after task 135; 1 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 

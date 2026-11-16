@@ -6,7 +6,8 @@ local addonName, Q = ...
 --   id, section, category ;
 --   type : "toggle" (case à cocher), "select" (choix), "slider" (curseur), "action" (bouton),
 --          "keybind" (raccourci du jeu, en lecture), "info" (texte), "hidden" (valeur de profil
---          sans contrôle, par exemple la position du suivi) ;
+--          sans contrôle, par exemple la position du suivi) ; position = true : valeur lue et
+--          contrôlée comme une position { point, point relatif, x, y } ;
 --   label, tip : clés de Q.L (texte du contrôle, infobulle de l'icône « i ») ;
 --   keywords : mots de recherche en plus (français et anglais, jamais traduits) ;
 --   path : chemin de Q.Settings (lu et écrit par Q.Settings:Get/Set, donc enregistré dans le
@@ -113,6 +114,18 @@ local function detected()
   return ok and type(d) == "table" and d or { native = true }
 end
 
+-- Routeur et affichage effectifs (Q.Nav:Active) : style de trajet et ligne n'ont de sens qu'avec le
+-- routeur Questify, le verrou de la flèche que si elle s'affiche (ni SPF ni autre affichage).
+local function navActive()
+  local N = Q.Nav
+  if not (N and N.Active) then return nil, nil end
+  local ok, router, display = pcall(N.Active, N)
+  if not ok then return nil, nil end
+  return router, display
+end
+local function questifyRouter() return (navActive()) == "questify" end
+local function arrowShown() return select(2, navActive()) == "arrow" end
+
 ---------------------------------------------------------------------------
 -- Actions (appelées par la fenêtre ; chacune protégée par Q.SafeCall côté fenêtre)
 ---------------------------------------------------------------------------
@@ -199,24 +212,67 @@ add({ id = "routeClicks", section = "route", category = "progress", type = "info
   label = "OPT_INFO_ROUTE_CLICKS", keywords = "passer etape revenir skip back clic droit right click" })
 
 -- Navigation --------------------------------------------------------------
-add({ id = "nav.routing", section = "navigation", category = "routing", type = "toggle", path = "nav.routing",
-  label = "OPT_NAV_ROUTING", tip = "OPT_TIP_NAV_ROUTING",
-  keywords = "itineraire trajet shortestpath chemin vols bateaux portails route planning path",
-  enabled = function() return detected().shortestpath == true end,
-  disabledText = "OPT_NOT_INSTALLED" })
-add({ id = "nav.display", section = "navigation", category = "display", type = "select", path = "nav.display",
-  label = "OPT_NAV_DISPLAY", tip = "OPT_TIP_NAV_DISPLAY", style = "radio",
-  keywords = "repere marqueur fleche tomtom waypointui waypoint arrow marker fleche navigation",
-  values = { "native", "tomtom", "waypointui" },
+add({ id = "nav.router", section = "navigation", category = "routing", type = "select", path = "nav.router",
+  label = "OPT_NAV_ROUTER", tip = "OPT_TIP_NAV_ROUTER", style = "radio",
+  keywords = "routeur itineraire trajet calcul chemin vols bateaux portails shortestpath spf aucun "
+    .. "router route planning path planner flights boats portals none",
+  values = { "questify", "spf", "none" },
   choices = function()
     local d = detected()
     local Lx = L()
     return {
-      { value = "native", text = Lx.UI_NAV_NATIVE },
-      { value = "tomtom", text = Lx.UI_NAV_TOMTOM, disabled = not d.tomtom },
-      { value = "waypointui", text = Lx.UI_NAV_WAYPOINTUI, disabled = not d.waypointui },
+      { value = "questify", text = Lx.NAV_ROUTER_QUESTIFY, disabled = d.questify == false },
+      { value = "spf", text = Lx.NAV_ROUTER_SPF, disabled = not d.shortestpath },
+      { value = "none", text = Lx.NAV_ROUTER_NONE },
     }
   end })
+add({ id = "nav.routeStyle", section = "navigation", category = "routing", type = "select",
+  path = "nav.routeStyle", label = "OPT_NAV_ROUTE_STYLE", tip = "OPT_TIP_NAV_ROUTE_STYLE", style = "radio",
+  keywords = "style trajet sur securite rapide routes villes hostiles danger route style safe fastest roads hostile",
+  values = { "safe", "fastest", "roads" },
+  enabled = questifyRouter,
+  choices = function()
+    local Lx = L()
+    return {
+      { value = "safe", text = Lx.NAV_STYLE_SAFE },
+      { value = "fastest", text = Lx.NAV_STYLE_FASTEST },
+      { value = "roads", text = Lx.NAV_STYLE_ROADS },
+    }
+  end })
+add({ id = "nav.display", section = "navigation", category = "display", type = "select", path = "nav.display",
+  label = "OPT_NAV_DISPLAY", tip = "OPT_TIP_NAV_DISPLAY", style = "radio",
+  keywords = "repere marqueur fleche tomtom waypointui waypoint arrow marker fleche navigation affichage display",
+  values = { "arrow", "waypointui", "tomtom", "native" },
+  choices = function()
+    local d = detected()
+    local Lx = L()
+    return {
+      { value = "arrow", text = Lx.UI_NAV_ARROW },
+      { value = "waypointui", text = Lx.UI_NAV_WAYPOINTUI, disabled = not d.waypointui },
+      { value = "tomtom", text = Lx.UI_NAV_TOMTOM, disabled = not d.tomtom },
+      { value = "native", text = Lx.UI_NAV_NATIVE },
+    }
+  end })
+add({ id = "nav.lineStyle", section = "navigation", category = "display", type = "select",
+  path = "nav.lineStyle", label = "OPT_NAV_LINE_STYLE", tip = "OPT_TIP_NAV_LINE_STYLE", style = "radio",
+  keywords = "ligne trajet points pointilles trait tirets carte minicarte line style dots solid dashes map minimap",
+  values = { "dots", "solid", "dashes" },
+  enabled = questifyRouter,
+  choices = function()
+    local Lx = L()
+    return {
+      { value = "dots", text = Lx.NAV_LINE_DOTS },
+      { value = "solid", text = Lx.NAV_LINE_SOLID },
+      { value = "dashes", text = Lx.NAV_LINE_DASHES },
+    }
+  end })
+add({ id = "nav.arrowLocked", section = "navigation", category = "display", type = "toggle",
+  path = "nav.arrowLocked", label = "OPT_NAV_ARROW_LOCKED", tip = "OPT_TIP_NAV_ARROW_LOCKED",
+  keywords = "fleche verrouiller bloquer deplacer arrow lock move position", enabled = arrowShown })
+-- Flèche : affichage et couleur dans la section Thème (plus bas) ; ici seulement le verrou.
+-- position de la flèche Questify (UI/Arrow.lua) : { point, point relatif, x, y }, comme celle du suivi
+add({ id = "nav.arrowPos", section = "navigation", category = "display", type = "hidden", path = "nav.arrowPos",
+  position = true })
 add({ id = "autoFly", section = "navigation", category = "flights", type = "toggle", path = "autoFly",
   label = "COMFORT_OPT_AUTOFLY", tip = "OPT_TIP_AUTOFLY",
   keywords = "vol vols maitre de vol taxi griffon flight flights flight master" })
@@ -374,7 +430,8 @@ add({ id = "tracker.nextSteps", section = "tracker", category = "layout", type =
   min = 0, max = 10, step = 1, integer = true,
   format = function(v) return tostring(math.floor((tonumber(v) or 0) + 0.5)) end,
   keywords = "suivi etapes suivantes nombre lignes tracker next steps count lines" })
-add({ id = "tracker.point", section = "tracker", category = "layout", type = "hidden", path = "tracker.point" })
+add({ id = "tracker.point", section = "tracker", category = "layout", type = "hidden", path = "tracker.point",
+  position = true })
 add({ id = "trackerResetPosition", section = "tracker", category = "layout", type = "action",
   label = "OPT_TRACKER_RESET_POS", tip = "OPT_TIP_TRACKER_RESET_POS",
   keywords = "suivi position replacer origine deplacer tracker reset position move",
@@ -687,7 +744,7 @@ local MAX_OFFSET = 10000
 
 -- Validate(entry, value) -> ok, valeur propre : contrôle d'une valeur importée.
 -- Case : booléen ; choix : une valeur de la liste ; curseur : nombre ramené entre min et max ;
--- position du suivi : { point, point relatif, x, y }.
+-- position (suivi, flèche : entrée `position`) : { point, point relatif, x, y }.
 function Schema:Validate(e, value)
   if e.type == "toggle" then
     if type(value) == "boolean" then return true, value end
@@ -702,7 +759,7 @@ function Schema:Validate(e, value)
     local v = self:ClampSlider(e, value)
     if v == nil then return false end
     return true, v
-  elseif e.path == "tracker.point" then
+  elseif e.position then
     if type(value) ~= "table" then return false end
     local p, rp, x, y = value[1], value[2], value[3], value[4]
     if not (ANCHORS[p] and ANCHORS[rp] and type(x) == "number" and type(y) == "number") then return false end

@@ -63,6 +63,7 @@ Data\Maps.lua
 Data\ClassTrainers.lua
 Data\ClassSpells.lua
 Data\Caves.lua
+Data\Travel.lua
 Data\ZoneArt.lua
 Data\ClassGuides.lua
 Data\ClassMacros.lua
@@ -102,6 +103,8 @@ Engine\ClassGuide.lua
 Engine\ClassMacros.lua
 
 Nav\Caves.lua
+Nav\Travel.lua
+Nav\Walk.lua
 Nav\Navigation.lua
 
 Automation\Rewards.lua
@@ -113,7 +116,6 @@ Automation\Taxi.lua
 UI\Themes.lua
 UI\ObjectiveRows.lua
 UI\ThemePreview.lua
-UI\Arrow.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
 UI\QuestValue.lua
@@ -135,6 +137,8 @@ UI\PacePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
 UI\ZoneOverlay.lua
+UI\Arrow.lua
+UI\RouteLine.lua
 UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua

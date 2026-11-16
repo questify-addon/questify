@@ -21,11 +21,16 @@ local function cave()
     npcs = { 9001, 9002 }, objects = { 9101 }, source = "https://example.test/den" }
 end
 
+-- Affichage « Repère du jeu » sauf autre choix : les points posés se lisent sur le repère du jeu.
+-- Sans routeur sauf autre choix : l'affichage reçoit le détour de Navigation ; avec le routeur
+-- Questify, il reçoit le virage du pont de marche (test questify_router_turn_carries_the_cave_title).
 local function load(settings, opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
+  local s = { ["nav.display"] = "native", ["nav.router"] = "none" }
+  for path, value in pairs(settings or {}) do s[path] = value end
   opts.beforeLogin = function(Q)
-    for path, value in pairs(settings or {}) do Q.Settings:Set(path, value) end
+    for path, value in pairs(s) do Q.Settings:Set(path, value) end
   end
   return Mock.loadAddon(TOC, opts)
 end
@@ -200,7 +205,7 @@ return {
   shortestpath_display_shows_the_entrance_first = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "waypointui" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "waypointui" })
     worldWithDen(Q)
     placePlayer(at(Q, WEST))
     local d = at(Q, DEEP)
@@ -226,7 +231,7 @@ return {
   -- ShortestPath sans NavigateRoute : c'est quand même l'entrée qu'on lui demande.
   shortestpath_without_navigate_route_goes_to_the_entrance = function(t)
     Mock.addons.ShortestPathForever = true
-    local Q = load({ ["nav.routing"] = true })
+    local Q = load({ ["nav.router"] = "spf" })
     ShortestPathForever.API.NavigateRoute = nil
     worldWithDen(Q)
     placePlayer(at(Q, WEST))
@@ -253,13 +258,32 @@ return {
     noErrors(t)
 
     Mock.addons.ShortestPathForever = true
-    local Q2 = load({ ["nav.routing"] = true })
+    local Q2 = load({ ["nav.router"] = "spf" })
     worldWithDen(Q2)
     Mock.player.map = nil
     Q2.Nav:SetTarget(MAP, d[1], d[2], "Kill the wendigos")
     local call = Mock.lastCall("ShortestPathForever.API.NavigateRoute")
     t.ok(call, "route through the entrance")
     nearE(t, call.args[2][1].x * 100, call.args[2][1].y * 100)
+  end,
+
+  -- Routeur Questify, affichage TomTom : le virage du pont de marche est l'entrée de la grotte, avec
+  -- son titre ; un seul plan de grotte par cible.
+  questify_router_turn_carries_the_cave_title = function(t)
+    Mock.addons.TomTom = true
+    local Q = load({ ["nav.router"] = "questify", ["nav.display"] = "tomtom" })
+    worldWithDen(Q)
+    placePlayer(at(Q, WEST))
+    local calls = 0
+    local plan = Q.Caves.Plan
+    Q.Caves.Plan = function(...) calls = calls + 1; return plan(...) end
+    local d = at(Q, DEEP)
+    Q.Nav:SetTarget(MAP, d[1], d[2], "Kill the wendigos")
+    t.eq(calls, 1, "one cave plan")
+    local call = Mock.lastCall("TomTom:AddWaypoint")
+    nearE(t, call.args[2] * 100, call.args[3] * 100)
+    t.eq(call.args[4].title, "Cave entrance — Kill the wendigos")
+    noErrors(t)
   end,
 
   -- Constat 2 : une cible devant l'entrée n'est pas dans la grotte.
@@ -300,7 +324,7 @@ return {
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
     Mock.addons.TomTom = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "waypointui" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "waypointui" })
     Q.Nav:SetTarget(MAP, 29.93, 71.2, "Talk")
     t.ok(Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation"), "seeded")
     local cleared = Mock.countCalls("WaypointUIAPI.Navigation.ClearUserNavigation")

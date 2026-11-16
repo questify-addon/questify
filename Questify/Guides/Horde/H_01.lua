@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 113 étapes, niveau final 17.95, ~21851 xp/h, 194 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 114 étapes, niveau final 17.95, ~21828 xp/h, 194 min.
 Q:RegisterGuide({
   id = "H_01",
   title = "The Barrens",
   faction = "Horde",
   minLevel = 12, maxLevel = 17,
   next = "H_02",
-  sim = { steps = 113, endLevel = 17.95, xpPerHour = 21851, minutes = 194 },
+  sim = { steps = 114, endLevel = 17.95, xpPerHour = 21828, minutes = 194 },
   steps = {
     { "accept", 842, race = { "Orc", "Troll" } }, -- Crossroads Conscription (lvl 12, ~910 xp, sim lvl 13)
     { "fp", 1413, 51.5, 30.34 }, -- point de vol
@@ -71,10 +71,12 @@ Q:RegisterGuide({
     { "complete", 875, at = { 1413, 38.72, 14.4 } }, -- Harpy Lieutenants (lvl 16, ~1150 xp, sim lvl 14)
     { "accept", 95494 }, -- Bruised Pride and Lion Hides (lvl 18, ~1350 xp, sim lvl 15)
     { "complete", 95494, at = { 1413, 43.81, 15.82 } }, -- Bruised Pride and Lion Hides (lvl 18, ~1350 xp, sim lvl 15)
-    { "turnin", 850, xp = 880 }, -- Kolkar Leaders (lvl 16, ~880 xp, sim lvl 15)
-    { "accept", 851 }, -- Verog the Dervish (lvl 18, ~1000 xp, sim lvl 15)
+    { "hearth", 1413 }, -- pierre de foyer
     { "turnin", 903, xp = 1050 }, -- Prowlers of the Barrens (lvl 15, ~1050 xp, sim lvl 15)
     { "accept", 881 }, -- Echeyakee (lvl 16, ~1450 xp, sim lvl 15)
+    { "turnin", 875, xp = 1150 }, -- Harpy Lieutenants (lvl 16, ~1150 xp, sim lvl 15)
+    { "turnin", 850, xp = 880 }, -- Kolkar Leaders (lvl 16, ~880 xp, sim lvl 15)
+    { "accept", 851 }, -- Verog the Dervish (lvl 18, ~1000 xp, sim lvl 15)
     { "complete", 871, at = { 1413, 55.39, 26.7 } }, -- Disrupt the Attacks (lvl 12, ~910 xp, sim lvl 15)
     { "complete", 896, at = { 1413, 61.2, 4.28 } }, -- Miner's Fortune (lvl 18, ~1700 xp, sim lvl 15)
     { "accept", 858 }, -- Ignition (lvl 18, ~1350 xp, sim lvl 16)
@@ -96,8 +98,8 @@ Q:RegisterGuide({
     { "turnin", 97253, xp = 1050 }, -- Parts and Pieces (lvl 15, ~1050 xp, sim lvl 16)
     { "turnin", 902, xp = 1150 }, -- Samophlange (lvl 16, ~1150 xp, sim lvl 16)
     { "turnin", 863, xp = 1700 }, -- The Escape (lvl 18, ~1700 xp, sim lvl 16)
-    { "accept", 3921 }, -- Wenikee Boltbucket (lvl 14, ~490 xp, sim lvl 16)
-    { "turnin", 896, xp = 1700 }, -- Miner's Fortune (lvl 18, ~1700 xp, sim lvl 16)
+    { "accept", 3921 }, -- Wenikee Boltbucket (lvl 14, ~490 xp, sim lvl 17)
+    { "turnin", 896, xp = 1700 }, -- Miner's Fortune (lvl 18, ~1700 xp, sim lvl 17)
     { "complete", 898, at = { 1413, 62.27, 39.09 } }, -- Free From the Hold (lvl 20, ~1950 xp, sim lvl 17)
     { "turnin", 898, xp = 1950 }, -- Free From the Hold (lvl 20, ~1950 xp, sim lvl 17)
     { "complete", 851, at = { 1413, 53.06, 41.74 } }, -- Verog the Dervish (lvl 18, ~1000 xp, sim lvl 17)
@@ -112,7 +114,6 @@ Q:RegisterGuide({
     { "turnin", 880, xp = 1150 }, -- Altered Beings (lvl 16, ~1150 xp, sim lvl 17)
     { "accept", 1489, optional = true, dungeon = "Wailing Caverns" }, -- Hamuul Runetotem (lvl 16, ~0 xp, sim lvl 17)
     { "turnin", 881, xp = 1450 }, -- Echeyakee (lvl 16, ~1450 xp, sim lvl 17)
-    { "turnin", 875, xp = 1150 }, -- Harpy Lieutenants (lvl 16, ~1150 xp, sim lvl 17)
     { "turnin", 871, xp = 910 }, -- Disrupt the Attacks (lvl 12, ~910 xp, sim lvl 17)
     { "turnin", 852, xp = 1100 }, -- Hezrul Bloodmark (lvl 19, ~1100 xp, sim lvl 17)
     { "turnin", 3921, xp = 490 }, -- Wenikee Boltbucket (lvl 14, ~490 xp, sim lvl 17)

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 131 étapes, niveau final 12.16, ~17889 xp/h, 127 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 132 étapes, niveau final 12.16, ~17849 xp/h, 127 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_02",
   title = "Dun Morogh",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 6, maxLevel = 11,
   next = "A_DwarfGnome_03",
-  sim = { steps = 131, endLevel = 12.16, xpPerHour = 17889, minutes = 127 },
+  sim = { steps = 132, endLevel = 12.16, xpPerHour = 17849, minutes = 127 },
   steps = {
     { "accept", 317 }, -- Stocking Jetsteam (lvl 6, ~680 xp, sim lvl 6)
     { "accept", 313 }, -- The Grizzled Den (lvl 7, ~630 xp, sim lvl 6)
@@ -143,5 +143,6 @@ Q:RegisterGuide({
     { "fp", 1432, 33.94, 50.95 }, -- point de vol
     { "turnin", 414, xp = 630 }, -- Stout to Kadrell (lvl 10, ~630 xp, sim lvl 12)
     { "turnin", 94465, xp = 660, classes = { "SHAMAN" } }, -- Call of Fire (lvl 11, ~660 xp, sim lvl 12)
+    { "sethearth", 1432, 35.53, 48.4 }, -- lier la pierre de foyer
   },
 })

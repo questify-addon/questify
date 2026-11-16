@@ -1397,6 +1397,12 @@ local function stepSegments(entry, mobs)
       if type(line) == "string" then buf[#buf + 1] = line end
     end
   end
+  local travel = comfort("Travel", "Lines", entry)
+  if type(travel) == "table" then
+    for _, line in ipairs(travel) do
+      if type(line) == "string" then buf[#buf + 1] = line end
+    end
+  end
   local state, reason = Q.Progress:State(entry)
   if state == "blocked" and reason then
     buf[#buf + 1] = REASON_COLOR .. Q.Format:Reason(reason) .. "|r"

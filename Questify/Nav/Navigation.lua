@@ -1,6 +1,16 @@
 local addonName, Q = ...
 
--- Navigation : une seule interface (SetTarget / Clear), quatre fournisseurs (spec § 5.4).
+-- Navigation : une seule interface (SetTarget / Clear), deux réglages (spec du routeur intégré, § 5) :
+--   nav.router  : "questify" (Questify_Nav, défaut), "spf" (ShortestPath Forever) ou "none" ;
+--   nav.display : "arrow" (flèche Questify, défaut), "waypointui", "tomtom" ou "native".
+-- Chaque pose ou retrait de cible est annoncé : Q:Fire("NAV_TARGET", { mapId, x, y, title } ou nil),
+-- en 0-100, quel que soit le routeur (Nav:Active() dit qui calcule). Avec le routeur Questify, le
+-- calcul du trajet écoute ce message (Nav/Walk.lua) ; la flèche ne pose rien d'autre, les autres
+-- affichages reçoivent par leur fournisseur le prochain virage du trajet (NAV_ROUTE), à défaut la
+-- cible. Avec SPF, comme avant : SPF calcule et affiche.
+-- Replis : affichage choisi absent -> la flèche (le repère du jeu avec SPF, que la flèche ne suit
+-- pas) ; SPF choisi mais absent -> le routeur Questify s'il est installé. TomTom ou WaypointUI
+-- chargé après nous (ADDON_LOADED) : la cible est reposée chez lui.
 -- Coordonnées reçues en 0-100 avec uiMapID ; chaque fournisseur reçoit son échelle :
 -- ShortestPath et TomTom 0-1, WaypointUI 0-100, marqueur natif (UiMapPoint) 0-1.
 local Nav = {}
@@ -19,6 +29,7 @@ local ticker
 local caveTicker    -- suit l'avancée du joueur vers l'entrée d'une grotte (voir syncCaveTicker)
 local CAVE_CHECK_EVERY = 1          -- secondes
 local syncCaveTicker                -- défini plus bas, appelé par apply
+local announcedKey  -- clé de la dernière cible annoncée par NAV_TARGET (nil : aucune)
 
 ---------------------------------------------------------------------------
 -- Détection (globales, lues à chaque appel : un addon peut se charger après nous)
@@ -37,9 +48,24 @@ local function hasTomTom()
   return type(TomTom) == "table" and type(TomTom.AddWaypoint) == "function"
 end
 
--- Detect() -> { shortestpath, waypointui, tomtom, native = true }
+-- Questify_Nav (routeur de marche, chargé à la demande) : installé et activé suffit.
+local function hasQuestifyNav()
+  local api = C_AddOns
+  if not api then return false end
+  if type(api.IsAddOnLoaded) == "function" then
+    local ok, loaded = pcall(api.IsAddOnLoaded, "Questify_Nav")
+    if ok and loaded then return true end
+  end
+  if type(api.GetAddOnInfo) ~= "function" then return false end
+  local ok, _, _, _, loadable, reason = pcall(api.GetAddOnInfo, "Questify_Nav")
+  if not ok then return false end
+  return loadable == true or reason == "DEMAND_LOADED"
+end
+
+-- Detect() -> { questify, shortestpath, waypointui, tomtom, native = true }
 function Nav:Detect()
   return {
+    questify = hasQuestifyNav(),
     shortestpath = hasShortestPath(),
     waypointui = hasWaypointUI(),
     tomtom = hasTomTom(),
@@ -47,22 +73,35 @@ function Nav:Detect()
   }
 end
 
+-- ShortestPath calcule-t-il ? (choisi et chargé)
 local function routingOn()
-  return Q.Settings:Get("nav.routing") == true and hasShortestPath()
+  return Q.Settings:Get("nav.router") == "spf" and hasShortestPath()
 end
 
--- Fournisseur d'affichage effectif : celui du réglage, sinon le marqueur natif s'il manque.
+-- Le routeur Questify calcule-t-il ? (choisi, ou SPF choisi mais absent ; Questify_Nav installé)
+local function questifyOn()
+  local router = Q.Settings:Get("nav.router")
+  if router == "spf" and not hasShortestPath() then router = "questify" end
+  return router == "questify" and hasQuestifyNav()
+end
+
+-- Fournisseur d'affichage effectif : celui du réglage, sinon la flèche Questify s'il manque.
+-- La flèche Questify ne suit pas les trajets de SPF : avec lui, le repère du jeu la remplace.
 local function displayProvider()
   local wanted = Q.Settings:Get("nav.display")
+  local routing = routingOn()
+  if wanted == "arrow" and not routing then return "arrow" end
   if wanted == "waypointui" and hasWaypointUI() then return "waypointui" end
   if wanted == "tomtom" and hasTomTom() then return "tomtom" end
-  return "native"
+  if wanted == "native" or routing then return "native" end
+  return "arrow"
 end
 
--- Active() -> nom du calcul d'itinéraire ("shortestpath") ou nil, fournisseur d'affichage.
+-- Active() -> routeur qui calcule ("questify", "shortestpath") ou nil, fournisseur d'affichage.
 -- Quand ShortestPath calcule, c'est lui qui transmet la destination à cet affichage.
 function Nav:Active()
-  return routingOn() and "shortestpath" or nil, displayProvider()
+  local router = (routingOn() and "shortestpath") or (questifyOn() and "questify") or nil
+  return router, displayProvider()
 end
 
 -- Fournisseur réellement utilisé pour poser une cible.
@@ -72,6 +111,8 @@ local function currentProvider()
 end
 
 local LABELS = {
+  questify = "NAV_QUESTIFY",
+  arrow = "NAV_ARROW",
   shortestpath = "NAV_SHORTESTPATH",
   waypointui = "NAV_WAYPOINTUI",
   tomtom = "NAV_TOMTOM",
@@ -193,6 +234,17 @@ end
 
 local PROVIDERS = {}
 
+-- Flèche Questify (UI/Arrow.lua) : elle suit NAV_TARGET et le trajet calculé, rien à poser ici. Au
+-- retrait (autre affichage, autre routeur, plus de cible), le repère du jeu que la lueur pose près d'un
+-- objet (UI/ObjectGlow.lua) part avec elle, avant que le nouveau fournisseur ne pose le sien.
+PROVIDERS.arrow = {
+  set = function() return true end,
+  clear = function()
+    local G = Q.UI and Q.UI.ObjectGlow
+    if G and G.ReleasePin then G:ReleasePin() end
+  end,
+}
+
 -- ShortestPath : renvoie false en combat. On ne pose rien d'autre : il gère l'affichage.
 -- `via` : points à rejoindre d'abord (entrée ou sortie de grotte, voir apply), une seule route.
 PROVIDERS.shortestpath = {
@@ -280,6 +332,7 @@ end
 -- roche. Dans la grotte de la cible (ou à son entrée), la flèche directe remplace le calcul.
 ---------------------------------------------------------------------------
 local caveWatch    -- vrai tant qu'une grotte entre en jeu : la minuterie suit l'avancée du joueur
+local cavePlanOf   -- dernier plan de grotte calculé : { target, plan } (lu par Nav/Walk.lua)
 local cavePos      -- { mapId, x, y } du joueur au dernier calcul du plan
 local CAVE_MOVE_YARDS = 3           -- en dessous, le plan ne peut pas avoir changé
 
@@ -310,16 +363,113 @@ local function caveTitle(stop, title)
   return base
 end
 
--- retry = true : seconde tentative après un refus, on n'en refait pas d'autre.
-local function apply(retry)
-  local t = target
-  if not t then return end
-  Q.SafeCall(scaleWaypointUIInput)
+---------------------------------------------------------------------------
+-- Prochain virage (spec § 5) : avec le routeur Questify et un autre affichage que la flèche, le
+-- fournisseur reçoit le prochain point du trajet (route.nextPoint du pont de marche, Nav/Walk.lua,
+-- arrêts de grotte compris), en point de carte, avec le titre de l'étape. Il n'est reposé que quand
+-- ce point bouge de plus de TURN_MOVE yd ou que le trajet change : WaypointUI rejoue son animation
+-- à chaque pose, le repère du jeu et TomTom sautent.
+---------------------------------------------------------------------------
+local TURN_EVERY = 0.5      -- secondes : relevé du prochain virage
+local TURN_MOVE = 12        -- yards (LOOKAHEAD du pont)
+local turnRoute             -- dernière route reçue (NAV_ROUTE), lue sans la modifier
+local turn                  -- virage posé : { mapId, x, y, title, instance, wx, wy, route, leg }
+local turnTicker
+
+local function turnsWanted()
+  if not (target and turnRoute) then return false end
+  local router, display = Nav:Active()
+  return router == "questify" and display ~= "arrow"
+end
+
+-- La route est-elle celle de la cible posée ? (le pont copie la cible annoncée par NAV_TARGET)
+local function routeOfTarget(r)
+  local rt, t = type(r) == "table" and r.target, target
+  return type(rt) == "table" and t ~= nil and rt.mapId == t.mapId and rt.x == t.x and rt.y == t.y
+end
+
+-- Point monde p -> carte (0-100) : celle du joueur, puis celles du trajet en cours, puis celle de la
+-- cible, la première qui le contient. -> mapId, x, y ou nil.
+local function mapPointOf(p, r)
+  local L = type(r.legs) == "table" and r.legs[r.leg] or nil
+  local maps = { (Q.Maps:PlayerPos()), L and L.to and L.to.mapId, L and L.from and L.from.mapId, target.mapId }
+  for i = 1, 4 do
+    local m = maps[i]
+    if m then
+      local x, y = Q.Maps:MapPos(m, p.instance, p.x, p.y)
+      if x and x >= 0 and x <= 100 and y >= 0 and y <= 100 then return m, x, y end
+    end
+  end
+  return nil
+end
+
+-- Virage relevé sur la route ; -> vrai s'il a changé (à reposer).
+local function updateTurn()
+  local old = turn
+  local r = turnsWanted() and turnRoute or nil
+  if r and Q.Walk and Q.Walk.Route then Q.Walk:Route() end   -- nextPoint suit le joueur
+  local p = r and routeOfTarget(r) and r.nextPoint or nil
+  if type(p) ~= "table" then
+    turn = nil
+    return old ~= nil
+  end
+  if old and old.route == r and old.leg == r.leg and old.instance == p.instance then
+    local dx, dy = p.x - old.wx, p.y - old.wy
+    if dx * dx + dy * dy <= TURN_MOVE * TURN_MOVE then return false end
+  end
+  local m, x, y = mapPointOf(p, r)
+  if not m then
+    turn = nil
+    return old ~= nil
+  end
+  -- arrêt de grotte (bout du trajet à pied, Walk.lua) : son titre, comme sans routeur
+  local path, goal = r.path, r.goal
+  local cave = p.cave or (type(path) == "table" and p == path[#path] and type(goal) == "table" and goal.cave)
+  local title = cave and caveTitle({ kind = cave }, target.title) or target.title
+  turn = { mapId = m, x = x, y = y, title = title, instance = p.instance, wx = p.x, wy = p.y,
+    route = r, leg = r.leg }
+  return true
+end
+
+local post
+
+-- Minuterie du virage, tant que des virages sont voulus.
+local function syncTurnTicker()
+  if turnsWanted() then
+    if not turnTicker then
+      turnTicker = Q:NewTicker(TURN_EVERY, function()
+        if updateTurn() then post() end
+        if not turnsWanted() and turnTicker then
+          turnTicker:Cancel()
+          turnTicker = nil
+        end
+      end)
+    end
+  elseif turnTicker then
+    turnTicker:Cancel()
+    turnTicker = nil
+  end
+end
+
+-- Plan de grotte de la cible : recalculé par apply et SetTarget seulement (Caves:Plan change l'état
+-- du joueur), jamais à chaque virage.
+local function planCaves(t)
   local plan = cavePlan(t)
+  cavePlanOf = { target = t, plan = plan }
   local pm, px, py = Q.Maps:PlayerPos()
   cavePos = pm and { mapId = pm, x = px, y = py } or nil
   caveWatch = plan ~= nil
   syncCaveTicker()
+end
+
+-- Pose chez le fournisseur, avec le dernier plan de grotte de la cible.
+-- retry = true : seconde tentative après un refus, on n'en refait pas d'autre.
+post = function(retry)
+  local t = target
+  if not t then return end
+  Q.SafeCall(scaleWaypointUIInput)
+  local c = cavePlanOf
+  local plan = c and c.target == t and c.plan or nil
   local provider = currentProvider()
   if plan and plan.direct and provider == "shortestpath" then provider = displayProvider() end
   local via
@@ -332,6 +482,10 @@ local function apply(retry)
   -- un affichage sans calcul d'itinéraire montre le premier point du détour, puis la cible
   local shown = t
   if via and provider ~= "shortestpath" then shown = via[1] end
+  -- routeur Questify : le prochain virage du trajet de cette cible, à la place de la cible
+  if turn and provider ~= "shortestpath" and provider ~= "arrow" and routeOfTarget(turn.route) then
+    shown = turn
+  end
   -- la vraie cible est toujours mémorisée (`target`, que la minuterie et le passage à l'entrée relisent) ;
   -- le point n'est reposé que si le point affiché ou son titre change (pour ShortestPath, le point
   -- affiché est la cible elle-même, dernier arrêt de la route).
@@ -355,9 +509,26 @@ local function apply(retry)
   end
 end
 
+-- Plan de grotte recalculé, puis pose.
+local function apply(retry)
+  local t = target
+  if not t then return end
+  planCaves(t)
+  post(retry)
+end
+
 ---------------------------------------------------------------------------
 -- API
 ---------------------------------------------------------------------------
+-- NAV_TARGET : une fois par cible (même dédoublonnage que les fournisseurs, au dixième près),
+-- et une fois au retrait. Copie : un abonné ne peut pas changer la cible mémorisée.
+local function announce(t)
+  local key = t and makeKey("target", t) or nil
+  if key == announcedKey then return end
+  announcedKey = key
+  Q:Fire("NAV_TARGET", t and { mapId = t.mapId, x = t.x, y = t.y, title = t.title } or nil)
+end
+
 -- SetTarget(mapId, x, y, title) : x et y en 0-100.
 function Nav:SetTarget(mapId, x, y, title)
   if type(mapId) ~= "number" or type(x) ~= "number" or type(y) ~= "number" then
@@ -365,7 +536,15 @@ function Nav:SetTarget(mapId, x, y, title)
     return
   end
   target = { mapId = mapId, x = x, y = y, title = type(title) == "string" and title or "" }
-  apply()
+  -- le plan de grotte d'abord : le pont de marche (NAV_TARGET) le lit par Nav:CavePlan() ; avec les
+  -- virages du routeur Questify, la pose attend sa route (NAV_ROUTE, annoncée pendant announce) :
+  -- l'affichage ne reçoit pas la cible puis aussitôt le virage
+  local router, display = self:Active()
+  local turns = router == "questify" and display ~= "arrow"
+  planCaves(target)
+  if not turns then post() end
+  announce(target)
+  if turns then post() end
 end
 
 -- Cible choisie par le joueur (clic sur un repère de la carte) : elle reste posée jusqu'au
@@ -398,8 +577,18 @@ function Nav:Status()
   }
 end
 
+-- CavePlan() -> plan de grotte de la cible courante (Caves:Plan, recalculé ici quand le joueur
+-- bouge ou entre et sort), ou nil. Lecture seule : Caves:Plan change l'état « entré » du joueur,
+-- un seul module doit donc l'appeler (Nav/Walk.lua lit celui-ci).
+function Nav:CavePlan()
+  local c = cavePlanOf
+  if c and target and c.target == target then return c.plan end
+  return nil
+end
+
 function Nav:Clear()
   target = nil
+  announce(nil)
   manual = nil
   retryPending, refusedKey = false, nil
   caveWatch = nil
@@ -551,10 +740,41 @@ Q:On("COMBAT_ENDED", function()
   end
 end)
 
--- Réglages `nav.*` : on retire l'ancien fournisseur puis on repose la cible.
+-- Routeur ou affichage changé : on retire l'ancien fournisseur puis on repose la cible. Les autres
+-- réglages `nav.*` (style, flèche) ne changent pas le fournisseur : la cible posée ne bouge pas.
+-- Routeur changé : la cible est annoncée de nouveau (NAV_TARGET), pour le routeur qui prend la main.
+local PROVIDER_PATHS = { nav = true, ["nav.router"] = true, ["nav.display"] = true }
+-- L'ancien fournisseur est retiré avant l'annonce : la route qu'elle produit (NAV_ROUTE) pose son
+-- virage chez le nouveau.
 Q:On("SETTINGS_CHANGED", function(path)
-  if type(path) ~= "string" or (path ~= "nav" and path:sub(1, 4) ~= "nav.") then return end
+  if not PROVIDER_PATHS[path] then return end
   clearApplied()
   retryPending, refusedKey = false, nil
+  if path ~= "nav.display" then
+    announcedKey = nil
+    if target then announce(target) end
+  end
+  turn = nil
+  updateTurn()
+  syncTurnTicker()
+  apply()
+end)
+
+-- Route du pont de marche : virage relevé, reposé s'il a changé ; minuterie tant qu'il en faut.
+-- Rien n'est posé ici si le fournisseur va changer (réglage en cours, première pose de SetTarget) :
+-- celui qui le change pose le virage, une seule fois.
+Q:On("NAV_ROUTE", function(r)
+  turnRoute = type(r) == "table" and r or nil
+  if updateTurn() and applied and applied.provider == currentProvider() then post() end
+  syncTurnTicker()
+end)
+
+-- TomTom ou WaypointUI chargé après nous : l'affichage effectif peut changer.
+local DISPLAY_ADDONS = { TomTom = true, WaypointUI = true }
+Q:RegisterEvent("ADDON_LOADED", function(_, name)
+  if not (DISPLAY_ADDONS[name] and target) then return end
+  turn = nil
+  updateTurn()
+  syncTurnTicker()
   apply()
 end)

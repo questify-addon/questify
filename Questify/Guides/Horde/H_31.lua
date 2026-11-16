@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 95 étapes, niveau final 40.00, ~50466 xp/h, 272 min.
+-- Simulation : 95 étapes, niveau final 40.00, ~50463 xp/h, 272 min.
 Q:RegisterGuide({
   id = "H_31",
   title = "Riverglades",
   faction = "Horde",
   minLevel = 37, maxLevel = 40,
   next = "H_13",
-  sim = { steps = 95, endLevel = 40.00, xpPerHour = 50466, minutes = 272 },
+  sim = { steps = 95, endLevel = 40.00, xpPerHour = 50463, minutes = 272 },
   steps = {
     { "note", "Not running City of Dalaran? Abandon Heart of Disruption, The Grave Knight", optional = true, dungeon = "City of Dalaran" },
     { "note", "Travel to Riverglades" },

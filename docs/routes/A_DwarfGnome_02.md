@@ -1,6 +1,6 @@
 # A_DwarfGnome_02 — Dun Morogh
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -8,12 +8,12 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 6.00 -> 12.16 |
 | Time | 127 min |
 | XP gained | 37925 |
-| XP/h | 17889 |
-| Steps | 131 |
+| XP/h | 17849 |
+| Steps | 132 |
 | Quests turned in | 37 |
 | Hubs | 11 |
 | Median ratio (XP/s) | 4.51 |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | bound to Innkeeper Hearthstove after task 104; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -737,6 +737,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 - step 103: `fp 1455 55.5 47.74`
 - step 129: `fp 1432 33.94 50.95`
+- step 132: `sethearth 1432 35.53 48.4`
 
 ## Warnings
 

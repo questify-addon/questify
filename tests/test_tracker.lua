@@ -437,4 +437,75 @@ return {
     t.ok(T.skipButton:IsShown())
     t.eq(#Mock.errors, 0)
   end,
+  -- Trajets du voyage sous l'étape (Q.Travel:Lines, Nav/Travel.lua) : un trajet par ligne, le trajet en
+  -- cours d'abord, les avertissements une fois par cible.
+  tracker_shows_travel_legs = function(t)
+    Mock.addons.Questify_Nav = "demand"
+    local Q = load()
+    local cur = Q.Progress:Current()
+    local I = Q.Travel.ICONS
+    local function leg(kind, caption, seconds)
+      return { kind = kind, caption = caption, seconds = seconds, icon = I[kind],
+        from = { mapId = 1429, x = 40, y = 50 }, to = { mapId = 1429, x = 60, y = 50 } }
+    end
+    local route = { leg = 1, warnings = {}, target = { mapId = 1429, x = 60, y = 50, title = "Gryan" },
+      legs = { leg("walk", Q.L.NAV_TRAVEL_WALK_FM, 60), leg("fly", "Fly to Sentinel Hill", 120),
+               leg("walk", "Walk to Gryan", 30) } }
+    Q.Walk.Route = function() return route end
+    Q.Nav.Status = function() return { target = route.target } end
+    local function text()
+      local parts = {}
+      for _, chunk in ipairs(Q.UI.Tracker.textChunks) do
+        if chunk:IsShown() then parts[#parts + 1] = plain(chunk:GetText()) end
+      end
+      return table.concat(parts, "\n")
+    end
+    local lines = Q.Travel:Lines(cur)
+    t.eq(#lines, 3, "one line per leg")
+    t.ok(lines[1]:find("|cffffd100", 1, true), "current leg in the title colour")
+    t.ok(lines[2]:find("|cffaaaaaa", 1, true), "following legs dim")
+    t.ok(lines[2]:find("|T" .. I.fly, 1, true), "leg icon")
+    Q:Fire("NAV_ROUTE", route)
+    t.ok(text():find("Fly to Sentinel Hill · 2 min", 1, true), "flight line under the step: " .. text())
+    -- trajet suivant : le trajet passé n'est plus montré
+    route = { leg = 2, warnings = {}, target = route.target, legs = route.legs }
+    Q:Fire("NAV_ROUTE", route)
+    t.eq(#Q.Travel:Lines(cur), 2)
+    -- tout à pied : rien
+    route = { leg = 1, warnings = {}, target = route.target, legs = { leg("walk", "Walk to Gryan", 30) } }
+    Q:Fire("NAV_ROUTE", route)
+    t.eq(Q.Travel:Lines(cur), nil, "walk-only plan: no lines")
+    -- une autre étape que la courante : rien
+    route.legs = { leg("walk", "a", 1), leg("fly", "b", 1) }
+    t.eq(Q.Travel:Lines({ key = "other", step = cur.step }), nil, "not the current step")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  tracker_travel_warnings_once_per_target = function(t)
+    Mock.addons.Questify_Nav = "demand"
+    local Q = load()
+    local cur = Q.Progress:Current()
+    local I = Q.Travel.ICONS
+    local legs = { { kind = "walk", caption = "w", seconds = 1, icon = I.walk },
+                   { kind = "fly", caption = "f", seconds = 1, icon = I.fly } }
+    local tg = { mapId = 1429, x = 60, y = 50, title = "A" }
+    local w = { { kind = "hostile", name = "Orgrimmar" }, { kind = "level", level = 45 } }
+    local route = { leg = 1, legs = legs, warnings = w, target = tg }
+    Q.Walk.Route = function() return route end
+    Q.Nav.Status = function() return { target = route.target } end
+    Q:Fire("NAV_ROUTE", route)
+    Q:Fire("NAV_ROUTE", route)    -- recalcul : mêmes avertissements
+    local lines = Q.Travel:Lines(cur)
+    t.eq(#lines, 4, "2 legs + 2 warnings, none repeated")
+    t.eq(plain(lines[3]), string.format(Q.L.NAV_WARN_HOSTILE, "Orgrimmar"))
+    t.eq(plain(lines[4]), string.format(Q.L.NAV_WARN_LEVEL, 45))
+    -- nouvelle cible sans avertissement : plus rien
+    route = { leg = 1, legs = legs, warnings = {}, target = { mapId = 1429, x = 10, y = 10, title = "B" } }
+    Q:Fire("NAV_ROUTE", route)
+    t.eq(#Q.Travel:Lines(cur), 2, "warnings reset with the target")
+    -- route périmée : la cible suivie n'est plus celle de la route
+    Q.Nav.Status = function() return { target = { mapId = 1429, x = 70, y = 70, title = "C" } } end
+    t.eq(Q.Travel:Lines(cur), nil, "stale route of the previous step: no lines")
+    t.eq(#Mock.errors, 0)
+  end,
 }

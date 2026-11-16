@@ -12,6 +12,8 @@ local addonName, Q = ...
 --   /qf export     mesures de temps, prêtes à copier
 --   /qf session    résumé de la session de jeu (temps actif, temps mort, XP/h par zone)
 --   /qf debug      messages de débogage (QuestifyDB.debug)
+--   /qf navperf    mesures du routeur intégré (pire image, moyenne, calculs, mémoire) ; « reset » : à zéro
+--   /qf arrow reset     flèche Questify (UI/Arrow.lua) remise à sa place par défaut
 --   /qf check      autodiagnostic du client (API, QuestieDB, navigation, route) ; alias /qf diag
 --   /qf bug        rapport de bug prêt à copier (alias /qf report) ; /qf bug clear vide les erreurs gardées
 --   /qf theme <clé>     thème du suivi (parchment, dark, transparent, gradient) ; seul : la liste
@@ -264,6 +266,34 @@ COMMANDS.opacity = function(rest)
   n = math.max(0, math.min(100, math.floor(n + 0.5)))
   Q.Settings:Set("tracker.opacity", n / 100)
   Q:Print(L.UI_SLASH_OPACITY_SET, n)
+end
+
+-- Mesures du routeur intégré (Nav/Walk.lua, spec § 3 bis) ; « reset » les remet à zéro.
+COMMANDS.navperf = function(rest)
+  local W = Q.Walk
+  if not W then return end
+  if rest == "reset" then
+    W:ResetPerf()
+    Q:Print(L.UI_NAVPERF_RESET)
+    return
+  end
+  local p = W:Perf()
+  local m = p.memKB
+  Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (m.Questify or 0) / 1024,
+    (m.Questify_Nav or 0) / 1024, ((m.Questify_Nav_EK or 0) + (m.Questify_Nav_Kalimdor or 0)) / 1024,
+    p.loadMs or 0)
+end
+
+-- Flèche Questify (UI/Arrow.lua) : « reset » la remet à sa place par défaut.
+COMMANDS.arrow = function(rest)
+  local A = Q.Arrow
+  if not A then return end
+  if rest == "reset" then
+    A:ResetPosition()
+    Q:Print(L.UI_ARROW_RESET)
+    return
+  end
+  Q:Print(L.UI_ARROW_HELP)
 end
 
 COMMANDS.check = function()

@@ -18,7 +18,77 @@ local function indexOf(steps, action, q)
   for i, s in ipairs(steps) do if s[1] == action and s[2] == q then return i end end
 end
 
+-- Contexte minimal de sim.planHearth sur la carte de test (1 % = 20 yd) : auberge A en (90, 50), près de la
+-- fin du chapitre ; auberge B en (10, 50), au départ du chapitre et au hub du chapitre suivant.
+local function lookaheadCase()
+  local W, MAP = F.W(), F.MAP
+  local function inn(id, x, y)
+    return { id = id, name = "Inn " .. id, friendly = "A", npcFlags = 128, spawns = { [MAP] = { { x, y } } } }
+  end
+  local D = { npcs = { [1101] = inn(1101, 90, 50), [1102] = inn(1102, 10, 50) }, innkeepers = { 1101, 1102 },
+              flightMasters = {} }
+  local ctx = { D = D, W = W, faction = "Alliance", letter = "A", opts = {},
+                state = { level = 10, time = 0, hearthReadyAt = 0, knownTaxi = {}, race = "Dwarf" } }
+  local function task(id, x, y, extra)
+    local tk = { id = id, kind = "O", pos = sim.mkPos(W, MAP, x, y), after = {}, dur = 0 }
+    for k, v in pairs(extra or {}) do tk[k] = v end
+    return tk
+  end
+  -- chapitre : B (départ), A, un objectif à 1000 yd de A, retour à A (un retour par la pierre si A est liée)
+  local seq = { task("T1", 10.5, 50), task("T2", 90.5, 50), task("T3", 90, 0), task("T4", 90.5, 50, { after = { "T3" } }) }
+  -- chapitre suivant : deux allers-retours de 1000 yd depuis B, la pierre rechargée entre les deux
+  local nextSeq = { task("N1", 10, 100), task("N2", 10.5, 50, { after = { "N1" } }),
+                    task("N3", 10, 0, { dur = 3700 }), task("N4", 10.5, 50, { after = { "N3" } }) }
+  local ids = {}
+  for _, x in ipairs(seq) do ids[x.id] = true end
+  local hubs = { { pos = sim.mkPos(W, MAP, 90.5, 50) } }
+  local look = { { entry = { MAP, 90, 50 }, hubs = { { pos = sim.mkPos(W, MAP, 10, 50) } }, tasks = nextSeq } }
+  return ctx, seq, hubs, { logCap = 20, ids = ids }, look
+end
+
+local function boundInns(binds)
+  local out = {}
+  for _, id in ipairs({ "T1", "T2", "T3", "T4" }) do
+    if binds[id] then out[#out + 1] = id .. "=" .. binds[id].npc end
+  end
+  return table.concat(out, ",")
+end
+
 return {
+  -- liaisons choisies avec le chapitre suivant en vue : B (hub du chapitre suivant, deux retours de loin) bat A
+  -- (un retour dans ce chapitre) ; sans anticipation, A
+  lookahead_prefers_next_hub = function(t)
+    local ctx, seq, hubs, fopts, look = lookaheadCase()
+    local _, binds = sim.planHearth(ctx, seq, hubs, seq[1].pos, nil, fopts)
+    t.eq(boundInns(binds), "T2=1101", "without lookahead: inn A")
+    ctx, seq, hubs, fopts, look = lookaheadCase()
+    fopts.lookahead = look
+    _, binds = sim.planHearth(ctx, seq, hubs, seq[1].pos, nil, fopts)
+    t.eq(boundInns(binds), "T1=1102", "with lookahead: inn B")
+  end,
+
+  -- vitesse du personnage simulé : à pied, puis monture achetée au niveau 40 (x1,6) et 60 (x2,0)
+  mount_speed_by_level = function(t)
+    local function near(a, b) return math.abs(a - b) < 1e-9 end
+    t.ok(near(sim.walkSpeed({ level = 39 }), 7), "level 39: " .. sim.walkSpeed({ level = 39 }))
+    t.ok(near(sim.walkSpeed({ level = 40 }), 11.2), "level 40: " .. sim.walkSpeed({ level = 40 }))
+    t.ok(near(sim.walkSpeed({ level = 59 }), 11.2), "level 59: " .. sim.walkSpeed({ level = 59 }))
+    t.ok(near(sim.walkSpeed({ level = 60 }), 14), "level 60: " .. sim.walkSpeed({ level = 60 }))
+    t.ok(near(sim.walkSpeed({}), 7), "no level: on foot")
+    -- trajet calculé (sim.route) : la marche suit la vitesse du niveau
+    local W = F.W()
+    local a, b = sim.mkPos(W, F.MAP, 10, 50), sim.mkPos(W, F.MAP, 90, 50)
+    local function walkTime(level)
+      local ctx = { D = { npcs = {}, flightMasters = {} }, W = W, faction = "Alliance", letter = "A", opts = {},
+                    state = { level = level, time = 0, hearthReadyAt = 0, knownTaxi = {}, race = "Dwarf" } }
+      local legs = sim.route(ctx, a, b, {})
+      return legs[1].time
+    end
+    t.ok(near(walkTime(30), 1600 / 7), "level 30: " .. walkTime(30))
+    t.ok(near(walkTime(45), 1600 / 11.2), "level 45: " .. walkTime(45))
+    t.ok(near(sim.walk(a, b, 14), 1600 / 14), "sim.walk with a speed")
+  end,
+
   -- retour par la pierre : pris si incantation + pénalité + marche depuis l'auberge < marche directe
   hearth_cost_uses_stone_on_long_return = function(t)
     local seq = { { id = "O1", pos = P(1000) }, { id = "T1", pos = P(5) } }

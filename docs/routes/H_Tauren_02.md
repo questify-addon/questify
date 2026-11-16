@@ -1,19 +1,19 @@
 # H_Tauren_02 — Mulgore
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
 
 | Item | Value |
 |---|---|
 | Level band | 6-12 |
 | Simulated level | 6.00 -> 13.89 |
-| Time | 242 min |
+| Time | 244 min |
 | XP gained | 53286 |
-| XP/h | 13238 |
-| Steps | 137 |
+| XP/h | 13105 |
+| Steps | 136 |
 | Quests turned in | 41 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 3.89 |
-| Hearthstone | bound to Innkeeper Pala after task 63; 1 return(s) planned, 0 bundle(s) |
+| Hearthstone | bound to Innkeeper Boorand Plainswind after task 115; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -450,7 +450,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 61 | T | 772 | Rite of Vision | 1412 | 34.3, 43.3 | 205 |  |
 | 62 | A | 773 | Rite of Wisdom | 1412 | 34.3, 43.3 | 0 |  |
 | 63 | A | 76156 | Stalk With The Earthmother | 1456 | 39.4, 65.8 | 330 |  |
-| 64 | A | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 1076 |  |
+| 64 | A | 833 | A Sacred Burial | 1412 | 57.0, 34.5 | 1143 |  |
 | 65 | T | 773 | Rite of Wisdom | 1412 | 58.3, 30.7 | 177 |  |
 | 66 | A | 775 | Journey into Thunder Bluff | 1412 | 58.3, 30.7 | 0 |  |
 | 67 | O | 833 | A Sacred Burial | 1412 | 58.1, 30.8 | 11 |  |
@@ -503,7 +503,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 114 | T | 886 | The Barrens Oases | 1413 | 52.3, 31.9 | 2421 |  |
 | 115 | T | 860 | Sergra Darkthorn | 1413 | 52.2, 31.0 | 62 |  |
 
-Walking between tasks: 22427 yd (~53 min at 7 yd/s).
+Walking between tasks: 22494 yd (~54 min at 7 yd/s).
 
 ## Qualité
 
@@ -524,9 +524,8 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 ## Logistics
 
 - step 64: `fp 1456 47 49.83`
-- step 67: `sethearth 1456 45.81 64.71`
-- step 96: `hearth 1456`
-- step 133: `fp 1413 51.5 30.34`
+- step 131: `fp 1413 51.5 30.34`
+- step 136: `sethearth 1413 51.99 29.89`
 
 ## Warnings
 

@@ -503,15 +503,16 @@ function Build.select(e)
   row.sync = function()
     local choices = S:Choices(e, player())
     local current = S:Get(e, player())
+    local enabled = S:Enabled(e, player())   -- réglage grisé : tous ses choix
     for i, c in ipairs(choices) do
       local r = radio(i)
       r.value, r.disabledChoice = c.value, c.disabled
       local text = tostring(c.text)
       if c.disabled then text = text .. " |cff808080" .. L.OPT_NOT_INSTALLED .. "|r" end
       r.label:SetText(text)
-      if c.disabled then r.label:SetTextColor(tc("textMuted")) else r.label:SetTextColor(tc("text")) end
+      if c.disabled or not enabled then r.label:SetTextColor(tc("textMuted")) else r.label:SetTextColor(tc("text")) end
       r:SetChecked(current == c.value)
-      r:SetEnabled(not c.disabled)
+      r:SetEnabled(enabled and not c.disabled)
       r:Show()
       r.label:Show()
     end

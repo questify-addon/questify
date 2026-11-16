@@ -1,6 +1,6 @@
 # A_Human_02 — Elwynn Forest
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
@@ -8,12 +8,12 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 6.00 -> 11.88 |
 | Time | 117 min |
 | XP gained | 34677 |
-| XP/h | 17711 |
-| Steps | 150 |
+| XP/h | 17730 |
+| Steps | 149 |
 | Quests turned in | 40 |
 | Hubs | 10 |
 | Median ratio (XP/s) | 3.62 |
-| Hearthstone | bound to Innkeeper Farley after task 3; 1 return(s) planned, 0 bundle(s) |
+| Hearthstone | no new bind; 1 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -663,7 +663,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 1 | A | 62 | The Fargodeep Mine | 1429 | 42.1, 65.9 | 0 |  |
 | 2 | A | 91775 | Book Return | 1429 | 42.1, 65.9 | 0 |  |
 | 3 | A | 60 | Kobold Candles | 1429 | 43.3, 65.7 | 42 |  |
-| 4 | O | 62 | The Fargodeep Mine | 1429 | 40.6, 82.3 | 396 |  |
+| 4 | O | 62 | The Fargodeep Mine | 1429 | 40.6, 82.3 | 395 |  |
 | 5 | O | 91775 | Book Return | 1429 | 41.6, 79.9 | 65 |  |
 | 6 | O | 60 | Kobold Candles | 1429 | 40.0, 80.7 | 59 |  |
 | 7 | A | 106 | Young Lovers | 1429 | 43.1, 89.6 | 233 |  |
@@ -763,7 +763,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 101 | T | 184 | Furlbrow's Deed | 1436 | 60.0, 19.4 | 928 |  |
 | 102 | T | 109 | Report to Gryan Stoutmantle | 1436 | 56.3, 47.5 | 669 |  |
 
-Walking between tasks: 17967 yd (~43 min at 7 yd/s).
+Walking between tasks: 17965 yd (~43 min at 7 yd/s).
 
 ## Qualité
 
@@ -783,10 +783,9 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 5: `sethearth 1429 43.77 65.8`
-- step 98: `fp 1453 71.29 72.23`
-- step 132: `hearth 1429`
-- step 149: `fp 1436 56.55 52.64`
+- step 97: `fp 1453 71.29 72.23`
+- step 131: `hearth 1429`
+- step 148: `fp 1436 56.55 52.64`
 
 ## Warnings
 

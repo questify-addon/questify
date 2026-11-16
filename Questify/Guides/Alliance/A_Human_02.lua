@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 150 étapes, niveau final 11.88, ~17711 xp/h, 117 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 149 étapes, niveau final 11.88, ~17730 xp/h, 117 min.
 Q:RegisterGuide({
   id = "A_Human_02",
   title = "Elwynn Forest",
@@ -10,13 +10,12 @@ Q:RegisterGuide({
   races = { "Human" },
   minLevel = 6, maxLevel = 11,
   next = "A_Human_03",
-  sim = { steps = 150, endLevel = 11.88, xpPerHour = 17711, minutes = 117 },
+  sim = { steps = 149, endLevel = 11.88, xpPerHour = 17730, minutes = 117 },
   steps = {
     { "accept", 62 }, -- The Fargodeep Mine (lvl 7, ~475 xp, sim lvl 6)
     { "accept", 91775 }, -- Book Return (lvl 6, ~680 xp, sim lvl 6)
     { "accept", 60 }, -- Kobold Candles (lvl 7, ~475 xp, sim lvl 6)
     { "accept", 5624, classes = { "PRIEST" } }, -- Garments of the Light (lvl 4, ~160 xp, sim lvl 6)
-    { "sethearth", 1429, 43.77, 65.8 }, -- lier la pierre de foyer
     { "complete", 62, at = { 1429, 40.56, 82.26 } }, -- The Fargodeep Mine (lvl 7, ~475 xp, sim lvl 6)
     { "complete", 91775, at = { 1429, 41.62, 79.9 } }, -- Book Return (lvl 6, ~680 xp, sim lvl 6)
     { "complete", 60, at = { 1429, 39.98, 80.7 } }, -- Kobold Candles (lvl 7, ~475 xp, sim lvl 6)

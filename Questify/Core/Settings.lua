@@ -12,7 +12,14 @@ Settings.defaults = {
   rewardPick = "upgrade",   -- Automation/Rewards.lua : "upgrade" (amélioration d'abord) ou "value" (le plus cher)
   rewardMarks = true,       -- UI/RewardMarks.lua : flèche et pièce sur les choix de récompense
   dungeonQuests = true,
-  nav = { routing = false, display = "native" },
+  -- Nav/Navigation.lua : routeur ("questify" | "spf" | "none") et affichage ("arrow" | "waypointui" |
+  -- "tomtom" | "native") ; style de trajet et de ligne du routeur Questify ; flèche (UI/Arrow.lua),
+  -- dont la position (nav.arrowPos = { point, point relatif, x, y }) n'a pas de défaut.
+  -- Migration des anciens réglages (nav.routing) : Core/Profiles.lua.
+  nav = { router = "questify", display = "arrow", routeStyle = "safe", lineStyle = "dots", arrowLocked = false },
+  -- Flèche Questify (UI/Arrow.lua) : affichée, couleur ("cyan" | "theme" | "gold" | "green" | "white" |
+  -- "pink"). Mêmes réglages que la session ui-themes (Options › Thème chez elle).
+  arrow = { show = true, color = "cyan" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
     theme = "neutral", opacity = 0.9,       -- UI/Themes.lua : thème choisi et opacité du fond (0 à 1)
     style = "solid",                        -- UI/Themes.lua : fond du suivi (solid, fade, none)

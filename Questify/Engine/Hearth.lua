@@ -210,6 +210,30 @@ function Hearth:Check(silent)
 end
 
 ---------------------------------------------------------------------------
+-- Auberge liée (planificateur de voyage, Nav/Travel.lua)
+---------------------------------------------------------------------------
+local function round2(v) return math.floor(v * 100 + 0.5) / 100 end
+
+-- Position de l'auberge liée : celle du joueur enregistrée à HEARTHSTONE_BOUND (Q.char.hearthBind),
+-- tant que GetBindLocation donne le même lieu ; sinon l'auberge reconnue à ce nom
+-- (Q.Travel:InnNamed). -> mapId, x, y ou nil (inconnue : pas de pierre dans les trajets).
+function Hearth:BindPos()
+  local loc = bindLocation()
+  local b = Q.char and Q.char.hearthBind
+  if type(b) == "table" and type(b.m) == "number" and (not loc or not b.name or b.name == loc) then
+    return b.m, b.x, b.y
+  end
+  if loc and Q.Travel then return Q.Travel:InnNamed(loc) end
+  return nil
+end
+
+local function recordBind()
+  if not Q.char then return end
+  local m, x, y = Q.Maps:PlayerPos()
+  Q.char.hearthBind = m and { m = m, x = round2(x), y = round2(y), name = bindLocation() } or nil
+end
+
+---------------------------------------------------------------------------
 -- Évènements
 ---------------------------------------------------------------------------
 local function check() Hearth:Check() end
@@ -225,4 +249,5 @@ Q:On("SETTINGS_CHANGED", function(path)
   if path == "hearthHints" then check() end
 end)
 Q:RegisterEvent("BAG_UPDATE_COOLDOWN", check)
+Q:RegisterEvent("HEARTHSTONE_BOUND", recordBind)
 Q:RegisterEvent("HEARTHSTONE_BOUND", check)

@@ -7,8 +7,9 @@
 # Le premier contrôle qui échoue arrête tout : aucun zip n'est produit.
 #
 # La version vient de « ## Version: » dans Questify/Questify.toc (0.1.0 si absente).
-# Le dossier Questify/ est à la racine du zip ; LICENSE y est copiée (GPL) ; .DS_Store et
-# les fichiers temporaires d'éditeur sont exclus. tests/, tools/ et docs/ n'y figurent jamais.
+# Quatre dossiers à la racine du zip : Questify/ et le routeur de marche (Questify_Nav, Questify_Nav_EK,
+# Questify_Nav_Kalimdor). LICENSE est copiée dans Questify/ (GPL) ; .DS_Store et les fichiers temporaires
+# d'éditeur sont exclus. tests/, tools/ et docs/ n'y figurent jamais.
 set -u
 set -o pipefail
 
@@ -18,6 +19,8 @@ ADDON_DIR="$ROOT/$ADDON"
 TOC="$ADDON_DIR/$ADDON.toc"
 TOC_FOREVER="$ADDON_DIR/${ADDON}_Camelot.toc"
 DEFAULT_VERSION="0.1.0"
+NAV_ADDONS=(Questify_Nav Questify_Nav_EK Questify_Nav_Kalimdor)
+ROOTS=("$ADDON" "${NAV_ADDONS[@]}")
 
 LUAJIT="${LUAJIT:-luajit}"
 if ! command -v "$LUAJIT" >/dev/null 2>&1; then
@@ -88,6 +91,20 @@ while IFS= read -r line; do
       ;;
   esac
 done < "$TOC"
+# TOC du routeur de marche : chaque fichier listé doit exister dans son dossier.
+for nav in "${NAV_ADDONS[@]}"; do
+  navtoc="$ROOT/$nav/$nav.toc"
+  [ -f "$navtoc" ] || fail "TOC introuvable : $navtoc"
+  while IFS= read -r line; do
+    line="$(printf '%s' "$line" | tr -d '\r')"
+    case "$line" in ""|"#"*) continue ;; esac
+    rel="${line//\\//}"
+    if [ ! -f "$ROOT/$nav/$rel" ]; then
+      echo "fichier du TOC absent : $nav/$rel" >&2
+      missing=1
+    fi
+  done < "$navtoc"
+done
 [ "$missing" -eq 0 ] || fail "des fichiers listés dans le TOC ou dans un XML sont absents"
 echo "OK"
 
@@ -105,26 +122,32 @@ stageAddon() {
   if [ -f "$ROOT/LICENSE" ]; then
     cp "$ROOT/LICENSE" "$dir/$ADDON/LICENSE" || fail "copie de LICENSE échouée"
   fi
+  for nav in "${NAV_ADDONS[@]}"; do
+    cp -R "$ROOT/$nav" "$dir/$nav" || fail "copie de $nav échouée"
+  done
   find "$dir" \( -name '.DS_Store' -o -name '._*' -o -name '*.swp' -o -name '*~' \) -delete
 }
 
-# zipAddon <saveur> : zippe $STAGE/<saveur>/Questify en dist/Questify-<version>-<saveur>.zip.
+# zipAddon <saveur> : zippe $STAGE/<saveur>/ (les quatre dossiers) en dist/Questify-<version>-<saveur>.zip.
 zipAddon() {
   ZIP="$ROOT/dist/$ADDON-$VERSION-$1.zip"
   rm -f "$ZIP"
-  ( cd "$STAGE/$1" && zip -r -X -q "$ZIP" "$ADDON" ) || fail "zip $1 a échoué"
+  ( cd "$STAGE/$1" && zip -r -X -q "$ZIP" "${ROOTS[@]}" ) || fail "zip $1 a échoué"
 }
 
-# checkZip <entrée requise...> : tout sous Questify/, rien d'interdit, entrées requises présentes.
+# checkZip <entrée requise...> : tout sous les quatre dossiers, rien d'interdit, entrées requises présentes.
 checkZip() {
-  local entries bad required
+  local entries bad required nav
   entries="$(unzip -Z1 "$ZIP")" || fail "zip illisible : $ZIP"
-  bad="$(printf '%s\n' "$entries" | grep -v "^$ADDON/" || true)"
-  [ -z "$bad" ] || fail "entrées hors de $ADDON/ dans $ZIP :
+  bad="$(printf '%s\n' "$entries" | grep -vE "^($(IFS='|'; echo "${ROOTS[*]}"))/" || true)"
+  [ -z "$bad" ] || fail "entrées hors de ${ROOTS[*]} dans $ZIP :
 $bad"
   bad="$(printf '%s\n' "$entries" | grep -E '(^|/)(\.DS_Store|tests|tools|docs|dist|\.cache|\.superpowers)(/|$)' || true)"
   [ -z "$bad" ] || fail "entrées interdites dans $ZIP :
 $bad"
+  for nav in "${NAV_ADDONS[@]}"; do
+    printf '%s\n' "$entries" | grep -qx "$nav/$nav.toc" || fail "absent de $ZIP : $nav/$nav.toc"
+  done
   for required in "$@"; do
     printf '%s\n' "$entries" | grep -qx "$ADDON/$required" || fail "absent de $ZIP : $required"
   done

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 135 étapes, niveau final 12.00, ~17745 xp/h, 116 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 136 étapes, niveau final 12.00, ~17725 xp/h, 116 min.
 Q:RegisterGuide({
   id = "A_NightElf_02",
   title = "Teldrassil",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "NightElf" },
   minLevel = 6, maxLevel = 11,
   next = "A_NightElf_03",
-  sim = { steps = 135, endLevel = 12.00, xpPerHour = 17745, minutes = 116 },
+  sim = { steps = 136, endLevel = 12.00, xpPerHour = 17725, minutes = 116 },
   steps = {
     { "accept", 929 }, -- Crown of the Earth (lvl 5, ~335 xp, sim lvl 6)
     { "accept", 2438 }, -- The Emerald Dreamcatcher (lvl 6, ~405 xp, sim lvl 6)
@@ -147,5 +147,6 @@ Q:RegisterGuide({
     { "boat", 1438, 54.9, 96.8, note = "Take the boat to Auberdine" }, -- bateau
     { "fp", 1439, 36.34, 45.58 }, -- point de vol
     { "turnin", 6342, xp = 420 }, -- Flight to Auberdine (lvl 10, ~420 xp, sim lvl 11)
+    { "sethearth", 1439, 37.04, 44.13 }, -- lier la pierre de foyer
   },
 })

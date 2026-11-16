@@ -65,10 +65,11 @@ local ADDONS = {
 }
 Wizard.ADDONS = ADDONS
 
-local DISPLAYS = { "waypointui", "tomtom", "native" }
+local DISPLAYS = { "arrow", "waypointui", "tomtom", "native" }
 -- Page 2 : route automatique (mode « Donjons ») ou manuelle (chapitres habituels).
 local ROUTES = { { "auto", "DGMODE_WIZ_AUTO", "DGMODE_WIZ_AUTO_DESC" }, { "manual", "DGMODE_WIZ_MANUAL", "DGMODE_WIZ_MANUAL_DESC" } }
 local PROVIDER_TEXT = {
+  arrow = { "UI_NAV_ARROW", "UI_NAV_ARROW_DESC" },
   shortestpath = { "UI_NAV_SHORTESTPATH", "UI_NAV_SHORTESTPATH_DESC" },
   waypointui = { "UI_NAV_WAYPOINTUI", "UI_NAV_WAYPOINTUI_DESC" },
   tomtom = { "UI_NAV_TOMTOM", "UI_NAV_TOMTOM_DESC" },
@@ -143,6 +144,7 @@ function Wizard:Detect()
     tomtom = type(TomTom) == "table" and TomTom.AddWaypoint ~= nil,
   }
   d.native = true
+  d.arrow = true   -- flèche Questify : toujours disponible
   local status
   if Q.QDB and Q.QDB.Status then
     local ok, res = pcall(Q.QDB.Status, Q.QDB)
@@ -819,7 +821,7 @@ function Wizard:SelectRoute(id)
 end
 
 function Wizard:SelectDisplay(id)
-  if not (self.detected and self.detected[id]) then id = "native" end
+  if not (self.detected and self.detected[id]) then id = "arrow" end
   self.choice.display = id
   for rid, r in pairs(self.radios) do r:SetChecked(rid == id) end
 end
@@ -913,19 +915,18 @@ end
 function Wizard:Load()
   local d = self:Detect()
   self.detected = d
+  -- Affichage : celui du réglage ; au premier passage, la flèche Questify (le défaut), même si un
+  -- autre addon de repère est installé.
   local display = Q.Settings:Get("nav.display")
-  -- Premier passage : le meilleur repère installé (WaypointUI, puis TomTom, puis le jeu).
-  if not (Q.char and Q.char.wizardDone) then
-    display = (d.waypointui and "waypointui") or (d.tomtom and "tomtom") or "native"
-  end
-  if not d[display] then display = "native" end
+  if not (Q.char and Q.char.wizardDone) then display = "arrow" end
+  if not d[display] then display = "arrow" end
   -- Route : celle du personnage ; au premier passage, l'automatique quand elle existe.
   local D = Q.DungeonMode
   local route = "manual"
   if autoAvailable() and (D:IsOn() or not (Q.char and Q.char.wizardDone)) then route = "auto" end
   local initial = {
     route = route,
-    routing = d.shortestpath and Q.Settings:Get("nav.routing") == true or false,
+    routing = d.shortestpath and Q.Settings:Get("nav.router") == "spf" or false,
     display = display,
     autoQuest = Q.Settings:Get("autoQuest") ~= false,
     autoReward = Q.Settings:Get("autoReward") ~= false,
@@ -969,7 +970,7 @@ function Wizard:UpdateRecap()
   local function onOff(v) return v and L.UI_WIZ_ON or L.UI_WIZ_OFF end
   r.route:SetFormattedText(L.DGMODE_WIZ_RECAP, c.route == "auto" and L.DGMODE_TAB_AUTO or L.DGMODE_TAB_MANUAL)
   r.routing:SetFormattedText(L.UI_WIZ_RECAP_ROUTING, c.routing and L.UI_NAV_SHORTESTPATH or L.UI_WIZ_OFF)
-  local display = PROVIDER_TEXT[c.display] or PROVIDER_TEXT.native
+  local display = PROVIDER_TEXT[c.display] or PROVIDER_TEXT.arrow
   r.display:SetFormattedText(L.UI_WIZ_RECAP_DISPLAY, L[display[1]])
   r.autoQuest:SetFormattedText(L.UI_WIZ_RECAP_AUTOQUEST, onOff(c.autoQuest))
   r.autoReward:SetFormattedText(L.UI_WIZ_RECAP_AUTOREWARD, onOff(c.autoReward))
@@ -1072,8 +1073,11 @@ end
 function Wizard:Finish()
   self:ReadWidgets()
   local c = self.choice
-  Q.Settings:Set("nav.routing", c.routing)
-  Q.Settings:Set("nav.display", c.display or "native")
+  -- case « ShortestPath » : SPF, sinon le routeur choisi ailleurs (Questify s'il était sur SPF)
+  local router = Q.Settings:Get("nav.router")
+  if c.routing then router = "spf" elseif router == "spf" then router = "questify" end
+  Q.Settings:Set("nav.router", router)
+  Q.Settings:Set("nav.display", c.display or "arrow")
   Q.Settings:Set("autoQuest", c.autoQuest)
   Q.Settings:Set("autoReward", c.autoReward)
   Q.Settings:Set("sellJunk", c.sellJunk)

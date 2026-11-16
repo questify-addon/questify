@@ -179,6 +179,18 @@ function Maps:WorldPos(m, x, y)
   return t.continent, t.ox + u * t.xX + v * t.yX, t.oy + u * t.xY + v * t.yY
 end
 
+-- Point de la carte m (0-100, parfois hors de 0-100) du point monde (X, Y) du continent c : inverse
+-- de WorldPos. nil si la carte est sur un autre continent ou sa transformation inconnue.
+function Maps:MapPos(m, c, X, Y)
+  if type(X) ~= "number" or type(Y) ~= "number" then return nil end
+  local t = transform(m)
+  if not t or t.continent ~= c then return nil end
+  local det = t.xX * t.yY - t.yX * t.xY
+  if det == 0 then return nil end
+  local dx, dy = X - t.ox, Y - t.oy
+  return (dx * t.yY - t.yX * dy) / det * 100, (t.xX * dy - t.xY * dx) / det * 100
+end
+
 -- Distance en yards, nil si les points sont sur des continents différents.
 function Maps:Distance(m1, x1, y1, m2, x2, y2)
   local c1, ax, ay = self:WorldPos(m1, x1, y1)
