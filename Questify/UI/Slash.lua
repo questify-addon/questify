@@ -10,6 +10,7 @@ local addonName, Q = ...
 --   /qf wizard     assistant de navigation
 --   /qf export     mesures de temps, prêtes à copier
 --   /qf debug      messages de débogage (QuestifyDB.debug)
+--   /qf navperf    mesures du routeur intégré (pire image, moyenne, calculs, mémoire) ; « reset » : à zéro
 --   /qf check      autodiagnostic du client (API, QuestieDB, navigation, route) ; alias /qf diag
 --   /qf bug        rapport de bug prêt à copier (alias /qf report) ; /qf bug clear vide les erreurs gardées
 --   /qf theme <clé>     thème du suivi (parchment, dark, transparent, gradient) ; seul : la liste
@@ -212,6 +213,20 @@ COMMANDS.opacity = function(rest)
   n = math.max(0, math.min(100, math.floor(n + 0.5)))
   Q.Settings:Set("tracker.opacity", n / 100)
   Q:Print(L.UI_SLASH_OPACITY_SET, n)
+end
+
+-- Mesures du routeur intégré (Nav/Walk.lua, spec § 3 bis) ; « reset » les remet à zéro.
+COMMANDS.navperf = function(rest)
+  local W = Q.Walk
+  if not W then return end
+  if rest == "reset" then
+    W:ResetPerf()
+    Q:Print(L.UI_NAVPERF_RESET)
+    return
+  end
+  local p = W:Perf()
+  Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (p.memKB.Questify or 0) / 1024,
+    (p.memKB.Questify_Nav or 0) / 1024)
 end
 
 COMMANDS.check = function()

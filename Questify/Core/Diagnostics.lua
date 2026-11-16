@@ -205,6 +205,21 @@ check("navigation", "DIAG_NAVIGATION", function()
   return "ok", string.format(L.DIAG_NAV_OK, using, installed)
 end)
 
+-- Chemins à pied du routeur intégré (Nav/Walk.lua) : chargé ou non, cartes de chaque continent.
+local WALK_REASONS = { noaddon = "DIAG_WALK_NOADDON", noengine = "DIAG_WALK_NOENGINE", nodata = "DIAG_WALK_NODATA" }
+check("walk", "DIAG_WALK", function()
+  if Q.Nav:Active() ~= "questify" or not Q.Walk then return "info", L.DIAG_WALK_OFF end
+  local st = Q.Walk:Status()
+  if WALK_REASONS[st.reason] then
+    return "warn", string.format(L.DIAG_WALK_STRAIGHT, L[WALK_REASONS[st.reason]])
+  end
+  if st.reason == "combat" then return "info", L.DIAG_WALK_COMBAT end
+  if not st.loaded then return "info", L.DIAG_WALK_IDLE end
+  local maps = string.format("%s %s, %s %s", Q.Maps:MapName(1415), onOff(st.maps[0]),
+    Q.Maps:MapName(1414), onOff(st.maps[1]))
+  return "ok", string.format(L.DIAG_WALK_OK, maps)
+end)
+
 check("route", "DIAG_ROUTE", function()
   if not Q.Progress:IsEnabled() then return "fail", L.DIAG_ROUTE_DISABLED end
   local P = Q.Player or {}
@@ -467,6 +482,11 @@ function Diag:Report()
   local routing, display
   if Q.Nav and Q.Nav.Active then routing, display = Q.Nav:Active() end
   add("Navigation: routing %s, display %s", tostring(routing or "-"), tostring(display or "-"))
+  if Q.Walk then
+    local w = Q.Walk:Status()
+    add("Walk: loaded %s, maps 0=%s 1=%s, reason %s, last search %s", tostring(w.loaded), tostring(w.maps[0]),
+      tostring(w.maps[1]), tostring(w.reason or "-"), tostring(w.search or "ok"))
+  end
 
   local log = questLog()
   add("Quest log (%d): %s", #log, #log > 0 and table.concat(log, ", ") or "-")

@@ -20,6 +20,9 @@
 --   Mock.missingFiles                    fichiers listés dans le TOC/XML mais absents
 --   Mock.secret(v)                       crée une « valeur secrète » (issecretvalue -> true)
 --   Mock.strictSecret(v)                 valeur secrète dont toute opération lève une erreur
+--   Mock.navEngine                       routeur factice (Mock.newNavEngine), posé par
+--                                        C_AddOns.LoadAddOn("Questify_Nav") ; Mock.onLoadAddOn[nom]
+--   Mock.addonMemory[nom], Mock.areaNames[id]   GetAddOnMemoryUsage, C_Map.GetAreaInfo
 
 Mock = Mock or {}
 Mock.root = Mock.root or "."
@@ -628,6 +631,62 @@ local function installQuestieDB(extra)
 end
 
 ---------------------------------------------------------------------------
+-- Routeur de marche factice (Questify_NavEngine, Questify_Nav/API.lua) : installé par
+-- C_AddOns.LoadAddOn("Questify_Nav") (Mock.onLoadAddOn). Find note chaque demande et ne répond
+-- jamais seul : le test répond avec engine.resolve(job, points, cost, hubs) ou engine.fail(job, reason).
+--   engine.finds        demandes Find dans l'ordre : { map, from, to, callback, opts, cancelled }
+--   engine.cancels      jobs passés à Cancel
+--   engine.available    [map] = false : pas de cartes pour ce continent (Available, Resident)
+--   engine.zones        fonction (map, x, y) -> uiMapID, pour ZoneAt
+---------------------------------------------------------------------------
+function Mock.newNavEngine()
+  local E = { finds = {}, cancels = {}, available = {}, zones = nil }
+  function E.Find(map, from, to, callback, opts)
+    local job = { map = map, from = from, to = to, callback = callback, opts = opts }
+    E.finds[#E.finds + 1] = job
+    record("NavEngine.Find", map, from, to, opts)
+    return job
+  end
+  function E.Cancel(job)
+    if job then job.cancelled = true end
+    E.cancels[#E.cancels + 1] = job
+    record("NavEngine.Cancel", job)
+  end
+  function E.Busy() return false end
+  function E.Available(map) return map ~= nil and E.available[map] ~= false end
+  function E.Resident(map) return E.Available(map) end
+  function E.ZoneAt(map, x, y) return E.zones and E.zones(map, x, y) or nil end
+  -- Réponse du routeur : points { { map, x, y } } (repère monde), hubs { { id, name, areaId } }.
+  function E.resolve(job, points, cost, hubs)
+    job.done, job.hubs = true, hubs or {}
+    local out = {}
+    for i, p in ipairs(points) do out[i] = { map = p.map or job.map, x = p.x, y = p.y, z = p.z } end
+    local ok, err = pcall(job.callback, out, cost or 0, job)
+    if not ok then pushError(err) end
+  end
+  function E.fail(job, reason)
+    job.done, job.reason = true, reason
+    local ok, err = pcall(job.callback, nil, reason, job)
+    if not ok then pushError(err) end
+  end
+  -- Demandes encore en cours (ni annulées ni terminées).
+  function E.pending()
+    local out = {}
+    for _, j in ipairs(E.finds) do
+      if not j.cancelled and not j.done then out[#out + 1] = j end
+    end
+    return out
+  end
+  return E
+end
+
+local function defaultNavLoad()
+  Mock.navEngine = Mock.navEngine or Mock.newNavEngine()
+  Questify_NavEngine = Mock.navEngine
+  QuestifyPathData = { [0] = { part = "Questify_Nav_EK" }, [1] = { part = "Questify_Nav_Kalimdor" } }
+end
+
+---------------------------------------------------------------------------
 -- Addons de navigation factices (selon Mock.addons)
 ---------------------------------------------------------------------------
 local function installNavAddons()
@@ -978,6 +1037,10 @@ local function installApi()
   issecretvalue = function(v) return secrets[v] == true end
   canaccessvalue = function(v) return secrets[v] ~= true end
   GetTime = function() return Mock.now end
+  -- Horloge en millisecondes (Mock.now) ; mémoire des addons en Ko (Mock.addonMemory[nom]).
+  debugprofilestop = function() return Mock.now * 1000 end
+  UpdateAddOnMemoryUsage = function() record("UpdateAddOnMemoryUsage") end
+  GetAddOnMemoryUsage = function(name) return Mock.addonMemory[name] or 0 end
   time = function() return 1762300800 + floor(Mock.now) end
   date = os.date
   GetLocale = function() return Mock.locale end
@@ -1101,7 +1164,19 @@ local function installApi()
       return nil
     end,
     GetNumAddOns = function() return 0 end,
-    LoadAddOn = function(name) return Mock.addons[name] == true end,
+    -- Chargé, ou chargeable à la demande : chargé (une fois), avec Mock.onLoadAddOn[nom] (qui peut
+    -- renvoyer false : échec du chargement). Chaque appel est noté.
+    LoadAddOn = function(name)
+      record("C_AddOns.LoadAddOn", name)
+      local v = Mock.addons[name]
+      if v ~= true and v ~= "demand" then return false, v == "disabled" and "DISABLED" or "MISSING" end
+      if Mock.loadedAddOns[name] then return true end
+      local hook = Mock.onLoadAddOn[name]
+      if hook and hook(name) == false then return false, "CORRUPT" end
+      Mock.loadedAddOns[name] = true
+      Mock.addons[name] = true
+      return true
+    end,
     -- Mock.addons[nom] : true (chargé), "demand" (installé, chargé à la demande), "disabled", sinon absent
     GetAddOnInfo = function(name)
       local v = Mock.addons[name]
@@ -1269,6 +1344,7 @@ local function installApi()
       if pos.GetXY then x, y = pos:GetXY() end
       return m.continent, vector(m.top - y * m.height, m.left - x * m.width)
     end,
+    GetAreaInfo = function(areaId) return Mock.areaNames[areaId] end,
     GetMapInfo = function(mapID)
       local m = Mock.maps[mapID]
       if not m then return nil end
@@ -1332,7 +1408,12 @@ function Mock.reset()
   Mock.titles = {}
   Mock.calls = {}
   Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false,
-    Questify_Nav = true }
+    Questify_Nav = true, Questify_Nav_EK = "demand", Questify_Nav_Kalimdor = "demand" }
+  Mock.loadedAddOns = {}                         -- addons chargés par C_AddOns.LoadAddOn
+  Mock.onLoadAddOn = { Questify_Nav = defaultNavLoad }
+  Mock.navEngine = nil                           -- routeur factice (Mock.newNavEngine), créé au chargement
+  Mock.addonMemory = {}
+  Mock.areaNames = {}
   Mock.qdbMeta = {}                              -- métadonnées du TOC de QuestieDB (Version : aucune par défaut)
   Mock.errors = {}
   Mock.prints = {}

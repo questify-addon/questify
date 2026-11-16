@@ -324,6 +324,7 @@ end
 -- roche. Dans la grotte de la cible (ou à son entrée), la flèche directe remplace le calcul.
 ---------------------------------------------------------------------------
 local caveWatch    -- vrai tant qu'une grotte entre en jeu : la minuterie suit l'avancée du joueur
+local cavePlanOf   -- dernier plan de grotte calculé : { target, plan } (lu par Nav/Walk.lua)
 local cavePos      -- { mapId, x, y } du joueur au dernier calcul du plan
 local CAVE_MOVE_YARDS = 3           -- en dessous, le plan ne peut pas avoir changé
 
@@ -360,6 +361,7 @@ local function apply(retry)
   if not t then return end
   Q.SafeCall(scaleWaypointUIInput)
   local plan = cavePlan(t)
+  cavePlanOf = { target = t, plan = plan }
   local pm, px, py = Q.Maps:PlayerPos()
   cavePos = pm and { mapId = pm, x = px, y = py } or nil
   caveWatch = plan ~= nil
@@ -418,8 +420,9 @@ function Nav:SetTarget(mapId, x, y, title)
     return
   end
   target = { mapId = mapId, x = x, y = y, title = type(title) == "string" and title or "" }
-  announce(target)
+  -- le plan de grotte d'abord : le pont de marche (NAV_TARGET) le lit par Nav:CavePlan()
   apply()
+  announce(target)
 end
 
 -- Cible choisie par le joueur (clic sur un repère de la carte) : elle reste posée jusqu'au
@@ -450,6 +453,15 @@ function Nav:Status()
     manual = manual == true,
     cave = caveWatch == true,
   }
+end
+
+-- CavePlan() -> plan de grotte de la cible courante (Caves:Plan, recalculé ici quand le joueur
+-- bouge ou entre et sort), ou nil. Lecture seule : Caves:Plan change l'état « entré » du joueur,
+-- un seul module doit donc l'appeler (Nav/Walk.lua lit celui-ci).
+function Nav:CavePlan()
+  local c = cavePlanOf
+  if c and target and c.target == target then return c.plan end
+  return nil
 end
 
 function Nav:Clear()
