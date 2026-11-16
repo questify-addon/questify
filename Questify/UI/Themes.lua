@@ -339,3 +339,20 @@ function Themes:Apply(frame, themeKey, opacity)
   frame.qvThemeKey, frame.qvThemeOpacity = theme.key, alpha
   return theme
 end
+
+---------------------------------------------------------------------------
+-- Couleur d'un code (suivi des objectifs, zones sur la carte)
+---------------------------------------------------------------------------
+-- Couleur { r, g, b } (0 à 1) d'un code de couleur Questify (« ffff6060 », avec ou sans « |c ») tel
+-- que le thème l'affiche : remplacé par theme.codes s'il y figure, sinon lu tel quel. Les objectifs
+-- et les zones de la carte n'ont pas de teintes propres : ils reprennent ces codes.
+-- Code illisible : nil.
+function Themes:CodeColor(hex, theme)
+  if type(hex) ~= "string" then return nil end
+  hex = hex:gsub("^|c", ""):lower()
+  if not hex:match("^%x%x%x%x%x%x%x%x$") then return nil end
+  theme = theme or self:Current()
+  local to = theme and theme.codes and theme.codes[hex] or hex
+  local r, g, b = tonumber(to:sub(3, 4), 16), tonumber(to:sub(5, 6), 16), tonumber(to:sub(7, 8), 16)
+  return { r / 255, g / 255, b / 255 }
+end

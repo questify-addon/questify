@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objectifs et zones</title>
+<!--
+  Maquette : objectifs de l'étape courante dans le suivi, et zones du mode zone sur la carte du monde et la
+  minicarte. Unités du jeu (1 px = 1 unité d'interface) agrandies par zoom. Couleurs : variables par thème
+  (rôles de UI/Themes.lua et codes de couleur Questify), aucune teinte propre aux objectifs ou aux zones.
+  Icônes : textures d'interface du jeu redessinées en SVG ; icônes d'objets de wow.zamimg.com.
+-->
+<style>
+:root {
+  --friz: "Optima", "Marcellus", "Palatino", serif;
+  --sans: "Avenir Next", "Avenir", "Helvetica Neue", system-ui, sans-serif;
+  --page: #121418; --ink: #e9ebef; --muted: #9aa1ac; --line: #2a2e35; --card: #191c21;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+main { max-width: 1500px; margin: 0 auto; padding: 32px 16px 80px; }
+header .brand { color: #d9b44a; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; font-weight: 600; }
+h1 { font-size: 34px; margin: 6px 0 10px; font-weight: 600; }
+h2 { font-size: 24px; margin: 46px 0 6px; font-weight: 600; }
+h3 { font-size: 16px; margin: 0 0 4px; font-weight: 600; }
+p, li { color: var(--muted); line-height: 1.5; font-size: 15px; }
+.lead { max-width: 900px; }
+.opt { display: inline-block; min-width: 26px; padding: 1px 8px; border-radius: 999px; background: #d9b44a; color: #1a1406; font-weight: 700; font-size: 13px; margin-right: 6px; text-align: center; }
+.row { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 18px; align-items: flex-start; }
+.col { flex: 0 0 auto; }
+.col > p { max-width: 430px; margin: 10px 0 0; font-size: 14px; }
+.toolbar { position: sticky; top: 0; z-index: 9; background: rgba(18,20,24,.92); backdrop-filter: blur(6px);
+  padding: 10px 0; margin: 18px 0 0; border-bottom: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.toolbar span { color: var(--muted); font-size: 14px; margin-right: 6px; }
+.toolbar button { font: inherit; font-size: 14px; color: var(--ink); background: var(--card); border: 1px solid #3a3f48; border-radius: 999px; padding: 5px 14px; cursor: pointer; }
+.toolbar button[aria-pressed="true"] { background: #d9b44a; color: #1a1406; border-color: #d9b44a; }
+.note { border-left: 3px solid #d9b44a; padding: 6px 12px; background: #171a1f; border-radius: 0 6px 6px 0; margin-top: 14px; }
+
+/* ---------------- Suivi (unités du jeu) ---------------- */
+.z { zoom: 1.7; }
+.trk { position: relative; width: 260px; padding: 8px 8px 6px; font-family: var(--friz); }
+.trk .bg, .trk .edge { position: absolute; pointer-events: none; }
+.trk .bg { inset: 3px; }
+.trk .edge { inset: 0; border-radius: 5px; }
+.trk > * { position: relative; }
+.trk .head { height: 18px; display: flex; justify-content: space-between; }
+.trk .title { font-size: 13px; color: var(--t-title); }
+.trk .levels { font-size: 11px; color: var(--t-dim); padding-top: 2px; }
+.trk .bar { height: 12px; margin-bottom: 6px; background: var(--bar-bg); position: relative; }
+.trk .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar-fill); }
+.trk .bar b { position: absolute; inset: 0; text-align: center; font-weight: normal; font-size: 11px; line-height: 12px; color: #fff; text-shadow: 1px 1px 0 #000; white-space: pre; }
+.cur { position: relative; padding-left: 40px; min-height: 36px; margin-bottom: 6px; }
+.cur .cicon { position: absolute; left: 8px; top: 0; width: 22px; height: 22px; }
+.cur .dist { position: absolute; left: -2px; top: 24px; width: 42px; text-align: center; font-size: 11px; color: var(--t-dist); }
+.step { font-size: 13px; line-height: 15px; color: var(--t-body); margin-bottom: 3px; }
+.step .q { color: var(--c-quest); }
+.next { position: relative; height: 15px; padding-left: 18px; font-size: 11px; line-height: 13px; color: var(--t-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.next .ki { position: absolute; left: 2px; top: 0; width: 12px; height: 12px; filter: grayscale(1); opacity: .7; }
+.grip { position: absolute; right: 3px; bottom: 3px; width: 12px; height: 12px; opacity: .6;
+  background: linear-gradient(135deg, transparent 55%, var(--t-dim) 55% 62%, transparent 62% 72%, var(--t-dim) 72% 79%, transparent 79%); }
+.more { position: relative; margin: 4px 0 2px; height: 22px; border: 1px dashed var(--t-dim); border-radius: 4px; opacity: .55;
+  font-size: 10px; line-height: 20px; text-align: center; color: var(--t-dim); }
+
+/* Ligne d'objectif */
+.ob { position: relative; display: grid; grid-template-columns: 14px 1fr auto; column-gap: 5px; align-items: center;
+  min-height: 15px; font-size: 12px; line-height: 14px; color: var(--t-body); padding: 1px 0; }
+.ob .ki { width: 13px; height: 13px; }
+.ob .tx { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ob .ct { font-family: var(--friz); font-size: 11px; color: var(--t-body); font-variant-numeric: tabular-nums; padding-left: 4px; }
+.ob.done { color: var(--t-done); }
+.ob.done .ct { color: var(--t-done); }
+.ob .ct.full { color: var(--t-ok); }
+.ob.lead::before { content: ""; position: absolute; left: -4px; top: 2px; bottom: 2px; width: 2px; border-radius: 1px; background: var(--t-accent); }
+.ob.lead .tx { color: var(--t-lead); }
+.fold { font-size: 11px; line-height: 14px; color: var(--t-done); padding-left: 19px; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fold .ki { position: absolute; left: 1px; top: 1px; width: 11px; height: 11px; }
+.ob .pb { grid-column: 2 / 4; height: 3px; margin: 2px 0 1px; background: var(--bar-bg); border-radius: 2px; position: relative; overflow: hidden; }
+.ob .pb i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--t-progress); border-radius: 2px; }
+.ob.done .pb i { background: var(--t-ok); }
+.ob .dd { font-size: 10px; color: var(--t-dim); padding-left: 5px; }
+.qh { font-size: 11px; line-height: 13px; color: var(--c-quest); margin: 4px 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qh:first-child { margin-top: 0; }
+.qh small { color: var(--t-dim); font-size: 10px; }
+.mob { position: relative; height: 15px; padding-left: 37px; font-size: 11px; line-height: 15px; display: flex; justify-content: space-between; }
+.mob .sk { position: absolute; left: 21px; top: 2px; width: 11px; height: 11px; }
+.mob .mn { color: var(--c-mob); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mob .ml { color: var(--t-dim); padding-left: 6px; white-space: nowrap; }
+.mob.done .mn { color: var(--t-done); }
+.zpill { display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px 1px 4px; border-radius: 999px; margin-bottom: 4px;
+  background: color-mix(in srgb, var(--t-zone) 18%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--t-zone) 55%, transparent);
+  font-size: 12px; line-height: 15px; color: var(--t-zone); white-space: nowrap; }
+.zpill .ki { width: 11px; height: 11px; }
+.zpill small { color: var(--t-dim); font-size: 10px; }
+.grp { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: var(--t-dim); margin: 5px 0 1px; display: flex; align-items: center; gap: 6px; }
+.grp::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--t-dim) 45%, transparent); }
+.num { display: inline-block; width: 12px; height: 12px; border-radius: 50%; font-size: 8px; line-height: 12px; text-align: center; color: #fff;
+  background: var(--t-dim); font-family: var(--sans); font-weight: 700; }
+.ob.lead .num { background: var(--t-lead); color: var(--lead-on); }
+
+/* ---------------- Thèmes actuels (UI/Themes.lua) ---------------- */
+.th-parchment { --t-title:#4d2100; --t-body:#2b1a08; --t-dim:#5c452a; --t-dist:#40260d; --t-done:#7d6b52; --t-lead:#2b1a08;
+  --t-ok:#1f6e1f; --t-accent:#8c591a; --t-progress:#8c591a; --t-zone:#1f6e1f; --lead-on:#f1e3bf;
+  --c-quest:#7a3d00; --c-mob:#a31414; --c-obj:#1d4f8c; --c-npc:#00663a; --c-named:#8a4b00;
+  --bar-fill:#8c591a; --bar-bg:rgba(51,31,10,.30); }
+.th-parchment .bg { opacity: .9; background: radial-gradient(ellipse 85% 75% at 50% 45%, #f1e3bf 0%, #e3cf9f 55%, #c9ac74 100%); }
+.th-parchment .edge { border: 2px solid #b88c40; box-shadow: inset 0 0 0 1px rgba(90,60,20,.45); }
+.th-parchment .trk .bar { background: rgba(51,31,10,.55); }
+
+.th-dark { --t-title:#ffd100; --t-body:#ffffff; --t-dim:#8c8c8c; --t-dist:#ffffff; --t-done:#808080; --t-lead:#ffffff;
+  --t-ok:#40e050; --t-accent:#ffd100; --t-progress:#428ff2; --t-zone:#40e050; --lead-on:#000;
+  --c-quest:#ffd100; --c-mob:#ff6060; --c-obj:#66bbff; --c-npc:#00ff96; --c-named:#ffb040;
+  --bar-fill:#428ff2; --bar-bg:rgba(255,255,255,.12); }
+.th-dark .bg { background: #000; opacity: .9; }
+.th-dark .edge { border: 2px solid rgba(128,128,128,.72); }
+.th-dark .trk, .th-dark .trk * { text-shadow: 1px 1px 0 #000; }
+.th-dark .trk .bar { background: rgba(0,0,0,.5); }
+.th-dark .ob .tx:not(.done) { }
+
+.th-transparent { --t-title:#ffd100; --t-body:#ffffff; --t-dim:#b8b8b8; --t-dist:#ffffff; --t-done:#9a9a9a; --t-lead:#ffffff;
+  --t-ok:#40e050; --t-accent:#ffd100; --t-progress:#428ff2; --t-zone:#40e050; --lead-on:#000;
+  --c-quest:#ffd100; --c-mob:#ff6060; --c-obj:#66bbff; --c-npc:#00ff96; --c-named:#ffb040;
+  --bar-fill:#428ff2; --bar-bg:rgba(0,0,0,.45); }
+.th-transparent .trk, .th-transparent .trk * { text-shadow: -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000; }
+.scene { padding: 18px; border-radius: 8px; background: linear-gradient(160deg, #3b4a3a, #59654a 40%, #6e6650 70%, #3e4440); }
+
+/* ---------------- Icônes (textures du jeu redessinées) ---------------- */
+.ki { display: inline-block; background-size: 100% 100%; background-repeat: no-repeat; flex: none; }
+/* Interface\Cursor\Attack : épée */
+.k-kill { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M25.5 3.5l3 3-14 14-3-3z' fill='%23d9dde3' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='M26 4l2 2-13 13' stroke='%23fff' stroke-width='1' opacity='.7'/%3E%3Cpath d='M8.5 15.5l8 8-2.2 2.2-8-8z' fill='%23c79a2b' stroke='%23000' stroke-width='1.3' stroke-linejoin='round'/%3E%3Cpath d='M10.8 20.9l-6 6 0 0' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M10.8 20.9l-6 6' stroke='%237a4a1c' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='4.6' cy='27.2' r='2.3' fill='%23c79a2b' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"); }
+/* Interface\Cursor\Pickup : main qui ramasse (butin) */
+.k-loot { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 11c0-4 3-7 7-7s7 3 7 7' fill='none' stroke='%23000' stroke-width='4.5'/%3E%3Cpath d='M9 11c0-4 3-7 7-7s7 3 7 7' fill='none' stroke='%23b07a2e' stroke-width='2.4'/%3E%3Cpath d='M6 11h20l-2 16.5c-.2 1.3-1.3 2-2.5 2h-11c-1.2 0-2.3-.7-2.5-2z' fill='%23a8742c' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M8 13.5h16' stroke='%23f0c66a' stroke-width='1.2'/%3E%3Ccircle cx='16' cy='20' r='3.2' fill='%23ffd34d' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"); }
+/* Interface\Cursor\Interact : engrenage (objet du monde) */
+.k-object { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M14 3h4l.8 3.4 2.6 1.1 3-1.9 2.9 2.9-1.9 3 1.1 2.6L29 14v4l-3.4.8-1.1 2.6 1.9 3-2.9 2.9-3-1.9-2.6 1.1L18 29h-4l-.8-3.4-2.6-1.1-3 1.9-2.9-2.9 1.9-3-1.1-2.6L3 18v-4l3.4-.8 1.1-2.6-1.9-3 2.9-2.9 3 1.9 2.6-1.1z' fill='%23b9bec6' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='16' r='4.6' fill='%23474c55' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E"); }
+/* Interface\Cursor\Speak : bulle */
+.k-talk { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 4C8.8 4 3.5 8.6 3.5 14.2c0 3.3 1.8 6.1 4.7 8L7 28.5l6.4-4.3c.9.2 1.8.3 2.6.3 7.2 0 12.5-4.6 12.5-10.3S23.2 4 16 4z' fill='%23f2f2f2' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='10.5' cy='14.5' r='1.8' fill='%23333'/%3E%3Ccircle cx='16' cy='14.5' r='1.8' fill='%23333'/%3E%3Ccircle cx='21.5' cy='14.5' r='1.8' fill='%23333'/%3E%3C/svg%3E"); }
+/* Interface\Cursor\Cast : objet à utiliser (main + étincelle) */
+.k-use { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l2.6 8.2L27 8l-5.8 6.3L30 17l-8.8 1.3L24 27l-7-5.4L11 29l.8-8.6L3 19l7.6-4.4L5 7l8.3 3.1z' fill='%23ffd34d' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='16' r='3.6' fill='%23fff6c8'/%3E%3C/svg%3E"); }
+/* Interface\WorldMap\WorldMapPartyIcon / exploration : drapeau */
+.k-explore { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M8 3v26' stroke='%23000' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M8 3v26' stroke='%23a07040' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M9 4h16l-4 5.5 4 5.5H9z' fill='%2366bbff' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+/* Interface\GossipFrame\AvailableQuestIcon / ActiveQuestIcon */
+.k-accept { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11.5 3h9l-2 17.5h-5z' fill='%23ffd200' stroke='%23000' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='26.2' r='3.6' fill='%23ffd200' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E"); }
+.k-turnin { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 10.5C9 6 12.2 3 16.4 3c4.4 0 7.4 2.8 7.4 6.6 0 3-1.7 4.6-3.6 5.8-1.6 1-2.2 1.7-2.2 3.4v1h-4.8v-1.5c0-2.8 1.1-4.1 3-5.4 1.5-1 2.4-1.7 2.4-3.1 0-1.5-1.1-2.5-2.6-2.5-1.7 0-2.8 1.1-2.9 3.1z' fill='%23ffd200' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='15.6' cy='26.2' r='3.4' fill='%23ffd200' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E"); }
+/* ReadyCheck-Ready : objectif fait */
+.k-done { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 17l7.5 7.5L27.5 7' fill='none' stroke='%23000' stroke-width='7.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 17l7.5 7.5L27.5 7' fill='none' stroke='%2346d826' stroke-width='4.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+/* UI-RaidTargetingIcon_8 : crâne */
+.k-skull { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2.5C8.8 2.5 4 7.6 4 13.8c0 3.8 1.8 6.3 4 7.9v4.6c0 1.1.8 1.9 1.8 1.9h12.4c1 0 1.8-.8 1.8-1.9v-4.6c2.2-1.6 4-4.1 4-7.9C28 7.6 23.2 2.5 16 2.5z' fill='%23f4f4f4' stroke='%23000' stroke-width='1.4'/%3E%3Cellipse cx='11' cy='14.6' rx='3.6' ry='3.9' fill='%23111'/%3E%3Cellipse cx='21' cy='14.6' rx='3.6' ry='3.9' fill='%23111'/%3E%3Cpath d='M16 18.4l-2.3 3.8h4.6z' fill='%23111'/%3E%3C/svg%3E"); }
+/* Indicator-Green : pastille du mode zone */
+.k-zone { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35' r='.7'%3E%3Cstop offset='0' stop-color='%23c8ffb0'/%3E%3Cstop offset='.45' stop-color='%2333c822'/%3E%3Cstop offset='1' stop-color='%23095c06'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='11.5' fill='url(%23g)' stroke='%23042a02' stroke-width='1.6'/%3E%3Cellipse cx='13' cy='11' rx='4.5' ry='2.6' fill='%23fff' opacity='.55'/%3E%3C/svg%3E"); }
+.k-item { border-radius: 2px; box-shadow: 0 0 0 1px #000; }
+
+/* ---------------- Cartes ---------------- */
+.map { position: relative; width: 420px; height: 300px; border-radius: 6px; overflow: hidden;
+  box-shadow: 0 0 0 1px #000, inset 0 0 0 2px #6b5a35;
+  background:
+    radial-gradient(ellipse 30% 22% at 72% 70%, rgba(220,230,240,.55), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 20% 25%, rgba(120,110,90,.6), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 60% 30%, rgba(160,170,150,.5), transparent 70%),
+    linear-gradient(160deg, #8d9a86 0%, #a7ae98 35%, #c4c6b8 60%, #9aa496 100%); }
+.map .lbl { position: absolute; font-family: var(--friz); color: #f3e3b0; text-shadow: 1px 1px 0 #000, 0 0 4px #000; font-size: 13px; }
+.map svg, .mini svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mini { position: relative; width: 150px; height: 150px; border-radius: 50%; overflow: hidden;
+  box-shadow: 0 0 0 3px #1b1b1b, 0 0 0 6px #8c8f96, 0 0 0 8px #2a2a2a;
+  background: radial-gradient(ellipse 70% 60% at 40% 40%, #b2b8a6, #8f9a88 60%, #77826f); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 1px #000; }
+.tip { position: absolute; padding: 6px 8px 7px; border-radius: 4px; font-family: var(--friz); font-size: 11px; line-height: 13px; color: #fff;
+  background: rgba(10,10,26,.94); box-shadow: 0 0 0 1px #000, inset 0 0 0 1.5px #c9c9d4; text-shadow: 1px 1px 0 #000; white-space: nowrap; }
+.tip .tt { color: #ffd100; font-size: 12px; }
+.tip .d { color: #aaa; }
+.kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px 18px; margin-top: 12px; max-width: 900px; }
+.kinds div { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 14px; }
+.kinds .ki { width: 22px; height: 22px; }
+.kinds small { color: var(--muted); display: block; font-size: 12px; }
+
+/* ---------------- Assistant (UI/Wizard.lua, 520 x 560, contenu en (20, -70)) ---------------- */
+.wiz { position: relative; width: 520px; height: 560px; border-radius: 7px; font-family: var(--friz);
+  background: linear-gradient(180deg, #2a2b2e 0%, #1c1d20 100%);
+  box-shadow: 0 0 0 1px #050505, inset 0 0 0 2px #77787c, inset 0 0 0 3px #3a3b3e, inset 0 0 0 4px #0b0b0c, 0 18px 50px rgba(0,0,0,.65); }
+.wtop { position: absolute; left: 3px; right: 3px; top: 3px; height: 20px; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, #3a3b3f, #24252a); }
+.winset { position: absolute; left: 4px; top: 60px; right: 6px; bottom: 26px; background: #0d0e10; box-shadow: inset 0 0 0 1px #000, inset 0 0 0 2px #3b3c40; }
+.wportrait { position: absolute; left: -9px; top: -9px; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 3px #c9a646, 0 0 0 6px #77787c; }
+.wportrait img { width: 100%; height: 100%; display: block; }
+.wtitle { position: absolute; left: 58px; right: 28px; top: 6px; text-align: center; color: #ffd100; font-size: 13px; text-shadow: 1px 1px 0 #000; }
+.wclose { position: absolute; right: 4px; top: 4px; width: 18px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #c3251b, #6d0c07); box-shadow: 0 0 0 1px #000, inset 0 0 0 1px #e0b85a; }
+.wstep { position: absolute; right: 16px; top: 36px; font-size: 11px; color: #808080; }
+.wpage { position: absolute; left: 20px; top: 70px; width: 480px; }
+.wh1 { color: #ffd100; font-size: 17px; text-shadow: 1px 1px 0 #000; }
+.wp { color: #fff; font-size: 13px; line-height: 15px; margin-top: 8px; width: 472px; text-shadow: 1px 1px 0 #000; }
+.wcols { display: flex; gap: 12px; margin-top: 12px; }
+.wleft { width: 200px; }
+.wh2 { color: #ffd100; font-size: 13px; margin-bottom: 4px; text-shadow: 1px 1px 0 #000; }
+.wr { display: flex; gap: 6px; align-items: flex-start; margin: 3px 0 5px; cursor: pointer; }
+.wr input { position: absolute; opacity: 0; pointer-events: none; }
+.wr .rd { flex: none; width: 16px; height: 16px; border-radius: 50%; margin-top: 1px; background: radial-gradient(circle at 50% 40%, #2a2a2a, #050505); box-shadow: 0 0 0 1px #000, inset 0 0 0 1.5px #a59a83; position: relative; }
+.wr input:checked + .rd::after { content: ""; position: absolute; left: 4px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff6b0, #f2c200 60%, #a37a00); }
+.wr b { display: block; font-weight: normal; color: #fff; font-size: 13px; line-height: 15px; text-shadow: 1px 1px 0 #000; }
+.wr small { display: block; color: #808080; font-size: 11px; line-height: 12px; }
+.wright { width: 260px; }
+.wprev { color: #808080; font-size: 11px; margin-bottom: 3px; }
+.wbtn { position: absolute; bottom: 4px; width: 110px; height: 22px; border-radius: 3px; text-align: center; font-size: 13px; line-height: 21px; color: #ffd100; text-shadow: 1px 1px 0 #000;
+  background: linear-gradient(180deg, #b31c12 0%, #7a0d08 55%, #5a0805 100%); box-shadow: 0 0 0 1px #1d0201, inset 0 0 0 1px rgba(232,170,110,.55); }
+.wbtn.dis { color: #8a8a8a; background: linear-gradient(180deg, #4b4b4b, #2a2a2a); }
+@media (max-width: 700px) { .z { zoom: 1.25; } .map { width: 100%; } }
+</style>
+</head>
+<body class="th-parchment">
+<main>
+<header>
+  <div class="brand">Questify · maquette</div>
+  <h1>Objectifs du suivi et zones sur la carte</h1>
+  <p class="lead">Trois propositions pour la liste des objectifs de l'étape courante, puis le mode zone revu, puis les zones tracées sur la carte du monde et la minicarte. Les couleurs viennent du thème choisi (aucune teinte propre) : changez le thème ci-dessous pour voir chaque variante. La refonte des thèmes en cours fournira les teintes finales.</p>
+</header>
+
+<div class="toolbar" role="group" aria-label="Thème">
+  <span>Thème du suivi :</span>
+  <button data-theme="th-parchment" aria-pressed="true">Parchemin</button>
+  <button data-theme="th-dark" aria-pressed="false">Sombre</button>
+  <button data-theme="th-transparent" aria-pressed="false">Transparent</button>
+</div>
+
+<!-- ======================================================= -->
+<h2>1. Icônes par type d'objectif</h2>
+<p class="lead">Une icône du jeu par type, à gauche de chaque objectif. Fait : la coche verte remplace l'icône.</p>
+<div class="kinds">
+  <div><span class="ki k-kill"></span><span>Tuer<small>monstre ou crédit de mise à mort</small></span></div>
+  <div><span class="ki k-loot"></span><span>Ramasser<small>butin d'un monstre</small></span></div>
+  <div><span class="ki k-object"></span><span>Interagir<small>objet du monde, coffre, plante</small></span></div>
+  <div><img class="ki k-item" style="width:22px;height:22px" src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_03.jpg" alt=""><span>Utiliser un objet<small>l'icône de l'objet lui-même</small></span></div>
+  <div><span class="ki k-talk"></span><span>Parler<small>PNJ à qui parler (événement)</small></span></div>
+  <div><span class="ki k-explore"></span><span>Explorer<small>lieu à découvrir</small></span></div>
+  <div><span class="ki k-accept"></span><span>Prendre<small>donneur de quête</small></span></div>
+  <div><span class="ki k-turnin"></span><span>Rendre<small>destinataire de quête</small></span></div>
+  <div><span class="ki k-done"></span><span>Fait<small>compteur vert, puis replié dans « ✓ N faits »</small></span></div>
+</div>
+
+<!-- ======================================================= -->
+<h2>2. Étape « Faire » : trois mises en page</h2>
+<p class="lead">Même étape, trois mises en page. L'objectif suivi par la flèche porte un trait à gauche et passe en tête. Un objectif fini passe en vert (compteur), puis se replie au bout d'une seconde dans la ligne « ✓ N faits ». Comme Polestar, un « 0/1 » seul n'est pas écrit… sauf ici pour la comparaison. Le cadre pointillé montre la place laissée à un bloc ajouté sous les objectifs (proposition d'amélioration d'équipement).</p>
+
+<div class="row">
+  <div class="col">
+    <h3><span class="opt">A</span>Liste compacte</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="head"><span class="title">Coldridge Valley</span><span class="levels">1-6</span></div>
+      <div class="bar"><i style="width:45%"></i><b>18/40  ·  1-6</b></div>
+      <div class="cur"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll</span><span class="ct">3/8</span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span></div>
+        <div class="ob"><img class="ki k-item" src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_03.jpg" alt=""><span class="tx">Fiole utilisée sur le totem</span><span class="ct">0/1</span></div>
+        <div class="fold"><span class="ki k-done"></span>1 fait : Parler à Grelin Whitebeard</div>
+      </div>
+      <div class="more">bloc ajouté plus tard</div>
+      <div class="next"><span class="ki k-turnin"></span>Rendre : Les trolls de la vallée</div>
+      <div class="next"><span class="ki k-accept"></span>Prendre : Le journal volé</div>
+      <div class="grip"></div>
+    </div></div>
+    <p>Une ligne par objectif : icône, texte, compteur aligné à droite. Le plus court et le plus lisible ; c'est la mise en page de Polestar.</p>
+  </div>
+
+  <div class="col">
+    <h3><span class="opt">B</span>Avec barres d'avancement</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="head"><span class="title">Coldridge Valley</span><span class="levels">1-6</span></div>
+      <div class="bar"><i style="width:45%"></i><b>18/40  ·  1-6</b></div>
+      <div class="cur"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll</span><span class="ct">3/8</span><span class="pb"><i style="width:37.5%"></i></span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span><span class="pb"><i style="width:33%"></i></span></div>
+        <div class="ob"><img class="ki k-item" src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_03.jpg" alt=""><span class="tx">Fiole utilisée sur le totem</span><span class="ct">0/1</span><span class="pb"><i style="width:0"></i></span></div>
+        <div class="fold"><span class="ki k-done"></span>1 fait : Parler à Grelin Whitebeard</div>
+      </div>
+      <div class="more">bloc ajouté plus tard</div>
+      <div class="next"><span class="ki k-turnin"></span>Rendre : Les trolls de la vallée</div>
+      <div class="next"><span class="ki k-accept"></span>Prendre : Le journal volé</div>
+      <div class="grip"></div>
+    </div></div>
+    <p>La liste A plus une barre fine sous chaque objectif (couleur de la barre du thème ; verte quand c'est fait). Se lit d'un coup d'œil en combat, prend 4 unités de plus par ligne.</p>
+  </div>
+
+  <div class="col">
+    <h3><span class="opt">C</span>Groupée par quête</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="head"><span class="title">Coldridge Valley</span><span class="levels">1-6</span></div>
+      <div class="bar"><i style="width:45%"></i><b>18/40  ·  1-6</b></div>
+      <div class="cur"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="qh">Les trolls de la vallée <small>· 2/4</small></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll</span><span class="ct">3/8</span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span></div>
+        <div class="ob"><img class="ki k-item" src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_03.jpg" alt=""><span class="tx">Fiole utilisée sur le totem</span><span class="ct">0/1</span></div>
+        <div class="fold"><span class="ki k-done"></span>1 fait : Parler à Grelin Whitebeard</div>
+      </div>
+      <div class="more">bloc ajouté plus tard</div>
+      <div class="next"><span class="ki k-turnin"></span>Rendre : Les trolls de la vallée</div>
+      <div class="next"><span class="ki k-accept"></span>Prendre : Le journal volé</div>
+      <div class="grip"></div>
+    </div></div>
+    <p>Le nom de la quête devient un en-tête (avec le compte d'objectifs faits), les objectifs en dessous. Même rendu en mode zone, où plusieurs quêtes se suivent.</p>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<h2>3. Détail par objectif</h2>
+<p class="lead">Ce qu'on montre sous chaque objectif, illustré sur la liste A.</p>
+<div class="row">
+  <div class="col">
+    <h3><span class="opt">1</span>Compteur seul</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="cur" style="margin:0"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll</span><span class="ct">3/8</span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span></div>
+      </div>
+    </div></div>
+    <p>Le plus court. Les monstres restent ciblables par le raccourci clavier, pas par clic sur une ligne.</p>
+  </div>
+  <div class="col">
+    <h3><span class="opt">2</span>Compteur + monstres ciblables</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="cur" style="margin:0"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll</span><span class="ct">3/8</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Troll Glacepoing</span><span class="ml">Niveau 5-6</span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Trogg Mâcheroc</span><span class="ml">Niveau 1-2</span></div>
+      </div>
+    </div></div>
+    <p>Comme aujourd'hui : sous chaque objectif, les monstres qui le donnent (clic = ciblage, niveau à droite).</p>
+  </div>
+  <div class="col">
+    <h3><span class="opt">3</span>Compteur + monstres + distance</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="cur" style="margin:0"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>
+        <div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>
+        <div class="ob lead"><span class="ki k-loot"></span><span class="tx">Défense de troll <span class="dd">64 yd</span></span><span class="ct">3/8</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Troll Glacepoing</span><span class="ml">Niveau 5-6</span></div>
+        <div class="ob"><span class="ki k-kill"></span><span class="tx">Trogg Mâcheroc tué <span class="dd">110 yd</span></span><span class="ct">2/6</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Trogg Mâcheroc</span><span class="ml">Niveau 1-2</span></div>
+      </div>
+    </div></div>
+    <p>En plus, la distance du point d'apparition le plus proche de chaque objectif, mise à jour toutes les 0,5 s.</p>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<h2>4. Mode zone dans le suivi</h2>
+<p class="lead">La zone garde ses règles (objets d'abord, puis élites et nommés, puis monstres, le plus proche à priorité égale) ; seul l'affichage change : pastille de zone, groupes en petites capitales, objectifs numérotés dans l'ordre à suivre. Les numéros sont ceux des repères sur la carte.</p>
+<div class="row">
+  <div class="col">
+    <h3>Dans la zone (liste A, détail 2)</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="head"><span class="title">Coldridge Valley</span><span class="levels">1-6</span></div>
+      <div class="bar"><i style="width:50%"></i><b>20/40  ·  1-6</b></div>
+      <div class="cur"><span class="cicon ki k-zone"></span><span class="dist">38 yd</span>
+        <div class="zpill"><span>Vallée des Frigères</span><small>5 objectifs · 3 quêtes</small></div>
+        <div class="grp">Objets</div>
+        <div class="ob lead"><span class="num">1</span><span class="tx">Seau de boulons de Felix</span><span class="ct">0/1</span></div>
+        <div class="ob"><span class="num">2</span><span class="tx">Coffre de Felix</span><span class="ct">0/1</span></div>
+        <div class="grp">Élites et nommés</div>
+        <div class="ob"><span class="num">3</span><span class="tx">Journal de Grelin Whitebeard</span><span class="ct">0/1</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Grik'nir le Froid</span><span class="ml">Niveau 5</span></div>
+        <div class="grp">Monstres</div>
+        <div class="ob"><span class="num">4</span><span class="tx">Trogg Mâcheroc tué</span><span class="ct">2/6</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Trogg Mâcheroc</span><span class="ml">Niveau 1-2</span></div>
+        <div class="ob"><span class="num">5</span><span class="tx">Trogg Mâcheroc forcené tué</span><span class="ct">1/6</span></div>
+        <div class="mob"><span class="ki k-skull sk"></span><span class="mn">Trogg Mâcheroc forcené</span><span class="ml">Niveau 2</span></div>
+      </div>
+      <div class="more">bloc ajouté plus tard</div>
+      <div class="next"><span class="ki k-turnin"></span>Rendre : Rapporter la Tasse</div>
+      <div class="grip"></div>
+    </div></div>
+  </div>
+  <div class="col">
+    <h3>Hors de la zone</h3>
+    <div class="z"><div class="trk"><div class="bg"></div><div class="edge"></div>
+      <div class="head"><span class="title">Coldridge Valley</span><span class="levels">1-6</span></div>
+      <div class="bar"><i style="width:50%"></i><b>20/40  ·  1-6</b></div>
+      <div class="cur"><span class="cicon ki k-zone"></span><span class="dist">210 yd</span>
+        <div class="zpill"><span>Vallée des Frigères</span><small>5 objectifs · 3 quêtes</small></div>
+        <div class="qh">Le journal volé <small>· 1 objectif</small></div>
+        <div class="qh">Les malheurs d'un réfugié <small>· 2 objectifs</small></div>
+        <div class="qh">Les trolls de la vallée <small>· 2 objectifs</small></div>
+        <div class="step" style="font-size:11px;color:var(--t-dim);margin-top:3px">Aller au cercle sur la carte : tout s'y fait en une visite</div>
+      </div>
+      <div class="next"><span class="ki k-turnin"></span>Rendre : Rapporter la Tasse</div>
+      <div class="grip"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<h2>5. Zones sur la carte du monde et la minicarte</h2>
+<p class="lead">Le cercle suit le centre et le rayon calculés par le mode zone. Dedans, un point par endroit d'apparition retenu, coloré selon le groupe (objets, élites et nommés, monstres) ; le premier de chaque objectif porte son numéro d'ordre. Survol d'un point : nom, quête, avancement. Sur la minicarte, le même cercle à l'échelle ; hors de portée, une flèche au bord.</p>
+<div class="legend">
+  <span><i style="background:var(--c-obj)"></i>Objets (à utiliser ou ramasser)</span>
+  <span><i style="background:var(--c-named)"></i>Élites et nommés</span>
+  <span><i style="background:var(--c-mob)"></i>Monstres</span>
+  <span><i style="background:var(--t-zone)"></i>Cercle de la zone</span>
+</div>
+
+<div class="row" id="maps"></div>
+
+<div class="row">
+  <div class="col">
+    <h3>Minicarte, dans la zone (style γ retenu)</h3>
+    <div class="mini" id="mini-in"></div>
+  </div>
+  <div class="col">
+    <h3>Minicarte, hors de la zone</h3>
+    <div class="mini" id="mini-out"></div>
+    <p>La zone est loin : arc du cercle au bord, plus la pastille de zone.</p>
+  </div>
+</div>
+
+
+<!-- ======================================================= -->
+<h2>6. Choix du joueur : page de l'assistant</h2>
+<p class="lead">La mise en page et le détail deviennent deux réglages du joueur. Nouvelle page de l'assistant (après « Suivi des quêtes ») : à gauche les deux choix, à droite un aperçu du suivi, redessiné à chaque clic avec le thème courant. Les mêmes choix sont dans Options &gt; Suivi &gt; Contenu (deux listes déroulantes, l'aperçu en moins).</p>
+<div class="row">
+  <div class="col">
+    <div class="z" style="zoom:1.45">
+      <div class="wiz">
+        <div class="wtop"></div><div class="winset"></div>
+        <div class="wportrait"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_map_01.jpg" alt=""></div>
+        <div class="wtitle">Assistant de navigation</div><div class="wclose"></div>
+        <div class="wstep">Étape 7 sur 8</div>
+        <div class="wpage">
+          <div class="wh1">Objectifs du suivi</div>
+          <div class="wp">Choisis comment le suivi montre les objectifs de l'étape. L'aperçu à droite change à chaque clic.</div>
+          <div class="wcols">
+            <div class="wleft">
+              <div class="wh2">Mise en page</div>
+              <label class="wr"><input type="radio" name="lay" value="list" checked><span class="rd"></span><span><b>Liste compacte</b><small>une ligne par objectif</small></span></label>
+              <label class="wr"><input type="radio" name="lay" value="bars"><span class="rd"></span><span><b>Avec barres</b><small>barre d'avancement sous chaque objectif</small></span></label>
+              <label class="wr"><input type="radio" name="lay" value="quest"><span class="rd"></span><span><b>Par quête</b><small>nom de la quête en en-tête</small></span></label>
+              <div class="wh2" style="margin-top:12px">Détail</div>
+              <label class="wr"><input type="radio" name="det" value="count"><span class="rd"></span><span><b>Compteur seul</b><small>le plus court</small></span></label>
+              <label class="wr"><input type="radio" name="det" value="mobs" checked><span class="rd"></span><span><b>Monstres ciblables</b><small>clic sur un monstre = cible</small></span></label>
+              <label class="wr"><input type="radio" name="det" value="distance"><span class="rd"></span><span><b>Monstres et distance</b><small>distance de chaque objectif</small></span></label>
+            </div>
+            <div class="wright"><div class="wprev">Aperçu</div><div id="preview"></div></div>
+          </div>
+        </div>
+        <div class="wbtn dis" style="left:8px">Précédent</div>
+        <div class="wbtn" style="right:124px">Ignorer</div>
+        <div class="wbtn" style="right:8px">Suivant</div>
+      </div>
+    </div>
+    <p>Cliquez sur les choix : l'aperçu suit, comme en jeu. Le récapitulatif de l'assistant ajoute « Objectifs : liste compacte, monstres ciblables ».</p>
+  </div>
+</div>
+
+<div class="note">
+  <p><b style="color:var(--ink)">Retenu :</b> mise en page et détail au choix du joueur (assistant et options), enveloppe des points (γ) sur la carte et la minicarte. Les couleurs finales viendront des thèmes revus en parallèle.</p>
+</div>
+</main>
+
+<script>
+// Thème : change les variables de couleur de toute la page.
+document.querySelectorAll('.toolbar button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.body.className = b.dataset.theme;
+    document.querySelectorAll('.toolbar button').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+    draw();
+  });
+});
+
+// Points d'apparition (coordonnées de la carte, 0-100) : groupe, n° d'ordre de l'objectif.
+var CENTER = { x: 52, y: 50 }, R = 26;   // rayon en % de la largeur de la carte
+var PTS = [
+  { x: 44, y: 38, g: 'obj', n: 1, name: 'Seau de boulons de Felix', q: 'Les malheurs d’un réfugié', p: '0/1' },
+  { x: 47, y: 41, g: 'obj', n: 2, name: 'Coffre de Felix', q: 'Les malheurs d’un réfugié', p: '0/1' },
+  { x: 63, y: 34, g: 'named', n: 3, name: 'Grik’nir le Froid', q: 'Le journal volé', p: '0/1' },
+  { x: 40, y: 56, g: 'mob', n: 4 }, { x: 46, y: 62 }, { x: 53, y: 58, g: 'mob' }, { x: 58, y: 66, g: 'mob' }, { x: 36, y: 48, g: 'mob' },
+  { x: 61, y: 52, g: 'mob', n: 5 }, { x: 66, y: 58, g: 'mob' }, { x: 70, y: 46, g: 'mob' }, { x: 56, y: 44, g: 'mob' }
+];
+PTS.forEach(function (p) { p.g = p.g || 'mob'; });
+var PLAYER = { x: 34, y: 70, a: -40 };
+
+function css(v) { return getComputedStyle(document.body).getPropertyValue(v).trim(); }
+function col(g) { return css(g === 'obj' ? '--c-obj' : g === 'named' ? '--c-named' : '--c-mob'); }
+
+// Un style de cercle : anneau, voile, pointillés, numéros.
+var STYLES = [
+  { key: 'α', title: 'Anneau et voile', text: 'Anneau plein et voile léger de la couleur de la zone. Le plus visible, sans cacher la carte.', ring: 2, dash: '', fill: .14, nums: true },
+  { key: 'β', title: 'Anneau pointillé', text: 'Anneau pointillé sans voile : discret, laisse voir le relief et les autres repères.', ring: 2, dash: '6 4', fill: 0, nums: true },
+  { key: 'γ', title: 'Enveloppe des points', text: 'Comme Polestar : un polygone qui épouse les points d’apparition (voile 20 %, bord fin), au lieu d’un cercle. Plus juste quand la zone est allongée ; plus coûteux à tracer.', ring: 1.5, dash: '', fill: .2, nums: true, hull: true }
+];
+
+// Enveloppe convexe des points, élargie de pad (16 points par disque, comme Polestar).
+function hull(P, pad) {
+  var all = [];
+  P.forEach(function (p) { for (var i = 0; i < 16; i++) { var a = i * Math.PI / 8; all.push([p[0] + pad * Math.cos(a), p[1] + pad * Math.sin(a)]); } });
+  all.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+  var cross = function (o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); };
+  var lo = [], up = [];
+  all.forEach(function (p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); });
+  all.slice().reverse().forEach(function (p) { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); });
+  lo.pop(); up.pop();
+  return lo.concat(up);
+}
+
+function svgFor(st, w, h, scale, cx, cy, opts) {
+  opts = opts || {};
+  var zone = css('--t-zone');
+  var r = R * w / 100 * scale;
+  var X = function (x) { return cx + (x - CENTER.x) * w / 100 * scale; };
+  var Y = function (y) { return cy + (y - CENTER.y) * w / 100 * scale; };
+  var s = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg"><defs><filter id="blur"><feGaussianBlur stdDeviation="9"/></filter></defs>';
+  if (st.hull) {
+    var pts = hull(PTS.map(function (p) { return [X(p.x), Y(p.y)]; }), 14 * scale);
+    var d = 'M' + pts.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' L') + ' Z';
+    s += '<path d="' + d + '" fill="' + zone + '" fill-opacity="' + st.fill + '" stroke="' + zone + '" stroke-opacity=".7" stroke-width="' + st.ring + '" stroke-linejoin="round"/>';
+  } else {
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + zone + '" fill-opacity="' + st.fill + '" stroke="#000" stroke-opacity=".55" stroke-width="' + (st.ring + 2) + '"' + (st.dash ? ' stroke-dasharray="' + st.dash + '"' : '') + '/>';
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + zone + '" stroke-width="' + st.ring + '"' + (st.dash ? ' stroke-dasharray="' + st.dash + '"' : '') + '/>';
+  }
+  PTS.forEach(function (p) {
+    var big = p.n ? 1 : 0;
+    var rr = (p.n ? 6.5 : 3.6) * Math.max(scale, .8);
+    s += '<circle cx="' + X(p.x) + '" cy="' + Y(p.y) + '" r="' + rr + '" fill="' + col(p.g) + '" stroke="#000" stroke-width="1.2"/>';
+    if (p.n && st.nums) s += '<text x="' + X(p.x) + '" y="' + (Y(p.y) + 3.3 * Math.max(scale, .8)) + '" text-anchor="middle" font-family="Avenir Next, sans-serif" font-weight="700" font-size="' + 9 * Math.max(scale, .8) + '" fill="#fff" stroke="#000" stroke-width=".6" paint-order="stroke">' + p.n + '</text>';
+  });
+  if (opts.player !== false) {
+    var px = opts.px != null ? opts.px : X(PLAYER.x), py = opts.py != null ? opts.py : Y(PLAYER.y);
+    s += '<g transform="translate(' + px + ' ' + py + ') rotate(' + PLAYER.a + ')"><path d="M0 -9 L6 7 L0 3 L-6 7 Z" fill="#fff" stroke="#000" stroke-width="1.3"/></g>';
+  }
+  return s + '</svg>';
+}
+
+function draw() {
+  var host = document.getElementById('maps');
+  host.innerHTML = '';
+  STYLES.forEach(function (st) {
+    var c = document.createElement('div');
+    c.className = 'col';
+    c.innerHTML = '<h3><span class="opt">' + st.key + '</span>' + st.title + '</h3>' +
+      '<div class="map"><span class="lbl" style="left:16px;top:12px">Dun Morogh</span><span class="lbl" style="left:200px;top:258px;font-size:11px">Vallée des Frigères</span>' +
+      svgFor(st, 420, 300, 1, 420 * CENTER.x / 100, 300 * CENTER.y / 100) +
+      (st.key === 'α' ? '<div class="tip" style="left:276px;top:62px"><div class="tt">Grik’nir le Froid</div><div>Le journal volé</div><div class="d">Journal de Grelin Whitebeard : 0/1</div></div>' : '') +
+      '</div><p>' + st.text + '</p>';
+    host.appendChild(c);
+  });
+  var stA = STYLES[2];   // choix retenu : enveloppe des points
+  // Minicarte dans la zone : échelle plus forte, joueur au centre.
+  document.getElementById('mini-in').innerHTML = svgFor(stA, 150, 150, 1.5, 75 + (CENTER.x - 46) * 150 / 100 * 1.5, 75 + (CENTER.y - 55) * 150 / 100 * 1.5, { px: 75, py: 75 });
+  // Hors de la zone : centre loin en haut à droite, seul un arc entre dans le disque.
+  var zone = css('--t-zone');
+  document.getElementById('mini-out').innerHTML = '<svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M120 -10 C 150 40, 170 60, 200 70 L 200 -10 Z" fill="' + zone + '" fill-opacity=".2" stroke="' + zone + '" stroke-opacity=".7" stroke-width="1.5"/>' +
+    '<g transform="translate(75 75) rotate(-40)"><path d="M0 -9 L6 7 L0 3 L-6 7 Z" fill="#fff" stroke="#000" stroke-width="1.3"/></g></svg>' +
+    '<span class="ki k-zone" style="position:absolute;right:16px;top:14px;width:15px;height:15px"></span>';
+}
+draw();
+
+// Aperçu de l'assistant : même étape, mise en page et détail choisis.
+var SAMPLE = [
+  { k: 'k-loot', t: 'Défense de troll', c: '3/8', p: 37.5, lead: true, mob: ['Troll Glacepoing', 'Niveau 5-6'], d: '64 yd' },
+  { k: 'k-kill', t: 'Trogg Mâcheroc tué', c: '2/6', p: 33, mob: ['Trogg Mâcheroc', 'Niveau 1-2'], d: '110 yd' },
+  { img: 'inv_misc_orb_03', t: 'Fiole utilisée sur le totem', c: '0/1', p: 0, d: '150 yd' }
+];
+function preview() {
+  var lay = document.querySelector('input[name=lay]:checked').value;
+  var det = document.querySelector('input[name=det]:checked').value;
+  var h = '<div class="trk"><div class="bg"></div><div class="edge"></div><div class="cur" style="margin:0"><span class="cicon ki k-kill"></span><span class="dist">64 yd</span>';
+  h += lay === 'quest' ? '<div class="qh">Les trolls de la vallée <small>· 1/4</small></div>' : '<div class="step">Faire : <span class="q">Les trolls de la vallée</span></div>';
+  SAMPLE.forEach(function (o) {
+    var icon = o.img ? '<img class="ki k-item" src="https://wow.zamimg.com/images/wow/icons/large/' + o.img + '.jpg" alt="">' : '<span class="ki ' + o.k + '"></span>';
+    var dist = det === 'distance' ? ' <span class="dd">' + o.d + '</span>' : '';
+    var bar = lay === 'bars' ? '<span class="pb"><i style="width:' + o.p + '%"></i></span>' : '';
+    h += '<div class="ob' + (o.lead ? ' lead' : '') + '">' + icon + '<span class="tx">' + o.t + dist + '</span><span class="ct">' + o.c + '</span>' + bar + '</div>';
+    if (det !== 'count' && o.mob) h += '<div class="mob"><span class="ki k-skull sk"></span><span class="mn">' + o.mob[0] + '</span><span class="ml">' + o.mob[1] + '</span></div>';
+  });
+  h += '<div class="fold"><span class="ki k-done"></span>1 fait : Parler à Grelin Whitebeard</div></div></div>';
+  document.getElementById('preview').innerHTML = h;
+}
+document.querySelectorAll('.wr input').forEach(function (i) { i.addEventListener('change', preview); });
+preview();
+</script>
+</body>
+</html>
