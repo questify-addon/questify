@@ -123,8 +123,14 @@ function Travel:Speed()
 end
 
 ---------------------------------------------------------------------------
--- Points de vol connus (cache rafraîchi à TAXIMAP_OPENED et UI_INFO_MESSAGE)
+-- Points de vol connus : union de deux sources, gardée en cache et rafraîchie à TAXIMAP_OPENED et
+-- UI_INFO_MESSAGE.
+--   * Q.char.knownTaxi[nodeID] : points vus atteignables sur la carte des vols (Q.Taxi:Nodes, état
+--     CURRENT ou REACHABLE) à chaque ouverture ; l'ensemble ne fait que grandir ;
+--   * C_TaxiMap.GetTaxiNodesForMap(continent) : un nœud compte seulement si isUndiscovered vaut false
+--     (un champ absent ne prouve pas que le point est appris).
 ---------------------------------------------------------------------------
+local STATE_CURRENT, STATE_REACHABLE = 0, 1   -- Enum.FlightPathState
 local knownCache, nodeNames
 local flightCache = {}
 
@@ -132,7 +138,6 @@ local function readTaxiMap(m, mine, out, names)
   local ok, nodes = pcall(C_TaxiMap.GetTaxiNodesForMap, m)
   if not ok or secret(nodes) or type(nodes) ~= "table" then return end
   for _, n in ipairs(nodes) do
-    -- isUndiscovered doit valoir false : un champ absent ne prouve pas que le point est appris
     if type(n) == "table" and not secret(n.isUndiscovered) and n.isUndiscovered == false
        and not secret(n.nodeID) and type(n.nodeID) == "number" then
       local f = not secret(n.faction) and tonumber(n.faction) or nil
@@ -144,16 +149,43 @@ local function readTaxiMap(m, mine, out, names)
   end
 end
 
+-- Points de vol mémorisés du personnage (Q.char.knownTaxi), créés au besoin ; nil sans Q.char.
+local function recorded(create)
+  local c = Q.char
+  if type(c) ~= "table" then return nil end
+  if type(c.knownTaxi) ~= "table" then
+    if not create then return nil end
+    c.knownTaxi = {}
+  end
+  return c.knownTaxi
+end
+
 -- -> { [nodeId] = true } (identifiants de TaxiNodes, ceux de Q.TravelData.taxi).
 function Travel:KnownTaxi()
   if knownCache then return knownCache end
   local out, names = {}, {}
+  for id in pairs(recorded(false) or {}) do
+    if type(id) == "number" then out[id] = true end
+  end
   if C_TaxiMap and type(C_TaxiMap.GetTaxiNodesForMap) == "function" then
     local mine = NODE_FACTION[Q.Player and Q.Player.faction or ""]
     for _, m in ipairs(CONTINENT_MAPS) do readTaxiMap(m, mine, out, names) end
   end
   knownCache, nodeNames = out, names
   return out
+end
+
+-- Carte des vols ouverte : mémorise les points atteignables (avec leur identifiant de TaxiNodes).
+function Travel:RecordTaxiMap()
+  if not (Q.Taxi and Q.Taxi.Nodes) then return end
+  local set
+  for _, n in ipairs(Q.Taxi:Nodes()) do
+    if n.nodeID and (n.state == STATE_CURRENT or n.state == STATE_REACHABLE) then
+      set = set or recorded(true)
+      if not set then return end
+      set[n.nodeID] = true
+    end
+  end
 end
 
 function Travel:Refresh()
@@ -285,10 +317,12 @@ local function shortName(name)
   return name:match("^(.-),") or name
 end
 
--- Destination d'une liaison d'après sa note anglaise (« Take the boat to Auberdine (…) »).
+-- Destination d'une liaison : nom localisé de la carte d'arrivée (client) ; la note anglaise des
+-- données (« Take the boat to Auberdine (…) ») seulement si la carte n'a pas de nom.
 local function linkTarget(l, to)
-  local name = type(l.name) == "string" and (l.name:match(" to (.-)%s*%(") or l.name:match(" to (.-)%s*$"))
-  return name or Q.Maps:MapName(to.m)
+  local name = Q.Maps:MapName(to.m)
+  if name:sub(1, 1) ~= "#" then return name end
+  return type(l.name) == "string" and (l.name:match(" to (.-)%s*%(") or l.name:match(" to (.-)%s*$")) or name
 end
 
 local function bindName(inn)
@@ -407,5 +441,8 @@ end
 -- Évènements
 ---------------------------------------------------------------------------
 local function refresh() Travel:Refresh() end
-Q:RegisterEvent("TAXIMAP_OPENED", refresh)
+Q:RegisterEvent("TAXIMAP_OPENED", function()
+  Travel:RecordTaxiMap()
+  refresh()
+end)
 Q:RegisterEvent("UI_INFO_MESSAGE", refresh)

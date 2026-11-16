@@ -139,6 +139,37 @@ return {
     t.eq(Q.Travel:KnownTaxi(), { [2] = true, [4] = true, [6] = true })
   end,
 
+  known_taxi_recorded_at_taxi_map = function(t)
+    local Q = load()
+    -- client sans isUndiscovered : GetTaxiNodesForMap ne prouve rien
+    C_TaxiMap.GetTaxiNodesForMap = function()
+      return { { nodeID = 2, name = "Stormwind, Elwynn" }, { nodeID = 4, name = "Sentinel Hill, Westfall" } }
+    end
+    Q.Travel:Refresh()
+    t.eq(Q.Travel:KnownTaxi(), {})
+    t.eq(kinds(Q.Travel:Plan(ELWYNN_GATE, GRYAN)), "walk")
+    -- carte des vols ouverte à Stormwind : Stormwind (actuel) et Sentinel Hill (atteignable) ;
+    -- Lakeshire, inatteignable, n'est pas appris
+    Mock.comfort.taxiMapId = 1415
+    Mock.comfort.nodes = {
+      { nodeID = 2, name = "Stormwind, Elwynn", state = 0 },
+      { nodeID = 4, name = "Sentinel Hill, Westfall", state = 1 },
+      { nodeID = 5, name = "Lakeshire, Redridge", state = 2 },
+    }
+    Mock.fire("TAXIMAP_OPENED")
+    t.eq(Q.Travel:KnownTaxi(), { [2] = true, [4] = true })
+    t.eq(kinds(Q.Travel:Plan(ELWYNN_GATE, GRYAN)), "walk,fly,walk")
+    t.eq(Q.char.knownTaxi, { [2] = true, [4] = true })
+    -- l'ensemble survit au rechargement (Q.char) et ne fait que grandir
+    Q = Mock.reload()
+    Ext.install()
+    Mock.comfort.nodes = { { nodeID = 6, name = "Ironforge, Dun Morogh", state = 0 } }
+    t.eq(Q.Travel:KnownTaxi(), { [2] = true, [4] = true })
+    Mock.fire("TAXIMAP_OPENED")
+    t.eq(Q.Travel:KnownTaxi(), { [2] = true, [4] = true, [6] = true })
+    t.eq(#Mock.errors, 0)
+  end,
+
   hearth_ready = function(t)
     local Q = load()
     bindGoldshire()
@@ -214,6 +245,17 @@ return {
       t.ok(type(l.caption) == "string" and l.caption ~= "", "caption")
       t.eq(l.icon, Q.Travel.ICONS[l.kind])
     end
+  end,
+
+  link_caption_localized = function(t)
+    Mock.locale = "frFR"
+    local Q = load({ locale = "frFR" })
+    Mock.maps[1439].name = "Sombrivage"
+    local legs = Q.Travel:Plan({ 1453, 50, 60 }, { 1439, 33, 41 })
+    local boat
+    for _, l in ipairs(legs) do if l.kind == "boat" then boat = l end end
+    t.ok(boat, "boat: " .. kinds(legs))
+    t.eq(boat.caption, "Bateau pour Sombrivage")
   end,
 
   mount_speed = function(t)
