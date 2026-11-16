@@ -41,6 +41,7 @@ Locales\StringsZone.lua
 Locales\StringsVersion.lua
 Locales\StringsMinimap.lua
 Locales\StringsOptions.lua
+Locales\StringsTrainer.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -69,6 +70,7 @@ Engine\ZoneMode.lua
 Engine\Format.lua
 Engine\ClassQuests.lua
 Engine\Trainer.lua
+Engine\ActionRanks.lua
 Engine\Professions.lua
 Engine\ClassQuestOffer.lua
 Engine\BagQuests.lua
@@ -100,6 +102,8 @@ UI\ObjectGlow.lua
 UI\UpgradePopup.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
+UI\TrainerPanel.lua
+UI\RanksWizard.lua
 UI\DungeonPopup.lua
 UI\DungeonChainPopup.lua
 UI\DungeonModePanel.lua

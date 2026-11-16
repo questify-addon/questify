@@ -120,6 +120,20 @@ COMMANDS.classe = function()
 end
 COMMANDS.class = COMMANDS.classe
 
+-- Anciens rangs sur les barres d'action (Engine/ActionRanks.lua) : ouvre l'assistant ; « reset » repropose
+-- les rangs ignorés.
+COMMANDS.rangs = function(rest)
+  local R = Q.ActionRanks
+  if not R then return end
+  local arg = tostring(rest or ""):lower():match("^%s*(%S*)")
+  if arg == "reset" then
+    R:ForgetIgnored()
+    Q:Print(L.RANKS_FORGOTTEN)
+  end
+  if not R:Check(true) then Q:Print(L.RANKS_NONE) end
+end
+COMMANDS.ranks = COMMANDS.rangs
+
 -- Quêtes de sac (Engine/BagQuests.lua) : liste dans la discussion ; « reset » repropose les quêtes ignorées.
 local function bagsText(eq)
   local parts = {}
