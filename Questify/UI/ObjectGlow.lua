@@ -8,7 +8,10 @@ local addonName, Q = ...
 -- « marqueur natif » ou flèche Questify, objet à l'écran (marqueur non collé au bord) et à moins de 50 m.
 -- Avec la flèche Questify, Nav ne pose pas de repère du jeu : la lueur pose elle-même le repère suivi
 -- sur l'objet, seulement à portée (POSE_YARDS), et le retire en s'éloignant (RELEASE_YARDS), quand
--- l'étape change ou quand l'option est coupée. Le repère des autres affichages n'est jamais touché.
+-- l'étape change ou quand l'option est coupée, et quand l'affichage ou le routeur change (Nav appelle
+-- ObjectGlow:ReleasePin en retirant la flèche). Le repère des autres affichages n'est jamais touché.
+-- Ce repère peut survivre à une déconnexion : ses coordonnées sont gardées (Q.char.glowPin) et, à la
+-- connexion, le repère du jeu est retiré s'il est encore le sien.
 -- Sinon rien ne s'affiche. Rien ici n'est protégé : le combat ne change rien.
 Q.UI = Q.UI or {}
 local ObjectGlow = {}
@@ -17,6 +20,7 @@ Q.UI.ObjectGlow = ObjectGlow
 local CHECK_INTERVAL = 0.1   -- secondes entre deux vérifications (le cadre suit seul le marqueur)
 local MAX_DIST = 50          -- au-delà, l'objet est trop petit à l'écran pour être entouré
 local POSE_YARDS, RELEASE_YARDS = 50, 65   -- flèche Questify : repère posé à portée, retiré au-delà
+local RETRY_EVERY = 5        -- secondes : repère refusé ou retiré par un autre addon, nouvel essai
 local SIZE_NEAR, SIZE_FAR = 150, 60
 local WAVE_TIME = 1.4
 local RING_TEXTURE = "Interface\\Cooldown\\ping4"
@@ -122,12 +126,18 @@ end
 
 -- Repère du jeu posé par la lueur (affichage flèche Questify) : clé « carte|x|y », nil sinon.
 local posedKey
+local tryKey, tryAt   -- dernier essai de pose (clé, GetTime) : un nouvel essai au plus toutes les 5 s
 
 local function releasePin()
+  tryKey, tryAt = nil, nil
   if not posedKey then return end
   posedKey = nil
+  if Q.char then Q.char.glowPin = nil end
   Q.API.ClearNativeWaypoint()
 end
+
+-- Retire le repère de la lueur (appelé par Nav quand la flèche cède la place à un autre affichage).
+function ObjectGlow:ReleasePin() releasePin() end
 
 -- Affichage flèche Questify : repère du jeu sur l'objet `tg` tant qu'il est à portée (tg nil : retiré).
 -- -> vrai si le repère de la lueur est posé.
@@ -146,7 +156,11 @@ local function syncPin(tg)
   -- reposé si l'objet change, ou si le repère a disparu (changement d'affichage, retrait par le joueur)
   local present = not (C_Map and C_Map.HasUserWaypoint) or C_Map.HasUserWaypoint()
   if posedKey ~= key or not present then
+    local now = GetTime()
+    if tryKey == key and tryAt and now - tryAt < RETRY_EVERY then return false end
+    tryKey, tryAt = key, now
     posedKey = Q.API.SetNativeWaypoint(tg.mapId, tg.x / 100, tg.y / 100, tg.title) and key or nil
+    if Q.char then Q.char.glowPin = posedKey and { mapId = tg.mapId, x = tg.x, y = tg.y } or nil end
   end
   return posedKey ~= nil
 end
@@ -155,8 +169,6 @@ end
 local function wanted()
   if not available() then return nil end
   local display = navDisplay()
-  -- le repère d'un autre affichage appartient à la navigation : on oublie le nôtre sans le retirer
-  if display ~= "arrow" then posedKey = nil end
   local T = Q.UI.Tracker
   local tg = T and T.entry and T.target
   if setting("objectGlow") == false or not (tg and tg.kind == "object") then tg = nil end
@@ -218,7 +230,27 @@ end
 
 -- Le cadre reste affiché (transparent quand rien n'est à entourer) pour que son OnUpdate tourne ;
 -- il n'existe que sur un client qui a le marqueur natif.
+-- Connexion : le repère de la lueur d'avant la déconnexion est retiré s'il est encore là, sauf quand la
+-- navigation pose elle-même un repère du jeu (« Repère du jeu », WaypointUI, ShortestPath).
+local function clearStalePin()
+  local pin = Q.char and Q.char.glowPin
+  if type(pin) ~= "table" then return end
+  Q.char.glowPin = nil
+  local d = navDisplay()
+  if d ~= "arrow" and d ~= "tomtom" then return end
+  if not (C_Map and C_Map.GetUserWaypoint) then return end
+  local ok, point = pcall(C_Map.GetUserWaypoint)
+  if not (ok and type(point) == "table" and point.uiMapID == pin.mapId and point.position) then return end
+  local x, y = point.position.x, point.position.y
+  if type(point.position.GetXY) == "function" then x, y = point.position:GetXY() end
+  if type(x) ~= "number" or type(y) ~= "number" or type(pin.x) ~= "number" or type(pin.y) ~= "number" then return end
+  if math.abs(x - pin.x / 100) < 0.0001 and math.abs(y - pin.y / 100) < 0.0001 then
+    Q.API.ClearNativeWaypoint()
+  end
+end
+
 Q:On("LOGIN", function()
+  Q.SafeCall(clearStalePin)
   if not available() then return end
   local f = ObjectGlow:Create()
   f:SetAlpha(0)

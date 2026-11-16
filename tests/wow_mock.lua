@@ -1271,6 +1271,7 @@ local function installApi()
     SetUserWaypoint = function(point) Mock.userWaypoint = point; record("C_Map.SetUserWaypoint", point) end,
     ClearUserWaypoint = function() Mock.userWaypoint = nil; record("C_Map.ClearUserWaypoint") end,
     HasUserWaypoint = function() return Mock.userWaypoint ~= nil end,
+    GetUserWaypoint = function() return Mock.userWaypoint end,
   }
   C_SuperTrack = {
     SetSuperTrackedUserWaypoint = function(b) record("C_SuperTrack.SetSuperTrackedUserWaypoint", b) end,

@@ -226,10 +226,15 @@ end
 
 local PROVIDERS = {}
 
--- Flèche Questify (UI/Arrow.lua) : elle suit NAV_TARGET et le trajet calculé, rien à poser ici.
+-- Flèche Questify (UI/Arrow.lua) : elle suit NAV_TARGET et le trajet calculé, rien à poser ici. Au
+-- retrait (autre affichage, autre routeur, plus de cible), le repère du jeu que la lueur pose près d'un
+-- objet (UI/ObjectGlow.lua) part avec elle, avant que le nouveau fournisseur ne pose le sien.
 PROVIDERS.arrow = {
   set = function() return true end,
-  clear = function() end,
+  clear = function()
+    local G = Q.UI and Q.UI.ObjectGlow
+    if G and G.ReleasePin then G:ReleasePin() end
+  end,
 }
 
 -- ShortestPath : renvoie false en combat. On ne pose rien d'autre : il gère l'affichage.
