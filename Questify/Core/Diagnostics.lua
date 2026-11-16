@@ -182,17 +182,20 @@ end)
 check("navigation", "DIAG_NAVIGATION", function()
   local d = Q.Nav:Detect()
   local found = {}
-  for _, id in ipairs({ "shortestpath", "waypointui", "tomtom" }) do
+  for _, id in ipairs({ "questify", "shortestpath", "waypointui", "tomtom" }) do
     if d[id] then found[#found + 1] = providerLabel(id) end
   end
   local installed = #found > 0 and table.concat(found, ", ") or L.DIAG_NONE
   local routing, display = Q.Nav:Active()
   local wanted = Q.Settings:Get("nav.display")
-  if wanted ~= "native" and display ~= wanted then
+  -- la flèche Questify ne manque jamais ; avec SPF, le repère du jeu la remplace (voulu)
+  if wanted ~= "native" and wanted ~= "arrow" and display ~= wanted then
     return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel(wanted), providerLabel(display))
   end
-  if Q.Settings:Get("nav.routing") == true and not routing then
-    return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel("shortestpath"), providerLabel(display))
+  -- routeur choisi mais absent (Questify_Nav ou ShortestPath Forever)
+  local router = ({ questify = "questify", spf = "shortestpath" })[Q.Settings:Get("nav.router")]
+  if router and routing ~= router then
+    return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel(router), providerLabel(display))
   end
   local st = Q.Nav:Status()
   local using = routing and (providerLabel(routing) .. " > " .. providerLabel(display)) or providerLabel(display)
@@ -295,7 +298,7 @@ end
 -- Rapport de bug (texte brut, prêt à coller dans une issue)
 ---------------------------------------------------------------------------
 local SETTING_PATHS = {
-  "autoQuest", "autoReward", "dungeonQuests", "nav.display", "nav.routing",
+  "autoQuest", "autoReward", "dungeonQuests", "nav.display", "nav.router",
   "tracker.locked", "tracker.scale", "tracker.nextSteps", "tracker.showMobs", "nameplates", "telemetry",
 }
 

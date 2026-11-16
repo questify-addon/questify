@@ -21,11 +21,14 @@ local function cave()
     npcs = { 9001, 9002 }, objects = { 9101 }, source = "https://example.test/den" }
 end
 
+-- Affichage « Repère du jeu » sauf autre choix : les points posés se lisent sur le repère du jeu.
 local function load(settings, opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
+  local s = { ["nav.display"] = "native" }
+  for path, value in pairs(settings or {}) do s[path] = value end
   opts.beforeLogin = function(Q)
-    for path, value in pairs(settings or {}) do Q.Settings:Set(path, value) end
+    for path, value in pairs(s) do Q.Settings:Set(path, value) end
   end
   return Mock.loadAddon(TOC, opts)
 end
@@ -200,7 +203,7 @@ return {
   shortestpath_display_shows_the_entrance_first = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "waypointui" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "waypointui" })
     worldWithDen(Q)
     placePlayer(at(Q, WEST))
     local d = at(Q, DEEP)
@@ -226,7 +229,7 @@ return {
   -- ShortestPath sans NavigateRoute : c'est quand même l'entrée qu'on lui demande.
   shortestpath_without_navigate_route_goes_to_the_entrance = function(t)
     Mock.addons.ShortestPathForever = true
-    local Q = load({ ["nav.routing"] = true })
+    local Q = load({ ["nav.router"] = "spf" })
     ShortestPathForever.API.NavigateRoute = nil
     worldWithDen(Q)
     placePlayer(at(Q, WEST))
@@ -253,7 +256,7 @@ return {
     noErrors(t)
 
     Mock.addons.ShortestPathForever = true
-    local Q2 = load({ ["nav.routing"] = true })
+    local Q2 = load({ ["nav.router"] = "spf" })
     worldWithDen(Q2)
     Mock.player.map = nil
     Q2.Nav:SetTarget(MAP, d[1], d[2], "Kill the wendigos")
@@ -300,7 +303,7 @@ return {
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
     Mock.addons.TomTom = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "waypointui" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "waypointui" })
     Q.Nav:SetTarget(MAP, 29.93, 71.2, "Talk")
     t.ok(Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation"), "seeded")
     local cleared = Mock.countCalls("WaypointUIAPI.Navigation.ClearUserNavigation")

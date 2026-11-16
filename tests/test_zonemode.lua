@@ -66,6 +66,7 @@ local function load(opts)
     beforeLogin = function(Q)
       Ext.spy()
       C_Item.GetItemCount = function(id) return bags[id] or 0 end
+      Q.Settings:Set("nav.display", "native")   -- les cibles se lisent sur le repère du jeu
       for path, value in pairs(settings or {}) do Q.Settings:Set(path, value) end
       if opts.keys then Q.ZoneMode.KEYS = opts.keys end
     end,

@@ -7,7 +7,7 @@ return {
     local Q = Mock.loadAddon(TOC, { beforeLogin = function(Q) Q:On("LOGIN", function() loginSeen = true end) end })
     t.ok(Questify == Q, "global set")
     t.ok(loginSeen, "LOGIN fired")
-    t.eq(Q.Settings:Get("nav.display"), "native")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
     t.ok(Q.IsForever())
     t.eq(#Mock.errors, 0, "no Lua error")
   end,

@@ -1,6 +1,12 @@
 local addonName, Q = ...
 
--- Navigation : une seule interface (SetTarget / Clear), quatre fournisseurs (spec § 5.4).
+-- Navigation : une seule interface (SetTarget / Clear), deux réglages (spec du routeur intégré, § 5) :
+--   nav.router  : "questify" (Questify_Nav, défaut), "spf" (ShortestPath Forever) ou "none" ;
+--   nav.display : "arrow" (flèche Questify, défaut), "waypointui", "tomtom" ou "native".
+-- Chaque pose ou retrait de cible est annoncé : Q:Fire("NAV_TARGET", { mapId, x, y, title } ou nil),
+-- en 0-100, quel que soit le routeur (Nav:Active() dit qui calcule). Avec le routeur Questify, le
+-- calcul du trajet écoute ce message (Nav/Walk.lua) ; la flèche ne pose rien d'autre, les autres
+-- affichages reçoivent la cible par leur fournisseur. Avec SPF, comme avant : SPF calcule et affiche.
 -- Coordonnées reçues en 0-100 avec uiMapID ; chaque fournisseur reçoit son échelle :
 -- ShortestPath et TomTom 0-1, WaypointUI 0-100, marqueur natif (UiMapPoint) 0-1.
 local Nav = {}
@@ -19,6 +25,7 @@ local ticker
 local caveTicker    -- suit l'avancée du joueur vers l'entrée d'une grotte (voir syncCaveTicker)
 local CAVE_CHECK_EVERY = 1          -- secondes
 local syncCaveTicker                -- défini plus bas, appelé par apply
+local announcedKey  -- clé de la dernière cible annoncée par NAV_TARGET (nil : aucune)
 
 ---------------------------------------------------------------------------
 -- Détection (globales, lues à chaque appel : un addon peut se charger après nous)
@@ -37,9 +44,24 @@ local function hasTomTom()
   return type(TomTom) == "table" and type(TomTom.AddWaypoint) == "function"
 end
 
--- Detect() -> { shortestpath, waypointui, tomtom, native = true }
+-- Questify_Nav (routeur de marche, chargé à la demande) : installé et activé suffit.
+local function hasQuestifyNav()
+  local api = C_AddOns
+  if not api then return false end
+  if type(api.IsAddOnLoaded) == "function" then
+    local ok, loaded = pcall(api.IsAddOnLoaded, "Questify_Nav")
+    if ok and loaded then return true end
+  end
+  if type(api.GetAddOnInfo) ~= "function" then return false end
+  local ok, _, _, _, loadable, reason = pcall(api.GetAddOnInfo, "Questify_Nav")
+  if not ok then return false end
+  return loadable == true or reason == "DEMAND_LOADED"
+end
+
+-- Detect() -> { questify, shortestpath, waypointui, tomtom, native = true }
 function Nav:Detect()
   return {
+    questify = hasQuestifyNav(),
     shortestpath = hasShortestPath(),
     waypointui = hasWaypointUI(),
     tomtom = hasTomTom(),
@@ -47,22 +69,31 @@ function Nav:Detect()
   }
 end
 
+-- ShortestPath calcule-t-il ? (choisi et chargé)
 local function routingOn()
-  return Q.Settings:Get("nav.routing") == true and hasShortestPath()
+  return Q.Settings:Get("nav.router") == "spf" and hasShortestPath()
+end
+
+-- Le routeur Questify calcule-t-il ? (choisi et Questify_Nav installé)
+local function questifyOn()
+  return Q.Settings:Get("nav.router") == "questify" and hasQuestifyNav()
 end
 
 -- Fournisseur d'affichage effectif : celui du réglage, sinon le marqueur natif s'il manque.
+-- La flèche Questify ne suit pas les trajets de SPF : avec lui, le repère du jeu la remplace.
 local function displayProvider()
   local wanted = Q.Settings:Get("nav.display")
+  if wanted == "arrow" and not routingOn() then return "arrow" end
   if wanted == "waypointui" and hasWaypointUI() then return "waypointui" end
   if wanted == "tomtom" and hasTomTom() then return "tomtom" end
   return "native"
 end
 
--- Active() -> nom du calcul d'itinéraire ("shortestpath") ou nil, fournisseur d'affichage.
+-- Active() -> routeur qui calcule ("questify", "shortestpath") ou nil, fournisseur d'affichage.
 -- Quand ShortestPath calcule, c'est lui qui transmet la destination à cet affichage.
 function Nav:Active()
-  return routingOn() and "shortestpath" or nil, displayProvider()
+  local router = (routingOn() and "shortestpath") or (questifyOn() and "questify") or nil
+  return router, displayProvider()
 end
 
 -- Fournisseur réellement utilisé pour poser une cible.
@@ -72,6 +103,8 @@ local function currentProvider()
 end
 
 local LABELS = {
+  questify = "NAV_QUESTIFY",
+  arrow = "NAV_ARROW",
   shortestpath = "NAV_SHORTESTPATH",
   waypointui = "NAV_WAYPOINTUI",
   tomtom = "NAV_TOMTOM",
@@ -192,6 +225,12 @@ local function waypointUIWithRouting()
 end
 
 local PROVIDERS = {}
+
+-- Flèche Questify (UI/Arrow.lua) : elle suit NAV_TARGET et le trajet calculé, rien à poser ici.
+PROVIDERS.arrow = {
+  set = function() return true end,
+  clear = function() end,
+}
 
 -- ShortestPath : renvoie false en combat. On ne pose rien d'autre : il gère l'affichage.
 -- `via` : points à rejoindre d'abord (entrée ou sortie de grotte, voir apply), une seule route.
@@ -358,6 +397,15 @@ end
 ---------------------------------------------------------------------------
 -- API
 ---------------------------------------------------------------------------
+-- NAV_TARGET : une fois par cible (même dédoublonnage que les fournisseurs, au dixième près),
+-- et une fois au retrait. Copie : un abonné ne peut pas changer la cible mémorisée.
+local function announce(t)
+  local key = t and makeKey("target", t) or nil
+  if key == announcedKey then return end
+  announcedKey = key
+  Q:Fire("NAV_TARGET", t and { mapId = t.mapId, x = t.x, y = t.y, title = t.title } or nil)
+end
+
 -- SetTarget(mapId, x, y, title) : x et y en 0-100.
 function Nav:SetTarget(mapId, x, y, title)
   if type(mapId) ~= "number" or type(x) ~= "number" or type(y) ~= "number" then
@@ -365,6 +413,7 @@ function Nav:SetTarget(mapId, x, y, title)
     return
   end
   target = { mapId = mapId, x = x, y = y, title = type(title) == "string" and title or "" }
+  announce(target)
   apply()
 end
 
@@ -400,6 +449,7 @@ end
 
 function Nav:Clear()
   target = nil
+  announce(nil)
   manual = nil
   retryPending, refusedKey = false, nil
   caveWatch = nil
@@ -551,9 +601,11 @@ Q:On("COMBAT_ENDED", function()
   end
 end)
 
--- Réglages `nav.*` : on retire l'ancien fournisseur puis on repose la cible.
+-- Routeur ou affichage changé : on retire l'ancien fournisseur puis on repose la cible. Les autres
+-- réglages `nav.*` (style, flèche) ne changent pas le fournisseur : la cible posée ne bouge pas.
+local PROVIDER_PATHS = { nav = true, ["nav.router"] = true, ["nav.display"] = true }
 Q:On("SETTINGS_CHANGED", function(path)
-  if type(path) ~= "string" or (path ~= "nav" and path:sub(1, 4) ~= "nav.") then return end
+  if not PROVIDER_PATHS[path] then return end
   clearApplied()
   retryPending, refusedKey = false, nil
   apply()

@@ -22,6 +22,8 @@ local function load(opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
   if opts.skipGuides == nil then opts.skipGuides = true end
+  -- la lueur suit le marqueur 3D du jeu : affichage « Repère du jeu »
+  opts.beforeLogin = opts.beforeLogin or function(Q) Q.Settings:Set("nav.display", "native") end
   local Q = Mock.loadAddon(TOC, opts)
   Q:RegisterGuide({ id = "T_obj", faction = "Alliance", steps = { { "complete", 3361, obj = 2 }, { "complete", 179 } } })
   Mock.quests.log[3361] = { objectives = {

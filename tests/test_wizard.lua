@@ -58,7 +58,7 @@ return {
     t.ok(plain(W.recap.autoReward:GetText()):find(Q.L.UI_WIZ_OFF, 1, true), "summary reads the boxes")
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.eq(Q.Settings:Get("nav.routing"), false)
+    t.eq(Q.Settings:Get("nav.router"), "questify")
     t.eq(Q.Settings:Get("autoQuest"), true)
     t.eq(Q.Settings:Get("autoReward"), false)
     t.eq(Q.Settings:Get("sellJunk"), true)
@@ -303,7 +303,7 @@ return {
     QuestifyWizard:Hide()
     t.eq(Q.char.wizardDone, nil, "closing is not finishing")
     t.eq(Q.char.wizardPage, 4, "page kept")
-    t.eq(Q.Settings:Get("nav.display"), "native", "settings unchanged")
+    t.eq(Q.Settings:Get("nav.display"), "arrow", "settings unchanged")
     -- pas de nouvelle ouverture automatique dans la même session
     Q:Fire("LOGIN")
     Mock.advance(5)
@@ -355,12 +355,15 @@ return {
     t.ok(not W.radios.tomtom:IsEnabled(), "TomTom missing")
     t.ok(not W.radios.waypointui:IsEnabled(), "WaypointUI missing")
     t.ok(W.radios.native:IsEnabled(), "native always available")
-    t.ok(W.radios.native:GetChecked(), "native selected by default")
+    t.ok(W.radios.arrow:IsEnabled(), "Questify arrow always available")
+    t.ok(W.radios.arrow:GetChecked(), "Questify arrow selected by default")
     Mock.click(W.radios.tomtom, "LeftButton")          -- bouton désactivé : ignoré
-    t.ok(W.radios.native:GetChecked())
+    t.ok(W.radios.arrow:GetChecked())
     goToPage(W, 6)
+    t.ok(plain(W.recap.display:GetText()):find("Questify arrow", 1, true), "summary shows the arrow")
     Mock.click(W.finishButton, "LeftButton")
-    t.eq(Q.Settings:Get("nav.display"), "native")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
+    t.eq(Q.Settings:Get("nav.router"), "questify")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -380,8 +383,22 @@ return {
     goToPage(W, 6)
     t.ok(plain(W.recap.routing:GetText()):find("ShortestPath Forever", 1, true))
     Mock.click(W.finishButton, "LeftButton")
-    t.eq(Q.Settings:Get("nav.routing"), true)
+    t.eq(Q.Settings:Get("nav.router"), "spf")
     t.eq(Q.Settings:Get("nav.display"), "waypointui")
+  end,
+
+  -- La case ShortestPath ne touche qu'au choix SPF : un routeur « Aucun » choisi dans les options reste.
+  wizard_keeps_router_none = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true },
+      QuestifyDB = { profiles = { Default = { settings = { nav = { router = "none", migrated = 1 } } } } } } })
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, 3)
+    t.eq(W.checks.routing:GetChecked(), false)
+    goToPage(W, 6)
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "none")
   end,
 
   wizard_rerun_keeps_current_choice = function(t)

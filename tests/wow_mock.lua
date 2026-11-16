@@ -1095,6 +1095,14 @@ local function installApi()
     end,
     GetNumAddOns = function() return 0 end,
     LoadAddOn = function(name) return Mock.addons[name] == true end,
+    -- Mock.addons[nom] : true (chargé), "demand" (installé, chargé à la demande), "disabled", sinon absent
+    GetAddOnInfo = function(name)
+      local v = Mock.addons[name]
+      if v == true then return name, name, "", true, nil, "INSECURE", false end
+      if v == "demand" then return name, name, "", true, "DEMAND_LOADED", "INSECURE", false end
+      if v == "disabled" then return name, name, "", false, "DISABLED", "INSECURE", false end
+      return name, nil, nil, false, "MISSING", "INSECURE", false
+    end,
   }
 
   -- Minuteurs
@@ -1315,7 +1323,8 @@ function Mock.reset()
   Mock.quests = { log = {}, completed = {} }
   Mock.titles = {}
   Mock.calls = {}
-  Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false }
+  Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false,
+    Questify_Nav = true }
   Mock.qdbMeta = {}                              -- métadonnées du TOC de QuestieDB (Version : aucune par défaut)
   Mock.errors = {}
   Mock.prints = {}

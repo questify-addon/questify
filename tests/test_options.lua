@@ -135,8 +135,12 @@ return {
     t.eq(S:Entry("autoReward").category, "auto")
     t.eq(S:Entry("rewardRole").category, "profile")
     t.eq(S:Entry("specRolePrompt").category, "profile")
-    t.eq(S:Entry("nav.routing").category, "routing")
+    t.eq(S:Entry("nav.router").category, "routing")
+    t.eq(S:Entry("nav.routeStyle").category, "routing")
     t.eq(S:Entry("nav.display").category, "display")
+    t.eq(S:Entry("nav.lineStyle").category, "display")
+    t.eq(S:Entry("nav.arrowLocked").category, "display")
+    t.eq(S:Entry("nav.arrowPos").type, "hidden", "arrow position: a profile value without a control")
     t.eq(S:Entry("autoFly").category, "flights")
   end,
 
@@ -170,7 +174,7 @@ return {
     t.ok(contains(ids(S:Search("opacité", Q.Player)), "tracker.opacity"))
     t.ok(contains(ids(S:Search("recompense", Q.Player)), "autoReward"), "« récompense » without accent")
     t.ok(contains(ids(S:Search("parchemin", Q.Player)), "tracker.theme"), "choice labels are searched")
-    t.ok(contains(ids(S:Search("vols bateaux", Q.Player)), "nav.routing"), "every word must match")
+    t.ok(contains(ids(S:Search("vols bateaux", Q.Player)), "nav.router"), "every word must match")
     t.eq(#S:Search("zzzz", Q.Player), 0)
     t.eq(#S:Search("   ", Q.Player), 0, "blank search")
     -- les entrées invisibles pour la classe ne sortent pas
@@ -288,11 +292,11 @@ return {
     Mock.click(cb, "LeftButton")
     t.eq(Q.Settings:Get("tracker.locked"), true)
     t.ok(not Q.UI.Tracker.frame:IsMovable(), "tracker follows")
-    -- addon facultatif absent : case grisée
     O:Open("navigation")
-    local routing = O:Widget("nav.routing")
-    t.ok(not routing.check:IsEnabled(), "routing needs ShortestPath")
-    t.ok(plain(routing.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
+    cb = O:Widget("nav.arrowLocked").check
+    cb:SetChecked(true)
+    Mock.click(cb, "LeftButton")
+    t.eq(Q.Settings:Get("nav.arrowLocked"), true)
     noErrors(t)
   end,
 
@@ -305,15 +309,26 @@ return {
     local byValue = {}
     for _, r in ipairs(w.radios) do byValue[r.value] = r end
     t.eq(byValue.native._template, "UIRadioButtonTemplate")
-    t.ok(byValue.native:GetChecked(), "current value checked")
+    t.ok(byValue.arrow:GetChecked(), "current value checked")
+    t.ok(byValue.arrow:IsEnabled() and byValue.native:IsEnabled(), "always available")
     t.ok(byValue.tomtom:IsEnabled(), "TomTom installed")
     t.ok(not byValue.waypointui:IsEnabled(), "WaypointUI missing")
     t.ok(plain(byValue.waypointui.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
     Mock.click(byValue.tomtom, "LeftButton")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.ok(byValue.tomtom:GetChecked() and not byValue.native:GetChecked())
+    t.ok(byValue.tomtom:GetChecked() and not byValue.arrow:GetChecked())
     t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.display"), "waypointui"), "missing addon refused")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
+    -- routeur : ShortestPath Forever absent, grisé
+    local router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.questify:GetChecked(), "Questify by default")
+    t.ok(not router.spf:IsEnabled(), "SPF needs ShortestPath Forever")
+    t.ok(plain(router.spf.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
+    t.ok(router.none:IsEnabled())
+    Mock.click(router.none, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "none")
+    t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.router"), "spf"), "missing addon refused")
     noErrors(t)
   end,
 
@@ -830,6 +845,31 @@ return {
     noErrors(t)
   end,
 
+  -- Navigation : une chaîne récente garde son affichage (pas de seconde migration) ; la position de la
+  -- flèche est contrôlée comme celle du suivi.
+  nav_values_export_and_import = function(t)
+    local Q = load()
+    local P = Q.Profiles
+    Q.Settings:Set("nav.display", "native")
+    Q.Settings:Set("nav.router", "none")
+    Q.Settings:Set("nav.lineStyle", "dashes")
+    Q.Settings:Set("nav.arrowPos", { "CENTER", "BOTTOMLEFT", 12.34, -8 })
+    local s = P:Export()
+    t.ok(P:Import(s, "Copie"))
+    t.eq(P:Active(), "Copie")
+    t.eq(Q.Settings:Get("nav.display"), "native", "not migrated again")
+    t.eq(Q.Settings:Get("nav.router"), "none")
+    t.eq(Q.Settings:Get("nav.lineStyle"), "dashes")
+    t.eq(Q.Settings:Get("nav.arrowPos"), { "CENTER", "BOTTOMLEFT", 12.3, -8 })
+    local function encode(tbl) return "QFY1:" .. P.Base64Encode(P.Serialize(tbl)) end
+    local clean = P:Decode(encode({ v = 1, settings = { nav = { router = "questify", lineStyle = "zigzag",
+      arrowPos = { "NOWHERE", "CENTER", 1, 2 } } } }))
+    t.eq(clean.settings.nav.arrowPos, nil, "bad anchor")
+    t.eq(clean.settings.nav.lineStyle, nil, "unknown style")
+    t.eq(clean.settings.nav.router, "questify")
+    noErrors(t)
+  end,
+
   import_rejects_bad_strings_without_errors = function(t)
     local Q = load()
     local P = Q.Profiles
@@ -869,7 +909,8 @@ return {
     t.eq(clean.settings.autoQuest, nil)
     t.eq(clean.settings.autoReward, false)
     t.eq(clean.settings.nav.display, nil)
-    t.eq(clean.settings.nav.routing, true)
+    t.eq(clean.settings.nav.routing, nil, "string from before the built-in router: migrated")
+    t.eq(clean.settings.nav.router, "spf")
     t.eq(clean.settings.nav.junk, nil)
     t.eq(clean.settings.tracker.scale, 1.6, "clamped to max")
     t.eq(clean.settings.tracker.nextSteps, 0, "clamped to min")

@@ -10,7 +10,11 @@ Settings.defaults = {
   autoQuest = true,
   autoReward = true,
   dungeonQuests = true,
-  nav = { routing = false, display = "native" },
+  -- Nav/Navigation.lua : routeur ("questify" | "spf" | "none") et affichage ("arrow" | "waypointui" |
+  -- "tomtom" | "native") ; style de trajet et de ligne du routeur Questify ; flèche (UI/Arrow.lua),
+  -- dont la position (nav.arrowPos = { point, point relatif, x, y }) n'a pas de défaut.
+  -- Migration des anciens réglages (nav.routing) : Core/Profiles.lua.
+  nav = { router = "questify", display = "arrow", routeStyle = "safe", lineStyle = "dots", arrowLocked = false },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
     theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
     foldBlizzard = true },                  -- UI/BlizzardTracker.lua : suivi de Blizzard replié

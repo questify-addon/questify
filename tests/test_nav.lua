@@ -3,13 +3,38 @@ local TOC = "Questify/Questify.toc"
 local GUIDES = "tests/fixtures/guide_fixture.lua"
 
 -- Charge l'addon ; `settings` est appliqué avant la connexion, donc avant la première cible.
+-- opts.onLoad(Q) : appelé au même moment (abonnement à un message avant la première cible).
 local function load(settings, opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
+  local onLoad = opts.onLoad
   opts.beforeLogin = function(Q)
     for path, value in pairs(settings or {}) do Q.Settings:Set(path, value) end
+    if onLoad then onLoad(Q) end
   end
   return Mock.loadAddon(TOC, opts)
+end
+
+-- Affichage « Repère du jeu » (l'ancien défaut) : les tests du repère natif.
+local function loadNative(settings, opts)
+  local s = { ["nav.display"] = "native" }
+  for k, v in pairs(settings or {}) do s[k] = v end
+  return load(s, opts)
+end
+
+-- Charge l'addon en notant chaque NAV_TARGET (false pour un retrait).
+local function loadWatching(settings)
+  local seen = {}
+  local Q = load(settings, { onLoad = function(Q)
+    Q:On("NAV_TARGET", function(target) seen[#seen + 1] = target or false end)
+  end })
+  return Q, seen
+end
+
+-- Profil enregistré d'une version précédente (réglages `nav` donnés).
+local function loadSavedNav(nav)
+  return Mock.loadAddon(TOC, { extraFiles = { GUIDES }, savedVariables = {
+    QuestifyDB = { profiles = { Default = { settings = { nav = nav } } } } } })
 end
 
 local function useGuide(Q, id, steps)
@@ -30,8 +55,145 @@ local function noNavErrors(t)
 end
 
 return {
-  native_by_default = function(t)
+  -- Défaut : routeur Questify et flèche Questify. Navigation pose la cible et l'annonce (NAV_TARGET) ;
+  -- la flèche ne pose rien chez un autre addon ni dans le jeu.
+  questify_by_default = function(t)
+    local Q, seen = loadWatching()
+    local router, display = Q.Nav:Active()
+    t.eq(router, "questify"); t.eq(display, "arrow")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0, "no game pin")
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), 0)
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), 0)
+    t.eq(#seen, 1, "target announced at login")
+    t.eq(seen[1].mapId, 1426); t.eq(seen[1].x, 29.93); t.eq(seen[1].y, 71.2)
+    t.ok(seen[1].title:find("Dwarven Outfitters", 1, true), "step title")
+    local st = Q.Nav:Status()
+    t.eq(st.provider, "arrow"); t.eq(st.wanted, "arrow")
+    Q.Nav:SetTarget(1426, 29.93, 71.2, seen[1].title)   -- même cible : pas de nouvelle annonce
+    t.eq(#seen, 1)
+    accept179()                                          -- autre étape, autre cible
+    t.eq(#seen, 2)
+    t.ok(seen[2] and seen[2].title ~= seen[1].title, "new target announced")
+    Q.Nav:Clear()
+    t.eq(seen[3], false, "removal announced")
+    Q.Nav:Clear()
+    t.eq(#seen, 3, "nothing left to remove")
+    noNavErrors(t)
+  end,
+
+  -- Routeur Questify sans le dossier Questify_Nav : pas de calcul, l'affichage reste.
+  questify_router_needs_questify_nav = function(t)
+    Mock.addons.Questify_Nav = false
     local Q = load()
+    t.eq(Q.Nav:Detect().questify, false)
+    local router, display = Q.Nav:Active()
+    t.eq(router, nil); t.eq(display, "arrow")
+    noNavErrors(t)
+  end,
+
+  -- Routeur Questify, affichage TomTom : TomTom reçoit la cible (la tâche 5 y mettra le prochain virage).
+  questify_with_tomtom_display = function(t)
+    Mock.addons.TomTom = true
+    local Q, seen = loadWatching({ ["nav.router"] = "questify", ["nav.display"] = "tomtom" })
+    local router, display = Q.Nav:Active()
+    t.eq(router, "questify"); t.eq(display, "tomtom")
+    local add = Mock.callsTo("TomTom:AddWaypoint")
+    t.eq(#add, 1)
+    t.eq(add[1].args[1], 1426); t.near(add[1].args[2], 0.2993, 0.001); t.near(add[1].args[3], 0.712, 0.001)
+    t.eq(#seen, 1, "target announced too")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
+    noNavErrors(t)
+  end,
+
+  -- Sans routeur : comportement d'avant (affichage seul).
+  router_none = function(t)
+    local Q = load({ ["nav.router"] = "none", ["nav.display"] = "native" })
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1, "game pin only")
+    local router, display = Q.Nav:Active()
+    t.eq(router, nil); t.eq(display, "native")
+    -- flèche sans routeur : rien n'est posé ailleurs
+    Mock.reset()
+    local Q2 = load({ ["nav.router"] = "none" })
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
+    router, display = Q2.Nav:Active()
+    t.eq(router, nil); t.eq(display, "arrow")
+    noNavErrors(t)
+  end,
+
+  -- SPF calcule et dessine : la flèche Questify n'apparaît pas, SPF a le repère du jeu (ou WaypointUI).
+  spf_with_arrow_display_uses_the_game_pin = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = load({ ["nav.router"] = "spf" })
+    local router, display = Q.Nav:Active()
+    t.eq(router, "shortestpath"); t.eq(display, "native")
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 1)
+    noNavErrors(t)
+  end,
+
+  -- Position de la flèche, style de ligne… : la cible posée ne bouge pas (TomTom ne la repose pas).
+  other_nav_settings_do_not_repost = function(t)
+    Mock.addons.TomTom = true
+    local Q, seen = loadWatching({ ["nav.display"] = "tomtom" })
+    Q.Settings:Set("nav.arrowPos", { "CENTER", "CENTER", 10, 20 })
+    Q.Settings:Set("nav.lineStyle", "solid")
+    Q.Settings:Set("nav.routeStyle", "roads")
+    Q.Settings:Set("nav.arrowLocked", true)
+    t.eq(Mock.countCalls("TomTom:AddWaypoint"), 1)
+    t.eq(Mock.countCalls("TomTom:RemoveWaypoint"), 0)
+    t.eq(#seen, 1)
+    noNavErrors(t)
+  end,
+
+  defaults = function(t)
+    local Q = load()
+    t.eq(Q.Settings:Get("nav.router"), "questify")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
+    t.eq(Q.Settings:Get("nav.routeStyle"), "safe")
+    t.eq(Q.Settings:Get("nav.lineStyle"), "dots")
+    t.eq(Q.Settings:Get("nav.arrowLocked"), false)
+    t.eq(Q.Settings:Get("nav.arrowPos"), nil)
+    t.eq(Q.Settings:Get("nav.routing"), nil, "old setting gone")
+  end,
+
+  -- Migration (une fois par profil) : SPF choisi reste SPF, son affichage reste.
+  migrate_spf_profile = function(t)
+    local Q = loadSavedNav({ routing = true, display = "tomtom" })
+    t.eq(Q.Settings:Get("nav.router"), "spf")
+    t.eq(Q.Settings:Get("nav.display"), "tomtom")
+    local nav = QuestifyDB.profiles.Default.settings.nav
+    t.eq(nav.routing, nil, "old setting removed")
+    t.eq(nav.migrated, 1)
+  end,
+
+  -- `routing = false` venait de l'assistant chez les joueurs sans SPF ; « Repère du jeu » était le défaut.
+  migrate_wizard_false = function(t)
+    local Q = loadSavedNav({ routing = false, display = "native" })
+    t.eq(Q.Settings:Get("nav.router"), "questify")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
+    t.eq(QuestifyDB.profiles.Default.settings.nav.routing, nil)
+    -- une seule fois : un « Repère du jeu » choisi après la migration reste
+    Q.Settings:Set("nav.display", "native")
+    local Q2 = Mock.reload()
+    t.eq(Q2.Settings:Get("nav.display"), "native", "migrated once")
+    t.eq(Q2.Settings:Get("nav.router"), "questify")
+  end,
+
+  -- Tous les profils, et les réglages d'avant les profils (QuestifyDB.settings).
+  migrate_every_profile = function(t)
+    local Q = Mock.loadAddon(TOC, { extraFiles = { GUIDES }, savedVariables = {
+      QuestifyDB = { settings = { nav = { routing = true } } } } })
+    t.eq(Q.Settings:Get("nav.router"), "spf")
+    t.eq(Q.Settings:Get("nav.display"), "arrow", "absent display: the new default")
+    Mock.reset()
+    Mock.loadAddon(TOC, { extraFiles = { GUIDES }, savedVariables = {
+      QuestifyDB = { profiles = { Default = { settings = {} },
+        Raid = { settings = { nav = { routing = true, display = "native" } } } } } } })
+    local raid = QuestifyDB.profiles.Raid.settings.nav
+    t.eq(raid.router, "spf"); t.eq(raid.display, "arrow"); t.eq(raid.routing, nil); t.eq(raid.migrated, 1)
+  end,
+
+  native_display = function(t)
+    local Q = loadNative()
     local calls = Mock.callsTo("C_Map.SetUserWaypoint")
     t.eq(#calls, 1, "one native waypoint at login")
     local point = calls[1].args[1]
@@ -76,7 +238,7 @@ return {
   -- au lieu de « Repère cartographique ».
   native_with_waypointui_names_the_pin = function(t)
     Mock.addons.WaypointUI = true
-    local Q = load()
+    local Q = loadNative()
     local call = Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation")
     t.ok(call, "WaypointUI called")
     local arg = call.args[1]
@@ -95,7 +257,7 @@ return {
 
   native_with_waypointui_refused_map = function(t)
     Mock.addons.WaypointUI = true
-    local Q = load()
+    local Q = loadNative()
     Q.Nav:SetTarget(99999, 10, 10, "Nowhere")   -- carte sans repère possible : WaypointUI renvoie nil
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
     t.eq(Mock.countCalls("WaypointUIAPI.Navigation.ClearUserNavigation"), 1, "old named pin removed")
@@ -108,7 +270,7 @@ return {
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
     t.eq(Mock.countCalls("TomTom:AddWaypoint"), 0)
     local routing, display = Q.Nav:Active()
-    t.eq(routing, nil); t.eq(display, "native")
+    t.eq(routing, "questify"); t.eq(display, "native")
     -- WaypointUI absent : même repli
     Mock.reset()
     local Q2 = load({ ["nav.display"] = "waypointui" })
@@ -119,7 +281,7 @@ return {
   shortestpath_retries_after_combat = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.navigateResult = false
-    local Q = load({ ["nav.routing"] = true })
+    local Q = load({ ["nav.router"] = "spf" })
     local first = Mock.callsTo("ShortestPathForever.API.Navigate")
     t.eq(#first, 1, "refused in combat")
     local a = first[1].args
@@ -138,7 +300,7 @@ return {
   shortestpath_retry_is_only_once = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.navigateResult = false
-    local Q = load({ ["nav.routing"] = true })
+    local Q = load({ ["nav.router"] = "spf" })
     Mock.fire("PLAYER_REGEN_ENABLED")
     Mock.fire("PLAYER_REGEN_ENABLED")
     Mock.fire("PLAYER_REGEN_ENABLED")
@@ -148,7 +310,7 @@ return {
   shortestpath_does_nothing_else = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.TomTom = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "tomtom" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "tomtom" })
     t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 1)
     t.eq(Mock.countCalls("TomTom:AddWaypoint"), 0, "ShortestPath handles the display")
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0)
@@ -161,7 +323,7 @@ return {
   shortestpath_seeds_a_named_waypointui_navigation = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    local Q = load({ ["nav.routing"] = true, ["nav.display"] = "waypointui" })
+    local Q = load({ ["nav.router"] = "spf", ["nav.display"] = "waypointui" })
     local seed = Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation")
     t.ok(seed, "WaypointUI navigation started")
     t.ok(seed.args[1].name:find("Dwarven Outfitters", 1, true), "named after the step")
@@ -181,13 +343,13 @@ return {
     Mock.reset()
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    load({ ["nav.routing"] = true })
+    load({ ["nav.router"] = "spf" })
     t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), 1)
     Mock.reset()
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
     Mock.addons.TomTom = true
-    load({ ["nav.routing"] = true, ["nav.display"] = "tomtom" })
+    load({ ["nav.router"] = "spf", ["nav.display"] = "tomtom" })
     t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), 0)
   end,
 
@@ -197,7 +359,7 @@ return {
   waypointui_input_scaled_for_shortestpath_turns = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    local Q = load({ ["nav.routing"] = true })
+    local Q = load({ ["nav.router"] = "spf" })
     local nav = WaypointUIAPI.Navigation
     -- le virage tel que ShortestPath le transmet (C_Map, 0-1)
     local res = nav.NewUserNavigation({ name = "Trajet vers Rejold", mapID = 1426, x = 0.3019, y = 0.4573 })
@@ -223,7 +385,7 @@ return {
   shortestpath_turns_are_silent_and_not_repeated = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    load({ ["nav.routing"] = true })
+    load({ ["nav.router"] = "spf" })
     local nav = WaypointUIAPI.Navigation
     local current
     nav.IsUserNavigationTracked = function() return current ~= nil end
@@ -251,7 +413,7 @@ return {
   shortestpath_does_not_reseed_a_tracking_waypointui = function(t)
     Mock.addons.ShortestPathForever = true
     Mock.addons.WaypointUI = true
-    load({ ["nav.routing"] = true })
+    load({ ["nav.router"] = "spf" })
     t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), 1, "first target: seeded")
     WaypointUIAPI.Navigation.IsUserNavigationTracked = function() return true end
     local navs = Mock.countCalls("ShortestPathForever.API.Navigate")
@@ -271,13 +433,13 @@ return {
   end,
 
   routing_without_shortestpath_uses_display = function(t)
-    local Q = load({ ["nav.routing"] = true })
+    local Q = loadNative({ ["nav.router"] = "spf" })
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
     t.eq((Q.Nav:Active()), nil)
   end,
 
   dedupe_same_target = function(t)
-    local Q = load()
+    local Q = loadNative()
     local before = Mock.countCalls("C_Map.SetUserWaypoint")
     Q.Nav:SetTarget(1426, 22.6, 71.4, "Camp")
     Q.Nav:SetTarget(1426, 22.6, 71.4, "Camp")
@@ -293,7 +455,7 @@ return {
   end,
 
   clear_clears_the_provider_in_use = function(t)
-    local Q = load()
+    local Q = loadNative()
     Q.Nav:Clear()
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1)
     Q.Nav:Clear()
@@ -313,14 +475,14 @@ return {
 
     Mock.reset()
     Mock.addons.ShortestPathForever = true
-    local Q4 = load({ ["nav.routing"] = true })
+    local Q4 = load({ ["nav.router"] = "spf" })
     Q4.Nav:Clear()
     local cancel = Mock.lastCall("ShortestPathForever.API.Cancel")
     t.ok(cancel and cancel.args[1] == "Questify", "Cancel(owner)")
   end,
 
   clears_when_there_is_no_current_step = function(t)
-    local Q = load()
+    local Q = loadNative()
     -- guide vide : plus d'étape courante
     useGuide(Q, "empty", { { "level", 1 } })
     t.eq(Q.Progress:Current(), nil)
@@ -331,7 +493,7 @@ return {
   end,
 
   step_without_target_clears = function(t)
-    local Q = load()
+    local Q = loadNative()
     useGuide(Q, "t_note", { { "note", "Read this" }, { "accept", 179 } })
     t.eq(Q.Progress:Current().step.action, "note")
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "a note has no target")
@@ -339,7 +501,7 @@ return {
 
   settings_change_switches_provider = function(t)
     Mock.addons.TomTom = true
-    local Q = load()
+    local Q = loadNative()
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1)
     Q.Settings:Set("nav.display", "tomtom")
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "old provider cleared")
@@ -354,29 +516,56 @@ return {
 
   settings_change_enables_routing = function(t)
     Mock.addons.ShortestPathForever = true
-    local Q = load()
+    local Q = loadNative()
     t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 0)
-    Q.Settings:Set("nav.routing", true)
+    Q.Settings:Set("nav.router", "spf")
     t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 1)
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "native marker removed")
-    Q.Settings:Set("nav.routing", false)
+    Q.Settings:Set("nav.router", "questify")
     t.eq(Mock.countCalls("ShortestPathForever.API.Cancel"), 1)
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 2)
+    Q.Settings:Set("nav.router", "none")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 3, "re-applied after the change")
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 1)
   end,
 
   detect_lists_installed_providers = function(t)
     local Q = load()
-    t.eq(Q.Nav:Detect(), { shortestpath = false, waypointui = false, tomtom = false, native = true })
+    t.eq(Q.Nav:Detect(), { questify = true, shortestpath = false, waypointui = false, tomtom = false, native = true })
     Mock.reset()
     Mock.addons.TomTom = true
     Mock.addons.ShortestPathForever = true
     local Q2 = load()
-    t.eq(Q2.Nav:Detect(), { shortestpath = true, waypointui = false, tomtom = true, native = true })
+    t.eq(Q2.Nav:Detect(), { questify = true, shortestpath = true, waypointui = false, tomtom = true, native = true })
     t.eq(Q2.Nav:ProviderLabel("native"), "Built-in waypoint")
+    t.eq(Q2.Nav:ProviderLabel("arrow"), "Questify arrow")
+    t.eq(Q2.Nav:ProviderLabel("questify"), "Questify Nav")
+  end,
+
+  -- Questify_Nav est chargé à la demande : installé et activé suffit (pas encore chargé).
+  detect_questify_nav_on_demand = function(t)
+    Mock.addons.Questify_Nav = "demand"
+    local Q = load()
+    t.eq(Q.Nav:Detect().questify, true)
+    t.eq((Q.Nav:Active()), "questify")
+    Mock.reset()
+    Mock.addons.Questify_Nav = "disabled"
+    local Q2 = load()
+    t.eq(Q2.Nav:Detect().questify, false)
+  end,
+
+  strings_nav_in_both_languages = function(t)
+    local captured
+    local fake = { RegisterStrings = function(_, tables) captured = tables end }
+    assert(loadfile(Mock.root .. "/Questify/Locales/StringsNav.lua"))("Questify", fake)
+    for k in pairs(captured.enUS) do t.ok(captured.frFR[k], "frFR has " .. k) end
+    for k in pairs(captured.frFR) do t.ok(captured.enUS[k], "enUS has " .. k) end
+    t.eq(captured.frFR.NAV_ROUTER_QUESTIFY, "Questify (intégré)")
+    t.eq(captured.frFR.UI_NAV_ARROW, "Flèche Questify")
   end,
 
   step_target_follows_the_current_step = function(t)
-    local Q = load()
+    local Q = loadNative()
     accept179()
     local call = Mock.lastCall("C_Map.SetUserWaypoint").args[1]
     -- cible du « complete 179 » : un loup, pas Sten Stoutarm
@@ -386,7 +575,7 @@ return {
   end,
 
   complete_target_is_recomputed_every_3s = function(t)
-    local Q = load()
+    local Q = loadNative()
     accept179()
     local before = Mock.countCalls("C_Map.SetUserWaypoint")
     Mock.advance(6)
@@ -402,7 +591,7 @@ return {
   end,
 
   spawn_under_the_player_skipped = function(t)
-    local Q = load()
+    local Q = loadNative()
     accept179()
     Mock.player.x, Mock.player.y = 22.58, 78.22   -- sur un point d'apparition de loup (22.57, 78.23)
     Mock.advance(3)
@@ -427,7 +616,7 @@ return {
   end,
 
   no_recompute_for_other_steps = function(t)
-    local Q = load()
+    local Q = loadNative()
     local before = Mock.countCalls("C_Map.SetUserWaypoint")
     Mock.player.x, Mock.player.y = 26.0, 74.0
     Mock.advance(30)
@@ -488,7 +677,7 @@ return {
   end,
 
   native_skips_maps_without_waypoints = function(t)
-    local Q = load()
+    local Q = loadNative()
     local before = Mock.countCalls("C_Map.SetUserWaypoint")
     Q.Nav:SetTarget(99999, 10, 10, "Nowhere")   -- carte inconnue : pas de marqueur possible
     t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), before)
@@ -496,7 +685,7 @@ return {
   end,
 
   invalid_target_clears = function(t)
-    local Q = load()
+    local Q = loadNative()
     Q.Nav:SetTarget(nil, 10, 10, "x")
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1)
     noNavErrors(t)
