@@ -257,6 +257,8 @@ function build.simulatePass(D, W, faction, ov, only, look, noFilters)
         local out = {}
         for k = i + 1, math.min(i + look.n, #path) do
           local L = look.looks[path[k].id]
+          -- chapitre sans séquence ou sans point de départ : la fenêtre s'arrête là (voulu, les suivants
+          -- ne sont pas vus non plus)
           if not L or not L.entry then break end
           out[#out + 1] = L
         end

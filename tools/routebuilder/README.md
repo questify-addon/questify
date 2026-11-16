@@ -460,7 +460,8 @@ within `HEARTH_INN` of their hubs become candidates too (an inn passed in this c
 one), and each plan also costs, for each following chapter, `order.hearthCost` of its sequence with the inn
 bound at the end of this chapter (no new bind there) and the cooldown left (after the stone is used for the
 trip to the next chapter: a full cooldown). The binds chosen this way are the `sethearth` steps written.
-`ROUTEBUILDER_HEARTH_LOOKAHEAD=0` restores the old calculation (one pass); the guide mode `Donjons`
+`--only` on a race chapter stops the first pass at that chapter, so its lookahead is empty: compare A/B with
+full builds. `ROUTEBUILDER_HEARTH_LOOKAHEAD=0` restores the old calculation (one pass); the guide mode `Donjons`
 (`build_dungeon_guides.lua`) keeps one pass. A build takes about twice as long.
 
 Measured on QuestieDB v1.0.15 (2026-11-16, without `--jit`), sum of the chapter minutes along each race path:
@@ -503,12 +504,13 @@ only through a different trunk (Redridge then grinds 116 mobs), +12 min in Darks
 ## Mount speed (`sim.walkSpeed`, 2026-11-16)
 
 The simulated character buys a mount: walking speed is `WALK` (7 yd/s) times 1.6 from level 40 and 2.0 from
-level 60 (`MOUNT`). The purchase is assumed in a city: neither the trip to the riding trainer nor its time is
-counted. The speed at the start of the chapter drives the choice of quests (isolated and marginal times,
+level 60 (`MOUNT`). Neither the purchase time nor the trip to the riding trainer is counted: a few seconds
+against -245 min, so they are left out (a deviation from the design note, which asked for the purchase time). The speed at the start of the chapter drives the choice of quests (isolated and marginal times,
 transport bonus, timed quests), the ordering (walking costs and sweep radii, so the yards stay the same), the
 woven class quests and the bind plan; the simulated walk (`sim.travel`, `sim.route`, flight paths picked up
-on the way) follows the level of the moment. Spawn spread inside an objective site stays at walking speed
-(the fights are on foot). `travel.lua` (the times of `choices`) knows no level and stays at 7 yd/s.
+on the way) follows the level of the moment. Two movements stay at walking speed (the fights are on foot):
+the spawn spread inside an objective site, and the walk between the sites of one quest merged into one task
+(`MERGE_SITES`, at most 150 yd). `travel.lua` (the times of `choices`) knows no level and stays at 7 yd/s.
 `ROUTEBUILDER_NO_MOUNT=1` walks at 7 yd/s throughout (comparison).
 
 Measured on QuestieDB v1.0.15 (2026-11-16, without `--jit`, old bind plan): -245 min on every race path of both

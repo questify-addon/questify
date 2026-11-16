@@ -21,7 +21,8 @@ local sim = {}
 sim.CONST = {
   WALK = 7,               -- yards/s à pied
   -- monture achetée par le personnage simulé : vitesse de marche multipliée à partir de ce niveau (60 % au
-  -- niveau 40, 100 % au niveau 60 ; achat supposé en ville, trajet jusqu'au maître de monte non compté).
+  -- niveau 40, 100 % au niveau 60 ; temps d'achat et trajet jusqu'au maître de monte non comptés : quelques
+  -- secondes, écart assumé à la note de conception).
   -- ROUTEBUILDER_NO_MOUNT=1 : toujours à pied (mesure avant / après)
   MOUNT = { { level = 40, mult = 1.6 }, { level = 60, mult = 2.0 } },
   KILL_TIME = 20,         -- s par mob tué, repos compris
@@ -904,6 +905,7 @@ local function analyse(ctx, q, classMode)
     local merged = false
     for _, g in ipairs(groups) do
       if yards(g.pos, s.pos) <= C.MERGE_SITES then
+        -- marche entre sites fusionnés (au plus MERGE_SITES yards) : à pied, sans monture (combats à pied)
         g.dur = g.dur + s.dur + yards(g.pos, s.pos) / C.WALK
         for _, k in ipairs(s.kills) do g.kills[#g.kills + 1] = k end
         for _, o in ipairs(s.objs) do g.objs[#g.objs + 1] = o end
@@ -2623,6 +2625,8 @@ function sim.planHearth(ctx, ordered, hubs, start, finish, fopts)
       local c, _, _, lf = orderm.hearthCost(L.tasks, { start = L.entry, dist = L.dist, inn = fin.inn, ready = ready,
         cd = o.cd, use = o.use, real = o.real, bindDur = o.bindDur, dur = o.dur })
       total = total + c
+      -- chapitre suivant de l'anticipation : le trajet entre les deux chapitres n'est pas compté
+      -- (approximation : la recharge écoulée est sous-estimée)
       ready = math.max(0, lf.ready - lf.time)
     end
     return total
