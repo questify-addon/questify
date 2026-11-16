@@ -886,6 +886,7 @@ end
 ---------------------------------------------------------------------------
 local AH_ICON = "Interface\\Icons\\INV_Misc_Coin_01"
 local AH_HINT_H = 14
+local AH_HINT_INDENT = 10   -- retrait de la ligne « à l'hôtel des ventes », comme les monstres (UI/ObjectiveRows.lua)
 
 local function auctionPanel() return Q.UI.AuctionPanel end
 
@@ -986,8 +987,8 @@ function Tracker:LayoutAuctionHint(i, ah, yy)
   local h = hintRow(self, i)
   local row = h.row
   row:ClearAllPoints()
-  row:SetPoint("TOPLEFT", self.current, "TOPLEFT", ICON_COL + 2 + MOB_INDENT, -yy - 1)
-  row:SetWidth(textWidth() - MOB_INDENT)
+  row:SetPoint("TOPLEFT", self.current, "TOPLEFT", ICON_COL + 2 + AH_HINT_INDENT, -yy - 1)
+  row:SetWidth(textWidth() - AH_HINT_INDENT)
   h.icon:SetTexture(Q.AuctionItems:Icon(ah.item))
   if ah.approx then
     h.text:SetText(string.format(L.AH_HINT_APPROX, ah.name or ""))
