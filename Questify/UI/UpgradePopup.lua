@@ -87,12 +87,9 @@ end
 -- sacs (arme à deux mains portée).
 function Popup:Evaluate(link)
   local item = Q.Rewards:ReadItem(link)
-  if not item.equipLoc and not item.loaded then return "wait" end   -- objet encore inconnu du client
-  if not item.equipLoc or item.equipLoc == "" then return "no" end   -- pas un équipement
-  if not item.loaded then return "wait" end
-  local gain, pair = Q.Rewards:UpgradeGain(item, Q.Player)
-  if gain and gain > Q.Rewards.EPSILON then return "upgrade", gain, item, pair end
-  return "no"
+  local verdict, gain, pair = Q.Rewards:UpgradeVerdict(item, Q.Player)
+  if verdict == "upgrade" then return "upgrade", gain, item, pair end
+  return verdict
 end
 
 local function consider(link, tries)

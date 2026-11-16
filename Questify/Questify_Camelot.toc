@@ -100,6 +100,7 @@ UI\MobPanel.lua
 UI\Nameplates.lua
 UI\ObjectGlow.lua
 UI\UpgradePopup.lua
+UI\RewardMarks.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
 UI\TrainerPanel.lua

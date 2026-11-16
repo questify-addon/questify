@@ -258,21 +258,51 @@ local function readItem(link)
   return out
 end
 
--- CollectChoices() -> { { index, link, equipLoc, classID, subclassID, minLevel, sellPrice, stats, loaded } }
--- Lit les choix de la fenêtre de récompense en cours.
-function Rewards:CollectChoices()
+-- Choix de la fenêtre du PNJ (fin de quête, détail) ou du journal de quêtes (fromLog) :
+-- nombre, puis lien et quantité du choix i.
+local function numChoices(fromLog)
+  if not fromLog then return GetNumQuestChoices and GetNumQuestChoices() or 0 end
+  if not GetNumQuestLogChoices then return 0 end
+  local questID = C_QuestLog and C_QuestLog.GetSelectedQuest and C_QuestLog.GetSelectedQuest()
+  return GetNumQuestLogChoices(questID, true) or 0
+end
+
+local function choiceInfo(i, fromLog)
+  local link, count
+  if fromLog then
+    link = GetQuestLogItemLink and GetQuestLogItemLink("choice", i)
+    if GetQuestLogChoiceInfo then count = select(3, GetQuestLogChoiceInfo(i)) end
+  else
+    link = GetQuestItemLink and GetQuestItemLink("choice", i)
+    if GetQuestItemInfo then count = select(3, GetQuestItemInfo("choice", i)) end
+  end
+  count = tonumber(count)
+  return link, (count and count > 0) and count or 1
+end
+
+-- CollectChoices(fromLog) -> { { index, link, count, equipLoc, classID, subclassID, minLevel, sellPrice,
+-- stats, loaded, priced } }
+-- Lit les choix de la fenêtre de récompense en cours (du journal de quêtes avec fromLog).
+-- priced : le prix de revente est connu (objet en cache) ; loaded : les stats aussi.
+function Rewards:CollectChoices(fromLog)
   local list = {}
-  local n = GetNumQuestChoices and GetNumQuestChoices() or 0
-  for i = 1, n do
-    local link = GetQuestItemLink("choice", i)
+  for i = 1, numChoices(fromLog) do
+    local link, count = choiceInfo(i, fromLog)
+    if Q.Util.IsSecret(link) then link = nil end
     local item = readItem(link)
     list[#list + 1] = {
-      index = i, link = link, name = item.name, equipLoc = item.equipLoc, classID = item.classID,
+      index = i, link = link, count = count, name = item.name, equipLoc = item.equipLoc, classID = item.classID,
       subclassID = item.subclassID, minLevel = item.minLevel, sellPrice = item.sellPrice, stats = item.stats,
-      loaded = item.loaded,
+      loaded = item.loaded, priced = item.name ~= nil,
     }
   end
   return list
+end
+
+-- Value(choice) -> prix de revente du choix en cuivre : prix unitaire × quantité.
+function Rewards.Value(choice)
+  if type(choice) ~= "table" then return 0 end
+  return (tonumber(choice.sellPrice) or 0) * (tonumber(choice.count) or 1)
 end
 
 -- Vrai quand toutes les infos des choix sont en cache.
@@ -530,6 +560,23 @@ function Rewards:UpgradeGain(item, player, equipped, bags)
 end
 Rewards.EPSILON = EPSILON
 
+-- UpgradeVerdict(item, player, equipped, bags) -> "upgrade", gain, pair | "no" | "wait"
+-- Test d'amélioration commun : choix de récompense (marques, UI/RewardMarks.lua), objets reçus
+-- (UI/UpgradePopup.lua) et objets ramassés. item : objet lu par ReadItem (ou choix de
+-- CollectChoices) ; equipped, bags : comme UpgradeGain.
+--   "upgrade" : gain de score > 0 ; pair comme UpgradeGain (autre moitié prise dans les sacs) ;
+--   "no"      : pas un équipement, pas portable par la classe à ce niveau, ou pas meilleur ;
+--   "wait"    : objet pas encore en cache (le client le chargera, GET_ITEM_INFO_RECEIVED).
+function Rewards:UpgradeVerdict(item, player, equipped, bags)
+  if type(item) ~= "table" then return "no" end
+  if not item.equipLoc and not item.loaded then return "wait" end   -- objet encore inconnu du client
+  if not item.equipLoc or item.equipLoc == "" then return "no" end   -- pas un équipement
+  if not item.loaded then return "wait" end
+  local gain, pair = self:UpgradeGain(item, player, equipped, bags)
+  if gain and gain > EPSILON then return "upgrade", gain, pair end
+  return "no"
+end
+
 -- FitsMain(item, player) / FitsOff(item, player) : l'objet, portable par la classe, peut aller en
 -- main droite (arme à une main) / en main gauche (bouclier, objet de main gauche, ou arme pour une
 -- classe qui porte deux armes).
@@ -598,13 +645,29 @@ end
 ---------------------------------------------------------------------------
 -- Choix
 ---------------------------------------------------------------------------
--- Pick(choices, player, equipped, bags) -> index, reasonKey, detail
+-- mostValuable(choices) -> le choix le plus cher à la revente (prix × quantité ; le premier en cas
+-- d'égalité), sa position.
+local function mostValuable(choices)
+  local top, topPos
+  for pos, c in ipairs(choices) do
+    if not top or Rewards.Value(c) > Rewards.Value(top) then top, topPos = c, pos end
+  end
+  return top, topPos
+end
+
+-- Pick(choices, player, equipped, bags, mode) -> index, reasonKey, detail
 --   "upgrade" : meilleure amélioration ; detail = gain de score
 --   "vendor"  : rien n'améliore ; le plus cher à la revente ; detail = prix en cuivre
+--   "value"   : mode "value" (réglage rewardPick) : le plus cher à la revente, amélioration ou
+--               non ; detail = prix en cuivre
 -- player = { classFile, level }. equipped, bags : comme UpgradeGain (par défaut l'inventaire et les
--- sacs du joueur, lus une fois). Renvoie nil sans choix.
-function Rewards:Pick(choices, player, equipped, bags)
+-- sacs du joueur, lus une fois). mode : "upgrade" (défaut) ou "value". Renvoie nil sans choix.
+function Rewards:Pick(choices, player, equipped, bags, mode)
   if type(choices) ~= "table" or #choices == 0 then return nil end
+  if mode == "value" then
+    local top, topPos = mostValuable(choices)
+    return top.index or topPos, "value", self.Value(top)
+  end
   player = player or Q.Player or {}
   local read = slotReader(equipped)
   local equippedCache = {}
@@ -625,7 +688,7 @@ function Rewards:Pick(choices, player, equipped, bags)
     if gain then
       if gain > EPSILON then
         if not best or gain > bestGain + EPSILON
-          or (math.abs(gain - bestGain) <= EPSILON and (c.sellPrice or 0) > (best.sellPrice or 0)) then
+          or (math.abs(gain - bestGain) <= EPSILON and self.Value(c) > self.Value(best)) then
           best, bestGain, bestPos, bestPair = c, gain, pos, pair
         end
       end
@@ -637,11 +700,47 @@ function Rewards:Pick(choices, player, equipped, bags)
     return best.index or bestPos, "upgrade", bestGain
   end
 
-  local top, topPos
-  for pos, c in ipairs(choices) do
-    if not top or (c.sellPrice or 0) > (top.sellPrice or 0) then top, topPos = c, pos end
+  local top, topPos = mostValuable(choices)
+  return top.index or topPos, "vendor", self.Value(top)
+end
+
+---------------------------------------------------------------------------
+-- Marques des choix (UI/RewardMarks.lua)
+---------------------------------------------------------------------------
+-- Marks(choices, player, equipped, bags) -> { [index du choix] = { upgrade, gain, verdict, coin } }
+--   upgrade : le choix améliore l'équipé (UpgradeVerdict) ; chaque amélioration a la sienne ;
+--   verdict : "upgrade", "no" ou "wait" (pas encore en cache : ni flèche ni « pas une amélioration ») ;
+--   coin    : le plus cher à la revente (prix × quantité), à partir de deux choix, quand tous les
+--             prix sont connus et que le plus haut n'est pas nul ; les ex æquo l'ont tous.
+-- Indépendantes : un même choix peut avoir la flèche et la pièce.
+function Rewards:Marks(choices, player, equipped, bags)
+  local out = {}
+  if type(choices) ~= "table" then return out end
+  player = player or Q.Player or {}
+  local read = slotReader(equipped)
+  local equippedCache = {}
+  local function cached(slot)
+    local v = equippedCache[slot]
+    if v == nil then v = read(slot) or false; equippedCache[slot] = v end
+    return v or nil
   end
-  return top.index or topPos, "vendor", top.sellPrice or 0
+  if not bags then
+    local main = cached(16)
+    bags = (main and main.equipLoc == "INVTYPE_2HWEAPON") and self:BagItems() or {}
+  end
+  local priced, top = #choices >= 2, 0
+  for pos, c in ipairs(choices) do
+    local verdict, gain = self:UpgradeVerdict(c, player, cached, bags)
+    out[c.index or pos] = { verdict = verdict, upgrade = verdict == "upgrade", gain = gain, coin = false }
+    if c.priced == false then priced = false end
+    top = math.max(top, self.Value(c))
+  end
+  if priced and top > 0 then
+    for pos, c in ipairs(choices) do
+      if self.Value(c) == top then out[c.index or pos].coin = true end
+    end
+  end
+  return out
 end
 
 ---------------------------------------------------------------------------
@@ -664,5 +763,6 @@ function Rewards:Describe(reasonKey, link, detail)
   local L = Q.L
   local shown = link or "?"
   if reasonKey == "upgrade" then return string.format(L.REWARD_UPGRADE, shown) end
+  if reasonKey == "value" then return string.format(L.REWARD_VALUE, shown, self.FormatMoney(detail)) end
   return string.format(L.REWARD_VENDOR, shown, self.FormatMoney(detail))
 end

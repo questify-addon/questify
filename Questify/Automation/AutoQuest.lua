@@ -139,7 +139,8 @@ Q:RegisterEvent("QUEST_PROGRESS", function()
   if IsQuestCompletable() and AutoQuest:IsRouteQuest(GetQuestID()) then CompleteQuest() end
 end)
 
--- Récompense : un seul choix, ou le meilleur selon Q.Rewards.
+-- Récompense : un seul choix, ou le meilleur selon Q.Rewards (réglage rewardPick : la meilleure
+-- amélioration, sinon le plus cher ; ou toujours le plus cher).
 local pending = 0   -- jeton de la relecture différée ; changé à chaque nouvelle fenêtre
 
 -- La fenêtre de récompense montre toujours la quête attendue, et l'automatisation reste voulue.
@@ -166,7 +167,7 @@ local function chooseReward(questId, n, retried)
     end)
     return
   end
-  local index, reason, detail = Q.Rewards:Pick(choices, Q.Player)
+  local index, reason, detail = Q.Rewards:Pick(choices, Q.Player, nil, nil, Q.Settings:Get("rewardPick"))
   if not index then return end
   local link
   for _, c in ipairs(choices) do
