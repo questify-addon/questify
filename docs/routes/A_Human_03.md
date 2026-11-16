@@ -1,6 +1,6 @@
 # A_Human_03 — Westfall
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Human.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Human.
 
 | Item | Value |
 |---|---|
@@ -15,7 +15,7 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Median ratio (XP/s) | 5.22 |
 | Grinding (level steps) | ~40 mobs |
 | Level band | grinding 46 mobs with quests up to level 19: band widened to level 22 |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 

@@ -1,6 +1,6 @@
 # A_DwarfGnome_04 — Westfall
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -8,12 +8,12 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 14.00 -> 16.96 |
 | Time | 133 min |
 | XP gained | 39330 |
-| XP/h | 17712 |
-| Steps | 60 |
+| XP/h | 17717 |
+| Steps | 62 |
 | Quests turned in | 18 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 6.39 |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | bound to Innkeeper Heather after task 13; 1 return(s) planned, 1 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -159,7 +159,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 11 | F |  | flight path | 1436 | 56.5, 52.6 | 119 |  |
 | 12 | A | 153 | Red Leather Bandanas | 1436 | 54.0, 53.0 | 90 |  |
 | 13 | A | 92742 | Testing the Wells | 1436 | 52.5, 53.0 | 52 |  |
-| 14 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 0 |  |
+| 14 | A | 92744 | Murloc Gills | 1436 | 52.5, 53.0 | 21 |  |
 | 15 | O | 92742 | Testing the Wells | 1436 | 46.1, 38.1 | 412 |  |
 | 16 | O | 12 | The People's Militia | 1436 | 31.6, 33.8 | 516 |  |
 | 17 | O | 92744 | Murloc Gills | 1436 | 34.5, 17.0 | 404 |  |
@@ -193,10 +193,10 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 45 | A | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 0 | near #28 (went 1101 yd away) |
 | 46 | O | 92747 | Moonbrook Espionage | 1436 | 43.1, 68.8 | 494 | near #29 (went 1176 yd away) |
 | 47 | T | 103 | Keeper of the Flame | 1436 | 30.0, 86.0 | 608 | near #30 (went 1697 yd away) |
-| 48 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 802 |  |
-| 49 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 551 | near #45 (went 1101 yd away) |
-| 50 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #45 (went 1101 yd away) |
-| 51 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 185 | near #43 (went 1286 yd away) |
+| 48 | T | 92747 | Moonbrook Espionage | 1436 | 52.5, 53.0 | 1101 | near #45 (went 1101 yd away) |
+| 49 | A | 92748 | Explosive Consultation | 1436 | 52.5, 53.0 | 0 | near #45 (went 1101 yd away) |
+| 50 | O | 14 | The People's Militia | 1436 | 52.1, 76.6 | 551 |  |
+| 51 | T | 14 | The People's Militia | 1436 | 56.3, 47.5 | 694 | near #43 (went 1286 yd away) |
 | 52 | T | 9 | The Killing Fields | 1436 | 56.0, 31.2 | 380 | near #7 (went 1569 yd away) |
 | 53 | T | 22 | Goretusk Liver Pie | 1436 | 56.4, 30.5 | 21 | near #7 (went 1591 yd away) |
 | 54 | T | 151 | Poor Old Blanchy | 1436 | 59.9, 19.4 | 286 | near #21 (went 1873 yd away) |
@@ -207,7 +207,7 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 59 | A | 2040 | Underground Assault | 1453 | 62.6, 34.1 | 154 |  |
 | 60 | T | 92748 | Explosive Consultation | 1453 | 61.9, 30.6 | 43 |  |
 
-Walking between tasks: 14939 yd (~36 min at 7 yd/s).
+Walking between tasks: 15769 yd (~38 min at 7 yd/s).
 
 ## Qualité
 
@@ -229,6 +229,8 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 - step 1: `fp 1453 71.29 72.23`
 - step 9: `fp 1436 56.55 52.64`
+- step 15: `sethearth 1436 52.86 53.71`
+- step 50: `hearth 1436`
 
 ## Warnings
 

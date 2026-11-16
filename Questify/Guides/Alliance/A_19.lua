@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 62 étapes, niveau final 46.00, ~49926 xp/h, 137 min.
+-- Simulation : 62 étapes, niveau final 46.00, ~61827 xp/h, 103 min.
 Q:RegisterGuide({
   id = "A_19",
   title = "Feralas",
   faction = "Alliance",
   minLevel = 45, maxLevel = 46,
   next = "A_20",
-  sim = { steps = 62, endLevel = 46.00, xpPerHour = 49926, minutes = 137 },
+  sim = { steps = 62, endLevel = 46.00, xpPerHour = 61827, minutes = 103 },
   steps = {
     { "note", "Not running Razorfen Downs? Abandon The Coldbringer's Eye", optional = true, dungeon = "Razorfen Downs" },
     { "fp", 1449, 45.23, 5.83 }, -- point de vol
@@ -20,7 +20,7 @@ Q:RegisterGuide({
     { "accept", 2970 }, -- Doling Justice (lvl 47, ~3150 xp, sim lvl 45)
     { "accept", 7721 }, -- Fuel for the Zapping (lvl 48, ~4400 xp, sim lvl 45)
     { "fp", 1444, 30.24, 43.25 }, -- point de vol
-    { "accept", 2821 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
+    { "accept", 2982 }, -- The High Wilderness (lvl 44, ~3750 xp, sim lvl 45)
     { "accept", 2866 }, -- The Ruins of Solarsal (lvl 43, ~2700 xp, sim lvl 45)
     { "accept", 4124 }, -- The Missing Courier (lvl 43, ~360 xp, sim lvl 45)
     { "turnin", 2866, xp = 2700 }, -- The Ruins of Solarsal (lvl 43, ~2700 xp, sim lvl 45)
@@ -30,22 +30,22 @@ Q:RegisterGuide({
     { "turnin", 3130, xp = 360 }, -- Against the Hatecrest (lvl 43, ~360 xp, sim lvl 45)
     { "accept", 2869 }, -- Against the Hatecrest (lvl 43, ~2700 xp, sim lvl 45)
     { "complete", 2869, at = { 1444, 27.75, 53.32 } }, -- Against the Hatecrest (lvl 43, ~2700 xp, sim lvl 45)
-    { "turnin", 2869, xp = 2700 }, -- Against the Hatecrest (lvl 43, ~2700 xp, sim lvl 45)
-    { "accept", 2870 }, -- Against Lord Shalzaru (lvl 45, ~2900 xp, sim lvl 45)
     { "turnin", 4124, xp = 360 }, -- The Missing Courier (lvl 43, ~360 xp, sim lvl 45)
     { "accept", 4125 }, -- The Missing Courier (lvl 43, ~2700 xp, sim lvl 45)
-    { "accept", 2982 }, -- The High Wilderness (lvl 44, ~3750 xp, sim lvl 45)
+    { "accept", 92858 }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
+    { "accept", 2821 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
+    { "turnin", 2869, xp = 2700 }, -- Against the Hatecrest (lvl 43, ~2700 xp, sim lvl 45)
+    { "accept", 2870 }, -- Against Lord Shalzaru (lvl 45, ~2900 xp, sim lvl 45)
     { "complete", 2870, at = { 1444, 28.5, 70.46 } }, -- Against Lord Shalzaru (lvl 45, ~2900 xp, sim lvl 45)
     { "turnin", 4125, xp = 2700 }, -- The Missing Courier (lvl 43, ~2700 xp, sim lvl 45)
     { "accept", 4127 }, -- Boat Wreckage (lvl 44, ~375 xp, sim lvl 45)
     { "complete", 2821, at = { 1444, 52.05, 58.58 } }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
     { "turnin", 4127, xp = 375 }, -- Boat Wreckage (lvl 44, ~375 xp, sim lvl 45)
     { "accept", 4129 }, -- The Knife Revealed (lvl 44, ~375 xp, sim lvl 45)
-    { "accept", 92858 }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
-    { "turnin", 2821, xp = 4050 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
-    { "accept", 7733 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
     { "turnin", 4129, xp = 375 }, -- The Knife Revealed (lvl 44, ~375 xp, sim lvl 45)
     { "accept", 4130 }, -- Psychometric Reading (lvl 44, ~375 xp, sim lvl 45)
+    { "turnin", 2821, xp = 4050 }, -- The Mark of Quality (lvl 46, ~4050 xp, sim lvl 45)
+    { "accept", 7733 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
     { "turnin", 4130, xp = 375 }, -- Psychometric Reading (lvl 44, ~375 xp, sim lvl 45)
     { "accept", 4131 }, -- The Woodpaw Gnolls (lvl 44, ~2800 xp, sim lvl 45)
     { "complete", 7721, at = { 1444, 48.3, 52.09 } }, -- Fuel for the Zapping (lvl 48, ~4400 xp, sim lvl 45)
@@ -67,11 +67,11 @@ Q:RegisterGuide({
     { "accept", 4266 }, -- A Hero's Welcome (lvl 46, ~6050 xp, sim lvl 45)
     { "turnin", 2982, xp = 3750 }, -- The High Wilderness (lvl 44, ~3750 xp, sim lvl 45)
     { "turnin", 2870, xp = 2900 }, -- Against Lord Shalzaru (lvl 45, ~2900 xp, sim lvl 45)
-    { "turnin", 92858, xp = 4450 }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
     { "accept", 2871 }, -- Delivering the Relic (lvl 45, ~3900 xp, sim lvl 45)
+    { "turnin", 92858, xp = 4450 }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
     { "turnin", 4266, xp = 6050 }, -- A Hero's Welcome (lvl 46, ~6050 xp, sim lvl 45)
     { "turnin", 2871, xp = 3900 }, -- Delivering the Relic (lvl 45, ~3900 xp, sim lvl 45)
     { "turnin", 7733, xp = 4400 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
-    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 62 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
+    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 32 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
   },
 })

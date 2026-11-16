@@ -2,16 +2,23 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 35 étapes, niveau final 43.01, ~52011 xp/h, 86 min.
+-- Simulation : 43 étapes, niveau final 43.00, ~53063 xp/h, 114 min.
 Q:RegisterGuide({
   id = "H_14",
   title = "Swamp of Sorrows",
   faction = "Horde",
   minLevel = 42, maxLevel = 43,
   next = "H_15",
-  sim = { steps = 35, endLevel = 43.01, xpPerHour = 52011, minutes = 86 },
+  sim = { steps = 43, endLevel = 43.00, xpPerHour = 53063, minutes = 114 },
   steps = {
-    { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 26.87, 77.1, note = "Flight master" }, -- déplacement
+    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
+    { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 42)
+    { "accept", 625 }, -- Cortello's Riddle (lvl 43, ~0 xp, sim lvl 42)
+    { "accept", 93429 }, -- Blood of My Blood (lvl 35, ~1650 xp, sim lvl 42)
+    { "turnin", 93429, xp = 1650 }, -- Blood of My Blood (lvl 35, ~1650 xp, sim lvl 42)
+    { "accept", 1389 }, -- Draenethyst Crystals (lvl 35, ~1650 xp, sim lvl 42)
+    { "accept", 93430 }, -- Taking the Bait Back (lvl 35, ~1230 xp, sim lvl 42)
     { "fp", 1435, 46.07, 54.83 }, -- point de vol
     { "accept", 698 }, -- Lack of Surplus (lvl 40, ~3150 xp, sim lvl 42)
     { "accept", 1430 }, -- Fresh Meat (lvl 44, ~3750 xp, sim lvl 42)
@@ -36,15 +43,16 @@ Q:RegisterGuide({
     { "turnin", 1428, xp = 3900 }, -- Continued Threat (lvl 45, ~3900 xp, sim lvl 42)
     { "complete", 1424, at = { 1435, 72.58, 56.48 } }, -- Pool of Tears (lvl 43, ~4450 xp, sim lvl 42)
     { "accept", 1393 }, -- Galen's Escape (lvl 38, ~2850 xp, sim lvl 42)
+    { "complete", 1389, at = { 1435, 63.27, 22.35 } }, -- Draenethyst Crystals (lvl 35, ~1650 xp, sim lvl 42)
     { "complete", 1393, at = { 1435, 53.08, 29.55 } }, -- Galen's Escape (lvl 38, ~2850 xp, sim lvl 42)
+    { "complete", 93430, at = { 1435, 54.49, 30.2 } }, -- Taking the Bait Back (lvl 35, ~1230 xp, sim lvl 42)
     { "accept", 1392, at = { 1435, 54.9, 34.1 }, note = "Loot Noboru's Cudgel to start the quest (93.3 % drop: about 2 kills)" }, -- Noboru the Cudgel (lvl 39, ~2250 xp, sim lvl 42)
     { "turnin", 1393, xp = 2850 }, -- Galen's Escape (lvl 38, ~2850 xp, sim lvl 42)
     { "turnin", 1424, xp = 4450 }, -- Pool of Tears (lvl 43, ~4450 xp, sim lvl 42)
     { "turnin", 1430, xp = 3750 }, -- Fresh Meat (lvl 44, ~3750 xp, sim lvl 42)
-    { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 42)
-    { "accept", 625 }, -- Cortello's Riddle (lvl 43, ~0 xp, sim lvl 42)
-    { "accept", 93429 }, -- Blood of My Blood (lvl 35, ~1650 xp, sim lvl 42)
-    { "turnin", 93429, xp = 1650 }, -- Blood of My Blood (lvl 35, ~1650 xp, sim lvl 42)
+    { "turnin", 1389, xp = 1650 }, -- Draenethyst Crystals (lvl 35, ~1650 xp, sim lvl 42)
     { "turnin", 1392, xp = 2250 }, -- Noboru the Cudgel (lvl 39, ~2250 xp, sim lvl 42)
+    { "turnin", 93430, xp = 1230 }, -- Taking the Bait Back (lvl 35, ~1230 xp, sim lvl 42)
+    { "level", 43, at = { 1435, 54.49, 30.2 }, note = "About 93 more mobs near the last objective" }, -- farm de niveau
   },
 })

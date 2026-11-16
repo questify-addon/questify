@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
 -- Simulation : 71 étapes, niveau final 22.44, ~25003 xp/h, 163 min.
 Q:RegisterGuide({
   id = "A_02",
@@ -14,7 +14,7 @@ Q:RegisterGuide({
     { "fp", 1440, 34.41, 47.99 }, -- point de vol
     { "accept", 991 }, -- Raene's Cleansing (lvl 19, ~1450 xp, sim lvl 19)
     { "sethearth", 1440, 36.99, 49.22 }, -- lier la pierre de foyer
-    { "turnin", 990, xp = 365 }, -- Trek to Ashenvale (lvl 19, ~365 xp, sim lvl 19)
+    { "turnin", 990, xp = 365, race = { "Dwarf", "Gnome", "Human", "Skyborne" } }, -- Trek to Ashenvale (lvl 19, ~365 xp, sim lvl 19)
     { "accept", 1008 }, -- The Zoram Strand (lvl 19, ~1450 xp, sim lvl 19)
     { "accept", 1070 }, -- On Guard in Stonetalon (lvl 21, ~830 xp, sim lvl 19)
     { "turnin", 991, xp = 1450 }, -- Raene's Cleansing (lvl 19, ~1450 xp, sim lvl 19)
@@ -25,7 +25,7 @@ Q:RegisterGuide({
     { "accept", 970 }, -- The Tower of Althalaxx (lvl 21, ~1650 xp, sim lvl 20)
     { "accept", 1010 }, -- Bathran's Hair (lvl 20, ~780 xp, sim lvl 20)
     { "turnin", 5713, xp = 1050 }, -- One Shot.  One Kill. (lvl 15, ~1050 xp, sim lvl 20)
-    { "turnin", 5321, xp = 1550 }, -- The Sleeper Has Awakened (lvl 20, ~1550 xp, sim lvl 20)
+    { "turnin", 5321, xp = 1550, race = { "Dwarf", "Gnome", "Human", "Skyborne" } }, -- The Sleeper Has Awakened (lvl 20, ~1550 xp, sim lvl 20)
     { "complete", 1010, at = { 1440, 31.5, 23.36 } }, -- Bathran's Hair (lvl 20, ~780 xp, sim lvl 20)
     { "complete", 970, at = { 1440, 31.4, 30.64 } }, -- The Tower of Althalaxx (lvl 21, ~1650 xp, sim lvl 20)
     { "turnin", 1010, xp = 780 }, -- Bathran's Hair (lvl 20, ~780 xp, sim lvl 20)

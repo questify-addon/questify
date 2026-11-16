@@ -1,6 +1,6 @@
 # A_DwarfGnome_03 — Loch Modan
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
@@ -8,12 +8,12 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 12.00 -> 14.26 |
 | Time | 73 min |
 | XP gained | 23220 |
-| XP/h | 19003 |
-| Steps | 60 |
+| XP/h | 19166 |
+| Steps | 59 |
 | Quests turned in | 19 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 4.73 |
-| Hearthstone | bound to Innkeeper Hearthstove after task 1; 1 return(s) planned, 1 bundle(s) |
+| Hearthstone | no new bind; 1 return(s) planned, 1 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -517,16 +517,16 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 416 | Rat Catching | 1432 | 32.6, 49.7 | 0 |  |
-| 2 | A | 1339 | Mountaineer Stormpike's Task | 1432 | 32.6, 49.7 | 83 |  |
-| 3 | A | 298 | Excavation Progress Report | 1432 | 65.9, 65.6 | 963 |  |
-| 4 | T | 298 | Excavation Progress Report | 1432 | 37.2, 47.4 | 859 | near #2 (went 859 yd away) |
-| 5 | A | 301 | Report to Ironforge | 1432 | 37.2, 47.4 | 0 | near #2 (went 859 yd away) |
-| 6 | A | 6387 | Honor Students | 1432 | 37.0, 47.8 | 9 |  |
-| 7 | T | 6387 | Honor Students | 1432 | 33.9, 51.0 | 102 |  |
-| 8 | A | 6391 | Ride to Ironforge | 1432 | 33.9, 51.0 | 0 |  |
-| 9 | T | 1339 | Mountaineer Stormpike's Task | 1432 | 24.8, 18.4 | 650 |  |
-| 10 | A | 307 | Filthy Paws | 1432 | 24.8, 18.4 | 0 |  |
+| 1 | A | 298 | Excavation Progress Report | 1432 | 65.9, 65.6 | 896 |  |
+| 2 | T | 298 | Excavation Progress Report | 1432 | 37.2, 47.4 | 859 |  |
+| 3 | A | 301 | Report to Ironforge | 1432 | 37.2, 47.4 | 0 |  |
+| 4 | A | 6387 | Honor Students | 1432 | 37.0, 47.8 | 9 |  |
+| 5 | T | 6387 | Honor Students | 1432 | 33.9, 51.0 | 102 |  |
+| 6 | A | 6391 | Ride to Ironforge | 1432 | 33.9, 51.0 | 0 |  |
+| 7 | A | 1339 | Mountaineer Stormpike's Task | 1432 | 32.6, 49.7 | 42 |  |
+| 8 | A | 416 | Rat Catching | 1432 | 32.6, 49.7 | 0 |  |
+| 9 | A | 307 | Filthy Paws | 1432 | 24.8, 18.4 | 616 |  |
+| 10 | T | 1339 | Mountaineer Stormpike's Task | 1432 | 24.8, 18.4 | 0 |  |
 | 11 | A | 1338 | Stormpike's Order | 1432 | 24.8, 18.4 | 0 |  |
 | 12 | O | 307 | Filthy Paws | 1432 | 35.5, 24.6 | 317 |  |
 | 13 | O | 416 | Rat Catching | 1432 | 36.8, 22.2 | 56 |  |
@@ -556,15 +556,15 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 37 | A | 454 | After the Ambush | 1432 | 52.2, 69.3 | 0 |  |
 | 38 | T | 454 | After the Ambush | 1432 | 52.2, 69.4 | 2 |  |
 | 39 | A | 309 | Protecting the Shipment | 1432 | 52.2, 69.4 | 0 |  |
-| 40 | O | 309 | Protecting the Shipment | 1432 | 65.1, 65.8 | 362 | near #3 (went 2846 yd away) |
-| 41 | T | 309 | Protecting the Shipment | 1432 | 65.9, 65.6 | 22 | near #3 (went 2866 yd away) |
+| 40 | O | 309 | Protecting the Shipment | 1432 | 65.1, 65.8 | 362 | near #1 (went 2846 yd away) |
+| 41 | T | 309 | Protecting the Shipment | 1432 | 65.9, 65.6 | 22 | near #1 (went 2866 yd away) |
 | 42 | A | 86758 | Twisting the Knife | 1432 | 81.8, 61.7 | 442 |  |
 | 43 | T | 2039 | Find Bingles | 1432 | 63.6, 47.9 | 562 |  |
 | 44 | O | 86758 | Twisting the Knife | 1432 | 63.9, 47.8 | 9 |  |
 | 45 | T | 86758 | Twisting the Knife | 1432 | 81.8, 61.7 | 554 |  |
 | 46 | T | 1338 | Stormpike's Order | 1453 | 64.6, 37.2 |  |  |
 
-Walking between tasks: 12773 yd (~30 min at 7 yd/s).
+Walking between tasks: 12630 yd (~30 min at 7 yd/s).
 
 ## Qualité
 
@@ -584,14 +584,13 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 2: `sethearth 1432 35.53 48.4`
-- step 17: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
-- step 28: `goto 1455 55.5 47.74` — Flight master
-- step 29: `fly 1432` — Thelsamar, Loch Modan
-- step 54: `hearth 1432`
-- step 55: `goto 1432 33.94 50.95` — Flight master
-- step 56: `fly 1455` — Ironforge, Dun Morogh
-- step 57: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
+- step 16: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
+- step 27: `goto 1455 55.5 47.74` — Flight master
+- step 28: `fly 1432` — Thelsamar, Loch Modan
+- step 53: `hearth 1432`
+- step 54: `goto 1432 33.94 50.95` — Flight master
+- step 55: `fly 1455` — Ironforge, Dun Morogh
+- step 56: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
 
 ## Warnings
 

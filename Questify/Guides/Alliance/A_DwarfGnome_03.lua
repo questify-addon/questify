@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 59 étapes, niveau final 14.26, ~19003 xp/h, 73 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 58 étapes, niveau final 14.26, ~19166 xp/h, 73 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_03",
   title = "Loch Modan",
@@ -14,19 +14,18 @@ Q:RegisterGuide({
     { id = "A_DwarfGnome_04", travel = { kind = "walk", minutes = 3 } },
     { id = "A_01", travel = { kind = "boat", minutes = 7 } },
   },
-  sim = { steps = 59, endLevel = 14.26, xpPerHour = 19003, minutes = 73 },
+  sim = { steps = 58, endLevel = 14.26, xpPerHour = 19166, minutes = 73 },
   steps = {
-    { "accept", 416 }, -- Rat Catching (lvl 11, ~880 xp, sim lvl 12)
-    { "sethearth", 1432, 35.53, 48.4 }, -- lier la pierre de foyer
-    { "accept", 1339 }, -- Mountaineer Stormpike's Task (lvl 15, ~540 xp, sim lvl 12)
     { "accept", 298 }, -- Excavation Progress Report (lvl 15, ~270 xp, sim lvl 12)
     { "turnin", 298, xp = 270 }, -- Excavation Progress Report (lvl 15, ~270 xp, sim lvl 12)
     { "accept", 301 }, -- Report to Ironforge (lvl 15, ~540 xp, sim lvl 12)
     { "accept", 6387 }, -- Honor Students (lvl 10, ~210 xp, sim lvl 12)
     { "turnin", 6387, xp = 210 }, -- Honor Students (lvl 10, ~210 xp, sim lvl 12)
     { "accept", 6391 }, -- Ride to Ironforge (lvl 10, ~420 xp, sim lvl 12)
-    { "turnin", 1339, xp = 540 }, -- Mountaineer Stormpike's Task (lvl 15, ~540 xp, sim lvl 12)
+    { "accept", 1339 }, -- Mountaineer Stormpike's Task (lvl 15, ~540 xp, sim lvl 12)
+    { "accept", 416 }, -- Rat Catching (lvl 11, ~880 xp, sim lvl 12)
     { "accept", 307 }, -- Filthy Paws (lvl 15, ~1350 xp, sim lvl 12)
+    { "turnin", 1339, xp = 540 }, -- Mountaineer Stormpike's Task (lvl 15, ~540 xp, sim lvl 12)
     { "accept", 1338 }, -- Stormpike's Order (lvl 14, ~980 xp, sim lvl 12)
     { "complete", 307, at = { 1432, 35.5, 24.64 } }, -- Filthy Paws (lvl 15, ~1350 xp, sim lvl 12)
     { "complete", 416, at = { 1432, 36.76, 22.21 } }, -- Rat Catching (lvl 11, ~880 xp, sim lvl 12)

@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 137 étapes, niveau final 13.89, ~13238 xp/h, 242 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 136 étapes, niveau final 13.89, ~13105 xp/h, 244 min.
 Q:RegisterGuide({
   id = "H_Tauren_02",
   title = "Mulgore",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Tauren" },
   minLevel = 6, maxLevel = 12,
   nextByRace = { Tauren = "H_01" },
-  sim = { steps = 137, endLevel = 13.89, xpPerHour = 13238, minutes = 242 },
+  sim = { steps = 136, endLevel = 13.89, xpPerHour = 13105, minutes = 244 },
   steps = {
     { "accept", 751 }, -- The Ravaged Caravan (lvl 8, ~530 xp, sim lvl 6)
     { "accept", 96130 }, -- Chakuyak (lvl 5, ~335 xp, sim lvl 6)
@@ -78,7 +78,6 @@ Q:RegisterGuide({
     { "fp", 1456, 47, 49.83 }, -- point de vol
     { "accept", 76156 }, -- Stalk With The Earthmother (lvl 10, ~630 xp, sim lvl 11)
     { "accept", 5926, classes = { "DRUID" } }, -- Heeding the Call (lvl 10, ~85 xp, sim lvl 11)
-    { "sethearth", 1456, 45.81, 64.71 }, -- lier la pierre de foyer
     { "accept", 833 }, -- A Sacred Burial (lvl 10, ~630 xp, sim lvl 11)
     { "turnin", 773, xp = 840 }, -- Rite of Wisdom (lvl 10, ~840 xp, sim lvl 11)
     { "accept", 775 }, -- Journey into Thunder Bluff (lvl 10, ~420 xp, sim lvl 11)
@@ -107,7 +106,6 @@ Q:RegisterGuide({
     { "accept", 99082 }, -- The High Chieftain (lvl 11, ~90 xp, sim lvl 12)
     { "turnin", 743, xp = 700 }, -- Dangers of the Windfury (lvl 8, ~700 xp, sim lvl 12)
     { "complete", 6061, at = { 1412, 40.67, 70.04 }, classes = { "HUNTER" } }, -- Taming the Beast (lvl 10, ~840 xp, sim lvl 12)
-    { "hearth", 1456 }, -- pierre de foyer
     { "turnin", 76156, xp = 630 }, -- Stalk With The Earthmother (lvl 10, ~630 xp, sim lvl 12)
     { "accept", 744 }, -- Preparation for Ceremony (lvl 11, ~880 xp, sim lvl 12)
     { "complete", 744, at = { 1412, 32.6, 34.44 } }, -- Preparation for Ceremony (lvl 11, ~880 xp, sim lvl 12)
@@ -149,5 +147,6 @@ Q:RegisterGuide({
     { "turnin", 860, xp = 85 }, -- Sergra Darkthorn (lvl 10, ~85 xp, sim lvl 13)
     { "turnin", 1505, xp = 85, classes = { "WARRIOR" } }, -- Veteran Uzzek (lvl 10, ~85 xp, sim lvl 13)
     { "turnin", 1523, xp = 420, classes = { "SHAMAN" } }, -- Call of Fire (lvl 10, ~420 xp, sim lvl 13)
+    { "sethearth", 1413, 51.99, 29.89 }, -- lier la pierre de foyer
   },
 })

@@ -2,25 +2,23 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 47 étapes, niveau final 60.00, ~61725 xp/h, 204 min.
+-- Simulation : 44 étapes, niveau final 60.00, ~71662 xp/h, 175 min.
 Q:RegisterGuide({
   id = "H_30",
   title = "Silithus",
   faction = "Horde",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 47, endLevel = 60.00, xpPerHour = 61725, minutes = 204 },
+  sim = { steps = 44, endLevel = 60.00, xpPerHour = 71662, minutes = 175 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon The Heart of the Mountain, Vivian Lagrave", optional = true, dungeon = "Blackrock Depths" },
-    { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
-    { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
+    { "hearth", 1452 }, -- pierre de foyer
+    { "goto", 1452, 60.47, 36.3, note = "Flight master" }, -- déplacement
     { "fly", 1444, node = 42, note = "Camp Mojache, Feralas" }, -- vol
     { "fp", 1451, 48.68, 36.67 }, -- point de vol
     { "accept", 8284 }, -- The Twilight Mystery (lvl 58, ~6200 xp, sim lvl 59)
-    { "sethearth", 1451, 51.89, 39.16 }, -- lier la pierre de foyer
     { "accept", 9416 }, -- Report to General Kirika (lvl 60, ~6600 xp, sim lvl 59)
     { "accept", 8304 }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
     { "complete", 8284, at = { 1451, 22.09, 10.4 } }, -- The Twilight Mystery (lvl 58, ~6200 xp, sim lvl 59)
-    { "hearth", 1451 }, -- pierre de foyer
     { "turnin", 8284, xp = 6200 }, -- The Twilight Mystery (lvl 58, ~6200 xp, sim lvl 59)
     { "accept", 8285 }, -- The Deserter (lvl 59, ~4800 xp, sim lvl 59)
     { "accept", 8280 }, -- Securing the Supply Lines (lvl 55, ~5650 xp, sim lvl 59)
@@ -51,8 +49,7 @@ Q:RegisterGuide({
     { "turnin", 8287, xp = 6600 }, -- A Terrible Purpose (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8304, xp = 6600 }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8283, xp = 8050 }, -- Wanted - Deathclasp, Terror of the Sands (lvl 59, ~8050 xp, sim lvl 59)
-    { "goto", 1451, 48.68, 36.67, note = "Flight master" }, -- déplacement
-    { "fly", 1452, node = 53, note = "Everlook, Winterspring" }, -- vol
+    { "hearth", 1452 }, -- pierre de foyer
     { "accept", 5055 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "complete", 5055, at = { 1452, 62.54, 57.9 } }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)
     { "turnin", 5055, xp = 6200 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 59)

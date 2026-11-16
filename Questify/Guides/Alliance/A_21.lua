@@ -2,40 +2,50 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 45 étapes, niveau final 50.00, ~43586 xp/h, 380 min.
+-- Simulation : 43 étapes, niveau final 50.00, ~45588 xp/h, 364 min.
 Q:RegisterGuide({
   id = "A_21",
   title = "Stranglethorn Vale",
   faction = "Alliance",
   minLevel = 48, maxLevel = 50,
   next = "A_22",
-  sim = { steps = 45, endLevel = 50.00, xpPerHour = 43586, minutes = 380 },
+  sim = { steps = 43, endLevel = 50.00, xpPerHour = 45588, minutes = 364 },
   steps = {
     { "goto", 1446, 51.01, 29.34, note = "Flight master" }, -- déplacement
     { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
     { "boat", 1413, 63.54, 38.61, note = "Take the boat to Booty Bay (Stranglethorn Vale)" }, -- bateau
     { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
-    { "sethearth", 1434, 27.04, 77.31 }, -- lier la pierre de foyer
-    { "accept", 617 }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
-    { "accept", 613 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 48)
     { "turnin", 2874, xp = 3900 }, -- Deliver to MacKinley (lvl 45, ~3900 xp, sim lvl 48)
+    { "accept", 613 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 48)
+    { "accept", 617 }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
     { "accept", 8551 }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 48)
-    { "accept", 624, at = { 1434, 29.19, 88.6 }, note = "Loot Cortello's Riddle to start the quest" }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 48)
-    { "complete", 608, at = { 1434, 29.32, 88.29 } }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
-    { "complete", 608, at = { 1434, 32.87, 88.2 } }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
-    { "accept", 594, at = { 1434, 33.79, 77.68 }, note = "Loot Carefully Folded Note to start the quest" }, -- Message in a Bottle (lvl 45, ~2900 xp, sim lvl 48)
-    { "turnin", 594, xp = 2900 }, -- Message in a Bottle (lvl 45, ~2900 xp, sim lvl 48)
-    { "complete", 8551, at = { 1434, 36.95, 69.73 } }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 48)
-    { "accept", 97405 }, -- Noise Complaints (lvl 44, ~4650 xp, sim lvl 48)
+    { "accept", 8552, at = { 1434, 23.25, 72.1 }, note = "Loot Monogrammed Sash to start the quest (93.5 % drop: about 2 kills)" }, -- The Monogrammed Sash (lvl 50, ~2350 xp, sim lvl 48)
+    { "complete", 617, at = { 1434, 26, 28.52 } }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
     { "accept", 202 }, -- Colonel Kurzen (lvl 40, ~1260 xp, sim lvl 48)
-    { "complete", 202, obj = 3, at = { 1434, 49.94, 3.95 } }, -- Colonel Kurzen (lvl 40, ~1260 xp, sim lvl 48)
     { "complete", 202, at = { 1434, 47.59, 7.02 } }, -- Colonel Kurzen (lvl 40, ~1260 xp, sim lvl 48)
+    { "complete", 202, at = { 1434, 49.94, 3.95 } }, -- Colonel Kurzen (lvl 40, ~1260 xp, sim lvl 48)
     { "turnin", 202, xp = 1260 }, -- Colonel Kurzen (lvl 40, ~1260 xp, sim lvl 48)
     { "accept", 206 }, -- Mai'Zoth (lvl 46, ~5050 xp, sim lvl 48)
-    { "complete", 97405, at = { 1434, 51.63, 27.42 } }, -- Noise Complaints (lvl 44, ~4650 xp, sim lvl 48)
+    { "accept", 97405 }, -- Noise Complaints (lvl 44, ~4650 xp, sim lvl 48)
     { "complete", 613, at = { 1434, 50.96, 28.04 } }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 48)
+    { "complete", 97405, at = { 1434, 51.63, 27.42 } }, -- Noise Complaints (lvl 44, ~4650 xp, sim lvl 48)
     { "complete", 206, at = { 1434, 52.93, 27.6 } }, -- Mai'Zoth (lvl 46, ~5050 xp, sim lvl 48)
     { "turnin", 97405, xp = 4650 }, -- Noise Complaints (lvl 44, ~4650 xp, sim lvl 48)
+    { "complete", 8551, at = { 1434, 36.95, 69.73 } }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 48)
+    { "accept", 594, at = { 1434, 33.79, 77.68 }, note = "Loot Carefully Folded Note to start the quest" }, -- Message in a Bottle (lvl 45, ~2900 xp, sim lvl 48)
+    { "turnin", 594, xp = 2900 }, -- Message in a Bottle (lvl 45, ~2900 xp, sim lvl 48)
+    { "complete", 608, obj = 1, at = { 1434, 32.87, 88.2 } }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
+    { "accept", 624, at = { 1434, 29.19, 88.6 }, note = "Loot Cortello's Riddle to start the quest" }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 48)
+    { "complete", 608, at = { 1434, 29.32, 88.29 } }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
+    { "turnin", 613, xp = 4650 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 48)
+    { "turnin", 608, xp = 4850 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
+    { "turnin", 617, xp = 3600 }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
+    { "turnin", 8552, xp = 2350 }, -- The Monogrammed Sash (lvl 50, ~2350 xp, sim lvl 48)
+    { "accept", 8553 }, -- The Captain's Cutlass (lvl 50, ~470 xp, sim lvl 48)
+    { "turnin", 8551, xp = 3150 }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 48)
+    { "turnin", 8553, xp = 470 }, -- The Captain's Cutlass (lvl 50, ~470 xp, sim lvl 48)
+    { "turnin", 206, xp = 5050 }, -- Mai'Zoth (lvl 46, ~5050 xp, sim lvl 48)
+    { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 48)
     { "accept", 1398 }, -- Driftwood (lvl 42, ~2760 xp, sim lvl 48)
     { "accept", 81947 }, -- Sanguine Sorcery (lvl 45, ~0 xp, sim lvl 48)
     { "complete", 81947, at = { 1435, 70, 51 } }, -- Sanguine Sorcery (lvl 45, ~0 xp, sim lvl 48)
@@ -43,18 +53,6 @@ Q:RegisterGuide({
     { "fp", 1419, 65.54, 24.34 }, -- point de vol
     { "turnin", 1398, xp = 2760 }, -- Driftwood (lvl 42, ~2760 xp, sim lvl 48)
     { "accept", 1425 }, -- Deliver the Shipment (lvl 42, ~0 xp, sim lvl 48)
-    { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 48)
-    { "turnin", 206, xp = 5050 }, -- Mai'Zoth (lvl 46, ~5050 xp, sim lvl 48)
-    { "complete", 617, at = { 1434, 26, 28.52 } }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
-    { "hearth", 1434 }, -- pierre de foyer
-    { "accept", 8552, at = { 1434, 23.25, 72.1 }, note = "Loot Monogrammed Sash to start the quest (93.5 % drop: about 2 kills)" }, -- The Monogrammed Sash (lvl 50, ~2350 xp, sim lvl 48)
-    { "turnin", 8552, xp = 2350 }, -- The Monogrammed Sash (lvl 50, ~2350 xp, sim lvl 48)
-    { "accept", 8553 }, -- The Captain's Cutlass (lvl 50, ~470 xp, sim lvl 48)
-    { "turnin", 8551, xp = 3150 }, -- The Captain's Chest (lvl 47, ~3150 xp, sim lvl 48)
-    { "turnin", 8553, xp = 470 }, -- The Captain's Cutlass (lvl 50, ~470 xp, sim lvl 48)
-    { "turnin", 617, xp = 3600 }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 48)
-    { "turnin", 608, xp = 4850 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 48)
-    { "turnin", 613, xp = 4650 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 48)
-    { "level", 50, at = { 1434, 26, 28.52 }, note = "About 826 more mobs near the last objective" }, -- farm de niveau
+    { "level", 50, at = { 1434, 29.32, 88.29 }, note = "About 826 more mobs near the last objective" }, -- farm de niveau
   },
 })

@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 51 étapes, niveau final 57.00, ~63090 xp/h, 179 min.
+-- Simulation : 51 étapes, niveau final 57.00, ~70078 xp/h, 161 min.
 Q:RegisterGuide({
   id = "A_27",
   title = "Felwood and Winterspring",
   faction = "Alliance",
   minLevel = 56, maxLevel = 57,
   next = "A_23",
-  sim = { steps = 51, endLevel = 57.00, xpPerHour = 63090, minutes = 179 },
+  sim = { steps = 51, endLevel = 57.00, xpPerHour = 70078, minutes = 161 },
   steps = {
     { "accept", 4809 }, -- Chillwind Horns (lvl 54, ~5450 xp, sim lvl 56)
     { "accept", 6028 }, -- The Everlook Report (lvl 52, ~0 xp, sim lvl 56)
@@ -61,6 +61,6 @@ Q:RegisterGuide({
     { "complete", 5156, at = { 1448, 43.73, 40.16 } }, -- Verifying the Corruption (lvl 54, ~6800 xp, sim lvl 56)
     { "turnin", 5156, xp = 6800 }, -- Verifying the Corruption (lvl 54, ~6800 xp, sim lvl 56)
     { "turnin", 5385, xp = 7550 }, -- The Remains of Trey Lightforge (lvl 57, ~7550 xp, sim lvl 56)
-    { "level", 57, at = { 1448, 43.73, 40.16 }, note = "About 237 more mobs near the last objective" }, -- farm de niveau
+    { "level", 57, at = { 1448, 43.73, 40.16 }, note = "About 236 more mobs near the last objective" }, -- farm de niveau
   },
 })

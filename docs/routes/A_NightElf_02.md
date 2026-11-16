@@ -1,6 +1,6 @@
 # A_NightElf_02 — Teldrassil
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
+Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
 
 | Item | Value |
 |---|---|
@@ -8,13 +8,13 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 6.00 -> 12.00 |
 | Time | 116 min |
 | XP gained | 34314 |
-| XP/h | 17745 |
-| Steps | 135 |
+| XP/h | 17725 |
+| Steps | 136 |
 | Quests turned in | 39 |
 | Hubs | 12 |
 | Median ratio (XP/s) | 3.71 |
 | Grinding (level steps) | ~3 mobs |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | bound to Innkeeper Shaussiy after task 103; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -477,6 +477,7 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 - step 127: `fp 1438 58.4 94.02`
 - step 133: `boat 1438 54.9 96.8` — Take the boat to Auberdine
 - step 134: `fp 1439 36.34 45.58`
+- step 136: `sethearth 1439 37.04 44.13`
 
 ## Warnings
 

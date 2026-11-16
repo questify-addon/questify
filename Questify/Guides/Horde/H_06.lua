@@ -2,14 +2,14 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 137 étapes, niveau final 33.94, ~34505 xp/h, 510 min.
+-- Simulation : 137 étapes, niveau final 33.94, ~34503 xp/h, 510 min.
 Q:RegisterGuide({
   id = "H_06",
   title = "Alterac Mountains and Arathi Highlands",
   faction = "Horde",
   minLevel = 30, maxLevel = 33,
   next = "H_09",
-  sim = { steps = 137, endLevel = 33.94, xpPerHour = 34505, minutes = 510 },
+  sim = { steps = 137, endLevel = 33.94, xpPerHour = 34503, minutes = 510 },
   steps = {
     { "note", "Not running Blackfathom Deeps? Abandon Trouble in the Deeps, The Essence of Aku'Mai", optional = true, dungeon = "Blackfathom Deeps" },
     { "note", "Not running Ragefire Chasm? Abandon Hidden Enemies, Slaying the Beast", optional = true, dungeon = "Ragefire Chasm" },
