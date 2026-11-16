@@ -1183,14 +1183,23 @@ local function sectionButton(i, s)
   bar:Hide()
   b.bar = bar
   local text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  text:SetPoint("LEFT", b, "LEFT", 10, 0)
+  text:SetPoint("LEFT", b, "LEFT", 32, 0)
   text:SetJustifyH("LEFT")
-  local label = L[s.label]
-  -- icon = "class" : icône de la classe du joueur devant le nom (section Classe)
+  -- Icône devant le nom : celle de la classe du joueur (icon = "class"), sinon une texture du jeu.
   if s.icon == "class" and Q.UI.TrackerButtons and Q.UI.TrackerButtons.IconMarkup then
-    label = Q.UI.TrackerButtons.IconMarkup("class", 14) .. " " .. label
+    local mark = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    mark:SetPoint("LEFT", b, "LEFT", 9, 0)
+    mark:SetText(Q.UI.TrackerButtons.IconMarkup("class", 16))
+    b.icon = mark
+  elseif type(s.icon) == "string" then
+    local tex = b:CreateTexture(nil, "ARTWORK")
+    tex:SetSize(16, 16)
+    tex:SetPoint("LEFT", b, "LEFT", 9, 0)
+    tex:SetTexture("Interface\\Icons\\" .. s.icon)
+    if tex.SetTexCoord then tex:SetTexCoord(0.08, 0.92, 0.08, 0.92) end
+    b.icon = tex
   end
-  text:SetText(label)
+  text:SetText(L[s.label])
   b.selected, b.text, b.sectionId = sel, text, s.id
   b:SetScript("OnClick", safe(function(self)
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")

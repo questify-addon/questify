@@ -29,50 +29,50 @@ Q.OptionsSchema = Schema
 
 ---------------------------------------------------------------------------
 -- Sections (ordre de la barre latérale) et catégories (ordre dans la section). panel : nom d'un panneau
--- de Q.UI affiché à la place de la liste (méthodes Attach(parent), Detach()) ; icon = "class" : icône
--- de la classe du joueur devant le nom.
+-- de Q.UI affiché à la place de la liste (méthodes Attach(parent), Detach()) ; icon : icône devant le
+-- nom, texture de Interface\Icons, ou "class" pour l'icône de la classe du joueur.
 ---------------------------------------------------------------------------
 Schema.SECTIONS = {
-  { id = "route", label = "OPT_SEC_ROUTE", categories = {
+  { id = "route", label = "OPT_SEC_ROUTE", icon = "INV_Misc_Map_01", categories = {
     { id = "path", label = "OPT_CAT_ROUTE_PATH" },
     { id = "progress", label = "OPT_CAT_ROUTE_PROGRESS" } } },
-  { id = "navigation", label = "OPT_SEC_NAV", categories = {
+  { id = "navigation", label = "OPT_SEC_NAV", icon = "Ability_Tracking", categories = {
     { id = "routing", label = "OPT_CAT_NAV_ROUTING" },
     { id = "display", label = "OPT_CAT_NAV_DISPLAY" },
     { id = "flights", label = "OPT_CAT_NAV_FLIGHTS" } } },
-  { id = "automation", label = "OPT_SEC_AUTO", categories = {
+  { id = "automation", label = "OPT_SEC_AUTO", icon = "INV_Misc_Gear_01", categories = {
     { id = "quests", label = "OPT_CAT_AUTO_QUESTS" },
     { id = "merchants", label = "OPT_CAT_AUTO_MERCHANTS" },
     { id = "targeting", label = "OPT_CAT_AUTO_TARGETING" } } },
-  { id = "loot", label = "OPT_SEC_LOOT", categories = {
+  { id = "loot", label = "OPT_SEC_LOOT", icon = "INV_Misc_Bag_08", categories = {
     { id = "auto", label = "OPT_CAT_LOOT_AUTO" },
     { id = "profile", label = "OPT_CAT_LOOT_PROFILE" } } },
   -- Classe : panneau propre (UI/ClassPanel.lua, Talents et Macros) à la place de la liste des options.
   { id = "classguide", label = "OPT_SEC_CLASSGUIDE", panel = "ClassPanel", icon = "class", categories = {} },
-  { id = "class", label = "OPT_SEC_CLASS", categories = {
+  { id = "class", label = "OPT_SEC_CLASS", icon = "INV_Misc_Book_09", categories = {
     { id = "spells", label = "OPT_CAT_CLASS_SPELLS" },
     { id = "professions", label = "OPT_CAT_CLASS_PROFESSIONS" },
     { id = "dungeons", label = "OPT_CAT_CLASS_DUNGEONS" } } },
-  { id = "map", label = "OPT_SEC_MAP", categories = {
+  { id = "map", label = "OPT_SEC_MAP", icon = "INV_Misc_Spyglass_03", categories = {
     { id = "worldmap", label = "OPT_CAT_MAP_WORLD" },
     { id = "markers", label = "OPT_CAT_MAP_MARKERS" },
     { id = "minimap", label = "OPT_CAT_MAP_MINIMAP" } } },
-  { id = "tracker", label = "OPT_SEC_TRACKER", categories = {
+  { id = "tracker", label = "OPT_SEC_TRACKER", icon = "INV_Misc_Note_01", categories = {
     { id = "layout", label = "OPT_CAT_TRACKER_LAYOUT" },
     { id = "content", label = "OPT_CAT_TRACKER_CONTENT" } } },
-  { id = "theme", label = "OPT_SEC_THEME", categories = {
+  { id = "theme", label = "OPT_SEC_THEME", icon = "INV_Misc_Gem_Variety_01", categories = {
     { id = "theme", label = "OPT_CAT_THEME_COLORS" },
     { id = "arrow", label = "OPT_CAT_THEME_ARROW" },
     { id = "background", label = "OPT_CAT_THEME_LOOK" } } },
-  { id = "comfort", label = "OPT_SEC_COMFORT", categories = {
+  { id = "comfort", label = "OPT_SEC_COMFORT", icon = "INV_Misc_Rune_01", categories = {
     { id = "hearth", label = "OPT_CAT_COMFORT_HEARTH" },
     { id = "warnings", label = "OPT_CAT_COMFORT_WARNINGS" } } },
-  { id = "tools", label = "OPT_SEC_TOOLS", categories = {
+  { id = "tools", label = "OPT_SEC_TOOLS", icon = "INV_Misc_Wrench_01", categories = {
     { id = "wizards", label = "OPT_CAT_TOOLS_WIZARDS" },
     { id = "measures", label = "OPT_CAT_TOOLS_MEASURES" },
     { id = "diagnostics", label = "OPT_CAT_TOOLS_DIAG" },
     { id = "versions", label = "OPT_CAT_TOOLS_VERSIONS" } } },
-  { id = "profiles", label = "OPT_SEC_PROFILES", categories = {
+  { id = "profiles", label = "OPT_SEC_PROFILES", icon = "INV_Scroll_03", categories = {
     { id = "active", label = "OPT_CAT_PROFILES_ACTIVE" },
     { id = "manage", label = "OPT_CAT_PROFILES_MANAGE" },
     { id = "share", label = "OPT_CAT_PROFILES_SHARE" } } },
