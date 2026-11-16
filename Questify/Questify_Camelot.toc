@@ -97,6 +97,7 @@ UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
 UI\ObjectGlow.lua
+UI\UpgradeCompare.lua
 UI\UpgradePopup.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
