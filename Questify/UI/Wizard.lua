@@ -1,6 +1,6 @@
 local addonName, Q = ...
 
--- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en six pages :
+-- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en sept pages :
 --   1. bienvenue et addons (QuestieDB, ShortestPath Forever, WaypointUI, TomTom) : état de chacun
 --      (chargé, désactivé, activé mais pas encore chargé, périmé, absent, QuestieDB trop ancien),
 --      lien CurseForge à copier pour les absents et pour QuestieDB trop ancien (le jeu n'ouvre pas
@@ -10,7 +10,9 @@ local addonName, Q = ...
 --   3. calcul d'itinéraire par ShortestPath Forever (case active seulement s'il est chargé) ;
 --   4. affichage : WaypointUI, TomTom ou repère du jeu (les absents sont désactivés) ;
 --   5. automatisations (accepter/rendre, choix de la récompense, vente de la camelote) ;
---   6. récapitulatif et « Terminer ».
+--   6. objectifs du suivi : mise en page et détail (tracker.objLayout, tracker.objDetail), avec un
+--      aperçu du suivi redessiné à chaque clic dans le thème courant (UI/ObjectiveRows.lua) ;
+--   7. récapitulatif et « Terminer ».
 -- Chaque page a « Précédent », « Ignorer » (remet les choix de la page à leur valeur actuelle et
 -- passe à la suivante) et « Suivant » ; la dernière a « Terminer ». « Recharger l'interface » est
 -- visible sur la page des addons, et sur toutes les pages après « Activer ».
@@ -31,7 +33,7 @@ local INNER = WIDTH - 48
 local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
-local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_RECAP = 1, 2, 3, 4, 5, 6
+local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_OBJECTIVES, PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
 
@@ -74,7 +76,20 @@ local PAGE_KEYS = {
   [PAGE_ROUTING] = { "routing" },
   [PAGE_DISPLAY] = { "display" },
   [PAGE_AUTO] = { "autoQuest", "autoReward", "sellJunk", "rewardRole" },
+  [PAGE_OBJECTIVES] = { "objLayout", "objDetail" },
 }
+Wizard.PAGE_OBJECTIVES = PAGE_OBJECTIVES
+
+-- Page 6 : choix (valeur, libellé, description) et aperçu.
+local OBJ_CHOICES = {
+  objLayout = { { "list", "OBJ_LAYOUT_LIST", "UI_WIZ_OBJ_LIST_DESC" }, { "bars", "OBJ_LAYOUT_BARS", "UI_WIZ_OBJ_BARS_DESC" },
+    { "quest", "OBJ_LAYOUT_QUEST", "UI_WIZ_OBJ_QUEST_DESC" } },
+  objDetail = { { "count", "OBJ_DETAIL_COUNT", "UI_WIZ_OBJ_COUNT_DESC" }, { "mobs", "OBJ_DETAIL_MOBS", "UI_WIZ_OBJ_MOBS_DESC" },
+    { "distance", "OBJ_DETAIL_DISTANCE", "UI_WIZ_OBJ_DIST_DESC" } },
+}
+local OBJ_LEFT_W = 200          -- colonne des choix
+local PREVIEW_W = 260           -- aperçu : largeur par défaut du suivi
+local PREVIEW_PAD, PREVIEW_ICON_COL = 8, 38   -- comme UI/Tracker.lua (PAD, ICON_COL)
 
 local READY = "Interface\\RaidFrame\\ReadyCheck-Ready"
 local NOT_READY = "Interface\\RaidFrame\\ReadyCheck-NotReady"
@@ -423,11 +438,117 @@ function Wizard:BuildAutoPage(page)
   self.rewardRoleButton = b
 end
 
+-- Page « Objectifs du suivi » : deux groupes de choix à gauche, aperçu du suivi à droite.
+function Wizard:BuildObjectivesPage(page)
+  local title = pageTitle(page, "UI_WIZ_OBJ_TITLE")
+  local text = paragraph(page, L.UI_WIZ_OBJ_TEXT, title, 8)
+  self.objRadios = {}
+  local anchor, gap = text, 12
+  for _, key in ipairs({ "objLayout", "objDetail" }) do
+    local head = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    head:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -gap)
+    head:SetWidth(OBJ_LEFT_W)
+    head:SetJustifyH("LEFT")
+    head:SetText(L[key == "objLayout" and "UI_WIZ_OBJ_LAYOUT" or "UI_WIZ_OBJ_DETAIL"])
+    anchor, gap = head, 6
+    self.objRadios[key] = {}
+    for _, def in ipairs(OBJ_CHOICES[key]) do
+      local r = newButton("CheckButton", page, "UIRadioButtonTemplate")
+      r:SetSize(16, 16)
+      r:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -gap)
+      r.id, r.key = def[1], key
+      r.label = labelFor(r, L[def[2]])
+      r.label:SetWidth(OBJ_LEFT_W - 22)
+      r.desc = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+      r.desc:SetPoint("TOPLEFT", r, "BOTTOMLEFT", 20, 0)
+      r.desc:SetWidth(OBJ_LEFT_W - 20)
+      r.desc:SetJustifyH("LEFT")
+      r.desc:SetText(L[def[3]])
+      r:SetScript("OnClick", safe(function(self)
+        playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+        Wizard:SetChoice(self.key, self.id)
+        Wizard:SelectObjectives()
+        Wizard:RenderPreview()
+      end))
+      self.objRadios[key][def[1]] = r
+      anchor, gap = r.desc, 5
+    end
+    gap = 12
+  end
+  local label = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  label:SetPoint("TOPLEFT", text, "BOTTOMLEFT", OBJ_LEFT_W + 12, -12)
+  label:SetText(L.UI_WIZ_OBJ_PREVIEW)
+  -- aperçu : un cadre au thème du suivi (fond, bordure, couleurs), contenu rendu comme le suivi
+  local f = CreateFrame("Frame", nil, page, "BackdropTemplate")
+  f:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -3)
+  f:SetSize(PREVIEW_W, 80)
+  local icon = f:CreateTexture(nil, "ARTWORK")
+  icon:SetSize(22, 22)
+  icon:SetPoint("TOP", f, "TOPLEFT", PREVIEW_PAD + PREVIEW_ICON_COL / 2, -PREVIEW_PAD)
+  local dist = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  dist:SetPoint("TOP", icon, "BOTTOM", 0, -2)
+  self.preview = { frame = f, icon = icon, dist = dist, host = { parent = f } }
+end
+
+-- Coche les choix de la page 6 d'après self.choice.
+function Wizard:SelectObjectives()
+  for key, radios in pairs(self.objRadios or {}) do
+    for id, r in pairs(radios) do r:SetChecked(self.choice[key] == id) end
+  end
+end
+
+-- Exemple de l'aperçu : une étape « Faire » à trois objectifs (dont un fini, replié) et deux monstres.
+local function previewSegments(layout, detail)
+  local O = Q.Objectives
+  local rows = {
+    { index = 1, kind = "loot", label = L.UI_WIZ_OBJ_SAMPLE_1, have = 3, need = 8, lead = true,
+      mob = { name = L.UI_WIZ_OBJ_SAMPLE_MOB_1, minLevel = 5, maxLevel = 6 }, dist = 64 },
+    { index = 2, kind = "kill", label = L.UI_WIZ_OBJ_SAMPLE_2, have = 2, need = 6,
+      mob = { name = L.UI_WIZ_OBJ_SAMPLE_MOB_2, minLevel = 1, maxLevel = 2 }, dist = 110 },
+    { index = 3, kind = "use", label = L.UI_WIZ_OBJ_SAMPLE_3, have = 0, need = 1, dist = 150,
+      icon = "Interface\\Icons\\INV_Misc_Orb_03" },
+  }
+  local segs = {}
+  if layout == "quest" then
+    segs[#segs + 1] = { quest = L.UI_WIZ_OBJ_SAMPLE_QUEST, sub = "· 1/4" }
+  else
+    segs[#segs + 1] = { text = string.format(L.STEP_COMPLETE, L.UI_WIZ_OBJ_SAMPLE_QUEST) }
+  end
+  for _, r in ipairs(rows) do
+    r.icon = r.icon or (O and O.ICONS[r.kind])
+    r.text = r.label .. ": " .. r.have .. "/" .. r.need
+    local dist = detail == "distance" and Q.Util.FormatDistance(r.dist) or nil
+    segs[#segs + 1] = { obj = r, bars = layout == "bars", dist = dist }
+    if detail ~= "count" and r.mob then segs[#segs + 1] = { mob = r.mob } end
+  end
+  segs[#segs + 1] = { fold = string.format(L.OBJ_FOLD_ONE, L.UI_WIZ_OBJ_SAMPLE_DONE) }
+  return segs
+end
+Wizard.PreviewSegments = previewSegments
+
+-- Redessine l'aperçu avec les choix courants et le thème du suivi.
+function Wizard:RenderPreview()
+  local p = self.preview
+  if not (p and self.choice) then return end
+  local T = Q.Themes
+  local theme
+  if T then theme = T:Apply(p.frame, Q.Settings:Get("tracker.theme"), Q.Settings:Get("tracker.opacity")) end
+  p.host.theme = theme
+  p.icon:SetTexture(Q.Format:ActionIcon("complete"))
+  p.dist:SetText(Q.Util.FormatDistance(64))
+  if T then T:StyleText(p.dist, "distance", theme) end
+  local segs = previewSegments(self.choice.objLayout, self.choice.objDetail)
+  local h = Q.UI.ObjectiveRows:Render(p.host, segs, PREVIEW_PAD + PREVIEW_ICON_COL + 2,
+    PREVIEW_W - 2 * PREVIEW_PAD - PREVIEW_ICON_COL - 2, PREVIEW_PAD)
+  p.frame:SetHeight(math.max(h, 36) + 2 * PREVIEW_PAD)
+  p.segs = segs
+end
+
 function Wizard:BuildRecapPage(page)
   local title = pageTitle(page, "UI_WIZ_RECAP_TITLE")
   local anchor = paragraph(page, L.UI_WIZ_RECAP_TEXT, title, 10)
   local gap = 14
-  for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk" }) do
+  for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk", "objectives" }) do
     local line = paragraph(page, "", anchor, gap)
     self.recap[key] = line
     anchor = line
@@ -468,6 +589,7 @@ function Wizard:Create()
   self:BuildRoutingPage(self.pages[PAGE_ROUTING])
   self:BuildDisplayPage(self.pages[PAGE_DISPLAY])
   self:BuildAutoPage(self.pages[PAGE_AUTO])
+  self:BuildObjectivesPage(self.pages[PAGE_OBJECTIVES])
   self:BuildRecapPage(self.pages[PAGE_RECAP])
 
   local step = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -585,6 +707,8 @@ function Wizard:Refresh()
   end
   self:SelectDisplay(c.display)
   for _, def in ipairs(AUTOMATIONS) do self.checks[def[1]]:SetChecked(c[def[1]]) end
+  self:SelectObjectives()
+  self:RenderPreview()
   local rb, Rw = self.rewardRoleButton, Q.Rewards
   if rb and Rw then
     local classFile = Q.Player and Q.Player.classFile
@@ -629,6 +753,8 @@ function Wizard:Load()
     autoReward = Q.Settings:Get("autoReward") ~= false,
     sellJunk = Q.Settings:Get("sellJunk") ~= false,
     rewardRole = Q.Rewards and Q.Rewards:Role() or "auto",
+    objLayout = Q.Objectives and Q.Objectives:Layout() or "list",
+    objDetail = Q.Objectives and Q.Objectives:Detail() or "mobs",
   }
   self.initial = initial
   local choice = {}
@@ -667,6 +793,13 @@ function Wizard:UpdateRecap()
   r.autoQuest:SetFormattedText(L.UI_WIZ_RECAP_AUTOQUEST, onOff(c.autoQuest))
   r.autoReward:SetFormattedText(L.UI_WIZ_RECAP_AUTOREWARD, onOff(c.autoReward))
   r.sellJunk:SetFormattedText(L.UI_WIZ_RECAP_SELLJUNK, onOff(c.sellJunk))
+  local function choiceText(key)
+    for _, def in ipairs(OBJ_CHOICES[key]) do
+      if def[1] == c[key] then return L[def[2]] end
+    end
+    return tostring(c[key])
+  end
+  r.objectives:SetFormattedText(L.UI_WIZ_RECAP_OBJ, choiceText("objLayout"), choiceText("objDetail"))
 end
 
 -- Affiche la page n et la garde dans Q.char.wizardPage (reprise après /reload).
@@ -760,6 +893,8 @@ function Wizard:Finish()
   Q.Settings:Set("autoQuest", c.autoQuest)
   Q.Settings:Set("autoReward", c.autoReward)
   Q.Settings:Set("sellJunk", c.sellJunk)
+  Q.Settings:Set("tracker.objLayout", c.objLayout)
+  Q.Settings:Set("tracker.objDetail", c.objDetail)
   -- profil de butin : propre au personnage (Q.char.rewardRole), hors profils d'options
   if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
   if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then Q.char.rewardRoleChosen = true end

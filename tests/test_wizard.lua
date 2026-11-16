@@ -40,7 +40,7 @@ return {
     t.ok(f and f:IsShown(), "shown 3 s after login")
     t.eq(Q.char.wizardDone, nil, "not marked done while open")
     t.eq(W.page, 1)
-    t.eq(W.NUM_PAGES, 6)
+    t.eq(W.NUM_PAGES, 7)
     t.ok(not W.finishButton:IsShown(), "finish only on the last page")
     goToPage(W, 4)
     t.ok(W.radios.tomtom:IsEnabled(), "TomTom present")
@@ -51,7 +51,7 @@ return {
     t.ok(W.radios.tomtom:GetChecked() and not W.radios.native:GetChecked(), "one choice only")
     goToPage(W, 5)
     W.checks.autoReward:SetChecked(false)
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(W.finishButton:IsShown())
     t.ok(not W.nextButton:IsShown() and not W.skipButton:IsShown(), "no Next / Skip on the last page")
     t.ok(plain(W.recap.display:GetText()):find("TomTom", 1, true), "summary shows the marker")
@@ -284,7 +284,7 @@ return {
     Mock.click(W.checks.sellJunk, "LeftButton")
     t.eq(Q.char.wizardPage, 5)
     t.eq(Q.char.wizardDraft.sellJunk, false)
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.char.wizardDone, true)
     t.eq(Q.char.wizardPage, nil, "page cleared")
@@ -337,7 +337,7 @@ return {
     t.eq(W2.page, 5)
     t.ok(not W2.checks.autoReward:GetChecked(), "unsaved choice kept across /reload")
     t.ok(W2.radios.native:GetChecked() and not W2.radios.tomtom:GetChecked())
-    goToPage(W2, 6)
+    goToPage(W2, W2.NUM_PAGES)
     Mock.click(W2.finishButton, "LeftButton")
     t.eq(Q2.Settings:Get("nav.display"), "native")
     t.eq(Q2.Settings:Get("autoReward"), false)
@@ -358,7 +358,7 @@ return {
     t.ok(W.radios.native:GetChecked(), "native selected by default")
     Mock.click(W.radios.tomtom, "LeftButton")          -- bouton désactivé : ignoré
     t.ok(W.radios.native:GetChecked())
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.Settings:Get("nav.display"), "native")
     t.eq(#Mock.errors, 0)
@@ -377,7 +377,7 @@ return {
     goToPage(W, 4)
     t.ok(W.radios.waypointui:GetChecked(), "WaypointUI preferred on first run")
     Mock.click(W.radios.waypointui, "LeftButton")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(plain(W.recap.routing:GetText()):find("ShortestPath Forever", 1, true))
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.Settings:Get("nav.routing"), true)
@@ -472,7 +472,7 @@ return {
     t.eq(Q.char.wizardDraft.route, "manual")
     Mock.click(W.routeRadios.auto, "LeftButton")
     t.ok(W.routeRadios.auto:GetChecked() and not W.routeRadios.manual:GetChecked(), "one choice only")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(plain(W.recap.route:GetText()):find(Q.L.DGMODE_TAB_AUTO, 1, true), "summary shows the route")
     Mock.click(W.finishButton, "LeftButton")
     t.ok(Q.DungeonMode:IsOn(), "automatic mode on")
@@ -480,7 +480,7 @@ return {
     W:Show(2)
     t.ok(W.routeRadios.auto:GetChecked())
     Mock.click(W.routeRadios.manual, "LeftButton")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.ok(not Q.DungeonMode:IsOn(), "back to the manual route")
     t.eq(#Mock.errors, 0)
@@ -496,9 +496,64 @@ return {
     t.ok(W.routeRadios.manual:GetChecked())
     Mock.click(W.routeRadios.auto, "LeftButton")
     t.eq(W.choice.route, "manual")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.ok(not Q.DungeonMode:IsOn())
     t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_objectives_page_previews_and_saves = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    t.ok(W.pages[W.PAGE_OBJECTIVES]:IsShown(), "objectives page")
+    t.ok(W.objRadios.objLayout.list:GetChecked() and W.objRadios.objDetail.mobs:GetChecked(), "defaults checked")
+    local Rows = Q.UI.ObjectiveRows
+    local host = W.preview.host
+    local function shownBars()
+      local n = 0
+      for _, r in ipairs(host.objRows or {}) do if r.barBg:IsShown() then n = n + 1 end end
+      return n
+    end
+    local function shownMobs()
+      local n = 0
+      for _, r in ipairs(host.mobRows or {}) do if r.name:IsShown() then n = n + 1 end end
+      return n
+    end
+    t.eq(shownBars(), 0, "list: no bars")
+    t.eq(shownMobs(), 2, "mobs under their objectives")
+    local h1 = W.preview.frame:GetHeight()
+    -- chaque clic redessine l'aperçu
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    t.eq(W.choice.objLayout, "bars")
+    t.ok(W.objRadios.objLayout.bars:GetChecked() and not W.objRadios.objLayout.list:GetChecked())
+    t.eq(shownBars(), 3, "one bar per objective")
+    t.ok(W.preview.frame:GetHeight() > h1, "taller with bars")
+    Mock.click(W.objRadios.objDetail.count, "LeftButton")
+    t.eq(shownMobs(), 0, "counter only: no mob lines")
+    Mock.click(W.objRadios.objDetail.distance, "LeftButton")
+    t.ok(Rows:VisibleText(host):find("64 yd", 1, true), "distance shown: " .. Rows:VisibleText(host))
+    Mock.click(W.objRadios.objLayout.quest, "LeftButton")
+    t.ok(Rows:VisibleText(host):find(Q.L.UI_WIZ_OBJ_SAMPLE_QUEST .. " · 1/4", 1, true), "quest heading")
+    t.eq(Q.char.wizardDraft.objLayout, "quest", "draft kept")
+    -- récapitulatif puis « Terminer » : réglages enregistrés
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.objectives:GetText()):find(Q.L.OBJ_LAYOUT_QUEST, 1, true), "recap line")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.objLayout"), "quest")
+    t.eq(Q.Settings:Get("tracker.objDetail"), "distance")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_objectives_skip_restores = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    Mock.click(W.skipButton, "LeftButton")
+    t.eq(W.choice.objLayout, "list", "skip keeps the starting choice")
+    t.eq(W.page, W.NUM_PAGES)
   end,
 }

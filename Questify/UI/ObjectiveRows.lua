@@ -367,7 +367,7 @@ local function placeObj(host, row, seg, x0, width, y)
     row.barBg:Hide()
     row.bar:Hide()
   end
-  row.data = r
+  row.data, row.dist = r, seg.dist
   return h
 end
 
@@ -494,7 +494,7 @@ function Rows:Restyle(host)
 end
 
 -- Texte visible, sans couleurs, dans l'ordre (tests, infobulles) : un objectif donne son texte
--- du journal (« Loup tué : 3/8 »).
+-- du journal (« Loup tué : 3/8 »), suivi de sa distance quand elle est affichée.
 function Rows:VisibleText(host)
   local items = {}
   local function add(region, text)
@@ -505,7 +505,9 @@ function Rows:VisibleText(host)
   end
   for _, c in ipairs(pool(host, "textChunks")) do add(c) end
   for _, r in ipairs(pool(host, "objRows")) do
-    if r.label:IsShown() and r.data then add(r.label, r.data.text) end
+    if r.label:IsShown() and r.data then
+      add(r.label, (r.data.text or r.data.label or "") .. (r.dist and ("  " .. r.dist) or ""))
+    end
   end
   for _, r in ipairs(pool(host, "mobRows")) do add(r.name) end
   for _, fs in ipairs(pool(host, "questHeads")) do add(fs) end
