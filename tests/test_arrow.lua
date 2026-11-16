@@ -249,6 +249,61 @@ return {
     noErrors(t)
   end,
 
+  -- Budget : la position du joueur est lue au plus toutes les 0,05 s ; chaque image ne lit que
+  -- l'orientation.
+  rotation_reads_position_sparingly = function(t)
+    local Q = load()
+    Q:Fire("NAV_ROUTE", fakeRoute(Q, walkLegs(Q)))
+    local f = Q.Arrow:Frame()
+    local orig, reads, facings = Q.Maps.PlayerPos, 0, 0
+    Q.Maps.PlayerPos = function(...) reads = reads + 1; return orig(...) end
+    local origFacing = GetPlayerFacing
+    GetPlayerFacing = function() facings = facings + 1; return origFacing() end
+    local onUpdate = f:GetScript("OnUpdate")
+    for _ = 1, 10 do onUpdate(f, 0.004) end     -- dix images, même instant (GetTime inchangé)
+    t.ok(reads <= 1, "at most one position read, got " .. reads)
+    t.eq(facings, 10, "facing read every frame")
+    t.near(f.arrow:GetRotation(), -math.pi / 2, 0.01, "still points east")
+    Q.Maps.PlayerPos = orig
+    noErrors(t)
+  end,
+
+  -- Pas de minuterie quand la flèche ne peut pas s'afficher (autre affichage, arrow.show coupé).
+  no_ticker_when_arrow_cannot_show = function(t)
+    Mock.addons.TomTom = true
+    local Q = load({ ["nav.display"] = "tomtom" })
+    Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
+    t.eq(Q.Arrow:Ticking(), false, "TomTom display: no ticker")
+    Q.Settings:Set("nav.display", "arrow")
+    t.eq(Q.Arrow:Ticking(), true, "arrow display: ticking")
+    Q.Settings:Set("arrow.show", false)
+    t.eq(Q.Arrow:Ticking(), false, "arrow.show off: no ticker")
+    Q.Settings:Set("arrow.show", true)
+    t.eq(Q.Arrow:Ticking(), true)
+    Q.Nav:Clear()
+    t.eq(Q.Arrow:Ticking(), false, "nothing to follow: no ticker")
+    noErrors(t)
+  end,
+
+  -- Distances localisées : virgule décimale en français.
+  french_decimal_separator = function(t)
+    Mock.locale = "frFR"
+    local Q = load()
+    Q.Nav:SetTarget(ELWYNN, 75, 50, "Loin")       -- 35 x 34,7 = 1214,5 yd
+    local f = Q.Arrow:Frame()
+    t.eq(f.dist:GetText(), "1,2 km")
+    Q.Nav:SetTarget(ELWYNN, 60, 50, "Près")
+    t.eq(f.dist:GetText(), "694 m")
+    noErrors(t)
+  end,
+
+  english_decimal_separator = function(t)
+    local Q = load()
+    Q.Nav:SetTarget(ELWYNN, 75, 50, "Far")
+    t.eq(Q.Arrow:Frame().dist:GetText(), "1.2 km")
+    noErrors(t)
+  end,
+
   slash_arrow_reset = function(t)
     local Q = load({ ["nav.arrowPos"] = { "CENTER", "BOTTOMLEFT", 300, 400 } })
     Q:Fire("NAV_ROUTE", fakeRoute(Q, walkLegs(Q)))

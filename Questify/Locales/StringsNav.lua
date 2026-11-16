@@ -45,7 +45,8 @@ Q:RegisterStrings({
 
     -- Flèche Questify (UI/Arrow.lua) : distance, temps restant, avertissements, cadenas, /qf arrow
     NAV_ARROW_YARDS = "%d yd",
-    NAV_ARROW_KM = "%.1f km",
+    NAV_ARROW_KM = "%s km",
+    DECIMAL_SEP = ".",
     NAV_ARROW_ETA_MIN = "about %d min",
     NAV_ARROW_ETA_SEC = "about %d s",
     NAV_WARN_HOSTILE = "Hostile town: %s",
@@ -116,7 +117,8 @@ Q:RegisterStrings({
     OPT_ARROW_PINK = "Rose",
 
     NAV_ARROW_YARDS = "%d m",
-    NAV_ARROW_KM = "%.1f km",
+    NAV_ARROW_KM = "%s km",
+    DECIMAL_SEP = ",",
     NAV_ARROW_ETA_MIN = "environ %d min",
     NAV_ARROW_ETA_SEC = "environ %d s",
     NAV_WARN_HOSTILE = "Ville hostile : %s",

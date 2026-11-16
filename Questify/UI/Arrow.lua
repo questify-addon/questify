@@ -56,6 +56,7 @@ local SHADOW_ALPHA = 0.55
 local DEFAULT_POINT = { "TOP", "TOP", 0, -140 }
 
 local UPDATE_EVERY = 0.2          -- secondes : textes, visibilité, prochain point
+local POSITION_EVERY = 0.05       -- secondes : position du joueur relue au plus à ce rythme (rotation)
 local WARN_SECONDS = 10           -- durée d'un avertissement
 local WALK_SPEED = 7              -- yards/s, si Q.Travel:Speed manque
 
@@ -75,6 +76,7 @@ local target         -- dernière cible reçue (NAV_TARGET) : { mapId, x, y, tit
 local ticker         -- Update toutes les UPDATE_EVERY s tant qu'une route ou une cible existe
 local moving         -- glisser-déposer en cours
 local aimC, aimX, aimY   -- point visé (repère monde), lu à chaque image pour la rotation
+local posC, posX, posY, posAt   -- position du joueur en cache (monde) et instant de la lecture
 local seen, seenKey = {}, nil   -- avertissements déjà montrés pour la cible seenKey
 local warnText, warnUntil
 
@@ -94,6 +96,16 @@ local function playerWorld()
   local m, x, y = M:PlayerPos()
   if not m then return nil end
   return M:WorldPos(m, x, y)
+end
+
+-- Position du joueur en cache, relue au plus toutes les POSITION_EVERY s (fresh : relue maintenant).
+local function cachedPlayer(fresh)
+  local t = now()
+  if fresh or not posAt or t - posAt >= POSITION_EVERY then
+    posC, posX, posY = playerWorld()
+    posAt = t
+  end
+  return posC, posX, posY
 end
 
 local function worldOf(p)
@@ -144,7 +156,8 @@ end
 local function formatDistance(yards)
   if type(yards) ~= "number" then return "" end
   if yards < 1000 then return string.format(L.NAV_ARROW_YARDS, floor(yards + 0.5)) end
-  return string.format(L.NAV_ARROW_KM, yards / 1000)
+  local km = string.format("%.1f", yards / 1000):gsub("%.", L.DECIMAL_SEP or ".", 1)
+  return string.format(L.NAV_ARROW_KM, km)
 end
 
 -- « environ 2 min », « environ 30 s » (dizaines de secondes sous la minute).
@@ -339,7 +352,7 @@ end
 local function rotate()
   local f = frame
   if not f then return end
-  local c, px, py = playerWorld()
+  local c, px, py = cachedPlayer()
   local facing = GetPlayerFacing and GetPlayerFacing()
   if not aimC or not c or c ~= aimC or isSecret(facing) or type(facing) ~= "number" then
     f.arrow:Hide()
@@ -477,7 +490,7 @@ end
 function Arrow:Update()
   local m = wanted()
   if not m then return hide() end
-  local c, px, py = playerWorld()
+  local c, px, py = cachedPlayer(true)
   if not c then return hide() end
   local point, caption, icon, yards, seconds
   if m == "route" then
@@ -537,6 +550,9 @@ function Arrow:Update()
   rotate()
 end
 
+-- Minuterie active (tests).
+function Arrow:Ticking() return ticker ~= nil end
+
 function Arrow:ResetPosition()
   Q.Settings:Set("nav.arrowPos", nil)
   applyPosition()
@@ -546,8 +562,9 @@ end
 -- Messages et évènements
 ---------------------------------------------------------------------------
 -- Minuterie tant qu'il y a quelque chose à suivre (aussi pendant un vol : réapparition à l'atterrissage).
+-- Seulement si la flèche peut s'afficher : affichage « flèche » effectif et arrow.show actif.
 local function syncTicker()
-  local need = route ~= nil or target ~= nil
+  local need = (route ~= nil or target ~= nil) and setting("arrow.show") ~= false and mode() ~= nil
   if need and not ticker then
     ticker = Q:NewTicker(UPDATE_EVERY, function() Arrow:Update() end)
   elseif not need and ticker then
@@ -580,6 +597,7 @@ Q:On("SETTINGS_CHANGED", function(path)
     if path == nil or path == "nav" or path == "nav.arrowLocked" then applyLock() end
   end
   if path == nil or path == "nav" or path == "arrow" or tostring(path):find("^nav%.") or path == "arrow.show" then
+    syncTicker()
     Arrow:Update()
   end
 end)
