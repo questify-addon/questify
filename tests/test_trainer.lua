@@ -172,7 +172,8 @@ return {
     talkTo(912, SERVICES_L2)
     local T = Q.UI.Tracker
     T.trainerAlert:GetScript("OnEnter")(T.trainerAlert)
-    t.ok(Ext.tooltipHas("Rend (Rank 1)"))
+    t.ok(Ext.tooltipHas("Rend Rank 1"), "name and rank")
+    t.ok(Ext.tooltipHas("|T136002:16:16:0:0|t Rend"), "trainer icon before the name")
     t.ok(Ext.tooltipHas(Q.L.UI_TRAINER_HINT_GO))
     t.ok(Ext.tooltipHas(Q.L.UI_TRAINER_HINT_SNOOZE))
   end,

@@ -130,7 +130,9 @@ local function showTooltip(owner, lines)
   GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
   GameTooltip:ClearLines()
   for i, line in ipairs(lines) do
-    if i == 1 then
+    if type(line) == "table" then   -- { gauche, droite } : deux colonnes (sorts du maître et leur prix)
+      GameTooltip:AddDoubleLine(line[1], line[2], 1, 1, 1, 1, 1, 1)
+    elseif i == 1 then
       GameTooltip:AddLine(line, 1, 0.82, 0, true)
     else
       GameTooltip:AddLine(line, 1, 1, 1, true)
@@ -844,7 +846,16 @@ function Tracker:TrainerTooltip(owner)
       lines[#lines + 1] = "..."
       break
     end
-    lines[#lines + 1] = "- " .. name
+    -- icône, nom, rang (gris) et prix de chaque sort ; sans ligne du maître, le nom seul
+    local s = alert.spells and alert.spells[i]
+    if type(s) == "table" then
+      local icon = Q.Trainer.ServiceIcon(s)
+      local left = (icon and ("|T" .. tostring(icon) .. ":16:16:0:0|t ") or "") .. tostring(s.name)
+      if s.rank and s.rank ~= "" then left = left .. " |cffaaaaaa" .. s.rank .. "|r" end
+      lines[#lines + 1] = { left, (s.cost or 0) > 0 and money(s.cost) or "" }
+    else
+      lines[#lines + 1] = "- " .. name
+    end
   end
   if alert.known and alert.cost > 0 then lines[#lines + 1] = string.format(L.UI_TRAINER_COST, money(alert.cost)) end
   if alert.known and alert.missing > 0 then

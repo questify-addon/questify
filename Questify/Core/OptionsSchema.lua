@@ -261,6 +261,21 @@ add({ id = "lootSingle", section = "loot", category = "profile", type = "info", 
 add({ id = "trainerAlert", section = "class", category = "spells", type = "toggle", path = "trainerAlert",
   label = "UI_OPT_TRAINER", tip = "OPT_TIP_TRAINER",
   keywords = "maitre de classe entraineur sorts trainer spells class" })
+add({ id = "trainerPanel", section = "class", category = "spells", type = "toggle", path = "trainerPanel",
+  label = "RANKS_OPT_PANEL", tip = "RANKS_OPT_TIP_PANEL",
+  keywords = "maitre de classe panneau sorts prix rang icone trainer panel spells cost rank icon" })
+add({ id = "oldRanks", section = "class", category = "spells", type = "toggle", path = "oldRanks",
+  label = "RANKS_OPT_OLD", tip = "RANKS_OPT_TIP_OLD",
+  keywords = "barres action rang ancien remplacer mettre a jour action bar rank old upgrade replace" })
+add({ id = "oldRanksForget", section = "class", category = "spells", type = "action",
+  label = "RANKS_OPT_FORGET", tip = "RANKS_OPT_TIP_FORGET",
+  keywords = "barres action rang ignore oublier reproposer action bar rank ignored forget",
+  run = function()
+    if Q.ActionRanks then
+      Q.ActionRanks:ForgetIgnored()
+      Q:Print(Q.L.RANKS_FORGOTTEN)
+    end
+  end })
 add({ id = "professions", section = "class", category = "professions", type = "action",
   label = "UI_OPT_PROFESSIONS", tip = "OPT_TIP_PROFESSIONS",
   keywords = "metiers metier minage herboristerie depecage cuisine professions profession mining herbalism",
