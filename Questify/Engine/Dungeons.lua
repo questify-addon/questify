@@ -1225,10 +1225,48 @@ end)
 ---------------------------------------------------------------------------
 local QUEST_ACTIONS = { accept = true, complete = true, turnin = true }
 
+-- Les notes et le nom du donjon sont écrits dans les étapes au moment de l'ajout, dans la langue du client
+-- d'alors. Si le jeu a changé de langue depuis, ils sont réécrits dans la langue actuelle. La note de retour
+-- perd alors son détail (le titre de l'étape visée, qu'on ne sait pas retraduire).
+local function relocalize()
+  local L = Q.L
+  local backPrefix = L.DUNGEON_BACK_NOTE:match("^(.-)%%s") or L.DUNGEON_BACK_NOTE
+  local DM = Q.DungeonMode
+  for _, e in ipairs(Q.Progress:Entries()) do
+    local tag, step = e.tag, e.step
+    if e.source == "inserted" and type(tag) == "string" and tag:sub(1, #TAG_PREFIX) == TAG_PREFIX then
+      local key = tag:sub(#TAG_PREFIX + 1)
+      local r = DM and DM.Rung and DM:Rung(key)
+      local d = findDungeon(key) or (r and findDungeon(r.dungeon))
+      if d then
+        local name = Dungeons:Name(d)
+        if step.action == "goto" and type(step.note) == "string" then
+          if step.dungeon then
+            if step.note ~= L.DUNGEON_BACK_NOTE_PLAIN and step.note:sub(1, #backPrefix) ~= backPrefix then
+              step.note = L.DUNGEON_BACK_NOTE_PLAIN
+            end
+          else
+            step.note = string.format(L.DUNGEON_GOTO_NOTE, name)
+          end
+        end
+        if step.dungeon then step.dungeon = name end
+      end
+    end
+  end
+end
+Dungeons.Relocalize = relocalize
+
+local relocalized = false
+
 Q:On("PROGRESS_UPDATED", function()
   if not enabled() then return end
   local s = saved()
   if not s then return end
+  if not relocalized then
+    relocalized = true
+    local ok, err = pcall(relocalize)
+    if not ok then Q:ReportError(err) end
+  end
   local groups, order = {}, {}
   for _, e in ipairs(Q.Progress:Entries()) do
     local tag = e.tag

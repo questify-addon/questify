@@ -124,14 +124,10 @@ return {
     t.eq(f:IsMouseEnabled(), false, "locked: clicks go through")
     f:GetScript("OnDragStart")(f)
     t.eq(Mock.countCalls("StartMoving"), 0, "locked: does not move")
-    t.ok(f.lock:GetTexture():find("Locked", 1, true), "padlock closed")
-    t.near(f.lock:GetAlpha(), 0.85, 0.001)
-    -- clic sur le cadenas : déverrouille
-    Mock.click(f.lockButton)
-    t.eq(Q.Settings:Get("nav.arrowLocked"), false, "padlock click unlocks")
+    t.eq(f.lockButton, nil, "no padlock on the arrow")
+    -- le réglage (options) déverrouille
+    Q.Settings:Set("nav.arrowLocked", false)
     t.eq(f:IsMouseEnabled(), true)
-    t.ok(f.lock:GetTexture():find("Unlocked", 1, true), "padlock open")
-    t.near(f.lock:GetAlpha(), 0.35, 0.001, "open padlock is faint")
     noErrors(t)
   end,
 

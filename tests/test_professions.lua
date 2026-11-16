@@ -70,7 +70,7 @@ end
 
 return {
   picker_once_after_wizard = function(t)
-    local Q = load({ QuestifyCharDB = { wizardDone = true } })
+    local Q = load({ QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } })
     Mock.advance(4)
     local P = Q.UI.ProfessionPicker
     t.ok(P.frame and P.frame:IsShown(), "asked at login")

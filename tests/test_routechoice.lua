@@ -220,6 +220,35 @@ return {
     t.eq(Mock.countPrinted(string.format(Q.L.ROUTE_NEXT, "Westfall")), 1)
   end,
 
+  -- Suites toutes sous le niveau du joueur : pas de demande, on saute au chapitre de son niveau. Une
+  -- suite encore à son niveau : la demande part comme d'habitude.
+  choices_below_level_jump_ahead = function(t)
+    local Q = load()
+    setup(Q, { level = 30 })
+    Q:RegisterGuide({ id = "T_HIGH", title = "Stranglethorn", faction = "Alliance",
+      minLevel = 29, maxLevel = 32, steps = { { "accept", 233 }, { "turnin", 233, xp = 900 } } })
+    local asked = 0
+    Q:On("ROUTE_CHOICE_NEEDED", function() asked = asked + 1 end)
+    finish(Q)
+    Mock.advance(0)
+    t.eq(Q.Progress:Guide().id, "T_HIGH", "jumps to the chapter of the player's level")
+    t.eq(asked, 0, "no choice asked")
+    t.eq(Q.Progress:PendingChoice(), nil)
+    t.ok(not popup(Q):IsShown())
+    t.eq(Q.char.routeChoices.T_FROM, nil, "no choice stored")
+    noErrors(t)
+
+    Mock.reset()
+    Q = load()
+    setup(Q, { level = 18 })
+    Q:RegisterGuide({ id = "T_HIGH", title = "Stranglethorn", faction = "Alliance",
+      minLevel = 29, maxLevel = 32, steps = { { "accept", 233 }, { "turnin", 233, xp = 900 } } })
+    finish(Q)
+    Mock.advance(0)
+    t.eq(Q.Progress:Guide().id, "T_FROM", "Darkshore still fits at 18: the player chooses")
+    t.eq(Q.Progress:PendingChoice(), "T_FROM")
+  end,
+
   -- « Plus tard » : le choix reste en attente, le suivi le dit, /qf route le rouvre ; « Garder la route
   -- prévue » prend la suite par défaut.
   later_then_slash_route_and_keep = function(t)

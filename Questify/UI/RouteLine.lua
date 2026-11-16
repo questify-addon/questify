@@ -63,7 +63,15 @@ local BEHIND, AHEAD = 50, 200      -- yards : fenêtre du chemin où l'on cherch
 local MIN_BRIGHT = 0.48            -- canal le plus fort de la couleur au moins à ce niveau (lisible)
 local RIDE_ALPHA = 0.9
 local HALO_ALPHA = 0.667           -- maquette : #000a
-local HALO_GROW = { world = 3, mini = 2.5 }   -- pixels de halo en plus de la marque
+local HALO_GROW = { world = 2, mini = 2 }   -- pixels de halo en plus de la marque
+-- Carte du monde : écart voulu entre deux marques, en pixels de la carte affichée. Les points sont
+-- calculés en yards ; selon l'échelle de la carte (yards par pixel), un point sur n seulement est
+-- posé, pour que les marques ne se chevauchent pas en pâté (carte de zone) ni ne s'empilent (carte
+-- du continent). Trait plein : des barres tournées le long du chemin, longues comme l'écart, qui se
+-- rejoignent en un trait fin et continu.
+local GAP_PX = { dots = 9, solid = 6, dashes = 15, ride = 9 }
+local SOLID_THICK = 3              -- épaisseur du trait plein en barres
+local SOLID_OVERLAP = 1.5          -- pixels de recouvrement entre deux barres
 
 -- Types de niveau de la carte du monde (insérés sous le niveau des repères de quête).
 local LEVEL_LINE, LEVEL_HALO = "QUESTIFY_ROUTE_LINE", "QUESTIFY_ROUTE_HALO"
@@ -107,6 +115,8 @@ local miniAt           -- { instance, x, y } du joueur au dernier calcul de la m
 local ticker
 local levels           -- nil : pas encore tenté ; false : niveau par défaut ; true : types insérés
 local posedSig         -- signature de la route posée (voir signature), nil : rien de posé
+local ypp              -- yards par pixel de la carte du monde affichée ; nil : inconnu (un point sur un)
+local worldN = 0       -- marques posées sur la carte du monde (hors halos)
 
 ---------------------------------------------------------------------------
 -- Outils
@@ -197,6 +207,41 @@ local function worldLevels()
   return nil, nil
 end
 
+-- Yards par pixel de la carte du monde affichée (largeur de la zone chez HereBeDragons sur la
+-- largeur de la carte à l'écran), ou nil quand l'une des deux manque (carte du monde entier, API
+-- absente).
+local function mapScale()
+  local map, stub = WorldMapFrame, LibStub
+  if type(map) ~= "table" or type(map.GetMapID) ~= "function" then return nil end
+  if type(stub) ~= "table" or type(stub.GetLibrary) ~= "function" then return nil end
+  local okL, hbd = pcall(stub.GetLibrary, stub, "HereBeDragons-2.0", true)
+  if not okL or type(hbd) ~= "table" or type(hbd.GetZoneSize) ~= "function" then return nil end
+  local okM, id = pcall(map.GetMapID, map)
+  if not okM or type(id) ~= "number" then return nil end
+  local okZ, yards = pcall(hbd.GetZoneSize, hbd, id)
+  if not okZ or type(yards) ~= "number" or yards <= 0 then return nil end
+  local child = type(map.ScrollContainer) == "table" and map.ScrollContainer.Child or nil
+  if type(child) ~= "table" or type(child.GetWidth) ~= "function" then return nil end
+  local okW, width = pcall(child.GetWidth, child)
+  if not okW or type(width) ~= "number" or width <= 0 then return nil end
+  local scale = 1
+  if type(map.GetCanvasScale) == "function" then
+    local okS, v = pcall(map.GetCanvasScale, map)
+    if okS and type(v) == "number" and v > 0 then scale = v end
+  end
+  return yards / (width * scale)
+end
+
+-- Un point sur n posé sur la carte du monde pour ce genre de marque, et l'écart obtenu en pixels
+-- (nil : échelle inconnue, tous les points).
+local function strideOf(kind)
+  if not ypp then return 1, nil end
+  local look = kind == "ride" and "ride" or style
+  local spacing = kind == "ride" and RIDE_SPACING or SPACING[style]
+  local n = max(1, math.ceil(GAP_PX[look] * ypp / spacing - 1e-6))
+  return n, n * spacing / ypp
+end
+
 ---------------------------------------------------------------------------
 -- Couleur
 ---------------------------------------------------------------------------
@@ -241,7 +286,9 @@ local function release(where, f)
 end
 
 -- Apparence du repère du point i : marque (couleur, angle) ou halo (noir, un peu plus grand).
-local function dress(f, i, where, color, halo)
+-- span : écart en pixels jusqu'à la marque suivante (carte du monde à l'échelle connue) ; le trait
+-- plein devient alors une barre de cette longueur, tournée le long du chemin.
+local function dress(f, i, where, color, halo, span)
   local kind = ptK[i]
   local look = kind == "ride" and "ride" or style
   local size = SIZES[look][where]
@@ -251,6 +298,9 @@ local function dress(f, i, where, color, halo)
   if not round and where == "mini" and rotatingMinimap() then
     -- minicarte qui tourne : l'angle changerait avec le joueur, un point rond à la place
     round, w = true, h
+  end
+  if look == "solid" and span then
+    round, w, h = false, span + SOLID_OVERLAP, SOLID_THICK
   end
   if halo then
     local g = HALO_GROW[where]
@@ -389,20 +439,23 @@ end
 -- Pose
 ---------------------------------------------------------------------------
 local function placeWorld(lib, i, color)
+  local stride, span = strideOf(ptK[i])
+  if i % stride ~= 0 then return end
   local lineLevel, haloLevel = worldLevels()
   local flag = HBD_PINS_WORLDMAP_SHOW_CONTINENT or 2
   -- HereBeDragons : x vers l'ouest, y vers le nord
   local h = acquire("world")
-  dress(h, i, "world", color, true)
+  dress(h, i, "world", color, true, span)
   if call(lib.AddWorldMapIconWorld, lib, REF, h, ptI[i], ptY[i], ptX[i], flag, haloLevel) then
     worldHalo[i] = h
   else
     release("world", h)
   end
   local f = acquire("world")
-  dress(f, i, "world", color, false)
+  dress(f, i, "world", color, false, span)
   if call(lib.AddWorldMapIconWorld, lib, REF, f, ptI[i], ptY[i], ptX[i], flag, lineLevel) then
     worldLine[i] = f
+    worldN = worldN + 1
   else
     release("world", f)
   end
@@ -413,6 +466,7 @@ local function removeWorld(lib, i)
     local f = list[i]
     if f then
       list[i] = nil
+      if list == worldLine then worldN = worldN - 1 end
       if type(lib.RemoveWorldMapIcon) == "function" then call(lib.RemoveWorldMapIcon, lib, REF, f) end
       release("world", f)
     end
@@ -429,14 +483,20 @@ local function clearWorld(lib)
     end
   end
   worldLast = first - 1
+  worldN = 0
 end
 
--- Fenêtre de la carte du monde : points first .. first + WORLD_POINTS - 1, carte ouverte seulement.
+-- Fenêtre de la carte du monde : à partir de first, jusqu'à WORLD_POINTS marques posées (un point
+-- sur n selon l'échelle de la carte, voir strideOf), carte ouverte seulement.
 local function syncWorld(lib, color)
   if not mapShown() then return end
-  local last = min(count, first + WORLD_POINTS - 1)
-  for i = max(worldLast + 1, first), last do placeWorld(lib, i, color) end
-  worldLast = max(worldLast, last)
+  if worldN == 0 then ypp = mapScale() end
+  local i = max(worldLast + 1, first)
+  while i <= count and worldN < WORLD_POINTS do
+    placeWorld(lib, i, color)
+    worldLast = i
+    i = i + 1
+  end
 end
 
 local function clearMinimap(lib)
@@ -632,6 +692,17 @@ if type(WorldMapFrame) == "table" and type(WorldMapFrame.HookScript) == "functio
   WorldMapFrame:HookScript("OnHide", function()
     Q.SafeCall(function() clearWorld(hbdPins()) end)
   end)
+  -- autre carte affichée (zone, continent) : l'échelle change, les marques sont reposées
+  if type(hooksecurefunc) == "function" and type(WorldMapFrame.OnMapChanged) == "function" then
+    hooksecurefunc(WorldMapFrame, "OnMapChanged", function()
+      Q.SafeCall(function()
+        local lib = hbdPins()
+        if not lib or count == 0 or not mapShown() then return end
+        clearWorld(lib)
+        syncWorld(lib, RouteLine:Color())
+      end)
+    end)
+  end
 end
 
 -- Écran de chargement : la minicarte suit le continent du joueur.

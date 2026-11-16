@@ -64,6 +64,7 @@ Q:RegisterStrings({
     UI_WIZ_ON = "on",
     UI_WIZ_OFF = "off",
     UI_WIZ_DONE = "Settings saved. Type /qf wizard to run the wizard again.",
+    UI_WIZ_NEW_OBJECTIVES = "New: choose how the tracker shows objectives (list, bars, counters). Close the window to keep the current display.",
   },
   frFR = {
     UI_WIZ_WELCOME_TITLE = "Bienvenue dans Questify",
@@ -124,5 +125,6 @@ Q:RegisterStrings({
     UI_WIZ_ON = "oui",
     UI_WIZ_OFF = "non",
     UI_WIZ_DONE = "Réglages enregistrés. Tape /qf wizard pour relancer l'assistant.",
+    UI_WIZ_NEW_OBJECTIVES = "Nouveau : choisis l'affichage des objectifs du suivi (liste, barres, compteurs). Ferme la fenêtre pour garder l'affichage actuel.",
   },
 })

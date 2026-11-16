@@ -13,6 +13,12 @@ local addonName, Q = ...
 --   3. nom de la zone de destination (langue du client) dans un seul nom de nœud ;
 --   4. position : nœud le plus proche de la première étape localisée sur la carte de destination.
 -- Nœud trouvé mais inaccessible, ou aucun nœud : un court message, pas de vol.
+--
+-- Surbrillance (toujours, avec ou sans autoFly) : à l'ouverture de la carte des vols, le point de vol
+-- à prendre est entouré d'un anneau doré qui pulse. C'est celui de l'étape « fly », sinon l'arrivée
+-- du premier vol de la route du routeur Questify (Q.Walk:Route, trajet « fly », champ node). Le
+-- bouton du point est cherché sur la carte des vols de Mainline (FlightMapFrame, repères
+-- FlightMap_FlightPointPinTemplate) puis sur la carte historique (TaxiButton<index>).
 local Taxi = {}
 Q.Taxi = Taxi
 
@@ -209,6 +215,126 @@ function Taxi:Try()
   return true
 end
 
+---------------------------------------------------------------------------
+-- Surbrillance du point de vol à prendre
+---------------------------------------------------------------------------
+local GLOW_NAME = "QuestifyTaxiGlow"
+local GLOW_MIN, GLOW_FACTOR = 34, 2.4    -- pixels, et taille par rapport au bouton du point
+local GLOW_TIME = 1.1
+local RING_TEXTURE = "Interface\\Cooldown\\ping4"
+local glow
+
+-- Point de vol à prendre parmi `nodes` : celui de l'étape « fly », sinon l'arrivée du premier vol
+-- de la route du routeur. nil : aucun, ou le joueur y est déjà.
+function Taxi:Wanted(nodes)
+  local node
+  local entry = currentFly()
+  if entry then node = self:Pick(entry, nodes) end
+  if not node then
+    local W = Q.Walk
+    local ok, r = false, nil
+    if W and type(W.Route) == "function" then ok, r = pcall(W.Route, W) end
+    if ok and type(r) == "table" and type(r.legs) == "table" then
+      for i = tonumber(r.leg) or 1, #r.legs do
+        local leg = r.legs[i]
+        if type(leg) == "table" and leg.kind == "fly" then
+          local id = tonumber(leg.node)
+          for _, n in ipairs(nodes) do
+            if id and n.nodeID == id then node = n; break end
+          end
+          break
+        end
+      end
+    end
+  end
+  if node and node.state == STATE_CURRENT then return nil end
+  return node
+end
+
+-- Bouton (cadre) du point de vol sur la carte des vols affichée, ou nil.
+local function nodeButton(node)
+  local fm = FlightMapFrame
+  if type(fm) == "table" and type(fm.EnumeratePinsByTemplate) == "function"
+    and type(fm.IsShown) == "function" and fm:IsShown() then
+    local ok, found = pcall(function()
+      for pin in fm:EnumeratePinsByTemplate("FlightMap_FlightPointPinTemplate") do
+        local d = pin.taxiNodeData
+        if type(d) == "table" and not Q.Util.IsSecret(d.slotIndex)
+          and (d.slotIndex == node.index or (node.nodeID ~= nil and d.nodeID == node.nodeID)) then
+          return pin
+        end
+      end
+    end)
+    if ok and found then return found end
+  end
+  local b = _G["TaxiButton" .. tostring(node.index)]
+  if type(b) == "table" and type(b.IsShown) == "function" and b:IsShown() then return b end
+  return nil
+end
+
+local function glowFrame()
+  if glow then return glow end
+  local f = CreateFrame("Frame", GLOW_NAME, UIParent)
+  f:Hide()
+  f:EnableMouse(false)
+  local steady = f:CreateTexture(nil, "OVERLAY")
+  steady:SetTexture(RING_TEXTURE)
+  steady:SetBlendMode("ADD")
+  steady:SetVertexColor(1, 0.82, 0, 0.9)
+  steady:SetAllPoints(f)
+  local ring = f:CreateTexture(nil, "OVERLAY")
+  ring:SetTexture(RING_TEXTURE)
+  ring:SetBlendMode("ADD")
+  ring:SetVertexColor(1, 0.82, 0)
+  ring:SetAllPoints(f)
+  local group = ring:CreateAnimationGroup()
+  group:SetLooping("REPEAT")
+  local scale = group:CreateAnimation("Scale")
+  if scale.SetScaleFrom then
+    scale:SetScaleFrom(0.6, 0.6)
+    scale:SetScaleTo(1.7, 1.7)
+  end
+  scale:SetDuration(GLOW_TIME)
+  local fade = group:CreateAnimation("Alpha")
+  fade:SetFromAlpha(1)
+  fade:SetToAlpha(0)
+  fade:SetDuration(GLOW_TIME)
+  f.pulse = group
+  glow = f
+  return f
+end
+
+function Taxi:HideHighlight()
+  if not glow then return end
+  if glow.pulse then glow.pulse:Stop() end
+  glow:Hide()
+  glow.node = nil
+end
+
+-- Entoure le point de vol à prendre. -> le nœud entouré, ou nil (aucun, ou bouton introuvable).
+function Taxi:Highlight()
+  if not open then return nil end
+  local nodes = self:Nodes()
+  local node = #nodes > 0 and self:Wanted(nodes) or nil
+  local button = node and nodeButton(node)
+  if not button then
+    self:HideHighlight()
+    return nil
+  end
+  local f = glowFrame()
+  local w = type(button.GetWidth) == "function" and tonumber(button:GetWidth()) or 0
+  local size = math.max(GLOW_MIN, w * GLOW_FACTOR)
+  f:SetParent(button)
+  f:ClearAllPoints()
+  f:SetPoint("CENTER", button, "CENTER", 0, 0)
+  f:SetSize(size, size)
+  if f.SetFrameLevel and button.GetFrameLevel then f:SetFrameLevel((button:GetFrameLevel() or 0) + 5) end
+  f.node = node
+  f:Show()
+  if f.pulse then f.pulse:Play() end
+  return node
+end
+
 -- Une nouvelle ouverture sans fermeture entre les deux ne relance pas de vol.
 function Taxi:OnOpened()
   if not open then done = false end
@@ -216,9 +342,15 @@ function Taxi:OnOpened()
   if not self:Try() then
     Q:After(RETRY_DELAY, function() Taxi:Try() end)
   end
+  -- les boutons des points de vol peuvent n'être posés qu'un instant après l'ouverture
+  Q.SafeCall(Taxi.Highlight, Taxi)
+  Q:After(RETRY_DELAY, function() Q.SafeCall(Taxi.Highlight, Taxi) end)
 end
 
 -- Progress (chargé avant) traite TAXIMAP_OPENED d'abord : l'étape « fp » de ce maître de vol est
 -- validée, l'étape courante est donc déjà la suivante quand ce gestionnaire s'exécute.
 Q:RegisterEvent("TAXIMAP_OPENED", function() Taxi:OnOpened() end)
-Q:RegisterEvent("TAXIMAP_CLOSED", function() open, done = false, false end)
+Q:RegisterEvent("TAXIMAP_CLOSED", function()
+  open, done = false, false
+  Q.SafeCall(Taxi.HideHighlight, Taxi)
+end)

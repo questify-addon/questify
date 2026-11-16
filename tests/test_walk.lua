@@ -179,9 +179,17 @@ return {
     -- le job, tel que le routeur le lit au début du calcul (après le retour du pont) : sans danger
     t.eq(last.danger, nil, "fastest: no zone pricing")
     t.eq(finds()[1].cancelled, true)
+    -- sûr : les grands chemins, avec l'évitement des zones ; « roads », son ancien nom, pareil
+    Q.Settings:Set("nav.routeStyle", "safe")
+    Mock.advance(1.1)
+    t.eq(finds()[#finds()].opts.style, "roads")
+    t.eq(finds()[#finds()].opts.danger, { [1436] = 4, [1432] = 2 })
+    Q.Settings:Set("nav.routeStyle", "fastest")
+    Mock.advance(1.1)
     Q.Settings:Set("nav.routeStyle", "roads")
     Mock.advance(1.1)
     t.eq(finds()[#finds()].opts.style, "roads")
+    t.eq(finds()[#finds()].opts.danger, { [1436] = 4, [1432] = 2 })
     t.eq(#Mock.errors, 0)
   end,
 

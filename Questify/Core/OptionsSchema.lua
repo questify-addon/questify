@@ -228,15 +228,15 @@ add({ id = "nav.router", section = "navigation", category = "routing", type = "s
   end })
 add({ id = "nav.routeStyle", section = "navigation", category = "routing", type = "select",
   path = "nav.routeStyle", label = "OPT_NAV_ROUTE_STYLE", tip = "OPT_TIP_NAV_ROUTE_STYLE", style = "radio",
-  keywords = "style trajet sur securite rapide routes villes hostiles danger route style safe fastest roads hostile",
-  values = { "safe", "fastest", "roads" },
+  keywords = "style trajet sur securite rapide optimise routes chemins villes hostiles danger route style safe fastest optimized roads hostile",
+  values = { "fastest", "optimized", "safe" },
   enabled = questifyRouter,
   choices = function()
     local Lx = L()
     return {
-      { value = "safe", text = Lx.NAV_STYLE_SAFE },
       { value = "fastest", text = Lx.NAV_STYLE_FASTEST },
-      { value = "roads", text = Lx.NAV_STYLE_ROADS },
+      { value = "optimized", text = Lx.NAV_STYLE_OPTIMIZED },
+      { value = "safe", text = Lx.NAV_STYLE_SAFE },
     }
   end })
 add({ id = "nav.display", section = "navigation", category = "display", type = "select", path = "nav.display",

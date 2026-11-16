@@ -166,6 +166,41 @@ return {
     t.eq(#Mock.prints, 0)
   end,
 
+  -- Surbrillance : le point de vol de l'étape, même avec les vols automatiques coupés ; retirée à
+  -- la fermeture. Sans étape de vol : l'arrivée du premier vol de la route du routeur.
+  highlights_the_flight_to_take = function(t)
+    local Q = load()
+    Q.Settings:Set("autoFly", false)
+    flyTo(Q, { { "fly", 1432 } })
+    nodes({ { name = "Ironforge, Dun Morogh", state = 0 }, { name = "Thelsamar, Loch Modan", state = 1 } })
+    TaxiButton2 = CreateFrame("Button", nil, UIParent)
+    TaxiButton2:SetSize(16, 16)
+    TaxiButton2:Show()
+    Mock.fire("TAXIMAP_OPENED", 1)
+    t.eq(taken(), {}, "autoFly off: no flight")
+    t.ok(QuestifyTaxiGlow and QuestifyTaxiGlow:IsShown(), "glow shown")
+    t.eq(QuestifyTaxiGlow:GetParent(), TaxiButton2, "on the button of the node to take")
+    t.eq(QuestifyTaxiGlow.node.name, "Thelsamar, Loch Modan")
+    Mock.fire("TAXIMAP_CLOSED")
+    t.ok(not QuestifyTaxiGlow:IsShown(), "hidden when the flight map closes")
+    TaxiButton2 = nil
+    t.eq(#Mock.errors, 0)
+  end,
+
+  highlight_follows_the_router_flight = function(t)
+    local Q = load()
+    local list = { { index = 1, name = "Stormwind", lname = "stormwind", state = 0, nodeID = 2 },
+      { index = 2, name = "Lakeshire", lname = "lakeshire", state = 1, nodeID = 5 },
+      { index = 3, name = "Darkshire", lname = "darkshire", state = 1, nodeID = 12 } }
+    t.eq(Q.Taxi:Wanted(list), nil, "no fly step, no route")
+    Q.Walk = { Route = function() return { leg = 1, legs = { { kind = "walk" }, { kind = "fly", node = 5 },
+      { kind = "fly", node = 12 } } } end }
+    t.eq(Q.Taxi:Wanted(list).name, "Lakeshire", "arrival of the first flight of the route")
+    Q.Walk = { Route = function() return { leg = 1, legs = { { kind = "fly", node = 2 } } } end }
+    t.eq(Q.Taxi:Wanted(list), nil, "already there")
+    t.eq(#Mock.errors, 0)
+  end,
+
   legacy_taxi_functions = function(t)
     local Q = load()
     flyTo(Q, { { "fly", 1432 } })

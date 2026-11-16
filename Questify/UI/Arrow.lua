@@ -3,11 +3,12 @@ local addonName, Q = ...
 -- Flèche Questify (spec du routeur intégré, § 4 ; maquette validée :
 -- docs/superpowers/specs/2026-11-16-routeur-integre-maquette.html, bloc « Flèche »).
 --
--- Un cadre aux couleurs du thème du suivi (tracker.theme, tracker.opacity), de haut en bas :
+-- Un cadre sans fond ni bordure, aux couleurs de texte du thème du suivi (tracker.theme), textes
+-- contourés pour rester lisibles sur le décor ; de haut en bas :
 -- la flèche (Media/Themes/arrow.tga, blanche, teinte par SetVertexColor, tournée par SetRotation à
 -- chaque image) sur son ombre (arrow-glow.tga), la distance, le temps restant, puis l'icône et la
--- légende du trajet en cours ; un cadenas en haut à droite (fermé : verrouillée ; ouvert, pâle :
--- déplaçable). Sous la légende, un avertissement passager (ville hostile, zone de haut niveau).
+-- légende du trajet en cours. Sous la légende, un avertissement passager (ville hostile, zone de
+-- haut niveau).
 --
 -- Ce qu'elle suit :
 --   * routeur Questify (Q.Nav:Active() == "questify") : la route du pont de marche (message NAV_ROUTE,
@@ -23,7 +24,7 @@ local addonName, Q = ...
 -- trajet (par cible), pendant WARN_SECONDS.
 --
 -- Réglages : arrow.show, arrow.color (Q.Themes:ArrowColor quand il existe), nav.arrowLocked (la souris
--- traverse la flèche verrouillée ; le cadenas reste cliquable), nav.arrowPos = { point, point relatif,
+-- traverse la flèche verrouillée ; réglé dans les options, sans bouton sur la flèche), nav.arrowPos = { point, point relatif,
 -- x, y } par rapport à UIParent (centre du cadre, en unités d'UIParent, comme la position du suivi).
 --   Q.Arrow:Frame()          cadre (créé au premier appel ; tests et /qf demo)
 --   Q.Arrow:Update()         visibilité, textes et cible de la flèche
@@ -38,21 +39,18 @@ local L = Q.L
 local MEDIA = "Interface\\AddOns\\" .. addonName .. "\\Media\\Themes\\"
 local ARROW_TEXTURE = MEDIA .. "arrow"
 local GLOW_TEXTURE = MEDIA .. "arrow-glow"
-local LOCKED_TEXTURE = "Interface\\Buttons\\LockButton-Locked-Up"
-local UNLOCKED_TEXTURE = "Interface\\Buttons\\LockButton-Unlocked-Up"
 
--- Mise en page de la maquette (.arrow : 210 px de large, marges 10/12/8, flèche 64 px, icône 18 px).
-local WIDTH = 210
-local PAD_TOP, PAD_BOTTOM, PAD_X = 10, 8, 12
-local ARROW_SIZE = 64
-local GLOW_SIZE = 76              -- ombre un peu plus grande que la flèche (contour et ombre portée)
+-- Mise en page : la maquette (.arrow : 210 px de large, flèche 64 px, icône 18 px) réduite d'un bon
+-- tiers, trop grande en jeu.
+local WIDTH = 170
+local PAD_TOP, PAD_BOTTOM, PAD_X = 6, 6, 8
+local ARROW_SIZE = 40
+local GLOW_SIZE = 48              -- ombre un peu plus grande que la flèche (contour et ombre portée)
 local GAP = 2                     -- entre flèche, distance et temps
-local DIST_H, ETA_H = 20, 13
-local LEG_GAP = 6                 -- gap 2 + margin-top 4 de la légende
-local ICON_SIZE, ICON_GAP = 18, 6
+local DIST_H, ETA_H = 16, 12
+local LEG_GAP = 4                 -- entre le temps et la légende
+local ICON_SIZE, ICON_GAP = 14, 5
 local WARN_GAP, WARN_H = 4, 14
-local LOCK_SIZE = 12
-local LOCK_ALPHA_ON, LOCK_ALPHA_OFF = 0.85, 0.35
 local SHADOW_ALPHA = 0.55
 local DEFAULT_POINT = { "TOP", "TOP", 0, -140 }
 
@@ -252,14 +250,15 @@ local function applyStyle()
   local f = frame
   if not f then return end
   local T = Q.Themes
-  -- thème en vigueur (race du personnage ou tracker.theme), comme le suivi
-  local theme = T:Apply(f, T.CurrentKey and T:CurrentKey() or setting("tracker.theme"), setting("tracker.opacity"))
+  -- couleurs de texte du thème en vigueur (race du personnage ou tracker.theme), sans son fond ni sa
+  -- bordure : la flèche flotte sur le décor, ses textes portent donc toujours un contour
+  local base = T:Get(T.CurrentKey and T:CurrentKey() or setting("tracker.theme"))
+  local theme = setmetatable({ outline = true }, { __index = base })
+  f.qvThemeKey = base.key
   T:StyleText(f.dist, "distance", theme)
   T:StyleText(f.eta, "dim", theme)
   T:StyleText(f.caption, "body", theme)
   T:StyleText(f.warn, "warn", theme)
-  local d = T:TextColor("dim", theme)
-  f.lock:SetVertexColor(d[1], d[2], d[3], 1)
   local r, g, b = arrowColor()
   f.arrow:SetVertexColor(r, g, b, 1)
   f.glow:SetVertexColor(0, 0, 0, SHADOW_ALPHA)
@@ -270,8 +269,6 @@ local function applyLock()
   if not f then return end
   local locked = setting("nav.arrowLocked") == true
   f:EnableMouse(not locked)
-  f.lock:SetTexture(locked and LOCKED_TEXTURE or UNLOCKED_TEXTURE)
-  f.lock:SetAlpha(locked and LOCK_ALPHA_ON or LOCK_ALPHA_OFF)
 end
 
 local function scaleRatio(f)
@@ -372,18 +369,9 @@ end
 ---------------------------------------------------------------------------
 -- Construction
 ---------------------------------------------------------------------------
-local function showLockTooltip(owner)
-  if not GameTooltip then return end
-  GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
-  GameTooltip:SetText(L.OPT_NAV_ARROW_LOCKED)
-  GameTooltip:AddLine(L.OPT_TIP_NAV_ARROW_LOCKED, 1, 1, 1, true)
-  GameTooltip:AddLine(L.NAV_ARROW_LOCK_CLICK, 0.6, 0.6, 0.6, true)
-  GameTooltip:Show()
-end
-
 function Arrow:Frame()
   if frame then return frame end
-  local f = CreateFrame("Frame", "QuestifyArrow", UIParent, "BackdropTemplate")
+  local f = CreateFrame("Frame", "QuestifyArrow", UIParent)
   frame = f
   f:Hide()
   f:SetSize(WIDTH, 120)
@@ -424,7 +412,7 @@ function Arrow:Frame()
   arrow:SetPoint("TOP", f, "TOP", 0, -PAD_TOP)
   f.arrow = arrow
 
-  local d = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+  local d = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
   d:SetPoint("TOP", arrow, "BOTTOM", 0, -GAP)
   d:SetHeight(DIST_H)
   f.dist = d
@@ -453,22 +441,6 @@ function Arrow:Frame()
   warn:SetWordWrap(false)
   warn:Hide()
   f.warn = warn
-
-  -- cadenas : fermé = verrouillée, ouvert et pâle = déplaçable ; clic = bascule
-  local lb = CreateFrame("Button", nil, f)
-  lb:SetSize(LOCK_SIZE + 4, LOCK_SIZE + 4)
-  lb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -4)
-  lb:SetScript("OnClick", function()
-    Q.Settings:Set("nav.arrowLocked", setting("nav.arrowLocked") ~= true)
-  end)
-  lb:SetScript("OnEnter", function(self) Q.SafeCall(showLockTooltip, self) end)
-  lb:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
-  f.lockButton = lb
-  local lock = lb:CreateTexture(nil, "OVERLAY")
-  lock:SetSize(LOCK_SIZE, LOCK_SIZE)
-  lock:SetPoint("CENTER", lb, "CENTER", 0, 0)
-  if lock.SetDesaturated then lock:SetDesaturated(true) end
-  f.lock = lock
 
   applyPosition()
   applyStyle()

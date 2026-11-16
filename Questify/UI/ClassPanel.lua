@@ -885,6 +885,11 @@ function Panel:MacroState(m)
   end
   if status == "ok" then
     return { main = L.CLASS_BTN_CREATED, kind = "done", note = note, noteRole = noteRole }
+  elseif (status == "outdated" or status == "edited") and M:Foreign(m) then
+    -- créée dans une autre langue que celle du jeu : on traduit la macro telle qu'elle est
+    local canWrite = why ~= "combat" and why ~= "noapi"
+    return { main = L.CLASS_BTN_CREATED, kind = "done", second = L.CLASS_BTN_TRANSLATE, canWrite = canWrite,
+      note = (not canWrite and note) or L.CLASS_ST_FOREIGN, noteRole = "warning", translate = true }
   elseif status == "outdated" or status == "edited" then
     return { main = L.CLASS_BTN_CREATED, kind = "done", second = L.CLASS_BTN_UPDATE, canWrite = okWrite,
       note = note or (status == "outdated" and L.CLASS_ST_OUTDATED or L.CLASS_ST_EDITED),
@@ -918,6 +923,11 @@ function Panel:MacroAction(card, which)
   local ok, why
   if which == "main" and s.kind ~= "done" then
     ok, why = M:Create(m, self:Filters().macroWhere == "char")
+  elseif which == "second" and s.translate then
+    ok, why = M:Translate(m)
+    if not ok and why == "long" and Q.UI.Options then
+      Q.UI.Options:Status(string.format(L.CLASS_ST_LONG, M.MAX_BODY + 1), true)
+    end
   elseif which == "second" then
     if s.edited and Q.UI.Options and Q.UI.Options.Confirm then
       Q.UI.Options:Confirm(L.CLASS_EDIT_CONFIRM, function()

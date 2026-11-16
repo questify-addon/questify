@@ -6,11 +6,13 @@ local addonName, Q = ...
 -- minicarte ; l'angle est gardé dans QuestifyDB.minimapAngle (repris après /reload).
 -- L'icône montre le profil de butin du personnage (Q.Rewards) : l'icône de la spécialisation qui
 -- correspond au profil si l'API la donne (Q.SpecRole), sinon une icône du jeu par rôle.
---   Clic gauche : menu des choix rapides (MenuUtil.CreateContextMenu de Blizzard_Menu, sinon un
+--   Clic gauche : fenêtre d'options (ouvre ou ferme). Clic droit : fenêtre d'options sur la section
+--     « Route ».
+--   Maj+clic : menu des choix rapides (MenuUtil.CreateContextMenu de Blizzard_Menu, sinon un
 --     petit menu maison) : profil de butin de la classe (le profil actuel coché), quatre
 --     interrupteurs (autoQuest, autoReward, zoneMode, mapPins, par Q.Settings:Set), puis
 --     « Options… » (fenêtre d'options), « Journal », « Assistant de démarrage », « Signaler un bug ».
---   Ctrl+clic : assistant de démarrage. Clic droit : journal (ouvre ou ferme).
+--   Ctrl+clic : assistant de démarrage.
 -- Option « minimapButton » (cachée si désactivée). Le bouton n'est pas sécurisé : l'afficher ou le
 -- cacher en combat ne pose pas de problème, et rien de protégé n'est appelé.
 Q.UI = Q.UI or {}
@@ -151,7 +153,7 @@ function Button:TooltipLines()
   local cf = classFile()
   local label = Rw and Rw:RoleLabel(Rw:Role(cf), cf) or "?"
   return { L.MINIMAP_TIP_TITLE, string.format(L.MINIMAP_TIP_ROLE, tostring(label)),
-    L.MINIMAP_TIP_LEFT, L.MINIMAP_TIP_RIGHT, L.MINIMAP_TIP_CTRL, L.MINIMAP_TIP_DRAG }
+    L.MINIMAP_TIP_LEFT, L.MINIMAP_TIP_RIGHT, L.MINIMAP_TIP_SHIFT, L.MINIMAP_TIP_CTRL, L.MINIMAP_TIP_DRAG }
 end
 
 function Button:ShowTooltip(owner)
@@ -186,10 +188,16 @@ function Button:Toggle(path)
   return not on
 end
 
--- OpenOptions() : fenêtre d'options (UI/Options.lua).
-function Button:OpenOptions()
+-- OpenOptions(section) : fenêtre d'options (UI/Options.lua), sur cette section si elle est donnée.
+function Button:OpenOptions(section)
   local O = Q.UI.Options
-  if O then O:Open() end
+  if O then O:Open(section) end
+end
+
+-- ToggleOptions() : ouvre ou ferme la fenêtre d'options.
+function Button:ToggleOptions()
+  local O = Q.UI.Options
+  if O then O:Toggle() end
 end
 
 function Button:OpenJournal(tab)
@@ -396,11 +404,13 @@ function Button:OnClick(mouse)
   if self.dragging then return end
   hideTooltip()
   if mouse == "RightButton" then
-    self:ToggleJournal()
+    self:OpenOptions("route")
   elseif IsControlKeyDown and IsControlKeyDown() then
     self:OpenWizard()
-  else
+  elseif IsShiftKeyDown and IsShiftKeyDown() then
     self:OpenMenu()
+  else
+    self:ToggleOptions()
   end
 end
 

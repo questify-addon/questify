@@ -498,7 +498,26 @@ local function optionsOf(g)
   return Q.Guides:Choices(g, P.raceKey, P.faction)
 end
 
--- Suite du chapitre fini g : -> chapitre, ou nil, true quand le joueur doit choisir. Une seule suite, ou
+-- Toutes les suites sont sous le niveau du joueur (niveau >= leur maxLevel) : -> le chapitre de son
+-- niveau dans le même parcours (Q.Guides:ForPlayer), pris sans demander ; nil quand une suite lui
+-- convient encore ou qu'aucun chapitre plus loin n'existe.
+local function aheadOf(g, options)
+  local P = Q.Player or {}
+  local level = tonumber(P.level)
+  if not level then return nil end
+  local top = g.minLevel or 1
+  for _, o in ipairs(options) do
+    local max = o.guide.maxLevel or 61
+    if level < max then return nil end
+    if max > top then top = max end
+  end
+  local target = Q.Guides:ForPlayer(P.faction, P.raceKey, level, g.mode)
+  if not target or target == g or target.mode ~= g.mode or (target.minLevel or 1) < top then return nil end
+  return target
+end
+
+-- Suite du chapitre fini g : -> chapitre, ou nil, true quand le joueur doit choisir. Suites toutes
+-- sous le niveau du joueur : le chapitre de son niveau, sans demander (aheadOf). Une seule suite, ou
 -- l'option route.choicePopup coupée : la suite par défaut, sans demander. Un choix déjà fait est repris.
 -- La demande (ROUTE_CHOICE_NEEDED) part une fois par chapitre et par session, hors de Update (le
 -- gestionnaire peut rappeler Progress, voir Progress:ChooseRoute).
@@ -510,6 +529,8 @@ local function resolveNext(g)
   for _, o in ipairs(options) do
     if o.guide.id == stored then return o.guide end
   end
+  local ahead = aheadOf(g, options)
+  if ahead then return ahead end
   if Q.Settings:Get("route.choicePopup") == false then
     for _, o in ipairs(options) do
       if o.default then return o.guide end

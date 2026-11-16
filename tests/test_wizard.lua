@@ -454,7 +454,7 @@ return {
   end,
 
   wizard_slash_command = function(t)
-    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true } } })
+    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
     Mock.advance(3)
     t.ok(not shown(Q.UI.Wizard))
     SlashCmdList.QUESTIFY("wizard")
@@ -616,6 +616,26 @@ return {
     t.eq(Q.Settings:Get("tracker.objLayout"), "quest")
     t.eq(Q.Settings:Get("tracker.objDetail"), "distance")
     t.eq(#Mock.errors, 0)
+  end,
+
+  -- Assistant terminé avant la page des objectifs : elle est proposée une seule fois, avec un message.
+  wizard_offers_the_objectives_page_once = function(t)
+    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true } } })
+    local W = Q.UI.Wizard
+    t.ok(not shown(W), "not before 3 s")
+    Mock.advance(3)
+    t.ok(shown(W), "shown for the new page")
+    t.eq(W.page, W.PAGE_OBJECTIVES)
+    t.eq(Q.char.wizardObjectivesSeen, true)
+    t.eq(Q.char.wizardDone, true, "still done")
+    t.eq(Mock.countPrinted(Q.L.UI_WIZ_NEW_OBJECTIVES), 1)
+    W.frame:Hide()
+
+    Mock.reset()
+    Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
+    Mock.advance(3)
+    t.ok(not shown(Q.UI.Wizard), "not offered again")
+    t.eq(Mock.countPrinted(Q.L.UI_WIZ_NEW_OBJECTIVES), 0)
   end,
 
   wizard_objectives_skip_restores = function(t)

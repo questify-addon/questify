@@ -223,6 +223,8 @@ local function build(key)
   for role, v in pairs(SHARED) do c[role] = v end
   c.sel = { c.accent[1], c.accent[2], c.accent[3], 0.16 }
   c.line2 = { 1, 1, 1, 0.13 }
+  -- fond des blocs de code (macros) : plus sombre que le fond, pour un texte clair
+  c.code = c.code or mix(c.bg, { 0, 0, 0 }, 0.45)
   -- bandeau : silhouette lointaine et premier plan (cuits dans la texture, gardés pour l'aperçu)
   c.far = mix(c.bg, { 0, 0, 0 }, 0.05)
   c.near = mix(c.bg, { 0, 0, 0 }, 0.3)

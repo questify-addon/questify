@@ -339,12 +339,20 @@ local function warningsOf(E, j, path, danger)
   return out
 end
 
--- Options du routeur selon nav.routeStyle : « safe » = balanced + faction + danger.
+-- Options du routeur selon nav.routeStyle :
+--   « fastest »   le plus court (style fastest du routeur), sans regard pour le niveau des zones ;
+--   « optimized » (défaut) coupe par les chemins et les pentes douces (style balanced), en évitant
+--                 les zones bien au-dessus du niveau du joueur (danger) ;
+--   « safe »      reste au plus sur les routes (style roads), avec le même évitement des zones ;
+--                 « roads », l'ancien nom de ce choix, est lu comme « safe ».
+-- Les villes hostiles sont évitées dans les trois (profil de faction).
 local function options(fromMap, toMap)
   local style = Q.Settings:Get("nav.routeStyle")
   local profile = faction()
-  if style == "fastest" or style == "roads" then return { profile = profile, style = style } end
-  return { profile = profile, style = "balanced", danger = Walk:DangerTable(fromMap, toMap) }
+  if style == "fastest" then return { profile = profile, style = "fastest" } end
+  local danger = Walk:DangerTable(fromMap, toMap)
+  if style == "safe" or style == "roads" then return { profile = profile, style = "roads", danger = danger } end
+  return { profile = profile, style = "balanced", danger = danger }
 end
 
 ---------------------------------------------------------------------------

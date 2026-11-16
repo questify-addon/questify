@@ -26,6 +26,8 @@ local addonName, Q = ...
 -- enregistrés dans Q.char.wizardDraft. Tant que l'assistant n'est pas terminé, il se rouvre sur
 -- cette page 3 s après « LOGIN » (donc après /reload ou une reconnexion), jamais en combat, au
 -- plus une fois par session. Fermer par la croix ne termine pas : /qf wizard reprend à la même page.
+-- Assistant terminé avant la page des objectifs : il se rouvre une seule fois sur cette page
+-- (Q.char.wizardObjectivesSeen), avec un message dans la discussion.
 Q.UI = Q.UI or {}
 local Wizard = { page = 1, pages = {}, radios = {}, checks = {}, addonRows = {}, recap = {}, enabledNames = {} }
 Q.UI.Wizard = Wizard
@@ -1101,6 +1103,7 @@ function Wizard:Finish()
   if Q.DungeonMode and autoAvailable() then Q.DungeonMode:SetOn(c.route == "auto") end
   if Q.char then
     Q.char.wizardDone = true
+    Q.char.wizardObjectivesSeen = true
     Q.char.wizardPage = nil
     Q.char.wizardDraft = nil
   end
@@ -1114,8 +1117,16 @@ end
 ---------------------------------------------------------------------------
 local waitingCombat = false
 
+-- Assistant terminé avant que la page des objectifs existe : elle est proposée une fois
+-- (Q.char.wizardObjectivesSeen), les autres pages gardant les réglages en vigueur.
+local function newPagePending()
+  return Q.char ~= nil and Q.char.wizardDone == true and not Q.char.wizardObjectivesSeen
+end
+
 local function autoShow()
-  if not Q.char or Q.char.wizardDone or Wizard:IsShown() then return end
+  if not Q.char or Wizard:IsShown() then return end
+  local revisit = newPagePending()
+  if Q.char.wizardDone and not revisit then return end
   -- déjà ouvert ou fermé par le joueur pendant cette session : pas d'insistance
   if Wizard.autoShown or Wizard.dismissed then return end
   if InCombatLockdown and InCombatLockdown() then
@@ -1123,11 +1134,17 @@ local function autoShow()
     return
   end
   Wizard.autoShown = true
-  Wizard:Show()
+  if revisit then
+    Q.char.wizardObjectivesSeen = true
+    Wizard:Show(PAGE_OBJECTIVES)
+    Q:Print(L.UI_WIZ_NEW_OBJECTIVES)
+  else
+    Wizard:Show()
+  end
 end
 
 Q:On("LOGIN", function()
-  if Q.char and not Q.char.wizardDone then Q:After(AUTO_DELAY, autoShow) end
+  if Q.char and (not Q.char.wizardDone or newPagePending()) then Q:After(AUTO_DELAY, autoShow) end
 end)
 
 Q:RegisterEvent("PLAYER_REGEN_ENABLED", function()

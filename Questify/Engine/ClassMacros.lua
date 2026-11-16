@@ -295,6 +295,78 @@ function Macros:Update(m)
   return true
 end
 
+---------------------------------------------------------------------------
+-- Macro écrite dans une autre langue que le jeu
+---------------------------------------------------------------------------
+-- Nom actuel d'un marqueur (« s123 », « i45 », « r ») dans la langue du client.
+local function currentName(key)
+  if key == "r" then return Macros:RankWord() end
+  local names = Q.ClassMacroData and Q.ClassMacroData.names or {}
+  local kind, id = key:sub(1, 1), tonumber(key:sub(2))
+  return (kind == "s" and spellName(id) or itemName(id)) or names[key] or ("#" .. id)
+end
+
+-- Noms que portait le texte enregistré à la création, retrouvés en le comparant au modèle du site :
+-- -> { { old, new } } pour ceux qui diffèrent des noms du client, du plus long au plus court ; nil si le
+-- texte ne suit plus le modèle (le site a changé la macro).
+local function renames(m, body)
+  if type(body) ~= "string" then return nil end
+  local keys = {}
+  local pat = m.code:gsub("[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")
+  pat = pat:gsub("{([sir])(%d*)}", function(kind, id)
+    keys[#keys + 1] = kind .. id
+    return "(.-)"
+  end)
+  if #keys == 0 or #keys > 32 then return nil end
+  local ok, caps = pcall(function() return { body:match("^" .. pat .. "$") } end)
+  if not ok or #caps ~= #keys then return nil end
+  local out, seen = {}, {}
+  for i, key in ipairs(keys) do
+    local old, new = caps[i], currentName(key)
+    if old ~= "" and old ~= new and not seen[old] then
+      seen[old] = true
+      out[#out + 1] = { old, new }
+    end
+  end
+  table.sort(out, function(a, b) return #a[1] > #b[1] end)
+  return out
+end
+
+-- La macro du jeu a-t-elle été créée dans une autre langue que celle du client ?
+function Macros:Foreign(m)
+  local rec = self:Store()[m.id]
+  if not rec or macroIndex(rec.name) == 0 then return false end
+  local list = renames(m, rec.body)
+  return list ~= nil and #list > 0
+end
+
+-- Traduit la macro du jeu telle qu'elle est (retouches à la main gardées) : chaque nom de sort ou d'objet
+-- de l'ancienne langue est remplacé par celui du client, et le nom de la macro suit s'il est libre.
+-- -> true ou false, raison ("missing", "combat", "long", "noapi", "failed").
+function Macros:Translate(m)
+  local rec = self:Store()[m.id]
+  if not rec then return false, "missing" end
+  local index = macroIndex(rec.name)
+  if index == 0 then return false, "missing" end
+  if inCombat() then return false, "combat" end
+  if type(EditMacro) ~= "function" then return false, "noapi" end
+  local body = macroBody(index) or ""
+  for _, pair in ipairs(renames(m, rec.body) or {}) do
+    local old = pair[1]:gsub("%p", "%%%0")
+    local new = pair[2]:gsub("%%", "%%%%")
+    body = body:gsub(old, new)
+  end
+  if #body > MAX_BODY then return false, "long" end
+  local name = rec.name
+  local want = self:DefaultName(m)
+  if want ~= name and macroIndex(want) == 0 then name = want end
+  local done = pcall(EditMacro, index, name, nil, body)
+  if not done then return false, "failed" end
+  rec.name, rec.body = name, self:Body(m)
+  Q:Fire("CLASS_MACROS_CHANGED")
+  return true
+end
+
 -- Ouvre la fenêtre des macros du jeu (hors combat).
 function Macros:OpenMacroFrame()
   if inCombat() then return end

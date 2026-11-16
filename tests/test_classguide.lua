@@ -84,7 +84,7 @@ local function installMacros(opts)
   EditMacro = function(i, name, icon, body)
     Mock.record("EditMacro", i, name, icon, body)
     local m = all()[i]
-    if m then m.body = body end
+    if m then m.body = body; m.name = name or m.name end
     return i
   end
 end
@@ -319,6 +319,32 @@ return {
     installMacros({ charUsed = 18, accUsed = 120 })
     local ok2, why2 = M:CanWrite(m, true, false)
     t.ok(not ok2 and why2 == "full")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  translates_a_macro_made_in_another_language = function(t)
+    local names = { [2139] = "Contresort" }
+    local Q = load({ spellNames = names })
+    local M = Q.ClassMacros
+    local m
+    for _, x in ipairs(M:All()) do if x.id == "class-wide-counterspell" then m = x end end
+    t.ok(M:Create(m, true))
+    t.ok(not M:Foreign(m), "même langue : rien à traduire")
+    -- retouche à la main, puis le jeu passe en anglais
+    macros.char[1].body = macros.char[1].body .. "\n/say Contresort !"
+    names[2139] = "Counterspell"
+    t.eq(M:Status(m), "edited")
+    t.ok(M:Foreign(m), "créée dans une autre langue")
+    t.ok(M:Translate(m))
+    t.eq(macros.char[1].body, "#showtooltip Counterspell\n/stopcasting\n/cast Counterspell\n/say Counterspell !")
+    t.ok(not M:Foreign(m), "traduite")
+    t.eq(M:Status(m), "edited", "la retouche à la main est gardée")
+    -- sans retouche : la traduction la remet à jour
+    macros.char[1].body = "#showtooltip Contresort\n/stopcasting\n/cast Contresort"
+    Q.char.classMacros[m.id].body = macros.char[1].body
+    t.ok(M:Foreign(m))
+    t.ok(M:Translate(m))
+    t.eq(M:Status(m), "ok")
     t.eq(#Mock.errors, 0)
   end,
 

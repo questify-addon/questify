@@ -16,7 +16,7 @@ Settings.defaults = {
   -- "tomtom" | "native") ; style de trajet et de ligne du routeur Questify ; flèche (UI/Arrow.lua),
   -- dont la position (nav.arrowPos = { point, point relatif, x, y }) n'a pas de défaut.
   -- Migration des anciens réglages (nav.routing) : Core/Profiles.lua.
-  nav = { router = "questify", display = "arrow", routeStyle = "safe", lineStyle = "dots", arrowLocked = false },
+  nav = { router = "questify", display = "arrow", routeStyle = "optimized", lineStyle = "dots", arrowLocked = false },
   -- Flèche Questify (UI/Arrow.lua) : affichée, couleur ("cyan" | "theme" | "gold" | "green" | "white" |
   -- "pink"). Mêmes réglages que la session ui-themes (Options › Thème chez elle).
   arrow = { show = true, color = "cyan" },
