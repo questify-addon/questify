@@ -121,6 +121,7 @@ both({ id = "sky_zephras_mulgore", kind = "boat", faction = "Horde", races = { "
      { id = "sky_mulgore_zephras", note = "Take the skyboat to Zephras Isle" })
 
 transport.links = L
+transport.REGION = REGION
 
 -- Liaisons utilisables par une faction et une race (race nil : toutes les races de la faction).
 function transport.linksFor(faction, race)

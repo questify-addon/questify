@@ -57,6 +57,7 @@ Data\Maps.lua
 Data\ClassTrainers.lua
 Data\ClassSpells.lua
 Data\Caves.lua
+Data\Travel.lua
 Data\ZoneArt.lua
 
 Engine\Guides.lua
