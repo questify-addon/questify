@@ -6,7 +6,8 @@ local addonName, Q = ...
 --               faits, dépassés ou d'une autre race ; coche verte sur un chapitre fini), étapes du
 --               chapitre à droite (icône d'état, clic = étape courante) ;
 --   « Donjons » : liste groupée et notée (étoiles) à gauche, détail du donjon choisi à droite ;
---   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver.
+--   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver ;
+--   « Rythme » : écart avec la route simulée, chapitres mesurés, session (UI/PacePanel.lua).
 -- Le bouton « Options… » en bas à droite ouvre la fenêtre d'options (UI/Options.lua).
 Q.UI = Q.UI or {}
 local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {} }
@@ -16,8 +17,8 @@ local L = Q.L
 
 local FRAME_NAME = "QuestifyJournal"
 local WIDTH, HEIGHT = 520, 560
-local TAB_NAMES = { "route", "dungeons", "class" }
-local TAB_INDEX = { route = 1, dungeons = 2, class = 3 }
+local TAB_NAMES = { "route", "dungeons", "class", "pace" }
+local TAB_INDEX = { route = 1, dungeons = 2, class = 3, pace = 4 }
 
 local CHAPTER_W, CHAPTER_ROW_H = 150, 20
 local STEP_W, STEP_ROW_H = 290, 18
@@ -129,7 +130,7 @@ function Journal:Create()
     end
     return text
   end
-  local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS) }
+  local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS), label("pace", L.PACE_TAB) }
   for i, name in ipairs(TAB_NAMES) do
     local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, f, "PanelTabButtonTemplate")
     tab:SetID(i)
@@ -182,6 +183,8 @@ function Journal:Create()
   end
   self:BuildDungeons(self.panels.dungeons)
   self:BuildClass(self.panels.class)
+  local pace = Q.UI.PacePanel
+  if pace and pace.Build then pace:Build(self.panels.pace) end
   -- Options : fenêtre à part (UI/Options.lua)
   local opt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   opt:SetSize(120, 22)
@@ -246,7 +249,7 @@ function Journal:ResolveTab(name)
   return name
 end
 
--- ShowTab("route" | "class" | "dungeons") : ouvre le journal sur cet onglet. "options" ouvre la
+-- ShowTab("route" | "class" | "dungeons" | "pace") : ouvre le journal sur cet onglet. "options" ouvre la
 -- fenêtre d'options (l'ancien onglet Options). À l'ouverture du journal, l'onglet Route revient sur la vue
 -- de la route choisie (Automatique si le mode automatique est actif), sauf keepRouteMode (ShowRouteMode).
 function Journal:ShowTab(name, keepRouteMode)
@@ -315,6 +318,9 @@ function Journal:RefreshTab(name, scroll)
     self:RefreshDungeonTab()
   elseif name == "class" then
     self:RefreshClass()
+  elseif name == "pace" then
+    local pace = Q.UI.PacePanel
+    if pace and pace.Refresh then pace:Refresh() end
   end
 end
 

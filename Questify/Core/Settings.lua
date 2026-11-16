@@ -27,6 +27,7 @@ Settings.defaults = {
   dangerAlert = true,       -- Engine/Danger.lua
   supplyReminders = true,   -- Engine/Supplies.lua
   showXPRate = true,        -- Engine/XPRate.lua
+  showPace = true,          -- Engine/Pace.lua : avance ou retard sur la route dans le suivi
   -- Donjons selon le niveau et la faction (alerte du suivi)
   dungeonSuggest = true,    -- Engine/Dungeons.lua
   classQuestOffer = true,   -- Engine/ClassQuestOffer.lua

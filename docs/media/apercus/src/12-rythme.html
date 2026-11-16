@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Questify, aperçu 12 : le rythme</title>
+<link rel="stylesheet" href="apercu.css">
+<style>
+  /* Journal (UI/Journal.lua) : 520 x 560 ; contenu de (10, -64) à (-10, 30). */
+  .jr { width: 520px; height: 560px; }
+  .content { position: absolute; left: 10px; top: 64px; width: 500px; height: 466px; }
+  .sec { position: absolute; left: 4px; width: 470px; }
+  .sec .h { height: 16px; border-bottom: 1px solid rgba(255,209,0,.28); margin-bottom: 4px; }
+  .kv { position: relative; height: 15px; }
+  .kv .k { position: absolute; left: 6px; top: 1px; width: 128px; }
+  .kv .v { position: absolute; left: 136px; top: 1px; }
+  .ahead { color: #40e050; } .behind { color: #ffb040; } .even { color: #c8c8c8; }
+  /* tableau des chapitres */
+  .thd, .trw { position: relative; height: 18px; }
+  .trw:nth-child(odd) { background: rgba(255,255,255,.035); }
+  .c1 { position: absolute; left: 6px; top: 3px; width: 150px; }
+  .c2 { position: absolute; left: 160px; top: 3px; width: 54px; text-align: right; }
+  .c3 { position: absolute; left: 220px; top: 3px; width: 64px; text-align: right; }
+  .c4 { position: absolute; left: 290px; top: 3px; width: 80px; text-align: right; }
+  .c6 { position: absolute; left: 380px; top: 3px; width: 86px; text-align: right; }
+  .c5 { position: absolute; left: 366px; top: 3px; width: 100px; text-align: right; }
+  /* XP/h par zone : barre fine sous le texte */
+  .zr { position: relative; height: 17px; }
+  .zr .zn { position: absolute; left: 6px; top: 1px; width: 150px; }
+  .zr .zt { position: absolute; left: 160px; top: 1px; width: 54px; text-align: right; }
+  .zr .zx { position: absolute; left: 220px; top: 1px; width: 64px; text-align: right; }
+  .zr .zb { position: absolute; left: 296px; top: 4px; height: 7px; border-radius: 2px; background: #428ff2; box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+  .zr .zv { position: absolute; left: 400px; top: 1px; width: 66px; text-align: right; }
+  .tip.pace-tip { left: 10px; top: 150px; width: 240px; }
+  .lnk { color: #66bbff; }
+  .seg { position: absolute; height: 20px; border-radius: 3px; text-align: center; line-height: 20px;
+    background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px #4a4b50; }
+  .seg.on { background: rgba(255,209,0,.18); box-shadow: inset 0 0 0 1px rgba(255,209,0,.55); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="cap" style="width:860px; top:70px">
+    <div class="brand">Questify</div>
+    <h1>Ton rythme face à la route</h1>
+    <p>Dans le suivi, l'avance ou le retard sur la route simulée, à côté de l'XP/h. Au survol : fin du chapitre et prochain niveau, prévus à <i>ton</i> rythme.</p>
+    <p>Dans le journal, l'onglet «&nbsp;Rythme&nbsp;» : le chapitre, toute la route, tes autres personnages, et la session.</p>
+    <p style="font-size:17px">Temps comptés en jeu actif seulement : absent, mort ou immobile sans XP depuis 5 min, le temps s'arrête.</p>
+  </div>
+
+  <!-- Suivi, thème parchemin, avec l'infobulle de la ligne de rythme -->
+  <div class="ui" style="left:96px; top:470px">
+    <div style="zoom:1.6; position:relative">
+      <div class="trk th-parchment">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="row head">
+          <div class="title fn t-title">Ashenvale and Stonetalon Mountains</div>
+        </div>
+        <div class="bar">
+          <div class="bbg"></div><div class="fill" style="width:59%"></div>
+          <div class="btxt fhs t-bar" style="white-space:pre">42/71  ·  niv. 20-22  ·  ~9,6k XP restants</div>
+        </div>
+        <div class="xp fhs t-xp">21,3k XP/h · <span style="color:#1f6e1f">+12 min d'avance</span></div>
+        <div class="cur">
+          <img class="cicon ico" src="https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg" alt="">
+          <div class="dist fhs t-dist">212 yd</div>
+          <div class="chunk fh t-body wrap">Faire : <span class="c-quest">The Zoram Strand</span><br>&nbsp;&nbsp;<span class="c-todo">Wrathtail Head : 4/20</span></div>
+        </div>
+        <div class="next"><span class="ico i-turnin"></span><span class="ntxt fds t-dim">Rendre : The Tower of Althalaxx</span></div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : The Tower of Althalaxx</span></div>
+        <div class="grip ico i-grip"></div>
+      </div>
+
+      <div class="tip pace-tip">
+        <div class="tt">Rythme</div>
+        <div class="tl">Chapitre : <span class="ahead">+12 min d'avance</span></div>
+        <div class="tl" style="color:#aaaaaa">Route simulée à ce point : 1 h 36 · toi : 1 h 24</div>
+        <div class="tl">Toute la route : <span class="ahead">+34 min d'avance</span></div>
+        <div class="tl" style="margin-top:6px">Fin du chapitre dans ~58 min</div>
+        <div class="tl">Niveau 22 dans ~38 min</div>
+        <div class="tl" style="color:#aaaaaa">Prévu à ton rythme (113 % de la simulation)</div>
+        <div class="tl" style="color:#66bbff; margin-top:6px">Clic : onglet Rythme du journal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Petit rappel : thème noir, retard -->
+  <div class="ui" style="left:540px; top:470px">
+    <div style="zoom:1.6">
+      <div class="trk th-dark" style="padding-bottom:4px">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="xp fhs t-xp">18,7k XP/h · <span class="behind">8 min de retard</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journal, onglet Rythme -->
+  <div class="ui" style="left:1010px; top:52px">
+    <div style="zoom:1.66; position:relative">
+      <div class="bft jr">
+        <div class="bft-top"></div>
+        <div class="bft-inset"></div>
+        <div class="bft-portrait"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_book_09.jpg" alt=""></div>
+        <div class="bft-title fn">Questify</div>
+        <div class="bft-close"></div>
+
+        <div class="content">
+          <!-- Chapitre en cours -->
+          <div class="sec" style="top:2px">
+            <div class="h fn">Chapitre : Ashenvale and Stonetalon Mountains</div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Écart</span><span class="v fhs"><span class="ahead">+12 min d'avance</span> <span style="color:#aaa">(simulation 1 h 36, toi 1 h 24)</span></span></div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Fin du chapitre</span><span class="v fhs">~58 min <span style="color:#aaa">(simulation 1 h 07)</span></span></div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Prochain niveau</span><span class="v fhs">niveau 22 dans ~38 min <span style="color:#aaa">(21,3k XP/h)</span></span></div>
+          </div>
+
+          <!-- Toute la route -->
+          <div class="sec" style="top:72px">
+            <div class="h fn">Toute la route</div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Écart</span><span class="v fhs"><span class="ahead">+34 min d'avance</span> <span style="color:#aaa">sur 5 chapitres</span></span></div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Ton rythme</span><span class="v fhs">113 % de la simulation <span style="color:#aaa">(sert aux prévisions)</span></span></div>
+          </div>
+
+          <!-- Comparaison par chapitre -->
+          <div class="sec" style="top:126px">
+            <div class="h fn">Chapitres : ce personnage et tes autres personnages</div>
+            <div class="thd fds"><span class="c1">Chapitre</span><span class="c2">Simulé</span><span class="c3">Ce perso</span><span class="c4">Ton meilleur</span><span class="c6">Écart</span></div>
+            <div>
+              <div class="trw fhs"><span class="c1 ell">Dun Morogh</span><span class="c2" style="color:#aaa">1 h 52</span><span class="c3 ahead">1 h 41</span><span class="c4">1 h 35</span><span class="c6 ahead">+11 min</span></div>
+              <div class="trw fhs"><span class="c1 ell">Loch Modan</span><span class="c2" style="color:#aaa">1 h 05</span><span class="c3 behind">1 h 11</span><span class="c4">1 h 02</span><span class="c6 behind">-6 min</span></div>
+              <div class="trw fhs"><span class="c1 ell">Darkshore</span><span class="c2" style="color:#aaa">2 h 40</span><span class="c3 ahead">2 h 22</span><span class="c4">2 h 22</span><span class="c6 ahead">+18 min</span></div>
+              <div class="trw fhs"><span class="c1 ell">Darkshore</span><span class="c2" style="color:#aaa">1 h 18</span><span class="c3 ahead">1 h 06</span><span class="c4">1 h 06</span><span class="c6 ahead">+12 min</span></div>
+              <div class="trw fhs"><span class="c1 ell" style="color:#ffd100">Ashenvale and Stonetalon…</span><span class="c2" style="color:#aaa">2 h 43</span><span class="c3" style="color:#aaa">en cours</span><span class="c4">2 h 31</span><span class="c6 ahead">+12 min</span></div>
+              <div class="trw fhs"><span class="c1 ell">Redridge Mountains and…</span><span class="c2" style="color:#aaa">4 h 25</span><span class="c3" style="color:#666">-</span><span class="c4">4 h 10</span><span class="c6" style="color:#666">-</span></div>
+            </div>
+            <div class="fds" style="margin-top:3px; padding-left:6px; white-space:normal; width:460px">Survol d'un chapitre : tes 5 derniers passages (classe, race, niveaux, date).</div>
+          </div>
+
+          <!-- Session -->
+          <div class="sec" style="top:302px">
+            <div class="h fn">Session <span class="fns" style="color:#aaa">· depuis 20:41</span></div>
+            <div class="btn" style="right:0; top:-4px; width:140px; height:20px; line-height:19px; font-size:12px">Session précédente</div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">Temps de jeu</span><span class="v fhs">2 h 14 <span style="color:#aaa">· actif 1 h 52 · temps mort 22 min (absent 15, immobile 4, mort 3)</span></span></div>
+            <div class="kv"><span class="k fhs" style="color:#aaa">XP gagnée</span><span class="v fhs">39,7k <span style="color:#aaa">· 21,3k XP/h actif · 2 niveaux</span></span></div>
+            <div class="fds" style="height:16px; margin-top:4px; position:relative"><span class="abs" style="left:6px">Zone</span><span class="abs" style="left:160px; width:54px; text-align:right">Temps</span><span class="abs" style="left:220px; width:64px; text-align:right">XP</span><span class="abs" style="left:400px; width:66px; text-align:right">XP/h</span></div>
+            <div class="zr fhs"><span class="zn ell">Ashenvale</span><span class="zt">1 h 02</span><span class="zx">24,1k</span><span class="zb" style="width:96px"></span><span class="zv">23,3k</span></div>
+            <div class="zr fhs"><span class="zn ell">Stonetalon Mountains</span><span class="zt">31 min</span><span class="zx">11,9k</span><span class="zb" style="width:94px"></span><span class="zv">23,0k</span></div>
+            <div class="zr fhs"><span class="zn ell">Darkshore</span><span class="zt">19 min</span><span class="zx">3,7k</span><span class="zb" style="width:48px"></span><span class="zv">11,7k</span></div>
+          </div>
+        </div>
+
+        <div class="btn" style="right:278px; bottom:4px; width:140px">Zone alternative</div>
+        <div class="btn" style="right:134px; bottom:4px; width:130px">Changer de route</div>
+        <div class="btn" style="right:8px; bottom:4px; width:120px">Options…</div>
+      </div>
+      <div class="tab" style="left:12px; top:558px; width:76px"><span class="fns">Route</span></div>
+      <div class="tab" style="left:91px; top:558px; width:84px"><span class="fns">Donjons</span></div>
+      <div class="tab" style="left:178px; top:558px; width:132px"><span class="fns">Quêtes de classe</span></div>
+      <div class="tab on" style="left:313px; top:558px; width:82px"><span class="fns">Rythme</span></div>
+    </div>
+  </div>
+
+  <div class="badge"><div class="t">Maquette</div><div class="s">Chiffres d'exemple, pas une capture en jeu</div></div>
+</div>
+</body>
+</html>
