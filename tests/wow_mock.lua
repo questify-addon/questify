@@ -1079,6 +1079,13 @@ local function installApi()
   IsControlKeyDown = function() return P().ctrl == true end
   IsAltKeyDown = function() return P().alt == true end
   GetBindLocation = function() return P().bind or "Coldridge Valley" end
+  -- Compétences (fenêtre des compétences) : Mock.skills = { { name, header, rank, max } }
+  GetNumSkillLines = function() return #Mock.skills end
+  GetSkillLineInfo = function(i)
+    local s = Mock.skills[i]
+    if not s then return nil end
+    return s.name, s.header == true, false, s.rank or 0, 0, 0, s.max or 0
+  end
   IsInInstance = function() return P().instance == true, P().instance and "party" or "none" end
 
   -- Addons
@@ -1277,7 +1284,7 @@ local function installApi()
     SetSuperTrackedUserWaypoint = function(b) record("C_SuperTrack.SetSuperTrackedUserWaypoint", b) end,
     IsSuperTrackingUserWaypoint = function() return false end,
   }
-  C_TaxiMap = { GetAllTaxiNodes = function() return {} end }
+  C_TaxiMap = { GetAllTaxiNodes = function() return {} end, GetTaxiNodesForMap = function() return {} end }
 
   -- Barres de nom
   C_NamePlate = {
@@ -1335,6 +1342,7 @@ function Mock.reset()
   Mock.questFrame = { questId = 0, numChoices = nil, completable = false, choices = {} }
   Mock.items = {}
   Mock.inventory = {}
+  Mock.skills = {}
   Mock.units = {}
   Mock.nameplates = {}
   Mock.modelFileIDs = {}

@@ -33,6 +33,16 @@ Q:RegisterStrings({
     OPT_NAV_ARROW_LOCKED = "Lock the arrow",
     OPT_TIP_NAV_ARROW_LOCKED = "The Questify arrow can no longer be moved with the mouse.",
 
+    -- Planificateur de voyage (Nav/Travel.lua) : légende de chaque trajet
+    NAV_TRAVEL_WALK = "Walk to %s",
+    NAV_TRAVEL_WALK_FM = "Walk to the flight master",
+    NAV_TRAVEL_FLY = "Fly to %s",
+    NAV_TRAVEL_BOAT = "Boat to %s",
+    NAV_TRAVEL_ZEPPELIN = "Zeppelin to %s",
+    NAV_TRAVEL_TRAM = "Tram to %s",
+    NAV_TRAVEL_PORTAL = "Portal to %s",
+    NAV_TRAVEL_HEARTH = "Hearthstone to %s",
+
     REWARD_UPGRADE = "Reward: %s (an upgrade over your equipped item)",
     REWARD_VENDOR = "Reward: %s (nothing improves your gear, so the highest vendor price: %s)",
     REWARD_NOT_LOADED = "Reward items are not loaded yet: choose your reward yourself.",
@@ -69,6 +79,15 @@ Q:RegisterStrings({
     NAV_LINE_DASHES = "Tirets",
     OPT_NAV_ARROW_LOCKED = "Verrouiller la flèche",
     OPT_TIP_NAV_ARROW_LOCKED = "La flèche Questify ne se déplace plus à la souris.",
+
+    NAV_TRAVEL_WALK = "Marche vers %s",
+    NAV_TRAVEL_WALK_FM = "Marche jusqu'au maître de vol",
+    NAV_TRAVEL_FLY = "Vol vers %s",
+    NAV_TRAVEL_BOAT = "Bateau pour %s",
+    NAV_TRAVEL_ZEPPELIN = "Zeppelin pour %s",
+    NAV_TRAVEL_TRAM = "Tram vers %s",
+    NAV_TRAVEL_PORTAL = "Portail vers %s",
+    NAV_TRAVEL_HEARTH = "Pierre de foyer vers %s",
 
     REWARD_UPGRADE = "Récompense : %s (meilleure que ton objet équipé)",
     REWARD_VENDOR = "Récompense : %s (rien n'améliore ton équipement, donc le plus gros prix de revente : %s)",
