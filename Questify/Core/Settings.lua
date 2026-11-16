@@ -21,6 +21,7 @@ Settings.defaults = {
   nameplates = true,
   objectGlow = true,
   trainerAlert = true,
+  classGuide = { levelUp = true },   -- UI/TalentAdvice.lua : encart « point de talent » au passage de niveau
   trainerPanel = true,      -- UI/TrainerPanel.lua : panneau des sorts à côté du maître de classe
   oldRanks = true,          -- Engine/ActionRanks.lua : assistant des anciens rangs sur les barres
   upgradePopup = true,

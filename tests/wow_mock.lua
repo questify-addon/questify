@@ -1343,6 +1343,10 @@ end
 ---------------------------------------------------------------------------
 local ADDON = "Questify"
 
+-- Gros fichiers de données (Data/ClassGuides.lua…) : compilés une fois pour toute la série de tests.
+local CACHE_MIN = 100000
+local chunkCache = {}
+
 local function runFile(path, ns)
   local full = rootPath(path)
   local f = io.open(full, "rb")
@@ -1350,8 +1354,13 @@ local function runFile(path, ns)
     Mock.missingFiles[#Mock.missingFiles + 1] = path
     return false
   end
+  local size = f:seek("end")
   f:close()
-  local chunk, err = loadfile(full)
+  local chunk, err = chunkCache[full], nil
+  if not chunk then
+    chunk, err = loadfile(full)
+    if chunk and size >= CACHE_MIN then chunkCache[full] = chunk end
+  end
   if not chunk then pushError(err); return false end
   local ok, rerr = pcall(chunk, ADDON, ns)
   if not ok then pushError(rerr); return false end

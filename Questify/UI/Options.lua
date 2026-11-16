@@ -976,7 +976,12 @@ local function sectionButton(i, s)
   local text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   text:SetPoint("LEFT", b, "LEFT", 10, 0)
   text:SetJustifyH("LEFT")
-  text:SetText(L[s.label])
+  local label = L[s.label]
+  -- icon = "class" : icône de la classe du joueur devant le nom (section Classe)
+  if s.icon == "class" and Q.UI.TrackerButtons and Q.UI.TrackerButtons.IconMarkup then
+    label = Q.UI.TrackerButtons.IconMarkup("class", 14) .. " " .. label
+  end
+  text:SetText(label)
   b.selected, b.text, b.sectionId = sel, text, s.id
   b:SetScript("OnClick", safe(function(self)
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
@@ -1186,8 +1191,25 @@ function Options:UpdateSidebar()
 end
 
 -- Render(garderDéfilement) : réaffiche la section choisie ou les résultats de la recherche.
+-- ShowPanel(nom) : panneau propre d'une section (schéma : panel = nom dans Q.UI) à la place de la
+-- liste défilante ; nil : retour à la liste. Le panneau reçoit la zone de la liste (Attach(zone)).
+function Options:ShowPanel(name)
+  for key, p in pairs(self.panels) do
+    if key ~= name and p.Detach then Q.SafeCall(p.Detach, p) end
+  end
+  local panel = name and Q.UI[name]
+  if not (panel and panel.Attach) then
+    self.scroll:Show()
+    return
+  end
+  self.panels[name] = panel
+  self.scroll:Hide()
+  Q.SafeCall(panel.Attach, panel, self.frame, self.scroll)
+end
+
 function Options:Render(keepScroll)
   if not self.frame then return end
+  self:ShowPanel(nil)
   for _, w in pairs(self.widgets) do w:Hide() end
   for _, h in ipairs(self.headers) do h:Hide() end
   self.headerUsed = 0
@@ -1211,6 +1233,11 @@ function Options:Render(keepScroll)
     self.countText:SetText("")
     local s = S:Section(self.section) or S.SECTIONS[1]
     self.section = s.id
+    if s.panel then
+      self:ShowPanel(s.panel)
+      self:UpdateSidebar()
+      return
+    end
     y = placeHeader(y, L[s.label], "section")
     y = placeList(S:EntriesFor(s.id, p), y, false)
   end

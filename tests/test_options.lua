@@ -110,7 +110,7 @@ return {
         t.ok(Q.L[c.label] ~= c.label, "category label " .. c.label)
       end
     end
-    t.eq(order, { "route", "navigation", "automation", "loot", "class", "map", "tracker", "theme", "comfort",
+    t.eq(order, { "route", "navigation", "automation", "loot", "classguide", "class", "map", "tracker", "theme", "comfort",
       "tools", "profiles" })
     local seen = {}
     for _, e in ipairs(S.entries) do
@@ -229,9 +229,9 @@ return {
     t.ok(f:IsMovable(), "movable")
     t.ok(contains(UISpecialFrames, "QuestifyOptions"), "closes with Escape")
     t.eq(O.searchBox._template, "SearchBoxTemplate")
-    t.eq(#O.sectionButtons, 11)
+    t.eq(#O.sectionButtons, 12)
     t.eq(O.sectionButtons[1].text:GetText(), Q.L.OPT_SEC_ROUTE)
-    t.eq(O.sectionButtons[11].text:GetText(), Q.L.OPT_SEC_PROFILES)
+    t.eq(O.sectionButtons[12].text:GetText(), Q.L.OPT_SEC_PROFILES)
     t.ok(O.sectionButtons[1].selected:IsShown(), "selected highlight")
     Mock.click(O.sectionButtons[4], "LeftButton")
     t.eq(O.section, "loot")

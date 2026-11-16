@@ -6,12 +6,13 @@ local addonName, Q = ...
 --   « route »    : point d'exclamation de quête sur un chemin -> journal, onglet Route ;
 --   « dungeons » : portail de donjon (atlas du jeu « dungeon ») et point d'exclamation -> journal,
 --                  onglet Donjons ;
---   « class »    : icône de la classe du joueur -> journal, onglet Quêtes de classe ;
+--   « class »    : icône de la classe du joueur, sans « ! » -> Options › Classe (talents et macros,
+--                  UI/ClassPanel.lua) ; les quêtes de classe restent dans l'onglet du journal ;
 --   « options »  : engrenage -> fenêtre d'options.
 -- Un second clic sur le bouton de l'onglet ouvert ferme le journal (l'engrenage ferme les options).
 -- Lueurs pulsées :
---   Classe brille tant qu'une suite de quêtes de classe est disponible et qu'aucune n'est suivie
---   (ajoutée à la route ou en cours dans le journal de quêtes) ;
+--   Classe brille tant qu'un point de talent est à dépenser et que le guide de classe en prévoit un
+--   (Engine/ClassGuide.lua) ;
 --   Donjons brille tant qu'un donjon est conseillé (Dungeons:Suggested) et qu'aucun n'est ajouté à
 --   la route.
 -- Des boutons simples, jamais sécurisés : un enfant sécurisé rendrait le suivi protégé (impossible
@@ -40,7 +41,7 @@ local BORDER_COLOR = { 0.72, 0.55, 0.25, 1 }
 local BACK_COLOR = { 0.07, 0.05, 0.02, 1 }
 local GLOW_COLOR = { 1, 0.78, 0.1, 1 }
 
-local TABS = { route = "route", dungeons = "dungeons", class = "class" }
+local TABS = { route = "route", dungeons = "dungeons" }
 local NAMES = {
   route = "UI_TRACKER_BTN_ROUTE", dungeons = "UI_TRACKER_BTN_DUNGEONS",
   class = "UI_TRACKER_BTN_CLASS", options = "UI_TRACKER_BTN_OPTIONS",
@@ -56,24 +57,18 @@ end
 ---------------------------------------------------------------------------
 -- Lueurs
 ---------------------------------------------------------------------------
--- États d'une suite de quêtes de classe que le joueur suit (Engine/ClassQuests.lua).
-local FOLLOWED = { added = true, inprogress = true }
-
--- ClassGlow() -> nombre de suites disponibles quand aucune n'est suivie, sinon 0.
+-- ClassGlow() -> points de talent à dépenser quand le guide de classe prévoit le suivant, sinon 0.
 function Buttons.ClassGlow()
-  local cq = Q.ClassQuests
-  if not (cq and cq.List) then return 0 end
-  local ok, list = pcall(cq.List, cq)
+  local G = Q.ClassGuide
+  if not (G and G.Advice) then return 0 end
+  local ok, advice = pcall(G.Advice, G)
   if not ok then
-    Q:ReportError(list)
+    Q:ReportError(advice)
     return 0
   end
-  local available = 0
-  for _, row in ipairs(type(list) == "table" and list or {}) do
-    if FOLLOWED[row.state] then return 0 end
-    if row.state == "available" then available = available + 1 end
-  end
-  return available
+  if not advice then return 0 end
+  Buttons.classAdvice = advice
+  return math.max(1, Q.Talents and Q.Talents:Unspent() or 1)
 end
 
 -- DungeonGlow() -> nombre de donjons conseillés quand aucun n'est ajouté à la route, sinon 0.
@@ -125,6 +120,15 @@ function Buttons:Click(key)
     if O then O:Toggle() end
     return
   end
+  if key == "class" then
+    local O, P = Q.UI.Options, Q.UI.ClassPanel
+    if O and O:IsShown() and O.section == "classguide" and O.query == "" then
+      O:Close()
+    elseif P then
+      P:Open("talents")
+    end
+    return
+  end
   local J = Q.UI.Journal
   local tab = TABS[key]
   if not (J and tab) then return end
@@ -139,10 +143,20 @@ function Buttons:Tooltip(owner, key)
   if not GameTooltip then return end
   GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
   GameTooltip:ClearLines()
+  if key == "class" then
+    GameTooltip:AddLine(L.CLASS_BTN_TIP, 1, 0.82, 0)
+    local a = self.classCount > 0 and Buttons.classAdvice
+    if a then
+      local unspent = self.classCount == 1 and L.CLASS_UNSPENT_ONE or string.format(L.CLASS_UNSPENT_MANY, self.classCount)
+      GameTooltip:AddLine(string.format(L.CLASS_BTN_UNSPENT, unspent, Q.ClassGuide:TalentName(a.spell, a.spec), a.rank,
+        a.max), 1, 1, 1, true)
+    end
+    GameTooltip:AddLine(L.CLASS_BTN_HINT, 0.7, 0.7, 0.7, true)
+    GameTooltip:Show()
+    return
+  end
   GameTooltip:AddLine(L[NAMES[key]], 1, 0.82, 0)
-  if key == "class" and self.classCount > 0 then
-    GameTooltip:AddLine(string.format(L.UI_TRACKER_BTN_CLASS_GLOW, self.classCount), 1, 1, 1, true)
-  elseif key == "dungeons" and self.dungeonCount > 0 then
+  if key == "dungeons" and self.dungeonCount > 0 then
     GameTooltip:AddLine(string.format(L.UI_TRACKER_BTN_DUNGEON_GLOW, self.dungeonCount), 1, 1, 1, true)
   end
   GameTooltip:AddLine(L.UI_TRACKER_BTN_HINT, 0.7, 0.7, 0.7, true)
@@ -290,3 +304,9 @@ function Buttons:Layout(f, pad)
   end
   self:UpdateGlows()
 end
+
+-- Points de talent gagnés ou dépensés : lueur du bouton Classe.
+Q:On("TALENTS_CHANGED", function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
+Q:RegisterEvent("PLAYER_LEVEL_UP", function()
+  Q:After(1, function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
+end)

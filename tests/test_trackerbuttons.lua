@@ -86,15 +86,16 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  class_button_switches_tab_before_closing = function(t)
+  class_button_opens_the_class_section_of_the_options = function(t)
     local Q = load()
-    local B, J = Q.UI.TrackerButtons, Q.UI.Journal
-    Mock.click(B.buttons.route)
+    local B, J, O = Q.UI.TrackerButtons, Q.UI.Journal, Q.UI.Options
     Mock.click(B.buttons.class)
-    t.ok(J:IsShown(), "still open")
-    t.eq(J.tab, "class")
+    t.ok(O:IsShown(), "options opened")
+    t.eq(O.section, "classguide")
+    t.eq(Q.UI.ClassPanel.tab, "talents")
+    t.ok(not J:IsShown(), "not the class quests of the journal")
     Mock.click(B.buttons.class)
-    t.ok(not J:IsShown(), "closed on the second click")
+    t.ok(not O:IsShown(), "closed on the second click")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -119,19 +120,24 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  class_glow_while_a_chain_is_available_and_none_followed = function(t)
+  class_glow_while_a_talent_point_of_the_guide_is_due = function(t)
     local Q = load()
-    local B = lists(Q, { row("available", "a"), row("upcoming", "b") })
+    local B = Q.UI.TrackerButtons
+    local advice = nil
+    Q.ClassGuide.Advice = function() return advice end
+    Q.Talents.Unspent = function() return 2 end
+    lists(Q, { row("available", "a") })
+    t.ok(not B.buttons.class.glow:IsShown(), "class quests alone: no glow")
+    advice = { spell = 12286, rank = 1, max = 3, level = 10, spec = Q.ClassGuide:Specs()[1] }
+    B:UpdateGlows()
     t.ok(B.buttons.class.glow:IsShown(), "glows")
     t.ok(B.buttons.class.pulse:IsPlaying(), "pulses")
-    t.eq(B.classCount, 1)
-    lists(Q, { row("available", "a"), row("added", "b") })
-    t.ok(not B.buttons.class.glow:IsShown(), "a chain added to the route: no glow")
-    lists(Q, { row("available", "a"), row("available", "c"), row("inprogress", "b") })
-    t.ok(not B.buttons.class.glow:IsShown(), "a chain in the quest log: no glow")
+    t.eq(B.classCount, 2)
+    B:Tooltip(B.buttons.class, "class")
+    advice = nil
+    Q:Fire("TALENTS_CHANGED")
+    t.ok(not B.buttons.class.glow:IsShown(), "point spent: no glow")
     t.ok(not B.buttons.class.pulse:IsPlaying(), "pulse stopped")
-    lists(Q, { row("ignored", "a"), row("done", "b"), row("inroute", "c") })
-    t.ok(not B.buttons.class.glow:IsShown(), "nothing available: no glow")
     t.eq(#Mock.errors, 0)
   end,
 
