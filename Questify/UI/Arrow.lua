@@ -169,12 +169,7 @@ local function formatEta(seconds)
   return string.format(L.NAV_ARROW_ETA_MIN, max(1, floor(seconds / 60 + 0.5)))
 end
 
-local function warningText(w)
-  if type(w) ~= "table" then return nil end
-  if w.kind == "hostile" and w.name then return string.format(L.NAV_WARN_HOSTILE, tostring(w.name)) end
-  if w.kind == "level" and tonumber(w.level) then return string.format(L.NAV_WARN_LEVEL, tonumber(w.level)) end
-  return nil
-end
+local function warningText(w) return Q.Travel and Q.Travel:WarningText(w) end
 
 local function tenth(v) return type(v) == "number" and floor(v * 10 + 0.5) or "" end
 

@@ -454,7 +454,8 @@ local function targetKey(t)
   return table.concat({ tostring(t.mapId), tostring(t.x), tostring(t.y), tostring(t.title or "") }, "|")
 end
 
-local function warningText(w)
+-- Texte d'un avertissement de route (aussi utilisé par UI/Arrow.lua), nil si illisible.
+function Travel:WarningText(w)
   if type(w) ~= "table" then return nil end
   if w.kind == "hostile" and w.name then return string.format(L.NAV_WARN_HOSTILE, tostring(w.name)) end
   if w.kind == "level" and tonumber(w.level) then return string.format(L.NAV_WARN_LEVEL, tonumber(w.level)) end
@@ -466,7 +467,7 @@ local function noteWarnings(r)
   local key = targetKey(r.target)
   if key ~= warnedKey then warned, warnedKey = {}, key end
   for _, w in ipairs(r.warnings or {}) do
-    local text = warningText(w)
+    local text = Travel:WarningText(w)
     if text then
       local dup = false
       for _, t in ipairs(warned) do if t == text then dup = true; break end end
@@ -475,17 +476,29 @@ local function noteWarnings(r)
   end
 end
 
-local function isCurrent(entry)
+local function tenth(v) return type(v) == "number" and math.floor(v * 10 + 0.5) or "" end
+
+-- Même clé que Nav/Navigation.lua (cible au dixième près) : la route doit viser la cible que le
+-- routeur suit maintenant, sinon c'est celle de l'étape précédente (NAV_TARGET pas encore reçu).
+local function sameTarget(a, b)
+  if type(a) ~= "table" or type(b) ~= "table" then return false end
+  return a.mapId == b.mapId and tenth(a.x) == tenth(b.x) and tenth(a.y) == tenth(b.y)
+    and (a.title or "") == (b.title or "")
+end
+
+local function isCurrent(entry, r)
   local P = Q.Progress
   local cur = P and P:IsEnabled() and P:Current()
   if not (cur and type(entry) == "table" and entry.key == cur.key) then return false end
-  return not (Q.Nav and Q.Nav.HasManualTarget and Q.Nav:HasManualTarget())
+  local N = Q.Nav
+  if not (N and N.Status) or N.HasManualTarget and N:HasManualTarget() then return false end
+  return sameTarget(r.target, N:Status().target)
 end
 
 function Travel:Lines(entry)
   local W = Q.Walk
   local r = W and W.Route and W:Route()
-  if not (r and type(r.legs) == "table" and isCurrent(entry)) then return nil end
+  if not (r and type(r.legs) == "table" and isCurrent(entry, r)) then return nil end
   if not (Q.Nav and Q.Nav.Active and Q.Nav:Active() == "questify") then return nil end
   local ride = false
   for _, leg in ipairs(r.legs) do if leg.kind ~= "walk" then ride = true; break end end

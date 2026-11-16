@@ -452,6 +452,7 @@ return {
       legs = { leg("walk", Q.L.NAV_TRAVEL_WALK_FM, 60), leg("fly", "Fly to Sentinel Hill", 120),
                leg("walk", "Walk to Gryan", 30) } }
     Q.Walk.Route = function() return route end
+    Q.Nav.Status = function() return { target = route.target } end
     local function text()
       local parts = {}
       for _, chunk in ipairs(Q.UI.Tracker.textChunks) do
@@ -491,6 +492,7 @@ return {
     local w = { { kind = "hostile", name = "Orgrimmar" }, { kind = "level", level = 45 } }
     local route = { leg = 1, legs = legs, warnings = w, target = tg }
     Q.Walk.Route = function() return route end
+    Q.Nav.Status = function() return { target = route.target } end
     Q:Fire("NAV_ROUTE", route)
     Q:Fire("NAV_ROUTE", route)    -- recalcul : mêmes avertissements
     local lines = Q.Travel:Lines(cur)
@@ -501,6 +503,9 @@ return {
     route = { leg = 1, legs = legs, warnings = {}, target = { mapId = 1429, x = 10, y = 10, title = "B" } }
     Q:Fire("NAV_ROUTE", route)
     t.eq(#Q.Travel:Lines(cur), 2, "warnings reset with the target")
+    -- route périmée : la cible suivie n'est plus celle de la route
+    Q.Nav.Status = function() return { target = { mapId = 1429, x = 70, y = 70, title = "C" } } end
+    t.eq(Q.Travel:Lines(cur), nil, "stale route of the previous step: no lines")
     t.eq(#Mock.errors, 0)
   end,
 }
