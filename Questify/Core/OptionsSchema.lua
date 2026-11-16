@@ -107,6 +107,18 @@ local function detected()
   return ok and type(d) == "table" and d or { native = true }
 end
 
+-- Routeur et affichage effectifs (Q.Nav:Active) : style de trajet et ligne n'ont de sens qu'avec le
+-- routeur Questify, le verrou de la flèche que si elle s'affiche (ni SPF ni autre affichage).
+local function navActive()
+  local N = Q.Nav
+  if not (N and N.Active) then return nil, nil end
+  local ok, router, display = pcall(N.Active, N)
+  if not ok then return nil, nil end
+  return router, display
+end
+local function questifyRouter() return (navActive()) == "questify" end
+local function arrowShown() return select(2, navActive()) == "arrow" end
+
 ---------------------------------------------------------------------------
 -- Actions (appelées par la fenêtre ; chacune protégée par Q.SafeCall côté fenêtre)
 ---------------------------------------------------------------------------
@@ -211,6 +223,7 @@ add({ id = "nav.routeStyle", section = "navigation", category = "routing", type 
   path = "nav.routeStyle", label = "OPT_NAV_ROUTE_STYLE", tip = "OPT_TIP_NAV_ROUTE_STYLE", style = "radio",
   keywords = "style trajet sur securite rapide routes villes hostiles danger route style safe fastest roads hostile",
   values = { "safe", "fastest", "roads" },
+  enabled = questifyRouter,
   choices = function()
     local Lx = L()
     return {
@@ -237,6 +250,7 @@ add({ id = "nav.lineStyle", section = "navigation", category = "display", type =
   path = "nav.lineStyle", label = "OPT_NAV_LINE_STYLE", tip = "OPT_TIP_NAV_LINE_STYLE", style = "radio",
   keywords = "ligne trajet points pointilles trait tirets carte minicarte line style dots solid dashes map minimap",
   values = { "dots", "solid", "dashes" },
+  enabled = questifyRouter,
   choices = function()
     local Lx = L()
     return {
@@ -247,7 +261,7 @@ add({ id = "nav.lineStyle", section = "navigation", category = "display", type =
   end })
 add({ id = "nav.arrowLocked", section = "navigation", category = "display", type = "toggle",
   path = "nav.arrowLocked", label = "OPT_NAV_ARROW_LOCKED", tip = "OPT_TIP_NAV_ARROW_LOCKED",
-  keywords = "fleche verrouiller bloquer deplacer arrow lock move position" })
+  keywords = "fleche verrouiller bloquer deplacer arrow lock move position", enabled = arrowShown })
 add({ id = "arrow.show", section = "navigation", category = "display", type = "toggle", path = "arrow.show",
   label = "OPT_ARROW_SHOW", tip = "OPT_TIP_ARROW_SHOW",
   keywords = "fleche afficher montrer direction distance navigation arrow show floating direction distance" })

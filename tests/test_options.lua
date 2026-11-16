@@ -332,6 +332,41 @@ return {
     noErrors(t)
   end,
 
+  -- Style de trajet et de ligne : propres au routeur Questify, grisés avec SPF ou sans routeur ;
+  -- verrou de la flèche : grisé quand la flèche ne s'affiche pas (SPF, autre affichage).
+  nav_options_follow_the_router = function(t)
+    Mock.addons.ShortestPathForever = true
+    Mock.addons.TomTom = true
+    local Q = load()
+    local S = Q.OptionsSchema
+    local function on(id) return S:Enabled(S:Entry(id)) end
+    t.ok(on("nav.routeStyle") and on("nav.lineStyle") and on("nav.arrowLocked"), "Questify router, arrow")
+    Q.Settings:Set("nav.router", "spf")
+    t.ok(not on("nav.routeStyle"), "SPF: no route style")
+    t.ok(not on("nav.lineStyle"), "SPF: no line")
+    t.ok(not on("nav.arrowLocked"), "SPF: no arrow")
+    Q.Settings:Set("nav.router", "none")
+    t.ok(not on("nav.routeStyle") and not on("nav.lineStyle"), "no router")
+    t.ok(on("nav.arrowLocked"), "no router: the arrow points at the target")
+    Q.Settings:Set("nav.router", "questify")
+    Q.Settings:Set("nav.display", "tomtom")
+    t.ok(on("nav.routeStyle") and on("nav.lineStyle"), "TomTom display: still the Questify route")
+    t.ok(not on("nav.arrowLocked"), "TomTom display: no arrow")
+    -- fenêtre : les choix d'un réglage grisé sont grisés
+    Q.Settings:Set("nav.router", "spf")
+    local O = Q.UI.Options
+    O:Open("navigation")
+    for _, r in ipairs(O:Widget("nav.routeStyle").radios) do
+      if r:IsShown() then t.ok(not r:IsEnabled(), "route style radio greyed: " .. tostring(r.value)) end
+    end
+    t.ok(not O:Widget("nav.arrowLocked").check:IsEnabled(), "arrow lock greyed")
+    Q.Settings:Set("nav.router", "questify")
+    for _, r in ipairs(O:Widget("nav.routeStyle").radios) do
+      if r:IsShown() then t.ok(r:IsEnabled(), "route style radio back: " .. tostring(r.value)) end
+    end
+    noErrors(t)
+  end,
+
   dropdown_select_uses_the_blizzard_menu_when_available = function(t)
     -- WowStyle1DropdownTemplate factice : SetupMenu garde le générateur, GenerateMenu le relance
     local generator
