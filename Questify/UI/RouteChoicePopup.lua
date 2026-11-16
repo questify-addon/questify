@@ -5,14 +5,14 @@ local addonName, Q = ...
 -- sur la ligne du suivi).
 --
 -- Mise en page : voile sombre plein écran (un clic à côté ne fait rien), fenêtre d'environ 70 % de la
--- hauteur de l'écran aux couleurs du thème du suivi (UI/Themes.lua), titre « Choisis la suite de ta
--- route » et chapitre fini. Une carte haute par suite (2 à 4, Q.RouteChoice:Rank), côte à côte :
+-- hauteur de l'écran aux couleurs du thème en vigueur (UI/Themes.lua : celui de la race du personnage ou
+-- celui choisi), bandeau illustré avec blason, titre « Choisis la suite de ta route » et chapitre fini. Une carte haute par suite (2 à 4, Q.RouteChoice:Rank), côte à côte :
 --   image de la zone en fond (Q.ZoneArt, sinon la carte du monde de la zone, sinon un fond uni du
 --   thème), recadrée pour remplir la carte et assombrie vers le bas ; nom de la zone en gros (langue
 --   du client), tranche de niveaux en badge ; quêtes et XP des remises, durée et XP/h simulées,
 --   trajet, chacun avec son icône ; « Points forts » (Q.RouteChoice:Highlights) quand il y en a.
--- La carte conseillée a un liseré doré, un halo qui pulse doucement, le badge « Conseillé » et sa
--- raison en toutes lettres (jamais la couleur seule). Survol ou carte active au clavier : liseré
+-- La carte conseillée a un liseré à l'accent du thème, un halo qui pulse doucement, le badge « Conseillé »
+-- et sa raison en toutes lettres (jamais la couleur seule). Survol ou carte active au clavier : liseré
 -- éclairci, image plus lumineuse. Clic sur une carte = « Y aller » ; en bas « Garder la route
 -- prévue » (suite par défaut) et « Plus tard » (Échap et la croix aussi) : le chapitre reste en
 -- attente, le suivi le rappelle et /qf route rouvre le choix.
@@ -53,6 +53,7 @@ local ICON, SMALL_ICON = 16, 14
 local LINE_H, HL_H = 21, 18        -- lignes de chiffres, puces des points forts
 local TOP_BAND = 64                -- bande assombrie du haut (badges)
 
+-- Couleurs sans module de thèmes ; avec lui, les jetons du thème en vigueur (colors()).
 local GOLD = { 1, 0.82, 0 }
 local GOLD_LIGHT = { 1, 0.94, 0.55 }
 local EDGE = { 0.42, 0.42, 0.47 }
@@ -60,12 +61,28 @@ local EDGE_LIGHT = { 0.92, 0.92, 0.98 }
 local NAME_COLOR = { 1, 0.96, 0.86 }
 local TEXT = { 0.95, 0.95, 0.95 }
 local WARN = { 1, 0.47, 0.36 }
+local ON_GOLD = { 0.16, 0.10, 0 }
+local BANNER_H = 56                -- bandeau illustré du thème (dans HEADER_H)
 local VEIL_ALPHA = 0.6
 local ART_REST, ART_LIT = 0.78, 1  -- luminosité de l'image : au repos, survolée ou active
 local SHADE_BOTTOM, SHADE_TOP = { 0, 0, 0, 0.94 }, { 0, 0, 0, 0.08 }
 
--- Fond uni des cartes sans image : teinte sombre du thème actif (le texte reste clair).
-local CARD_FILL = { parchment = { 0.22, 0.15, 0.08 }, default = { 0.09, 0.09, 0.11 } }
+-- Fond uni des cartes sans image, sans module de thèmes (avec lui : le jeton panel).
+local CARD_FILL = { default = { 0.09, 0.09, 0.11 } }
+
+-- Couleurs de la fenêtre : jetons du thème en vigueur, sinon les couleurs fixes ci-dessus.
+--   accent (carte conseillée : liseré, halo, badge, raison), accentLit (conseillée active), edge /
+--   edgeLit (liseré des autres cartes), name, text, warn, onAccent, fill (fond uni des cartes).
+local function mix(a, b, k) return { a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k, a[3] + (b[3] - a[3]) * k } end
+local function colors(theme)
+  if not (theme and theme.colors) then
+    return { accent = GOLD, accentLit = GOLD_LIGHT, edge = EDGE, edgeLit = EDGE_LIGHT, name = NAME_COLOR,
+      text = TEXT, warn = WARN, onAccent = ON_GOLD, fill = CARD_FILL.default }
+  end
+  local c = theme.colors
+  return { accent = c.accent, accentLit = mix(c.accent, { 1, 1, 1 }, 0.35), edge = c.edge, edgeLit = c.textDim,
+    name = c.text, text = c.text, warn = c.danger, onAccent = c.onAccent, fill = c.panel }
+end
 
 local ICONS = {
   quests = "Interface\\GossipFrame\\AvailableQuestIcon",
@@ -192,10 +209,11 @@ local function gradient(tx, orientation, from, to)
   tx:SetColorTexture((from[1] + to[1]) / 2, (from[2] + to[2]) / 2, (from[3] + to[3]) / 2, (from[4] + to[4]) / 2)
 end
 
+-- Liseré plat des cartes (2 px, teinté par RefreshLook).
 local EDGE_BACKDROP = {
-  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-  edgeSize = 14,
-  insets = { left = 4, right = 4, top = 4, bottom = 4 },
+  edgeFile = "Interface\\Buttons\\WHITE8X8",
+  edgeSize = 2,
+  insets = { left = 2, right = 2, top = 2, bottom = 2 },
 }
 
 -- Pastille : fond uni, icône facultative, texte.
@@ -231,32 +249,38 @@ end
 ---------------------------------------------------------------------------
 -- Cadre
 ---------------------------------------------------------------------------
--- Halo de la carte conseillée : quatre bandes dorées qui s'effacent vers l'extérieur, pulsation douce.
+-- Halo de la carte conseillée : quatre bandes (accent du thème, doré sans thème) qui s'effacent vers
+-- l'extérieur, pulsation douce. paintHalo le repeint.
+local function paintHalo(halo, color)
+  local inner, outer = { color[1], color[2], color[3], 0.6 }, { color[1], color[2], color[3], 0 }
+  gradient(halo.top, "VERTICAL", inner, outer)
+  gradient(halo.bottom, "VERTICAL", outer, inner)
+  gradient(halo.left, "HORIZONTAL", outer, inner)
+  gradient(halo.right, "HORIZONTAL", inner, outer)
+end
+
 local function makeHalo(window, card)
   local halo = CreateFrame("Frame", nil, window)
   halo:SetPoint("TOPLEFT", card, "TOPLEFT", -HALO, HALO)
   halo:SetPoint("BOTTOMRIGHT", card, "BOTTOMRIGHT", HALO, -HALO)
-  local inner, outer = { GOLD[1], GOLD[2], GOLD[3], 0.6 }, { GOLD[1], GOLD[2], GOLD[3], 0 }
   local top = halo:CreateTexture(nil, "BACKGROUND")
   top:SetPoint("TOPLEFT", halo, "TOPLEFT", HALO, 0)
   top:SetPoint("TOPRIGHT", halo, "TOPRIGHT", -HALO, 0)
   top:SetHeight(HALO)
-  gradient(top, "VERTICAL", inner, outer)
   local bottom = halo:CreateTexture(nil, "BACKGROUND")
   bottom:SetPoint("BOTTOMLEFT", halo, "BOTTOMLEFT", HALO, 0)
   bottom:SetPoint("BOTTOMRIGHT", halo, "BOTTOMRIGHT", -HALO, 0)
   bottom:SetHeight(HALO)
-  gradient(bottom, "VERTICAL", outer, inner)
   local left = halo:CreateTexture(nil, "BACKGROUND")
   left:SetPoint("TOPLEFT", halo, "TOPLEFT", 0, -HALO)
   left:SetPoint("BOTTOMLEFT", halo, "BOTTOMLEFT", 0, HALO)
   left:SetWidth(HALO)
-  gradient(left, "HORIZONTAL", outer, inner)
   local right = halo:CreateTexture(nil, "BACKGROUND")
   right:SetPoint("TOPRIGHT", halo, "TOPRIGHT", 0, -HALO)
   right:SetPoint("BOTTOMRIGHT", halo, "BOTTOMRIGHT", 0, HALO)
   right:SetWidth(HALO)
-  gradient(right, "HORIZONTAL", inner, outer)
+  halo.top, halo.bottom, halo.left, halo.right = top, bottom, left, right
+  paintHalo(halo, GOLD)
   local pulse = halo:CreateAnimationGroup()
   pulse:SetLooping("BOUNCE")
   local fade = pulse:CreateAnimation("Alpha")
@@ -341,14 +365,11 @@ function Popup:CardFrame(i)
   if c.name.SetShadowColor then c.name:SetShadowColor(0, 0, 0, 0.9) end
   if c.name.SetShadowOffset then c.name:SetShadowOffset(1, -1) end
   c.warning = fontString(content, "GameFontNormalSmall")
-  setColor(c.warning, WARN)
   for k = 1, 3 do c.lines[k] = iconLine(content, "GameFontHighlight", ICON) end
   c.hlHeader = fontString(content, "GameFontNormalSmall")
   c.hlHeader:SetText(L.UI_ROUTECHOICE_HIGHLIGHTS)
-  setColor(c.hlHeader, GOLD)
   for k = 1, 3 do c.highlights[k] = iconLine(content, "GameFontHighlightSmall", SMALL_ICON) end
   c.reason = fontString(content, "GameFontNormal")
-  setColor(c.reason, GOLD)
   c.reason:SetPoint("BOTTOMLEFT", content, "BOTTOMLEFT", INNER, INNER + BUTTON_H + 8)
   c.button = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
   c.button:SetHeight(BUTTON_H)
@@ -416,6 +437,24 @@ function Popup:Create()
   self.closeButton:SetPoint("TOPRIGHT", win, "TOPRIGHT", -4, -4)
   self.closeButton:SetScript("OnClick", function() Q.SafeCall(Popup.Later, Popup) end)
 
+  -- Habillage du thème : bandeau illustré avec blason, titre et sous-titre, coins, liseré, croix plate
+  -- (la croix de la fenêtre est celle habillée), pied aux couleurs du thème.
+  local T = Q.Themes
+  if T then
+    T:Apply(win, T:CurrentKey(), 1)
+    T:Decorate(win, { header = BANNER_H, emblem = 34, title = self.title, sub = self.subtitle })
+    win.qvClose = self.closeButton
+    local foot = win:CreateTexture(nil, "BACKGROUND", nil, -3)
+    foot:SetPoint("BOTTOMLEFT", win, "BOTTOMLEFT", 1, 1)
+    foot:SetPoint("BOTTOMRIGHT", win, "BOTTOMRIGHT", -1, 1)
+    foot:SetHeight(FOOTER_H - 4)
+    local line = win:CreateTexture(nil, "BORDER")
+    line:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", 0, 0)
+    line:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", 0, 0)
+    line:SetHeight(1)
+    self.footBar = { bg = foot, line = line }
+  end
+
   self.keepButton = footerButton(win, L.UI_ROUTECHOICE_KEEP, 190, function() Popup:Keep() end)
   self.laterButton = footerButton(win, L.UI_ROUTECHOICE_LATER, 120, function() Popup:Later() end)
   self.keepButton:SetPoint("BOTTOMRIGHT", win, "BOTTOM", -6, 30)
@@ -436,18 +475,28 @@ end
 ---------------------------------------------------------------------------
 -- Contenu
 ---------------------------------------------------------------------------
--- Thème du suivi (sans fond : thème sombre), opacité d'au moins 0,92.
+-- Thème en vigueur (Q.Themes:Current : celui de la race du personnage, ou celui choisi), fenêtre opaque :
+-- fond, bandeau, croix, pied, textes et boutons du pied (« Garder la route prévue » en bouton plat,
+-- « Plus tard » en bouton discret ; l'action principale est le « Y aller » de chaque carte).
 function Popup:ApplyTheme()
   local Themes = Q.Themes
+  self.colors = colors(nil)
   if not Themes then return end
-  local theme = Themes:Get(Q.Settings:Get("tracker.theme"))
-  if not theme.background or theme.background.kind == "none" then theme = Themes:Get("dark") end
-  local opacity = math.max(Themes:Opacity(Q.Settings:Get("tracker.opacity")), 0.92)
-  Themes:Apply(self.window, theme.key, opacity)
+  local theme = Themes:Current()
+  Themes:Apply(self.window, theme.key, 1)
   Themes:StyleText(self.title, "title", theme)
-  Themes:StyleText(self.subtitle, "levels", theme)
-  Themes:StyleText(self.keysHint, "dim", theme)
+  Themes:StyleText(self.subtitle, "dim", theme)
+  Themes:StyleText(self.keysHint, "muted", theme)
+  Themes:SkinClose(self.window, theme)
+  Themes:SkinButton(self.keepButton, "secondary", theme)
+  Themes:SkinButton(self.laterButton, "ghost", theme)
+  local foot = self.footBar
+  if foot then
+    foot.bg:SetColorTexture(Themes:Color("footer", theme))
+    foot.line:SetColorTexture(Themes:Color("line", theme))
+  end
   self.theme = theme
+  self.colors = colors(theme)
 end
 
 -- Recadrage « couvrir » d'une image (entrée de Q.ZoneArt) dans une zone aw × ah : coordonnées de
@@ -519,7 +568,7 @@ end
 -- "map" | "color".
 function Popup:PaintArt(c, mapId)
   local aw, ah = c.art:GetSize()
-  local fill = CARD_FILL[self.theme and self.theme.key] or CARD_FILL.default
+  local fill = (self.colors or colors(nil)).fill
   c.solid:SetColorTexture(fill[1], fill[2], fill[3], 1)
   c.solid:Show()
   c.image:Hide()
@@ -623,23 +672,31 @@ function Popup:FillCard(c, data, w, h)
   c.frame:SetSize(w, h)
   c.art:SetSize(w - 2 * ART_INSET, h - 2 * ART_INSET)
   self:PaintArt(c, data.mapId)
+  local col = self.colors or colors(nil)
+  setColor(c.warning, col.warn)
+  setColor(c.hlHeader, col.accent)
+  setColor(c.reason, col.accent)
+  paintHalo(c.halo, col.accent)
+  -- « Y aller » : action principale sur la carte conseillée
+  if Q.Themes then Q.Themes:SkinButton(c.button, data.recommended and "primary" or "secondary", self.theme) end
 
-  -- Badges du haut : « Conseillé » (doré) ou « Route de Questify », tranche de niveaux
+  -- Badges du haut : « Conseillé » (accent du thème) ou « Route de Questify », tranche de niveaux
   if data.recommended then
-    setPill(c.badge, L.UI_ROUTECHOICE_RECOMMENDED, { GOLD[1], GOLD[2], GOLD[3], 0.95 }, { 0.16, 0.10, 0 }, ICONS.star)
+    local a = col.accent
+    setPill(c.badge, L.UI_ROUTECHOICE_RECOMMENDED, { a[1], a[2], a[3], 0.95 }, col.onAccent, ICONS.star)
   elseif data.default then
     setPill(c.badge, L.UI_ROUTECHOICE_DEFAULT, { 0, 0, 0, 0.65 }, { 0.85, 0.85, 0.85 })
   else
     c.badge.text:SetText("")
     c.badge:Hide()
   end
-  setPill(c.levelPill, string.format(L.UI_ROUTECHOICE_LEVELS, data.minLevel, data.maxLevel), { 0, 0, 0, 0.65 }, TEXT)
+  setPill(c.levelPill, string.format(L.UI_ROUTECHOICE_LEVELS, data.minLevel, data.maxLevel), { 0, 0, 0, 0.65 }, col.text)
 
   -- Nom de la zone : police du jeu, grande, cernée
   local inner = w - 2 * INNER
   local size = clamp(math.floor(w / 13), 18, 26)
   if c.name.SetFont then pcall(c.name.SetFont, c.name, STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", size, "OUTLINE") end
-  setColor(c.name, NAME_COLOR)
+  setColor(c.name, col.name)
   c.name:SetWidth(inner)
   c.name:SetText(data.title)
 
@@ -718,7 +775,8 @@ function Popup:FillMinimal(c, data, w, h)
   c.data = data
   c.frame:SetSize(w, h)
   c.art:SetSize(w - 2 * ART_INSET, h - 2 * ART_INSET)
-  local fill = CARD_FILL[self.theme and self.theme.key] or CARD_FILL.default
+  local col = self.colors or colors(nil)
+  local fill = col.fill
   c.solid:SetColorTexture(fill[1], fill[2], fill[3], 1)
   c.solid:Show()
   c.image:Hide()
@@ -733,7 +791,8 @@ function Popup:FillMinimal(c, data, w, h)
   for _, row in ipairs(c.lines) do hideLine(row) end
   for _, row in ipairs(c.highlights) do hideLine(row) end
   c.hlHeader:Hide()
-  setColor(c.name, NAME_COLOR)
+  paintHalo(c.halo, col.accent)
+  setColor(c.name, col.name)
   c.name:SetWidth(w - 2 * INNER)
   c.name:SetText(data.title or data.id or "?")
   c.name:ClearAllPoints()
@@ -749,14 +808,15 @@ function Popup:FillMinimal(c, data, w, h)
   end
 end
 
--- Liseré et lumière d'une carte : dorés pour la conseillée, éclaircis pour la carte active (survol
--- ou clavier).
+-- Liseré et lumière d'une carte : accent du thème pour la conseillée, éclaircis pour la carte active
+-- (survol ou clavier).
 function Popup:RefreshLook(c)
   local d = c.data
   if not d then return end
   local lit = self.focus == c.index
+  local col = self.colors or colors(nil)
   local edge
-  if d.recommended then edge = lit and GOLD_LIGHT or GOLD else edge = lit and EDGE_LIGHT or EDGE end
+  if d.recommended then edge = lit and col.accentLit or col.accent else edge = lit and col.edgeLit or col.edge end
   if c.border.SetBackdropBorderColor then c.border:SetBackdropBorderColor(edge[1], edge[2], edge[3], 1) end
   c.lit:SetShown(lit)
   local v = lit and ART_LIT or ART_REST
@@ -989,6 +1049,10 @@ end
 -- Évènements
 ---------------------------------------------------------------------------
 Q:On("ROUTE_CHOICE_NEEDED", function(fromId) Popup:Open(fromId) end)
+-- Changement de thème, fenêtre ouverte : repeinte (fond, bandeau, cartes).
+Q:On("THEME_CHANGED", function()
+  if Popup:IsShown() and Popup.fromId and Popup.cards then Q.SafeCall(Popup.Fill, Popup, Popup.fromId, Popup.cards) end
+end)
 Q:On("ROUTE_CHOSEN", function(fromId)
   local set = dismissedSet(false)
   if set then set[fromId] = nil end

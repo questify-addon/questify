@@ -384,6 +384,9 @@ add({ id = "tracker.style", section = "theme", category = "background", type = "
   keywords = "fond suivi plein fondu transparent sans fond background tracker full fade none transparent",
   choices = { { value = "solid", label = "OPT_THEME_STYLE_SOLID" }, { value = "fade", label = "OPT_THEME_STYLE_FADE" },
     { value = "none", label = "OPT_THEME_STYLE_NONE" } } })
+add({ id = "theme.fontScale", section = "theme", category = "background", type = "slider", path = "theme.fontScale",
+  label = "OPT_THEME_FONT_SCALE", tip = "OPT_TIP_THEME_FONT_SCALE", min = 0.8, max = 1.5, step = 0.05, format = percent,
+  keywords = "taille texte police grand petit lisibilite text size font large small readability" })
 add({ id = "tracker.opacity", section = "theme", category = "background", type = "slider", path = "tracker.opacity",
   label = "OPT_OPACITY", tip = "OPT_TIP_OPACITY", min = 0, max = 1, step = 0.05, format = percent,
   keywords = "theme fond transparence opacite alpha background opacity transparency" })

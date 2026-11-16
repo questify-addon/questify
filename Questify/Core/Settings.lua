@@ -16,7 +16,7 @@ Settings.defaults = {
     style = "solid",                        -- UI/Themes.lua : fond du suivi (solid, fade, none)
     foldBlizzard = true },                  -- UI/BlizzardTracker.lua : suivi de Blizzard replié
   -- Thème de toutes les fenêtres (UI/Themes.lua) : suivre la race, police, icônes des étapes
-  theme = { followRace = true, font = "game", icons = "flat" },
+  theme = { followRace = true, font = "game", icons = "flat", fontScale = 1 },
   -- Flèche flottante (UI/Arrow.lua) : affichée, couleur (cyan, theme, gold, green, white, pink)
   arrow = { show = true, color = "cyan" },
   nameplates = true,

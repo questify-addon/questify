@@ -3,6 +3,8 @@ local addonName, Q = ...
 -- Fenêtre d'un donjon conseillé, ouverte depuis l'alerte du suivi (ou le journal) : nom, plage de
 -- niveaux, zone de l'entrée, quêtes avec leur donneur, puis deux choix : « Ajouter à la route » et
 -- « Ignorer ». Les deux marquent le donjon comme vu. Même modèle que UI/ClassQuestPopup.lua.
+-- Habillage du thème (UI/Themes.lua) : bandeau avec blason et titre, textes et boutons aux couleurs du
+-- thème (« Ajouter à la route » en action principale), repeints à chaque changement de thème.
 Q.UI = Q.UI or {}
 local Popup = { lines = {} }
 Q.UI.DungeonPopup = Popup
@@ -86,6 +88,68 @@ function Popup.QuestLine(row, opts)
 end
 
 ---------------------------------------------------------------------------
+-- Habillage du thème (UI/Themes.lua, maquette docs/media/apercus/src/themes/maquette.html, popup(t)) :
+-- gabarit de Blizzard caché, bordure de 1 px, fond, bandeau illustré de 46 px avec blason et titre,
+-- coins, liseré, croix plate et pied aux couleurs du thème. Sans module de thèmes, le gabarit reste.
+---------------------------------------------------------------------------
+local HEADER_H, FOOTER_H = 46, 34
+local TEXT_ROLES = { text = "body", textDim = "dim", textMuted = "muted" }
+
+-- Couleur, ombre et police d'une ligne de texte ; rôles des jetons (text, textDim, textMuted) ou du
+-- texte (title, quest, npc, xp, accent…).
+local function paint(fs, role)
+  local T = Q.Themes
+  if T and fs then T:StyleText(fs, TEXT_ROLES[role] or role) end
+end
+
+-- Codes de couleur des textes remplacés par ceux du thème.
+local function recolor(text)
+  local T = Q.Themes
+  if T then return T:Recolor(text) end
+  return text
+end
+
+-- Bouton plat du thème : "primary" (action principale), "secondary" ou "ghost".
+local function skin(btn, kind)
+  btn.qvButtonKind = kind
+  if Q.Themes then Q.Themes:SkinButton(btn, kind) end
+  return btn
+end
+
+-- Habille la fenêtre f ; title : FontString posé dans le bandeau. -> pied { bg, line }, nil sans thème.
+local function skinWindow(f, title)
+  local T = Q.Themes
+  if not T then return nil end
+  T:StripTemplate(f)
+  -- bordure de 1 px : le gabarit n'a pas de BackdropTemplate (Q.Themes:Apply ne pose alors que le fond)
+  if not f.SetBackdrop and type(Mixin) == "function" and type(BackdropTemplateMixin) == "table" then
+    Mixin(f, BackdropTemplateMixin)
+    if f.OnBackdropSizeChanged then f:HookScript("OnSizeChanged", f.OnBackdropSizeChanged) end
+  end
+  T:Apply(f, T:CurrentKey(), 1)
+  T:Decorate(f, { header = HEADER_H, emblem = 30, title = title })
+  local foot = { bg = f:CreateTexture(nil, "BACKGROUND", nil, -3), line = f:CreateTexture(nil, "BORDER") }
+  foot.bg:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
+  foot.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
+  foot.bg:SetHeight(FOOTER_H)
+  foot.line:SetPoint("BOTTOMLEFT", foot.bg, "TOPLEFT", 0, 0)
+  foot.line:SetPoint("BOTTOMRIGHT", foot.bg, "TOPRIGHT", 0, 0)
+  foot.line:SetHeight(1)
+  return foot
+end
+
+-- Croix et pied aux couleurs du thème (à la création et à chaque changement de thème).
+local function paintChrome(f, foot)
+  local T = Q.Themes
+  if not (T and f) then return end
+  T:SkinClose(f)
+  if foot then
+    foot.bg:SetColorTexture(T:Color("footer"))
+    foot.line:SetColorTexture(T:Color("line"))
+  end
+end
+
+---------------------------------------------------------------------------
 -- Construction
 ---------------------------------------------------------------------------
 local function newFrame()
@@ -120,9 +184,16 @@ function Popup:Create()
   if f.SetTitle then f:SetTitle(L.DUNGEON_POPUP_TITLE) end
   if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Bone_HumanSkull_01") end
   if UISpecialFrames then tinsert(UISpecialFrames, FRAME_NAME) end
+  local head = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  head:SetText(L.DUNGEON_POPUP_TITLE)
+  self.headText = head
+  self.foot = skinWindow(f, head)
+  if not self.foot then head:Hide() end
+  -- haut du contenu : sous le bandeau du thème, sinon dans le cadre intérieur du modèle
+  self.top = self.foot and HEADER_H + 12 or 68
 
   local c = CreateFrame("Frame", nil, f)
-  c:SetPoint("TOPLEFT", f, "TOPLEFT", 16, -68)
+  c:SetPoint("TOPLEFT", f, "TOPLEFT", 16, -self.top)
   c:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -16, 32)
   self.content = c
 
@@ -141,19 +212,36 @@ function Popup:Create()
 
   local add = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   add:SetSize(150, 22)
-  add:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 4)
+  add:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, self.foot and (FOOTER_H - 22) / 2 + 1 or 4)
   add:SetText(L.UI_BTN_ADD_ROUTE)
   add:SetScript("OnClick", function() Q.SafeCall(function() Popup:Choose("Add") end) end)
-  self.addButton = add
+  self.addButton = skin(add, "primary")
   local ignore = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   ignore:SetSize(110, 22)
   ignore:SetPoint("RIGHT", add, "LEFT", -6, 0)
   ignore:SetText(L.UI_BTN_IGNORE)
   ignore:SetScript("OnClick", function() Q.SafeCall(function() Popup:Choose("Ignore") end) end)
-  self.ignoreButton = ignore
+  self.ignoreButton = skin(ignore, "secondary")
 
+  self:ApplyTheme()
   f:Hide()
   return f
+end
+
+-- Rôle de couleur de chaque texte fixe de la fenêtre.
+local TEXT_COLORS = {
+  headText = "title", title = "title", counter = "textMuted", level = "textDim", entrance = "text",
+  questsHeader = "textMuted", empty = "textMuted", more = "textMuted",
+}
+
+-- Couleurs du thème : textes, lignes de quête, boutons, croix et pied.
+function Popup:ApplyTheme()
+  if not (self.frame and Q.Themes) then return end
+  for key, role in pairs(TEXT_COLORS) do paint(self[key], role) end
+  for _, fs in ipairs(self.lines) do paint(fs, "text") end
+  skin(self.addButton, "primary")
+  skin(self.ignoreButton, "secondary")
+  paintChrome(self.frame, self.foot)
 end
 
 local function line(i)
@@ -161,6 +249,7 @@ local function line(i)
   if fs then return fs end
   fs = text(Popup.content, "GameFontHighlightSmall", INNER)
   fs:SetWordWrap(true)
+  paint(fs, "text")
   Popup.lines[i] = fs
   return fs
 end
@@ -179,6 +268,7 @@ function Popup:Show(d, index, total)
   if type(d) ~= "table" then return end
   self:Create()
   self.dungeon = d
+  self.shownWith = { index, total }
   self.demo = d.demo == true   -- scène /qf demo : les boutons ferment sans agir (UI/Demo.lua)
   local y = 0
   if tonumber(total) and total > 1 then
@@ -218,7 +308,7 @@ function Popup:Show(d, index, total)
   local shown = math.min(#sorted, MAX_LINES)
   for i = 1, shown do
     local fs = line(i)
-    fs:SetText("- " .. Popup.QuestLine(sorted[i]))
+    fs:SetText("- " .. recolor(Popup.QuestLine(sorted[i])))
     place(fs, y)
     fs:Show()
     y = y + (fs:GetStringHeight() or 13) + 3
@@ -244,7 +334,7 @@ function Popup:Show(d, index, total)
     self.addButton:Disable()
   end
 
-  self.frame:SetHeight(math.max(220, y + 68 + 40))
+  self.frame:SetHeight(math.max(220, y + self.top + 40))
   self.frame:Show()
   self.frame:Raise()
 end
@@ -266,3 +356,13 @@ function Popup:Choose(action)
   self:Hide()
   if Q.UI.Tracker and Q.UI.Tracker.Refresh then Q.UI.Tracker:Refresh() end
 end
+
+-- Changement de thème : couleurs repeintes ; fenêtre ouverte : lignes de quête refaites.
+Q:On("THEME_CHANGED", function()
+  if not Popup.frame then return end
+  Q.SafeCall(Popup.ApplyTheme, Popup)
+  if Popup.frame:IsShown() and Popup.dungeon then
+    local w = Popup.shownWith or {}
+    Q.SafeCall(Popup.Show, Popup, Popup.dungeon, w[1], w[2])
+  end
+end)

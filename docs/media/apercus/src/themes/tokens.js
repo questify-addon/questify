@@ -27,6 +27,13 @@ const THEMES = {
     text: "#eef3f7", textDim: "#b9c7d3", textMuted: "#8fa0b0",
     accent: "#3fd0e6", onAccent: "#04161d", trim: "#d4a94f",
   },
+  contrast: {
+    name: "Contraste élevé", group: "Neutre", note: "lisibilité", emblem: "logo", metal: "#ffffff",
+    bg: "#000000", panel: "#0b0b0b", panelAlt: "#161616", sidebar: "#000000", footer: "#050505",
+    sky: "#1a1a1a", edge: "#ffffff", line: "rgba(255,255,255,.45)",
+    text: "#ffffff", textDim: "#f0f0f0", textMuted: "#d4d4d4",
+    accent: "#ffd60a", onAccent: "#000000", trim: "#ffd60a",
+  },
   alliance: {
     name: "Alliance", group: "Alliance", emblem: ICON("achievement_pvp_a_a"), metal: "#d9b45a",
     bg: "#141b2b", panel: "#182136", panelAlt: "#1f2a44", sidebar: "#10162a", footer: "#121929",
@@ -112,7 +119,7 @@ const THEMES = {
     accent: "#ec9165", onAccent: "#1a0904", trim: "#ac90e6",
   },
 };
-const ORDER = ["neutral", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
+const ORDER = ["neutral", "contrast", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
   "horde", "orc", "troll", "tauren", "undead", "skyborneH"];
 
 /* Contraste WCAG (couleurs #rrggbb). */

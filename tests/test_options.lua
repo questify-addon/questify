@@ -519,12 +519,12 @@ return {
       t.eq(card.art:GetTexture(), Q.Themes:Get(th.key).banner, "banner art")
     end
     t.ok(w.cards[1].check:IsShown(), "Questify chosen")
-    t.ok(w.cards[4].mine:IsShown() and not w.cards[1].mine:IsShown(), "the race card is marked")
-    Mock.click(w.cards[8], "LeftButton")
+    t.ok(w.cards[5].mine:IsShown() and not w.cards[1].mine:IsShown(), "the race card is marked")
+    Mock.click(w.cards[9], "LeftButton")
     t.eq(Q.Settings:Get("tracker.theme"), "horde")
     t.eq(Q.Settings:Get("theme.followRace"), false)
     t.eq(Q.UI.Tracker.themeKey, "horde", "tracker restyled at once")
-    t.ok(w.cards[8].check:IsShown() and not w.cards[1].check:IsShown())
+    t.ok(w.cards[9].check:IsShown() and not w.cards[1].check:IsShown())
     t.eq(O.frame.qvTheme.key, "horde", "the window follows the theme")
     -- fenêtre élargie pour l'aperçu en direct
     t.ok(O.preview:IsShown(), "live preview shown")

@@ -83,7 +83,7 @@ for (const key of ORDER) {
   <defs><linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity="1"/></linearGradient>
   <mask id="m"><rect width="512" height="64" fill="url(#fade)"/></mask></defs>
   <style>.far{fill:${far}}.near{fill:${near}}.glow{fill:${glow};stroke:${glow};opacity:.7}</style>
-  <g mask="url(#m)">${BAN[key]}</g></svg>`;
+  <g mask="url(#m)">${BAN[key] || BAN.neutral}</g></svg>`;
   write("banner-" + key, svg, 512, 64);
 }
 console.log("ok", out);

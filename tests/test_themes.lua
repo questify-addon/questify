@@ -59,7 +59,7 @@ local function contrast(a, b)
   return (math.max(x, y) + 0.05) / (math.min(x, y) + 0.05)
 end
 
-local KEYS = { "neutral", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
+local KEYS = { "neutral", "contrast", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
   "horde", "orc", "troll", "tauren", "undead", "skyborneH" }
 
 return {
@@ -68,7 +68,7 @@ return {
     t.eq(Q.Settings.defaults.tracker.theme, "neutral")
     t.eq(Q.Settings.defaults.tracker.opacity, 0.9)
     t.eq(Q.Settings.defaults.tracker.style, "solid")
-    t.eq(Q.Settings.defaults.theme, { followRace = true, font = "game", icons = "flat" })
+    t.eq(Q.Settings.defaults.theme, { followRace = true, font = "game", icons = "flat", fontScale = 1 })
     t.eq(Q.Settings.defaults.arrow, { show = true, color = "cyan" })
     -- le personnage de test est un Nain : son thème s'applique
     t.eq(Q.Themes:RaceKey(), "dwarf")
@@ -104,9 +104,9 @@ return {
     local keys, labels, groups = {}, {}, {}
     for i, th in ipairs(list) do keys[i], labels[i], groups[i] = th.key, th.label, th.group end
     t.eq(keys, KEYS)
-    t.eq(labels, { "Questify", "Alliance", "Humain", "Nain", "Elfe de la nuit", "Gnome", "Skyborne",
+    t.eq(labels, { "Questify", "Contraste élevé", "Alliance", "Humain", "Nain", "Elfe de la nuit", "Gnome", "Skyborne",
       "Horde", "Orc", "Troll", "Tauren", "Mort-vivant", "Skyborne" })
-    t.eq(groups[1], "neutral"); t.eq(groups[2], "alliance"); t.eq(groups[8], "horde")
+    t.eq(groups[1], "neutral"); t.eq(groups[2], "neutral"); t.eq(groups[3], "alliance"); t.eq(groups[9], "horde")
   end,
 
   every_theme_has_its_tokens_and_reads_well = function(t)
@@ -387,7 +387,7 @@ return {
     t.eq(Q.Settings:Get("tracker.theme"), "nightelf", "unknown: unchanged")
     t.ok(Mock.printed('Unknown theme "bogus"'))
     qf("theme")
-    t.ok(Mock.printed("neutral (Questify), alliance (Alliance), human (Human)"))
+    t.ok(Mock.printed("neutral (Questify), contrast (High contrast), alliance (Alliance)"))
     t.ok(Mock.printed("Current theme: Night Elf"))
     qf("theme race")
     t.eq(Q.Settings:Get("theme.followRace"), true)
@@ -414,5 +414,40 @@ return {
     t.eq(Q.Settings:Get("tracker.opacity"), 0, "unchanged")
     t.ok(Q.L.UI_SLASH_HELP:find("/qf opacity", 1, true), "in the help")
     t.eq(#Mock.errors, 0)
+  end,
+
+  font_scale_grows_text_and_rows = function(t)
+    local Q = load()
+    local T = Q.UI.Tracker
+    local fs = UIParent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    rawset(fs, "GetFont", function() return "Fonts\\FRIZQT__.TTF", 12, "" end)
+    local log = spy(fs, { "SetFont" }, {})
+    Q.Settings:Set("theme.fontScale", 1.3)
+    t.eq(Q.Themes:FontScale(), 1.3)
+    Q.Themes:StyleText(fs, "body", Q.Themes:Get("horde"))
+    t.eq(last(log.SetFont), { "Fonts\\FRIZQT__.TTF", 15.5, "" }, "12 x 1.3, rounded to half a point")
+    t.eq(T.themeScale, 1.3, "tracker restyled")
+    t.eq(T:BodyTop(), 44 + 6 + 4 + 3 + 17 + 4, "bar text row grows with the text")
+    Q.Settings:Set("theme.fontScale", 9)
+    t.eq(Q.Themes:FontScale(), 1.5, "clamped")
+    Q.Settings:Set("theme.fontScale", "junk")
+    t.eq(Q.Themes:FontScale(), 1)
+    local e = Q.OptionsSchema:Entry("theme.fontScale")
+    t.eq({ e.min, e.max, e.step }, { 0.8, 1.5, 0.05 })
+    t.eq(#Mock.errors, 0)
+  end,
+
+  hairline_is_one_screen_pixel = function(t)
+    local Q = load()
+    PixelUtil = { GetPixelToUIUnitFactor = function() return 0.5 end }
+    local f, log = spyFrame()
+    rawset(f, "GetEffectiveScale", function() return 0.8 end)
+    Q.Themes:Apply(f, "horde", 1)
+    local bd = last(log.SetBackdrop)[1]
+    t.eq(bd.edgeSize, 0.625, "one screen pixel at this UI scale (ElvUI changes it)")
+    t.ok(Q.Themes.Hairline(0.625) == bd, "cached")
+    PixelUtil = nil
+    Q.Themes:Apply(f, "horde", 1)
+    t.eq(last(log.SetBackdrop)[1], Q.Themes.HAIRLINE, "without PixelUtil: 1 unit")
   end,
 }

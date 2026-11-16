@@ -25,6 +25,7 @@ const state = {
   icons: P.get("icons") || "flat",
   style: P.get("style") || "solid",
   view: P.get("view") || "windows",
+  fs: P.get("fs") || "1",
 };
 if (P.get("shot")) document.body.classList.add("shot");
 
@@ -228,7 +229,7 @@ function picker(t, keyOn, cols) {
   const a = ["alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA"];
   const h = ["horde", "orc", "troll", "tauren", "undead", "skyborneH"];
   const row = (ks) => ks.map((k) => card(k, k === keyOn, k === "dwarf")).join("");
-  return `<div class="cards" style="grid-template-columns:repeat(${cols},1fr)">${card("neutral", keyOn === "neutral")}</div>
+  return `<div class="cards" style="grid-template-columns:repeat(${cols},1fr)">${card("neutral", keyOn === "neutral")}${card("contrast", keyOn === "contrast")}</div>
   <div class="s11 tm sc2" style="margin:8px 0 4px">Alliance</div>
   <div class="cards" style="grid-template-columns:repeat(${cols},1fr)">${row(a)}</div>
   <div class="s11 tm sc2" style="margin:8px 0 4px">Horde</div>
@@ -262,6 +263,12 @@ function options(t, key) {
         <span class="seg"><span class="${state.icons === "flat" ? "on" : ""}">Icônes plates</span><span class="${state.icons === "game" ? "on" : ""}">Du jeu</span></span>
         <span class="seg"><span class="${state.style === "solid" ? "on" : ""}">Plein</span><span class="${state.style === "fade" ? "on" : ""}">Fondu</span><span class="${state.style === "none" ? "on" : ""}">Sans fond</span></span>
         <span class="s13 td">Opacité</span><div class="slider" style="width:90px"><b style="width:90%"></b><i style="left:83%"></i></div><span class="s12 t num nw">90&nbsp;%</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;margin-top:12px">
+        <span class="s13 td">Taille du texte</span>
+        <div class="slider" style="width:180px"><b style="width:${(state.fs - 0.8) / 0.7 * 100}%"></b><i style="left:calc(${(state.fs - 0.8) / 0.7 * 100}% - 7px)"></i></div>
+        <span class="s12 t num nw">${Math.round(state.fs * 100)}&nbsp;%</span>
+        <span class="s11 tm">80 à 150 %, toutes les fenêtres</span>
       </div>
     </div>
     <div class="live">
@@ -321,6 +328,7 @@ function render() {
   const t = THEMES[state.theme];
   document.body.classList.toggle("f-clean", state.font === "clean");
   document.body.classList.toggle("i-game", state.icons === "game");
+  document.body.style.setProperty("--fs", state.fs);
   const page = document.getElementById("page");
   const ratio = contrast(t.text, t.bg).toFixed(1), ratio2 = contrast(t.textDim, t.bg).toFixed(1),
     ratio3 = contrast(t.textMuted, t.bg).toFixed(1);
@@ -328,7 +336,7 @@ function render() {
   const styleName = { solid: "fond plein", fade: "fond fondu", none: "sans fond" }[state.style];
   if (state.view === "grid") {
     page.innerHTML = `
-<div class="head-cap"><div><div class="brand">Questify · refonte des thèmes</div><h1>Les 13 thèmes, sur le suivi</h1>
+<div class="head-cap"><div><div class="brand">Questify · refonte des thèmes</div><h1>Les 14 thèmes, sur le suivi</h1>
   <div class="meta">Vallée de Frigères enneigée en fond (le cas le plus clair). ${fontName}, ${styleName}, opacité 90 %.</div></div></div>
 <div class="world"><div class="grid13">${ORDER.map((k) => `<div>${tracker(THEMES[k], state.style)}
   <div class="lab" style="text-shadow:0 1px 2px rgba(0,0,0,.6)">${THEMES[k].name}<small>${THEMES[k].group}${THEMES[k].note ? " · " + THEMES[k].note : ""}</small></div></div>`).join("")}</div></div>`;
@@ -367,6 +375,7 @@ function ctl() {
   <div class="grp"><span class="lbl">Vue</span>${b("view", "windows", "Fenêtres")}${b("view", "grid", "Les 13 suivis")}</div>
   <div class="grp"><span class="lbl">Thème</span>${ORDER.map((k) => b("theme", k, THEMES[k].name + (k.startsWith("skyborne") ? (k.endsWith("A") ? " (A)" : " (H)") : ""))).join("")}</div>
   <div class="grp"><span class="lbl">Police</span>${b("font", "game", "Du jeu")}${b("font", "clean", "Inter")}</div>
+  <div class="grp"><span class="lbl">Taille</span>${b("fs", "0.9", "90 %")}${b("fs", "1", "100 %")}${b("fs", "1.15", "115 %")}${b("fs", "1.3", "130 %")}</div>
   <div class="grp"><span class="lbl">Icônes</span>${b("icons", "flat", "Plates")}${b("icons", "game", "Du jeu")}</div>
   <div class="grp"><span class="lbl">Fond du suivi</span>${b("style", "solid", "Plein")}${b("style", "fade", "Fondu")}${b("style", "none", "Sans fond")}</div>`;
   document.querySelectorAll("#ctl button").forEach((el) => el.onclick = () => {

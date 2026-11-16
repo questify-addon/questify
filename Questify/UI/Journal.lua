@@ -8,8 +8,14 @@ local addonName, Q = ...
 --   « Donjons » : liste groupée et notée (étoiles) à gauche, détail du donjon choisi à droite ;
 --   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver.
 -- Le bouton « Options… » en bas à droite ouvre la fenêtre d'options (UI/Options.lua).
+-- Habillage du thème (UI/Themes.lua, maquette docs/media/apercus/src/themes/maquette.html, journal(t)) :
+-- gabarit de Blizzard caché, bandeau illustré de 52 px avec blason, titre et onglets en texte (onglet
+-- ouvert souligné de l'accent), barre latérale des listes (chapitres, donjons), sélection et étape
+-- courante sur fond « sel » avec barre d'accent, pied aux couleurs du thème (boutons plats, Options… en
+-- action principale). Tout est repeint à chaque changement de thème (THEME_CHANGED).
 Q.UI = Q.UI or {}
-local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {} }
+local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {},
+  buttons = {}, fills = {}, texts = {} }
 Q.UI.Journal = Journal
 
 local L = Q.L
@@ -19,19 +25,183 @@ local WIDTH, HEIGHT = 520, 560
 local TAB_NAMES = { "route", "dungeons", "class" }
 local TAB_INDEX = { route = 1, dungeons = 2, class = 3 }
 
+local HEADER_H, FOOTER_H = 52, 34      -- bandeau illustré, pied
+local EMBLEM = 34
+local CONTENT_TOP = HEADER_H + 8
 local CHAPTER_W, CHAPTER_ROW_H = 150, 20
 local STEP_W, STEP_ROW_H = 290, 18
 local CLASS_W, CLASS_ROW_H = 456, 46
 local CLASS_ITEMS = 3
 local LIST_H = 432
 
+local Themes0 = Q.Themes
 Journal.STATE_ICONS = {
-  done = "Interface\\RaidFrame\\ReadyCheck-Ready",
-  skipped = "Interface\\RaidFrame\\ReadyCheck-NotReady",
+  done = Themes0 and Themes0.GLYPH_CHECK or "Interface\\RaidFrame\\ReadyCheck-Ready",
+  skipped = Themes0 and Themes0.GLYPH_CLOSE or "Interface\\RaidFrame\\ReadyCheck-NotReady",
   current = "Interface\\ChatFrame\\ChatFrameExpandArrow",
   blocked = "Interface\\LFGFrame\\UI-LFG-ICON-LOCK",
 }
 local ICONS = Journal.STATE_ICONS
+-- Teinte de chaque icône d'état (jetons du thème) ; le verrou garde ses couleurs.
+local STATE_TINT = { done = "success", skipped = "textMuted", current = "accent" }
+
+---------------------------------------------------------------------------
+-- Couleurs du thème (UI/Themes.lua). Sans module de thèmes : couleurs d'avant la refonte.
+---------------------------------------------------------------------------
+local FALLBACK = { sel = { 1, 0.82, 0, 0.25 }, accent = { 1, 0.82, 0, 1 }, quest = { 1, 0.82, 0, 1 },
+  line = { 1, 1, 1, 0.1 }, sidebar = { 0, 0, 0, 0.25 }, footer = { 0, 0, 0, 0.3 }, edge = { 0.5, 0.5, 0.5, 1 },
+  panel = { 0.1, 0.1, 0.1, 0.9 }, textMuted = { 0.6, 0.6, 0.6, 1 }, textDim = { 0.8, 0.8, 0.8, 1 } }
+local WHITE = { 1, 1, 1, 1 }
+local TEXT_ROLES = { text = "body", textDim = "dim", textMuted = "muted" }
+
+-- tc(rôle) -> r, g, b, a du jeton.
+local function tc(role)
+  local T = Q.Themes
+  if T then return T:Color(role) end
+  local c = FALLBACK[role] or WHITE
+  return c[1], c[2], c[3], c[4]
+end
+
+-- Couleur, ombre et police d'une ligne de texte ; rôles des jetons (text, textDim, textMuted) ou du
+-- texte (accent, quest, success, danger, title…).
+local function paint(fs, role)
+  local T = Q.Themes
+  if T and fs then T:StyleText(fs, TEXT_ROLES[role] or role) end
+end
+
+-- Codes de couleur des textes remplacés par ceux du thème.
+local function recolor(text)
+  local T = Q.Themes
+  if T then return T:Recolor(text) end
+  return text
+end
+
+-- "|c" + couleur du rôle, pour les textes composés.
+local function hexOf(role, fallback)
+  local T = Q.Themes
+  return "|c" .. (T and T:Hex(role) or fallback)
+end
+
+-- Texture teintée d'un jeton, retenue pour être repeinte au changement de thème.
+local function fill(tex, role)
+  tex:SetColorTexture(tc(role))
+  Journal.fills[#Journal.fills + 1] = { tex, role }
+  return tex
+end
+
+-- Texte peint d'un rôle, retenu pour être repeint au changement de thème.
+local function styled(fs, role)
+  paint(fs, role)
+  Journal.texts[#Journal.texts + 1] = { fs, role }
+  return fs
+end
+
+-- Bouton plat du thème ("primary", "secondary", "ghost"), repeint au changement de thème.
+local function skin(btn, kind)
+  btn.qvButtonKind = kind
+  Journal.buttons[#Journal.buttons + 1] = btn
+  local T = Q.Themes
+  if T then T:SkinButton(btn, kind) end
+  return btn
+end
+
+-- Coche « fait » en texte (glyphe teint de la couleur de réussite).
+local function checkMarkup(size)
+  local T = Q.Themes
+  if not T then return "|TInterface\\RaidFrame\\ReadyCheck-Ready:" .. size .. ":" .. size .. "|t" end
+  local r, g, b = T:Color("success")
+  return string.format("|T%s:%d:%d:0:0:16:16:0:16:0:16:%d:%d:%d|t", T.GLYPH_CHECK, size, size,
+    math.floor(r * 255 + 0.5), math.floor(g * 255 + 0.5), math.floor(b * 255 + 0.5))
+end
+
+-- Icône d'état d'une étape ou d'un chapitre, teinte du thème.
+local function setStateIcon(tex, state)
+  local icon = ICONS[state]
+  tex:SetTexture(icon)
+  local tint = STATE_TINT[state]
+  -- la flèche du jeu est dorée : grisée puis teinte de l'accent
+  tex:SetDesaturated(state == "current" and Q.Themes ~= nil)
+  if tint and Q.Themes then
+    local r, g, b = tc(tint)
+    tex:SetVertexColor(r, g, b, 1)
+  else
+    tex:SetVertexColor(1, 1, 1, 1)
+  end
+end
+
+-- Survol d'une ligne : voile blanc léger.
+local function hoverHighlight(row)
+  local hl = row:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetAllPoints(row)
+  hl:SetColorTexture(1, 1, 1, 0.05)
+  return hl
+end
+
+-- Sélection de la maquette : fond « sel » et barre d'accent de 2 px à gauche. -> texture du fond
+-- (champ .bar : la barre).
+local function newSelection(row)
+  local sel = row:CreateTexture(nil, "BACKGROUND")
+  sel:SetAllPoints(row)
+  sel:Hide()
+  local bar = row:CreateTexture(nil, "ARTWORK")
+  bar:SetPoint("TOPLEFT", row, "TOPLEFT", 0, 0)
+  bar:SetPoint("BOTTOMLEFT", row, "BOTTOMLEFT", 0, 0)
+  bar:SetWidth(2)
+  bar:Hide()
+  sel.bar = bar
+  return sel
+end
+
+local function showSelection(sel, on)
+  if on then
+    sel:SetColorTexture(tc("sel"))
+    sel.bar:SetColorTexture(tc("accent"))
+    sel:Show()
+    sel.bar:Show()
+  else
+    sel:Hide()
+    sel.bar:Hide()
+  end
+end
+
+-- Barre latérale d'une liste (fond « sidebar » et filet à droite), de sous le bandeau jusqu'au pied.
+local function sidebar(panel, width)
+  local f = Journal.frame
+  local bg = panel:CreateTexture(nil, "BACKGROUND")
+  bg:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -(HEADER_H + 1))
+  bg:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, FOOTER_H + 1)
+  bg:SetWidth(width)
+  fill(bg, "sidebar")
+  local divider = panel:CreateTexture(nil, "BORDER")
+  divider:SetPoint("TOPLEFT", bg, "TOPRIGHT", 0, 0)
+  divider:SetPoint("BOTTOMLEFT", bg, "BOTTOMRIGHT", 0, 0)
+  divider:SetWidth(1)
+  fill(divider, "line")
+  return bg
+end
+
+-- Titre de colonne de la maquette (.h3) : texte discret et filet dessous.
+local function columnRule(panel, x, y, width)
+  local rule = panel:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", panel, "TOPLEFT", x, y)
+  rule:SetSize(width, 1)
+  fill(rule, "line")
+  return rule
+end
+
+-- Largeur d'un bouton d'après son texte (texte + pad, 18 px par défaut), entre min (60) et max.
+local function fitButton(b, max, min, pad)
+  local w
+  local ok, tw = pcall(function() return b:GetTextWidth() end)
+  if ok and type(tw) == "number" and tw > 0 then w = tw end
+  if not w then
+    local fs = b.GetFontString and b:GetFontString()
+    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
+  end
+  w = math.floor((w or #(b:GetText() or "") * 6) + (pad or 18))
+  b:SetWidth(math.min(max, math.max(min or 60, w)))
+  return b:GetWidth()
+end
 
 local CQ_STATE_TEXT = {
   available = "UI_CQ_AVAILABLE", upcoming = "UI_CQ_UPCOMING", added = "UI_CQ_ADDED",
@@ -56,8 +226,12 @@ local function showTooltip(owner, lines, anchor)
   if not GameTooltip then return end
   GameTooltip:SetOwner(owner, anchor or "ANCHOR_RIGHT")
   GameTooltip:ClearLines()
+  -- titre aux couleurs des quêtes du thème, lignes au texte du thème (codes de couleur repris)
+  local hr, hg, hb = tc("quest")
+  local r, g, b = tc("text")
   for i, line in ipairs(lines) do
-    if i == 1 then GameTooltip:AddLine(line, 1, 0.82, 0, true) else GameTooltip:AddLine(line, 1, 1, 1, true) end
+    if i == 1 then GameTooltip:AddLine(recolor(line), hr, hg, hb, true)
+    else GameTooltip:AddLine(recolor(line), r, g, b, true) end
   end
   GameTooltip:Show()
 end
@@ -96,6 +270,22 @@ local function newFrame()
   return CreateFrame("Frame", FRAME_NAME, UIParent, "BackdropTemplate")
 end
 
+-- Habillage du thème : gabarit caché, bordure de 1 px, fond, bandeau illustré avec blason et titre,
+-- coins, liseré, filigrane et croix plate. Le gabarit n'a pas de BackdropTemplate : sans lui, pas de
+-- bordure (Q.Themes:Apply ne pose que le fond).
+local function skinWindow(f, title)
+  local T = Q.Themes
+  if not T then return end
+  T:StripTemplate(f)
+  if not f.SetBackdrop and type(Mixin) == "function" and type(BackdropTemplateMixin) == "table" then
+    Mixin(f, BackdropTemplateMixin)
+    if f.OnBackdropSizeChanged then f:HookScript("OnSizeChanged", f.OnBackdropSizeChanged) end
+  end
+  T:Apply(f, T:CurrentKey(), 1)
+  T:Decorate(f, { header = HEADER_H, emblem = EMBLEM, title = title, watermark = 200 })
+  T:SkinClose(f)
+end
+
 function Journal:Create()
   if self.frame then return self.frame end
   local f = newFrame()
@@ -114,13 +304,34 @@ function Journal:Create()
   if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Book_09") end
   if UISpecialFrames then tinsert(UISpecialFrames, FRAME_NAME) end
 
-  -- Zone de contenu : intérieur du cadre « Inset » du modèle (60 px en haut, 26 px en bas).
+  local title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  title:SetText(L.UI_JOURNAL_TITLE)
+  self.titleText = title
+  skinWindow(f, title)
+  local header = f.qvDecor and f.qvDecor.header
+  if header then styled(title, "title") else title:Hide() end
+
+  -- Pied : fond du thème et filet au-dessus
+  local foot = f:CreateTexture(nil, "BACKGROUND", nil, -3)
+  foot:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
+  foot:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
+  foot:SetHeight(FOOTER_H)
+  fill(foot, "footer")
+  local footLine = f:CreateTexture(nil, "BORDER")
+  footLine:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", 0, 0)
+  footLine:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", 0, 0)
+  footLine:SetHeight(1)
+  fill(footLine, "line")
+  self.footer = foot
+
+  -- Zone de contenu : sous le bandeau, au-dessus du pied.
   local content = CreateFrame("Frame", nil, f)
-  content:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -64)
-  content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 30)
+  content:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -CONTENT_TOP)
+  content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, FOOTER_H + 2)
   self.content = content
 
-  -- libellés précédés de l'icône du bouton du suivi correspondant
+  -- Onglets en texte dans le bandeau, à droite du titre, soulignés de l'accent quand ils sont ouverts ;
+  -- libellés précédés de l'icône du bouton du suivi correspondant.
   local B = Q.UI.TrackerButtons
   local function label(key, text)
     if B and B.IconMarkup then
@@ -130,21 +341,36 @@ function Journal:Create()
     return text
   end
   local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS) }
+  local tabX = 8 + EMBLEM + 8 + math.floor(tonumber(title:GetStringWidth()) or 60) + 20
   for i, name in ipairs(TAB_NAMES) do
-    local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, f, "PanelTabButtonTemplate")
+    local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, header or f)
     tab:SetID(i)
+    local text = tab:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    text:SetPoint("CENTER", tab, "CENTER", 0, 1)
+    tab:SetFontString(text)
     tab:SetText(labels[i])
+    tab.text = text
+    local w = tonumber(text:GetStringWidth()) or 0
+    if w <= 0 then w = #L[({ "UI_TAB_ROUTE", "UI_TAB_DUNGEONS", "UI_TAB_CLASS" })[i]] * 7 + 18 end
+    tab:SetSize(math.floor(w) + 4, header and HEADER_H - 2 or 24)
+    local underline = tab:CreateTexture(nil, "OVERLAY")
+    underline:SetPoint("BOTTOMLEFT", tab, "BOTTOMLEFT", 0, 0)
+    underline:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", 0, 0)
+    underline:SetHeight(2)
+    underline:Hide()
+    tab.underline = underline
     if i == 1 then
-      tab:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 12, 2)
+      if header then tab:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", tabX, 0)
+      else tab:SetPoint("TOPLEFT", f, "TOPLEFT", 64, -30) end
     else
-      -- même ancre que PanelTemplates_AnchorTabs : l'appel suivant la remplace sans conflit
-      tab:SetPoint("TOPLEFT", self.tabs[i - 1], "TOPRIGHT", 3, 0)
+      tab:SetPoint("BOTTOMLEFT", self.tabs[i - 1], "BOTTOMRIGHT", 18, 0)
     end
     tab:SetScript("OnClick", safe(function()
       playSound("IG_CHARACTER_INFO_TAB")
       Journal:ShowTab(name)
     end))
-    if PanelTemplates_TabResize then pcall(PanelTemplates_TabResize, tab, 0) end
+    tab:SetScript("OnEnter", function(self) if not self.selected then paint(self.text, "text") end end)
+    tab:SetScript("OnLeave", function(self) if not self.selected then paint(self.text, "textDim") end end)
     self.tabs[i] = tab
 
     local panel = CreateFrame("Frame", nil, content)
@@ -152,7 +378,6 @@ function Journal:Create()
     panel:Hide()
     self.panels[name] = panel
   end
-  if PanelTemplates_SetNumTabs then pcall(PanelTemplates_SetNumTabs, f, #TAB_NAMES) end
 
   -- Onglet Route : deux vues. « Manuel » : chapitres et étapes ; « Automatique » : parcours complet avec les
   -- donjons (UI/DungeonModePanel.lua), proposé seulement quand il existe pour le personnage.
@@ -167,47 +392,63 @@ function Journal:Create()
   self:BuildRoute(self.routePanels.manual)
   local auto = Q.UI.DungeonModePanel
   if auto and auto.Build then auto:Build(self.routePanels.auto) end
+  -- « Manuel » / « Automatique » : à gauche du pied, collés (vue ouverte en action principale)
   self.routeModeButtons = {}
-  for i, mode in ipairs({ "manual", "auto" }) do
+  local prevMode
+  for _, mode in ipairs({ "manual", "auto" }) do
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    b:SetSize(112, 22)
-    b:SetPoint("TOPLEFT", f, "TOPLEFT", 62 + (i - 1) * 116, -34)
+    b:SetHeight(22)
+    if b.SetNormalFontObject then
+      pcall(b.SetNormalFontObject, b, "GameFontHighlightSmall")
+      pcall(b.SetHighlightFontObject, b, "GameFontHighlightSmall")
+      pcall(b.SetDisabledFontObject, b, "GameFontHighlightSmall")
+    end
     b:SetText(mode == "manual" and L.DGMODE_TAB_MANUAL or L.DGMODE_TAB_AUTO)
+    fitButton(b, 110, 50, 16)
+    if prevMode then b:SetPoint("LEFT", prevMode, "RIGHT", -1, 0)
+    else b:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 8, (FOOTER_H - 22) / 2 + 1) end
+    prevMode = b
     b:SetScript("OnClick", safe(function()
       playSound("IG_CHARACTER_INFO_TAB")
       Journal:ShowRouteMode(mode)
     end))
     b:Hide()
+    skin(b, "secondary")
     self.routeModeButtons[mode] = b
   end
   self:BuildDungeons(self.panels.dungeons)
   self:BuildClass(self.panels.class)
-  -- Options : fenêtre à part (UI/Options.lua)
+  -- Options : fenêtre à part (UI/Options.lua) ; action principale du pied
   local opt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  opt:SetSize(120, 22)
-  opt:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 4)
+  opt:SetHeight(24)
+  opt:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, (FOOTER_H - 24) / 2 + 1)
   opt:SetText(L.OPT_JOURNAL_OPTIONS)
+  fitButton(opt, 140, 76, 24)
   opt:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     if Q.UI.Options then Q.UI.Options:Open() end
   end))
+  skin(opt, "primary")
   self.optionsButton = opt
   -- Choix de suite (UI/RouteChoicePopup.lua) : rouvre le choix du chapitre courant ou du dernier choisi
   local route = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  route:SetSize(130, 22)
+  route:SetHeight(24)
   route:SetPoint("RIGHT", opt, "LEFT", -6, 0)
   route:SetText(L.UI_ROUTECHOICE_JOURNAL)
+  fitButton(route, 150, 76, 24)
   route:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     local P = Q.UI.RouteChoicePopup
     if P then P:OpenForPlayer() end
   end))
+  skin(route, "secondary")
   self.routeButton = route
   -- Zone de secours (Engine/Detour.lua) : autre zone du niveau du personnage, puis retour à la route
   local alt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  alt:SetSize(140, 22)
+  alt:SetHeight(24)
   alt:SetPoint("RIGHT", route, "LEFT", -6, 0)
   alt:SetText(L.DETOUR_BTN)
+  fitButton(alt, 160, 76, 24)
   alt:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     local go = Q.UI.Detour
@@ -219,8 +460,10 @@ function Journal:Create()
     showTooltip(self, { back and L.DETOUR_BTN_BACK or L.DETOUR_BTN, back and L.DETOUR_TIP_BACK or L.DETOUR_TIP })
   end))
   alt:SetScript("OnLeave", hideTooltip)
+  skin(alt, "secondary")
   self.detourButton = alt
   f:Hide()
+  self:ApplyTheme()
   -- Sons d'ouverture et de fermeture branchés après le Hide() initial (pas de son à la création).
   f:HookScript("OnShow", function() playSound("IG_CHARACTER_INFO_OPEN") end)
   f:HookScript("OnHide", function() playSound("IG_CHARACTER_INFO_CLOSE") end)
@@ -258,7 +501,7 @@ function Journal:ShowTab(name, keepRouteMode)
   self:Create()
   if not keepRouteMode and not self.frame:IsShown() then self.routeMode = nil end
   self.tab = name
-  if PanelTemplates_SetTab then pcall(PanelTemplates_SetTab, self.frame, TAB_INDEX[name]) end
+  self:UpdateTabs()
   for n, panel in pairs(self.panels) do
     if n == name then panel:Show() else panel:Hide() end
   end
@@ -273,6 +516,18 @@ function Journal:UpdateDetourButton()
   if not self.detourButton then return end
   local back = Q.Detour and Q.Detour:Current()
   self.detourButton:SetText(back and L.DETOUR_BTN_BACK or L.DETOUR_BTN)
+  fitButton(self.detourButton, 160, 76, 24)
+end
+
+-- Onglets : celui ouvert en texte principal et souligné de l'accent (2 px), les autres en texte secondaire.
+function Journal:UpdateTabs()
+  for i, tab in ipairs(self.tabs) do
+    local on = TAB_NAMES[i] == self.tab
+    tab.selected = on
+    paint(tab.text, on and "text" or "textDim")
+    tab.underline:SetColorTexture(tc("accent"))
+    if on then tab.underline:Show() else tab.underline:Hide() end
+  end
 end
 
 -- Vue de l'onglet Route réellement affichée : celle choisie par les boutons, sinon celle de la route du
@@ -293,8 +548,10 @@ function Journal:UpdateRouteMode()
   local show = self.tab == "route" and D ~= nil and D:Available()
   for m, b in pairs(self.routeModeButtons) do
     if show then b:Show() else b:Hide() end
-    -- vue ouverte : bouton enfoncé
+    -- vue ouverte : bouton enfoncé, en action principale
     if m == mode then b:Disable() else b:Enable() end
+    b.qvButtonKind = m == mode and "primary" or "secondary"
+    if Q.Themes then Q.Themes:SkinButton(b, b.qvButtonKind) end
   end
   for m, sub in pairs(self.routePanels) do
     if m == mode then sub:Show() else sub:Hide() end
@@ -327,15 +584,21 @@ end
 -- Onglet Route
 ---------------------------------------------------------------------------
 function Journal:BuildRoute(panel)
+  -- barre latérale des chapitres (jusqu'à la barre de défilement comprise)
+  sidebar(panel, CHAPTER_W + 37)
   local chHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   chHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
   chHeader:SetText(L.UI_ROUTE_CHAPTERS)
+  styled(chHeader, "textMuted")
+  columnRule(panel, 2, -20, CHAPTER_W + 20)
   local stHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   stHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", CHAPTER_W + 34, -4)
   stHeader:SetWidth(STEP_W)
   stHeader:SetJustifyH("LEFT")
   stHeader:SetWordWrap(false)
   stHeader:SetText(L.UI_ROUTE_STEPS)
+  styled(stHeader, "textMuted")
+  columnRule(panel, CHAPTER_W + 32, -20, STEP_W + 18)
   self.stepHeader = stHeader
 
   local chScroll, chChild = newScroll(panel, "QuestifyJournalChapterScroll", CHAPTER_W, LIST_H)
@@ -351,6 +614,7 @@ function Journal:BuildRoute(panel)
   msg:SetWidth(STEP_W - 8)
   msg:SetJustifyH("LEFT")
   msg:Hide()
+  styled(msg, "textDim")
   self.routeMessage = msg
 end
 
@@ -359,16 +623,11 @@ local function chapterRow(i)
   if row then return row end
   row = CreateFrame("Button", nil, Journal.chapterChild)
   row:SetSize(CHAPTER_W, CHAPTER_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local sel = row:CreateTexture(nil, "BACKGROUND")
-  sel:SetAllPoints(row)
-  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  sel:SetBlendMode("ADD")
-  sel:SetVertexColor(1, 0.82, 0, 0.5)
-  sel:Hide()
-  -- coche verte : chapitre fini (Q.Progress:ChapterDone)
+  hoverHighlight(row)
+  local sel = newSelection(row)
+  -- coche de réussite : chapitre fini (Q.Progress:ChapterDone)
   local check = row:CreateTexture(nil, "ARTWORK")
-  check:SetTexture(ICONS.done)
+  setStateIcon(check, "done")
   check:SetSize(12, 12)
   check:SetPoint("LEFT", row, "LEFT", 2, 0)
   check:Hide()
@@ -393,7 +652,7 @@ local function chapterRow(i)
     if self.guide then
       local lines = { Q.Guides:DisplayTitle(self.guide),
         string.format(L.UI_TRACKER_LEVELS, self.guide.minLevel or 1, self.guide.maxLevel or 60) }
-      if self.done then lines[#lines + 1] = "|cff40e050" .. L.UI_ROUTE_CHAPTER_DONE .. "|r" end
+      if self.done then lines[#lines + 1] = hexOf("success", "ff40e050") .. L.UI_ROUTE_CHAPTER_DONE .. "|r" end
       lines[#lines + 1] = L.UI_ROUTE_CHAPTER_HINT
       showTooltip(self, lines)
     end
@@ -436,7 +695,7 @@ local function stepTooltip(row)
   if row.isCurrent then label = L.UI_STATE_CURRENT end
   if reason and reason ~= "" then label = label .. " - " .. Q.Format:Reason(reason) end
   lines[#lines + 1] = "|cffaaaaaa" .. label .. "|r"
-  lines[#lines + 1] = "|cff66bbff" .. L.UI_ROUTE_STEP_HINT .. "|r"
+  lines[#lines + 1] = hexOf("accent", "ff66bbff") .. L.UI_ROUTE_STEP_HINT .. "|r"
   showTooltip(row, lines)
 end
 
@@ -446,13 +705,8 @@ local function stepRow(i)
   row = CreateFrame("Button", nil, Journal.stepChild)
   row:SetSize(STEP_W, STEP_ROW_H)
   row:SetPoint("TOPLEFT", Journal.stepChild, "TOPLEFT", 0, -(i - 1) * STEP_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local bg = row:CreateTexture(nil, "BACKGROUND")
-  bg:SetAllPoints(row)
-  bg:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  bg:SetBlendMode("ADD")
-  bg:SetVertexColor(1, 0.82, 0, 0.45)
-  bg:Hide()
+  hoverHighlight(row)
+  local bg = newSelection(row)
   local state = row:CreateTexture(nil, "ARTWORK")
   state:SetSize(14, 14)
   state:SetPoint("LEFT", row, "LEFT", 2, 0)
@@ -540,6 +794,7 @@ local function chapterHeader(i)
   h:SetJustifyH("LEFT")
   h:SetWidth(CHAPTER_W - 8)
   h:SetWordWrap(false)
+  styled(h, "textMuted")
   Journal.chapterHeaders[i] = h
   return h
 end
@@ -548,36 +803,46 @@ local function setStepRow(row, e, cur)
   local state, reason = Q.Progress:State(e)
   local isCurrent = cur ~= nil and e.key == cur.key
   row.entry, row.isCurrent = e, isCurrent
-  row.action:SetTexture(Q.Format:ActionIcon(e.step.action))
+  -- icône de l'action : glyphe plat teinté du thème (prendre, rendre) ou icône du jeu
+  local T = Q.Themes
+  local tex, r, g, b
+  if T then tex, r, g, b = T:StepIcon(e.step.action) else tex = Q.Format:ActionIcon(e.step.action) end
+  row.action:SetTexture(tex)
+  if r then row.action:SetVertexColor(r, g, b, 1) else row.action:SetVertexColor(1, 1, 1, 1) end
   local text = Q.Util.StripColors(Q.Format:StepTitle(e))
   local icon
   if isCurrent then
-    icon = ICONS.current
-  elseif state == "done" then
-    icon = ICONS.done
-  elseif state == "skipped" then
-    icon = ICONS.skipped
-  elseif state == "blocked" then
-    icon = ICONS.blocked
+    icon = "current"
+  elseif state == "done" or state == "skipped" or state == "blocked" then
+    icon = state
   end
   if state == "blocked" and reason then
     text = text .. " |cffff5555(" .. Q.Format:Reason(reason) .. ")|r"
   end
-  row.state:SetTexture(icon)
-  row.state:SetDesaturated(state == "skipped")
-  if icon then row.state:Show() else row.state:Hide() end
-  row.action:SetDesaturated(state == "done" or state == "skipped")
-  row.text:SetText(text)
-  if isCurrent then
-    row.text:SetTextColor(1, 0.82, 0)
-  elseif state == "skipped" then
-    row.text:SetTextColor(0.5, 0.5, 0.5)
-  elseif state == "done" then
-    row.text:SetTextColor(0.75, 0.75, 0.75)
+  if icon then
+    setStateIcon(row.state, icon)
+    row.state:Show()
   else
-    row.text:SetTextColor(1, 1, 1)
+    row.state:SetTexture(nil)
+    row.state:Hide()
   end
-  if isCurrent then row.currentBg:Show() else row.currentBg:Hide() end
+  row.action:SetDesaturated(state == "skipped")
+  row.text:SetText(recolor(text))
+  -- maquette : étape courante en texte principal sur fond « sel », faites et passées en texte discret
+  if isCurrent then
+    paint(row.text, "text")
+  elseif state == "skipped" or state == "done" then
+    paint(row.text, "textMuted")
+  else
+    paint(row.text, "text")
+  end
+  if not Q.Themes then
+    if isCurrent then row.text:SetTextColor(1, 0.82, 0)
+    elseif state == "skipped" then row.text:SetTextColor(0.5, 0.5, 0.5)
+    elseif state == "done" then row.text:SetTextColor(0.75, 0.75, 0.75)
+    else row.text:SetTextColor(1, 1, 1) end
+  end
+  showSelection(row.currentBg, isCurrent)
   row:Show()
 end
 
@@ -613,15 +878,22 @@ function Journal:RefreshRoute(scrollToCurrent)
       row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -y)
       row.text:SetText(Q.Guides:DisplayTitle(g))
       row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, g.minLevel or 1, g.maxLevel or 60)
-      if it.done then row.check:Show() else row.check:Hide() end
-      local selected = guide ~= nil and guide.id == g.id
-      if selected then row.selected:Show() else row.selected:Hide() end
-      if selected then
-        row.text:SetTextColor(1, 0.82, 0)
-      elseif grp.key == "now" then
-        row.text:SetTextColor(1, 1, 1)
+      if it.done then
+        setStateIcon(row.check, "done")
+        row.check:Show()
       else
-        row.text:SetTextColor(0.6, 0.6, 0.6)
+        row.check:Hide()
+      end
+      local selected = guide ~= nil and guide.id == g.id
+      showSelection(row.selected, selected)
+      -- maquette : chapitre choisi en texte principal, conseillés en secondaire, les autres discrets
+      if not Q.Themes then
+        if selected then row.text:SetTextColor(1, 0.82, 0)
+        elseif grp.key == "now" then row.text:SetTextColor(1, 1, 1)
+        else row.text:SetTextColor(0.6, 0.6, 0.6) end
+      else
+        paint(row.text, selected and "text" or grp.key == "now" and "textDim" or "textMuted")
+        paint(row.levels, selected and "textDim" or "textMuted")
       end
       row:Show()
       y = y + CHAPTER_ROW_H
@@ -673,6 +945,7 @@ function Journal:BuildClass(panel)
   empty:SetWidth(CLASS_W - 16)
   empty:SetJustifyH("LEFT")
   empty:Hide()
+  styled(empty, "textDim")
   self.classEmpty = empty
 end
 
@@ -723,7 +996,7 @@ local function classTooltip(row)
   local lines = { Q.UI.ClassQuestPopup.ChainTitle(chain), L.UI_CLASS_QUESTS }
   for _, id in ipairs(chain.quests or {}) do
     local q = Q.QDB:Quest(id)
-    local lvl = q and q.level and (" |cffaaaaaa(" .. q.level .. ")|r") or ""
+    local lvl = q and q.level and (" |cffaaaaaa(" .. q.level .. ")|r") or ""   -- recoloré par showTooltip
     lines[#lines + 1] = "- " .. Q.QDB:QuestName(id) .. lvl
   end
   local xp = 0
@@ -756,6 +1029,8 @@ local function classRow(i)
   info:SetWidth(150)
   info:SetJustifyH("LEFT")
   info:SetWordWrap(false)
+  styled(title, "quest")
+  styled(info, "textDim")
   row.title, row.info, row.items = title, info, {}
   for j = 1, CLASS_ITEMS do
     local b = Q.UI.ClassQuestPopup.CreateItemButton(row, 24)
@@ -769,10 +1044,10 @@ local function classRow(i)
     b:Hide()
     return b
   end
-  row.ignoreButton = button(L.UI_BTN_IGNORE, 80)
-  row.unignoreButton = button(L.UI_BTN_UNIGNORE, 80)
-  row.addButton = button(L.UI_BTN_ADD_ROUTE, 118)
-  row.trackButton = button(L.UI_BTN_TRACK, 118)
+  row.ignoreButton = skin(button(L.UI_BTN_IGNORE, 80), "ghost")
+  row.unignoreButton = skin(button(L.UI_BTN_UNIGNORE, 80), "secondary")
+  row.addButton = skin(button(L.UI_BTN_ADD_ROUTE, 118), "primary")
+  row.trackButton = skin(button(L.UI_BTN_TRACK, 118), "secondary")
   row.ignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
   row.unignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
   -- Ignorer et Réactiver occupent la même place (jamais affichés ensemble) : Ajouter à leur gauche.
@@ -799,10 +1074,10 @@ local function setClassRow(row, item)
   local stateKey = CQ_STATE_TEXT[state]
   local stateText = stateKey and L[stateKey] or tostring(state)
   if isLate(chain, state) then
-    row.info:SetText(CQ_LATE_COLOR .. string.format(L.UI_CQ_LATE, tonumber(chain.level) or 1) .. "|r")
+    row.info:SetText(hexOf("danger", CQ_LATE_COLOR:sub(3)) .. string.format(L.UI_CQ_LATE, tonumber(chain.level) or 1) .. "|r")
   else
-    row.info:SetText(string.format(L.UI_CLASS_ROW_INFO, tonumber(chain.level) or 1,
-      (CQ_STATE_COLOR[state] or "|cffffffff") .. stateText .. "|r"))
+    row.info:SetText(recolor(string.format(L.UI_CLASS_ROW_INFO, tonumber(chain.level) or 1,
+      (CQ_STATE_COLOR[state] or "|cffffffff") .. stateText .. "|r")))
   end
   local items, n = {}, 0
   local rewards = type(chain.rewards) == "table" and chain.rewards or {}
@@ -885,7 +1160,7 @@ local GROUP_ORDER = { "now", "next", "past" }
 local DG_GROUP_TEXT = { now = "DUNGEON_GROUP_NOW", next = "DUNGEON_GROUP_NEXT", past = "DUNGEON_GROUP_PAST" }
 local STAR_ON, STAR_OFF = "tradeskills-star", "tradeskills-star-off"
 local STAR_FALLBACK = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1"   -- étoile des marqueurs de raid
-local ROUTE_DOT = "Interface\\COMMON\\Indicator-Green"
+local ROUTE_DOT = "Interface\\COMMON\\Indicator-Green"   -- sans thème ; sinon point plat teinté de réussite
 
 -- DungeonStars(n) -> 0 à 3 étoiles pour n quêtes à faire : 1-3 -> 1, 4-7 -> 2, 8 et plus -> 3.
 function Journal.DungeonStars(n)
@@ -998,6 +1273,7 @@ local function dgHeader(i)
   h:SetJustifyH("LEFT")
   h:SetWidth(DG_LIST_W - 8)
   h:SetWordWrap(false)
+  styled(h, "textMuted")
   Journal.dgHeaders[i] = h
   return h
 end
@@ -1008,13 +1284,8 @@ local function dgRow(i)
   if row then return row end
   row = CreateFrame("Button", nil, Journal.dgChild)
   row:SetSize(DG_LIST_W, DG_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local sel = row:CreateTexture(nil, "BACKGROUND")
-  sel:SetAllPoints(row)
-  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  sel:SetBlendMode("ADD")
-  sel:SetVertexColor(1, 0.82, 0, 0.5)
-  sel:Hide()
+  hoverHighlight(row)
+  local sel = newSelection(row)
   local stars = newStars(row, 9)
   for s, tex in ipairs(stars) do tex:SetPoint("LEFT", row, "LEFT", 2 + (s - 1) * 9, 0) end
   local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -1026,7 +1297,7 @@ local function dgRow(i)
   lvl:SetPoint("RIGHT", row, "RIGHT", -4, 0)
   lvl:SetJustifyH("RIGHT")
   local dot = row:CreateTexture(nil, "ARTWORK")
-  dot:SetTexture(ROUTE_DOT)
+  dot:SetTexture(Q.Themes and Q.Themes.GLYPH_DOT or ROUTE_DOT)
   dot:SetSize(10, 10)
   dot:SetPoint("RIGHT", row, "RIGHT", -38, 0)
   dot:Hide()
@@ -1051,6 +1322,7 @@ local function dgLine(i)
   fs:SetWidth(DG_DETAIL_W - 10)
   fs:SetJustifyH("LEFT")
   fs:SetWordWrap(true)
+  styled(fs, "text")
   Journal.dgLines[i] = fs
   return fs
 end
@@ -1088,10 +1360,17 @@ end
 
 -- Encadré d'une chaîne de préquêtes sous la quête qu'elle débloque : « Demande une suite de 6 quêtes, hors de ta
 -- route (zones) », infobulle au survol, boutons « Voir la suite » (annexe du journal) et « Ajouter la suite ».
+-- Panneau du thème (fond « panel », bordure « edge » de 1 px), comme les info-bulles de la maquette.
 local CHAIN_BACKDROP = {
-  bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-  tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 },
+  bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8",
+  edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 },
 }
+
+local function paintChainBox(box)
+  if not box.SetBackdrop then return end
+  box:SetBackdropColor(tc("panel"))
+  box:SetBackdropBorderColor(tc("edge"))
+end
 
 local function dgChain(i)
   Journal.dgChains = Journal.dgChains or {}
@@ -1100,11 +1379,8 @@ local function dgChain(i)
   local parent = Journal.dgDetail
   local ok, box = pcall(CreateFrame, "Frame", nil, parent, "BackdropTemplate")
   if not ok or not box then box = CreateFrame("Frame", nil, parent) end
-  if box.SetBackdrop then
-    box:SetBackdrop(CHAIN_BACKDROP)
-    box:SetBackdropColor(0.12, 0.09, 0.05, 0.85)
-    box:SetBackdropBorderColor(0.6, 0.5, 0.3, 0.9)
-  end
+  if box.SetBackdrop then box:SetBackdrop(CHAIN_BACKDROP) end
+  paintChainBox(box)
   box:EnableMouse(true)
   box:SetScript("OnEnter", safe(function(self) chainTooltip(self) end))
   box:SetScript("OnLeave", hideTooltip)
@@ -1112,12 +1388,13 @@ local function dgChain(i)
   text:SetPoint("TOPLEFT", box, "TOPLEFT", 7, -7)
   text:SetJustifyH("LEFT")
   text:SetWordWrap(true)
-  local function button(width)
+  styled(text, "textDim")
+  local function button(width, kind)
     local b = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
     b:SetSize(width, 20)
-    return b
+    return skin(b, kind)
   end
-  local info, add = button(100), button(100)
+  local info, add = button(100, "ghost"), button(100, "secondary")
   info:SetText(L.DUNGEON_CHAIN_INFO)
   add:SetScript("OnClick", safe(function(self) chainAction(self.row) end))
   info:SetScript("OnClick", safe(function(self)
@@ -1173,24 +1450,14 @@ local function chainBoxText(chain, rows)
   return text
 end
 
--- Largeur d'un bouton d'après son texte (texte + 18 px), sans dépasser `max`.
-local function fitButton(b, max)
-  local w
-  local ok, tw = pcall(function() return b:GetTextWidth() end)
-  if ok and type(tw) == "number" and tw > 0 then w = tw end
-  if not w then
-    local fs = b.GetFontString and b:GetFontString()
-    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
-  end
-  w = math.floor((w or #(b:GetText() or "") * 6) + 18)
-  b:SetWidth(math.min(max, math.max(60, w)))
-  return b:GetWidth()
-end
-
 function Journal:BuildDungeons(panel)
+  -- barre latérale de la liste (jusqu'à la barre de défilement comprise)
+  sidebar(panel, DG_LIST_W + 37)
   local head = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   head:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
   head:SetText(L.DUNGEON_SECTION)
+  styled(head, "textMuted")
+  columnRule(panel, 2, -20, DG_LIST_W + 20)
   -- Tri : niveau ou nombre de quêtes
   local function sortButton(key, label)
     local b = CreateFrame("Button", nil, panel)
@@ -1213,6 +1480,7 @@ function Journal:BuildDungeons(panel)
   local sortLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   sortLabel:SetPoint("RIGHT", byLevel, "LEFT", -2, 0)
   sortLabel:SetText(L.DUNGEON_SORT)
+  styled(sortLabel, "textMuted")
   self.dgSortButtons = { level = byLevel, quests = byQuests }
 
   local scroll, child = newScroll(panel, "QuestifyJournalDungeonScroll", DG_LIST_W, LIST_H)
@@ -1233,6 +1501,9 @@ function Journal:BuildDungeons(panel)
   local score = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   score:SetWidth(DG_DETAIL_W - 50)
   score:SetJustifyH("LEFT")
+  styled(title, "title")
+  styled(meta, "textDim")
+  styled(score, "textDim")
   self.dgTitle, self.dgMeta, self.dgStars, self.dgScore = title, meta, stars, score
 
   local function button(label, width)
@@ -1242,9 +1513,9 @@ function Journal:BuildDungeons(panel)
     b:Hide()
     return b
   end
-  self.dgAdd = button(L.UI_BTN_ADD_ROUTE, 130)
-  self.dgIgnore = button(L.UI_BTN_IGNORE, 80)
-  self.dgUnignore = button(L.UI_BTN_UNIGNORE, 90)
+  self.dgAdd = skin(button(L.UI_BTN_ADD_ROUTE, 130), "primary")
+  self.dgIgnore = skin(button(L.UI_BTN_IGNORE, 80), "ghost")
+  self.dgUnignore = skin(button(L.UI_BTN_UNIGNORE, 90), "secondary")
   self.dgAdd:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Add", Journal.dgItem.dungeon.key) end end))
   self.dgIgnore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Ignore", Journal.dgItem.dungeon.key) end end))
   self.dgUnignore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Unignore", Journal.dgItem.dungeon.key) end end))
@@ -1254,6 +1525,7 @@ function Journal:BuildDungeons(panel)
   empty:SetWidth(DG_LIST_W + DG_DETAIL_W)
   empty:SetJustifyH("LEFT")
   empty:Hide()
+  styled(empty, "textDim")
   self.dgEmpty = empty
 end
 
@@ -1276,7 +1548,7 @@ function Journal:ShowDungeonDetail(item)
   self.dgTitle:Show()
   local key = DG_STATE_TEXT[state]
   local meta = string.format(L.DUNGEON_ROW_INFO, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60,
-    (DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r")
+    recolor((DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r"))
   if type(d.entrance) == "table" and type(d.entrance[1]) == "number" then
     meta = meta .. "\n" .. string.format(L.DUNGEON_ENTRANCE, Q.Maps:MapName(d.entrance[1]))
   end
@@ -1360,8 +1632,8 @@ function Journal:ShowDungeonDetail(item)
     else
       nLine = nLine + 1
       local fs = dgLine(nLine)
-      local prefix = r.done and "|TInterface\\RaidFrame\\ReadyCheck-Ready:12:12|t " or "- "
-      fs:SetText(prefix .. P.QuestLine(r, chain and { box = true } or nil))
+      local prefix = r.done and (checkMarkup(12) .. " ") or "- "
+      fs:SetText(prefix .. recolor(P.QuestLine(r, chain and { box = true } or nil)))
       fs:ClearAllPoints()
       fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
       fs:Show()
@@ -1397,7 +1669,8 @@ function Journal:RefreshDungeonTab()
   local items = qdbOk and dungeonItems() or nil
   local sort = self.dungeonSort or "level"
   for key, b in pairs(self.dgSortButtons) do
-    if key == sort then b.text:SetTextColor(1, 0.82, 0) else b.text:SetTextColor(0.6, 0.6, 0.6) end
+    if Q.Themes then paint(b.text, key == sort and "accent" or "textMuted")
+    elseif key == sort then b.text:SetTextColor(1, 0.82, 0) else b.text:SetTextColor(0.6, 0.6, 0.6) end
   end
   local groups = items and Journal.DungeonGroups(items, sort) or {}
   -- sélection : celle d'avant si le donjon est encore là, sinon le premier conseillé, sinon le premier
@@ -1430,13 +1703,16 @@ function Journal:RefreshDungeonTab()
       row.name:SetText(Q.UI.DungeonPopup.DungeonName(it.dungeon))
       row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, tonumber(it.dungeon.minLevel) or 1, tonumber(it.dungeon.maxLevel) or 60)
       local isSel = it == selected
-      if isSel then row.selected:Show() else row.selected:Hide() end
-      if isSel then
-        row.name:SetTextColor(1, 0.82, 0)
-      elseif g.key == "now" then
-        row.name:SetTextColor(1, 1, 1)
+      showSelection(row.selected, isSel)
+      if not Q.Themes then
+        if isSel then row.name:SetTextColor(1, 0.82, 0)
+        elseif g.key == "now" then row.name:SetTextColor(1, 1, 1)
+        else row.name:SetTextColor(0.6, 0.6, 0.6) end
       else
-        row.name:SetTextColor(0.6, 0.6, 0.6)
+        paint(row.name, isSel and "text" or g.key == "now" and "textDim" or "textMuted")
+        paint(row.levels, isSel and "textDim" or "textMuted")
+        local r, gg, b = tc("success")
+        row.routeDot:SetVertexColor(r, gg, b, 1)
       end
       if it.state == "added" then row.routeDot:Show() else row.routeDot:Hide() end
       row:Show()
@@ -1469,6 +1745,31 @@ end
 function Journal:ShowExport()
   if Q.UI.Options then return Q.UI.Options:ShowTelemetryExport() end
 end
+
+---------------------------------------------------------------------------
+-- Thème : couleurs repeintes (le fond, le bandeau, le blason, les coins et le liseré sont repeints par
+-- UI/Themes.lua) ; les lignes des listes reprennent les couleurs à leur rafraîchissement.
+---------------------------------------------------------------------------
+function Journal:ApplyTheme()
+  local f, T = self.frame, Q.Themes
+  if not (f and T) then return end
+  T:SkinClose(f)
+  for _, it in ipairs(self.fills) do it[1]:SetColorTexture(tc(it[2])) end
+  for _, it in ipairs(self.texts) do paint(it[1], it[2]) end
+  for _, b in ipairs(self.buttons) do T:SkinButton(b, b.qvButtonKind) end
+  for _, w in ipairs(self.dgChains or {}) do paintChainBox(w.box) end
+  self:UpdateTabs()
+  local P = Q.UI.DungeonModePanel
+  if P and P.ApplyTheme then P:ApplyTheme() end
+  if self:IsShown() then
+    self:UpdateRouteMode()
+    self:RefreshTab(self.tab)
+  end
+end
+
+Q:On("THEME_CHANGED", function()
+  if Journal.frame then Q.SafeCall(Journal.ApplyTheme, Journal) end
+end)
 
 ---------------------------------------------------------------------------
 -- Messages

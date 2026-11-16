@@ -5,7 +5,8 @@ local addonName, Q = ...
 -- modules lisent les jetons (Color, Hex, TextColor, StyleText) et posent les décorations
 -- communes (Decorate, Emblem, SkinButton) sans coder de couleur en dur.
 --
--- Treize thèmes, tous sur fond sombre : Questify (neutre, par défaut), Alliance, Humain, Nain,
+-- Quatorze thèmes, tous sur fond sombre : Questify (neutre, par défaut), Contraste élevé (noir,
+-- texte blanc, accent jaune : lisibilité), Alliance, Humain, Nain,
 -- Elfe de la nuit, Gnome, Skyborne (Alliance), Horde, Orc, Troll, Tauren, Mort-vivant, Skyborne
 -- (Horde). Style « Bannière » : fenêtre sobre avec bandeau illustré (silhouette de la terre natale,
 -- Media/Themes/banner-<clé>.tga), blason dans un anneau de métal, coins et liseré de métal, blason
@@ -19,6 +20,7 @@ local addonName, Q = ...
 --   tracker.opacity      opacité du fond et de la bordure (0 à 1), le texte reste opaque ;
 --   theme.font           "game" (police du jeu) ou "clean" (Inter, Media/Fonts) ;
 --   theme.icons          "flat" (glyphes plats teintés) ou "game" (icônes jaunes du jeu) ;
+--   theme.fontScale      taille du texte de toutes les fenêtres (0,8 à 1,5) ;
 --   arrow.show, arrow.color   flèche flottante (UI/Arrow.lua) et sa couleur.
 -- Changement de thème : Q:Fire("THEME_CHANGED", theme) ; les cadres passés à Decorate sont
 -- repeints tout seuls.
@@ -72,6 +74,9 @@ local P = {
   neutral = { bg = "0c1724", panel = "102030", panelAlt = "15283b", sidebar = "09121c", footer = "0a141f",
     sky = "183a58", edge = "2a4258", line = { "82c8eb", 0.12 }, text = "eef3f7", textDim = "b9c7d3",
     textMuted = "8fa0b0", accent = "3fd0e6", onAccent = "04161d", trim = "d4a94f", metal = "d4a94f" },
+  contrast = { bg = "000000", panel = "0b0b0b", panelAlt = "161616", sidebar = "000000", footer = "050505",
+    sky = "1a1a1a", edge = "ffffff", line = { "ffffff", 0.45 }, text = "ffffff", textDim = "f0f0f0",
+    textMuted = "d4d4d4", accent = "ffd60a", onAccent = "000000", trim = "ffd60a", metal = "ffffff" },
   alliance = { bg = "141b2b", panel = "182136", panelAlt = "1f2a44", sidebar = "10162a", footer = "121929",
     sky = "21345c", edge = "2f3f63", line = { "c8d7ff", 0.10 }, text = "f2f5fb", textDim = "c0c9dc",
     textMuted = "97a2ba", accent = "5e93ea", onAccent = "08111f", trim = "d9b45a", metal = "d9b45a" },
@@ -127,6 +132,7 @@ local function raceEmblem(atlasName, fileName, extra)
 end
 local IDENTITY = {
   neutral = { label = "UI_THEME_NEUTRAL", group = "neutral", emblem = { { file = TEX.logo } } },
+  contrast = { label = "UI_THEME_CONTRAST", group = "neutral", emblem = { { file = TEX.logo } } },
   alliance = { label = "UI_THEME_ALLIANCE", group = "alliance", faction = "Alliance",
     emblem = { { file = "Interface\\Icons\\Achievement_PVP_A_A" }, { file = "Interface\\Icons\\INV_BannerPVP_02" } } },
   human = { label = "UI_THEME_HUMAN", group = "alliance", faction = "Alliance", races = { Human = true },
@@ -152,7 +158,7 @@ local IDENTITY = {
   skyborneH = { label = "UI_THEME_SKYBORNE", group = "horde", faction = "Horde", raceIds = { [96] = true },
     emblem = raceEmblem("skyborne", "Skyborne", { file = TEX.skyborne }) },
 }
-local ORDER = { "neutral", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
+local ORDER = { "neutral", "contrast", "alliance", "human", "dwarf", "nightelf", "gnome", "skyborneA",
   "horde", "orc", "troll", "tauren", "undead", "skyborneH" }
 Themes.ORDER = ORDER
 
@@ -178,6 +184,33 @@ end
 -- constante : SetBackdrop ne refait rien quand on lui redonne la même table.
 local HAIRLINE = { edgeFile = TEX.white, edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 } }
 Themes.HAIRLINE = HAIRLINE
+-- Une bordure d'un pixel écran exact, quelle que soit l'échelle de l'interface (ElvUI la change :
+-- un filet de 1 unité deviendrait flou ou disparaîtrait). Tables en cache par taille.
+local hairlines = { [1] = HAIRLINE }
+local function hairline(size)
+  if not size or size == 1 then return HAIRLINE end
+  size = math.floor(size * 1000 + 0.5) / 1000
+  local h = hairlines[size]
+  if not h then
+    h = { edgeFile = TEX.white, edgeSize = size, insets = { left = size, right = size, top = size, bottom = size } }
+    hairlines[size] = h
+  end
+  return h
+end
+-- Taille d'un pixel écran dans l'échelle de frame (PixelUtil du jeu), 1 sans cette API.
+local function pixel(frame)
+  local PU = PixelUtil
+  if type(PU) == "table" and type(PU.GetPixelToUIUnitFactor) == "function" and frame and frame.GetEffectiveScale then
+    local ok, factor = pcall(PU.GetPixelToUIUnitFactor)
+    local scale = frame:GetEffectiveScale()
+    if ok and tonumber(factor) and tonumber(scale) and scale > 0 then
+      local px = factor / scale
+      if px > 0 and px < 4 then return px end
+    end
+  end
+  return 1
+end
+Themes.Pixel, Themes.Hairline = pixel, hairline
 
 local SHADOW = { color = { 0, 0, 0, 1 }, x = 1, y = -1 }
 local NO_SHADOW = { color = { 0, 0, 0, 0 }, x = 0, y = 0 }
@@ -440,6 +473,57 @@ function Themes:FontKind()
   return setting("theme.font") == "clean" and "clean" or "game"
 end
 
+-- Taille du texte (réglage theme.fontScale), ramenée entre 0,8 et 1,5.
+function Themes:FontScale()
+  local v = tonumber(setting("theme.fontScale"))
+  if not v or v ~= v then return 1 end
+  return math.max(0.8, math.min(1.5, v))
+end
+
+-- Police d'une ligne de texte : fichier du jeu ou Inter, taille d'origine × taille du texte,
+-- contour éventuel. La police d'origine est gardée la première fois (fs.qvBaseFont).
+local function baseFont(fs)
+  local base = fs.qvBaseFont
+  if not base and fs.GetFont then
+    local file, size, flags = fs:GetFont()
+    if type(file) == "string" and tonumber(size) then
+      base = { file, size, flags or "" }
+      fs.qvBaseFont = base
+      fs.qvFontFlags, fs.qvFontFile, fs.qvFontSize = base[3], base[1], base[2]
+    end
+  end
+  return base
+end
+local function applyFont(fs, flags, bold)
+  local base = baseFont(fs)
+  if not (base and fs.SetFont) then return end
+  flags = flags or fs.qvFontFlagsWanted or base[3]
+  local file = base[1]
+  if Themes:FontKind() == "clean" then file = bold and CLEAN_FONT_BOLD or CLEAN_FONT end
+  local size = math.floor(base[2] * Themes:FontScale() * 2 + 0.5) / 2
+  if fs.qvFontFlags ~= flags or fs.qvFontFile ~= file or fs.qvFontSize ~= size then
+    local ok = pcall(fs.SetFont, fs, file, size, flags)
+    if not ok then fs:SetFont(base[1], size, flags); file = base[1] end
+    fs.qvFontFlags, fs.qvFontFile, fs.qvFontSize = flags, file, size
+  end
+end
+Themes.ApplyFont = applyFont
+
+-- Police (taille du texte, police lisible) sur toutes les lignes de texte d'un arbre de cadres.
+function Themes:ScaleTree(root, depth)
+  if not root or (depth or 0) > 14 then return end
+  for _, r in ipairs({ root:GetRegions() }) do
+    if r.GetObjectType and r:GetObjectType() == "FontString" then applyFont(r, nil, r.qvBold) end
+  end
+  for _, child in ipairs({ root:GetChildren() }) do
+    if child.GetFontString then
+      local fs = child:GetFontString()
+      if fs then applyFont(fs) end
+    end
+    self:ScaleTree(child, (depth or 0) + 1)
+  end
+end
+
 -- Couleur, ombre, contour et police d'une ligne de texte. Le texte reste opaque quelle que soit
 -- l'opacité. La police d'origine est gardée pour revenir à la police du jeu ou retirer le contour.
 function Themes:StyleText(fs, role, theme)
@@ -451,24 +535,11 @@ function Themes:StyleText(fs, role, theme)
   if theme.outline then sh = SHADOW end
   if fs.SetShadowColor then fs:SetShadowColor(sh.color[1], sh.color[2], sh.color[3], sh.color[4]) end
   if fs.SetShadowOffset then fs:SetShadowOffset(sh.x, sh.y) end
-  local base = fs.qvBaseFont
-  if not base and fs.GetFont then
-    local file, size, flags = fs:GetFont()
-    if type(file) == "string" and tonumber(size) then
-      base = { file, size, flags or "" }
-      fs.qvBaseFont = base
-      fs.qvFontFlags, fs.qvFontFile = base[3], base[1]
-    end
-  end
-  if base and fs.SetFont then
+  local base = baseFont(fs)
+  if base then
     local flags = theme.outline and "OUTLINE" or base[3]
-    local file = base[1]
-    if self:FontKind() == "clean" then file = (role == "title") and CLEAN_FONT_BOLD or CLEAN_FONT end
-    if fs.qvFontFlags ~= flags or fs.qvFontFile ~= file then
-      local ok = pcall(fs.SetFont, fs, file, base[2], flags)
-      if not ok then fs:SetFont(base[1], base[2], flags); file = base[1] end
-      fs.qvFontFlags, fs.qvFontFile = flags, file
-    end
+    fs.qvFontFlagsWanted, fs.qvBold = flags, role == "title"
+    applyFont(fs, flags, role == "title")
   end
 end
 Themes.NO_SHADOW = NO_SHADOW
@@ -586,6 +657,14 @@ Themes.ApplyGradient = applyGradient
 function Themes:Apply(frame, themeKey, opacity, style)
   local theme = self:Get(themeKey, style)
   if not frame then return theme end
+  -- gabarits de Blizzard sans BackdropTemplate (ButtonFrameTemplate…) : la bordure de 1 px passe
+  -- par le mixin du jeu
+  if not frame.SetBackdrop and type(Mixin) == "function" and type(BackdropTemplateMixin) == "table" then
+    Mixin(frame, BackdropTemplateMixin)
+    if frame.HookScript and frame.OnBackdropSizeChanged then
+      frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
+    end
+  end
   local alpha = self:Opacity(opacity)
   local spec = theme.background or { kind = "none" }
   local inset = theme.border and theme.border.inset or 0
@@ -612,7 +691,7 @@ function Themes:Apply(frame, themeKey, opacity, style)
   if frame.SetBackdrop then
     local border = theme.border
     if border then
-      frame:SetBackdrop(border.backdrop)
+      frame:SetBackdrop(border.backdrop == HAIRLINE and hairline(pixel(frame)) or border.backdrop)
       local c = border.color
       if frame.SetBackdropBorderColor then
         frame:SetBackdropBorderColor(c[1], c[2], c[3], (c[4] or 1) * alpha)
@@ -819,12 +898,29 @@ function Themes:RepaintAll()
       if frame.qvThemeBg then self:Apply(frame, theme.key, frame.qvThemeOpacity or 1)
       else self:Paint(frame, theme, frame.qvThemeOpacity or 1) end
     end
+    self:ScaleTree(frame)
   end
 end
 
 ---------------------------------------------------------------------------
 -- Boutons et cadres des gabarits de Blizzard
 ---------------------------------------------------------------------------
+-- Objets de police des boutons, un par sorte (et un grisé) : le jeu remet la police de l'objet à
+-- chaque changement d'état (survol, appui, grisé), la couleur doit donc vivre dans l'objet.
+-- Recolorés à chaque thème : tous les boutons suivent.
+local buttonFonts = {}
+local function buttonFont(kind, c)
+  if type(CreateFont) ~= "function" then return nil end
+  local fo = buttonFonts[kind]
+  if not fo then
+    fo = CreateFont("QuestifyButtonFont_" .. kind)
+    if fo and fo.CopyFontObject and GameFontNormal then fo:CopyFontObject(GameFontNormal) end
+    buttonFonts[kind] = fo
+  end
+  if fo and fo.SetTextColor and c then fo:SetTextColor(c[1], c[2], c[3], 1) end
+  return fo
+end
+
 -- Habille un bouton (UIPanelButtonTemplate ou simple Button) : fond plat, bordure de 1 px, texte
 -- du thème. kind : "primary" (accent plein) ou "secondary" (défaut), "ghost" (sans fond).
 function Themes:SkinButton(btn, kind, theme)
@@ -869,6 +965,12 @@ function Themes:SkinButton(btn, kind, theme)
   s.bg:SetColorTexture(fill[1], fill[2], fill[3], fill[4] or 1)
   s.hl:SetColorTexture(1, 1, 1, 0.08)
   for _, e in ipairs(s.edges) do e:SetColorTexture(edge[1], edge[2], edge[3], 1) end
+  local fo, foDis = buttonFont(kind, txt), buttonFont("disabled", c.textMuted)
+  if fo and btn.SetNormalFontObject then
+    btn:SetNormalFontObject(fo)
+    if btn.SetHighlightFontObject then btn:SetHighlightFontObject(fo) end
+    if btn.SetDisabledFontObject and foDis then btn:SetDisabledFontObject(foDis) end
+  end
   local fs = btn.GetFontString and btn:GetFontString()
   if fs then
     fs:SetTextColor(txt[1], txt[2], txt[3], 1)
@@ -1005,6 +1107,7 @@ end
 ---------------------------------------------------------------------------
 local WATCHED = {
   ["tracker.theme"] = true, ["theme.followRace"] = true, ["theme.font"] = true, ["theme.icons"] = true,
+  ["theme.fontScale"] = true,
   ["tracker.style"] = true, ["arrow.color"] = true,
 }
 local lastKey

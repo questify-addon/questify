@@ -1490,7 +1490,8 @@ end
 Q:On("THEME_CHANGED", function()
   if Options.frame then
     Options:ApplyTheme()
-    if Options:IsShown() then Options:Sync() end
+    -- taille du texte, police : les lignes changent de hauteur, tout est remis en page
+    if Options:IsShown() then Options:Render(true) end
   end
 end)
 

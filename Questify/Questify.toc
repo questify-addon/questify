@@ -92,6 +92,8 @@ Automation\SellJunk.lua
 Automation\Taxi.lua
 
 UI\Themes.lua
+UI\ThemePreview.lua
+UI\Arrow.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
 UI\BlizzardTracker.lua

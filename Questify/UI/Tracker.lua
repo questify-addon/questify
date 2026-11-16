@@ -73,6 +73,12 @@ local LEVEL_COLOR = "|cffaaaaaa"
 -- Outils
 ---------------------------------------------------------------------------
 local function setting(path) return Q.Settings:Get(path) end
+-- Hauteur d'une ligne de texte selon la taille du texte (theme.fontScale, UI/Themes.lua).
+local function tsz(h)
+  local T = Q.Themes
+  local k = T and T.FontScale and T:FontScale() or 1
+  return math.floor(h * k + 0.5)
+end
 
 -- Codes de couleur d'un texte adaptés au thème courant.
 local function paint(text)
@@ -220,7 +226,7 @@ end
 -- Petit bouton du suivi (mode de la route, « Passer ce donjon ») : texte en petite police, largeur ajustée.
 local function smallButton(parent, onClick, onEnter)
   local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-  b:SetSize(110, MODE_H)
+  b:SetSize(110, tsz(MODE_H))
   if b.SetNormalFontObject then b:SetNormalFontObject("GameFontNormalSmall") end
   if b.SetHighlightFontObject then b:SetHighlightFontObject("GameFontHighlightSmall") end
   b:SetScript("OnClick", function(btn) Q.SafeCall(onClick, btn) end)
@@ -621,14 +627,16 @@ function Tracker:ApplyTheme(force)
   local key = T.CurrentKey and T:CurrentKey() or T:Resolve(setting("tracker.theme"))
   local style = T.Style and T:Style() or "solid"
   local font, icons = setting("theme.font"), setting("theme.icons")
+  local scale = T.FontScale and T:FontScale() or 1
   local opacity = T:Opacity(setting("tracker.opacity"))
   if not force and key == self.themeKey and opacity == self.themeOpacity and style == self.themeStyle
-    and font == self.themeFont and icons == self.themeIcons then return false end
+    and font == self.themeFont and icons == self.themeIcons and scale == self.themeScale then return false end
   self.theme = T:Apply(f, key, opacity, style)
   self.themeKey, self.themeOpacity, self.themeStyle = key, opacity, style
-  self.themeFont, self.themeIcons = font, icons
+  self.themeFont, self.themeIcons, self.themeScale = font, icons, scale
   self:PlaceHeader()
   self:StyleAll()
+  if T.ScaleTree then T:ScaleTree(f) end
   return true
 end
 
@@ -658,7 +666,7 @@ end
 
 -- Haut de la zone sous la barre et son texte.
 function Tracker:BodyTop()
-  return self:HeaderHeight() + 6 + BAR_H + 3 + BAR_TEXT_H + 4
+  return self:HeaderHeight() + 6 + BAR_H + 3 + tsz(BAR_TEXT_H) + 4
 end
 
 -- Icône d'une étape : glyphe plat du thème (prendre, rendre) ou icône du jeu. -> texture, r, g, b
@@ -969,7 +977,7 @@ function Tracker:LayoutMode(y)
   text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 2, -y - 3)
   text:SetWidth(W - 2 * PAD - 4 - (auto and (btn:GetWidth() or 0) + 4 or 0))
   text:Show()
-  return y + MODE_H + 4
+  return y + tsz(MODE_H) + 4
 end
 
 -- Rappel du premier donjon passé dont le personnage est dans la tranche de niveaux ; -> nouvelle hauteur.
@@ -1002,7 +1010,7 @@ function Tracker:LayoutSkip(entry, y)
     b:ClearAllPoints()
     b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
     b:Show()
-    y = y + MODE_H + 6
+    y = y + tsz(MODE_H) + 6
   else
     b:Hide()
   end
@@ -1031,7 +1039,7 @@ function Tracker:LayoutExtra(entry, y)
   b:ClearAllPoints()
   b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
   b:Show()
-  return y + MODE_H + 6
+  return y + tsz(MODE_H) + 6
 end
 
 -- « ~4 min, vol, nouveau point de vol » : trajet de Q.Dungeons:Trip.
@@ -1382,8 +1390,8 @@ function Tracker:LayoutCurrent(cur, yTop, zone)
       row.level:Show()
       row.mob = mob
       -- zone du bouton de ciblage, depuis le coin haut gauche du suivi
-      slots[#slots + 1] = { mob = mob, x = PAD + x - 2, y = yTop + yy, w = textWidth() - MOB_INDENT + 2, h = MOB_ROW_H }
-      yy = yy + MOB_ROW_H
+      slots[#slots + 1] = { mob = mob, x = PAD + x - 2, y = yTop + yy, w = textWidth() - MOB_INDENT + 2, h = tsz(MOB_ROW_H) }
+      yy = yy + tsz(MOB_ROW_H)
     end
   end
   for i = nText + 1, #self.textChunks do self.textChunks[i]:Hide() end
@@ -1413,7 +1421,7 @@ function Tracker:LayoutXPLine(y)
   line:SetWidth(curWidth() - 2 * PAD)
   line:SetText(paint(text))
   line:Show()
-  return y + XP_LINE_H
+  return y + tsz(XP_LINE_H)
 end
 
 -- Nouveau texte XP/h sans refaire toute la mise en page ; faux si la ligne doit apparaître ou
@@ -1468,7 +1476,7 @@ function Tracker:LayoutWarnings(y)
     line:SetWidth(curWidth() - 2 * PAD - 4)
     line:SetText(paint(text))
     line:Show()
-    y = y + WARN_LINE_H
+    y = y + tsz(WARN_LINE_H)
   end
   for i = n + 1, #self.warnLines do self.warnLines[i]:Hide() end
   if n > 0 then y = y + 2 end
@@ -1640,7 +1648,7 @@ function Tracker:Refresh()
           line.text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 18, -y)
           line.text:SetText(Q.Util.StripColors(Q.Format:StepTitle(e)))
           line.text:Show()
-          y = y + NEXT_HEIGHT
+          y = y + tsz(NEXT_HEIGHT)
           if n >= wanted then break end
         end
       elseif e == cur then
