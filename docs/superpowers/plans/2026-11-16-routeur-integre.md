@@ -113,11 +113,13 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
   `edges = { [a] = { [b] = seconds } }`,
   `links = { { kind = "boat"|"zeppelin"|"tram"|"portal", from = { m, x, y }, to = { m, x, y }, seconds, side, races = { ... } | nil, name } }`,
   `regions = { [uiMapID] = "EK_N"|"EK_S"|"KAL"|"TELD"|... }`,
-  `inns = { { m, x, y, side, name } } }`. Coordonnées en 0-100.
+  `inns = { { m, x, y, side, name } }`,
+  `zoneLevels = { [uiMapID] = minLevel } }` (plus petit `minLevel` des chapitres de `plans.lua` qui
+  listent la zone dans `zones`/`endZones`). Coordonnées en 0-100.
 
 - [ ] **Step 1: Test qui échoue** : `taxi` contient Stormwind et Orgrimmar avec le bon côté ;
   `edges` symétriques et positives ; le tram Stormwind ↔ Ironforge et le zeppelin Orgrimmar ↔ Undercity
-  sont dans `links` avec le bon `kind` ; chaque `regions[m]` existe pour les uiMapID de `transport.REGION` ;
+  sont dans `links` avec le bon `kind` ; `zoneLevels[1429]` (Elwynn) = 1 et `zoneLevels[1446]` (Tanaris) ≥ 40 ; chaque `regions[m]` existe pour les uiMapID de `transport.REGION` ;
   sortie identique sur deux exécutions (déterministe, tri par id).
 - [ ] **Step 2:** `luajit tools/routebuilder/tests/run.lua gen_travel` → FAIL.
 - [ ] **Step 3:** `gen_travel.lua [--db PATH] [--out Questify/Data/Travel.lua] [--date YYYY-MM-DD]` ; en-tête
@@ -134,8 +136,8 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
 - Test: `tests/test_nav.lua` (mis à jour), `tests/test_options.lua`, `tests/test_wizard.lua`
 
 **Interfaces:**
-- Produces: défauts `nav = { router = "questify", display = "arrow", lineStyle = "dots", arrowLocked = false,
-  arrowPos = nil }` ; `Nav:Detect()` gagne `questify = Questify_Nav installable` (`C_AddOns.GetAddOnInfo("Questify_Nav")`) ;
+- Produces: défauts `nav = { router = "questify", display = "arrow", routeStyle = "safe", lineStyle = "dots",
+  arrowLocked = false, arrowPos = nil }` ; `Nav:Detect()` gagne `questify = Questify_Nav installable` (`C_AddOns.GetAddOnInfo("Questify_Nav")`) ;
   `Nav:Active() -> router ("questify"|"shortestpath"|nil), display ("arrow"|"waypointui"|"tomtom"|"native")` ;
   message `Q:Fire("NAV_TARGET", target|nil)` à chaque pose ou retrait de cible (la tâche 5 l'écoute).
 - Migration (une fois par profil, marqueur `nav.migrated = 1`) : `routing == true` → `router = "spf"` ;
@@ -152,7 +154,7 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
 - [ ] **Step 3:** Implémenter : fournisseur `questify` (pose la cible et émet `NAV_TARGET` ; l'affichage
   `arrow` ne pose rien d'autre, les autres affichages reçoivent la cible via les fournisseurs existants) ;
   options `nav.router` (radio : questify / spf grisé si absent / none), `nav.display` (arrow / waypointui / tomtom / native),
-  `nav.lineStyle` (dots / solid / dashes), `nav.arrowLocked` (toggle) ; assistant et diagnostics sur `nav.router`.
+  `nav.routeStyle` (safe / fastest / roads), `nav.lineStyle` (dots / solid / dashes), `nav.arrowLocked` (toggle) ; assistant et diagnostics sur `nav.router`.
 - [ ] **Step 4:** `luajit tests/run.lua` → PASS (toute la suite).
 - [ ] **Step 5:** Commit `feat(nav): fournisseur questify par défaut, réglages routeur et affichage`.
 
@@ -172,6 +174,9 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
 - Coûts (copiés de `tools/routebuilder/sim.lua`, constantes `C`) : marche `yards / WALK`, vol `edges + FLY_PENALTY`,
   pierre `HEARTH_CAST + HEARTH_PENALTY` (temps affiché `HEARTH_CAST + HEARTH_LOAD`), liaison `seconds`.
   Noter les valeurs exactes en tête de `Travel.lua` avec le renvoi à `sim.lua`.
+- Vitesse : `WALK = 7` yd/s ; `Q.Travel:Speed() -> yd/s` = 7 × 1,6 avec la compétence Monte ≥ 75, × 2,0 avec ≥ 150
+  (`GetNumSkillLines` / `GetSkillLineInfo`, nom localisé de la compétence comparé à `GetSpellInfo(33388)`… sinon
+  au nom « Riding »/« Monte ») ; pas de compétence lisible → 7. Les marches du plan utilisent `Speed()`.
 - Points de vol connus : `C_TaxiMap.GetTaxiNodesForMap(continent)` hors `isUndiscovered`, mis en cache et
   rafraîchis à `TAXIMAP_OPENED` et `UI_INFO_MESSAGE`. Un point de vol non appris peut être rejoint à pied,
   appris puis quitté en vol, jamais rejoint en vol.
@@ -185,6 +190,7 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
   - `hearth_ready` / `hearth_cooldown` : pierre prête et auberge à destination → étape `hearth` ; `Remaining() > 0` → pas de `hearth`.
   - `other_faction_link` : un Horde ne prend pas le tram ; un Alliance ne prend pas le zeppelin.
   - `other_continent` : Stormwind → Darnassus (Alliance) → contient `boat`.
+  - `mount_speed` : compétence Monte 75 → une marche de 700 yd dure 62,5 s ; 150 → 50 s ; aucune → 100 s.
   - `unknown_bind` (Review Focus 4) : `GetBindLocation` inconnu des `inns` et pas de `hearthBind` → pas de `hearth`.
 - [ ] **Step 2:** `luajit tests/run.lua travel` → FAIL.
 - [ ] **Step 3:** Implémenter `Travel:Plan` : Dijkstra comme `sim.route` (nœuds : départ, arrivée, points de vol
@@ -208,7 +214,16 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
 - Règles : charge `Questify_Nav` puis la partie du continent (`C_AddOns.LoadAddOn`) à la première route ;
   relance si la cible change, si le joueur s'écarte de plus de `OFF_PATH = 25` yd du chemin, ou à la fin d'un
   trajet ; au plus un calcul par seconde ; `Cancel` du calcul en cours avant d'en lancer un ; rien en combat
-  si le moteur le refuse (relance à `COMBAT_ENDED`) ; `opts = { profile = faction du joueur, style = "balanced" }`.
+  si le moteur le refuse (relance à `COMBAT_ENDED`).
+- Style (`nav.routeStyle`) : `safe` → `opts = { profile = faction, style = "balanced", danger = Q.Walk:DangerTable(fromMap, toMap) }` ;
+  `fastest` / `roads` → `{ profile = faction, style = <idem> }`. `Q.Walk:DangerTable(fromMap, toMap) -> { [uiMapID] = 2|4 } | nil` :
+  zones de `zoneLevels` dont le niveau minimal dépasse celui du joueur d'au moins 5 (×2) ou 10 (×4), sans `fromMap` ni `toMap`.
+- Avertissements : `route.warnings = { { kind = "hostile", name } | { kind = "level", level } }` à partir de `job.hubs`
+  (nom par `C_Map.GetAreaInfo(areaId)`, sinon `name`) et des zones de la table traversées ; affichés par la flèche (tâche 6)
+  et le suivi (tâche 8), une fois par trajet.
+- Budget (spec § 3 bis) : chaque rappel et chaque image du pont mesurés par `debugprofilestop` ; `Q.Walk:Perf() ->
+  { worstMs, avgMs, frames, searches, memKB = { Questify, Questify_Nav } }`, `Q.Walk:ResetPerf()` ; commande `/qf navperf`
+  (afficher, `reset`). Plafonds du routeur (`Path.cacheKB` etc.) inchangés.
   `nextPoint` = premier point du chemin à plus de `LOOKAHEAD = 12` yd. Grotte connue (`Nav/Caves.lua`) : on
   garde ses arrêts en `via`, comme aujourd'hui.
 
@@ -218,6 +233,10 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
   - `off_path_recompute` : joueur à 30 yd du chemin → nouveau `Find` ; à 10 yd → aucun.
   - `throttle` : dix changements de cible en 0,5 s → un seul `Find` en cours, l'ancien annulé.
   - `no_data_straight` (Review Focus 2) : `LoadAddOn` échoue ou `Available(0) == false` → `route.straight = true`, `nextPoint` = cible, aucune erreur dans `Mock.errors`.
+  - `safe_style_danger` : joueur niveau 10, cible en Elwynn, chemin par une zone `zoneLevels = 30` → `opts.danger` contient
+    cette zone avec 4, pas Elwynn ; style `fastest` → pas de `danger`.
+  - `hostile_warning` : le faux moteur renvoie `job.hubs = { { id = 1, name = "Orgrimmar" } }` → `route.warnings[1].kind == "hostile"`.
+  - `perf_counters` : après deux calculs, `Perf().searches == 2` et `worstMs >= 0` ; `ResetPerf()` remet à zéro.
   - `loading_screen_cancel` (Review Focus 3) : `PLAYER_ENTERING_WORLD` pendant un calcul → `Cancel` appelé, `NAV_ROUTE` nil puis nouvelle route.
 - [ ] **Step 2:** `luajit tests/run.lua walk` → FAIL.
 - [ ] **Step 3:** Implémenter `Walk.lua` (repère monde par `Q.Maps:WorldPos`, instance = continent renvoyé).
@@ -304,7 +323,11 @@ Chaque ligne a son test dans la tâche qui possède le code (tâches 1, 4, 5).
 - [ ] **Step 2:** `luajit tools/routebuilder/tests/run.lua hearth` → FAIL.
 - [ ] **Step 3:** Implémenter.
 - [ ] **Step 4:** Tests du route builder → PASS.
-- [ ] **Step 5:** Mesure, sans `--jit`, au plus 4 en parallèle :
+- [ ] **Step 4 bis: Vitesse de monture dans le simulateur.** `sim.lua` : `C.MOUNT = { { level = 40, mult = 1.6 }, { level = 60, mult = 2.0 } }` ;
+  la vitesse de marche du personnage simulé suit son niveau (`sim.walkSpeed(state)`), utilisée par `walk`, `sim.route`,
+  `walkLeg` et `order` (coût des marches). Test `mount_speed_by_level` (niveau 39 → 7, 40 → 11,2, 60 → 14).
+  Variable `ROUTEBUILDER_NO_MOUNT=1` pour la mesure avant / après.
+- [ ] **Step 5:** Mesure, sans `--jit`, au plus 4 en parallèle, séparément pour la monture et pour la pierre :
   `ROUTEBUILDER_HEARTH_LOOKAHEAD=0 luajit tools/routebuilder/build.lua --faction Alliance --out <tmp>/before --report <tmp>/before-rep --date 2026-11-16`
   puis la même chose sans la variable vers `<tmp>/after`, pour les deux factions. Comparer la somme des minutes par
   parcours de race. Noter les chiffres dans le README (section Binds), même si le gain est nul.

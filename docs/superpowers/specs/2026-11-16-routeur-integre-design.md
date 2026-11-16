@@ -23,6 +23,12 @@ Cette décision annule celle du 2026-11-12 (« SPF seul routeur, pas de pathfind
 5. Liaisons de la pierre de foyer choisies avec les chapitres suivants en vue : le retour doit faire
    gagner le plus de temps sur toute la route, mesuré au route builder.
 6. Guidage tout automatique par défaut : routeur, ligne et flèche actifs sans aucun réglage.
+7. Style de trajet au choix : « sûr » (défaut), « plus rapide », « routes ». Le style « sûr » évite
+   les zones bien au-dessus du niveau du personnage et les villes de l'autre faction, et prévient
+   quand le chemin doit y entrer (comme « Hostile town » chez Polestar).
+8. Vitesse de monture comptée dans les temps de trajet, en jeu comme dans le route builder.
+9. Budget mémoire et processeur mesuré : aucune saccade en jeu (SPF a eu des rapports de 100 à
+   120 ms, issues #759 et #772), cartes chargées seulement à la demande, par continent.
 
 ## Non-objectifs
 
@@ -70,6 +76,9 @@ Source du routeur : Polestar_Nav plutôt que SPF 1.37. SPF a des cartes moins fi
 
 ## Décisions de l'utilisateur
 
+Ajouts du 2026-11-16, approuvés par l'utilisateur via la session parente : style « sûr », vitesse
+de monture, budget mémoire et processeur (objectifs 7 à 9).
+
 - Routeur : copie à l'identique de `Polestar_Nav`, `Polestar_Nav_EK` et `Polestar_Nav_Kalimdor`
   (version 0.3.7.2), renommés pour Questify.
 - Planificateur : celui de Questify (approche 1).
@@ -113,6 +122,19 @@ Source du routeur : Polestar_Nav plutôt que SPF 1.37. SPF a des cartes moins fi
 - Remplace la logique « grotte » quand le routeur a le niveau souterrain. Sinon, `Nav/Caves.lua`
   reste en premier, comme aujourd'hui.
 
+### 2 bis. Style de trajet (`nav.routeStyle`)
+
+- Valeurs : `safe` (défaut), `fastest`, `roads`. Le routeur de Polestar connaît `fastest`,
+  `balanced` et `roads` (`Routing/Costs.lua`) ; `safe` = `balanced` + `profile` (faction du joueur :
+  villes hostiles évitées) + `danger` (table `{ [uiMapID] = multiplicateur }`).
+- Table de danger : niveau minimal de chaque zone (`Data/Travel.lua`, champ `zoneLevels`, tiré des
+  chapitres du route builder). Écart d'au moins 5 niveaux au-dessus du personnage : ×2 ; au moins 10 :
+  ×4. Les zones de départ et d'arrivée n'entrent jamais dans la table (sinon on ne pourrait pas y aller).
+- `fastest` et `roads` passent aussi `profile` (une ville hostile reste plus chère à traverser), sans `danger`.
+- Avertissement : quand le chemin retenu entre dans une ville hostile (`job.hubs` non vide) ou dans
+  une zone de la table de danger, la flèche et le suivi l'affichent (« Ville hostile : Orgrimmar »,
+  « Zone de niveau 45+ »). Une fois par trajet, pas de message répété.
+
 ### 3. Planificateur (`Questify/Nav/Travel.lua` + `Questify/Data/Travel.lua`)
 
 - `Data/Travel.lua` est généré par `tools/routebuilder/gen_travel.lua` (nouveau) à partir de
@@ -123,6 +145,12 @@ Source du routeur : Polestar_Nav plutôt que SPF 1.37. SPF a des cartes moins fi
   (`Q.Taxi:Nodes()` / `GetTaxi…` appris), les quais et l'auberge liée (pierre prête,
   `Q.Hearth:Remaining()`). Coûts = ceux de `sim.route` (`WALK`, `FLY_PENALTY`, `HEARTH_CAST +
   HEARTH_PENALTY`). Les trajets à pied du plan sont ensuite affinés par le routeur.
+- Vitesse : à pied 7 yd/s (`WALK` du route builder). Monture : ×1,6 (60 %) quand le personnage a
+  la monte apprentie (compétence Monte ≥ 75), ×2,0 (100 %) avec la monte compagnon (≥ 150). En jeu,
+  la compétence est lue (`GetSkillLineInfo`) ; à défaut, aucune monture n'est supposée. Dans le route
+  builder, le personnage simulé l'achète au niveau 40 (×1,6) et à 60 (×2,0), avec son coût en temps
+  (trajet jusqu'au maître de monte non compté, achat supposé en ville). Les marches du chapitre
+  après le niveau 40 vont plus vite : les routes 40-60 sont régénérées et le gain mesuré.
 - Résultat : une liste de trajets `{ kind = "walk"|"fly"|"tram"|"boat"|"zeppelin"|"portal"|"hearth",
   from, to, seconds, caption }`. Chaque trajet a une icône (atlas ou icône du jeu, sans fichier
   ajouté si possible) et une légende localisée, par exemple « Vol vers Hurlevent » ou « Bateau
@@ -134,6 +162,21 @@ Source du routeur : Polestar_Nav plutôt que SPF 1.37. SPF a des cartes moins fi
   et s'envoler, comme `sim.route`), transport d'une autre faction, pierre en recharge.
 - Les étapes du guide restent des cibles : une étape « apprendre le point de vol » mène toujours au
   maître de vol, donc les points de vol du guide sont appris.
+
+### 3 bis. Budget mémoire et processeur
+
+- Le routeur de Polestar découpe ses calculs par image (`Routing/PathJobs.lua`) et plafonne la
+  mémoire décodée (`API.lua` : 8 Mo de grilles, 16 Mo de graphe pendant un calcul, 1 Mo au repos).
+  On garde ces plafonds et le découpage.
+- Budget : au plus **4 ms** de calcul de routeur par image (moyenne) et aucune image au-delà de
+  **16 ms** due à Questify ; mémoire de Questify et Questify_Nav au repos ≤ **30 Mo** après un trajet
+  sur un continent, ≤ **45 Mo** pendant un calcul.
+- Mesure : commande `/qf navperf` qui affiche, depuis la dernière remise à zéro, la pire image et la
+  moyenne passées dans le routeur et le pont (`debugprofilestop`), la mémoire de chaque addon
+  (`UpdateAddOnMemoryUsage`, `GetAddOnMemoryUsage`) et le nombre de calculs. Résultats en jeu notés
+  dans le README de `Questify_Nav`.
+- Le pont ne relance jamais plus d'un calcul par seconde, annule le précédent et ne calcule rien en
+  combat si le routeur le refuse.
 
 ### 4. Affichage
 
