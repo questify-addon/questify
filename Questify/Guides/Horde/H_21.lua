@@ -1,18 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 39 étapes, niveau final 51.00, ~51203 xp/h, 339 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 40 étapes, niveau final 51.00, ~50684 xp/h, 342 min.
 Q:RegisterGuide({
   id = "H_21",
   title = "The Hinterlands",
   faction = "Horde",
   minLevel = 49, maxLevel = 51,
   next = "H_23",
-  sim = { steps = 39, endLevel = 51.00, xpPerHour = 51203, minutes = 339 },
+  sim = { steps = 40, endLevel = 51.00, xpPerHour = 50684, minutes = 342 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Tran'rek, Scarab Shells, Troll Temper", optional = true, dungeon = "Zul'Farrak" },
-    { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
+    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
+    { "goto", 1458, 63.25, 48.56, note = "Flight master" }, -- déplacement
     { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
     { "fp", 1425, 81.7, 81.76 }, -- point de vol
     { "accept", 7815 }, -- Snapjaws, Mon! (lvl 50, ~4700 xp, sim lvl 49)

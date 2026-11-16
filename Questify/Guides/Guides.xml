@@ -24,8 +24,7 @@
   <Script file="Alliance\A_11.lua"/>
   <Script file="Alliance\A_12.lua"/>
   <Script file="Alliance\A_13.lua"/>
-  <Script file="Alliance\A_15.lua"/>
-  <Script file="Alliance\A_16.lua"/>
+  <Script file="Alliance\A_31.lua"/>
   <Script file="Alliance\A_17.lua"/>
   <Script file="Alliance\A_18.lua"/>
   <Script file="Alliance\A_19.lua"/>
@@ -51,14 +50,8 @@
   <Script file="Horde\H_02.lua"/>
   <Script file="Horde\H_03.lua"/>
   <Script file="Horde\H_04.lua"/>
-  <Script file="Horde\H_05.lua"/>
   <Script file="Horde\H_06.lua"/>
-  <Script file="Horde\H_07.lua"/>
-  <Script file="Horde\H_08.lua"/>
   <Script file="Horde\H_09.lua"/>
-  <Script file="Horde\H_10.lua"/>
-  <Script file="Horde\H_11.lua"/>
-  <Script file="Horde\H_12.lua"/>
   <Script file="Horde\H_13.lua"/>
   <Script file="Horde\H_14.lua"/>
   <Script file="Horde\H_15.lua"/>
@@ -73,6 +66,7 @@
   <Script file="Horde\H_27.lua"/>
   <Script file="Horde\H_28.lua"/>
   <Script file="Horde\H_29.lua"/>
+  <Script file="Horde\H_31.lua"/>
   <Script file="Horde\H_30.lua"/>
   <Script file="ClassQuestData.lua"/>
   <Script file="BagQuestData.lua"/>

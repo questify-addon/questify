@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 79 étapes, niveau final 54.07, ~55862 xp/h, 193 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 79 étapes, niveau final 54.07, ~54939 xp/h, 196 min.
 Q:RegisterGuide({
   id = "H_25",
   title = "Azshara",
   faction = "Horde",
   minLevel = 53, maxLevel = 54,
   next = "H_26",
-  sim = { steps = 79, endLevel = 54.07, xpPerHour = 55862, minutes = 193 },
+  sim = { steps = 79, endLevel = 54.07, xpPerHour = 54939, minutes = 196 },
   steps = {
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)" }, -- bateau
     { "fp", 1447, 21.96, 49.62 }, -- point de vol
@@ -86,7 +86,7 @@ Q:RegisterGuide({
     { "accept", 1018 }, -- The New Frontier (lvl 55, ~560 xp, sim lvl 54)
     { "accept", 2861, optional = true, dungeon = "Zul'Farrak" }, -- Tabetha's Task (lvl 46, ~0 xp, sim lvl 54)
     { "goto", 1454, 45.12, 63.89, note = "Flight master" }, -- déplacement
-    { "fly", 1456, node = 22, note = "Thunder Bluff, Mulgore" }, -- vol
+    { "fly", 1413, node = 25, note = "Crossroads, The Barrens" }, -- vol
     { "turnin", 1018, xp = 560 }, -- The New Frontier (lvl 55, ~560 xp, sim lvl 54)
     { "turnin", 92346, xp = 1400 }, -- Beneath Nordrassil (lvl 55, ~1400 xp, sim lvl 54)
     { "turnin", 3518, xp = 2550 }, -- Delivery to Magatha (lvl 52, ~2550 xp, sim lvl 54)

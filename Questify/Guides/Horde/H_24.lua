@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 70 étapes, niveau final 53.00, ~53148 xp/h, 181 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 70 étapes, niveau final 53.00, ~52711 xp/h, 183 min.
 Q:RegisterGuide({
   id = "H_24",
   title = "Searing Gorge and Burning Steppes",
   faction = "Horde",
   minLevel = 52, maxLevel = 53,
   next = "H_25",
-  sim = { steps = 70, endLevel = 53.00, xpPerHour = 53148, minutes = 181 },
+  sim = { steps = 70, endLevel = 53.00, xpPerHour = 52711, minutes = 183 },
   steps = {
     { "fp", 1428, 65.69, 24.22 }, -- point de vol
     { "accept", 4726 }, -- Broodling Essence (lvl 52, ~5100 xp, sim lvl 52)
@@ -75,11 +75,11 @@ Q:RegisterGuide({
     { "turnin", 7727, xp = 4550 }, -- Incendosaurs? Whateverosaur is More Like It (lvl 49, ~4550 xp, sim lvl 52)
     { "turnin", 7723, xp = 4550 }, -- Curse These Fat Fingers (lvl 49, ~4550 xp, sim lvl 52)
     { "turnin", 7701, xp = 4700 }, -- WANTED: Overseer Maltorius (lvl 50, ~4700 xp, sim lvl 52)
-    { "goto", 1427, 34.84, 30.87, note = "Flight master" }, -- déplacement
-    { "fly", 1458, node = 11, note = "Undercity, Tirisfal" }, -- vol
+    { "hearth", 1434 }, -- pierre de foyer
+    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
     { "turnin", 81953, xp = 585 }, -- Stonewrought Design (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81955, xp = 585 }, -- A Mind of Metal (lvl 45, ~585 xp, sim lvl 52)
     { "turnin", 81956, xp = 585 }, -- Conjurer's Codex (lvl 45, ~585 xp, sim lvl 52)
-    { "level", 53, at = { 1427, 28.59, 72.01 }, note = "About 97 more mobs near the last objective" }, -- farm de niveau
+    { "level", 53, at = { 1427, 28.59, 72.01 }, note = "About 98 more mobs near the last objective" }, -- farm de niveau
   },
 })

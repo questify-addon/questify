@@ -1,18 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 63 étapes, niveau final 46.00, ~49758 xp/h, 142 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 62 étapes, niveau final 46.00, ~49926 xp/h, 137 min.
 Q:RegisterGuide({
   id = "A_19",
   title = "Feralas",
   faction = "Alliance",
   minLevel = 45, maxLevel = 46,
   next = "A_20",
-  sim = { steps = 63, endLevel = 46.00, xpPerHour = 49758, minutes = 142 },
+  sim = { steps = 62, endLevel = 46.00, xpPerHour = 49926, minutes = 137 },
   steps = {
     { "note", "Not running Razorfen Downs? Abandon The Coldbringer's Eye", optional = true, dungeon = "Razorfen Downs" },
-    { "note", "Not running Uldaman? Abandon The Shattered Necklace", optional = true, dungeon = "Uldaman" },
     { "fp", 1449, 45.23, 5.83 }, -- point de vol
     { "fp", 1444, 89.5, 45.85 }, -- point de vol
     { "accept", 2969, note = "Timed quest: do it right away" }, -- Freedom for All Creatures (lvl 47, ~3150 xp, sim lvl 45)
@@ -73,6 +72,6 @@ Q:RegisterGuide({
     { "turnin", 4266, xp = 6050 }, -- A Hero's Welcome (lvl 46, ~6050 xp, sim lvl 45)
     { "turnin", 2871, xp = 3900 }, -- Delivering the Relic (lvl 45, ~3900 xp, sim lvl 45)
     { "turnin", 7733, xp = 4400 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
-    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 76 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
+    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 62 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
   },
 })

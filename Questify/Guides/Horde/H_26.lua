@@ -1,19 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 51 étapes, niveau final 55.00, ~62509 xp/h, 155 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
+-- Simulation : 49 étapes, niveau final 55.00, ~61541 xp/h, 158 min.
 Q:RegisterGuide({
   id = "H_26",
   title = "Felwood",
   faction = "Horde",
   minLevel = 54, maxLevel = 55,
   next = "H_27",
-  sim = { steps = 51, endLevel = 55.00, xpPerHour = 62509, minutes = 155 },
+  sim = { steps = 49, endLevel = 55.00, xpPerHour = 61541, minutes = 158 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Tabetha's Task", optional = true, dungeon = "Zul'Farrak" },
-    { "goto", 1456, 47, 49.83, note = "Flight master" }, -- déplacement
-    { "fly", 1440, node = 61, note = "Splintertree Post, Ashenvale" }, -- vol
     { "accept", 4102 }, -- Cleansing Felwood (lvl 55, ~5650 xp, sim lvl 54)
     { "accept", 8460 }, -- Timbermaw Ally (lvl 48, ~3520 xp, sim lvl 54)
     { "complete", 8460, at = { 1448, 48.61, 91.57 } }, -- Timbermaw Ally (lvl 48, ~3520 xp, sim lvl 54)
