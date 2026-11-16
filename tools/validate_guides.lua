@@ -235,6 +235,7 @@ function M.run(argv)
 
   -- chargement de tous les guides
   local guides, byId = {}, {}
+  local auctionData   -- AuctionItemData.lua (tools/routebuilder/build_auction_items.lua), contrôlé après les guides
   for _, rel in ipairs(files) do
     local path = opts.guides .. "/" .. rel
     local defs, err, lines, Q, text = loadGuide(path)
@@ -265,6 +266,8 @@ function M.run(argv)
           end
         end
       end
+    elseif rel:match("AuctionItemData%.lua$") then
+      auctionData = { path = path, data = Q.AuctionItemData }
     else
       if #defs ~= 1 then bad(path, 0, ("expected one RegisterGuide call, got %d"):format(#defs)) end
       for _, def in ipairs(defs) do
@@ -274,6 +277,45 @@ function M.run(argv)
           local g = { def = def, path = path, lines = lines, text = text }
           guides[#guides + 1] = g
           byId[def.id] = g
+        end
+      end
+    end
+  end
+
+  -- objets achetables à l'hôtel des ventes : chapitres connus, quêtes que le chapitre fait progresser,
+  -- objets et encanteurs connus de QuestieDB
+  if auctionData then
+    local A, path = auctionData.data, auctionData.path
+    if type(A) ~= "table" or type(A.guides) ~= "table" or type(A.auctioneers) ~= "table" then
+      bad(path, 0, "AuctionItemData missing or malformed")
+    else
+      for gid, list in pairs(A.guides) do
+        local g = byId[gid]
+        if not g then
+          bad(path, 0, "unknown guide " .. tostring(gid))
+        else
+          local faction = g.def.faction == "Horde" and "Horde" or "Alliance"
+          local steps = {}
+          for _, st in ipairs(g.def.steps or {}) do
+            if st[1] == "complete" or st[1] == "turnin" then steps[st[2]] = true end
+          end
+          for i, e in ipairs(list) do
+            if type(e) ~= "table" or type(e.item) ~= "number" or type(e.quest) ~= "number" or type(e.obj) ~= "number" then
+              bad(path, 0, ("%s entry %d: needs item, quest and obj"):format(gid, i))
+            else
+              if not D(faction).quests[e.quest] then bad(path, 0, ("%s: unknown quest %d"):format(gid, e.quest)) end
+              if not D(faction).items[e.item] then bad(path, 0, ("%s: unknown item %d"):format(gid, e.item)) end
+              if not steps[e.quest] then bad(path, 0, ("%s: quest %d has no complete or turnin step"):format(gid, e.quest)) end
+              if e.count ~= nil and (type(e.count) ~= "number" or e.count < 1) then
+                bad(path, 0, ("%s: bad count for item %d"):format(gid, e.item))
+              end
+            end
+          end
+        end
+      end
+      for _, f in ipairs({ "A", "H" }) do
+        for _, id in ipairs(A.auctioneers[f] or {}) do
+          if not D(f == "H" and "Horde" or "Alliance").npcs[id] then bad(path, 0, "unknown auctioneer " .. tostring(id)) end
         end
       end
     end

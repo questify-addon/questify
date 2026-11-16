@@ -24,6 +24,9 @@ local addonName, Q = ...
 -- Le clic sur un monstre passe par les boutons sécurisés d'UI/MobPanel.lua, posés par-dessus ses
 -- lignes sans s'ancrer au suivi : un enfant sécurisé rendrait le suivi protégé (impossible à
 -- redimensionner en combat). Ici, les lignes de monstres ne sont que du texte et des textures.
+-- Hôtel des ventes (Engine/AuctionItems.lua) : alerte « N objets de quête à l'hôtel des ventes » (début de
+-- chapitre, près d'un encanteur ; clic = liste, clic droit = masquée pour le chapitre) et, sous une étape
+-- « Prendre » ou « Terminer », une petite ligne grisée avec l'icône de l'objet (infobulle d'objet du jeu).
 -- Apparence (UI/Themes.lua) : fond, bordure, couleurs du texte, de la barre et des lueurs selon
 -- tracker.theme et tracker.opacity, réappliqués à chaud ; les codes de couleur des textes passent
 -- par Q.Themes:Recolor (teintes foncées sur parchemin).
@@ -467,6 +470,7 @@ function Tracker:Create()
   tr:SetScript("OnLeave", hideTooltip)
   tr:Hide()
   self.trainerAlert, self.trainerText, self.trainerPulse = tr, trText, trPulse
+  self:CreateAuctionAlert(f)
 
   -- Route : « Mode : Manuel / Automatique » ; en automatique, bouton du chemin alternatif (Engine/Detour.lua)
   local modeText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -626,6 +630,8 @@ function Tracker:StyleAll()
   Q.UI.ObjectiveRows:Restyle(self.host)
   for _, line in ipairs(self.nextLines) do style(line.text, "dim") end
   for _, line in ipairs(self.warnLines) do style(line, "warn") end
+  for _, row in ipairs(self.ahHints or {}) do style(row.text, "dim") end
+  if self.ahText then style(self.ahText, "warn") end
   local bar = th.bar
   if bar then
     self.bar:SetStatusBarColor(bar.fill[1], bar.fill[2], bar.fill[3])
@@ -856,6 +862,125 @@ function Tracker:LayoutTrainerAlert(y)
   self.trainerAlert:Show()
   if not self.trainerPulse:IsPlaying() then self.trainerPulse:Play() end
   return y + 20 + 4
+end
+
+---------------------------------------------------------------------------
+-- Hôtel des ventes (Engine/AuctionItems.lua, UI/AuctionPanel.lua)
+---------------------------------------------------------------------------
+local AH_ICON = "Interface\\Icons\\INV_Misc_Coin_01"
+local AH_HINT_H = 14
+
+local function auctionPanel() return Q.UI.AuctionPanel end
+
+-- Alerte « N objets de quête à l'hôtel des ventes » : clic = liste, clic droit = masquée pour le chapitre.
+function Tracker:CreateAuctionAlert(f)
+  local b = CreateFrame("Button", nil, f)
+  b:SetHeight(20)
+  b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+  hl:SetBlendMode("ADD")
+  hl:SetAllPoints(b)
+  local icon = b:CreateTexture(nil, "ARTWORK")
+  icon:SetTexture(AH_ICON)
+  icon:SetSize(16, 16)
+  icon:SetPoint("LEFT", b, "LEFT", 2, 0)
+  local t = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  t:SetPoint("LEFT", icon, "RIGHT", 4, 0)
+  t:SetPoint("RIGHT", b, "RIGHT", -2, 0)
+  t:SetJustifyH("LEFT")
+  t:SetWordWrap(false)
+  style(t, "warn")
+  b:SetScript("OnClick", function(_, button)
+    Q.SafeCall(function()
+      if button == "RightButton" then
+        Q.AuctionItems:HideAlert()
+      elseif auctionPanel() then
+        auctionPanel():ShowList()
+      end
+    end)
+  end)
+  b:SetScript("OnEnter", function(btn)
+    Q.SafeCall(showTooltip, btn, { t:GetText() or "", L.AH_ALERT_TIP, L.AH_ALERT_CLICK, L.AH_ALERT_RIGHT })
+  end)
+  b:SetScript("OnLeave", hideTooltip)
+  b:Hide()
+  self.ahAlert, self.ahText = b, t
+end
+
+-- Place l'alerte à la hauteur y si elle doit s'afficher ; -> nouvelle hauteur.
+function Tracker:LayoutAuctionAlert(y)
+  local b = self.ahAlert
+  if not b then return y end
+  local AI = Q.AuctionItems
+  local ok, alert = pcall(function() return AI and AI:Alert() end)
+  if not ok then Q:ReportError(alert); alert = nil end
+  if not alert then
+    b:Hide()
+    return y
+  end
+  if alert.count == 1 then self.ahText:SetText(L.AH_ALERT_ONE) else self.ahText:SetFormattedText(L.AH_ALERT, alert.count) end
+  local f = self.frame
+  b:ClearAllPoints()
+  b:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -y)
+  b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+  b:Show()
+  return y + 20 + 4
+end
+
+-- Ligne d'indice sous l'étape : petite, grisée, icône de l'objet ; survol = infobulle de l'objet (comme un
+-- objet des sacs, avec les lignes des addons de prix) ; clic = liste.
+local function hintRow(self, i)
+  self.ahHints = self.ahHints or {}
+  local h = self.ahHints[i]
+  if h then return h end
+  local row = CreateFrame("Button", nil, self.current)
+  row:SetHeight(AH_HINT_H)
+  local icon = row:CreateTexture(nil, "ARTWORK")
+  icon:SetSize(12, 12)
+  icon:SetPoint("LEFT", row, "LEFT", 0, 0)
+  local t = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  t:SetPoint("LEFT", icon, "RIGHT", 3, 0)
+  t:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+  t:SetJustifyH("LEFT")
+  t:SetWordWrap(false)
+  style(t, "dim")
+  row:SetScript("OnEnter", function(btn)
+    Q.SafeCall(function()
+      if not (btn.item and GameTooltip) then return end
+      GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
+      GameTooltip:SetItemByID(btn.item)
+      if btn.missing and btn.quest then
+        GameTooltip:AddLine(string.format(L.AH_TIP_MISSING, btn.missing, btn.quest), 0.2, 0.8, 1, true)
+      end
+      GameTooltip:Show()
+    end)
+  end)
+  row:SetScript("OnLeave", hideTooltip)
+  row:SetScript("OnClick", function() Q.SafeCall(function() if auctionPanel() then auctionPanel():ShowList() end end) end)
+  row:Hide()
+  h = { row = row, icon = icon, text = t }
+  self.ahHints[i] = h
+  return h
+end
+
+-- Place la ligne d'indice i à la hauteur yy (dans l'étape courante) ; -> hauteur prise.
+function Tracker:LayoutAuctionHint(i, ah, yy)
+  local h = hintRow(self, i)
+  local row = h.row
+  row:ClearAllPoints()
+  row:SetPoint("TOPLEFT", self.current, "TOPLEFT", ICON_COL + 2 + MOB_INDENT, -yy - 1)
+  row:SetWidth(textWidth() - MOB_INDENT)
+  h.icon:SetTexture(Q.AuctionItems:Icon(ah.item))
+  if ah.approx then
+    h.text:SetText(string.format(L.AH_HINT_APPROX, ah.name or ""))
+  else
+    h.text:SetText(string.format(L.AH_HINT, ah.need or 0, ah.name or ""))
+  end
+  row.item, row.missing = ah.item, ah.need
+  row.quest = auctionPanel() and auctionPanel().QuestNames(ah) or nil
+  row:Show()
+  return AH_HINT_H + 2
 end
 
 ---------------------------------------------------------------------------
@@ -1096,6 +1221,16 @@ local function chapterProgress()
   return done, total
 end
 
+-- Objet de l'étape achetable à l'hôtel des ventes (Engine/AuctionItems.lua), ou nil.
+local function auctionHint(entry)
+  local AI = Q.AuctionItems
+  if not AI then return nil end
+  local ok, row = pcall(AI.HintFor, AI, entry)
+  if not ok then Q:ReportError(row); return nil end
+  return row
+end
+
+
 -- Morceaux de l'étape courante pour UI/ObjectiveRows.lua : { text }, { obj }, { mob }, { quest }, { fold }.
 -- Étape « Faire » : un objectif par ligne (Engine/Objectives.lua) selon la mise en page et le détail
 -- choisis (tracker.objLayout, tracker.objDetail) ; les monstres d'un objectif suivent sa ligne, ceux
@@ -1324,6 +1459,14 @@ function Tracker:LayoutCurrent(cur, yTop, zone)
     slot.x = PAD + slot.x
     slot.y = yTop + slot.y
   end
+  -- objet de l'étape achetable à l'hôtel des ventes : une ligne sous les objectifs
+  local nHint = 0
+  local ah = cur and not zone and auctionHint(cur) or nil
+  if ah then
+    nHint = 1
+    h = h + self:LayoutAuctionHint(1, ah, h)
+  end
+  for i = nHint + 1, #(self.ahHints or {}) do self.ahHints[i].row.item = nil; self.ahHints[i].row:Hide() end
   self.mobSlots = slots
   self:ScheduleFold(data)
   return h
@@ -1519,6 +1662,7 @@ function Tracker:Refresh()
   end
   y = self:LayoutDungeonAlert(y)
   y = self:LayoutTrainerAlert(y)
+  y = self:LayoutAuctionAlert(y)
 
   -- Étape courante
   local entries = Q.Progress:Entries()
@@ -1611,6 +1755,7 @@ Q:On("CLASSQUESTS_CHANGED", refresh)
 Q:On("BAGQUESTS_CHANGED", refresh)
 Q:On("DUNGEONS_CHANGED", refresh)
 Q:On("TRAINER_CHANGED", refresh)
+Q:On("AUCTION_ITEMS_CHANGED", refresh)
 Q:On("DUNGEON_MODE_CHANGED", refresh)
 Q:On("DETOUR_CHANGED", refresh)
 -- Fin du combat : un objectif fini pendant le combat peut maintenant se replier.

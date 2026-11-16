@@ -81,6 +81,7 @@ Schema.CHAR_STATE = {
   routeChoices = true, routeChoiceLast = true,
   detour = true,        -- Engine/Detour.lua
   dungeonMode = true,   -- Engine/DungeonMode.lua (le choix du mode a son entrée : route.dungeonMode)
+  auction = true,       -- Engine/AuctionItems.lua (cases décochées, alertes masquées, messages donnés)
 }
 
 -- Réglages de Settings.defaults dont le contrôle est ailleurs que dans les Options (sans entrée au schéma).
@@ -221,6 +222,9 @@ add({ id = "autoQuest", section = "automation", category = "quests", type = "tog
 add({ id = "sellJunk", section = "automation", category = "merchants", type = "toggle", path = "sellJunk",
   label = "UI_OPT_SELLJUNK", tip = "OPT_TIP_SELLJUNK",
   keywords = "vendre camelote gris blanc equipement marchand sell junk grey gray white gear vendor merchant" })
+add({ id = "auctionItems", section = "automation", category = "merchants", type = "toggle", path = "auctionItems",
+  label = "AH_OPT", tip = "OPT_TIP_AH",
+  keywords = "hotel des ventes hv encanteur acheter objets quete collecte auction house ah auctioneer buy items" })
 add({ id = "tracker.autoTarget", section = "automation", category = "targeting", type = "toggle",
   path = "tracker.autoTarget", label = "UI_OPT_AUTOTARGET", tip = "OPT_TIP_AUTOTARGET",
   keywords = "cibler ciblage touche crane monstre target targeting key skull monster" })

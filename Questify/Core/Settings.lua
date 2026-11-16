@@ -37,6 +37,8 @@ Settings.defaults = {
   dungeonSuggest = true,    -- Engine/Dungeons.lua
   classQuestOffer = true,   -- Engine/ClassQuestOffer.lua
   bagQuestOffer = true,     -- Engine/BagQuestOffer.lua
+  -- Objets de collecte achetables à l'hôtel des ventes (alerte, liste, panneau à côté de l'HV)
+  auctionItems = true,      -- Engine/AuctionItems.lua
   -- Repères des étapes sur la carte du monde et la minicarte
   mapPins = true,           -- UI/MapPins.lua
   zoneOverlay = true,       -- UI/ZoneOverlay.lua : zone du mode zone tracée sur la carte et la minicarte

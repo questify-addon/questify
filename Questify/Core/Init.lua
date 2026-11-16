@@ -261,6 +261,8 @@ Q.charDefaults = {
   -- Engine/DungeonMode.lua : mode « Donjons » choisi (on), cases décochées (off), instances contournées
   dungeonMode = { off = {}, bypassed = {} },
   detour = nil,          -- Engine/Detour.lua : zone de secours en cours { from, to }
+  -- Engine/AuctionItems.lua : objets décochés, alertes masquées et messages donnés, par chapitre
+  auction = { skip = {}, hidden = {}, offered = {} },
 }
 
 local function onAddonLoaded(event, name)
