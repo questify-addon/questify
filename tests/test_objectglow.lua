@@ -111,6 +111,52 @@ return {
     t.ok(not glowing(Q), "TomTom: no native marker to follow")
   end,
 
+  -- Affichage par défaut (flèche Questify) : pas de repère du jeu loin de l'objet ; à portée, la lueur
+  -- pose le repère qui donne le cadre du marqueur 3D, et le retire en s'éloignant.
+  glow_with_the_default_arrow_display = function(t)
+    local Q = load({ beforeLogin = function() end })
+    t.eq(select(2, Q.Nav:Active()), "arrow")
+    local tg = Q.UI.Tracker.target
+    t.eq(tg.kind, "object")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0, "far from the chest: no game pin")
+    t.ok(not glowing(Q), "far: nothing")
+    Mock.player.map, Mock.player.x, Mock.player.y = tg.mapId, tg.x + 0.4, tg.y   -- ~20 yd
+    Mock.advance(0.2)
+    local pin = Mock.lastCall("C_Map.SetUserWaypoint")
+    t.ok(pin, "game pin posed on the object in range")
+    t.eq(pin.args[1].uiMapID, tg.mapId); t.near(pin.args[1].position.x, tg.x / 100, 0.0001)
+    t.ok(glowing(Q), "visible over the object, as with the game pin display")
+    local p, rel = Q.UI.ObjectGlow.frame:GetPoint(1)
+    t.eq(p, "CENTER"); t.ok(rel == nav.frame, "follows the native 3D marker")
+    Mock.advance(1)
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 1, "posed once")
+    Mock.player.x = tg.x + 3   -- ~150 yd
+    Mock.advance(0.2)
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 1, "removed out of range")
+    t.ok(not glowing(Q))
+    -- de retour à portée puis option coupée : retiré aussi
+    Mock.player.x = tg.x + 0.4
+    Mock.advance(0.2)
+    t.ok(glowing(Q))
+    Q.Settings:Set("objectGlow", false)
+    Mock.advance(0.2)
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 2, "removed with the option")
+    t.ok(not glowing(Q))
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Le repère du jeu de l'affichage « Repère du jeu » appartient à la navigation : la lueur n'y touche pas.
+  native_display_pin_is_not_touched = function(t)
+    local Q = load()
+    local sets, clears = Mock.countCalls("C_Map.SetUserWaypoint"), Mock.countCalls("C_Map.ClearUserWaypoint")
+    Mock.player.x = Q.UI.Tracker.target.x + 3
+    Mock.advance(0.5)
+    Q.Settings:Set("objectGlow", false)
+    Mock.advance(0.2)
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), sets)
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), clears)
+  end,
+
   nothing_without_navigation_api = function(t)
     Ext.install()
     C_Navigation = nil

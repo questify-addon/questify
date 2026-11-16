@@ -613,11 +613,10 @@ end
 function Wizard:Load()
   local d = self:Detect()
   self.detected = d
+  -- Affichage : celui du réglage ; au premier passage, la flèche Questify (le défaut), même si un
+  -- autre addon de repère est installé.
   local display = Q.Settings:Get("nav.display")
-  -- Premier passage : le meilleur repère installé (WaypointUI, puis TomTom, puis la flèche Questify).
-  if not (Q.char and Q.char.wizardDone) then
-    display = (d.waypointui and "waypointui") or (d.tomtom and "tomtom") or "arrow"
-  end
+  if not (Q.char and Q.char.wizardDone) then display = "arrow" end
   if not d[display] then display = "arrow" end
   -- Route : celle du personnage ; au premier passage, l'automatique quand elle existe.
   local D = Q.DungeonMode

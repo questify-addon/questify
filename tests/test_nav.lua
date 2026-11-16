@@ -144,6 +144,24 @@ return {
     noNavErrors(t)
   end,
 
+  -- Routeur changé en cours d'étape : la cible est annoncée de nouveau pour le routeur qui prend la main.
+  router_switch_reannounces = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q, seen = loadWatching({ ["nav.router"] = "spf" })
+    t.eq(#seen, 1)
+    Q.Settings:Set("nav.router", "questify")
+    t.eq(#seen, 2, "announced again")
+    t.eq(seen[2].mapId, seen[1].mapId); t.eq(seen[2].x, seen[1].x); t.eq(seen[2].y, seen[1].y)
+    t.eq(seen[2].title, seen[1].title)
+    t.eq((Q.Nav:Active()), "questify")
+    Q.Settings:Set("nav.display", "native")   -- affichage seul : pas de nouvelle annonce
+    t.eq(#seen, 2)
+    Q.Nav:Clear()
+    Q.Settings:Set("nav.router", "none")      -- pas de cible : rien à annoncer
+    t.eq(#seen, 3); t.eq(seen[3], false)
+    noNavErrors(t)
+  end,
+
   defaults = function(t)
     local Q = load()
     t.eq(Q.Settings:Get("nav.router"), "questify")

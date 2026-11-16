@@ -603,9 +603,14 @@ end)
 
 -- Routeur ou affichage changé : on retire l'ancien fournisseur puis on repose la cible. Les autres
 -- réglages `nav.*` (style, flèche) ne changent pas le fournisseur : la cible posée ne bouge pas.
+-- Routeur changé : la cible est annoncée de nouveau (NAV_TARGET), pour le routeur qui prend la main.
 local PROVIDER_PATHS = { nav = true, ["nav.router"] = true, ["nav.display"] = true }
 Q:On("SETTINGS_CHANGED", function(path)
   if not PROVIDER_PATHS[path] then return end
+  if path ~= "nav.display" then
+    announcedKey = nil
+    if target then announce(target) end
+  end
   clearApplied()
   retryPending, refusedKey = false, nil
   apply()

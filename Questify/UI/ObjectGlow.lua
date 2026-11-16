@@ -5,7 +5,10 @@ local addonName, Q = ...
 -- Un addon ne peut rien dessiner dans le monde 3D. On s'accroche donc au cadre d'écran du
 -- marqueur 3D natif (C_Navigation.GetFrame(), celui que suit SuperTrackedFrame), que Nav pose sur
 -- les coordonnées de l'objet. D'où les conditions : client à API moderne (Forever), affichage
--- « marqueur natif », objet à l'écran (marqueur non collé au bord) et à moins de 50 m.
+-- « marqueur natif » ou flèche Questify, objet à l'écran (marqueur non collé au bord) et à moins de 50 m.
+-- Avec la flèche Questify, Nav ne pose pas de repère du jeu : la lueur pose elle-même le repère suivi
+-- sur l'objet, seulement à portée (POSE_YARDS), et le retire en s'éloignant (RELEASE_YARDS), quand
+-- l'étape change ou quand l'option est coupée. Le repère des autres affichages n'est jamais touché.
 -- Sinon rien ne s'affiche. Rien ici n'est protégé : le combat ne change rien.
 Q.UI = Q.UI or {}
 local ObjectGlow = {}
@@ -13,6 +16,7 @@ Q.UI.ObjectGlow = ObjectGlow
 
 local CHECK_INTERVAL = 0.1   -- secondes entre deux vérifications (le cadre suit seul le marqueur)
 local MAX_DIST = 50          -- au-delà, l'objet est trop petit à l'écran pour être entouré
+local POSE_YARDS, RELEASE_YARDS = 50, 65   -- flèche Questify : repère posé à portée, retiré au-delà
 local SIZE_NEAR, SIZE_FAR = 150, 60
 local WAVE_TIME = 1.4
 local RING_TEXTURE = "Interface\\Cooldown\\ping4"
@@ -116,13 +120,52 @@ local function navDisplay()
   return display
 end
 
+-- Repère du jeu posé par la lueur (affichage flèche Questify) : clé « carte|x|y », nil sinon.
+local posedKey
+
+local function releasePin()
+  if not posedKey then return end
+  posedKey = nil
+  Q.API.ClearNativeWaypoint()
+end
+
+-- Affichage flèche Questify : repère du jeu sur l'objet `tg` tant qu'il est à portée (tg nil : retiré).
+-- -> vrai si le repère de la lueur est posé.
+local function syncPin(tg)
+  if not tg then
+    releasePin()
+    return false
+  end
+  local key = table.concat({ tg.mapId, tg.x, tg.y }, "|")
+  local d = Q.Maps:DistanceFromPlayer(tg.mapId, tg.x, tg.y)
+  local limit = posedKey == key and RELEASE_YARDS or POSE_YARDS
+  if not d or d > limit then
+    releasePin()
+    return false
+  end
+  -- reposé si l'objet change, ou si le repère a disparu (changement d'affichage, retrait par le joueur)
+  local present = not (C_Map and C_Map.HasUserWaypoint) or C_Map.HasUserWaypoint()
+  if posedKey ~= key or not present then
+    posedKey = Q.API.SetNativeWaypoint(tg.mapId, tg.x / 100, tg.y / 100, tg.title) and key or nil
+  end
+  return posedKey ~= nil
+end
+
 -- -> cadre du marqueur natif et distance (m, ou nil), ou nil si rien ne doit s'afficher.
 local function wanted()
-  if not available() or setting("objectGlow") == false then return nil end
+  if not available() then return nil end
+  local display = navDisplay()
+  -- le repère d'un autre affichage appartient à la navigation : on oublie le nôtre sans le retirer
+  if display ~= "arrow" then posedKey = nil end
   local T = Q.UI.Tracker
   local tg = T and T.entry and T.target
-  if not (tg and tg.kind == "object") then return nil end
-  if navDisplay() ~= "native" then return nil end
+  if setting("objectGlow") == false or not (tg and tg.kind == "object") then tg = nil end
+  if display == "arrow" then
+    if not syncPin(tg) then return nil end
+  elseif display ~= "native" then
+    return nil
+  end
+  if not tg then return nil end
   local nav = C_Navigation.GetFrame()
   if not nav then return nil end
   if C_Navigation.WasClampedToScreen and C_Navigation.WasClampedToScreen() then return nil end
