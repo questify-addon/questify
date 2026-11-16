@@ -142,12 +142,19 @@ return {
     qf("demo upgrade")
     t.ok(shown(P.frame), "announcement shown")
     t.ok(P.current.demo)
-    t.ok(P.text:GetText():find("Exemple d'objet", 1, true), "item named")
+    t.ok(P.name:GetText():find("Exemple d'objet", 1, true), "item named")
+    Mock.advance(10)
+    t.ok(shown(P.frame), "the demo box stays without a countdown")
+    -- survol : le comparatif s'ouvre à côté
+    P.frame.IsMouseOver = function() return true end
+    Mock.advance(0.1)
+    t.ok(Q.UI.UpgradeCompare:IsShown(), "before/after comparison on hover")
+    P.frame.IsMouseOver = nil
     qf("demo pair")
     t.ok(shown(P.frame))
     t.ok(P.current.pair and P.current.demo, "pair announcement")
-    t.eq(P.text:GetText(), string.format(Q.L.UI_UPGRADE_TEXT_PAIR, Mock.items[Q.UI.Demo.ITEMS.main[1]].link,
-      Mock.items[Q.UI.Demo.ITEMS.off[1]].link))
+    t.ok(P.name:GetText():find(Mock.items[Q.UI.Demo.ITEMS.main[1]].name, 1, true)
+      and P.name:GetText():find(Mock.items[Q.UI.Demo.ITEMS.off[1]].name, 1, true), "both items named")
     noErrors(t)
   end,
 
@@ -280,11 +287,11 @@ return {
 
     local up = Q.UI.UpgradePopup
     qf("demo upgrade")
-    Mock.click(up.frame, "LeftButton")
+    Mock.click(up.equipButton)
     t.eq(Mock.countCalls("C_Item.EquipItemByName"), 0, "nothing equipped")
     t.ok(not shown(up.frame), "announcement closed")
     qf("demo pair")
-    Mock.click(up.frame, "LeftButton")
+    Mock.click(up.equipButton)
     Mock.advance(2)
     t.eq(Mock.countCalls("C_Item.EquipItemByName"), 0, "pair: nothing equipped")
 

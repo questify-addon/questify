@@ -274,7 +274,8 @@ function SCENE.dungeon()
   return true
 end
 
--- Annonce d'équipement : l'objet est demandé au client, puis la vraie annonce s'affiche, sans minuterie.
+-- Boîte « Équiper » sous le suivi : l'objet est demandé au client, puis la vraie boîte s'affiche, sans
+-- minuterie (survol : comparatif avant/après).
 local function announce(scene, lists, make)
   local P = Q.UI.UpgradePopup
   if not (P and P.ShowEntry and Q.API and Q.API.GetItemInfo) then return false, WHY_API end
@@ -291,15 +292,22 @@ local function announce(scene, lists, make)
   return true
 end
 
+-- Gain au score de classe de l'objet de démonstration (ligne du comparatif), rien s'il n'en a pas.
+local function demoGain(link)
+  local R = Q.Rewards
+  local ok, gain = pcall(function() return R:UpgradeGain(R:ReadItem(link), Q.Player) end)
+  return ok and type(gain) == "number" and gain > 0 and gain or nil
+end
+
 function SCENE.upgrade()
   return announce("upgrade", { Demo.ITEMS.upgrade }, function(items)
-    return { link = items[1].link, name = items[1].name, gain = 0, demo = true }
+    return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true }
   end)
 end
 
 function SCENE.pair()
   return announce("pair", { Demo.ITEMS.main, Demo.ITEMS.off }, function(items)
-    return { link = items[1].link, name = items[1].name, gain = 0, demo = true,
+    return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true,
       pair = { main = items[1].link, off = items[2].link } }
   end)
 end
