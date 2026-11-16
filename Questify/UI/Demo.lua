@@ -566,6 +566,7 @@ end
 -- Ferme toutes les scènes et rétablit l'état d'avant.
 function Demo:Reset()
   token = token + 1
+  Demo.showing = nil
   local cq, dg, up, rp = Q.UI.ClassQuestPopup, Q.UI.DungeonPopup, Q.UI.UpgradePopup, Q.UI.RouteChoicePopup
   if cq and cq.demo then cq.demo = nil; cq:Hide() end
   if dg and dg.demo then dg.demo = nil; dg:Hide() end
@@ -608,7 +609,10 @@ end
 local function runScene(name)
   Demo:Reset()
   local ok, res, why = pcall(SCENE[name])
-  if ok and res then return true end
+  if ok and res then
+    Demo.showing = true   -- scène affichée : Engine/Pace.lua ne mesure pas (route et étapes simulées)
+    return true
+  end
   Demo:Reset()
   say(L.UI_DEMO_MISSING, name, ok and L[why] or tostring(res))
   return false

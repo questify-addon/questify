@@ -44,6 +44,7 @@ Locales\StringsOptions.lua
 Locales\StringsTrainer.lua
 Locales\StringsAuction.lua
 Locales\StringsQuestValue.lua
+Locales\StringsPace.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -81,6 +82,7 @@ Engine\BagQuestOffer.lua
 Engine\StepGuard.lua
 Engine\Telemetry.lua
 Engine\XPRate.lua
+Engine\Pace.lua
 Engine\Hearth.lua
 Engine\Danger.lua
 Engine\Supplies.lua
@@ -116,6 +118,7 @@ UI\RanksWizard.lua
 UI\DungeonPopup.lua
 UI\DungeonChainPopup.lua
 UI\DungeonModePanel.lua
+UI\PacePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
 UI\ZoneOverlay.lua

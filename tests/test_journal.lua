@@ -48,12 +48,13 @@ return {
     for _, n in ipairs(UISpecialFrames) do if n == "QuestifyJournal" then special = true end end
     t.ok(special, "closes with Escape (UISpecialFrames)")
     t.eq(Q.UI.Journal.tab, "route", "route tab by default")
-    t.eq(#Q.UI.Journal.tabs, 3, "Route, Dungeons and Class quests: options have their own window")
+    t.eq(#Q.UI.Journal.tabs, 4, "Route, Dungeons, Class quests and Pace: options have their own window")
     -- chaque onglet porte l'icône de son bouton du suivi devant son nom
     local B = Q.UI.TrackerButtons
     t.eq(Q.UI.Journal.tabs[1]:GetText(), B.IconMarkup("route", 14) .. " " .. Q.L.UI_TAB_ROUTE)
     t.eq(Q.UI.Journal.tabs[2]:GetText(), B.IconMarkup("dungeons", 14) .. " " .. Q.L.UI_TAB_DUNGEONS)
     t.eq(Q.UI.Journal.tabs[3]:GetText(), B.IconMarkup("class", 14) .. " " .. Q.L.UI_TAB_CLASS)
+    t.eq(Q.UI.Journal.tabs[4]:GetText(), Q.L.PACE_TAB, "no tracker button for Pace: plain label")
     t.eq(Q.UI.Journal.panels.options, nil)
     Mock.click(Q.UI.Journal.tabs[2], "LeftButton")
     t.eq(Q.UI.Journal.tab, "dungeons")

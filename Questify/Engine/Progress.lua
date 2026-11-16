@@ -541,7 +541,7 @@ local function checkRollover()
     if nxt and not visited[nxt.id] then
       Q.char.guideId = nxt.id
       invalidate()
-      Q:Fire("GUIDE_CHANGED", nxt)
+      Q:Fire("GUIDE_CHANGED", nxt, g)   -- g : chapitre fini qu'on quitte (Engine/Pace.lua)
       Q:Print(Q.L.ROUTE_NEXT, Q.Guides:DisplayTitle(nxt))
       Progress:Recompute()
     else

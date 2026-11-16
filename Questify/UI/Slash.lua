@@ -10,6 +10,7 @@ local addonName, Q = ...
 --   /qf options    fenêtre d'options (/qf options <texte> : avec cette recherche)
 --   /qf wizard     assistant de navigation
 --   /qf export     mesures de temps, prêtes à copier
+--   /qf session    résumé de la session de jeu (temps actif, temps mort, XP/h par zone)
 --   /qf debug      messages de débogage (QuestifyDB.debug)
 --   /qf check      autodiagnostic du client (API, QuestieDB, navigation, route) ; alias /qf diag
 --   /qf bug        rapport de bug prêt à copier (alias /qf report) ; /qf bug clear vide les erreurs gardées
@@ -200,6 +201,20 @@ COMMANDS.export = function()
   if O then
     O:ShowTelemetryExport()
     Q:Print(L.UI_SLASH_EXPORTED)
+  end
+end
+
+-- Résumé de la session (Engine/Pace.lua) : temps de jeu, actif, temps mort, XP/h par zone ; la
+-- session précédente suit si elle existe.
+COMMANDS.session = function()
+  local P = Q.Pace
+  if not P then return end
+  Q:Print(L.PACE_SESSION_HEADER)
+  for _, line in ipairs(P:SessionLines()) do Q:Print("%s", line) end
+  local last = P:LastSession()
+  if last then
+    Q:Print(L.PACE_SESSION_PREVIOUS)
+    for _, line in ipairs(P:SessionLines(last)) do Q:Print("%s", line) end
   end
 end
 

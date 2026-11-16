@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Questify, aperçu 13 : le classement</title>
+<link rel="stylesheet" href="../apercu.css">
+<style>
+  .jr { width: 520px; height: 560px; }
+  .content { position: absolute; left: 10px; top: 64px; width: 500px; height: 466px; }
+  .seg { position: absolute; top: 34px; height: 20px; border-radius: 3px; text-align: center; line-height: 20px;
+    background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px #4a4b50; }
+  .seg.on { background: rgba(255,209,0,.18); box-shadow: inset 0 0 0 1px rgba(255,209,0,.55); }
+  .lab { position: absolute; }
+  .thd, .trw { position: relative; height: 20px; }
+  .trw:nth-child(odd) { background: rgba(255,255,255,.035); }
+  .trw.me { background: rgba(255,209,0,.16); box-shadow: inset 0 0 0 1px rgba(255,209,0,.35); }
+  .r1 { position: absolute; left: 6px; top: 4px; width: 22px; text-align: right; }
+  .r2 { position: absolute; left: 36px; top: 4px; width: 56px; text-align: right; }
+  .r3 { position: absolute; left: 104px; top: 2px; width: 16px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px #000; }
+  .r4 { position: absolute; left: 126px; top: 4px; width: 120px; }
+  .r5 { position: absolute; left: 250px; top: 4px; width: 70px; text-align: center; }
+  .r6 { position: absolute; left: 324px; top: 4px; width: 66px; text-align: right; }
+  .r7 { position: absolute; left: 396px; top: 4px; width: 70px; text-align: right; }
+  .ahead { color: #40e050; } .behind { color: #ffb040; }
+  .tip.lb-tip { left: 250px; top: 214px; width: 230px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="cap" style="width:560px">
+    <div class="brand">Questify</div>
+    <h1>Le classement, chapitre par chapitre</h1>
+    <p>Les temps des joueurs de Questify circulent entre addons (guilde, groupe et un canal discret), sans nom ni royaume.</p>
+    <p>Classement par chapitre ou par zone, filtré par faction, classe, race et niveaux d'entrée et de sortie. Tes passages sont surlignés.</p>
+    <p style="font-size:17px">Un chapitre fini ou une zone quittée = un passage. Les temps irréalistes (sous 40 % de la simulation) sont écartés.</p>
+  </div>
+
+  <div class="ui" style="left:820px; top:52px">
+    <div style="zoom:1.66; position:relative">
+      <div class="bft jr">
+        <div class="bft-top"></div>
+        <div class="bft-inset"></div>
+        <div class="bft-portrait"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_book_09.jpg" alt=""></div>
+        <div class="bft-title fn">Questify</div>
+        <div class="bft-close"></div>
+
+        <div class="content">
+          <!-- bascule de l'onglet Rythme -->
+          <div class="seg fns" style="left:4px; top:2px; width:110px">Mon rythme</div>
+          <div class="seg on fns" style="left:118px; top:2px; width:110px; color:#fff">Classement</div>
+          <div class="fds abs" style="right:12px; top:6px">412 passages reçus · 96 joueurs</div>
+
+          <!-- filtres -->
+          <div class="seg fns" style="left:4px; width:70px">Chapitre</div>
+          <div class="seg on fns" style="left:78px; width:56px; color:#fff">Zone</div>
+          <div class="dd" style="left:142px; top:30px; width:330px"><span class="v fh ell">Ashenvale</span></div>
+
+          <span class="lab fds" style="left:6px; top:66px">Faction</span>
+          <div class="dd" style="left:4px; top:78px; width:90px"><span class="v fhs">Toutes</span></div>
+          <span class="lab fds" style="left:100px; top:66px">Classe</span>
+          <div class="dd" style="left:98px; top:78px; width:94px"><span class="v fhs">Chaman</span></div>
+          <span class="lab fds" style="left:198px; top:66px">Race</span>
+          <div class="dd" style="left:196px; top:78px; width:90px"><span class="v fhs">Toutes</span></div>
+          <span class="lab fds" style="left:292px; top:66px">Entrée</span>
+          <div class="dd" style="left:290px; top:78px; width:88px"><span class="v fhs">19-20</span></div>
+          <span class="lab fds" style="left:384px; top:66px">Sortie</span>
+          <div class="dd" style="left:382px; top:78px; width:90px"><span class="v fhs">Toutes</span></div>
+
+          <div class="fn abs" style="left:6px; top:114px">Ashenvale · Chaman · entrée 19-20</div>
+          <div class="fds abs" style="right:12px; top:115px">simulation 1 h 41 · médiane 1 h 52 (23)</div>
+
+          <div class="abs" style="left:4px; top:134px; width:470px">
+            <div class="thd fds"><span class="r1">#</span><span class="r2">Temps</span><span class="r4" style="left:104px">Classe, race</span><span class="r5">Faction</span><span class="r6">Niveaux</span><span class="r7">Date</span></div>
+            <div>
+              <div class="trw fhs"><span class="r1" style="color:#ffd100">1</span><span class="r2">1 h 09</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman tauren</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">19 → 23</span><span class="r7" style="color:#aaa">12/11</span></div>
+              <div class="trw fhs"><span class="r1" style="color:#c8c8c8">2</span><span class="r2">1 h 17</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman draeneï</span><span class="r5" style="color:#66bbff">Alliance</span><span class="r6">20 → 23</span><span class="r7" style="color:#aaa">14/11</span></div>
+              <div class="trw fhs"><span class="r1" style="color:#d08a4a">3</span><span class="r2">1 h 21</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman orc</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">19 → 22</span><span class="r7" style="color:#aaa">09/11</span></div>
+              <div class="trw fhs"><span class="r1">4</span><span class="r2">1 h 26</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman troll</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">20 → 22</span><span class="r7" style="color:#aaa">15/11</span></div>
+              <div class="trw me fhs"><span class="r1">5</span><span class="r2 ahead">1 h 31</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman nain <span style="color:#ffd100">(toi)</span></span><span class="r5" style="color:#66bbff">Alliance</span><span class="r6">20 → 22</span><span class="r7" style="color:#aaa">16/11</span></div>
+              <div class="trw fhs"><span class="r1">6</span><span class="r2">1 h 38</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman draeneï</span><span class="r5" style="color:#66bbff">Alliance</span><span class="r6">19 → 22</span><span class="r7" style="color:#aaa">10/11</span></div>
+              <div class="trw fhs"><span class="r1">7</span><span class="r2">1 h 44</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman orc</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">20 → 22</span><span class="r7" style="color:#aaa">13/11</span></div>
+              <div class="trw fhs"><span class="r1">8</span><span class="r2">1 h 50</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman tauren</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">19 → 22</span><span class="r7" style="color:#aaa">11/11</span></div>
+              <div class="trw fhs"><span class="r1">9</span><span class="r2">1 h 52</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman nain</span><span class="r5" style="color:#66bbff">Alliance</span><span class="r6">20 → 22</span><span class="r7" style="color:#aaa">08/11</span></div>
+              <div class="trw fhs"><span class="r1">10</span><span class="r2">1 h 57</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman draeneï</span><span class="r5" style="color:#66bbff">Alliance</span><span class="r6">20 → 21</span><span class="r7" style="color:#aaa">15/11</span></div>
+              <div class="trw fhs"><span class="r1">11</span><span class="r2">2 h 03</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman troll</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">19 → 21</span><span class="r7" style="color:#aaa">07/11</span></div>
+              <div class="trw fhs"><span class="r1">12</span><span class="r2">2 h 11</span><img class="r3" src="https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg" alt=""><span class="r4 ell">Chaman orc</span><span class="r5" style="color:#ff6060">Horde</span><span class="r6">20 → 22</span><span class="r7" style="color:#aaa">14/11</span></div>
+            </div>
+          </div>
+          <div class="sb" style="left:478px; top:154px; height:240px"><div class="arrow up dis"></div><div class="track"></div><div class="thumb" style="top:17px; height:40px"></div><div class="arrow down"></div></div>
+
+          <div class="fds abs" style="left:6px; top:404px; width:466px; white-space:normal">Tes 5 derniers passages ici : 1 h 31, 1 h 48 (Guerrier), 2 h 05 (Prêtre). Ton meilleur te classe 5e sur 23.</div>
+          <div class="abs fhs" style="left:6px; top:432px"><span style="color:#aaa">Partager mes temps :</span> oui <span style="color:#66bbff">(Options…)</span></div>
+        </div>
+
+        <div class="btn" style="right:8px; bottom:4px; width:120px">Options…</div>
+
+        <div class="tip lb-tip">
+          <div class="tt">2e · 1 h 17</div>
+          <div class="tl">Chaman draeneï, Alliance</div>
+          <div class="tl">Niveau 20 → 23 en Ashenvale</div>
+          <div class="tl" style="color:#aaaaaa">Chapitre : Ashenvale and Stonetalon Mountains</div>
+          <div class="tl" style="color:#aaaaaa">Questify 0.9.0 · 14/11</div>
+        </div>
+      </div>
+      <div class="tab" style="left:12px; top:558px; width:76px"><span class="fns">Route</span></div>
+      <div class="tab" style="left:91px; top:558px; width:84px"><span class="fns">Donjons</span></div>
+      <div class="tab" style="left:178px; top:558px; width:132px"><span class="fns">Quêtes de classe</span></div>
+      <div class="tab on" style="left:313px; top:558px; width:82px"><span class="fns">Rythme</span></div>
+    </div>
+  </div>
+
+  <div class="badge"><div class="t">Maquette</div><div class="s">Chiffres d'exemple, pas une capture en jeu</div></div>
+</div>
+</body>
+</html>

@@ -367,12 +367,29 @@ function Tracker:Create()
   barText:SetWordWrap(false)
   self.bar, self.barBg, self.barText = bar, barBg, barText
 
-  -- XP/h et temps avant le prochain niveau (Engine/XPRate.lua)
+  -- XP/h et temps avant le prochain niveau (Engine/XPRate.lua), ou XP/h et écart de rythme
+  -- (Engine/Pace.lua) : survol = détail du rythme, clic = onglet Rythme du journal
   local xpLine = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   xpLine:SetJustifyH("LEFT")
   xpLine:SetWordWrap(false)
   xpLine:Hide()
   self.xpLine = xpLine
+  local xpHover = CreateFrame("Button", nil, f)
+  xpHover:SetAllPoints(xpLine)
+  xpHover:RegisterForClicks("LeftButtonUp")
+  xpHover:SetScript("OnEnter", function(btn)
+    local lines = comfort("Pace", "TooltipLines")
+    if type(lines) == "table" then Q.SafeCall(showTooltip, btn, lines) end
+  end)
+  xpHover:SetScript("OnLeave", hideTooltip)
+  xpHover:SetScript("OnClick", function()
+    Q.SafeCall(function()
+      local J = Q.UI.Journal
+      if J and comfort("Pace", "TooltipLines") then J:ShowTab("pace") end
+    end)
+  end)
+  xpHover:Hide()
+  self.xpHover = xpHover
 
   -- Avertissements de confort (danger, sacs, réparation, nourriture, boisson), créés à la demande
   self.warnLines = {}
@@ -1190,6 +1207,7 @@ function Tracker:ShowMessage(text)
   self.mobSlots = {}
   for _, line in ipairs(self.nextLines) do line.icon:Hide(); line.text:Hide() end
   self.xpLine:Hide()
+  self.xpHover:Hide()
   for _, line in ipairs(self.warnLines) do line:Hide() end
   self.alertPulse:Stop()
   self.message:SetText(paint(text))
@@ -1481,12 +1499,25 @@ end
 ---------------------------------------------------------------------------
 -- Confort : ligne XP/h et avertissements
 ---------------------------------------------------------------------------
+-- Texte de la ligne XP/h : avec un écart de rythme (Engine/Pace.lua), « 21.3k XP/h · +12 min ahead »
+-- (le temps avant le niveau passe dans l'infobulle) ; sinon « 21.3k XP/h · level in 38 min ».
+local function xpLineText()
+  local pace = comfort("Pace", "TrackerText")
+  if type(pace) == "string" and pace ~= "" then
+    local rate = comfort("XPRate", "RateText")
+    if type(rate) == "string" and rate ~= "" then return rate .. " · " .. pace end
+    return pace
+  end
+  return comfort("XPRate", "Text")
+end
+
 -- Place la ligne XP/h à la hauteur y si elle a un texte ; -> nouvelle hauteur.
 function Tracker:LayoutXPLine(y)
-  local text = comfort("XPRate", "Text")
+  local text = xpLineText()
   local line = self.xpLine
   if type(text) ~= "string" or text == "" then
     line:Hide()
+    self.xpHover:Hide()
     return y
   end
   local f = self.frame
@@ -1495,6 +1526,7 @@ function Tracker:LayoutXPLine(y)
   line:SetWidth(curWidth() - 2 * PAD)
   line:SetText(paint(text))
   line:Show()
+  self.xpHover:Show()
   return y + XP_LINE_H
 end
 
@@ -1503,7 +1535,7 @@ end
 function Tracker:UpdateXPLine()
   local line = self.xpLine
   if not line or not self.title:IsShown() then return false end
-  local text = comfort("XPRate", "Text")
+  local text = xpLineText()
   local has = type(text) == "string" and text ~= ""
   if has ~= line:IsShown() then return false end
   if has then line:SetText(paint(text)) end
@@ -1772,7 +1804,7 @@ end)
 -- Confort : un nouveau texte XP/h se met à jour sur place ; le reste redessine le suivi.
 Q:On("COMFORT_CHANGED", function(kind)
   if not Tracker.frame then return end
-  if kind == "xp" and Tracker:UpdateXPLine() then return end
+  if (kind == "xp" or kind == "pace") and Tracker:UpdateXPLine() then return end
   Tracker:Refresh()
 end)
 -- Suivi de Blizzard masqué ou rendu : le suivi prend sa place ou revient à sa gauche.

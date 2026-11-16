@@ -77,6 +77,7 @@ Schema.SECTIONS = {
 -- de chemin de réglage, il n'est donc ni exporté ni changé par un changement de profil.
 Schema.CHAR_STATE = {
   guideId = true, manual = true, skipped = true, inserted = true, classQuests = true, telemetry = true,
+  pace = true,          -- Engine/Pace.lua
   wizardDone = true, specRoleAnswered = true,
   routeChoices = true, routeChoiceLast = true,
   detour = true,        -- Engine/Detour.lua
@@ -388,6 +389,9 @@ add({ id = "tracker.foldBlizzard", section = "tracker", category = "content", ty
 add({ id = "showXPRate", section = "tracker", category = "content", type = "toggle", path = "showXPRate",
   label = "COMFORT_OPT_XPRATE", tip = "OPT_TIP_XPRATE",
   keywords = "suivi experience xp heure niveau tracker xp per hour level rate" })
+add({ id = "showPace", section = "tracker", category = "content", type = "toggle", path = "showPace",
+  label = "PACE_OPT", tip = "OPT_TIP_PACE",
+  keywords = "suivi rythme avance retard route simulation temps tracker pace ahead behind route simulated time" })
 add({ id = "questItemButton", section = "tracker", category = "content", type = "toggle",
   path = "questItemButton", label = "UI_OPT_QUESTITEM", tip = "OPT_TIP_QUESTITEM",
   keywords = "objet de quete bouton utiliser quest item button use" })
