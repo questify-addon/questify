@@ -271,3 +271,16 @@ body.i-game .flat { display: none; } body:not(.i-game) .gameic { display: none; 
 .arrow svg { width: 96px; height: 70px; display: block; margin: 0 auto; }
 .arrow .d { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
 .arrow .n { font-size: 12px; color: #e9eef3; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+
+/* cadre orné : le liseré et les coins de métal laissent la place au cadre du thème */
+.framed::before, .framed > .co, .framed > .bgl::before { display: none; }
+.framed > .co { display: none; }
+/* contenu écarté des coins ornés */
+.framed .bnr .bin { padding-left: 34px; padding-right: 30px; }
+.framed > .ft { padding-left: 30px; padding-right: 30px; }
+.trk.framed .tbn .bin { padding-left: 30px; padding-right: 26px; }
+
+/* thèmes de couleur seulement : pas de coins de métal */
+.co { display: none !important; }
+.card .nm { color: var(--text); text-shadow: none; }
+.card .fc { color: var(--textMuted); text-shadow: none; }

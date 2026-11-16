@@ -12,7 +12,7 @@ Q.UI.ThemePreview = Preview
 local L = Q.L
 local MEDIA = "Interface\\AddOns\\" .. addonName .. "\\Media\\Themes\\"
 local W = 272          -- largeur du suivi d'exemple
-local HEADER = 44
+local HEADER = 28
 local PAD = 8
 local SCENES = { "kill", "zone", "item" }
 local SCENE_LABELS = { kill = "OPT_THEME_LIVE_KILL", zone = "OPT_THEME_LIVE_ZONE", item = "OPT_THEME_LIVE_ITEM" }
@@ -109,7 +109,7 @@ function Preview:Create(parent)
   trk.qvOwnTheme = true
   local head = trk:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   head:SetJustifyH("LEFT")
-  if T then self.decor = T:Decorate(trk, { header = HEADER, emblem = 30, title = head, cornerSize = 18 }) end
+  if T then self.decor = T:Decorate(trk, { header = HEADER, title = head }) end
   local levels = trk:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   levels:SetPoint("TOPRIGHT", trk, "TOPRIGHT", -PAD, -(HEADER - 12) / 2)
   local bar = trk:CreateTexture(nil, "ARTWORK")
@@ -238,7 +238,7 @@ function Preview:Refresh()
   if self.decor and self.decor.header then self.decor.header:SetHeight(top) end
   self.head:SetText(L[head[1]])
   self.head:ClearAllPoints()
-  if decor and self.decor and self.decor.emblem then self.head:SetPoint("LEFT", self.decor.emblem, "RIGHT", 8, 0)
+  if decor and self.decor and self.decor.header then self.head:SetPoint("LEFT", self.decor.header, "LEFT", PAD, 0)
   else self.head:SetPoint("TOPLEFT", trk, "TOPLEFT", PAD, -6) end
   T:StyleText(self.head, "title", variant)
   self.levels:SetText(head[2])

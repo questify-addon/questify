@@ -442,7 +442,7 @@ function Popup:Create()
   local T = Q.Themes
   if T then
     T:Apply(win, T:CurrentKey(), 1)
-    T:Decorate(win, { header = BANNER_H, emblem = 34, title = self.title, sub = self.subtitle })
+    T:Decorate(win, { header = BANNER_H, title = self.title, sub = self.subtitle })
     win.qvClose = self.closeButton
     local foot = win:CreateTexture(nil, "BACKGROUND", nil, -3)
     foot:SetPoint("BOTTOMLEFT", win, "BOTTOMLEFT", 1, 1)

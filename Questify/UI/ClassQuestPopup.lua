@@ -187,7 +187,7 @@ end
 -- gabarit de Blizzard caché, bordure de 1 px, fond, bandeau illustré de 46 px avec blason et titre,
 -- coins, liseré, croix plate et pied aux couleurs du thème. Sans module de thèmes, le gabarit reste.
 ---------------------------------------------------------------------------
-local HEADER_H, FOOTER_H = 46, 34
+local HEADER_H, FOOTER_H = 36, 34
 local TEXT_ROLES = { text = "body", textDim = "dim", textMuted = "muted" }
 
 -- Couleur, ombre et police d'une ligne de texte ; rôles des jetons (text, textDim, textMuted) ou du
@@ -222,7 +222,7 @@ local function skinWindow(f, title)
     if f.OnBackdropSizeChanged then f:HookScript("OnSizeChanged", f.OnBackdropSizeChanged) end
   end
   T:Apply(f, T:CurrentKey(), 1)
-  T:Decorate(f, { header = HEADER_H, emblem = 30, title = title })
+  T:Decorate(f, { header = HEADER_H, title = title })
   local foot = { bg = f:CreateTexture(nil, "BACKGROUND", nil, -3), line = f:CreateTexture(nil, "BORDER") }
   foot.bg:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
   foot.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)

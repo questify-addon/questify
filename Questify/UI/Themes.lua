@@ -5,12 +5,12 @@ local addonName, Q = ...
 -- modules lisent les jetons (Color, Hex, TextColor, StyleText) et posent les décorations
 -- communes (Decorate, Emblem, SkinButton) sans coder de couleur en dur.
 --
+-- Thèmes de couleur seulement (choix de l'utilisateur, 2026-11-16) : fond, bordure de 1 px, liseré
+-- de 2 px, en-tête en aplat, accent ; pas de bandeau illustré, de blason, de coins ni de cadre orné.
 -- Quatorze thèmes, tous sur fond sombre : Questify (neutre, par défaut), Contraste élevé (noir,
 -- texte blanc, accent jaune : lisibilité), Alliance, Humain, Nain,
 -- Elfe de la nuit, Gnome, Skyborne (Alliance), Horde, Orc, Troll, Tauren, Mort-vivant, Skyborne
--- (Horde). Style « Bannière » : fenêtre sobre avec bandeau illustré (silhouette de la terre natale,
--- Media/Themes/banner-<clé>.tga), blason dans un anneau de métal, coins et liseré de métal, blason
--- en filigrane.
+-- (Horde).
 --
 -- Réglages :
 --   tracker.theme        clé du thème choisi (les anciennes clés parchment, dark, transparent et
@@ -37,7 +37,6 @@ Themes.DEFAULT_KEY, Themes.DEFAULT_OPACITY = DEFAULT_KEY, DEFAULT_OPACITY
 local MEDIA = "Interface\\AddOns\\Questify\\Media\\"
 Themes.MEDIA = MEDIA
 local TEX = {
-  corner = MEDIA .. "Themes\\corner",          -- coin en filigrane (blanc ombré, teinté métal)
   ring = MEDIA .. "Themes\\ring",              -- anneau du blason (blanc ombré, teinté métal)
   logo = MEDIA .. "Themes\\logo",              -- boussole de Questify (blason du thème neutre)
   skyborne = MEDIA .. "Themes\\skyborne",      -- blason Skyborne de secours (dessin Questify)
@@ -258,7 +257,6 @@ local function build(key)
     key = key, label = id.label, group = id.group, faction = id.faction, races = id.races,
     raceIds = id.raceIds, emblemCandidates = id.emblem,
     colors = c, text = text, codes = codes,
-    banner = MEDIA .. "Themes\\banner-" .. key,
     background = { kind = "color", color = c.bg },
     border = { backdrop = HAIRLINE, color = c.edge, inset = 1 },
     shadow = SHADOW,
@@ -747,12 +745,10 @@ local decorated = setmetatable({}, { __mode = "k" })
 
 -- Q.Themes:Decorate(frame, opts) : pose les décorations communes sur frame (cadre construit par
 -- l'appelant ; le fond et la bordure viennent d'Apply). opts :
---   header = hauteur du bandeau illustré (nil : pas de bandeau) ;
---   emblem = taille du blason dans le bandeau (0 : pas de blason, défaut 30) ;
---   title = FontString à placer dans le bandeau (à droite du blason), sub = sous-titre ;
---   corners (défaut vrai), trim (liseré de 2 px en haut, défaut vrai) ;
---   watermark = taille du blason en filigrane (nil : pas de filigrane).
--- Renvoie frame.qvDecor : { header, sky, banner, emblem, corners, trim, watermark }.
+--   header = hauteur de l'en-tête en aplat (nil : pas d'en-tête) ;
+--   title = FontString à placer dans l'en-tête (à gauche), sub = sous-titre ;
+--   trim (liseré de 2 px en haut, défaut vrai). emblem, watermark, corners : ignorés (retirés).
+-- Renvoie frame.qvDecor : { header, sky, headerLine, trim }.
 -- Le cadre est repeint à chaque changement de thème (THEME_CHANGED) et à chaque Apply.
 function Themes:Decorate(frame, opts)
   if not frame then return nil end
@@ -772,24 +768,15 @@ function Themes:Decorate(frame, opts)
     if h.SetFrameLevel then h:SetFrameLevel(level) end
     local sky = h:CreateTexture(nil, "BACKGROUND", nil, -6)
     sky:SetAllPoints(h)
-    local banner = h:CreateTexture(nil, "BACKGROUND", nil, -5)
-    banner:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 0, 0)
-    banner:SetSize(opts.header * 8, opts.header)
     local line = h:CreateTexture(nil, "BORDER")
     line:SetPoint("BOTTOMLEFT", h, "BOTTOMLEFT", 0, 0)
     line:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 0, 0)
     line:SetHeight(1)
-    d.header, d.sky, d.banner, d.headerLine = h, sky, banner, line
-    local size = opts.emblem or 30
-    if size > 0 then
-      local e = self:Emblem(h, size)
-      e:SetPoint("LEFT", h, "LEFT", 8, 0)
-      d.emblem = e
-    end
+    d.header, d.sky, d.headerLine = h, sky, line
     if opts.title then
       opts.title:SetParent(h)
       opts.title:ClearAllPoints()
-      if d.emblem then opts.title:SetPoint("TOPLEFT", d.emblem, "TOPRIGHT", 8, opts.sub and -2 or -7)
+      if opts.sub then opts.title:SetPoint("TOPLEFT", h, "TOPLEFT", 12, -8)
       else opts.title:SetPoint("LEFT", h, "LEFT", 12, 0) end
       if opts.sub then
         opts.sub:SetParent(h)
@@ -797,19 +784,6 @@ function Themes:Decorate(frame, opts)
         opts.sub:SetPoint("TOPLEFT", opts.title, "BOTTOMLEFT", 0, -2)
       end
     end
-  end
-
-  if opts.watermark then
-    local wm = frame:CreateTexture(nil, "BACKGROUND", nil, -4)
-    wm:SetSize(opts.watermark, opts.watermark)
-    wm:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 40)
-    if frame.CreateMaskTexture and wm.AddMaskTexture then
-      local mask = frame:CreateMaskTexture()
-      mask:SetAllPoints(wm)
-      mask:SetTexture(TEX.mask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-      wm:AddMaskTexture(mask)
-    end
-    d.watermark = wm
   end
 
   -- coins et liseré dans un cadre au-dessus du contenu
@@ -824,21 +798,6 @@ function Themes:Decorate(frame, opts)
     trim:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 0)
     trim:SetHeight(2)
     d.trim = trim
-  end
-  if opts.corners ~= false then
-    d.corners = {}
-    local spots = {
-      { "TOPLEFT", -3, 3, 0, 1, 0, 1 }, { "TOPRIGHT", 3, 3, 1, 0, 0, 1 },
-      { "BOTTOMLEFT", -3, -3, 0, 1, 1, 0 }, { "BOTTOMRIGHT", 3, -3, 1, 0, 1, 0 },
-    }
-    for i, s in ipairs(spots) do
-      local c = over:CreateTexture(nil, "OVERLAY", nil, 2)
-      c:SetTexture(TEX.corner)
-      c:SetSize(opts.cornerSize or 22, opts.cornerSize or 22)
-      c:SetPoint(s[1], frame, s[1], s[2], s[3])
-      c:SetTexCoord(s[4], s[5], s[6], s[7])
-      d.corners[i] = c
-    end
   end
   decorated[frame] = true
   self:Paint(frame, frame.qvTheme or self:Current(), frame.qvThemeOpacity or 1)
@@ -857,35 +816,18 @@ function Themes:Paint(frame, theme, alpha)
   local on = theme.decor ~= false
   if d.header then
     if on then
-      local sky, top = c.sky, mix(c.sky, { 1, 1, 1 }, 0.08)
-      local bottom = mix(c.sky, c.bg, 0.4)
-      applyGradient(d.sky, { orientation = "VERTICAL", from = { bottom[1], bottom[2], bottom[3], 1 },
-        to = { top[1], top[2], top[3], 1 } })
+      -- en-tête en aplat : couleur des panneaux, filet dessous
+      d.sky:SetColorTexture(c.panel[1], c.panel[2], c.panel[3], 1)
       d.sky:SetAlpha(alpha)
-      d.banner:SetTexture(theme.banner)
-      d.banner:SetAlpha(alpha)
       d.headerLine:SetColorTexture(c.line[1], c.line[2], c.line[3], c.line[4])
-      d.sky:Show(); d.banner:Show(); d.headerLine:Show()
+      d.sky:Show(); d.headerLine:Show()
     else
-      d.sky:Hide(); d.banner:Hide(); d.headerLine:Hide()
+      d.sky:Hide(); d.headerLine:Hide()
     end
-    if d.emblem then
-      d.emblem:SetTheme(theme)
-      if on then d.emblem:Show() else d.emblem:Hide() end
-    end
-  end
-  if d.watermark then
-    setEmblemTexture(d.watermark, theme)
-    d.watermark:SetAlpha(on and 0.05 or 0)
   end
   if d.trim then
     d.trim:SetColorTexture(c.metal[1], c.metal[2], c.metal[3], alpha)
     if on then d.trim:Show() else d.trim:Hide() end
-  end
-  for _, corner in ipairs(d.corners or {}) do
-    tintMetal(corner, theme)
-    corner:SetAlpha(alpha)
-    if on then corner:Show() else corner:Hide() end
   end
 end
 

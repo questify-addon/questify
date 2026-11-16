@@ -396,7 +396,7 @@ return {
     local J, T = Q.UI.Journal, Q.Themes
     J:ShowTab("route")
     local f = J.frame
-    t.ok(f.qvDecor and f.qvDecor.header and f.qvDecor.emblem, "decorated: banner and emblem")
+    t.ok(f.qvDecor and f.qvDecor.header and not f.qvDecor.emblem, "decorated: plain header, no crest")
     t.eq(J.titleText:GetParent(), f.qvDecor.header, "title in the banner")
     t.eq(J.tabs[1]:GetParent(), f.qvDecor.header, "tabs in the banner")
     t.ok(J.tabs[1].underline:IsShown(), "open tab underlined")

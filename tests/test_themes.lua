@@ -137,7 +137,6 @@ return {
         "dungeonAlert", "trainerAlert" }) do
         t.eq(#th:TextColor(role, theme), 4, key .. " text role " .. role)
       end
-      t.eq(theme.banner, "Interface\\AddOns\\Questify\\Media\\Themes\\banner-" .. key)
       t.ok(theme.bar.fill and theme.bar.bg, "bar colours for the other modules")
       t.ok(theme.border and theme.border.color, "border colour for the other modules")
     end
@@ -252,7 +251,7 @@ return {
     t.eq(T.frame.qvThemeBackground, "none")
     t.eq(T:HeaderHeight(), 20, "no banner without a background")
     Q.Settings:Set("tracker.style", "solid")
-    t.eq(T:HeaderHeight(), 44)
+    t.eq(T:HeaderHeight(), 28)
     -- lignes créées après le changement : déjà aux couleurs du thème
     local chunk = T:TextChunk(#T.textChunks + 1)
     t.eq(color(chunk), th:Get("undead").text.body)
@@ -268,32 +267,28 @@ return {
     t.eq(T:ApplyTheme(true), true, "forced")
   end,
 
-  decorate_paints_banner_emblem_corners_and_trim = function(t)
+  decorate_paints_a_plain_header_and_trim = function(t)
     local Q = load()
     local th = Q.Themes
     local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    local d = th:Decorate(f, { header = 52, emblem = 34, title = title, watermark = 200 })
-    t.ok(d and d.header and d.emblem and d.trim and d.watermark, "parts")
-    t.eq(#d.corners, 4)
+    local d = th:Decorate(f, { header = 40, emblem = 34, title = title, watermark = 200 })
+    t.ok(d and d.header and d.trim, "header and trim")
+    t.eq(d.emblem, nil, "no crest (colour themes only)")
+    t.eq(d.watermark, nil); t.eq(d.corners, nil); t.eq(d.banner, nil)
     t.ok(th:Decorate(f) == d, "once per frame")
-    t.eq(d.header:GetHeight(), 52)
-    t.eq(d.banner:GetTexture(), th:Get("dwarf").banner)
-    t.eq(d.corners[1]:GetTexture(), th.TEX.corner)
-    t.eq(d.emblem.ring:GetTexture(), th.TEX.ring)
-    local m = th:Get("dwarf").colors.metal
-    t.eq({ d.corners[2]:GetVertexColor() }, { m[1], m[2], m[3], 1 }, "metal tint")
+    t.eq(d.header:GetHeight(), 40)
+    t.ok(title:GetParent() == d.header, "title in the header")
+    local p = th:Get("dwarf").colors.panel
+    t.eq({ d.sky:GetVertexColor() }, { 1, 1, 1, 1 })
+    t.ok(p, "plain panel colour")
     -- nouveau thème : repeint tout seul
     Q.Settings:Set("theme.followRace", false)
     Q.Settings:Set("tracker.theme", "nightelf")
-    t.eq(d.banner:GetTexture(), th:Get("nightelf").banner)
-    t.eq(d.emblem.qvThemeKey, "nightelf")
-    m = th:Get("nightelf").colors.metal
-    t.eq({ d.corners[2]:GetVertexColor() }, { m[1], m[2], m[3], 1 })
-    -- le suivi est décoré lui aussi, le titre est dans le bandeau
+    t.eq(f.qvTheme.key, "nightelf")
     local T = Q.UI.Tracker
-    t.ok(T.decor and T.decor.header, "tracker banner")
-    t.ok(T.title:GetParent() == T.decor.header, "title in the banner")
+    t.ok(T.decor and T.decor.header, "tracker header")
+    t.ok(T.title:GetParent() == T.decor.header, "title in the header")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -427,7 +422,7 @@ return {
     Q.Themes:StyleText(fs, "body", Q.Themes:Get("horde"))
     t.eq(last(log.SetFont), { "Fonts\\FRIZQT__.TTF", 15.5, "" }, "12 x 1.3, rounded to half a point")
     t.eq(T.themeScale, 1.3, "tracker restyled")
-    t.eq(T:BodyTop(), 44 + 6 + 4 + 3 + 17 + 4, "bar text row grows with the text")
+    t.eq(T:BodyTop(), 28 + 6 + 4 + 3 + 17 + 4, "bar text row grows with the text")
     Q.Settings:Set("theme.fontScale", 9)
     t.eq(Q.Themes:FontScale(), 1.5, "clamped")
     Q.Settings:Set("theme.fontScale", "junk")

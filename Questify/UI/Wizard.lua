@@ -35,7 +35,7 @@ local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
 local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_THEME, PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7
-local HEADER_H = 52
+local HEADER_H = 40
 local CARD_W, CARD_H, CARD_GAP = 152, 40, 8
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
@@ -430,7 +430,7 @@ function Wizard:BuildAutoPage(page)
   self.rewardRoleButton = b
 end
 
--- Page Thème : texte, « suivre la race », cartes des thèmes (bandeau, blason, nom, faction).
+-- Page Thème : texte, « suivre la race », cartes des thèmes (aplat de couleur, nom, trait d'accent).
 local GROUPS = { neutral = "UI_THEME_GROUP_NEUTRAL", alliance = "UI_THEME_GROUP_ALLIANCE", horde = "UI_THEME_GROUP_HORDE" }
 function Wizard:BuildThemePage(page)
   local T = Q.Themes
@@ -474,22 +474,14 @@ function Wizard:BuildThemePage(page)
     local sky = band:CreateTexture(nil, "BACKGROUND", nil, -6)
     sky:SetAllPoints(band)
     local k = theme.colors
-    T.ApplyGradient(sky, { orientation = "VERTICAL", from = { k.bg[1], k.bg[2], k.bg[3], 1 }, to = { k.sky[1], k.sky[2], k.sky[3], 1 } })
-    local art = band:CreateTexture(nil, "BACKGROUND", nil, -5)
-    art:SetPoint("BOTTOMRIGHT", band, "BOTTOMRIGHT", 0, 0)
-    art:SetSize((CARD_H - 5) * 8, CARD_H - 5)
-    art:SetTexture(theme.banner)
-    local emblem = T:Emblem(band, 26)
-    emblem:SetPoint("LEFT", band, "LEFT", 5, 0)
-    emblem:SetTheme(theme)
+    sky:SetColorTexture(k.panel[1], k.panel[2], k.panel[3], 1)
     local name = band:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    name:SetPoint("LEFT", emblem, "RIGHT", 6, 0)
+    name:SetPoint("LEFT", band, "LEFT", 8, 0)
     name:SetPoint("RIGHT", band, "RIGHT", -18, 0)
     name:SetJustifyH("LEFT")
     name:SetWordWrap(false)
     name:SetText(th.label)
-    name:SetShadowColor(0, 0, 0, 1)
-    name:SetShadowOffset(1, -1)
+    name:SetTextColor(k.text[1], k.text[2], k.text[3])
     local accent = card:CreateTexture(nil, "ARTWORK")
     accent:SetPoint("BOTTOMLEFT", card, "BOTTOMLEFT", 1, 1)
     accent:SetPoint("BOTTOMRIGHT", card, "BOTTOMRIGHT", -1, 1)
@@ -596,7 +588,7 @@ function Wizard:Create()
   if T then
     T:StripTemplate(f)
     T:Apply(f, T:CurrentKey(), 1)
-    T:Decorate(f, { header = HEADER_H, emblem = 34, title = titleText, watermark = 200 })
+    T:Decorate(f, { header = HEADER_H, title = titleText })
     T:SkinClose(f)
   end
 

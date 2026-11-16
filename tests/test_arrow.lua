@@ -71,7 +71,7 @@ return {
     O:Open("theme")
     t.ok(P.panel and O.preview:IsShown(), "preview built in the theme section")
     t.eq(P.trk.qvThemeKey, "dwarf", "the race theme")
-    t.ok(P.trk.qvDecor and P.trk.qvDecor.header, "banner and crest")
+    t.ok(P.trk.qvDecor and P.trk.qvDecor.header, "plain header")
     t.eq(P.scene, "kill")
     t.ok(P.lines[1]:IsShown() and not P.lines[5]:IsShown(), "kill scene: three lines")
     Mock.click(P.tabs[2], "LeftButton")
@@ -86,7 +86,7 @@ return {
     t.eq(P.trk.qvThemeKey, "troll")
     Q.Settings:Set("tracker.style", "none")
     t.eq(P.trk.qvThemeBackground, "none")
-    t.ok(not P.trk.qvDecor.emblem:IsShown(), "no crest without a background")
+    t.ok(not P.trk.qvDecor.sky:IsShown(), "no header fill without a background")
     Q.Settings:Set("arrow.color", "pink")
     local c = Q.Themes.ARROW_COLORS.pink
     t.eq({ P.arrow:GetVertexColor() }, { c[1], c[2], c[3], 1 })

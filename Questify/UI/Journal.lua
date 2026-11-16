@@ -25,8 +25,7 @@ local WIDTH, HEIGHT = 520, 560
 local TAB_NAMES = { "route", "dungeons", "class" }
 local TAB_INDEX = { route = 1, dungeons = 2, class = 3 }
 
-local HEADER_H, FOOTER_H = 52, 34      -- bandeau illustré, pied
-local EMBLEM = 34
+local HEADER_H, FOOTER_H = 40, 34      -- en-tête en aplat, pied
 local CONTENT_TOP = HEADER_H + 8
 local CHAPTER_W, CHAPTER_ROW_H = 150, 20
 local STEP_W, STEP_ROW_H = 290, 18
@@ -282,7 +281,7 @@ local function skinWindow(f, title)
     if f.OnBackdropSizeChanged then f:HookScript("OnSizeChanged", f.OnBackdropSizeChanged) end
   end
   T:Apply(f, T:CurrentKey(), 1)
-  T:Decorate(f, { header = HEADER_H, emblem = EMBLEM, title = title, watermark = 200 })
+  T:Decorate(f, { header = HEADER_H, title = title })
   T:SkinClose(f)
 end
 
@@ -341,7 +340,7 @@ function Journal:Create()
     return text
   end
   local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS) }
-  local tabX = 8 + EMBLEM + 8 + math.floor(tonumber(title:GetStringWidth()) or 60) + 20
+  local tabX = 12 + math.floor(tonumber(title:GetStringWidth()) or 60) + 20
   for i, name in ipairs(TAB_NAMES) do
     local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, header or f)
     tab:SetID(i)

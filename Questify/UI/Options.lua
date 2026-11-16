@@ -33,7 +33,7 @@ local SIDEBAR_W = 168
 local SECTION_ROW_H = 24
 local CONTENT_X = SIDEBAR_W + 22          -- début de la liste défilante (depuis le bord du cadre)
 local CONTENT_W = WIDTH - CONTENT_X - 34  -- largeur utile (barre de défilement à droite)
-local HEADER_H = 52                       -- bandeau illustré du thème
+local HEADER_H = 40                       -- en-tête en aplat du thème
 local CONTENT_TOP, CONTENT_BOTTOM = HEADER_H + 10, 34
 local PREVIEW_W = 340                     -- aperçu en direct (section Thème)
 local ROW_GAP = 4
@@ -530,8 +530,8 @@ function Build.select(e)
   return row
 end
 
--- Thèmes : une carte par thème, trois par ligne, groupées (neutre, Alliance, Horde) : bandeau de
--- la race en fond, blason dans son anneau, nom et faction, trait de l'accent ; carte choisie
+-- Thèmes : une carte par thème, trois par ligne, groupées (neutre, Alliance, Horde) : aplat de la
+-- couleur des panneaux du thème, nom et faction, trait de l'accent ; carte choisie
 -- encadrée de l'accent et cochée, celle de la race marquée « Ma race ». Clic = Q.Themes:Choose
 -- (décoche « suivre la race » si ce n'est pas la race du personnage).
 local GROUP_LABELS = { neutral = "UI_THEME_GROUP_NEUTRAL", alliance = "UI_THEME_GROUP_ALLIANCE", horde = "UI_THEME_GROUP_HORDE" }
@@ -560,13 +560,8 @@ function Build.themes(e)
     if band.SetClipsChildren then band:SetClipsChildren(true) end
     local sky = band:CreateTexture(nil, "BACKGROUND", nil, -6)
     sky:SetAllPoints(band)
-    local art = band:CreateTexture(nil, "BACKGROUND", nil, -5)
-    art:SetPoint("BOTTOMRIGHT", band, "BOTTOMRIGHT", 0, 0)
-    art:SetSize((CARD_H - 5) * 8, CARD_H - 5)
-    local emblem = T:Emblem(band, 28)
-    emblem:SetPoint("LEFT", band, "LEFT", 6, 0)
     local name = band:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    name:SetPoint("TOPLEFT", emblem, "TOPRIGHT", 7, -2)
+    name:SetPoint("TOPLEFT", band, "TOPLEFT", 9, -7)
     name:SetPoint("RIGHT", band, "RIGHT", -22, 0)
     name:SetJustifyH("LEFT")
     name:SetWordWrap(false)
@@ -593,7 +588,7 @@ function Build.themes(e)
     local hl = c:CreateTexture(nil, "HIGHLIGHT")
     hl:SetAllPoints(c)
     hl:SetColorTexture(1, 1, 1, 0.06)
-    c.sky, c.art, c.emblem, c.name, c.group, c.accent, c.check, c.mine = sky, art, emblem, name, group, accent, check, mine
+    c.sky, c.name, c.group, c.accent, c.check, c.mine = sky, name, group, accent, check, mine
     c:SetScript("OnClick", safe(function(self)
       playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
       if Q.Themes then Q.Themes:Choose(self.value) else S:Set(e, self.value, player()) end
@@ -627,10 +622,7 @@ function Build.themes(e)
       c:ClearAllPoints()
       c:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 6 + col * (cardW + CARD_GAP), -y)
       local k = th.colors
-      local top = { k.sky[1] * 1.08 + 0.02, k.sky[2] * 1.08 + 0.02, k.sky[3] * 1.08 + 0.02 }
-      T.ApplyGradient(c.sky, { orientation = "VERTICAL", from = { k.bg[1], k.bg[2], k.bg[3], 1 }, to = { top[1], top[2], top[3], 1 } })
-      c.art:SetTexture(th.banner)
-      c.emblem:SetTheme(th)
+      c.sky:SetColorTexture(k.panel[1], k.panel[2], k.panel[3], 1)
       c.name:SetText(ch.text)
       c.group:SetText(L[GROUP_LABELS[th.group] or "UI_THEME_GROUP_NEUTRAL"])
       c.accent:SetColorTexture(k.accent[1], k.accent[2], k.accent[3], 1)
@@ -641,9 +633,9 @@ function Build.themes(e)
       c.check:SetVertexColor(k.accent[1], k.accent[2], k.accent[3], 1)
       if on then c.check:Show() else c.check:Hide() end
       if ch.value == race then c.mine:Show() else c.mine:Hide() end
-      c.name:SetTextColor(1, 1, 1)
-      c.group:SetTextColor(0.85, 0.87, 0.9)
-      c.mine:SetTextColor(k.metal[1], k.metal[2], k.metal[3])
+      c.name:SetTextColor(k.text[1], k.text[2], k.text[3])
+      c.group:SetTextColor(k.textMuted[1], k.textMuted[2], k.textMuted[3])
+      c.mine:SetTextColor(k.accent[1], k.accent[2], k.accent[3])
       c:Show()
       col = col + 1
       n = i
@@ -1225,7 +1217,7 @@ function Options:Create()
   if T then
     T:StripTemplate(f)
     T:Apply(f, T:CurrentKey(), 1)
-    T:Decorate(f, { header = HEADER_H, emblem = 34, title = titleText, watermark = 220 })
+    T:Decorate(f, { header = HEADER_H, title = titleText })
     T:SkinClose(f)
   end
 

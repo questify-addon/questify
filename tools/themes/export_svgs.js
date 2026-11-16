@@ -34,7 +34,6 @@ const grey = (svg) => svg
   .replace(/#8c6524|#8a6324/g, "#7a7a7a").replace(/#5a3f12|#4a3410|#3a2a0c|#4a330c/g, "#3c3c3c")
   .replace(/#2f5fb8/g, "#9a9a9a").replace(/#6b4c18/g, "#5a5a5a");
 
-write("corner", grey(decode(ART_ALLIANCE.corner)), 64, 64);
 write("ring", grey(decode(ART_ALLIANCE.ring)), 64, 64);
 write("logo", decode(ART_Q.logo), 128, 128);
 write("icon", decode(ART_Q.icon), 128, 128);
@@ -70,20 +69,4 @@ write("arrow", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
 write("arrow-glow", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><filter id="b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter></defs>
   <path d="M64 12L100 68H78V116H50V68H28z" fill="#ffffff" filter="url(#b)"/></svg>`, 128, 128);
 
-// Bandeaux : silhouette de chaque thème aux couleurs du thème, effacée vers la gauche.
-const mix = (a, b, k) => {
-  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
-  return "#" + [16, 8, 0].map((s) => Math.round(((pa >> s) & 255) * (1 - k) + ((pb >> s) & 255) * k).toString(16).padStart(2, "0")).join("");
-};
-for (const key of ORDER) {
-  const t = THEMES[key];
-  const far = mix(t.bg, "#000000", 0.05), near = mix(t.bg, "#000000", 0.3);
-  const glow = t.trim === t.accent ? t.metal : t.trim;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
-  <defs><linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity="1"/></linearGradient>
-  <mask id="m"><rect width="512" height="64" fill="url(#fade)"/></mask></defs>
-  <style>.far{fill:${far}}.near{fill:${near}}.glow{fill:${glow};stroke:${glow};opacity:.7}</style>
-  <g mask="url(#m)">${BAN[key] || BAN.neutral}</g></svg>`;
-  write("banner-" + key, svg, 512, 64);
-}
 console.log("ok", out);

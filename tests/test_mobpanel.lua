@@ -113,9 +113,9 @@ return {
     local row = Q.UI.MobPanel.rows[1]
     local p, rel, rp, x, y = row:GetPoint(1)
     t.eq(p, "TOPLEFT"); t.ok(rel == UIParent, "screen coordinates, never anchored to the tracker"); t.eq(rp, "BOTTOMLEFT")
-    -- bandeau (44) + barre et son texte (30) + titre et objectif (12) ; colonne d'icône (8 + 38 + 2)
+    -- en-tête (28) + barre et son texte (30) + titre et objectif (12) ; colonne d'icône (8 + 38 + 2)
     -- + retrait (10) - 2
-    t.eq(x, 356); t.eq(y, 414)
+    t.eq(x, 356); t.eq(y, 430)
     t.eq({ row:GetSize() }, { 204 - 10 + 2, 16 })
     t.eq(row:GetParent(), UIParent)
     t.eq(row:GetFrameStrata(), "MEDIUM")

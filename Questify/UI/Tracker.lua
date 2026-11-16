@@ -23,8 +23,8 @@ local addonName, Q = ...
 -- Apparence (UI/Themes.lua) : thème en vigueur (race du personnage ou tracker.theme), fond du suivi
 -- (tracker.style : plein avec bandeau illustré et blason, fondu ou sans fond) et opacité, réappliqués
 -- à chaud ; les codes de couleur des textes passent par Q.Themes:Recolor. En fond plein, le titre
--- du chapitre est dans le bandeau, à droite du blason ; la barre de progression est un trait fin
--- à la couleur du thème, son texte dessous.
+-- du chapitre est dans l'en-tête en aplat ; la barre de progression est un trait fin à la couleur
+-- du thème, son texte dessous.
 Q.UI = Q.UI or {}
 local Tracker = {}
 Q.UI.Tracker = Tracker
@@ -34,9 +34,8 @@ local L = Q.L
 local WIDTH = 260           -- largeur par défaut (réglage tracker.width, poignée en bas à droite)
 local MIN_WIDTH, MAX_WIDTH = 220, 480
 local PAD = 8
-local HEADER_H = 44         -- bandeau illustré (fond plein)
+local HEADER_H = 28         -- en-tête en aplat (fond plein)
 local HEADER_PLAIN = 20     -- ligne du titre (fondu, sans fond)
-local EMBLEM = 30           -- blason dans le bandeau
 local BAR_H = 4             -- barre de progression
 local BAR_TEXT_H = 13       -- texte de la barre, sous la barre
 local ICON = 22             -- icône de l'action courante
@@ -362,10 +361,10 @@ function Tracker:Create()
   levels:Hide()
   self.levels = levels
 
-  -- Bandeau illustré, blason, coins et liseré du thème (UI/Themes.lua) ; le titre y est posé.
+  -- En-tête en aplat et liseré du thème (UI/Themes.lua) ; le titre y est posé.
   if Q.Themes and Q.Themes.Decorate then
     f.qvOwnTheme = true   -- le suivi se repeint lui-même (variante du fond)
-    self.decor = Q.Themes:Decorate(f, { header = HEADER_H, emblem = EMBLEM, title = title })
+    self.decor = Q.Themes:Decorate(f, { header = HEADER_H, title = title })
   end
 
   local bar = CreateFrame("StatusBar", nil, f)
@@ -653,8 +652,8 @@ function Tracker:PlaceHeader()
   local h = self:HeaderHeight()
   title:ClearAllPoints()
   if d and d.header then d.header:SetHeight(h) end
-  if d and d.emblem and h == HEADER_H then
-    title:SetPoint("LEFT", d.emblem, "RIGHT", 8, 0)
+  if d and d.header and h == HEADER_H then
+    title:SetPoint("LEFT", d.header, "LEFT", PAD, 0)
   else
     title:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD + 2)
   end
@@ -1515,7 +1514,7 @@ function Tracker:Refresh()
   f:SetWidth(W)
   local buttonsW = layoutButtons(f)
   self.message:SetWidth(W - 2 * PAD - buttonsW)
-  self.title:SetWidth(W - 2 * PAD - buttonsW - (self:HeaderHeight() == HEADER_H and (EMBLEM + 8) or 0))
+  self.title:SetWidth(W - 2 * PAD - buttonsW)
   for _, line in ipairs(self.nextLines) do line.text:SetWidth(W - 2 * PAD - 16) end
   f:Show()
 

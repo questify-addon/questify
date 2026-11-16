@@ -515,8 +515,7 @@ return {
       local card = w.cards[i]
       t.eq(card.value, th.key)
       t.eq(card.name:GetText(), th.label)
-      t.eq(card.emblem.qvThemeKey, th.key, "crest of the theme")
-      t.eq(card.art:GetTexture(), Q.Themes:Get(th.key).banner, "banner art")
+      t.eq(card.emblem, nil, "no crest: colour themes only")
     end
     t.ok(w.cards[1].check:IsShown(), "Questify chosen")
     t.ok(w.cards[5].mine:IsShown() and not w.cards[1].mine:IsShown(), "the race card is marked")
