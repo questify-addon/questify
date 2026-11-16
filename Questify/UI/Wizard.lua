@@ -1,6 +1,6 @@
 local addonName, Q = ...
 
--- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en huit pages :
+-- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en neuf pages :
 --   1. bienvenue et addons (QuestieDB, ShortestPath Forever, WaypointUI, TomTom) : état de chacun
 --      (chargé, désactivé, activé mais pas encore chargé, périmé, absent, QuestieDB trop ancien),
 --      lien CurseForge à copier pour les absents et pour QuestieDB trop ancien (le jeu n'ouvre pas
@@ -14,7 +14,10 @@ local addonName, Q = ...
 --      UI/BlizzardTracker.lua) ;
 --   7. objectifs du suivi : mise en page et détail (tracker.objLayout, tracker.objDetail), avec un
 --      aperçu du suivi redessiné à chaque clic dans le thème courant (UI/ObjectiveRows.lua) ;
---   8. récapitulatif et « Terminer ».
+--   8. thème (UI/Themes.lua) : « suivre la race » et une carte par thème ; la fenêtre prend le
+--      thème choisi tout de suite ;
+--   9. récapitulatif et « Terminer ».
+-- Habillage du thème : bandeau illustré avec blason et titre, coins et liseré, boutons plats.
 -- Chaque page a « Précédent », « Ignorer » (remet les choix de la page à leur valeur actuelle et
 -- passe à la suivante) et « Suivant » ; la dernière a « Terminer ». « Recharger l'interface » est
 -- visible sur la page des addons, et sur toutes les pages après « Activer ».
@@ -35,10 +38,13 @@ local INNER = WIDTH - 48
 local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
-local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_TRACKER, PAGE_OBJECTIVES, PAGE_RECAP =
-  1, 2, 3, 4, 5, 6, 7, 8
+local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_TRACKER, PAGE_OBJECTIVES, PAGE_THEME,
+  PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7, 8, 9
+local HEADER_H = 40
+local CARD_W, CARD_H, CARD_GAP = 152, 40, 8
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
+Wizard.PAGE_THEME = PAGE_THEME
 
 -- Addons de la page 1. folders : noms de dossier possibles, le premier est celui du TOC publié
 -- (QuestieDB.toc, ShortestPathForever.toc, WaypointUI.toc, TomTom.toc) ; les suivants couvrent
@@ -81,6 +87,7 @@ local PAGE_KEYS = {
   [PAGE_AUTO] = { "autoQuest", "autoReward", "sellJunk", "rewardRole" },
   [PAGE_TRACKER] = { "hideBlizzard" },
   [PAGE_OBJECTIVES] = { "objLayout", "objDetail" },
+  [PAGE_THEME] = { "theme", "followRace" },
 }
 Wizard.PAGE_OBJECTIVES = PAGE_OBJECTIVES
 
@@ -556,7 +563,10 @@ function Wizard:RenderPreview()
   if not (p and self.choice) then return end
   local T = Q.Themes
   local theme
-  if T then theme = T:Apply(p.frame, Q.Settings:Get("tracker.theme"), Q.Settings:Get("tracker.opacity")) end
+  if T then
+    local key = T.CurrentKey and T:CurrentKey() or Q.Settings:Get("tracker.theme")
+    theme = T:Apply(p.frame, key, Q.Settings:Get("tracker.opacity"))
+  end
   p.host.theme = theme
   p.icon:SetTexture(Q.Format:ActionIcon("complete"))
   p.dist:SetText(Q.Util.FormatDistance(64))
@@ -568,12 +578,133 @@ function Wizard:RenderPreview()
   p.segs = segs
 end
 
+-- Page Thème : texte, « suivre la race », cartes des thèmes (aplat de couleur, nom, trait d'accent).
+local GROUPS = { neutral = "UI_THEME_GROUP_NEUTRAL", alliance = "UI_THEME_GROUP_ALLIANCE", horde = "UI_THEME_GROUP_HORDE" }
+function Wizard:BuildThemePage(page)
+  local T = Q.Themes
+  local title = pageTitle(page, "UI_WIZ_THEME_TITLE")
+  local intro = paragraph(page, "", title, 10)
+  self.themeIntro = intro
+  local cb = newButton("CheckButton", page, "UICheckButtonTemplate")
+  cb:SetSize(26, 26)
+  cb:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", -4, -6)
+  cb.label = labelFor(cb, L.OPT_THEME_FOLLOW_RACE)
+  cb:SetScript("OnClick", safe(function(self)
+    Wizard:SetChoice("followRace", self:GetChecked() and true or false)
+    if self:GetChecked() and T then Wizard:SetChoice("theme", T:RaceKey() or Wizard.choice.theme) end
+    Wizard:RefreshTheme()
+  end))
+  self.checks.followRace = cb
+  self.themeCards = {}
+  if not T then return end
+  local y, col, last = 0, 0, nil
+  local top = CreateFrame("Frame", nil, page)
+  top:SetPoint("TOPLEFT", cb, "BOTTOMLEFT", 4, -4)
+  top:SetSize(INNER, 1)
+  for _, th in ipairs(T:List()) do
+    if th.group ~= last then
+      if col > 0 then y = y + CARD_H + CARD_GAP; col = 0 end
+      local g = page:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+      g:SetPoint("TOPLEFT", top, "TOPLEFT", 0, -y)
+      g:SetText(L[GROUPS[th.group] or GROUPS.neutral])
+      self.themeGroupLabels = self.themeGroupLabels or {}
+      table.insert(self.themeGroupLabels, g)
+      y, last = y + 14, th.group
+    end
+    local theme = T:Get(th.key)
+    local card = CreateFrame("Button", nil, page, "BackdropTemplate")
+    card:SetSize(CARD_W, CARD_H)
+    card:SetPoint("TOPLEFT", top, "TOPLEFT", col * (CARD_W + CARD_GAP), -y)
+    local band = CreateFrame("Frame", nil, card)
+    band:SetPoint("TOPLEFT", card, "TOPLEFT", 1, -1)
+    band:SetPoint("BOTTOMRIGHT", card, "BOTTOMRIGHT", -1, 4)
+    if band.SetClipsChildren then band:SetClipsChildren(true) end
+    local sky = band:CreateTexture(nil, "BACKGROUND", nil, -6)
+    sky:SetAllPoints(band)
+    local k = theme.colors
+    sky:SetColorTexture(k.panel[1], k.panel[2], k.panel[3], 1)
+    local name = band:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    name:SetPoint("LEFT", band, "LEFT", 8, 0)
+    name:SetPoint("RIGHT", band, "RIGHT", -18, 0)
+    name:SetJustifyH("LEFT")
+    name:SetWordWrap(false)
+    name:SetText(th.label)
+    name:SetTextColor(k.text[1], k.text[2], k.text[3])
+    local accent = card:CreateTexture(nil, "ARTWORK")
+    accent:SetPoint("BOTTOMLEFT", card, "BOTTOMLEFT", 1, 1)
+    accent:SetPoint("BOTTOMRIGHT", card, "BOTTOMRIGHT", -1, 1)
+    accent:SetHeight(3)
+    accent:SetColorTexture(k.accent[1], k.accent[2], k.accent[3], 1)
+    local check = band:CreateTexture(nil, "OVERLAY")
+    check:SetSize(12, 12)
+    check:SetPoint("TOPRIGHT", band, "TOPRIGHT", -3, -3)
+    check:SetTexture(T.GLYPH_CHECK)
+    check:SetVertexColor(k.accent[1], k.accent[2], k.accent[3], 1)
+    local hl = card:CreateTexture(nil, "HIGHLIGHT")
+    hl:SetAllPoints(card)
+    hl:SetColorTexture(1, 1, 1, 0.06)
+    card:SetBackdrop(T.HAIRLINE)
+    card.key, card.check, card.theme = th.key, check, theme
+    card:SetScript("OnClick", safe(function(self)
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      Wizard:SetChoice("theme", self.key)
+      if self.key ~= T:RaceKey() then Wizard:SetChoice("followRace", false) end
+      Wizard:RefreshTheme()
+    end))
+    self.themeCards[#self.themeCards + 1] = card
+    col = col + 1
+    if col >= 3 then col = 0; y = y + CARD_H + CARD_GAP end
+  end
+  if col > 0 then y = y + CARD_H + CARD_GAP end
+  local later = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  later:SetPoint("TOPLEFT", top, "TOPLEFT", 0, -y - 2)
+  later:SetWidth(INNER)
+  later:SetJustifyH("LEFT")
+  later:SetText(L.UI_WIZ_THEME_LATER)
+  self.themeLater = later
+end
+
+-- Cartes, case et fenêtre aux couleurs du thème choisi (aperçu : rien n'est enregistré avant
+-- « Terminer »).
+function Wizard:RefreshTheme()
+  local T, c = Q.Themes, self.choice
+  if not (T and c and self.themeCards) then return end
+  local key = c.theme or T:CurrentKey()
+  local race = T:RaceKey()
+  local raceLabel = race and L[T:Get(race).label] or L.UI_THEME_NEUTRAL
+  self.themeIntro:SetFormattedText(L.UI_WIZ_THEME_INTRO, raceLabel, raceLabel)
+  self.checks.followRace:SetChecked(c.followRace and true or false)
+  for _, card in ipairs(self.themeCards) do
+    local k = card.theme.colors
+    local on = card.key == key
+    local edge = on and k.accent or k.edge
+    card:SetBackdropBorderColor(edge[1], edge[2], edge[3], 1)
+    if on then card.check:Show() else card.check:Hide() end
+  end
+  self:ApplyTheme(key)
+end
+
+-- Fenêtre de l'assistant au thème key (le choisi sur la page Thème, sinon celui en vigueur).
+function Wizard:ApplyTheme(key)
+  local T, f = Q.Themes, self.frame
+  if not (T and f) then return end
+  key = key or (self.choice and self.choice.theme) or T:CurrentKey()
+  local theme = T:Apply(f, key, 1)
+  T:StyleText(self.titleText, "title", theme)
+  T:SkinClose(f, theme)
+  T:SkinTree(f, theme)
+  for _, b in ipairs({ self.prevButton, self.skipButton }) do if b then T:SkinButton(b, "secondary", theme) end end
+  for _, b in ipairs({ self.nextButton, self.finishButton }) do if b then T:SkinButton(b, "primary", theme) end end
+  if self.stepText then T:StyleText(self.stepText, "muted", theme) end
+  for _, g in ipairs(self.themeGroupLabels or {}) do T:StyleText(g, "muted", theme) end
+end
+
 function Wizard:BuildRecapPage(page)
   local title = pageTitle(page, "UI_WIZ_RECAP_TITLE")
   local anchor = paragraph(page, L.UI_WIZ_RECAP_TEXT, title, 10)
   local gap = 14
   for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk", "hideBlizzard",
-                          "objectives" }) do
+                          "objectives", "theme" }) do
     local line = paragraph(page, "", anchor, gap)
     self.recap[key] = line
     anchor = line
@@ -597,11 +728,21 @@ function Wizard:Create()
   f:SetScript("OnDragStart", function(self) self:StartMoving() end)
   f:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
   if f.SetTitle then f:SetTitle(L.UI_WIZ_TITLE) end
-  if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Map_01") end
   if UISpecialFrames then tinsert(UISpecialFrames, FRAME_NAME) end
+  -- habillage du thème : gabarit caché, bandeau illustré avec blason et titre, coins et liseré
+  local titleText = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  titleText:SetText(L.UI_WIZ_TITLE)
+  self.titleText = titleText
+  local T = Q.Themes
+  if T then
+    T:StripTemplate(f)
+    T:Apply(f, T:CurrentKey(), 1)
+    T:Decorate(f, { header = HEADER_H, title = titleText })
+    T:SkinClose(f)
+  end
 
   local content = CreateFrame("Frame", nil, f)
-  content:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -70)
+  content:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -HEADER_H - 14)
   content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 58)
   for i = 1, NUM_PAGES do
     local page = CreateFrame("Frame", nil, content)
@@ -616,10 +757,12 @@ function Wizard:Create()
   self:BuildAutoPage(self.pages[PAGE_AUTO])
   self:BuildTrackerPage(self.pages[PAGE_TRACKER])
   self:BuildObjectivesPage(self.pages[PAGE_OBJECTIVES])
+  self:BuildThemePage(self.pages[PAGE_THEME])
   self:BuildRecapPage(self.pages[PAGE_RECAP])
 
   local step = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-  step:SetPoint("TOPRIGHT", f, "TOPRIGHT", -16, -34)
+  step:SetPoint("RIGHT", f, "TOPRIGHT", -42, -HEADER_H / 2)
+  if f.qvDecor and f.qvDecor.header then step:SetParent(f.qvDecor.header) end
   self.stepText = step
 
   local function bottomButton(label, width, onClick)
@@ -639,6 +782,7 @@ function Wizard:Create()
   self.skipButton:SetPoint("RIGHT", self.nextButton, "LEFT", -6, 0)
   self.reloadButton = bottomButton(L.UI_WIZ_RELOAD, 190, function() Wizard:Reload() end)
   self.reloadButton:SetPoint("BOTTOM", f, "BOTTOM", 0, 30)
+  self:ApplyTheme()
 
   f:Hide()
   -- Branché après le Hide() initial. Fermer sans terminer garde la page (/qf wizard y reprend)
@@ -659,7 +803,12 @@ end
 local function setEnabled(widget, enabled, label)
   if enabled then widget:Enable() else widget:Disable() end
   if label then
-    if enabled then label:SetTextColor(1, 1, 1) else label:SetTextColor(0.5, 0.5, 0.5) end
+    local T = Q.Themes
+    local th = T and T:Get(Wizard.choice and Wizard.choice.theme or T:CurrentKey())
+    if th then
+      local c = enabled and th.colors.text or th.colors.textMuted
+      label:SetTextColor(c[1], c[2], c[3])
+    elseif enabled then label:SetTextColor(1, 1, 1) else label:SetTextColor(0.5, 0.5, 0.5) end
   end
 end
 
@@ -736,6 +885,7 @@ function Wizard:Refresh()
   self.checks.hideBlizzard:SetChecked(c.hideBlizzard)
   self:SelectObjectives()
   self:RenderPreview()
+  self:RefreshTheme()
   local rb, Rw = self.rewardRoleButton, Q.Rewards
   if rb and Rw then
     local classFile = Q.Player and Q.Player.classFile
@@ -784,6 +934,8 @@ function Wizard:Load()
     rewardRole = Q.Rewards and Q.Rewards:Role() or "auto",
     objLayout = Q.Objectives and Q.Objectives:Layout() or "list",
     objDetail = Q.Objectives and Q.Objectives:Detail() or "mobs",
+    theme = Q.Themes and Q.Themes:CurrentKey() or "neutral",
+    followRace = Q.Settings:Get("theme.followRace") ~= false,
   }
   self.initial = initial
   local choice = {}
@@ -830,6 +982,8 @@ function Wizard:UpdateRecap()
     return tostring(c[key])
   end
   r.objectives:SetFormattedText(L.UI_WIZ_RECAP_OBJ, choiceText("objLayout"), choiceText("objDetail"))
+  local T = Q.Themes
+  r.theme:SetFormattedText(L.UI_WIZ_RECAP_THEME, T and L[T:Get(c.theme).label] or tostring(c.theme))
 end
 
 -- Affiche la page n et la garde dans Q.char.wizardPage (reprise après /reload).
@@ -926,6 +1080,16 @@ function Wizard:Finish()
   Q.Settings:Set("tracker.hideBlizzard", c.hideBlizzard)
   Q.Settings:Set("tracker.objLayout", c.objLayout)
   Q.Settings:Set("tracker.objDetail", c.objDetail)
+  -- thème : suivre la race, sinon le thème choisi
+  if Q.Themes and c.theme then
+    if c.followRace then
+      Q.Settings:Set("theme.followRace", true)
+      if c.theme ~= Q.Themes:RaceKey() then Q.Settings:Set("tracker.theme", c.theme) end
+    else
+      Q.Settings:Set("theme.followRace", false)
+      Q.Settings:Set("tracker.theme", c.theme)
+    end
+  end
   -- profil de butin : propre au personnage (Q.char.rewardRole), hors profils d'options
   if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
   if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then Q.char.rewardRoleChosen = true end

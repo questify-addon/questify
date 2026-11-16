@@ -162,7 +162,8 @@ return {
     local T = Q.UI.Tracker
     Q.Settings:Set("tracker.objLayout", "bars")
     Q.Settings:Set("tracker.theme", "dark")
-    local fill = Q.Themes:Get("dark").bar.fill
+    -- thème en vigueur du suivi (celui de la race tant que « suivre la race » est coché)
+    local fill = T.theme.bar.fill
     local bar = T.host.objRows[1].bar
     -- 0/6 : pas de remplissage ; le fond suit le thème
     t.ok(not bar:IsShown(), "empty bar")

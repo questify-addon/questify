@@ -231,7 +231,8 @@ function Popup:ApplyTheme()
   local f = self.frame
   local T = Q.Themes
   if not (f and T) then return end
-  local th = T:Apply(f, setting("tracker.theme"), setting("tracker.opacity"))
+  -- thème en vigueur (race du personnage ou tracker.theme), comme le suivi
+  local th = T:Apply(f, T.CurrentKey and T:CurrentKey() or setting("tracker.theme"), setting("tracker.opacity"))
   self.theme = th
   T:StyleText(self.header, "dim", th)
   T:StyleText(self.counter, "dim", th)
@@ -580,4 +581,7 @@ Q:On("SETTINGS_CHANGED", function(path)
     -- nouveau thème du suivi : la boîte affichée le prend tout de suite (le comparatif à son ouverture)
     Popup:ApplyTheme()
   end
+end)
+Q:On("THEME_CHANGED", function()
+  if Popup.current and Popup.frame then Q.SafeCall(Popup.ApplyTheme, Popup) end
 end)

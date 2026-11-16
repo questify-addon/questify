@@ -121,8 +121,10 @@ return {
     money = 5000
     Mock.fire("PLAYER_MONEY")
     t.eq(P.foot.right:GetText(), "", "nothing missing")
-    local r = P.rows[2].cost:GetTextColor()
-    t.ok(r < 0.8, "Charge affordable now")
+    local r, g, b = P.rows[2].cost:GetTextColor()
+    local bad = { 0.85, 0.15, 0.15 }           -- BAD de UI/TrainerPanel.lua
+    t.ok(not (math.abs(r - bad[1]) < 1e-3 and math.abs(g - bad[2]) < 1e-3 and math.abs(b - bad[3]) < 1e-3),
+      "Charge affordable now: no longer in the warning colour")
     LIST[3][3] = "available"
   end,
 

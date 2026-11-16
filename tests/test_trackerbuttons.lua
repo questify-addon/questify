@@ -53,12 +53,12 @@ return {
       t.ok(b and b:IsShown(), key .. " shown")
       local p, rel, rp, bx, by = b:GetPoint(1)
       t.eq(p, "TOPRIGHT"); t.ok(rel == T.frame, key .. " anchored to the tracker"); t.eq(rp, "TOPRIGHT")
-      t.eq(by, -6)
+      t.eq(by, -5, "centred in the theme header (28 - 18) / 2")
       x[i] = bx
     end
     t.eq(x[4], -8, "options at the right edge")
     t.ok(x[1] < x[2] and x[2] < x[3] and x[3] < x[4], "left to right in ORDER")
-    -- le titre s'arrête avant les boutons ; les niveaux passent dans la barre
+    -- le titre s'arrête avant les boutons ; les niveaux passent sous la barre
     t.eq(T.title:GetWidth(), T.Width() - 16 - B:Width() - 6)
     t.ok(not T.levels:IsShown(), "levels no longer beside the title")
     t.ok(T.barText:GetText():find("lvl 1-6", 1, true), "levels in the progress bar")

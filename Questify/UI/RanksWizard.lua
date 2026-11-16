@@ -318,3 +318,4 @@ Q:RegisterEvent("PLAYER_REGEN_ENABLED", combatChanged)
 Q:On("SETTINGS_CHANGED", function(path)
   if path == "tracker.theme" and Wizard:IsShown() then Wizard:Refresh() end
 end)
+Q:On("THEME_CHANGED", function() if Wizard:IsShown() then Q.SafeCall(Wizard.Refresh, Wizard) end end)

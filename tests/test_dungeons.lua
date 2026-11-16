@@ -539,7 +539,9 @@ return {
     t.eq(J.dungeonSort, nil, "level order by default")
     Mock.click(J.dgSortButtons.quests, "LeftButton")
     t.eq(J.dungeonSort, "quests")
-    t.eq({ J.dgSortButtons.quests.text:GetTextColor() }, { 1, 0.82, 0 }, "active sort highlighted")
+    t.eq({ J.dgSortButtons.quests.text:GetTextColor() }, { Q.Themes:Color("accent") }, "active sort: theme accent")
+    local r, g, b = Q.Themes:Color("textMuted")
+    t.eq({ J.dgSortButtons.level.text:GetTextColor() }, { r, g, b, 1 }, "other sort: muted text")
     noErrors(t)
   end,
 

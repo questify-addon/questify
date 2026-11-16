@@ -297,7 +297,7 @@ return {
     for _, p in ipairs(P.pills) do
       if p:IsShown() then
         local r = p.text:GetTextColor()
-        t.eq(r, p.onRoute and 0.6 or 0.910, "text colour follows the route")
+        t.eq(r, (Q.Themes:Color(p.onRoute and "zone" or "textDim")), "text colour follows the route (theme tokens)")
       end
     end
     t.ok(P.lines[6]:IsShown() and not (P.lines[7] and P.lines[7]:IsShown()), "six steps")
@@ -384,7 +384,8 @@ return {
     t.eq({ item.todo, item.now }, { 3, 0 }, "turned-in quest out of the counters")
     local last
     for _, fs in ipairs(J.dgLines) do if fs:IsShown() then last = fs:GetText() end end
-    t.ok(last:find("ReadyCheck-Ready", 1, true) and last:find("(" .. Q.L.DUNGEON_DONE_TAG .. ")", 1, true), last)
+    -- coche « fait » : glyphe du thème teinté de la couleur de réussite
+    t.ok(last:find(Q.Themes.GLYPH_CHECK, 1, true) and last:find("(" .. Q.L.DUNGEON_DONE_TAG .. ")", 1, true), last)
     noErrors(t)
   end,
 

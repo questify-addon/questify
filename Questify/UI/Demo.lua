@@ -529,8 +529,9 @@ function SCENE.questitem()
   return true
 end
 
--- Thèmes du suivi : chaque appel montre le suivant (parchemin, noir, transparent, dégradé), sur la
--- même étape que la couverture ; le réglage enregistré ne change pas.
+-- Thèmes (UI/Themes.lua) : chaque appel montre le suivant (Questify, Alliance, les races…), sur la
+-- même étape que la couverture, sur le suivi et les fenêtres décorées ; le réglage enregistré ne
+-- change pas. Le blason retenu (atlas ou fichier du client) est écrit dans la discussion.
 function SCENE.theme()
   local T = Q.Themes
   if not (T and T.List) then return false, WHY_API end
@@ -543,10 +544,17 @@ function SCENE.theme()
   patch(Q.Settings, "Get", function(orig)
     return function(self, path, ...)
       if path == "tracker.theme" then return theme.key end
+      if path == "theme.followRace" then return false end
       return orig(self, path, ...)
     end
   end)
   say(L.UI_DEMO_THEME, theme.label, Demo.themeIndex, #list)
+  if T.EmblemSource then
+    local src = T:EmblemSource(T:Get(theme.key))
+    say(L.UI_DEMO_THEME_EMBLEM, theme.label, tostring(src.atlas or src.file))
+  end
+  if T.RepaintAll then T:RepaintAll() end
+  Q:Fire("THEME_CHANGED", T:Get(theme.key))
   refreshTracker()
   return true
 end

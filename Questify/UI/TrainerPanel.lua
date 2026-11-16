@@ -367,3 +367,4 @@ Q:On("SETTINGS_CHANGED", function(path)
   if path == "trainerPanel" and setting("trainerPanel") == false then Panel:Hide() end
   if path == "tracker.theme" and Panel:IsShown() then Panel:Refresh() end
 end)
+Q:On("THEME_CHANGED", function() if Panel:IsShown() then Q.SafeCall(Panel.Refresh, Panel) end end)

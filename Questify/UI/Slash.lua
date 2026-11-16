@@ -238,12 +238,18 @@ COMMANDS.theme = function(rest)
     Q:Print(L.UI_SLASH_THEME_LIST, themeList(), L[T:Current().label])
     return
   end
+  -- « /qf theme race » : le thème suit de nouveau la race du personnage
+  if rest:lower() == "race" or rest:lower() == L.UI_THEME_MY_RACE:lower() then
+    Q.Settings:Set("theme.followRace", true)
+    Q:Print(L.UI_SLASH_THEME_SET, L[T:Current().label])
+    return
+  end
   local key = T:Find(rest)
   if not key then
     Q:Print(L.UI_SLASH_THEME_UNKNOWN, rest, themeList())
     return
   end
-  Q.Settings:Set("tracker.theme", key)
+  T:Choose(key)
   Q:Print(L.UI_SLASH_THEME_SET, L[T:Get(key).label])
 end
 

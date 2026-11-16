@@ -253,6 +253,7 @@ local function newButton(f, key)
   local back = b:CreateTexture(nil, "BACKGROUND", nil, 0)
   inset(back, b, 1)
   back:SetColorTexture(BACK_COLOR[1], BACK_COLOR[2], BACK_COLOR[3], BACK_COLOR[4])
+  back.qvBack = true
   local icon = b:CreateTexture(nil, "ARTWORK")
   inset(icon, b, 1)
   b:SetHighlightTexture(HIGHLIGHT, "ADD")
@@ -290,18 +291,33 @@ function Buttons:Create(f)
   B.options.icon:SetTexCoord(ICON_CROP[1], ICON_CROP[2], ICON_CROP[3], ICON_CROP[4])
 end
 
+-- Couleurs du thème (UI/Themes.lua) : liseré de métal, fond du panneau, lueur de l'accent.
+function Buttons:ApplyTheme(theme)
+  if not theme or not theme.colors then return end
+  local c = theme.colors
+  for _, b in pairs(self.buttons) do
+    b.border:SetColorTexture(c.metal[1], c.metal[2], c.metal[3], 1)
+    for _, r in ipairs({ b:GetRegions() }) do
+      if r.qvBack then r:SetColorTexture(c.panelAlt[1], c.panelAlt[2], c.panelAlt[3], 1) end
+    end
+    b.glow:SetColorTexture(c.accent[1], c.accent[2], c.accent[3], 1)
+  end
+end
+
 -- Layout(frame, pad) : boutons en haut à droite du suivi, de gauche à droite dans l'ordre ORDER,
 -- puis lueurs à jour.
-function Buttons:Layout(f, pad)
+-- top : décalage depuis le haut du suivi (centré dans le bandeau du thème), sinon pad - 2.
+function Buttons:Layout(f, pad, top)
   self:Create(f)
   if not self.classIconSet then self:SetClassIcon() end
   local n = #ORDER
   for i, key in ipairs(ORDER) do
     local b = self.buttons[key]
     b:ClearAllPoints()
-    b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -(pad + (n - i) * (SIZE + GAP)), -(pad - 2))
+    b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -(pad + (n - i) * (SIZE + GAP)), -(top or (pad - 2)))
     b:Show()
   end
+  if Q.UI.Tracker and Q.UI.Tracker.theme then self:ApplyTheme(Q.UI.Tracker.theme) end
   self:UpdateGlows()
 end
 

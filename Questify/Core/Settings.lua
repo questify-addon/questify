@@ -14,10 +14,15 @@ Settings.defaults = {
   dungeonQuests = true,
   nav = { routing = false, display = "native" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
-    theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
+    theme = "neutral", opacity = 0.9,       -- UI/Themes.lua : thème choisi et opacité du fond (0 à 1)
+    style = "solid",                        -- UI/Themes.lua : fond du suivi (solid, fade, none)
     foldBlizzard = true,                    -- UI/BlizzardTracker.lua : suivi de Blizzard replié
-    hideBlizzard = false,                 -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
+    hideBlizzard = false,                   -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
     objLayout = "list", objDetail = "mobs" },   -- Engine/Objectives.lua : objectifs de l'étape
+  -- Thème de toutes les fenêtres (UI/Themes.lua) : suivre la race, police, icônes des étapes
+  theme = { followRace = true, font = "game", icons = "flat", fontScale = 1 },
+  -- Flèche flottante (UI/Arrow.lua) : affichée, couleur (cyan, theme, gold, green, white, pink)
+  arrow = { show = true, color = "cyan" },
   nameplates = true,
   objectGlow = true,
   trainerAlert = true,

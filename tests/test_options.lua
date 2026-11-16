@@ -10,7 +10,11 @@ local function load(opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
   if opts.skipGuides == nil then opts.skipGuides = true end
-  return Mock.loadAddon(TOC, opts)
+  local Q = Mock.loadAddon(TOC, opts)
+  -- profils et import : le thème choisi s'applique (pas celui de la race du personnage de test)
+  if Q and Q.Settings then Q.Settings.defaults.theme.followRace = false end
+  if Q and Q.UI and Q.UI.Tracker and Q.UI.Tracker.frame then Q.UI.Tracker:Refresh() end
+  return Q
 end
 
 local function noErrors(t)
@@ -169,7 +173,7 @@ return {
     t.eq(ids(S:Search("THÈME", Q.Player)), theme, "accented capital")
     t.ok(contains(ids(S:Search("opacité", Q.Player)), "tracker.opacity"))
     t.ok(contains(ids(S:Search("recompense", Q.Player)), "autoReward"), "« récompense » without accent")
-    t.ok(contains(ids(S:Search("parchemin", Q.Player)), "tracker.theme"), "choice labels are searched")
+    t.ok(contains(ids(S:Search("mort-vivant", Q.Player)), "tracker.theme"), "choice labels are searched")
     t.ok(contains(ids(S:Search("vols bateaux", Q.Player)), "nav.routing"), "every word must match")
     t.eq(#S:Search("zzzz", Q.Player), 0)
     t.eq(#S:Search("   ", Q.Player), 0, "blank search")
@@ -500,32 +504,52 @@ return {
   ---------------------------------------------------------------------------
   -- Thème
   ---------------------------------------------------------------------------
-  theme_section_previews_every_theme_and_applies_live = function(t)
+  theme_section_cards_segments_swatches_and_preview = function(t)
     local Q = load()
     local O = Q.UI.Options
     O:Open("theme")
     local w = O:Widget("tracker.theme")
     local list = Q.Themes:List()
-    t.eq(#w.tiles, #list)
+    t.eq(#w.cards, #list, "one card per theme")
     for i, th in ipairs(list) do
-      local tile = w.tiles[i]
-      t.eq(tile.value, th.key)
-      t.eq({ tile.swatch:GetSize() }, { 80, 40 }, "80 x 40 preview")
-      t.eq(tile.swatch.qvThemeKey, th.key, "theme applied on the preview")
-      t.eq(tile.name:GetText(), th.label)
+      local card = w.cards[i]
+      t.eq(card.value, th.key)
+      t.eq(card.name:GetText(), th.label)
+      t.eq(card.emblem, nil, "no crest: colour themes only")
     end
-    t.ok(w.tiles[1].selected:IsShown(), "parchment selected")
-    Mock.click(w.tiles[2], "LeftButton")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
-    t.eq(Q.UI.Tracker.themeKey, "dark", "tracker restyled at once")
-    t.ok(w.tiles[2].selected:IsShown() and not w.tiles[1].selected:IsShown())
-    -- opacité 0 à 100 % sur tracker.opacity, aperçus compris
+    t.ok(w.cards[1].check:IsShown(), "Questify chosen")
+    t.ok(w.cards[5].mine:IsShown() and not w.cards[1].mine:IsShown(), "the race card is marked")
+    Mock.click(w.cards[9], "LeftButton")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
+    t.eq(Q.Settings:Get("theme.followRace"), false)
+    t.eq(Q.UI.Tracker.themeKey, "horde", "tracker restyled at once")
+    t.ok(w.cards[9].check:IsShown() and not w.cards[1].check:IsShown())
+    t.eq(O.frame.qvTheme.key, "horde", "the window follows the theme")
+    -- fenêtre élargie pour l'aperçu en direct
+    t.ok(O.preview:IsShown(), "live preview shown")
+    t.eq(O.frame:GetWidth(), 760 + O.PREVIEW_W)
+    O:SelectSection("route")
+    t.ok(not O.preview:IsShown())
+    t.eq(O.frame:GetWidth(), 760)
+    O:SelectSection("theme")
+    -- segments : fond du suivi
+    local st = O:Widget("tracker.style")
+    t.eq(#st.segs, 3)
+    Mock.click(st.segs[2], "LeftButton")
+    t.eq(Q.Settings:Get("tracker.style"), "fade")
+    t.eq(Q.UI.Tracker.themeStyle, "fade")
+    t.ok(st.segs[2].under:IsShown() and not st.segs[1].under:IsShown())
+    -- couleurs de la flèche
+    local sw = O:Widget("arrow.color")
+    t.eq(#sw.swatches, 6)
+    Mock.click(sw.swatches[3], "LeftButton")
+    t.eq(Q.Settings:Get("arrow.color"), "gold")
+    -- opacité 0 à 100 % sur tracker.opacity
     local op = O:Widget("tracker.opacity")
     t.eq(plain(op.value:GetText()), "90 %")
     op.slider:SetValue(0.5)
     t.near(Q.Settings:Get("tracker.opacity"), 0.5, 1e-9)
     t.near(Q.UI.Tracker.themeOpacity, 0.5, 1e-9, "tracker background follows")
-    t.near(w.tiles[1].swatch.qvThemeOpacity, 0.5, 1e-9, "previews follow")
     t.eq(plain(op.value:GetText()), "50 %")
     noErrors(t)
   end,
@@ -539,9 +563,9 @@ return {
     t.eq(P:Active(), "Default")
     t.eq(P:Mode(), "account")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Default")
-    Q.Settings:Set("tracker.theme", "dark")
+    Q.Settings:Set("tracker.theme", "horde")
     Q.Settings:Set("tracker.point", { "TOPLEFT", "BOTTOMLEFT", 50, 60 })
-    t.eq(Q.UI.Tracker.themeKey, "dark")
+    t.eq(Q.UI.Tracker.themeKey, "horde")
     t.eq(P:Create("Raid"), "Raid")
     t.eq(select(2, P:Create("Raid")), Q.L.PROFILE_ERR_EXISTS)
     t.eq(select(2, P:Create("  ")), Q.L.PROFILE_ERR_NAME)
@@ -553,15 +577,15 @@ return {
     Q:On("PROFILE_CHANGED", function(name) changed = name end)
     t.ok(P:SetActive("Raid"))
     t.eq(changed, "Raid")
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment", "new profile has the defaults")
-    t.eq(Q.UI.Tracker.themeKey, "parchment", "tracker theme re-applied live")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral", "new profile has the defaults")
+    t.eq(Q.UI.Tracker.themeKey, "neutral", "tracker theme re-applied live")
     t.ok(contains(fired, "tracker.theme") and contains(fired, "tracker.point"), "changed paths fired")
     t.ok(not contains(fired, "autoQuest"), "unchanged paths not fired")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Raid", "mapping saved")
     t.eq(P:Mode(), "custom")
     -- copie : le profil actif prend les valeurs de l'autre
     t.ok(P:CopyFrom("Default"))
-    t.eq(Q.UI.Tracker.themeKey, "dark")
+    t.eq(Q.UI.Tracker.themeKey, "horde")
     t.eq(Q.Settings:Get("tracker.point")[3], 50)
     t.eq(select(2, P:CopyFrom("Raid")), Q.L.PROFILE_ERR_SAME)
     Q.Settings:Set("autoQuest", false)
@@ -576,9 +600,9 @@ return {
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Default")
     -- remise à zéro : valeurs par défaut, position comprise
     t.ok(P:Reset())
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral")
     t.eq(Q.Settings:Get("tracker.point"), nil)
-    t.eq(Q.UI.Tracker.themeKey, "parchment")
+    t.eq(Q.UI.Tracker.themeKey, "neutral")
     -- après /reload, le profil actif et ses valeurs restent
     P:Create("Solo")
     P:SetActive("Solo")
@@ -679,19 +703,19 @@ return {
   per_character_mode = function(t)
     local Q = load()
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "gradient")
+    Q.Settings:Set("tracker.theme", "alliance")
     t.ok(P:SetMode("character"))
     t.eq(P:Active(), "Testeur - Testrealm", "profile named after the character")
     t.eq(P:Mode(), "character")
     t.eq(QuestifyDB.profileMode, "character")
-    t.eq(Q.Settings:Get("tracker.theme"), "gradient", "copied from the current profile")
-    Q.Settings:Set("tracker.theme", "dark")
-    t.eq(QuestifyDB.profiles.Default.settings.tracker.theme, "gradient", "shared profile untouched")
+    t.eq(Q.Settings:Get("tracker.theme"), "alliance", "copied from the current profile")
+    Q.Settings:Set("tracker.theme", "horde")
+    t.eq(QuestifyDB.profiles.Default.settings.tracker.theme, "alliance", "shared profile untouched")
     -- un autre personnage, vu pour la première fois : son propre profil, copié de « Default »
     Mock.player.name = "Autre"
     local Q2 = Mock.reload()
     t.eq(Q2.Profiles:Active(), "Autre - Testrealm")
-    t.eq(Q2.Settings:Get("tracker.theme"), "gradient")
+    t.eq(Q2.Settings:Get("tracker.theme"), "alliance")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Testeur - Testrealm", "first character kept")
     -- retour au profil partagé
     t.ok(Q2.Profiles:SetMode("account"))
@@ -706,7 +730,7 @@ return {
   migration_from_old_settings_keeps_everything = function(t)
     local old = {
       settings = { autoQuest = false, nav = { display = "tomtom", routing = false },
-        tracker = { theme = "dark", opacity = 0.4, scale = 1.2, width = 300, point = { "TOPLEFT", "BOTTOMLEFT", 10, 20 },
+        tracker = { theme = "horde", opacity = 0.4, scale = 1.2, width = 300, point = { "TOPLEFT", "BOTTOMLEFT", 10, 20 },
           locked = true, nextSteps = 3, showMobs = true, autoTarget = false } },
       debug = false, minimapAngle = 123,
     }
@@ -719,11 +743,11 @@ return {
     t.eq(d.profiles.Default.settings.autoQuest, false)
     t.eq(Q.Settings:Get("autoQuest"), false)
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     t.near(Q.Settings:Get("tracker.opacity"), 0.4, 1e-9)
     t.eq(Q.Settings:Get("tracker.point")[4], 20)
     t.eq(Q.Settings:Get("tracker.locked"), true)
-    t.eq(Q.UI.Tracker.themeKey, "dark", "tracker starts with the migrated theme")
+    t.eq(Q.UI.Tracker.themeKey, "horde", "tracker starts with the migrated theme")
     t.eq(Q.Rewards:Role(), "tank", "loot profile kept for this character")
     t.eq(Q.char.rewardRole, "tank", "still in the character data")
     t.eq(d.profiles.Default.rewardRole, nil, "never in a profile")
@@ -791,7 +815,7 @@ return {
     Mock.player.classFile = "SHAMAN"
     local Q = load()
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "transparent")
+    Q.Settings:Set("tracker.theme", "undead")
     Q.Settings:Set("tracker.opacity", 0.35)
     Q.Settings:Set("tracker.scale", 1.15)
     Q.Settings:Set("tracker.width", 312)
@@ -812,8 +836,8 @@ return {
     t.ok(ok, msg)
     t.eq(P:Active(), "Copie")
     t.eq(P:Payload("Copie"), P:Payload("Default"), "identical values")
-    t.eq(Q.Settings:Get("tracker.theme"), "transparent")
-    t.eq(Q.UI.Tracker.themeKey, "transparent", "applied live")
+    t.eq(Q.Settings:Get("tracker.theme"), "undead")
+    t.eq(Q.UI.Tracker.themeKey, "undead", "applied live")
     t.eq(Q.Rewards:Role(), "caster", "import never sets the loot profile")
     t.ok(plain(msg):find("Copie", 1, true))
     -- dans le profil actuel
@@ -915,10 +939,10 @@ return {
     t.eq(names, { "Default", "Raid" })
     t.eq(active.radios[1].label:GetText(), Q.L.PROFILE_DEFAULT_NAME)
     t.ok(active.radios[2]:GetChecked())
-    Q.Settings:Set("tracker.theme", "dark")
+    Q.Settings:Set("tracker.theme", "horde")
     Mock.click(active.radios[1], "LeftButton")
     t.eq(P:Active(), "Default")
-    t.eq(Q.UI.Tracker.themeKey, "parchment")
+    t.eq(Q.UI.Tracker.themeKey, "neutral")
     -- Copier depuis… : liste des autres profils, puis confirmation
     t.eq(O:RunAction(Q.OptionsSchema:Entry("profile.copy"), O:Widget("profile.copy").button,
       O:Widget("profile.copy")), "fallback")
@@ -928,9 +952,9 @@ return {
     Mock.click(picker.buttons[1], "LeftButton")
     t.ok(not picker:IsShown())
     t.eq(Mock.lastCall("StaticPopup_Show").args[1], "QUESTIFY_OPTIONS_CONFIRM")
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment", "nothing before confirmation")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral", "nothing before confirmation")
     confirm()
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     -- Supprimer… : jamais le profil actif ni « Default »
     Mock.click(O:Widget("profile.delete").button, "LeftButton")
     t.ok(picker:IsShown())
@@ -943,9 +967,9 @@ return {
     t.eq(plain(O.statusText:GetText()), Q.L.OPT_PICK_NONE)
     -- Réinitialiser, après confirmation
     Mock.click(O:Widget("profile.reset").button, "LeftButton")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     confirm()
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral")
     -- type de profil : par personnage
     local mode = O:Widget("profile.mode")
     t.ok(mode.radios[1]:GetChecked(), "per account")
@@ -980,7 +1004,7 @@ return {
     local Q = load()
     local O = Q.UI.Options
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "gradient")
+    Q.Settings:Set("tracker.theme", "alliance")
     O:Open("profiles")
     local ex = O:Widget("profile.export")
     Mock.click(ex.button, "LeftButton")
@@ -1003,7 +1027,7 @@ return {
     t.eq(im.status:GetText(), Q.L.PROFILE_ERR_CORRUPT)
     t.eq(Mock.countCalls("StaticPopup_Show"), popups, "no confirmation for a bad string")
     -- chaîne valide dans un nouveau profil, après confirmation
-    Q.Settings:Set("tracker.theme", "parchment")
+    Q.Settings:Set("tracker.theme", "neutral")
     im.box:SetText(s)
     im.target:SetText("Partage")
     Mock.click(im.apply, "LeftButton")
@@ -1012,8 +1036,8 @@ return {
     t.eq(P:Active(), "Default", "nothing before confirmation")
     confirm()
     t.eq(P:Active(), "Partage")
-    t.eq(Q.Settings:Get("tracker.theme"), "gradient")
-    t.eq(Q.UI.Tracker.themeKey, "gradient")
+    t.eq(Q.Settings:Get("tracker.theme"), "alliance")
+    t.eq(Q.UI.Tracker.themeKey, "alliance")
     t.ok(plain(im.status:GetText()):find("Partage", 1, true))
     noErrors(t)
   end,

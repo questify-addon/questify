@@ -659,3 +659,4 @@ end
 Q:On("SETTINGS_CHANGED", function(path)
   if path == "zoneOverlay" or path == "zoneMode" or path == "tracker.theme" or path == nil then schedule() end
 end)
+Q:On("THEME_CHANGED", schedule)

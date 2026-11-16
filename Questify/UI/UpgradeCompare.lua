@@ -252,7 +252,7 @@ end
 ---------------------------------------------------------------------------
 local function theme()
   local T = Q.Themes
-  return T and T:Get(setting("tracker.theme")) or nil
+  return T and (T.Current and T:Current() or T:Get(setting("tracker.theme"))) or nil
 end
 local function recolor(text, th)
   return Q.Themes and Q.Themes:Recolor(text, th) or text
@@ -345,7 +345,8 @@ end
 function Compare:Show(owner, data)
   local f = self:Create()
   self.theme = theme()
-  if Q.Themes then Q.Themes:Apply(f, setting("tracker.theme"), setting("tracker.opacity")) end
+  local T = Q.Themes
+  if T then T:Apply(f, T.CurrentKey and T:CurrentKey() or setting("tracker.theme"), setting("tracker.opacity")) end
   self.used = {}
   for _, pool in pairs(self.pools) do
     for _, o in ipairs(pool) do

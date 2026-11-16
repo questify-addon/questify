@@ -262,7 +262,7 @@ return {
     t.eq(order, { "WARLOCK_OLD", "WARLOCK_OLD2", "WARLOCK_NEW", "WARLOCK_DONE", "WARLOCK_IGN" },
       "late first, then available, done, ignored")
     t.ok(plain(J.classRows[1].info:GetText()):find(string.format(Q.L.UI_CQ_LATE, 8), 1, true), "late label")
-    t.ok(J.classRows[1].info:GetText():find("|cffff", 1, true), "alert colour")
+    t.ok(J.classRows[1].info:GetText():find("|c" .. Q.Themes:Hex("danger"), 1, true), "alert colour (theme danger)")
     t.ok(not plain(J.classRows[3].info:GetText()):find(string.format(Q.L.UI_CQ_LATE, 20), 1, true), "not late")
     t.ok(J.classRows[1].addButton:IsShown(), "late chain: add button")
     t.eq(J.classRows[1].addButton:GetText(), Q.L.UI_BTN_ADD_ROUTE)
@@ -388,5 +388,69 @@ return {
     t.eq(Q.UI.Journal.classRows[1].title:GetText(), "The Stolen Tome", "journal row")
     Q.UI.ClassQuestPopup:Show(chain)
     t.eq(Q.UI.ClassQuestPopup.title:GetText(), "The Stolen Tome", "popup")
+  end,
+
+  -- Habillage du thème (UI/Themes.lua, maquette journal(t)) : bandeau décoré, onglet ouvert souligné,
+  -- étape courante sur fond « sel », Options… en action principale ; tout repeint sur THEME_CHANGED.
+  journal_wears_the_theme = function(t)
+    local Q = load()
+    local J, T = Q.UI.Journal, Q.Themes
+    J:ShowTab("route")
+    local f = J.frame
+    t.ok(f.qvDecor and f.qvDecor.header and not f.qvDecor.emblem, "decorated: plain header, no crest")
+    t.eq(J.titleText:GetParent(), f.qvDecor.header, "title in the banner")
+    t.eq(J.tabs[1]:GetParent(), f.qvDecor.header, "tabs in the banner")
+    t.ok(J.tabs[1].underline:IsShown(), "open tab underlined")
+    t.ok(not J.tabs[2].underline:IsShown() and not J.tabs[3].underline:IsShown())
+    local function rgb(role, theme) local r, g, b = T:Color(role, theme); return { r, g, b, 1 } end
+    t.eq({ J.tabs[1].text:GetTextColor() }, rgb("text"), "open tab: main text")
+    t.eq({ J.tabs[2].text:GetTextColor() }, rgb("textDim"), "other tabs: secondary text")
+    t.eq({ J.stepHeader:GetTextColor() }, rgb("textMuted"), "column title: muted text")
+    t.eq(J.optionsButton.qvButtonKind, "primary")
+    t.eq(J.routeButton.qvButtonKind, "secondary")
+    local cur
+    for _, r in ipairs(J.stepRows) do if r:IsShown() and r.isCurrent then cur = r end end
+    t.ok(cur and cur.currentBg:IsShown() and cur.currentBg.bar:IsShown(), "current step: sel and accent bar")
+    t.eq({ cur.state:GetVertexColor() }, rgb("accent"), "current step arrow: accent")
+    Mock.click(J.tabs[3], "LeftButton")
+    t.ok(J.tabs[3].underline:IsShown() and not J.tabs[1].underline:IsShown(), "underline follows the tab")
+    -- autre thème : tout est repeint
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "horde")
+    local horde = T:Get("horde")
+    t.eq(f.qvTheme.key, "horde", "frame repainted")
+    t.eq({ J.tabs[3].text:GetTextColor() }, rgb("text", horde))
+    t.eq({ J.stepHeader:GetTextColor() }, rgb("textMuted", horde))
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Fenêtres annexes : même habillage (bandeau, action principale), repeintes sur THEME_CHANGED.
+  popups_wear_the_theme = function(t)
+    local Q = load()
+    local T = Q.Themes
+    local CQ = Q.UI.ClassQuestPopup
+    CQ:Show(Ext.warlockChain())
+    local DP, DC, PP = Q.UI.DungeonPopup, Q.UI.DungeonChainPopup, Q.UI.ProfessionPicker
+    DP:Create(); DC:Create(); PP:Create()
+    for name, P in pairs({ class = CQ, dungeon = DP, chain = DC, professions = PP }) do
+      t.ok(P.frame.qvDecor and P.frame.qvDecor.header, name .. ": banner")
+      t.eq(P.headText:GetParent(), P.frame.qvDecor.header, name .. ": title in the banner")
+    end
+    t.eq(CQ.addButton.qvButtonKind, "primary")
+    t.eq(CQ.ignoreButton.qvButtonKind, "secondary")
+    t.eq(DP.addButton.qvButtonKind, "primary")
+    t.eq(DC.toggleButton.qvButtonKind, "primary")
+    t.eq(PP.okButton.qvButtonKind, "primary")
+    local RC = Q.UI.RouteChoicePopup
+    RC:Create()
+    t.ok(RC.window.qvDecor and RC.window.qvDecor.header, "route choice: banner")
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "troll")
+    local r, g, b = T:Color("text", T:Get("troll"))
+    for name, P in pairs({ class = CQ, dungeon = DP, chain = DC, professions = PP }) do
+      t.eq(P.frame.qvTheme.key, "troll", name .. ": repainted")
+      t.eq({ P.headText:GetTextColor() }, { r, g, b, 1 }, name .. ": title repainted")
+    end
+    t.eq(#Mock.errors, 0)
   end,
 }

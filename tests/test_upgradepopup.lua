@@ -501,7 +501,7 @@ return {
       { text = "Equip: Improves your chance to get a critical strike by 1%.", kind = "new" },
       { text = "Use: Increases run speed by 40% for 6 sec.", kind = "new" },
     })
-    t.ok(P.name:GetText():find("|cff1d4f8c[Stromgarde Hauberk]", 1, true), "rare: dark blue on parchment")
+    t.ok(P.name:GetText():find("|cff%x%x%x%x%x%x%[Stromgarde Hauberk%]"), "rare: name in its quality colour")
     P.frame.IsMouseOver = function() return true end
     Mock.advance(0.1)
     t.ok(C:IsShown())
@@ -529,11 +529,11 @@ return {
     receive(1, item(3086, { name = "Ringmail Gloves", equipLoc = "INVTYPE_HAND", classID = 4, subclassID = 3,
       stats = { [STR] = 2 } }))
     local P = Q.UI.UpgradePopup
-    t.eq(P.frame.qvThemeKey, "parchment")
-    local parchment = P.equipButton.qvStyle
-    Q.Settings:Set("tracker.theme", "dark")
-    t.eq(P.frame.qvThemeKey, "dark")
-    t.ok(P.equipButton.qvStyle ~= parchment, "buttons restyled")
+    -- thème en vigueur (celui du suivi : la race du personnage par défaut)
+    t.eq(P.frame.qvThemeKey, Q.Themes:CurrentKey())
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "horde")
+    t.eq(P.frame.qvThemeKey, "horde", "box repainted with the new theme")
     t.eq(#Mock.errors, 0)
   end,
 }

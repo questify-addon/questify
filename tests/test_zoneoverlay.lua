@@ -232,13 +232,17 @@ return {
     showMap(MAP)
     local s = Q.UI.ZoneOverlay.world
     local r, g, b, a = s.tex.fill[1]:GetVertexColor()
-    t.near(r, 0x40 / 255, 1e-6); t.near(g, 0xe0 / 255, 1e-6); t.near(b, 0x50 / 255, 1e-6)
+    -- couleur du code de zone (ff40e050) telle que le thème en vigueur l'affiche
+    local want = Q.Themes:CodeColor("ff40e050")
+    t.near(r, want[1], 1e-6); t.near(g, want[2], 1e-6); t.near(b, want[3], 1e-6)
     t.near(a, 0.2, 1e-6, "fill alpha")
-    -- parchemin : vert foncé du thème (code ff40e050 remappé)
-    Q.Settings:Set("tracker.theme", "parchment")
+    -- autre thème choisi : la zone est repeinte avec lui
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "horde")
     Mock.advance(0.5)
     r, g, b = s.tex.fill[1]:GetVertexColor()
-    t.near(r, 0x1f / 255, 1e-6); t.near(g, 0x6e / 255, 1e-6); t.near(b, 0x1f / 255, 1e-6)
+    want = Q.Themes:CodeColor("ff40e050", Q.Themes:Get("horde"))
+    t.near(r, want[1], 1e-6); t.near(g, want[2], 1e-6); t.near(b, want[3], 1e-6)
     t.eq(#Mock.errors, 0)
   end,
 }

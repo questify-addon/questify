@@ -28,7 +28,7 @@ local MENU_WIDTH = 240
 
 -- Icônes du jeu par profil de butin.
 local ICONS = {
-  auto = "Interface\\Icons\\INV_Misc_Book_09",
+  auto = "Interface\\AddOns\\Questify\\Media\\Icon",   -- icône de Questify (boussole et parchemin)
   caster = "Interface\\Icons\\Spell_Fire_FireBolt02",
   healer = "Interface\\Icons\\Spell_Holy_HolyBolt",
   melee = "Interface\\Icons\\INV_Sword_04",

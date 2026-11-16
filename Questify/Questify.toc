@@ -4,7 +4,7 @@
 ## Notes-frFR: Guide de leveling gratuit pour World of Warcraft: Forever (1-60).
 ## Author: Questify contributors
 ## Version: 0.8.1
-## IconTexture: Interface\Icons\INV_Misc_Book_09
+## IconTexture: Interface\AddOns\Questify\Media\Icon
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -46,6 +46,7 @@ Locales\StringsAuction.lua
 Locales\StringsQuestValue.lua
 Locales\StringsPace.lua
 Locales\StringsClass.lua
+Locales\StringsThemes.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -111,6 +112,8 @@ Automation\Taxi.lua
 
 UI\Themes.lua
 UI\ObjectiveRows.lua
+UI\ThemePreview.lua
+UI\Arrow.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
 UI\QuestValue.lua

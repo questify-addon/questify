@@ -60,8 +60,9 @@ Schema.SECTIONS = {
     { id = "layout", label = "OPT_CAT_TRACKER_LAYOUT" },
     { id = "content", label = "OPT_CAT_TRACKER_CONTENT" } } },
   { id = "theme", label = "OPT_SEC_THEME", categories = {
-    { id = "theme", label = "OPT_CAT_THEME_THEME" },
-    { id = "background", label = "OPT_CAT_THEME_BACKGROUND" } } },
+    { id = "theme", label = "OPT_CAT_THEME_COLORS" },
+    { id = "arrow", label = "OPT_CAT_THEME_ARROW" },
+    { id = "background", label = "OPT_CAT_THEME_LOOK" } } },
   { id = "comfort", label = "OPT_SEC_COMFORT", categories = {
     { id = "hearth", label = "OPT_CAT_COMFORT_HEARTH" },
     { id = "warnings", label = "OPT_CAT_COMFORT_WARNINGS" } } },
@@ -421,9 +422,13 @@ add({ id = "keyQuestItem", section = "tracker", category = "content", type = "ke
   keywords = "raccourci touche clavier objet de quete keybind binding key shortcut quest item" })
 
 -- Thème -------------------------------------------------------------------
+-- Section dessinée par UI/Options.lua avec l'aperçu en direct à droite (UI/ThemePreview.lua).
+add({ id = "theme.followRace", section = "theme", category = "theme", type = "toggle", path = "theme.followRace",
+  label = "OPT_THEME_FOLLOW_RACE", tip = "OPT_TIP_THEME_FOLLOW_RACE",
+  keywords = "theme race personnage automatique suivre faction follow race character automatic" })
 add({ id = "tracker.theme", section = "theme", category = "theme", type = "select", style = "themes",
   path = "tracker.theme", label = "OPT_THEME", tip = "OPT_TIP_THEME",
-  keywords = "theme apparence fond parchemin noir transparent fondu gris style look background parchment dark",
+  keywords = "theme apparence couleurs alliance horde humain nain elfe gnome orc troll tauren mort-vivant skyborne look colours colors human dwarf night elf undead",
   values = function()
     local out = {}
     for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do out[#out + 1] = th.key end
@@ -431,9 +436,38 @@ add({ id = "tracker.theme", section = "theme", category = "theme", type = "selec
   end,
   choices = function()
     local out = {}
-    for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do out[#out + 1] = { value = th.key, text = th.label } end
+    for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do
+      out[#out + 1] = { value = th.key, text = th.label, group = th.group }
+    end
     return out
   end })
+add({ id = "arrow.show", section = "theme", category = "arrow", type = "toggle", path = "arrow.show",
+  label = "OPT_ARROW_SHOW", tip = "OPT_TIP_ARROW_SHOW",
+  keywords = "fleche flottante direction distance navigation arrow floating direction distance" })
+add({ id = "arrow.color", section = "theme", category = "arrow", type = "select", style = "swatches",
+  path = "arrow.color", label = "OPT_ARROW_COLOR", tip = "OPT_TIP_ARROW_COLOR",
+  keywords = "fleche couleur cyan or vert blanc rose arrow colour color gold green white pink",
+  enabled = function() return Q.Settings:Get("arrow.show") ~= false end,
+  choices = {
+    { value = "cyan", label = "OPT_ARROW_CYAN" }, { value = "theme", label = "OPT_ARROW_THEME" },
+    { value = "gold", label = "OPT_ARROW_GOLD" }, { value = "green", label = "OPT_ARROW_GREEN" },
+    { value = "white", label = "OPT_ARROW_WHITE" }, { value = "pink", label = "OPT_ARROW_PINK" } } })
+add({ id = "theme.font", section = "theme", category = "background", type = "select", style = "segments",
+  path = "theme.font", label = "OPT_THEME_FONT", tip = "OPT_TIP_THEME_FONT",
+  keywords = "police texte lisible inter font text readable",
+  choices = { { value = "game", label = "OPT_THEME_FONT_GAME" }, { value = "clean", label = "OPT_THEME_FONT_CLEAN" } } })
+add({ id = "theme.icons", section = "theme", category = "background", type = "select", style = "segments",
+  path = "theme.icons", label = "OPT_THEME_ICONS", tip = "OPT_TIP_THEME_ICONS",
+  keywords = "icones etapes plates jeu icons steps flat game",
+  choices = { { value = "flat", label = "OPT_THEME_ICONS_FLAT" }, { value = "game", label = "OPT_THEME_ICONS_GAME" } } })
+add({ id = "tracker.style", section = "theme", category = "background", type = "select", style = "segments",
+  path = "tracker.style", label = "OPT_THEME_STYLE", tip = "OPT_TIP_THEME_STYLE",
+  keywords = "fond suivi plein fondu transparent sans fond background tracker full fade none transparent",
+  choices = { { value = "solid", label = "OPT_THEME_STYLE_SOLID" }, { value = "fade", label = "OPT_THEME_STYLE_FADE" },
+    { value = "none", label = "OPT_THEME_STYLE_NONE" } } })
+add({ id = "theme.fontScale", section = "theme", category = "background", type = "slider", path = "theme.fontScale",
+  label = "OPT_THEME_FONT_SCALE", tip = "OPT_TIP_THEME_FONT_SCALE", min = 0.8, max = 1.5, step = 0.05, format = percent,
+  keywords = "taille texte police grand petit lisibilite text size font large small readability" })
 add({ id = "tracker.opacity", section = "theme", category = "background", type = "slider", path = "tracker.opacity",
   label = "OPT_OPACITY", tip = "OPT_TIP_OPACITY", min = 0, max = 1, step = 0.05, format = percent,
   keywords = "theme fond transparence opacite alpha background opacity transparency" })
@@ -576,7 +610,7 @@ function Schema:Choices(e, player)
   local out = {}
   for _, c in ipairs(list or {}) do
     out[#out + 1] = { value = c.value, text = c.text or (c.label and L()[c.label]) or tostring(c.value),
-      disabled = c.disabled == true }
+      disabled = c.disabled == true, group = c.group }
   end
   return out
 end
