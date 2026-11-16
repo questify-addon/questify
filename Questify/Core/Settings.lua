@@ -28,8 +28,6 @@ Settings.defaults = {
     objLayout = "list", objDetail = "mobs" },   -- Engine/Objectives.lua : objectifs de l'étape
   -- Thème de toutes les fenêtres (UI/Themes.lua) : suivre la race, police, icônes des étapes
   theme = { followRace = true, font = "game", icons = "flat", fontScale = 1 },
-  -- Flèche flottante (UI/Arrow.lua) : affichée, couleur (cyan, theme, gold, green, white, pink)
-  arrow = { show = true, color = "cyan" },
   nameplates = true,
   objectGlow = true,
   trainerAlert = true,
