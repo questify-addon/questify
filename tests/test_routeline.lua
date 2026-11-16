@@ -209,6 +209,27 @@ return {
     noErrors(t)
   end,
 
+  -- Même chemin publié de nouveau (NAV_ROUTE à chaque calcul) : les repères de la carte du monde ne
+  -- sont pas retirés et reposés (chaque retrait parcourt tous les repères de la carte) ; si seule
+  -- l'avancée a changé, seuls les points dépassés partent. Un autre chemin est reposé.
+  same_route_not_rebuilt = function(t)
+    local Q = load()
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    local acquired = Mock.countCalls("WorldMapFrame:AcquirePin")
+    t.ok(acquired > 0, "pins posed")
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))          -- même chemin, nouvelles tables
+    t.eq(Mock.countCalls("WorldMapFrame:AcquirePin"), acquired, "same path: pins kept")
+    t.eq((counts()), 58)
+    Mock.player.x = 45                          -- 173 yd plus loin, avant la minuterie
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    local w = counts()
+    t.ok(w <= 58 - 14 and w >= 58 - 16, "passed points removed (" .. w .. " left)")
+    t.eq(Mock.countCalls("WorldMapFrame:AcquirePin"), acquired, "no pin posed again")
+    Q:Fire("NAV_ROUTE", fakeRoute(Q, nil, { world(Q, ELWYNN, 50, 50), world(Q, ELWYNN, 50, 40) }))
+    t.ok(Mock.countCalls("WorldMapFrame:AcquirePin") > acquired, "another path: posed")
+    noErrors(t)
+  end,
+
   other_continent_only_current = function(t)
     local Q = load()
     local legs = {

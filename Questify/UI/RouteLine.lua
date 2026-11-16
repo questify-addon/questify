@@ -21,7 +21,9 @@ local addonName, Q = ...
 -- l'affichage ; jamais avec Shortest Path Forever, qui dessine la sienne.
 --
 -- Coût (spec § 3 bis) : les points sont calculés à chaque NAV_ROUTE et au changement de style, pas à
--- chaque image. La carte du monde ne reçoit ses repères que pendant qu'elle est ouverte (posés à
+-- chaque image ; une route dont les trajets et le chemin n'ont pas changé (signature) n'est pas
+-- reposée : seuls les points dépassés partent (chaque retrait d'un repère de la carte du monde
+-- parcourt tous ses repères). La carte du monde ne reçoit ses repères que pendant qu'elle est ouverte (posés à
 -- l'ouverture, retirés à la fermeture) ; la minicarte les reçoit tout le temps. Toutes les
 -- CHECK_EVERY s, l'avancée du joueur le long du chemin retire les points dépassés et la minicarte
 -- reprend les points les plus proches quand le joueur a bougé. Au plus MAX_PINS repères (halos
@@ -104,6 +106,7 @@ local progress = 0
 local miniAt           -- { instance, x, y } du joueur au dernier calcul de la minicarte
 local ticker
 local levels           -- nil : pas encore tenté ; false : niveau par défaut ; true : types insérés
+local posedSig         -- signature de la route posée (voir signature), nil : rien de posé
 
 ---------------------------------------------------------------------------
 -- Outils
@@ -485,6 +488,23 @@ local function syncMinimap(lib, me, color)
   for k = 1, n do candD[candI[k]] = nil end
 end
 
+-- Signature de ce qui est tracé : style, trajet en cours, trajets (genre, départ, arrivée) et chemin,
+-- sans la position du joueur.
+local function pointKey(p)
+  if type(p) ~= "table" then return "" end
+  return string.format("%s:%.1f:%.1f", tostring(p.mapId or p.instance), tonumber(p.x) or 0, tonumber(p.y) or 0)
+end
+
+local function signature(r)
+  local parts = { currentStyle(), tostring(r.leg), tostring(r.straight == true) }
+  for _, L in ipairs(type(r.legs) == "table" and r.legs or {}) do
+    if type(L) == "table" then parts[#parts + 1] = tostring(L.kind) .. pointKey(L.from) .. pointKey(L.to) end
+  end
+  parts[#parts + 1] = "path"
+  for _, p in ipairs(type(r.path) == "table" and r.path or {}) do parts[#parts + 1] = pointKey(p) end
+  return table.concat(parts, "|")
+end
+
 -- Points dépassés retirés, fenêtre de la carte avancée, minicarte refaite si le joueur a bougé.
 local function follow(force)
   local lib = hbdPins()
@@ -530,13 +550,23 @@ function RouteLine:Clear()
   clearMinimap(lib)
   count, first, worldLast, progress = 0, 1, 0, 0
   poly, cum, miniAt = nil, nil, nil
+  posedSig = nil
 end
 
 function RouteLine:Refresh()
-  self:Clear()
-  if type(route) ~= "table" or not drawable() then return end
   local lib = hbdPins()
-  if not lib then return end
+  if type(route) ~= "table" or not drawable() or not lib then
+    self:Clear()
+    return
+  end
+  local sig = signature(route)
+  if sig == posedSig and count > 0 then
+    -- même tracé : seule l'avancée a pu changer
+    follow(false)
+    return
+  end
+  self:Clear()
+  posedSig = sig
   build(route)
   if count == 0 then return end
   -- points déjà dépassés (chemin parti d'avant la position actuelle) retirés avant la pose
