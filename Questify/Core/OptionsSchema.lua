@@ -232,6 +232,17 @@ add({ id = "keyAutoTarget", section = "automation", category = "targeting", type
 add({ id = "autoReward", section = "loot", category = "auto", type = "toggle", path = "autoReward",
   label = "UI_OPT_AUTOREWARD", tip = "OPT_TIP_AUTOREWARD",
   keywords = "butin loot recompense reward choisir choix automatique objet item" })
+add({ id = "rewardPick", section = "loot", category = "auto", type = "select", style = "radio", path = "rewardPick",
+  label = "OPT_REWARD_PICK", tip = "OPT_TIP_REWARD_PICK",
+  keywords = "butin loot recompense reward choix automatique amelioration puissance prix vente cher upgrade power value price vendor",
+  values = { "upgrade", "value" },
+  choices = function()
+    local Lx = L()
+    return { { value = "upgrade", text = Lx.OPT_REWARD_PICK_UPGRADE }, { value = "value", text = Lx.OPT_REWARD_PICK_VALUE } }
+  end })
+add({ id = "rewardMarks", section = "loot", category = "auto", type = "toggle", path = "rewardMarks",
+  label = "OPT_REWARD_MARKS", tip = "OPT_TIP_REWARD_MARKS",
+  keywords = "butin loot recompense reward fleche piece marque icone amelioration prix arrow coin mark icon upgrade value" })
 add({ id = "upgradePopup", section = "loot", category = "auto", type = "toggle", path = "upgradePopup",
   label = "UI_OPT_UPGRADE", tip = "OPT_TIP_UPGRADE",
   keywords = "butin loot amelioration equipement upgrade gear annonce popup" })

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questify — marques sur les récompenses de quête (maquette)</title>
+<style>
+  :root { --gold:#ffd100; --gold2:#c9a34a; --edge:#6d5a3a; --txt:#eadfc8; --dim:#8c8170;
+    --ink:#2b1a08; --ink2:#4a3418; --up:#3fd24a; --coin:#ffc61a; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--txt); font:14px/1.35 "Segoe UI", system-ui, sans-serif; padding:16px 16px 60px;
+    background:radial-gradient(ellipse at 30% 20%, #3c4a33 0%, #1c241a 45%, #0b0e0a 100%); min-height:100vh; }
+  .serif { font-family:"Friz Quadrata", Georgia, "Times New Roman", serif; }
+  h1 { font-size:17px; margin:0 0 4px; color:var(--gold2); }
+  .note { color:#b6ab97; font-size:12.5px; margin:0 0 10px; max-width:900px; }
+  .variant { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0 18px; font-size:12.5px; color:#b6ab97; }
+  .variant button { background:#241d16; color:var(--txt); border:1px solid var(--edge); border-radius:4px; padding:4px 10px; cursor:pointer; font:inherit; }
+  .variant button.on { border-color:var(--gold2); color:var(--gold); }
+  .wrap { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+
+  /* QuestFrame façon jeu */
+  .qf { position:relative; width:384px; border:3px solid #5c4a2c; outline:2px solid #15110c; border-radius:6px; box-shadow:0 10px 40px #000c; background:#1a140e; }
+  .qf-title { height:28px; line-height:28px; text-align:center; color:var(--gold); background:linear-gradient(#3a2f22,#1a140e); border-bottom:1px solid var(--edge); font-size:14px; }
+  .close { position:absolute; right:5px; top:3px; width:21px; height:21px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #d23a2a, #4a0d08); border:1px solid var(--gold2); color:#fff; font-size:11px; text-align:center; line-height:19px; }
+  .parch { margin:8px; padding:14px 14px 18px; border-radius:2px; color:var(--ink);
+    background:linear-gradient(180deg,#e9dcb9 0%,#dccaa0 60%,#cfba8b 100%); min-height:430px; }
+  .parch h2 { margin:0 0 6px; font-size:18px; color:#3a1f00; font-weight:400; }
+  .parch p { margin:0 0 10px; font-size:13px; color:var(--ink2); }
+  .rew-h { margin:14px 0 4px; font-size:16px; color:#3a1f00; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 6px; }
+  .rb { position:relative; display:flex; align-items:center; height:44px; }
+  .icon { position:relative; width:39px; height:39px; flex:none; border-radius:2px; background-size:cover; background-position:center; box-shadow:0 0 0 1px #000; }
+  .icon .qb { position:absolute; inset:-1px; border:2px solid var(--q, transparent); border-radius:2px; }
+  .name { flex:1; height:38px; margin-left:-2px; padding:2px 6px 0 8px; display:flex; align-items:center; font-size:12px; line-height:1.15;
+    background:linear-gradient(90deg,#4a3a22cc,#4a3a2244); border-radius:0 4px 4px 0; }
+  .name span { color:var(--qc,#fff); text-shadow:0 1px 0 #000; }
+  .cnt { position:absolute; right:2px; bottom:0; color:#fff; font-size:11px; text-shadow:0 0 2px #000,0 0 2px #000; }
+
+  /* marques Questify */
+  .mk { position:absolute; width:18px; height:18px; pointer-events:none; filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 1px #000); }
+  .mk.up { left:-5px; top:-5px; }
+  .mk.coin { right:-5px; top:-5px; }
+  .mk.wait { right:-5px; top:-5px; }
+  .hide { display:none !important; }
+
+  .money { margin-top:12px; font-size:13px; color:var(--ink2); }
+  .money b { color:#3a1f00; font-weight:400; }
+  .btns { display:flex; justify-content:space-between; padding:4px 10px 8px; }
+  .btns div { padding:3px 14px; border:1px solid #6d1c0e; border-radius:4px; background:linear-gradient(#a3281a,#5a0f06); color:var(--gold); font-size:12.5px; }
+
+  /* infobulle */
+  .tt { width:300px; background:rgba(4,6,18,.97); border:2px solid #6f7487; border-radius:5px; padding:7px 9px; font:400 12.5px/1.4 "Friz Quadrata", Georgia, serif; color:#fff; box-shadow:0 2px 10px #000; }
+  .tt .t1 { font-size:14.5px; color:#1eff00; } .tt .y { color:var(--gold); } .tt .g { color:#1eff00; }
+  .tt .qf-line { margin-top:4px; padding-top:4px; border-top:1px solid #ffffff22; }
+  .tt .qf-line .lg { color:var(--up); } .tt .qf-line .cn { color:var(--coin); }
+
+  .legend { max-width:420px; font-size:12.5px; color:#c9bea9; }
+  .legend h3 { margin:0 0 6px; font-size:13.5px; color:var(--gold2); font-weight:600; }
+  .legend ul { margin:0 0 12px; padding-left:18px; } .legend li { margin:3px 0; }
+  .legend code { color:#e8d9b0; background:#00000040; padding:0 3px; border-radius:3px; }
+  .chip { display:inline-block; vertical-align:-3px; width:16px; height:16px; }
+  .side { display:flex; flex-direction:column; gap:16px; }
+</style>
+</head>
+<body>
+<h1 class="serif">Questify — marques sur les choix de récompense</h1>
+<p class="note">Fenêtre de fin de quête de Blizzard (QuestFrame, onglet Récompenses). Questify ajoute deux marques sur l'icône
+de chaque choix : une <b style="color:var(--up)">flèche verte</b> en haut à gauche pour une amélioration de stats
+(même calcul que le choix automatique : <code>Rewards:UpgradeGain</code>, profil de rôle du personnage), une
+<b style="color:var(--coin)">pièce dorée</b> en haut à droite sur le choix qui se revend le plus cher (prix × quantité).
+Rien sur le nom de l'objet. Les cas se choisissent ci-dessous.</p>
+
+<div class="variant">
+  <span>Cas :</span>
+  <button data-v="normal" class="on">Normal</button>
+  <button data-v="same">Amélioration = la plus chère</button>
+  <button data-v="tie">Égalité de prix</button>
+  <button data-v="none">Aucune amélioration</button>
+  <button data-v="unknown">Prix pas encore connu</button>
+</div>
+
+<div class="wrap">
+  <div class="qf">
+    <div class="qf-title serif">Le cuir de la Vallée</div>
+    <div class="close">✕</div>
+    <div class="parch serif">
+      <h2>Récompenses</h2>
+      <p>Bon travail. Ces peaux suffiront pour l'hiver. Prenez ce qui vous convient le mieux.</p>
+      <div class="rew-h">Vous pourrez choisir une de ces récompenses :</div>
+      <div class="grid" id="grid"></div>
+      <div class="money">Vous recevrez aussi : <b>65 <span style="color:#c0c0c0">●</span></b></div>
+    </div>
+    <div class="btns serif"><div>Terminer la quête</div><div>Annuler</div></div>
+  </div>
+
+  <div class="side">
+    <div class="tt" id="tt">
+      <div class="t1">Bottes de l'éclaireur</div>
+      <div>Lié quand ramassé</div>
+      <div style="display:flex;justify-content:space-between"><span>Pieds</span><span>Cuir</span></div>
+      <div>62 Armure</div>
+      <div>+5 Agilité</div>
+      <div>+3 Endurance</div>
+      <div class="y">Niveau 18 requis</div>
+      <div>Prix de vente : 1 <span style="color:#c0c0c0">●</span> 42 <span style="color:#b87333">●</span></div>
+      <div class="qf-line" id="ttline"><span class="lg">▲ Amélioration</span> pour Voleur (Mêlée) · Pieds</div>
+    </div>
+    <div class="legend">
+      <h3>Règles proposées</h3>
+      <ul>
+        <li><b>Flèche</b> sur chaque choix qui améliore l'équipé (gain &gt; 0), pas seulement le meilleur. Objet non
+          équipable, pas pour la classe, niveau trop haut : pas de flèche.</li>
+        <li><b>Pièce</b> sur le plus cher à la revente, prix × quantité, dès qu'il y a au moins deux choix.
+          Égalité : tous les ex æquo ont la pièce. Prix nul partout : aucune pièce.</li>
+        <li><b>Objet pas encore en cache</b> : pas de pièce tant qu'un prix manque (on ne marque pas un « plus
+          cher » faux) ; les marques se redessinent dès que le jeu envoie l'objet
+          (<code>GET_ITEM_INFO_RECEIVED</code>).</li>
+        <li>Couleurs lues dans <code>Q.Themes</code> (rôles <code>upgrade</code> et <code>value</code>), glyphes
+          blancs teintés, cernés de noir : lisibles sur le parchemin et sur une interface sombre.</li>
+        <li>Option <code>Marquer les récompenses de quête</code> (activée par défaut) dans Butin.</li>
+      </ul>
+      <h3>Décisions (2026-11-16)</h3>
+      <ul>
+        <li>Marques aussi dans le journal de quêtes et la fenêtre de détail ; ligne dans l'infobulle du choix.</li>
+        <li>Amélioration et plus cher sur le même objet : les deux marques.</li>
+        <li>Choix automatique : nouveau réglage <code>Récompense automatique</code> : « Le plus de puissance »
+          (meilleure amélioration, sinon le plus cher ; défaut) ou « Le plus d'argent » (toujours le plus cher).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICON = "https://wow.zamimg.com/images/wow/icons/large/";
+const UP = `<svg class="mk up" viewBox="0 0 32 32"><path d="M16 3 L29 17 H21 V29 H11 V17 H3 Z" fill="currentColor" stroke="#000" stroke-width="2" stroke-linejoin="round" style="color:var(--up)"/></svg>`;
+const COIN = `<svg class="mk coin" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="var(--coin)" stroke="#000" stroke-width="2"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#7a5200" stroke-width="2"/></svg>`;
+const WAIT = `<svg class="mk wait" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#00000088" stroke="#888" stroke-width="2" stroke-dasharray="4 3"/></svg>`;
+const ITEMS = [
+  { n:"Bottes de l'éclaireur", i:"inv_boots_05", q:"#1eff00" },
+  { n:"Gilet de cuir épais", i:"inv_chest_leather_09", q:"#1eff00" },
+  { n:"Bâton de l'ermite", i:"inv_staff_08", q:"#1eff00" },
+  { n:"Potion de soins (×3)", i:"inv_potion_51", q:"#ffffff", cnt:3 },
+];
+// marks[i] = [upgrade, coin, wait]
+const CASES = {
+  normal:  [[1,0],[1,0],[0,1],[0,0]],
+  same:    [[1,1],[1,0],[0,0],[0,0]],
+  tie:     [[1,0],[0,1],[0,1],[0,0]],
+  none:    [[0,0],[0,0],[0,1],[0,0]],
+  unknown: [[1,0],[1,0],[0,0,1],[0,0]],
+};
+function draw(v) {
+  const g = document.getElementById("grid"); g.innerHTML = "";
+  CASES[v].forEach((m, k) => {
+    const it = ITEMS[k];
+    const ic = it.cnt ? `<span class="cnt">${it.cnt}</span>` : "";
+    g.insertAdjacentHTML("beforeend", `<div class="rb"><div class="icon" style="background-image:url(${ICON}${it.i}.jpg);--q:${it.q}55">
+      ${ic}${m[0] ? UP : ""}${m[1] ? COIN : ""}${m[2] ? WAIT : ""}</div>
+      <div class="name"><span style="--qc:${it.q}">${it.n}</span></div></div>`);
+  });
+  const line = document.getElementById("ttline");
+  line.innerHTML = v === "same"
+    ? `<span class="lg">▲ Amélioration</span> pour Voleur (Mêlée) · Pieds &nbsp;<span class="cn">● Se revend le plus cher</span>`
+    : (v === "none" ? `<span style="color:#9a9a9a">Pas une amélioration</span>`
+                    : `<span class="lg">▲ Amélioration</span> pour Voleur (Mêlée) · Pieds`);
+  document.querySelectorAll(".variant button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+}
+document.querySelectorAll(".variant button").forEach(b => b.onclick = () => draw(b.dataset.v));
+draw("normal");
+</script>
+</body>
+</html>

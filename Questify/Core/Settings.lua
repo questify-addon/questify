@@ -9,6 +9,8 @@ Q.Settings = Settings
 Settings.defaults = {
   autoQuest = true,
   autoReward = true,
+  rewardPick = "upgrade",   -- Automation/Rewards.lua : "upgrade" (amélioration d'abord) ou "value" (le plus cher)
+  rewardMarks = true,       -- UI/RewardMarks.lua : flèche et pièce sur les choix de récompense
   dungeonQuests = true,
   nav = { routing = false, display = "native" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,

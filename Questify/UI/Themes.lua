@@ -339,3 +339,24 @@ function Themes:Apply(frame, themeKey, opacity)
   frame.qvThemeKey, frame.qvThemeOpacity = theme.key, alpha
   return theme
 end
+
+---------------------------------------------------------------------------
+-- Couleurs de signal (marques posées hors du suivi, par exemple sur les récompenses de quête,
+-- UI/RewardMarks.lua) : upgrade (amélioration), value (plus cher à la revente), muted (neutre).
+-- Un thème peut les remplacer par sa table signals = { [rôle] = { r, g, b } } ; sinon ces valeurs,
+-- choisies pour rester lisibles sur le parchemin comme sur une interface sombre (glyphes cernés
+-- de noir).
+---------------------------------------------------------------------------
+local SIGNALS = {
+  upgrade = { 0.25, 0.88, 0.25 },
+  value = { 1, 0.78, 0.10 },
+  muted = { 0.62, 0.62, 0.62 },
+}
+Themes.SIGNALS = SIGNALS
+
+-- Q.Themes:SignalColor(role, theme) -> r, g, b (muted pour un rôle inconnu).
+function Themes:SignalColor(role, theme)
+  theme = theme or self:Current()
+  local c = (theme and theme.signals and theme.signals[role]) or SIGNALS[role] or SIGNALS.muted
+  return c[1], c[2], c[3]
+end
