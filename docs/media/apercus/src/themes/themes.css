@@ -1,0 +1,273 @@
+/* Maquette des thèmes de Questify (refonte « lisible », inspirée de Polestar).
+   Unités : 1 px = 1 unité d'interface du jeu ; chaque groupe est agrandi par zoom.
+   Règles de dessin tenables en jeu : aplats et fondus (SetColorTexture, SetGradient), filets de
+   1 px, liseré de 2 px, aucun coin arrondi sauf l'emblème (masque circulaire), pas d'ombre floue
+   (une ombre portée en texture de 8 px au plus). */
+
+:root {
+  --game: "Optima", "Marcellus", "Palatino", serif;   /* Friz Quadrata, la police du jeu */
+  --clean: "Inter", "Avenir Next", "Helvetica Neue", sans-serif;
+  --font: var(--game);
+}
+body.f-clean { --font: var(--clean); }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #0f1114; color: #e9ebef; font-family: var(--clean);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- barre de choix (navigateur) */
+.bar-ctl {
+  position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center;
+  padding: 10px 24px; background: rgba(12,14,17,.94); border-bottom: 1px solid rgba(255,255,255,.08);
+  font-size: 13px;
+}
+.bar-ctl .grp { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.bar-ctl .lbl { color: #8a929e; margin-right: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.bar-ctl button {
+  font: inherit; color: #d7dce3; background: #1d2127; border: 1px solid #323843; padding: 4px 9px; cursor: pointer;
+}
+.bar-ctl button.on { background: #e9edf3; color: #111; border-color: #e9edf3; }
+body.shot .bar-ctl { display: none; }
+
+/* ---------------------------------------------------------------- page */
+.page { width: 1920px; padding: 36px 48px 48px; }
+.head-cap { display: flex; align-items: flex-end; gap: 32px; margin-bottom: 26px; }
+.head-cap .brand { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #9fb2c8; }
+.head-cap h1 { margin: 6px 0 0; font-size: 40px; font-weight: 600; letter-spacing: -.01em; color: #f1f3f6; }
+.head-cap .meta { font-size: 17px; color: #9aa2ae; line-height: 1.5; }
+.head-cap .meta b { color: #e3e7ec; font-weight: 600; }
+.swatches { display: flex; gap: 6px; margin-left: auto; }
+.swatches span { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.12); }
+
+.row { display: flex; gap: 40px; align-items: flex-start; margin-bottom: 40px; }
+.cell .cap { font-size: 15px; color: #8f98a5; margin: 0 0 10px; letter-spacing: .02em; }
+.cell .cap b { color: #dfe3e8; font-weight: 600; }
+
+/* Paysage enneigé (vallée de Frigères) : le cas le plus dur pour le suivi semi-transparent. */
+.world {
+  position: relative; padding: 28px;
+  background:
+    radial-gradient(ellipse 60% 40% at 30% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(70,90,110,.55), rgba(70,90,110,0) 70%),
+    linear-gradient(160deg, #c9d3dd 0%, #9fb0c0 40%, #6f8396 70%, #4b5b6b 100%);
+}
+
+/* ---------------------------------------------------------------- texte du jeu */
+.ui { font-family: var(--font); color: var(--text); }
+.ui * { font-family: inherit; }
+.t   { color: var(--text); }
+.td  { color: var(--textDim); }
+.tm  { color: var(--textMuted); }
+.ta  { color: var(--accent); }
+.c-quest { color: var(--quest); } .c-npc { color: var(--npc); } .c-mob { color: var(--mob); }
+.c-item { color: var(--item); } .c-ok { color: var(--success); } .c-warn { color: var(--warning); }
+.c-bad { color: var(--danger); } .c-xp { color: var(--xp); } .c-zone { color: var(--zone); }
+.s15 { font-size: 15px; line-height: 18px; font-weight: 600; }
+.s13 { font-size: 13px; line-height: 16px; }
+.s12 { font-size: 12px; line-height: 15px; }
+.s11 { font-size: 11px; line-height: 14px; }
+.semi { font-weight: 600; }
+.nw { white-space: nowrap; }
+.ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.num { font-variant-numeric: tabular-nums; }
+/* Ombre dure de 1 px : seulement sur le suivi posé sur le monde */
+.hard { text-shadow: 1px 1px 0 rgba(0,0,0,.85); }
+
+/* ---------------------------------------------------------------- fenêtre */
+.win {
+  position: relative; background: var(--bg); border: 1px solid var(--edge);
+  box-shadow: 0 6px 0 -2px rgba(0,0,0,.0), 0 8px 18px rgba(0,0,0,.45);
+}
+.win::before { /* liseré du thème */
+  content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--metal); z-index: 3;
+}
+.win .hd {
+  position: relative; height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px 0 12px;
+  background: linear-gradient(180deg, var(--sky) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--line);
+}
+/* blason : icône ronde dans un anneau de métal (texture d'anneau teintée par --metal) */
+.emb { display: inline-block; vertical-align: middle; position: relative; width: 32px; height: 32px; flex: none; }
+.emb .disc { position: absolute; inset: 9%; border-radius: 50%; overflow: hidden; background: #0b1530; }
+.emb .disc img { width: 100%; height: 100%; display: block; transform: scale(1.15); }
+.emb .rg { position: absolute; inset: 0; background: linear-gradient(180deg, #fff6dc, var(--metal) 45%, color-mix(in srgb, var(--metal), black 50%));
+  -webkit-mask: var(--ring) center / 100% 100% no-repeat; mask: var(--ring) center / 100% 100% no-repeat; }
+/* coins de métal (texture de coin teintée) */
+.co { position: absolute; width: 22px; height: 22px; z-index: 4; pointer-events: none;
+  background: linear-gradient(135deg, #fff6dc, var(--metal) 40%, color-mix(in srgb, var(--metal), black 50%));
+  -webkit-mask: var(--corner) center / 100% 100% no-repeat; mask: var(--corner) center / 100% 100% no-repeat; }
+.co.tl { left: -3px; top: -3px; } .co.tr { right: -3px; top: -3px; transform: scaleX(-1); }
+.co.bl { left: -3px; bottom: -3px; transform: scaleY(-1); } .co.br { right: -3px; bottom: -3px; transform: scale(-1,-1); }
+/* blason en filigrane */
+.wm { position: absolute; right: 12px; bottom: 50px; border-radius: 50%; overflow: hidden; opacity: .05; pointer-events: none; }
+.wm img { width: 100%; height: 100%; transform: scale(1.2); }
+/* bandeau illustré */
+.bnr { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.bsky { position: absolute; inset: 0;
+  background: radial-gradient(1px 1px at 14% 26%, #ffffffa0, transparent), radial-gradient(1px 1px at 36% 14%, #ffffff80, transparent),
+    radial-gradient(1px 1px at 61% 30%, #ffffff90, transparent), radial-gradient(1px 1px at 83% 12%, #ffffff70, transparent),
+    radial-gradient(ellipse 45% 110% at 72% 0%, color-mix(in srgb, var(--sky), white 14%), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--sky), white 8%), var(--sky) 75%, color-mix(in srgb, var(--sky), var(--bg) 40%)); }
+/* la silhouette occupe la droite du bandeau et s'efface vers la gauche : le titre reste lisible */
+.bimg { position: absolute; left: 30%; right: 0; bottom: 0; height: 72%; background-size: cover; background-position: right bottom;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%); mask-image: linear-gradient(90deg, transparent, #000 35%); }
+.bin .sp { flex: 1; }
+.bin .sub { font-size: 12px; color: var(--textDim); text-shadow: 0 1px 2px #000; }
+.bin { position: relative; height: 100%; display: flex; align-items: center; gap: 10px; padding: 0 12px; }
+.bin .ttl, .bin .s15 { text-shadow: 0 1px 2px #000; }
+.bin .td { text-shadow: 0 1px 2px #000; }
+.trk .tbn { margin: -10px -12px 8px; }
+.hd .ttl { font-size: 15px; font-weight: 600; color: var(--text); }
+.hd .sub { font-size: 12px; color: var(--textMuted); }
+.hd .sp { flex: 1; }
+.x { width: 22px; height: 22px; display: grid; place-items: center; color: var(--textMuted); }
+.x svg { width: 12px; height: 12px; }
+
+/* onglets dans le bandeau */
+.tabs { display: flex; gap: 18px; margin-left: 18px; align-self: stretch; }
+.tab { display: flex; align-items: center; font-size: 13px; color: var(--textDim); position: relative; }
+.tab.on { color: var(--text); }
+.tab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); }
+
+.ft { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: var(--footer);
+  border-top: 1px solid var(--line); }
+
+/* barre latérale */
+.side { background: var(--sidebar); border-right: 1px solid var(--line); }
+.side .it { display: flex; align-items: center; height: 24px; padding: 0 10px 0 12px; gap: 8px;
+  font-size: 13px; color: var(--textDim); position: relative; }
+.side .it .r { white-space: nowrap; margin-left: auto; color: var(--textMuted); font-size: 12px; }
+.side .it.on { background: var(--sel); color: var(--text); }
+.side .it.on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); }
+.side .it.on .r { color: var(--textDim); }
+
+/* titres de section */
+.h2 { font-size: 18px; line-height: 22px; font-weight: 600; color: var(--text); }
+.h3 { font-size: 12px; line-height: 15px; color: var(--textMuted); text-transform: uppercase; letter-spacing: .08em;
+  padding-bottom: 5px; border-bottom: 1px solid var(--line); margin: 16px 0 8px; display: flex; }
+.h3 .r { margin-left: auto; text-transform: none; letter-spacing: 0; }
+
+/* contrôles */
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 12px;
+  font-size: 13px; color: var(--text); background: var(--panelAlt); border: 1px solid var(--edge); white-space: nowrap; }
+.btn.pri { background: var(--accent); color: var(--onAccent); border-color: var(--accent); font-weight: 600; }
+.btn.ghost { background: transparent; }
+.btn.dis { color: var(--textMuted); }
+.chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+.chk i { width: 14px; height: 14px; border: 1px solid var(--edge); background: var(--panelAlt); display: grid; place-items: center; flex: none; }
+.chk.on i { background: var(--accent); border-color: var(--accent); }
+.chk i svg { width: 10px; height: 10px; color: var(--onAccent); }
+.chk.on i svg { display: block; } .chk i svg { display: none; }
+.rad i { border-radius: 50%; }
+.rad.on i { background: var(--panelAlt); border-color: var(--accent); }
+.rad.on i::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.seg { display: inline-flex; border: 1px solid var(--edge); }
+.seg span { white-space: nowrap; padding: 3px 10px; font-size: 12px; color: var(--textDim); background: var(--panelAlt); }
+.seg span + span { border-left: 1px solid var(--edge); }
+.seg span.on { background: var(--sel); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.field { height: 24px; display: flex; align-items: center; gap: 6px; padding: 0 8px; background: var(--panelAlt);
+  border: 1px solid var(--edge); font-size: 12px; color: var(--textMuted); }
+.field svg { width: 12px; height: 12px; }
+.slider { position: relative; height: 4px; background: var(--line2); }
+.slider b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.slider i { position: absolute; top: -5px; width: 14px; height: 14px; background: var(--text); border: 1px solid var(--edge); }
+.info { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--textMuted); color: var(--textMuted);
+  font-size: 10px; display: inline-grid; place-items: center; font-family: var(--clean); font-weight: 700; }
+
+/* info-bulle */
+.tip { position: absolute; background: var(--panel); border: 1px solid var(--edge); padding: 8px 10px; width: 230px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5); }
+
+/* barre de progression */
+.prog { position: relative; height: 4px; background: var(--line2); }
+.prog b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+
+/* ---------------------------------------------------------------- icônes */
+.ic { width: 16px; height: 16px; flex: none; display: inline-block; vertical-align: middle; }
+.ic svg { width: 100%; height: 100%; display: block; }
+/* style « jeu » : les icônes jaunes cernées de noir de Blizzard (redessinées) */
+body.i-game .flat { display: none; } body:not(.i-game) .gameic { display: none; }
+.gameic { width: 16px; height: 16px; display: inline-block; background-size: 100% 100%; vertical-align: middle; }
+.g-accept { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11.5 3h9l-2 17.5h-5z' fill='%23ffd200' stroke='%23000' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='26.2' r='3.6' fill='%23ffd200' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E"); }
+.g-turnin { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M9 10.5C9 6 12.2 3 16.4 3c4.4 0 7.4 2.8 7.4 6.6 0 3-1.7 4.6-3.6 5.8-1.6 1-2.2 1.7-2.2 3.4v1h-4.8v-1.5c0-2.8 1.1-4.1 3-5.4 1.5-1 2.4-1.7 2.4-3.1 0-1.5-1.1-2.5-2.6-2.5-1.7 0-2.8 1.1-2.9 3.1z' fill='%23ffd200' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='15.6' cy='26.2' r='3.4' fill='%23ffd200' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E"); }
+.g-kill { background-image: url("https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg"); }
+.g-done { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 17l7 7L27 7' fill='none' stroke='%2300c800' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+/* ---------------------------------------------------------------- suivi */
+.trk { position: relative; width: 276px; padding: 10px 12px 10px; }
+.trk .bgl { position: absolute; inset: 0; background: var(--bg); opacity: var(--op, .9); border: 1px solid var(--edge); }
+.trk .bgl::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--metal); z-index: 3; }
+.trk.st-fade .bgl { background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 35%, transparent 100%); border-color: transparent; }
+.trk.st-fade .bgl::before { right: 40%; background: linear-gradient(90deg, var(--trim), transparent); }
+.trk.st-none .bgl { display: none; }
+.trk.st-none .ui-in, .trk.st-fade .ui-in { text-shadow: 1px 1px 0 rgba(0,0,0,.9), 0 0 3px rgba(0,0,0,.6); }
+.trk .ui-in { position: relative; }
+.trk .hrow { display: flex; align-items: baseline; gap: 8px; }
+.trk .hrow .lv { margin-left: auto; }
+.trk .prog { margin: 6px 0 4px; }
+.trk .meta { display: flex; }
+.trk .meta .r, .trk .mob .r { margin-left: auto; white-space: nowrap; }
+.trk .cur { display: flex; gap: 10px; margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--line); }
+.trk .cur .ico { width: 34px; flex: none; text-align: center; }
+.trk .cur .ico img { width: 34px; height: 34px; display: block; box-shadow: 0 0 0 1px var(--edge); }
+.trk .cur .body { flex: 1; min-width: 0; }
+.verb { display: inline-block; font-size: 10px; line-height: 14px; padding: 0 5px; margin-right: 6px; vertical-align: 1px;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--onAccent); background: var(--accent); font-family: var(--clean); font-weight: 700; }
+.obj { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.obj .mini { flex: 1; height: 3px; background: var(--line2); position: relative; max-width: 50px; }
+.obj .mini b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--success); }
+.mob { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+.mob .r { margin-left: auto; }
+.nxt { margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--line); }
+.nxt .l { display: flex; align-items: center; gap: 7px; height: 18px; }
+
+/* liste des étapes du journal */
+.steps .l { display: flex; align-items: center; gap: 7px; height: 22px; padding: 0 8px; font-size: 13px; position: relative; }
+.steps .l .st { width: 12px; flex: none; display: grid; place-items: center; }
+.steps .l.done { color: var(--textMuted); }
+.steps .l.cur { background: var(--sel); color: var(--text); }
+.steps .l.cur::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); }
+.steps .l.next { color: var(--text); }
+.scroll { position: absolute; right: 3px; width: 4px; background: var(--line2); }
+.scroll b { position: absolute; left: 0; right: 0; background: var(--textMuted); }
+
+/* cartes de thème (options et assistant) : bandeau de la race, portrait, nom et faction */
+.cards { display: grid; gap: 6px; }
+.card { border: 1px solid var(--edge); background: var(--panelAlt); position: relative; }
+.card .band { height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 8px; position: relative; }
+.card .nmw { min-width: 0; }
+.card .nm { font-size: 13px; line-height: 15px; color: #fff; text-shadow: 0 1px 2px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .fc { font-size: 10px; line-height: 12px; color: #e3e7ee; opacity: .8; text-shadow: 0 1px 2px #000; }
+.card .acc { height: 3px; }
+.card .ok { position: absolute; right: 6px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent2); color: #0b0f14; display: grid; place-items: center; }
+.card .ok svg { width: 10px; height: 10px; }
+.card .auto { position: absolute; right: 6px; bottom: 5px; font: 600 9px/13px var(--clean); padding: 0 4px; color: #0b0f14; background: var(--metal); }
+.card.on { border-color: var(--accent2); box-shadow: 0 0 0 1px var(--accent2), 0 0 10px color-mix(in srgb, var(--accent2) 40%, transparent); }
+.sc2 { text-transform: uppercase; letter-spacing: .08em; }
+/* aperçu en direct (colonne de droite de la section Thème) */
+.live { width: 330px; padding: 12px 14px; border-left: 1px solid var(--line); background: var(--sidebar); }
+.liveworld { padding: 12px 8px; background: radial-gradient(ellipse 60% 50% at 30% 20%, rgba(255,255,255,.45), transparent 70%), linear-gradient(160deg, #c9d3dd 0%, #9fb0c0 45%, #6f8396 100%); }
+.dotlive { width: 7px; height: 7px; border-radius: 50%; background: #5fe08a; margin-left: 6px; box-shadow: 0 0 6px #5fe08a; }
+.sws { display: inline-flex; gap: 5px; }
+.swc { width: 18px; height: 18px; border: 1px solid rgba(255,255,255,.25); display: grid; place-items: center; font: 700 10px var(--clean); color: #0b0f14; }
+.swc.on { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--text); }
+/* scènes du suivi */
+.zonedot { display: block; width: 26px; height: 26px; margin: 4px auto 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c8ffc8, var(--zone) 45%, #1e6b2a); box-shadow: 0 0 0 1px var(--edge); }
+.trk .grp { margin: 5px 0 1px; text-transform: uppercase; letter-spacing: .06em; font-size: 10px; }
+.trk .use { margin-top: 4px; }
+.trk .meta .r, .trk .mob .r { margin-left: auto; white-space: nowrap; }
+.qitem { position: absolute; left: -54px; top: 70px; z-index: 5; filter: drop-shadow(0 0 8px var(--accent)); }
+
+/* grille de tous les thèmes */
+.grid13 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px 26px; }
+.grid13 .lab { font-size: 16px; color: #e3e7ec; margin-top: 10px; font-weight: 600; }
+.grid13 .lab small { color: #eef1f4; font-weight: 400; margin-left: 6px; font-size: 14px; }
+
+/* flèche flottante (sans cadre) : flèche lumineuse et distance */
+.arrow { width: 150px; text-align: center; font-family: var(--font); }
+.arrow svg { width: 96px; height: 70px; display: block; margin: 0 auto; }
+.arrow .d { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+.arrow .n { font-size: 12px; color: #e9eef3; text-shadow: 0 1px 2px #000, 0 0 4px #000; }

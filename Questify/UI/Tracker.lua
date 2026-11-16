@@ -20,9 +20,11 @@ local addonName, Q = ...
 -- Le clic sur un monstre passe par les boutons sécurisés d'UI/MobPanel.lua, posés par-dessus ses
 -- lignes sans s'ancrer au suivi : un enfant sécurisé rendrait le suivi protégé (impossible à
 -- redimensionner en combat). Ici, les lignes de monstres ne sont que du texte et des textures.
--- Apparence (UI/Themes.lua) : fond, bordure, couleurs du texte, de la barre et des lueurs selon
--- tracker.theme et tracker.opacity, réappliqués à chaud ; les codes de couleur des textes passent
--- par Q.Themes:Recolor (teintes foncées sur parchemin).
+-- Apparence (UI/Themes.lua) : thème en vigueur (race du personnage ou tracker.theme), fond du suivi
+-- (tracker.style : plein avec bandeau illustré et blason, fondu ou sans fond) et opacité, réappliqués
+-- à chaud ; les codes de couleur des textes passent par Q.Themes:Recolor. En fond plein, le titre
+-- du chapitre est dans le bandeau, à droite du blason ; la barre de progression est un trait fin
+-- à la couleur du thème, son texte dessous.
 Q.UI = Q.UI or {}
 local Tracker = {}
 Q.UI.Tracker = Tracker
@@ -32,6 +34,11 @@ local L = Q.L
 local WIDTH = 260           -- largeur par défaut (réglage tracker.width, poignée en bas à droite)
 local MIN_WIDTH, MAX_WIDTH = 220, 480
 local PAD = 8
+local HEADER_H = 44         -- bandeau illustré (fond plein)
+local HEADER_PLAIN = 20     -- ligne du titre (fondu, sans fond)
+local EMBLEM = 30           -- blason dans le bandeau
+local BAR_H = 4             -- barre de progression
+local BAR_TEXT_H = 13       -- texte de la barre, sous la barre
 local ICON = 22             -- icône de l'action courante
 local ICON_COL = 38         -- colonne de l'icône et de la distance
 local NEXT_HEIGHT = 15
@@ -342,26 +349,32 @@ function Tracker:Create()
   title:SetWordWrap(false)
   self.title = title
 
-  -- Niveaux du chapitre : écrits dans la barre (la place à droite du titre est aux boutons).
+  -- Niveaux du chapitre : écrits sous la barre (la place à droite du titre est aux boutons).
   local levels = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   levels:SetPoint("TOPRIGHT", -PAD, -PAD - 1)
   levels:SetJustifyH("RIGHT")
   levels:Hide()
   self.levels = levels
 
+  -- Bandeau illustré, blason, coins et liseré du thème (UI/Themes.lua) ; le titre y est posé.
+  if Q.Themes and Q.Themes.Decorate then
+    f.qvOwnTheme = true   -- le suivi se repeint lui-même (variante du fond)
+    self.decor = Q.Themes:Decorate(f, { header = HEADER_H, emblem = EMBLEM, title = title })
+  end
+
   local bar = CreateFrame("StatusBar", nil, f)
-  bar:SetHeight(12)
-  bar:SetPoint("TOPLEFT", PAD, -PAD - 18)
-  bar:SetPoint("TOPRIGHT", -PAD, -PAD - 18)
-  bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+  bar:SetHeight(BAR_H)
+  bar:SetPoint("TOPLEFT", PAD, -HEADER_H - 6)
+  bar:SetPoint("TOPRIGHT", -PAD, -HEADER_H - 6)
+  bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
   bar:SetMinMaxValues(0, 1)
   bar:SetValue(0)
   local barBg = bar:CreateTexture(nil, "BACKGROUND")
   barBg:SetAllPoints(bar)
   local barText = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  barText:SetPoint("LEFT", bar, "LEFT", 2, 0)
-  barText:SetPoint("RIGHT", bar, "RIGHT", -2, 0)
-  barText:SetJustifyH("CENTER")
+  barText:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, -3)
+  barText:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, -3)
+  barText:SetJustifyH("LEFT")
   barText:SetWordWrap(false)
   self.bar, self.barBg, self.barText = bar, barBg, barText
 
@@ -605,14 +618,55 @@ local TEXT_ROLES = {
 function Tracker:ApplyTheme(force)
   local f, T = self.frame, Q.Themes
   if not (f and T) then return false end
-  local key = T:Resolve(setting("tracker.theme"))
+  local key = T.CurrentKey and T:CurrentKey() or T:Resolve(setting("tracker.theme"))
+  local style = T.Style and T:Style() or "solid"
+  local font, icons = setting("theme.font"), setting("theme.icons")
   local opacity = T:Opacity(setting("tracker.opacity"))
-  if not force and key == self.themeKey and opacity == self.themeOpacity then return false end
-  local restyle = force or key ~= self.themeKey
-  self.theme = T:Apply(f, key, opacity)
-  self.themeKey, self.themeOpacity = key, opacity
-  if restyle then self:StyleAll() end
+  if not force and key == self.themeKey and opacity == self.themeOpacity and style == self.themeStyle
+    and font == self.themeFont and icons == self.themeIcons then return false end
+  self.theme = T:Apply(f, key, opacity, style)
+  self.themeKey, self.themeOpacity, self.themeStyle = key, opacity, style
+  self.themeFont, self.themeIcons = font, icons
+  self:PlaceHeader()
+  self:StyleAll()
   return true
+end
+
+-- Hauteur du haut du suivi : bandeau en fond plein, simple ligne de titre sinon.
+function Tracker:HeaderHeight()
+  local th = self.theme
+  return (th and th.decor and self.decor) and HEADER_H or HEADER_PLAIN
+end
+
+-- Titre dans le bandeau (à droite du blason) ou en haut à gauche ; barre sous le haut du suivi.
+function Tracker:PlaceHeader()
+  local f, title = self.frame, self.title
+  local d = self.decor
+  local h = self:HeaderHeight()
+  title:ClearAllPoints()
+  if d and d.header then d.header:SetHeight(h) end
+  if d and d.emblem and h == HEADER_H then
+    title:SetPoint("LEFT", d.emblem, "RIGHT", 8, 0)
+  else
+    title:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD + 2)
+  end
+  local bar = self.bar
+  bar:ClearAllPoints()
+  bar:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -h - 6)
+  bar:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -h - 6)
+end
+
+-- Haut de la zone sous la barre et son texte.
+function Tracker:BodyTop()
+  return self:HeaderHeight() + 6 + BAR_H + 3 + BAR_TEXT_H + 4
+end
+
+-- Icône d'une étape : glyphe plat du thème (prendre, rendre) ou icône du jeu. -> texture, r, g, b
+-- (nil : pas de teinte), plate.
+function Tracker:StepIcon(action)
+  local T = Q.Themes
+  if T and T.StepIcon then return T:StepIcon(action, self.theme) end
+  return Q.Format:ActionIcon(action)
 end
 
 -- Couleurs du thème sur toutes les lignes existantes (les lignes créées ensuite les prennent à
@@ -632,6 +686,14 @@ function Tracker:StyleAll()
   if bar then
     self.bar:SetStatusBarColor(bar.fill[1], bar.fill[2], bar.fill[3])
     self.barBg:SetColorTexture(bar.bg[1], bar.bg[2], bar.bg[3], bar.bg[4] or 1)
+  end
+  if self.title and self.title.SetFontObject and not self.titleFontSet then
+    -- titre du chapitre en 15, comme la maquette
+    local file, _, flags = self.title:GetFont()
+    if type(file) == "string" then pcall(self.title.SetFont, self.title, file, 15, flags or "") end
+    self.title.qvBaseFont = nil
+    self.titleFontSet = true
+    style(self.title, "title")
   end
   for _, g in ipairs(self.glows) do g:SetBlendMode(th.glowBlend or "ADD") end
 end
@@ -1088,8 +1150,11 @@ function Tracker:ShowMessage(text)
   for _, line in ipairs(self.warnLines) do line:Hide() end
   self.alertPulse:Stop()
   self.message:SetText(paint(text))
+  local top = (self.theme and self.theme.decor and self.decor) and HEADER_H or 0
+  self.message:ClearAllPoints()
+  self.message:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD - top)
   self.message:Show()
-  f:SetHeight(PAD * 2 + (self.message:GetStringHeight() or 12))
+  f:SetHeight(PAD * 2 + top + (self.message:GetStringHeight() or 12))
 end
 
 local function applyLock(f)
@@ -1415,7 +1480,9 @@ end
 local function layoutButtons(f)
   local B = Q.UI.TrackerButtons
   if not (B and B.Layout) then return 0 end
-  local ok, err = pcall(B.Layout, B, f, PAD)
+  local h = Tracker:HeaderHeight()
+  local top = math.floor((h - (B.SIZE or 18)) / 2 + 0.5)
+  local ok, err = pcall(B.Layout, B, f, PAD, h == HEADER_H and top or nil)
   if not ok then
     Q:ReportError(err)
     return 0
@@ -1440,7 +1507,7 @@ function Tracker:Refresh()
   f:SetWidth(W)
   local buttonsW = layoutButtons(f)
   self.message:SetWidth(W - 2 * PAD - buttonsW)
-  self.title:SetWidth(W - 2 * PAD - buttonsW)
+  self.title:SetWidth(W - 2 * PAD - buttonsW - (self:HeaderHeight() == HEADER_H and (EMBLEM + 8) or 0))
   for _, line in ipairs(self.nextLines) do line.text:SetWidth(W - 2 * PAD - 16) end
   f:Show()
 
@@ -1482,7 +1549,7 @@ function Tracker:Refresh()
     self.barText:SetText((self.barText:GetText() or "") .. "  ·  " .. chapterXP)
   end
   self.bar:Show()
-  local y = PAD + 18 + 12 + 6
+  local y = self:BodyTop()
   y = self:LayoutXPLine(y)
   y = self:LayoutMode(y)
   y = self:LayoutResume(y)
@@ -1555,11 +1622,19 @@ function Tracker:Refresh()
         if s ~= "done" and s ~= "skipped" and not (zone and zone.entryKeys[e.key]) then
           n = n + 1
           local line = self.nextLines[n]
-          line.icon:SetTexture(Q.Format:ActionIcon(e.step.action))
+          local tex, r, g, b = self:StepIcon(e.step.action)
+          line.icon:SetTexture(tex)
           line.icon:ClearAllPoints()
           line.icon:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 2, -y - 1)
-          line.icon:SetDesaturated(true)
-          line.icon:SetAlpha(0.7)
+          if r then
+            line.icon:SetDesaturated(false)
+            line.icon:SetVertexColor(r, g, b, 1)
+            line.icon:SetAlpha(1)
+          else
+            line.icon:SetVertexColor(1, 1, 1, 1)
+            line.icon:SetDesaturated(true)
+            line.icon:SetAlpha(0.7)
+          end
           line.icon:Show()
           line.text:ClearAllPoints()
           line.text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 18, -y)

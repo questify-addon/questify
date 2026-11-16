@@ -416,7 +416,7 @@ return {
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_THEME, list[2].label, 2, #list)))
     qf("demo off")
     t.eq(Q.Settings:Get("tracker.theme"), saved, "setting untouched")
-    t.eq(Q.UI.Tracker.themeKey, Q.Themes:Resolve(saved), "tracker back to its theme")
+    t.eq(Q.UI.Tracker.themeKey, Q.Themes:CurrentKey(), "tracker back to its theme")
     noErrors(t)
   end,
 

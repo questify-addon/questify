@@ -9,7 +9,11 @@ local addonName, Q = ...
 --     boutons radio ou menu déroulant (WowStyle1DropdownTemplate, sinon radios), curseur
 --     (MinimalSliderWithSteppersTemplate) avec sa valeur, boutons d'action ; une icône « i »
 --     (Interface\common\help-i) à côté de chaque contrôle montre ce qu'il fait.
---   Section Thème : un aperçu 80 x 40 par thème (Q.Themes:Apply) et l'opacité du fond.
+--   Habillage du thème (UI/Themes.lua) : bandeau illustré avec blason et titre, coins et liseré de
+--   métal, barre latérale et contrôles plats aux couleurs du thème, repeints à chaque changement.
+--   Section Thème : « suivre la race », cartes des treize thèmes (bandeau, blason, nom, faction),
+--   flèche flottante et sa couleur, police, icônes, fond et opacité du suivi ; à droite, l'aperçu
+--   en direct du suivi (UI/ThemePreview.lua : monstres à tuer, zone à plusieurs quêtes, objet).
 --   Section Profils : profil actif, type de profil, Nouveau / Copier depuis… / Supprimer… /
 --     Réinitialiser, Exporter (texte sélectionné, Ctrl+C) et Importer (après confirmation).
 -- Chaque changement passe par Q.Settings:Set (ou la fonction set de l'entrée) : les modules
@@ -29,15 +33,25 @@ local SIDEBAR_W = 168
 local SECTION_ROW_H = 24
 local CONTENT_X = SIDEBAR_W + 22          -- début de la liste défilante (depuis le bord du cadre)
 local CONTENT_W = WIDTH - CONTENT_X - 34  -- largeur utile (barre de défilement à droite)
-local CONTENT_TOP, CONTENT_BOTTOM = 66, 34
+local HEADER_H = 52                       -- bandeau illustré du thème
+local CONTENT_TOP, CONTENT_BOTTOM = HEADER_H + 10, 34
+local PREVIEW_W = 340                     -- aperçu en direct (section Thème)
 local ROW_GAP = 4
 local INDENT = 10
 local INFO_TEXTURE = "Interface\\common\\help-i"
 local INFO_SIZE = 20
 local CONFIRM_DIALOG = "QUESTIFY_OPTIONS_CONFIRM"
-local THEME_TILE_W, THEME_TILE_H = 104, 72
-local SWATCH_W, SWATCH_H = 80, 40
+local CARD_COLS, CARD_H, CARD_GAP = 3, 46, 6
+local SWATCH = 18
 Options.CONTENT_W = CONTENT_W
+Options.PREVIEW_W = PREVIEW_W
+
+local function theme() return Q.Themes and Q.Themes:Current() end
+local function tc(role)
+  local th = theme()
+  if not th then return 1, 1, 1, 1 end
+  return Q.Themes:Color(role, th)
+end
 
 ---------------------------------------------------------------------------
 -- Outils
@@ -387,7 +401,7 @@ function Build.toggle(e)
     label:SetText(text)
     cb:SetChecked(S:Get(e, player()) == true)
     cb:SetEnabled(enabled)
-    if enabled then label:SetTextColor(1, 1, 1) else label:SetTextColor(0.5, 0.5, 0.5) end
+    if enabled then label:SetTextColor(tc("text")) else label:SetTextColor(tc("textMuted")) end
   end
   row.layout = function()
     local w, h = fitLabel(label, CONTENT_W - INDENT - 28 - INFO_SIZE - 12)
@@ -425,6 +439,8 @@ end
 -- Choix : menu déroulant (style "dropdown", si disponible) ou boutons radio.
 function Build.select(e)
   if e.style == "themes" then return Build.themes(e) end
+  if e.style == "segments" then return Build.segments(e) end
+  if e.style == "swatches" then return Build.swatches(e) end
   local row = newRow(e)
   titleLine(row, e)
   row.radios = {}
@@ -465,6 +481,7 @@ function Build.select(e)
     local r = row.radios[i]
     if r then return r end
     r = CreateFrame("CheckButton", nextName("Radio"), row, "UIRadioButtonTemplate")
+    r.qvRadio = true
     r:SetSize(16, 16)
     r:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 10, -(22 + (i - 1) * 20))
     local text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -492,7 +509,7 @@ function Build.select(e)
       local text = tostring(c.text)
       if c.disabled then text = text .. " |cff808080" .. L.OPT_NOT_INSTALLED .. "|r" end
       r.label:SetText(text)
-      if c.disabled then r.label:SetTextColor(0.5, 0.5, 0.5) else r.label:SetTextColor(1, 1, 1) end
+      if c.disabled then r.label:SetTextColor(tc("textMuted")) else r.label:SetTextColor(tc("text")) end
       r:SetChecked(current == c.value)
       r:SetEnabled(not c.disabled)
       r:Show()
@@ -513,75 +530,268 @@ function Build.select(e)
   return row
 end
 
--- Thèmes : un aperçu par thème (cadre 80 x 40 sur lequel le thème est appliqué), le thème
--- choisi encadré d'or ; clic = Q.Settings:Set("tracker.theme", clé).
+-- Thèmes : une carte par thème, trois par ligne, groupées (neutre, Alliance, Horde) : bandeau de
+-- la race en fond, blason dans son anneau, nom et faction, trait de l'accent ; carte choisie
+-- encadrée de l'accent et cochée, celle de la race marquée « Ma race ». Clic = Q.Themes:Choose
+-- (décoche « suivre la race » si ce n'est pas la race du personnage).
+local GROUP_LABELS = { neutral = "UI_THEME_GROUP_NEUTRAL", alliance = "UI_THEME_GROUP_ALLIANCE", horde = "UI_THEME_GROUP_HORDE" }
 function Build.themes(e)
   local row = newRow(e)
   titleLine(row, e)
-  row.tiles = {}
-  local function tile(i)
-    local t = row.tiles[i]
-    if t then return t end
-    t = CreateFrame("Button", nil, row)
-    t:SetSize(THEME_TILE_W, THEME_TILE_H)
-    t:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 8 + (i - 1) * (THEME_TILE_W + 8), -24)
-    local sel = t:CreateTexture(nil, "BACKGROUND")
-    sel:SetPoint("TOPLEFT", t, "TOPLEFT", (THEME_TILE_W - SWATCH_W) / 2 - 3, -1)
-    sel:SetSize(SWATCH_W + 6, SWATCH_H + 6)
-    sel:SetColorTexture(1, 0.82, 0, 0.95)
-    sel:Hide()
-    -- « monde » derrière l'aperçu : le thème transparent reste lisible
-    local world = CreateFrame("Frame", nil, t)
-    world:SetSize(SWATCH_W, SWATCH_H)
-    world:SetPoint("TOP", t, "TOP", 0, -4)
-    local ground = world:CreateTexture(nil, "BACKGROUND")
-    ground:SetAllPoints(world)
-    ground:SetColorTexture(0.30, 0.36, 0.26, 1)
-    local swatch = CreateFrame("Frame", nil, world, "BackdropTemplate")
-    swatch:SetSize(SWATCH_W, SWATCH_H)
-    swatch:SetAllPoints(world)
-    local sample = swatch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    sample:SetPoint("CENTER", swatch, "CENTER", 0, 0)
-    sample:SetText("Questify")
-    local name = t:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    name:SetPoint("TOP", world, "BOTTOM", 0, -6)
-    name:SetWidth(THEME_TILE_W)
-    t:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    t.selected, t.swatch, t.sample, t.name = sel, swatch, sample, name
-    t:SetScript("OnClick", safe(function(self)
+  row.cards, row.groups = {}, {}
+  local cardW = math.floor((CONTENT_W - INDENT - 8 - (CARD_COLS - 1) * CARD_GAP) / CARD_COLS)
+  local function groupLabel(i)
+    local g = row.groups[i]
+    if g then return g end
+    g = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    g:SetJustifyH("LEFT")
+    row.groups[i] = g
+    return g
+  end
+  local function card(i)
+    local c = row.cards[i]
+    if c then return c end
+    local T = Q.Themes
+    c = CreateFrame("Button", nil, row, "BackdropTemplate")
+    c:SetSize(cardW, CARD_H)
+    local band = CreateFrame("Frame", nil, c)
+    band:SetPoint("TOPLEFT", c, "TOPLEFT", 1, -1)
+    band:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -1, 4)
+    if band.SetClipsChildren then band:SetClipsChildren(true) end
+    local sky = band:CreateTexture(nil, "BACKGROUND", nil, -6)
+    sky:SetAllPoints(band)
+    local art = band:CreateTexture(nil, "BACKGROUND", nil, -5)
+    art:SetPoint("BOTTOMRIGHT", band, "BOTTOMRIGHT", 0, 0)
+    art:SetSize((CARD_H - 5) * 8, CARD_H - 5)
+    local emblem = T:Emblem(band, 28)
+    emblem:SetPoint("LEFT", band, "LEFT", 6, 0)
+    local name = band:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    name:SetPoint("TOPLEFT", emblem, "TOPRIGHT", 7, -2)
+    name:SetPoint("RIGHT", band, "RIGHT", -22, 0)
+    name:SetJustifyH("LEFT")
+    name:SetWordWrap(false)
+    name:SetShadowColor(0, 0, 0, 1)
+    name:SetShadowOffset(1, -1)
+    local group = band:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    group:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, -1)
+    group:SetJustifyH("LEFT")
+    group:SetShadowColor(0, 0, 0, 1)
+    group:SetShadowOffset(1, -1)
+    local accent = c:CreateTexture(nil, "ARTWORK")
+    accent:SetPoint("BOTTOMLEFT", c, "BOTTOMLEFT", 1, 1)
+    accent:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -1, 1)
+    accent:SetHeight(3)
+    local check = band:CreateTexture(nil, "OVERLAY")
+    check:SetSize(14, 14)
+    check:SetPoint("TOPRIGHT", band, "TOPRIGHT", -4, -4)
+    check:SetTexture(T.GLYPH_CHECK)
+    local mine = band:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    mine:SetPoint("BOTTOMRIGHT", band, "BOTTOMRIGHT", -4, 3)
+    mine:SetText(L.UI_THEME_MY_RACE)
+    mine:SetShadowColor(0, 0, 0, 1)
+    mine:SetShadowOffset(1, -1)
+    local hl = c:CreateTexture(nil, "HIGHLIGHT")
+    hl:SetAllPoints(c)
+    hl:SetColorTexture(1, 1, 1, 0.06)
+    c.sky, c.art, c.emblem, c.name, c.group, c.accent, c.check, c.mine = sky, art, emblem, name, group, accent, check, mine
+    c:SetScript("OnClick", safe(function(self)
       playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
-      S:Set(e, self.value, player())
-      row.sync()
+      if Q.Themes then Q.Themes:Choose(self.value) else S:Set(e, self.value, player()) end
+      Options:Sync()
     end))
-    t:SetScript("OnEnter", safe(function(self) showEntryTooltip(self, e) end))
-    t:SetScript("OnLeave", hideTooltip)
-    row.tiles[i] = t
-    return t
+    c:SetScript("OnEnter", safe(function(self) showEntryTooltip(self, e) end))
+    c:SetScript("OnLeave", hideTooltip)
+    row.cards[i] = c
+    return c
   end
   row.sync = function()
     local T = Q.Themes
-    local choices = S:Choices(e, player())
-    local current = T and T:Resolve(S:Get(e, player())) or S:Get(e, player())
-    local opacity = T and T:Opacity(Q.Settings:Get("tracker.opacity")) or 1
-    for i, c in ipairs(choices) do
-      local t = tile(i)
-      t.value = c.value
-      t.name:SetText(c.text)
-      if T then
-        local theme = T:Apply(t.swatch, c.value, opacity)
-        T:StyleText(t.sample, "title", theme)
+    if not T then return end
+    local current, race = T:CurrentKey(), T:RaceKey()
+    local y, col, lastGroup, n, g = 22, 0, nil, 0, 0
+    for i, ch in ipairs(S:Choices(e, player())) do
+      local th = T:Get(ch.value)
+      if ch.group ~= lastGroup then
+        if col > 0 then y = y + CARD_H + CARD_GAP end
+        g = g + 1
+        local gl = groupLabel(g)
+        gl:ClearAllPoints()
+        gl:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 6, -y - 2)
+        gl:SetText(L[GROUP_LABELS[ch.group] or "UI_THEME_GROUP_NEUTRAL"])
+        gl:SetTextColor(tc("textMuted"))
+        gl:Show()
+        y, col, lastGroup = y + 16, 0, ch.group
       end
-      local on = current == c.value
-      if on then t.selected:Show(); t.name:SetTextColor(1, 0.82, 0) else t.selected:Hide(); t.name:SetTextColor(1, 1, 1) end
-      t:Show()
+      local c = card(i)
+      c.value = ch.value
+      c:ClearAllPoints()
+      c:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 6 + col * (cardW + CARD_GAP), -y)
+      local k = th.colors
+      local top = { k.sky[1] * 1.08 + 0.02, k.sky[2] * 1.08 + 0.02, k.sky[3] * 1.08 + 0.02 }
+      T.ApplyGradient(c.sky, { orientation = "VERTICAL", from = { k.bg[1], k.bg[2], k.bg[3], 1 }, to = { top[1], top[2], top[3], 1 } })
+      c.art:SetTexture(th.banner)
+      c.emblem:SetTheme(th)
+      c.name:SetText(ch.text)
+      c.group:SetText(L[GROUP_LABELS[th.group] or "UI_THEME_GROUP_NEUTRAL"])
+      c.accent:SetColorTexture(k.accent[1], k.accent[2], k.accent[3], 1)
+      local on = ch.value == current
+      c:SetBackdrop(T.HAIRLINE)
+      local edge = on and k.accent or k.edge
+      c:SetBackdropBorderColor(edge[1], edge[2], edge[3], 1)
+      c.check:SetVertexColor(k.accent[1], k.accent[2], k.accent[3], 1)
+      if on then c.check:Show() else c.check:Hide() end
+      if ch.value == race then c.mine:Show() else c.mine:Hide() end
+      c.name:SetTextColor(1, 1, 1)
+      c.group:SetTextColor(0.85, 0.87, 0.9)
+      c.mine:SetTextColor(k.metal[1], k.metal[2], k.metal[3])
+      c:Show()
+      col = col + 1
+      n = i
+      if col >= CARD_COLS then col = 0; y = y + CARD_H + CARD_GAP end
     end
-    for i = #choices + 1, #row.tiles do row.tiles[i]:Hide() end
+    if col > 0 then y = y + CARD_H + CARD_GAP end
+    for i = n + 1, #row.cards do row.cards[i]:Hide() end
+    for i = g + 1, #row.groups do row.groups[i]:Hide() end
+    row.height = y
+    -- compatibilité : tuiles = cartes
+    row.tiles = row.cards
   end
   row.layout = function()
     fitLabel(row.label, CONTENT_W - INDENT - INFO_SIZE - 20)
-    local h = 24 + THEME_TILE_H + 4
+    local h = row.height or 200
     row:SetHeight(h)
     return h
+  end
+  return row
+end
+
+-- Choix en segments : libellé et « i », puis un bouton par choix collés, le choisi souligné de
+-- l'accent (police, icônes, fond du suivi).
+function Build.segments(e)
+  local row = newRow(e)
+  titleLine(row, e)
+  row.segs = {}
+  local function seg(i)
+    local b = row.segs[i]
+    if b then return b end
+    b = CreateFrame("Button", nil, row, "BackdropTemplate")
+    b:SetHeight(22)
+    local text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    text:SetPoint("CENTER", b, "CENTER", 0, 0)
+    local under = b:CreateTexture(nil, "ARTWORK")
+    under:SetPoint("BOTTOMLEFT", b, "BOTTOMLEFT", 1, 1)
+    under:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+    under:SetHeight(2)
+    local fill = b:CreateTexture(nil, "BACKGROUND")
+    fill:SetPoint("TOPLEFT", b, "TOPLEFT", 1, -1)
+    fill:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+    local hl = b:CreateTexture(nil, "HIGHLIGHT")
+    hl:SetAllPoints(b)
+    hl:SetColorTexture(1, 1, 1, 0.06)
+    b.text, b.under, b.fill = text, under, fill
+    b:SetScript("OnClick", safe(function(self)
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      S:Set(e, self.value, player())
+      Options:Sync()
+    end))
+    row.segs[i] = b
+    return b
+  end
+  row.sync = function()
+    local T = Q.Themes
+    local current = S:Get(e, player())
+    local x = INDENT + 10
+    local choices = S:Choices(e, player())
+    for i, c in ipairs(choices) do
+      local b = seg(i)
+      b.value = c.value
+      b.text:SetText(c.text)
+      local w = math.max(64, (tonumber(b.text:GetStringWidth()) or 40) + 22)
+      b:SetWidth(w)
+      b:ClearAllPoints()
+      b:SetPoint("TOPLEFT", row, "TOPLEFT", x, -22)
+      x = x + w - 1
+      local on = current == c.value
+      if T then
+        b:SetBackdrop(T.HAIRLINE)
+        b:SetBackdropBorderColor(tc("edge"))
+        local sr, sg, sb = tc("sel")
+        local pr, pg, pb = tc("panelAlt")
+        if on then b.fill:SetColorTexture(sr, sg, sb, 0.35) else b.fill:SetColorTexture(pr, pg, pb, 1) end
+        b.under:SetColorTexture(tc("accent"))
+      end
+      if on then b.under:Show(); b.text:SetTextColor(tc("text")) else b.under:Hide(); b.text:SetTextColor(tc("textDim")) end
+      b:Show()
+    end
+    for i = #choices + 1, #row.segs do row.segs[i]:Hide() end
+  end
+  row.layout = function()
+    fitLabel(row.label, CONTENT_W - INDENT - INFO_SIZE - 20)
+    row:SetHeight(48)
+    return 48
+  end
+  return row
+end
+
+-- Choix de couleur : un carré par couleur (« T » = couleur du thème), le choisi cerclé du texte.
+function Build.swatches(e)
+  local row = newRow(e)
+  titleLine(row, e)
+  row.swatches = {}
+  local function sw(i)
+    local b = row.swatches[i]
+    if b then return b end
+    b = CreateFrame("Button", nil, row, "BackdropTemplate")
+    b:SetSize(SWATCH, SWATCH)
+    b:SetPoint("TOPLEFT", row, "TOPLEFT", INDENT + 10 + (i - 1) * (SWATCH + 8), -24)
+    local fill = b:CreateTexture(nil, "ARTWORK")
+    fill:SetPoint("TOPLEFT", b, "TOPLEFT", 2, -2)
+    fill:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -2, 2)
+    local letter = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    letter:SetPoint("CENTER", b, "CENTER", 0, 0)
+    letter:SetText("T")
+    b.fill, b.letter = fill, letter
+    b:SetScript("OnClick", safe(function(self)
+      if not S:Enabled(e, player()) then return end
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      S:Set(e, self.value, player())
+      Options:Sync()
+    end))
+    b:SetScript("OnEnter", safe(function(self)
+      if not GameTooltip then return end
+      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+      GameTooltip:SetText(self.label or "", 1, 1, 1)
+      GameTooltip:Show()
+    end))
+    b:SetScript("OnLeave", hideTooltip)
+    row.swatches[i] = b
+    return b
+  end
+  row.sync = function()
+    local T = Q.Themes
+    local current = S:Get(e, player())
+    local enabled = S:Enabled(e, player())
+    local choices = S:Choices(e, player())
+    for i, c in ipairs(choices) do
+      local b = sw(i)
+      b.value, b.label = c.value, c.text
+      local col = T and T.ARROW_COLORS[c.value]
+      local r, g, bl
+      if col then r, g, bl = col[1], col[2], col[3] else r, g, bl = tc("accent") end
+      b.fill:SetColorTexture(r, g, bl, enabled and 1 or 0.35)
+      if col then b.letter:Hide() else b.letter:Show(); b.letter:SetTextColor(0, 0, 0) end
+      if T then
+        b:SetBackdrop(T.HAIRLINE)
+        if current == c.value then b:SetBackdropBorderColor(tc("text")) else b:SetBackdropBorderColor(0, 0, 0, 0) end
+      end
+      b:Show()
+    end
+    for i = #choices + 1, #row.swatches do row.swatches[i]:Hide() end
+  end
+  row.layout = function()
+    fitLabel(row.label, CONTENT_W - INDENT - INFO_SIZE - 20)
+    row:SetHeight(48)
+    return 48
   end
   return row
 end
@@ -953,7 +1163,7 @@ local function newSearchBox(f)
   local ok, box = pcall(CreateFrame, "EditBox", FRAME_NAME .. "Search", f, "SearchBoxTemplate")
   if not (ok and box) then box = CreateFrame("EditBox", FRAME_NAME .. "Search", f, "InputBoxTemplate") end
   box:SetSize(230, 20)
-  box:SetPoint("TOPRIGHT", f, "TOPRIGHT", -16, -33)
+  box:SetPoint("TOPRIGHT", f, "TOPRIGHT", -44, -(HEADER_H - 20) / 2)
   box:SetAutoFocus(false)
   if box.Instructions and box.Instructions.SetText then box.Instructions:SetText(L.OPT_SEARCH_HINT) end
   box:HookScript("OnTextChanged", function(self)
@@ -966,13 +1176,19 @@ local function sectionButton(i, s)
   local b = CreateFrame("Button", nil, Options.sidebar)
   b:SetSize(SIDEBAR_W - 8, SECTION_ROW_H)
   b:SetPoint("TOPLEFT", Options.sidebar, "TOPLEFT", 4, -4 - (i - 1) * SECTION_ROW_H)
-  b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetAllPoints(b)
+  hl:SetColorTexture(1, 1, 1, 0.05)
   local sel = b:CreateTexture(nil, "BACKGROUND")
   sel:SetAllPoints(b)
-  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  sel:SetBlendMode("ADD")
-  sel:SetVertexColor(1, 0.82, 0, 0.55)
+  sel:SetColorTexture(1, 1, 1, 0.1)
   sel:Hide()
+  local bar = b:CreateTexture(nil, "ARTWORK")
+  bar:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
+  bar:SetPoint("BOTTOMLEFT", b, "BOTTOMLEFT", 0, 0)
+  bar:SetWidth(2)
+  bar:Hide()
+  b.bar = bar
   local text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   text:SetPoint("LEFT", b, "LEFT", 10, 0)
   text:SetJustifyH("LEFT")
@@ -1000,8 +1216,18 @@ function Options:Create()
   f:SetScript("OnDragStart", function(self) self:StartMoving() end)
   f:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
   if f.SetTitle then f:SetTitle(L.OPT_TITLE) end
-  if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Gear_01") end
   if UISpecialFrames then tinsert(UISpecialFrames, FRAME_NAME) end
+  -- habillage du thème : gabarit caché, fond, bandeau illustré, blason, titre, coins et liseré
+  local T = Q.Themes
+  local titleText = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  titleText:SetText(L.OPT_TITLE)
+  self.titleText = titleText
+  if T then
+    T:StripTemplate(f)
+    T:Apply(f, T:CurrentKey(), 1)
+    T:Decorate(f, { header = HEADER_H, emblem = 34, title = titleText, watermark = 220 })
+    T:SkinClose(f)
+  end
 
   self.searchBox = newSearchBox(f)
   local count = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -1011,18 +1237,16 @@ function Options:Create()
 
   -- barre latérale des sections
   local side = CreateFrame("Frame", nil, f)
-  side:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -CONTENT_TOP)
-  side:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 10, CONTENT_BOTTOM)
+  side:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -HEADER_H - 1)
+  side:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, CONTENT_BOTTOM)
   side:SetWidth(SIDEBAR_W)
   local sideBg = side:CreateTexture(nil, "BACKGROUND")
   sideBg:SetAllPoints(side)
-  sideBg:SetColorTexture(0, 0, 0, 0.25)
   local divider = side:CreateTexture(nil, "ARTWORK")
   divider:SetPoint("TOPLEFT", side, "TOPRIGHT", 0, 0)
   divider:SetPoint("BOTTOMLEFT", side, "BOTTOMRIGHT", 0, 0)
   divider:SetWidth(1)
-  divider:SetColorTexture(1, 0.82, 0, 0.25)
-  self.sidebar = side
+  self.sidebar, self.sideBg, self.divider = side, sideBg, divider
   for i, s in ipairs(S.SECTIONS) do self.sectionButtons[i] = sectionButton(i, s) end
 
   -- liste défilante des contrôles
@@ -1047,6 +1271,16 @@ function Options:Create()
   status:SetJustifyH("LEFT")
   self.statusText = status
 
+  -- aperçu en direct (section Thème)
+  local preview = CreateFrame("Frame", nil, f)
+  preview:SetPoint("TOPRIGHT", f, "TOPRIGHT", -1, -HEADER_H - 1)
+  preview:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, CONTENT_BOTTOM)
+  preview:SetWidth(PREVIEW_W)
+  preview:Hide()
+  self.preview = preview
+  if Q.UI.ThemePreview then Q.SafeCall(Q.UI.ThemePreview.Create, Q.UI.ThemePreview, preview) end
+
+  self:ApplyTheme()
   f:Hide()
   f:HookScript("OnShow", function() playSound("IG_CHARACTER_INFO_OPEN") end)
   f:HookScript("OnHide", function()
@@ -1121,7 +1355,6 @@ local function header(i)
   line:SetHeight(1)
   line:SetPoint("TOPLEFT", text, "BOTTOMLEFT", 0, -3)
   line:SetPoint("RIGHT", h, "RIGHT", -6, 0)
-  line:SetColorTexture(1, 0.82, 0, 0.3)
   h.text, h.line = text, line
   Options.headers[i] = h
   return h
@@ -1133,8 +1366,10 @@ local function placeHeader(y, label, kind)
   h.kind = kind
   h:ClearAllPoints()
   h:SetPoint("TOPLEFT", Options.child, "TOPLEFT", 0, -y)
-  h.text:SetFontObject(kind == "section" and "GameFontNormalLarge" or "GameFontNormal")
+  h.text:SetFontObject(kind == "section" and "GameFontNormalLarge" or "GameFontNormalSmall")
   h.text:SetText(label)
+  if kind == "section" then h.text:SetTextColor(tc("text")) else h.text:SetTextColor(tc("textMuted")) end
+  h.line:SetColorTexture(tc("line"))
   if kind == "section" then h.line:Hide() else h.line:Show() end
   h:SetHeight(kind == "section" and 24 or 20)
   h:Show()
@@ -1179,9 +1414,11 @@ function Options:UpdateSidebar()
   local searching = self.query ~= ""
   for _, b in ipairs(self.sectionButtons) do
     local on = b.sectionId == self.section
-    if on then b.selected:Show() else b.selected:Hide() end
-    if on and not searching then b.text:SetTextColor(1, 1, 1) else b.text:SetTextColor(1, 0.82, 0) end
-    if on and searching then b.selected:SetAlpha(0.4) else b.selected:SetAlpha(1) end
+    if on then b.selected:Show(); b.bar:Show() else b.selected:Hide(); b.bar:Hide() end
+    b.selected:SetColorTexture(tc("sel"))
+    b.bar:SetColorTexture(tc("accent"))
+    if on and not searching then b.text:SetTextColor(tc("text")) else b.text:SetTextColor(tc("textDim")) end
+    if on and searching then b.selected:SetAlpha(0.4); b.bar:SetAlpha(0.4) else b.selected:SetAlpha(1); b.bar:SetAlpha(1) end
   end
 end
 
@@ -1216,8 +1453,46 @@ function Options:Render(keepScroll)
   end
   self.child:SetHeight(math.max(1, y + 8))
   if not keepScroll and self.scroll.SetVerticalScroll then self.scroll:SetVerticalScroll(0) end
+  -- section Thème : la fenêtre s'élargit pour l'aperçu en direct
+  local withPreview = self.query == "" and self.section == "theme" and self.preview ~= nil
+  self.frame:SetWidth(WIDTH + (withPreview and PREVIEW_W or 0))
+  if self.preview then
+    if withPreview then
+      self.preview:Show()
+      local P = Q.UI.ThemePreview
+      if P and P.Refresh then Q.SafeCall(P.Refresh, P) end
+    else
+      self.preview:Hide()
+    end
+  end
+  if Q.Themes then Q.Themes:SkinTree(self.child) end
   self:UpdateSidebar()
 end
+
+-- Couleurs du thème sur la fenêtre (fond et décorations repeints par UI/Themes.lua).
+function Options:ApplyTheme()
+  if not self.frame or not Q.Themes then return end
+  local T = Q.Themes
+  self.sideBg:SetColorTexture(tc("sidebar"))
+  self.divider:SetColorTexture(tc("line"))
+  T:StyleText(self.titleText, "title")
+  T:SkinClose(self.frame)
+  T:SkinTree(self.frame)
+  for _, h in ipairs(self.headers) do
+    if h.kind == "section" then h.text:SetTextColor(tc("text")) else h.text:SetTextColor(tc("textMuted")) end
+    h.line:SetColorTexture(tc("line"))
+  end
+  if self.statusText then self.statusText:SetTextColor(tc("textDim")) end
+  if self.countText then self.countText:SetTextColor(tc("textMuted")) end
+  self:UpdateSidebar()
+end
+
+Q:On("THEME_CHANGED", function()
+  if Options.frame then
+    Options:ApplyTheme()
+    if Options:IsShown() then Options:Sync() end
+  end
+end)
 
 -- Sync() : relit la valeur de chaque contrôle affiché (après un changement venu d'ailleurs).
 function Options:Sync()

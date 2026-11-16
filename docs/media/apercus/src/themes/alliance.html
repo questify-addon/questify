@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920">
+<title>Questify, thèmes ornés : Alliance</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="themes.css">
+<script src="art-alliance.js"></script>
+<style>
+/* Thème orné Alliance. Jetons (repris dans Questify/UI/Themes.lua) : */
+.al {
+  --bg: #0d1934; --bg2: #0a1228; --panel: #12234a; --panelAlt: #182c58; --inset: #0b1530;
+  --edge: #2c4478; --line: rgba(160,190,255,.14); --line2: rgba(160,190,255,.16);
+  --text: #f4f1e8; --textDim: #c9cfe2; --textMuted: #9ba6c6;
+  --gold: #e4c26c; --goldDeep: #8c6524; --accent: #4f8ae8; --onAccent: #0a1228; --sel: rgba(228,194,108,.14);
+  --quest: #ffd773; --npc: #94caff; --mob: #f57a7a; --item: #c7adff; --success: #6bd99a; --xp: #9fc4ff;
+  font-family: var(--font); color: var(--text);
+}
+.al * { font-family: inherit; }
+.gold { color: var(--gold); }
+.sc { font-variant: small-caps; letter-spacing: .12em; }
+
+/* ---------- A : Royal, cadre doré complet ---------- */
+.roy { position: relative; background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); padding: 10px; }
+.roy::before { /* motif */ content: ""; position: absolute; inset: 0; background-image: var(--pat); background-size: 32px 32px; opacity: .05; pointer-events: none; }
+.roy .fr { position: absolute; inset: 0; border: 3px solid #c9a04a; box-shadow: inset 0 0 0 1px #3a2a0c, inset 0 0 0 4px rgba(201,160,74,.28), 0 10px 28px rgba(0,0,0,.6); pointer-events: none; }
+.roy .co { position: absolute; width: 40px; height: 40px; background-size: 100% 100%; background-image: var(--corner); pointer-events: none; z-index: 3; }
+.roy .co.tl { left: -6px; top: -6px; } .roy .co.tr { right: -6px; top: -6px; transform: scaleX(-1); }
+.roy .co.bl { left: -6px; bottom: -6px; transform: scaleY(-1); } .roy .co.br { right: -6px; bottom: -6px; transform: scale(-1,-1); }
+.roy .wm { position: absolute; right: -10px; top: 30px; width: 170px; height: 170px; border-radius: 50%; opacity: .07; overflow: hidden; pointer-events: none; filter: grayscale(.2); }
+.roy .wm img { width: 100%; height: 100%; transform: scale(1.2); }
+.in { position: relative; z-index: 1; }
+
+/* médaillon (blason dans un anneau, ailes) */
+.med { position: relative; flex: none; }
+.med .wg { position: absolute; background-size: 100% 100%; background-image: var(--wings); }
+.med .disc { position: absolute; border-radius: 50%; overflow: hidden; background: #0b1530; }
+.med .disc img { width: 100%; height: 100%; transform: scale(1.15); display: block; }
+.med .rg { position: absolute; inset: 0; background-size: 100% 100%; background-image: var(--ring); }
+
+/* icône ronde à anneau doré */
+.ri { position: relative; width: 30px; height: 30px; flex: none; }
+.ri .disc { position: absolute; inset: 3px; border-radius: 50%; overflow: hidden; background: var(--inset); display: grid; place-items: center; }
+.ri .disc img { width: 100%; height: 100%; transform: scale(1.15); }
+.ri .disc .ic { width: 15px; height: 15px; }
+.ri .rg { position: absolute; inset: 0; background-size: 100% 100%; background-image: var(--ring); }
+.ri.sm { width: 20px; height: 20px; } .ri.sm .disc { inset: 2px; } .ri.sm .disc .ic { width: 11px; height: 11px; }
+
+.flo { height: 8px; background-size: 100% 100%; background-image: var(--flourish); }
+.plq { position: relative; height: 26px; background-size: 100% 100%; background-image: var(--plaque); display: grid; place-items: center; }
+.box { background: var(--panel); border: 1px solid var(--edge); position: relative; }
+.box.cur { border-color: #c9a04a; box-shadow: inset 0 0 0 1px rgba(228,194,108,.25), 0 0 10px rgba(228,194,108,.18); background: linear-gradient(90deg, rgba(228,194,108,.12), rgba(228,194,108,0) 70%), var(--panel); }
+.bar2 { position: relative; height: 5px; background: var(--inset); border: 1px solid var(--edge); }
+.bar2 b { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, #7fb0ff, #3a6fd0); }
+.bar2.g b { background: linear-gradient(180deg, #f6dc8e, #b88a32); }
+.btn2 { display: inline-flex; align-items: center; height: 24px; padding: 0 12px; font-size: 13px; color: var(--text); background: linear-gradient(180deg, #1c3368, #13244a); border: 1px solid #8c6a2a; }
+.btn2.pri { color: #1b1204; font-weight: 600; background: linear-gradient(180deg, #f3d886, #c99a3e); border-color: #f6e3a1; }
+.tab2 { font-size: 13px; color: var(--textDim); padding: 4px 12px; border: 1px solid var(--edge); border-bottom: 0; background: var(--panel); }
+.tab2.on { color: var(--gold); border-color: #c9a04a; background: linear-gradient(180deg, #1d3570, var(--panel)); }
+
+/* bandeau illustré */
+.sky { position: relative; overflow: hidden; background: radial-gradient(ellipse 50% 90% at 70% 0%, rgba(120,160,255,.35), rgba(120,160,255,0) 70%), linear-gradient(180deg, #1f3a78 0%, #132755 60%, var(--bg) 100%); }
+.sky .city { position: absolute; left: 0; right: 0; bottom: 0; height: 52px; background-size: 100% 100%; background-image: var(--skyline); opacity: .9; }
+.sky .stars { position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 12% 30%, #fff8, transparent), radial-gradient(1px 1px at 33% 18%, #fff6, transparent), radial-gradient(1px 1px at 58% 26%, #fff7, transparent), radial-gradient(1px 1px at 81% 14%, #fff5, transparent), radial-gradient(1px 1px at 92% 38%, #fff6, transparent); }
+
+/* ---------- B : Bannière, fenêtre sobre + incrustations ---------- */
+.ban { position: relative; background: var(--bg); border: 1px solid var(--edge); box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+.ban::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--gold); z-index: 2; }
+.ban .co { position: absolute; width: 22px; height: 22px; background-size: 100% 100%; background-image: var(--corner); z-index: 3; }
+.ban .co.tl { left: -3px; top: -3px; } .ban .co.tr { right: -3px; top: -3px; transform: scaleX(-1); }
+.ban .co.bl { left: -3px; bottom: -3px; transform: scaleY(-1); } .ban .co.br { right: -3px; bottom: -3px; transform: scale(-1,-1); }
+.ban .wm { position: absolute; right: 8px; bottom: 8px; width: 120px; height: 120px; border-radius: 50%; opacity: .06; overflow: hidden; }
+.ban .wm img { width: 100%; height: 100%; transform: scale(1.2); }
+
+.lab2 { font-family: var(--clean); font-size: 15px; color: #8f98a5; margin: 0 0 10px; } .lab2 b { color: #e3e7ec; }
+</style>
+</head>
+<body>
+<div class="bar-ctl"><div class="grp"><span class="lbl">Police</span><button id="fg" class="on">Du jeu</button><button id="fc">Inter</button></div></div>
+<div class="page" id="page"></div>
+<script>
+const LION = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_tournaments_symbol_human.jpg";
+const IC = (n) => `https://wow.zamimg.com/images/wow/icons/large/${n}.jpg`;
+const SVi = {
+  accept: '<svg viewBox="0 0 16 16"><rect x="6.6" y="1.5" width="2.8" height="9" rx="1.2" fill="currentColor"/><circle cx="8" cy="13.4" r="1.6" fill="currentColor"/></svg>',
+  turnin: '<svg viewBox="0 0 16 16"><path d="M4.6 5.4C4.6 3.3 6.1 2 8.1 2c2.1 0 3.5 1.3 3.5 3.1 0 1.5-.9 2.3-1.9 2.9-.8.5-1 .8-1 1.6v.6H6.6v-.8c0-1.3.5-2 1.5-2.6.8-.5 1.2-.8 1.2-1.5S8.8 4.2 8 4.2c-.8 0-1.3.5-1.4 1.3z" fill="currentColor"/><circle cx="7.7" cy="13.4" r="1.6" fill="currentColor"/></svg>',
+  kill: '<svg viewBox="0 0 16 16"><path d="M13.6 1.6l-.5 3L6.4 11.3 4.7 9.6l6.7-6.7zM3.2 9.4l3.4 3.4-1 1-1.2-1.2-1.6 1.6-1-1 1.6-1.6-1.2-1.2z" fill="currentColor"/></svg>',
+  skull: '<svg viewBox="0 0 16 16"><path d="M8 1.8c-3.3 0-5.6 2.2-5.6 5.2 0 1.8.9 3.2 2.2 4v2.2h1.6v-1.4h1v1.4h1.6v-1.4h1v1.4h1.6V11c1.3-.8 2.2-2.2 2.2-4 0-3-2.3-5.2-5.6-5.2zM5.6 9.2a1.4 1.4 0 110-2.8 1.4 1.4 0 010 2.8zm4.8 0a1.4 1.4 0 110-2.8 1.4 1.4 0 010 2.8z" fill="currentColor"/></svg>',
+  done: '<svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  x: '<svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.6"/></svg>',
+};
+const cssArt = Object.entries(ART_ALLIANCE).map(([k, v]) => `--${k}:url('${v}')`).join(";").replace("--pattern", "--pat");
+const ri = (kind, col, sm) => `<span class="ri ${sm ? "sm" : ""}"><span class="disc"><span class="ic ${col}">${SVi[kind]}</span></span><span class="rg"></span></span>`;
+const riImg = (src) => `<span class="ri"><span class="disc"><img src="${src}" alt=""></span><span class="rg"></span></span>`;
+const med = (size, wings) => {
+  const w = wings ? size * 2.6 : size;
+  return `<span class="med" style="width:${w}px;height:${size}px">
+    ${wings ? `<span class="wg" style="left:0;top:${-size * 0.08}px;width:${w}px;height:${size * 1.05}px"></span>` : ""}
+    <span class="disc" style="left:${(w - size) / 2 + size * 0.09}px;top:${size * 0.09}px;width:${size * 0.82}px;height:${size * 0.82}px"><img src="${LION}" alt=""></span>
+    <span class="rg" style="left:${(w - size) / 2}px;width:${size}px"></span></span>`;
+};
+const corners = `<span class="co tl"></span><span class="co tr"></span><span class="co bl"></span><span class="co br"></span>`;
+
+/* ---------------- A : Royal ---------------- */
+function trackerA() {
+  return `<div class="al roy" style="width:300px;${cssArt}">
+  <div class="fr"></div>${corners}<div class="wm"><img src="${LION}" alt=""></div>
+  <div class="in" style="padding:4px 6px 2px">
+    <div style="display:flex;align-items:center;gap:8px">${med(40, false)}
+      <div style="flex:1;min-width:0"><div style="display:flex;align-items:baseline"><span class="s15 gold">Coldridge Valley</span><span class="s12 tm num" style="margin-left:auto">1-6</span></div>
+      <div class="s11 tm">Dun Morogh · 12/40 étapes</div></div></div>
+    <div class="bar2 g" style="margin:7px 0 3px"><b style="width:30%"></b></div>
+    <div class="s11" style="display:flex"><span class="td num">~3,5k XP restants</span><span class="c-xp num" style="margin-left:auto">11,8k XP/h · niv. dans 4 min</span></div>
+    <div class="flo" style="margin:8px 30px 7px"></div>
+    <div class="box cur" style="padding:7px 8px;display:flex;gap:8px">
+      ${riImg(IC("inv_sword_04"))}
+      <div style="flex:1;min-width:0">
+        <div class="s13"><span class="tm">Faire</span> <span class="c-quest semi">La caverne des trolls</span></div>
+        <div class="s13" style="display:flex;margin-top:2px"><span>Jeune troll Frostmane tué</span><span class="num semi" style="margin-left:auto">5/14</span></div>
+        <div class="bar2" style="margin-top:4px"><b style="width:36%"></b></div>
+        <div class="s12" style="display:flex;align-items:center;gap:5px;margin-top:4px"><span class="ic c-mob">${SVi.skull}</span><span class="c-mob">Jeune troll Frostmane</span><span class="tm num" style="margin-left:auto">142 yd</span></div>
+      </div>
+    </div>
+    <div style="margin-top:6px">
+      ${[["turnin", "Rendre", "La caverne des trolls"], ["accept", "Prendre", "Le journal volé"], ["accept", "Prendre", "Une livraison de thé brûlant"]].map(([k, v, n]) =>
+        `<div class="box" style="display:flex;align-items:center;gap:7px;padding:3px 6px;margin-top:3px;background:rgba(18,35,74,.6)">${ri(k, "c-quest", true)}<span class="s12 tm">${v}</span><span class="s12 td ell">${n}</span></div>`).join("")}
+    </div>
+    <div style="display:flex;align-items:center;margin-top:7px" class="s11"><span class="gold" style="font-style:italic">Pour l'Alliance</span><span class="flo" style="flex:1;margin:0 10px"></span><span class="tm">Questify</span></div>
+  </div></div>`;
+}
+const CH = [["Coldridge Valley", "1-6", 1], ["Northshire", "1-6"], ["Shadowglen", "1-6"], ["Zephras Isle", "1-15"], ["Dun Morogh", "6-11"], ["Elwynn Forest", "6-11"], ["Teldrassil", "6-11"], ["Loch Modan", "11-14"], ["Westfall", "11-16"], ["Darkshore", "11-19"], ["Redridge Mountains", "22-26"], ["Wetlands", "26-29"]];
+const ST = [["done", "accept", "Prendre", "Chasseur de sangliers"], ["done", "kill", "", "Chasseur de sangliers"], ["done", "turnin", "Rendre", "Chasseur de sangliers"], ["done", "accept", "Prendre", "La caverne des trolls"],
+  ["cur", "kill", "", "La caverne des trolls"], ["next", "turnin", "Rendre", "La caverne des trolls"], ["next", "accept", "Prendre", "Le journal volé"], ["next", "accept", "Prendre", "Une livraison de thé brûlant"],
+  ["next", "turnin", "Rendre", "Une livraison de thé brûlant"], ["next", "accept", "Prendre", "Rapporter la Tasse"], ["next", "accept", "Prendre", "Grund and Gozwin"]];
+function stepRows(boxed) {
+  return ST.map(([s, k, v, n]) => {
+    const col = k === "kill" ? "c-mob" : "c-quest";
+    const st = s === "done" ? `<span class="ic c-ok">${SVi.done}</span>` : `<span class="ic"></span>`;
+    const cls = s === "cur" ? "box cur" : boxed ? "box" : "";
+    const txt = s === "done" ? "tm" : "";
+    return `<div class="${cls}" style="display:flex;align-items:center;gap:7px;height:${boxed ? 26 : 24}px;padding:0 8px;margin-bottom:${boxed ? 3 : 0}px;${s !== "cur" && boxed ? "background:rgba(18,35,74,.55)" : ""}">
+      ${st}${ri(k, col, true)}${v ? `<span class="s13 tm">${v}</span>` : ""}<span class="s13 ${txt} ell">${n}</span></div>`;
+  }).join("");
+}
+function journalA() {
+  return `<div class="al roy" style="width:720px;padding:0;${cssArt}">
+  <div class="sky" style="height:92px"><div class="stars"></div><div class="city"></div></div>
+  <div class="fr"></div>${corners}<div class="wm" style="top:120px;right:20px;width:260px;height:260px"><img src="${LION}" alt=""></div>
+  <div style="position:absolute;left:10px;top:4px;z-index:4">${med(76, true)}</div>
+  <div style="position:absolute;left:220px;right:20px;top:14px;z-index:2;display:flex;flex-direction:column;align-items:center">
+    <div class="gold" style="font-size:30px;line-height:34px;text-shadow:0 2px 0 #000">Questify</div>
+    <div style="display:flex;align-items:center;gap:8px;width:300px"><span class="flo" style="flex:1"></span><span class="s11 sc gold">journal de route</span><span class="flo" style="flex:1"></span></div>
+  </div>
+  <span class="x" style="position:absolute;right:14px;top:12px;z-index:4;color:var(--gold);border:1px solid #8c6a2a;background:#0d1a38">${SVi.x}</span>
+  <div class="in" style="padding:0 14px 12px">
+    <div style="display:flex;gap:4px;margin-top:-26px;padding-left:200px;position:relative;z-index:2"><span class="tab2 on">Route</span><span class="tab2">Quêtes de classe</span><span class="tab2">Donjons</span></div>
+    <div style="display:flex;gap:10px;border-top:1px solid #c9a04a;padding-top:10px">
+      <div class="box" style="width:200px;padding:6px 0;background:rgba(10,18,40,.75)">
+        <div class="s11 sc gold" style="padding:0 10px 6px">Chapitres</div>
+        ${CH.map(([n, l, on]) => `<div class="s13" style="display:flex;height:24px;align-items:center;padding:0 10px;${on ? "background:var(--sel);box-shadow:inset 2px 0 0 var(--gold)" : ""}"><span class="${on ? "gold" : "td"} ell">${n}</span><span class="tm num" style="margin-left:auto">${l}</span></div>`).join("")}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span class="s11 sc gold">Étapes · Coldridge Valley</span><span class="flo" style="flex:1"></span><span class="s12 tm num">11 / 40</span></div>
+        ${stepRows(true)}
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span class="s12 gold" style="font-style:italic">Pour l'Alliance</span><span class="flo" style="flex:1"></span><span class="btn2">Recommencer le chapitre</span><span class="btn2 pri">Options…</span></div>
+  </div></div>`;
+}
+function popupA() {
+  return `<div class="al roy" style="width:340px;padding:0;${cssArt}">
+  <div class="fr"></div>${corners}<div class="wm" style="top:40px"><img src="${LION}" alt=""></div>
+  <div class="in" style="padding:12px 14px 12px">
+    <div style="display:flex;align-items:center;gap:8px">${med(34, false)}<div><div class="s15 gold">Quête de classe</div><div class="s11 sc tm">paladin · niveau 10</div></div>
+      <span class="x" style="margin-left:auto;color:var(--gold)">${SVi.x}</span></div>
+    <div class="flo" style="margin:9px 40px"></div>
+    <div class="box" style="display:flex;gap:9px;padding:8px">${riImg(IC("spell_holy_holysmite"))}
+      <div><div class="s13 semi c-quest">Le livre de la Lumière</div>
+      <div class="s12 td" style="margin-top:3px;line-height:16px">À Forgefer, auprès de <span class="c-npc">Maxan Anvol</span>. Récompense : <span class="c-item">Masse de dévotion</span>.</div></div></div>
+    <div style="display:flex;gap:6px;margin-top:10px"><span class="btn2">Plus tard</span><span style="flex:1"></span><span class="btn2">Jamais</span><span class="btn2 pri">Ajouter à la route</span></div>
+  </div></div>`;
+}
+
+/* ---------------- B : Bannière ---------------- */
+function trackerB() {
+  return `<div class="al ban" style="width:288px;${cssArt}">${corners}<div class="wm"><img src="${LION}" alt=""></div>
+  <div class="sky" style="height:46px;border-bottom:1px solid var(--line)"><div class="stars"></div><div class="city" style="height:26px;opacity:.75"></div>
+    <div style="position:absolute;left:8px;top:7px;right:10px;display:flex;align-items:center;gap:8px">${med(32, false)}
+      <div style="flex:1;min-width:0"><div style="display:flex;align-items:baseline"><span class="s15 t" style="text-shadow:0 1px 2px #000">Coldridge Valley</span><span class="s12 td num" style="margin-left:auto">1-6</span></div>
+      <div class="s11 td">Dun Morogh · 12/40 étapes</div></div></div></div>
+  <div class="in" style="padding:8px 12px 10px">
+    <div class="bar2" style="height:4px;border:0;background:var(--line2)"><b style="width:30%;background:var(--gold)"></b></div>
+    <div class="s11" style="display:flex;margin-top:4px"><span class="td num">~3,5k XP restants</span><span class="c-xp num" style="margin-left:auto">11,8k XP/h</span></div>
+    <div style="display:flex;gap:9px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)">
+      ${riImg(IC("inv_sword_04"))}
+      <div style="flex:1;min-width:0">
+        <div class="s13"><span class="tm">Faire</span> <span class="c-quest semi">La caverne des trolls</span></div>
+        <div class="s13" style="display:flex;margin-top:2px"><span>Jeune troll Frostmane tué</span><span class="num semi" style="margin-left:auto">5/14</span></div>
+        <div class="bar2" style="height:3px;border:0;background:var(--line2);margin-top:4px"><b style="width:36%;background:var(--success)"></b></div>
+        <div class="s12" style="display:flex;align-items:center;gap:5px;margin-top:4px"><span class="ic c-mob">${SVi.skull}</span><span class="c-mob">Jeune troll Frostmane</span><span class="tm num" style="margin-left:auto">142 yd</span></div>
+      </div>
+    </div>
+    <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--line)">
+      ${[["turnin", "Rendre", "La caverne des trolls"], ["accept", "Prendre", "Le journal volé"], ["accept", "Prendre", "Une livraison de thé brûlant"]].map(([k, v, n]) =>
+        `<div style="display:flex;align-items:center;gap:7px;height:20px"><span class="ic c-quest">${SVi[k]}</span><span class="s12 tm">${v}</span><span class="s12 td ell">${n}</span></div>`).join("")}
+    </div>
+  </div></div>`;
+}
+function journalB() {
+  return `<div class="al ban" style="width:720px;${cssArt}">${corners}<div class="wm" style="width:220px;height:220px"><img src="${LION}" alt=""></div>
+  <div class="sky" style="height:58px;border-bottom:1px solid var(--line)"><div class="stars"></div><div class="city" style="height:34px"></div>
+    <div style="position:absolute;left:10px;top:10px;right:12px;display:flex;align-items:center;gap:10px">${med(38, false)}
+      <span class="s15" style="font-size:17px;text-shadow:0 1px 2px #000">Questify</span>
+      <span class="s13" style="margin-left:16px;color:var(--text);box-shadow:inset 0 -2px 0 var(--gold);padding:6px 0">Route</span><span class="s13 td" style="margin-left:12px">Quêtes de classe</span><span class="s13 td" style="margin-left:12px">Donjons</span>
+      <span class="x" style="margin-left:auto">${SVi.x}</span></div></div>
+  <div class="in" style="display:flex;height:330px">
+    <div style="width:200px;padding:8px 0;background:rgba(8,14,32,.7);border-right:1px solid var(--line)">
+      <div class="s11 sc tm" style="padding:0 12px 6px">Chapitres</div>
+      ${CH.map(([n, l, on]) => `<div class="s13" style="display:flex;height:23px;align-items:center;padding:0 10px 0 12px;${on ? "background:var(--sel);box-shadow:inset 2px 0 0 var(--gold)" : ""}"><span class="${on ? "t" : "td"} ell">${n}</span><span class="tm num" style="margin-left:auto">${l}</span></div>`).join("")}
+    </div>
+    <div style="flex:1;padding:8px 10px">
+      <div style="display:flex;margin-bottom:4px"><span class="s11 sc tm">Étapes · Coldridge Valley</span><span class="s12 tm num" style="margin-left:auto">11 / 40</span></div>
+      ${ST.map(([s, k, v, n]) => `<div class="s13" style="display:flex;align-items:center;gap:7px;height:24px;padding:0 6px;${s === "cur" ? "background:var(--sel);box-shadow:inset 2px 0 0 var(--gold)" : ""}">
+        ${s === "done" ? `<span class="ic c-ok">${SVi.done}</span>` : `<span class="ic"></span>`}<span class="ic ${k === "kill" ? "c-mob" : "c-quest"}">${SVi[k]}</span>${v ? `<span class="tm">${v}</span>` : ""}<span class="${s === "done" ? "tm" : ""} ell">${n}</span></div>`).join("")}
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid var(--line);background:rgba(8,14,32,.6)"><span class="s12 gold" style="font-style:italic">Pour l'Alliance</span><span style="flex:1"></span><span class="btn2" style="background:var(--panelAlt);border-color:var(--edge)">Recommencer le chapitre</span><span class="btn2 pri">Options…</span></div>
+  </div>`;
+}
+
+function render() {
+  document.getElementById("page").innerHTML = `
+<div class="head-cap"><div><div class="brand">Questify · thèmes ornés</div><h1>Alliance : deux propositions</h1>
+<div class="meta"><b>A · Royal</b> : cadre doré complet, coins en filigrane, blason ailé, bandeau illustré, motif de fond, blocs d'étape encadrés.<br>
+<b>B · Bannière</b> : fenêtre sobre (comme la v1) avec bandeau illustré, blason, coins dorés et liseré or. Les thèmes sobres de la v1 restent proposés à côté.</div></div></div>
+<div class="row">
+  <div class="cell"><div class="lab2"><b>A · Royal</b>, suivi · zoom 1,6</div><div class="world" style="padding:30px"><div style="zoom:1.6">${trackerA()}</div></div>
+    <div class="lab2" style="margin-top:26px"><b>A · Royal</b>, popup · zoom 1,5</div><div style="zoom:1.5;margin-left:8px">${popupA()}</div></div>
+  <div class="cell"><div class="lab2"><b>A · Royal</b>, journal · zoom 1,5</div><div style="zoom:1.5;margin-top:20px">${journalA()}</div></div>
+</div>
+<div class="row" style="margin-top:20px">
+  <div class="cell"><div class="lab2"><b>B · Bannière</b>, suivi · zoom 1,6</div><div class="world" style="padding:30px"><div style="zoom:1.6">${trackerB()}</div></div></div>
+  <div class="cell"><div class="lab2"><b>B · Bannière</b>, journal · zoom 1,5</div><div style="zoom:1.5">${journalB()}</div></div>
+</div>`;
+}
+const P = new URLSearchParams(location.search);
+if (P.get("shot")) document.body.classList.add("shot");
+if (P.get("font") === "clean") document.body.classList.add("f-clean");
+document.getElementById("fg").onclick = () => { document.body.classList.remove("f-clean"); };
+document.getElementById("fc").onclick = () => { document.body.classList.add("f-clean"); };
+render();
+</script>
+</body>
+</html>
