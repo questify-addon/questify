@@ -13,16 +13,25 @@ local addonName, Q = ...
 -- Styles (nav.lineStyle) : dots (défaut) points ronds tous les 12 yd ; solid points serrés tous les
 -- 4 yd qui se touchent ; dashes tirets tous les 10 yd, tournés par SetRotation le long du segment.
 -- Couleur : rôle title du thème du suivi (theme.text.accent s'il existe), éclairci quand il est trop
--- sombre pour se lire sur la carte (parchemin), comme dans la maquette. Aucune autre couleur.
+-- sombre pour se lire sur la carte (parchemin), comme dans la maquette. Sous chaque marque, un halo
+-- sombre un peu plus grand (maquette : .halo, noir à 2/3), posé comme un repère à part à un niveau
+-- plus bas que toutes les marques, pour qu'aucun halo ne couvre la marque voisine.
 --
 -- Tracée seulement avec le routeur Questify (Q.Nav:Active() == "questify"), quel que soit
 -- l'affichage ; jamais avec Shortest Path Forever, qui dessine la sienne.
 --
 -- Coût (spec § 3 bis) : les points sont calculés à chaque NAV_ROUTE et au changement de style, pas à
--- chaque image. Ensuite, toutes les CHECK_EVERY s, l'avancée du joueur le long du chemin retire les
--- points dépassés (un par un) et la minicarte reprend les MAX_MINIMAP points les plus proches quand
--- le joueur a bougé. Au plus MAX_PINS repères sur la carte du monde (les premiers devant le joueur),
--- MAX_MINIMAP sur la minicarte (sur le continent du joueur seulement). Cadres réutilisés (réserves).
+-- chaque image. La carte du monde ne reçoit ses repères que pendant qu'elle est ouverte (posés à
+-- l'ouverture, retirés à la fermeture) ; la minicarte les reçoit tout le temps. Toutes les
+-- CHECK_EVERY s, l'avancée du joueur le long du chemin retire les points dépassés et la minicarte
+-- reprend les points les plus proches quand le joueur a bougé. Au plus MAX_PINS repères (halos
+-- compris) sur la carte du monde, les premiers devant le joueur, et MAX_MINIMAP sur la minicarte,
+-- sur le continent du joueur seulement. Cadres réutilisés (réserves).
+--
+-- Niveaux : sur la carte du monde, deux types de niveau propres insérés sous celui des repères de
+-- quête (PIN_FRAME_LEVEL_AREA_POI, défaut de HereBeDragons) : la ligne passe sous les repères, le
+-- halo sous la ligne. Si le gestionnaire de niveaux de la carte ne le permet pas, niveau par défaut.
+-- Sur la minicarte (pas de type de niveau chez HereBeDragons), halo et ligne au-dessus de la carte.
 --
 -- Repères : HereBeDragons compte ses coordonnées monde comme UnitPosition inversé (x vers l'ouest,
 -- y vers le nord : HBD:GetPlayerWorldPosition lit « local y, x = UnitPosition ») ; route.path et
@@ -40,14 +49,23 @@ Q.UI.RouteLine = RouteLine
 local REF = "Questify_RouteLine"   -- clé de nos repères chez HereBeDragons-Pins
 local SPACING = { dots = 12, solid = 4, dashes = 10 }   -- yards entre deux points, par style
 local RIDE_SPACING = 12            -- yards entre deux tirets fins d'un vol, bateau…
-local MAX_PINS = 400               -- repères sur la carte du monde
-local MAX_MINIMAP = 60             -- repères sur la minicarte
+local MAX_PINS = 400               -- repères sur la carte du monde (halos compris)
+local MAX_MINIMAP = 60             -- repères sur la minicarte (halos compris)
+local WORLD_POINTS = MAX_PINS / 2  -- un halo par point
+local MINI_POINTS = MAX_MINIMAP / 2
 local MAX_POINTS = 4000            -- points calculés au plus pour une route
 local MINI_RANGE = 400             -- yards : au-delà, un point n'est pas proposé à la minicarte
 local MINI_MOVE = 10               -- yards de déplacement avant de refaire la minicarte
 local CHECK_EVERY = 0.5            -- secondes entre deux relevés de l'avancée du joueur
+local BEHIND, AHEAD = 50, 200      -- yards : fenêtre du chemin où l'on cherche le joueur
 local MIN_BRIGHT = 0.48            -- canal le plus fort de la couleur au moins à ce niveau (lisible)
 local RIDE_ALPHA = 0.9
+local HALO_ALPHA = 0.667           -- maquette : #000a
+local HALO_GROW = { world = 3, mini = 2.5 }   -- pixels de halo en plus de la marque
+
+-- Types de niveau de la carte du monde (insérés sous le niveau des repères de quête).
+local LEVEL_LINE, LEVEL_HALO = "QUESTIFY_ROUTE_LINE", "QUESTIFY_ROUTE_HALO"
+local LEVEL_ABOVE = "PIN_FRAME_LEVEL_AREA_POI"
 
 -- Trajets montrés en tirets fins (les autres non marchés : téléportations, pas de ligne).
 local RIDES = { fly = true, boat = true, zeppelin = true, tram = true }
@@ -77,14 +95,15 @@ local style = "dots"   -- style du dernier calcul
 local ptI, ptX, ptY, ptA, ptS, ptK = {}, {}, {}, {}, {}, {}
 local count = 0
 local first = 1        -- premier point non dépassé
-local worldLast = 0    -- dernier point posé sur la carte du monde
-local worldPins = {}   -- [index du point] = cadre
-local miniPins = {}    -- cadres posés sur la minicarte
+local worldLast = 0    -- dernier point posé sur la carte du monde (first - 1 : aucun)
+local worldLine, worldHalo = {}, {}   -- [index du point] = cadre
+local miniPins = {}    -- cadres posés sur la minicarte (marques et halos)
 -- Trajet en cours : polyligne { { instance, x, y } } et abscisses cumulées, avancée du joueur.
 local poly, cum
 local progress = 0
 local miniAt           -- { instance, x, y } du joueur au dernier calcul de la minicarte
 local ticker
+local levels           -- nil : pas encore tenté ; false : niveau par défaut ; true : types insérés
 
 ---------------------------------------------------------------------------
 -- Outils
@@ -117,6 +136,11 @@ local function drawable()
   return N ~= nil and type(N.Active) == "function" and N:Active() == "questify"
 end
 
+local function mapShown()
+  local map = WorldMapFrame
+  return type(map) == "table" and type(map.IsShown) == "function" and map:IsShown() == true
+end
+
 local function currentStyle()
   local s = Q.Settings:Get("nav.lineStyle")
   if SPACING[s] then return s end
@@ -140,6 +164,34 @@ end
 
 local function rotatingMinimap()
   return type(GetCVar) == "function" and GetCVar("rotateMinimap") == "1"
+end
+
+-- Types de niveau de la ligne et du halo sur la carte du monde, ou nil, nil (niveau par défaut).
+-- Insérés une fois sous LEVEL_ABOVE ; vérifiés (le gestionnaire doit leur donner un niveau), sans
+-- quoi HereBeDragons poserait un repère sans niveau valide.
+local function worldLevels()
+  if levels == nil then
+    levels = false
+    local map = WorldMapFrame
+    local mgr
+    if type(map) == "table" and type(map.GetPinFrameLevelsManager) == "function" then
+      local ok, m = pcall(map.GetPinFrameLevelsManager, map)
+      if ok and type(m) == "table" then mgr = m end
+    end
+    if mgr and type(mgr.InsertFrameLevelBelow) == "function" and type(mgr.GetValidFrameLevel) == "function" then
+      local ok1 = pcall(mgr.InsertFrameLevelBelow, mgr, LEVEL_LINE, LEVEL_ABOVE)
+      local ok2 = ok1 and pcall(mgr.InsertFrameLevelBelow, mgr, LEVEL_HALO, LEVEL_LINE)
+      if ok2 then
+        local okL, l = pcall(mgr.GetValidFrameLevel, mgr, LEVEL_LINE)
+        local okH, h = pcall(mgr.GetValidFrameLevel, mgr, LEVEL_HALO)
+        local okA, a = pcall(mgr.GetValidFrameLevel, mgr, LEVEL_ABOVE)
+        levels = okL and okH and okA and type(l) == "number" and type(h) == "number" and type(a) == "number"
+          and h < l and l < a
+      end
+    end
+  end
+  if levels then return LEVEL_LINE, LEVEL_HALO end
+  return nil, nil
 end
 
 ---------------------------------------------------------------------------
@@ -180,12 +232,13 @@ end
 
 local function release(where, f)
   f:Hide()
+  f.index = nil
   local list = free[where]
   list[#list + 1] = f
 end
 
--- Apparence du repère du point i (style, genre, couleur, angle).
-local function dress(f, i, where, color)
+-- Apparence du repère du point i : marque (couleur, angle) ou halo (noir, un peu plus grand).
+local function dress(f, i, where, color, halo)
   local kind = ptK[i]
   local look = kind == "ride" and "ride" or style
   local size = SIZES[look][where]
@@ -196,6 +249,10 @@ local function dress(f, i, where, color)
     -- minicarte qui tourne : l'angle changerait avec le joueur, un point rond à la place
     round, w = true, h
   end
+  if halo then
+    local g = HALO_GROW[where]
+    w, h = w + g, h + g
+  end
   if round then
     tex:SetTexture(DOT_TEXTURE)
     tex:SetRotation(0)
@@ -204,9 +261,16 @@ local function dress(f, i, where, color)
     tex:SetRotation(ptA[i])
   end
   tex:SetSize(w, h)
-  tex:SetVertexColor(color[1], color[2], color[3], kind == "ride" and RIDE_ALPHA or 1)
+  local alpha = kind == "ride" and RIDE_ALPHA or 1
+  if halo then
+    tex:SetVertexColor(0, 0, 0, HALO_ALPHA * alpha)
+  else
+    tex:SetVertexColor(color[1], color[2], color[3], alpha)
+  end
   f:SetSize(max(w, h), max(w, h))
   f.kind = kind
+  f.halo = halo or nil
+  f.index = i
 end
 
 ---------------------------------------------------------------------------
@@ -288,20 +352,30 @@ local function build(r)
   end
 end
 
--- Avancée du joueur le long du trajet en cours (yards), jamais en arrière.
+-- Avancée du joueur le long du trajet en cours (yards), jamais en arrière. Le joueur n'est cherché
+-- que sur les segments proches de l'avancée connue (BEHIND yd derrière, AHEAD devant) : un chemin
+-- en lacets qui repasse près du joueur ne fait pas sauter la ligne en avant.
 local function measure(me)
   if not (poly and cum and me) then return progress end
+  local lo, hi = progress - BEHIND, progress + AHEAD
   local bestD, bestS = huge, nil
   for k = 1, #poly - 1 do
+    if cum[k] > hi then break end
     local a, b = poly[k], poly[k + 1]
-    if a.instance == me.instance and b.instance == me.instance then
+    if cum[k + 1] >= lo and a.instance == me.instance and b.instance == me.instance then
       local dx, dy = b.x - a.x, b.y - a.y
       local l2 = dx * dx + dy * dy
       local t = 0
       if l2 > 0 then t = max(0, min(1, ((me.x - a.x) * dx + (me.y - a.y) * dy) / l2)) end
+      local s = cum[k] + t * sqrt(l2)
+      if s > hi then
+        -- au-delà de la fenêtre : le point du segment au bout de la fenêtre
+        t = (hi - cum[k]) / sqrt(l2)
+        s = hi
+      end
       local px, py = a.x + dx * t - me.x, a.y + dy * t - me.y
       local d = px * px + py * py
-      if d < bestD then bestD, bestS = d, cum[k] + t * sqrt(l2) end
+      if d < bestD then bestD, bestS = d, s end
     end
   end
   if bestS and bestS > progress then progress = bestS end
@@ -312,45 +386,81 @@ end
 -- Pose
 ---------------------------------------------------------------------------
 local function placeWorld(lib, i, color)
-  local f = acquire("world")
-  dress(f, i, "world", color)
+  local lineLevel, haloLevel = worldLevels()
+  local flag = HBD_PINS_WORLDMAP_SHOW_CONTINENT or 2
   -- HereBeDragons : x vers l'ouest, y vers le nord
-  local ok = call(lib.AddWorldMapIconWorld, lib, REF, f, ptI[i], ptY[i], ptX[i],
-    HBD_PINS_WORLDMAP_SHOW_CONTINENT or 2)
-  if ok then
-    worldPins[i] = f
+  local h = acquire("world")
+  dress(h, i, "world", color, true)
+  if call(lib.AddWorldMapIconWorld, lib, REF, h, ptI[i], ptY[i], ptX[i], flag, haloLevel) then
+    worldHalo[i] = h
+  else
+    release("world", h)
+  end
+  local f = acquire("world")
+  dress(f, i, "world", color, false)
+  if call(lib.AddWorldMapIconWorld, lib, REF, f, ptI[i], ptY[i], ptX[i], flag, lineLevel) then
+    worldLine[i] = f
   else
     release("world", f)
   end
 end
 
 local function removeWorld(lib, i)
-  local f = worldPins[i]
-  if not f then return end
-  worldPins[i] = nil
-  if type(lib.RemoveWorldMapIcon) == "function" then call(lib.RemoveWorldMapIcon, lib, REF, f) end
-  release("world", f)
+  for _, list in ipairs({ worldLine, worldHalo }) do
+    local f = list[i]
+    if f then
+      list[i] = nil
+      if type(lib.RemoveWorldMapIcon) == "function" then call(lib.RemoveWorldMapIcon, lib, REF, f) end
+      release("world", f)
+    end
+  end
 end
 
--- Fenêtre de la carte du monde : points first .. first + MAX_PINS - 1.
-local function syncWorld(lib, color)
-  local last = min(count, first + MAX_PINS - 1)
-  for i = worldLast + 1, last do
-    if i >= first then placeWorld(lib, i, color) end
+-- Tous les repères de la carte du monde retirés (carte fermée, nouvelle route).
+local function clearWorld(lib)
+  if lib and type(lib.RemoveAllWorldMapIcons) == "function" then call(lib.RemoveAllWorldMapIcons, lib, REF) end
+  for _, list in ipairs({ worldLine, worldHalo }) do
+    for i, f in pairs(list) do
+      list[i] = nil
+      release("world", f)
+    end
   end
+  worldLast = first - 1
+end
+
+-- Fenêtre de la carte du monde : points first .. first + WORLD_POINTS - 1, carte ouverte seulement.
+local function syncWorld(lib, color)
+  if not mapShown() then return end
+  local last = min(count, first + WORLD_POINTS - 1)
+  for i = max(worldLast + 1, first), last do placeWorld(lib, i, color) end
   worldLast = max(worldLast, last)
+end
+
+local function clearMinimap(lib)
+  if lib and type(lib.RemoveAllMinimapIcons) == "function" then call(lib.RemoveAllMinimapIcons, lib, REF) end
+  for k = #miniPins, 1, -1 do
+    release("mini", miniPins[k])
+    miniPins[k] = nil
+  end
+end
+
+local function placeMini(lib, i, color, halo, level)
+  local f = acquire("mini")
+  dress(f, i, "mini", color, halo)
+  if call(lib.AddMinimapIconWorld, lib, REF, f, ptI[i], ptY[i], ptX[i], false) then
+    if level then f:SetFrameLevel(level) end
+    miniPins[#miniPins + 1] = f
+  else
+    release("mini", f)
+  end
 end
 
 local candI, candD = {}, {}
 local function byDistance(a, b) return candD[a] < candD[b] end
 
--- Minicarte : les MAX_MINIMAP points non dépassés les plus proches, sur le continent du joueur.
+-- Minicarte : les MINI_POINTS points non dépassés les plus proches, sur le continent du joueur.
 local function syncMinimap(lib, me, color)
-  if type(lib.RemoveAllMinimapIcons) == "function" then call(lib.RemoveAllMinimapIcons, lib, REF) end
-  for k = #miniPins, 1, -1 do
-    release("mini", miniPins[k])
-    miniPins[k] = nil
-  end
+  clearMinimap(lib)
   miniAt = me
   if not me then return end
   local n = 0
@@ -367,16 +477,11 @@ local function syncMinimap(lib, me, color)
   end
   for k = #candI, n + 1, -1 do candI[k] = nil end
   table.sort(candI, byDistance)
-  for k = 1, min(n, MAX_MINIMAP) do
-    local i = candI[k]
-    local f = acquire("mini")
-    dress(f, i, "mini", color)
-    if call(lib.AddMinimapIconWorld, lib, REF, f, ptI[i], ptY[i], ptX[i], false) then
-      miniPins[#miniPins + 1] = f
-    else
-      release("mini", f)
-    end
-  end
+  -- halo juste au-dessus de la carte, marque au-dessus du halo
+  local base = Minimap and type(Minimap.GetFrameLevel) == "function" and Minimap:GetFrameLevel() or nil
+  local take = min(n, MINI_POINTS)
+  for k = 1, take do placeMini(lib, candI[k], color, true, base and base + 1) end
+  for k = 1, take do placeMini(lib, candI[k], color, false, base and base + 2) end
   for k = 1, n do candD[candI[k]] = nil end
 end
 
@@ -393,6 +498,7 @@ local function follow(force)
   if advanced then
     for i = first, newFirst - 1 do removeWorld(lib, i) end
     first = newFirst
+    if worldLast < first - 1 then worldLast = first - 1 end
     color = RouteLine:Color()
     syncWorld(lib, color)
   end
@@ -420,18 +526,8 @@ end
 function RouteLine:Clear()
   stopTicker()
   local lib = hbdPins()
-  if lib then
-    if type(lib.RemoveAllWorldMapIcons) == "function" then call(lib.RemoveAllWorldMapIcons, lib, REF) end
-    if type(lib.RemoveAllMinimapIcons) == "function" then call(lib.RemoveAllMinimapIcons, lib, REF) end
-  end
-  for i, f in pairs(worldPins) do
-    worldPins[i] = nil
-    release("world", f)
-  end
-  for k = #miniPins, 1, -1 do
-    release("mini", miniPins[k])
-    miniPins[k] = nil
-  end
+  clearWorld(lib)
+  clearMinimap(lib)
   count, first, worldLast, progress = 0, 1, 0, 0
   poly, cum, miniAt = nil, nil, nil
 end
@@ -453,21 +549,27 @@ function RouteLine:Refresh()
   startTicker()
 end
 
--- Couleur du thème reprise sur les repères posés, sans les reposer.
+-- Couleur du thème reprise sur les marques posées (les halos restent noirs), sans les reposer.
 function RouteLine:Recolor()
   local color = self:Color()
-  for i, f in pairs(worldPins) do dress(f, i, "world", color) end
-  -- minicarte : l'index du point n'est pas gardé, la couleur seule change
-  for _, f in ipairs(miniPins) do
+  for _, f in pairs(worldLine) do
     local _, _, _, a = f.tex:GetVertexColor()
     f.tex:SetVertexColor(color[1], color[2], color[3], a)
+  end
+  for _, f in ipairs(miniPins) do
+    if not f.halo then
+      local _, _, _, a = f.tex:GetVertexColor()
+      f.tex:SetVertexColor(color[1], color[2], color[3], a)
+    end
   end
 end
 
 function RouteLine:State()
   local w = 0
-  for _ in pairs(worldPins) do w = w + 1 end
-  return { style = style, points = count, first = first, world = w, minimap = #miniPins }
+  for _ in pairs(worldLine) do w = w + 1 end
+  local m = 0
+  for _, f in ipairs(miniPins) do if not f.halo then m = m + 1 end end
+  return { style = style, points = count, first = first, world = w, minimap = m }
 end
 
 ---------------------------------------------------------------------------
@@ -487,6 +589,19 @@ Q:On("SETTINGS_CHANGED", function(path)
     RouteLine:Recolor()
   end
 end)
+
+-- Carte du monde : repères posés à l'ouverture, retirés à la fermeture.
+if type(WorldMapFrame) == "table" and type(WorldMapFrame.HookScript) == "function" then
+  WorldMapFrame:HookScript("OnShow", function()
+    Q.SafeCall(function()
+      local lib = hbdPins()
+      if lib and count > 0 then syncWorld(lib, RouteLine:Color()) end
+    end)
+  end)
+  WorldMapFrame:HookScript("OnHide", function()
+    Q.SafeCall(function() clearWorld(hbdPins()) end)
+  end)
+end
 
 -- Écran de chargement : la minicarte suit le continent du joueur.
 Q:RegisterEvent("PLAYER_ENTERING_WORLD", function()

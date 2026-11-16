@@ -9,13 +9,18 @@ local ELWYNN, DUROTAR = 1429, 1411
 local DOT = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local SQUARE = "Interface\\Buttons\\WHITE8X8"
 
--- Charge l'addon, Questify_Nav installé (routeur Questify), joueur à Elwynn 40,50, sans guides.
-local function load(settings)
+-- Charge l'addon, Questify_Nav installé (routeur Questify), joueur à Elwynn 40,50, sans guides,
+-- carte du monde ouverte sur Elwynn (sauf mapClosed : la ligne n'y est posée que carte ouverte).
+local function load(settings, mapClosed)
   Mock.addons.Questify_Nav = "demand"
   Mock.player.map, Mock.player.x, Mock.player.y = ELWYNN, 40, 50
   local Q = Mock.loadAddon(TOC, { skipGuides = true, beforeLogin = function(Q)
     for path, value in pairs(settings or {}) do Q.Settings:Set(path, value) end
   end })
+  if not mapClosed then
+    WorldMapFrame:Show()
+    WorldMapFrame:SetMapID(ELWYNN)
+  end
   return Q
 end
 
@@ -37,17 +42,27 @@ local function fakeRoute(Q, legs, path)
     target = { mapId = ELWYNN, x = 60, y = 50, title = "East" } }
 end
 
-local function counts() return Ext.registered(REF) end
-
--- Données HereBeDragons des repères posés : { icon = data } pour la carte du monde et la minicarte.
-local function pinData(where)
+-- Données HereBeDragons des repères posés : { icon = data } pour la carte du monde ou la minicarte,
+-- marques de la ligne (halo nil) ou halos (halo vrai).
+local function pinData(where, halo)
   local lib = Ext.pins()
   local reg = where == "world" and lib.worldmapPinRegistry[REF] or lib.minimapPinRegistry[REF]
   local store = where == "world" and lib.worldmapPins or lib.minimapPins
   local out = {}
-  for icon in pairs(reg or {}) do out[icon] = store[icon] end
+  for icon in pairs(reg or {}) do
+    if (icon.halo == true) == (halo == true) then out[icon] = store[icon] end
+  end
   return out
 end
+
+local function size(t)
+  local n = 0
+  for _ in pairs(t) do n = n + 1 end
+  return n
+end
+
+-- Marques de la ligne posées (sans les halos) : carte du monde, minicarte.
+local function counts() return size(pinData("world")), size(pinData("minimap")) end
 
 local function noErrors(t) t.eq(Mock.errors, {}, "no Lua error") end
 
@@ -162,8 +177,9 @@ return {
     Q:Fire("NAV_ROUTE", fakeRoute(Q, { leg("walk", ELWYNN, 40, 50, ELWYNN, 100, 100) },
       { world(Q, ELWYNN, 40, 50), world(Q, ELWYNN, 100, 100) }))
     local w, m = counts()
-    t.eq(w, 400, "world map capped")
-    t.eq(m, 60, "minimap capped")
+    t.eq(w, 200, "world map: 200 marks")
+    t.eq(m, 30, "minimap: 30 marks")
+    t.eq({ Ext.registered(REF) }, { 400, 60 }, "with their halos: 400 and 60 pins at most")
     -- les plus proches du joueur : le début du chemin
     local HBD = LibStub("HereBeDragons-2.0")
     local maxX = 0
@@ -240,6 +256,100 @@ return {
     t.ok(m > 0)
     Q.Nav:Clear()
     t.eq((counts()), 0, "target cleared: line removed")
+    noErrors(t)
+  end,
+
+  map_closed_no_world_pins = function(t)
+    local Q = load(nil, true)
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    local w, m = counts()
+    t.eq(w, 0, "world map closed: no world pin registered")
+    t.ok(m > 0, "minimap pins stay live")
+    t.eq(Mock.countCalls("WorldMapFrame:AcquirePin"), 0)
+    -- ouverture : la ligne est posée ; fermeture : retirée
+    WorldMapFrame:Show()
+    WorldMapFrame:SetMapID(ELWYNN)
+    t.eq((counts()), 58, "map opened: line placed")
+    WorldMapFrame:Hide()
+    t.eq((counts()), 0, "map closed: line removed")
+    t.eq(select(2, counts()), m, "minimap untouched")
+    -- nouvelle route carte fermée : rien sur la carte du monde
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    t.eq((counts()), 0)
+    noErrors(t)
+  end,
+
+  halo_under_each_mark = function(t)
+    local Q = load()
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    for _, where in ipairs({ "world", "minimap" }) do
+      local marks, halos = pinData(where), pinData(where, true)
+      t.eq(size(halos), size(marks), where .. ": one halo per mark")
+      local at = {}
+      for icon, d in pairs(halos) do at[icon.index] = { d = d, icon = icon } end
+      for icon, d in pairs(marks) do
+        local h = at[icon.index]
+        t.ok(h, where .. ": halo of the same point")
+        t.near(h.d.x, d.x, 0.001)
+        t.near(h.d.y, d.y, 0.001)
+        local r, g, b, a = h.icon.tex:GetVertexColor()
+        t.eq({ r, g, b }, { 0, 0, 0 }, "dark halo")
+        t.near(a, 0.667, 0.001, "maquette #000a")
+        t.ok(h.icon.tex:GetWidth() > icon.tex:GetWidth(), "halo wider than the mark")
+      end
+    end
+    -- minicarte : halo sous la marque
+    local base = Minimap:GetFrameLevel()
+    for icon in pairs(pinData("minimap")) do t.eq(icon:GetFrameLevel(), base + 2) end
+    for icon in pairs(pinData("minimap", true)) do t.eq(icon:GetFrameLevel(), base + 1) end
+    noErrors(t)
+  end,
+
+  world_frame_levels_below_quest_pins = function(t)
+    -- gestionnaire de niveaux de la carte (MapCanvas) : types rangés dans l'ordre
+    local order = { "PIN_FRAME_LEVEL_MAP_EXPLORATION", "PIN_FRAME_LEVEL_AREA_POI" }
+    local mgr = {}
+    function mgr:InsertFrameLevelBelow(new, existing)
+      for i, v in ipairs(order) do
+        if v == existing then table.insert(order, i, new); return end
+      end
+      error("unknown frame level " .. tostring(existing))
+    end
+    function mgr:GetValidFrameLevel(kind)
+      for i, v in ipairs(order) do if v == kind then return 100 + i end end
+      return nil
+    end
+    local Q = load(nil, true)
+    rawset(WorldMapFrame, "GetPinFrameLevelsManager", function() return mgr end)
+    WorldMapFrame:Show()
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    t.eq(order, { "PIN_FRAME_LEVEL_MAP_EXPLORATION", "QUESTIFY_ROUTE_HALO", "QUESTIFY_ROUTE_LINE",
+      "PIN_FRAME_LEVEL_AREA_POI" }, "halo below the line, line below quest pins")
+    for _, d in pairs(pinData("world")) do t.eq(d.frameLevelType, "QUESTIFY_ROUTE_LINE") end
+    for _, d in pairs(pinData("world", true)) do t.eq(d.frameLevelType, "QUESTIFY_ROUTE_HALO") end
+    noErrors(t)
+  end,
+
+  world_frame_levels_fallback = function(t)
+    local Q = load()
+    Q:Fire("NAV_ROUTE", fakeRoute(Q))
+    t.eq((counts()), 58, "no level manager: default level")
+    for _, d in pairs(pinData("world")) do t.eq(d.frameLevelType, nil) end
+    noErrors(t)
+  end,
+
+  switchback_not_skipped = function(t)
+    local Q = load()
+    -- chemin en U : 231 yd vers le nord, 69 vers l'est, 231 vers le sud (532 yd, 45 points)
+    local path = { world(Q, ELWYNN, 40, 50), world(Q, ELWYNN, 40, 40), world(Q, ELWYNN, 42, 40),
+      world(Q, ELWYNN, 42, 50) }
+    Q:Fire("NAV_ROUTE", fakeRoute(Q, { leg("walk", ELWYNN, 40, 50, ELWYNN, 42, 50) }, path))
+    t.eq((counts()), 45)
+    -- un pas vers le nord, un peu à l'est : plus près du retour du U (28 yd) que de l'aller (42 yd)
+    Mock.player.x, Mock.player.y = 41.2, 49
+    Mock.advance(1)
+    local w = counts()
+    t.eq(w, 43, "only the 2 points behind the player removed (" .. w .. " left)")
     noErrors(t)
   end,
 
