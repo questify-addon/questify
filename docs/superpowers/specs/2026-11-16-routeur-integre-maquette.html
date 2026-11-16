@@ -94,14 +94,14 @@
 <div id="out"></div>
 
 <script>
-const ICONBASE = "https://static.icy-veins.com/wp/static/icydb/wowf/icons/";
+const ICONBASE = "https://wow.zamimg.com/images/wow/icons/large/";
 const IC = {
-  walk: "inv_boots_cloth_03", fly: "ability_mount_gryphon_01", boat: "inv_misc_ship_01" ,
+  walk: "inv_boots_cloth_03", fly: "ability_mount_gryphon_01", boat: "inv_misc_anchor" ,
   zep: "inv_misc_enggizmos_30", tram: "inv_misc_gear_01", portal: "spell_arcane_portalstormwind",
   hearth: "inv_misc_rune_01"
 };
 const FALLBACK = "this.style.background='#3a3026';this.removeAttribute('src')";
-const ico = k => `<img class="ico" src="${ICONBASE}${IC[k]}.webp" alt="" onerror="${FALLBACK}">`;
+const ico = k => `<img class="ico" src="${ICONBASE}${IC[k]}.jpg" alt="" onerror="${FALLBACK}">`;
 
 const arrowSvg = rot => `<svg viewBox="0 0 64 64" style="transform:rotate(${rot}deg)"><path d="M32 4 L52 54 L32 43 L12 54 Z" fill="var(--accent)" stroke="#000" stroke-opacity=".6" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
 
