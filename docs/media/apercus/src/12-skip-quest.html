@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Questify, aperçu 12 : passer une quête peu rentable</title>
+<link rel="stylesheet" href="apercu.css">
+<style>
+  /* Bloc « conseil » sous l'étape courante (UI/QuestValue.lua) : raison, XP perdue, petits boutons. */
+  .trk .adv { position: relative; margin: 0 0 6px 38px; width: 206px; }
+  .trk .adv .why { font-size: 11px; line-height: 12px; white-space: normal; }
+  .trk .adv .lost { font-size: 11px; line-height: 12px; margin-top: 1px; white-space: normal; }
+  .trk .adv .btns { position: relative; height: 18px; margin-top: 4px; }
+  .trk .adv .btns + .btns { margin-top: 3px; }
+  .trk .sb { position: absolute; top: 0; height: 18px; border-radius: 3px; text-align: center; white-space: nowrap;
+    font-family: var(--friz); font-size: 11px; line-height: 17px; color: var(--gold); text-shadow: var(--shadow);
+    background: linear-gradient(180deg, #b31c12 0%, #7a0d08 55%, #5a0805 100%);
+    box-shadow: 0 0 0 1px #1d0201, inset 0 0 0 1px rgba(232,170,110,.55), inset 0 1px 0 rgba(255,220,180,.5); }
+  .th-parchment .t-adv { color: #8c4d00; }
+  .th-parchment .t-lost { color: #5c452a; }
+  .panel-label { position: absolute; font-family: var(--sans); color: #e9ebef; font-size: 21px; font-weight: 600; }
+  .panel-sub { position: absolute; font-family: var(--sans); color: #aab0ba; font-size: 16px; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="cap" style="width:1700px; top:56px">
+    <div class="brand">Questify</div>
+    <h1 style="font-size:40px; margin-bottom:10px">Passer une quête devenue peu rentable</h1>
+    <p style="font-size:19px">Sous l'étape en cours, le suivi dit pourquoi la quête ne vaut plus le détour et ce qu'elle rapporterait encore. Rien n'est jamais passé sans clic. « Garder » cache le conseil pour cette quête.</p>
+  </div>
+
+  <!-- 1. Quête grise dans le journal -->
+  <div class="panel-label" style="left:70px; top:228px">1. Quête devenue grise</div>
+  <div class="panel-sub" style="left:70px; top:258px; width:410px">Humain niveau 26. La quête et sa suite sont passées ; elles quittent aussi le journal de quêtes pour faire de la place.</div>
+  <div class="ui" style="left:70px; top:340px">
+    <div style="zoom:1.6">
+      <div class="trk th-parchment">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="row head"><div class="title fn t-title">Ashenvale et les Serres-Rocheuses</div><div class="levels fhs t-levels">20-22</div></div>
+        <div class="bar"><div class="bbg"></div><div class="fill" style="width:15%"></div><div class="btxt fhs t-bar" style="white-space:pre">11/71  ·  ~38k XP restants</div></div>
+        <div class="cur">
+          <div class="cicon ico i-turnin"></div>
+          <div class="dist fhs t-dist">96 yd</div>
+          <div class="chunk fh t-body wrap">Rendre : <span class="c-quest">La tour d'Althalaxx</span></div>
+        </div>
+        <div class="adv">
+          <div class="why fhs t-adv">Quête grise : 400 XP au lieu de 1 000.</div>
+          <div class="lost fhs t-lost">Avec sa suite (La tour d'Althalaxx, niv. 21) : -2 050 XP.</div>
+          <div class="btns"><div class="sb" style="left:0; width:142px">Passer et abandonner</div><div class="sb" style="left:146px; width:60px">Garder</div></div>
+        </div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : La tour d'Althalaxx</span></div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : Les cheveux de Bathran</span></div>
+        <div class="grip ico i-grip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Juste après le clic : annulation possible 10 s -->
+  <div class="panel-label" style="left:520px; top:228px">2. Juste après « Passer »</div>
+  <div class="panel-sub" style="left:520px; top:258px; width:410px">L'étape suivante prend la place. L'abandon dans le journal du jeu n'a lieu qu'au bout de 10 s : « Annuler » remet tout.</div>
+  <div class="ui" style="left:520px; top:340px">
+    <div style="zoom:1.6">
+      <div class="trk th-parchment">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="row head"><div class="title fn t-title">Ashenvale et les Serres-Rocheuses</div><div class="levels fhs t-levels">20-22</div></div>
+        <div class="bar"><div class="bbg"></div><div class="fill" style="width:20%"></div><div class="btxt fhs t-bar" style="white-space:pre">14/71  ·  ~36k XP restants</div></div>
+        <div class="cur">
+          <div class="cicon ico i-accept"></div>
+          <div class="dist fhs t-dist">12 yd</div>
+          <div class="chunk fh t-body wrap">Prendre : <span class="c-quest">Les cheveux de Bathran</span></div>
+        </div>
+        <div class="adv">
+          <div class="why fhs t-lost">La tour d'Althalaxx passée, avec sa suite (3 étapes). Abandon dans 8 s.</div>
+          <div class="btns"><div class="sb" style="left:0; width:70px">Annuler</div></div>
+        </div>
+        <div class="next"><span class="ico i-turnin"></span><span class="ntxt fds t-dim">Rendre : Un tir, un mort</span></div>
+        <div class="next"><span class="ico i-turnin"></span><span class="ntxt fds t-dim">Rendre : Le dormeur s'est réveillé</span></div>
+        <div class="grip ico i-grip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Quête trop haute -->
+  <div class="panel-label" style="left:970px; top:228px">3. Monstres trop hauts</div>
+  <div class="panel-sub" style="left:970px; top:258px; width:410px">Monstres à 3 niveaux ou plus au-dessus du joueur. Zone de secours, bash sur place jusqu'au bon niveau, ou passer.</div>
+  <div class="ui" style="left:970px; top:340px">
+    <div style="zoom:1.6">
+      <div class="trk th-parchment">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="row head"><div class="title fn t-title">Ashenvale et les Serres-Rocheuses</div><div class="levels fhs t-levels">20-22</div></div>
+        <div class="bar"><div class="bbg"></div><div class="fill" style="width:40%"></div><div class="btxt fhs t-bar" style="white-space:pre">28/71  ·  ~24k XP restants</div></div>
+        <div class="cur">
+          <img class="cicon ico" src="https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg" alt="">
+          <div class="dist fhs t-dist">310 yd</div>
+          <div class="chunk fh t-body wrap">Faire : <span class="c-quest">Les ruines de Poussière-d'étoile</span><br>&nbsp;&nbsp;<span class="c-todo">Naga tué&nbsp;: 0/10</span></div>
+        </div>
+        <div class="adv">
+          <div class="why fhs t-adv">Trop haute : monstres niveau 23-24 (vous : 20).</div>
+          <div class="lost fhs t-lost">Passer : -1 850 XP.</div>
+          <div class="btns"><div class="sb" style="left:0; width:100px">Zone de secours</div><div class="sb" style="left:104px; width:102px">Bash jusqu'au 22</div></div>
+          <div class="btns"><div class="sb" style="left:0; width:70px">Passer</div><div class="sb" style="left:74px; width:60px">Garder</div></div>
+        </div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : Les ordres de Gerenzo</span></div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : La fureur de la terre</span></div>
+        <div class="grip ico i-grip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Quête de groupe -->
+  <div class="panel-label" style="left:1420px; top:228px">4. Élites, sans groupe</div>
+  <div class="panel-sub" style="left:1420px; top:258px; width:430px">« Chercher un groupe » ouvre la ligne de discussion avec un message prêt ; le joueur choisit le canal et l'envoie.</div>
+  <div class="ui" style="left:1420px; top:340px">
+    <div style="zoom:1.6">
+      <div class="trk th-parchment">
+        <div class="bg"></div><div class="edge"></div>
+        <div class="row head"><div class="title fn t-title">Ashenvale</div><div class="levels fhs t-levels">27-30</div></div>
+        <div class="bar"><div class="bbg"></div><div class="fill" style="width:55%"></div><div class="btxt fhs t-bar" style="white-space:pre">31/56  ·  ~19k XP restants</div></div>
+        <div class="cur">
+          <img class="cicon ico" src="https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg" alt="">
+          <div class="dist fhs t-dist">180 yd</div>
+          <div class="chunk fh t-body wrap">Faire : <span class="c-quest">Les druides fous</span><br>&nbsp;&nbsp;<span class="c-todo">Taneel Darkwood tué&nbsp;: 0/1</span></div>
+        </div>
+        <div class="adv">
+          <div class="why fhs t-adv">Quête de groupe : 3 élites à tuer, vous êtes seul.</div>
+          <div class="lost fhs t-lost">Passer : -3 200 XP.</div>
+          <div class="btns"><div class="sb" style="left:0; width:116px">Chercher un groupe</div><div class="sb" style="left:120px; width:86px">Zone de secours</div></div>
+          <div class="btns"><div class="sb" style="left:0; width:70px">Passer</div><div class="sb" style="left:74px; width:60px">Garder</div></div>
+        </div>
+        <div class="next"><span class="ico i-turnin"></span><span class="ntxt fds t-dim">Rendre : Les druides fous</span></div>
+        <div class="next"><span class="ico i-accept"></span><span class="ntxt fds t-dim">Prendre : Les patrouilles de Brisepoing</span></div>
+        <div class="grip ico i-grip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-sub" style="left:70px; top:830px; width:1500px">
+    Règles (seuils « équilibré ») — grise : couleur grise du jeu pour le niveau du joueur ; trop haute : un monstre à tuer, ou la quête, à 3 niveaux ou plus au-dessus du joueur ;
+    groupe : un monstre à tuer est élite (QuestieDB) ou le journal conseille un groupe, et le joueur n'est pas groupé.
+    XP perdue = XP de la quête et de ses suites au niveau actuel du joueur. « Bash jusqu'au 22 » ajoute une étape « Monter au niveau 22 » avant la quête.
+    « Annuler » 10 s, puis clic sur l'étape dans le journal (onglet Route) ou /qf back. Jamais de saut automatique.
+  </div>
+
+  <div class="badge"><div class="t">Aperçu de l'interface</div><div class="s">Maquette, pas une capture en jeu</div></div>
+</div>
+</body>
+</html>
