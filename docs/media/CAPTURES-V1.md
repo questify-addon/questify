@@ -15,12 +15,14 @@ l'insère dans le gabarit (`docs/media/apercus/src/en/<nom>.html`) puis je rends
 - Un personnage autour du niveau 20 à 35 donne les exemples les plus parlants (donjons, talents, routes).
 - Hors combat. `/qf demo off` remet tout en place après une scène de démonstration.
 
-## Où on en est (17/11)
-- Faites : 01 (suivi ; à refaire si possible sur une vraie étape « tuer » des Paluns, la capture montre des
-  objectifs de Froidecrête) et 10-quest-item (série d'avant, rafraîchie).
-- À refaire : 16 (fenêtre de démo classée au niveau 34), 14 (objets d'exemple moins bons que ton équipement).
-- Options (21, 22, 26 et l'encart de 24) : après le passage en 1.0.0, le pied du menu affiche la version.
-- Après mise à jour du code : `/reload` (scène `auction` nouvelle, scène `route` corrigée).
+## Où on en est (17/11, fin d'après-midi)
+- Faites : 01 (suivi), 10-quest-item, 20 (flèche, minicarte et carte du monde réunies : 20b n'est plus utile),
+  21 (talents), 22 (macros). Les options sont recadrées sur le panneau : la version 0.8.1 n'apparaît pas.
+- Reçues dans la discussion mais absentes du disque : 08c (onglet Donjons, Excavation Site) et 26 (thèmes).
+  Les déposer dans `docs/media/apercus/src/en/captures/` ou sur le Bureau.
+- À refaire une fois le personnage revenu sur un chapitre de son niveau (le suivi affiche Burning Steppes
+  53-55) : 12 (Pace) et 25 (liste d'achats, avec Auctionator pour les prix).
+- À faire : 16, 08, 23, 24, 14, 27. Après mise à jour du code : `/reload`.
 
 ## Liste
 
