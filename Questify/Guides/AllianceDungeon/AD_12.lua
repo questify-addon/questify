@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
--- Simulation : 31 étapes, niveau final 33.00, ~27265 xp/h, 232 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 29 étapes, niveau final 31.41, ~16156 xp/h, 77 min.
 Q:RegisterGuide({
   id = "AD_12",
   title = "Thousand Needles",
@@ -11,10 +11,9 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 31, maxLevel = 33,
   next = "AD_13",
-  sim = { steps = 31, endLevel = 33.00, xpPerHour = 27265, minutes = 232 },
+  sim = { steps = 29, endLevel = 31.41, xpPerHour = 16156, minutes = 77 },
   steps = {
-    { "goto", 1455, 55.5, 47.74, note = "Flight master" }, -- déplacement
-    { "fly", 1436, node = 4, note = "Sentinel Hill, Westfall" }, -- vol
+    { "hearth", 1431 }, -- pierre de foyer
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau
     { "fp", 1445, 67.48, 51.3 }, -- point de vol
     { "accept", 1110 }, -- Rocket Car Parts (lvl 31, ~2500 xp, sim lvl 31)
@@ -39,10 +38,9 @@ Q:RegisterGuide({
     { "turnin", 1114, xp = 700 }, -- Delivery to the Gnomes (lvl 36, ~700 xp, sim lvl 31)
     { "turnin", 1110, xp = 2500 }, -- Rocket Car Parts (lvl 31, ~2500 xp, sim lvl 31)
     { "accept", 1115 }, -- The Rumormonger (lvl 36, ~0 xp, sim lvl 31)
-    { "level", 33, at = { 1441, 87.86, 65.44 }, note = "About 444 more mobs near the last objective" }, -- farm de niveau
     { "goto", 1413, 42.9, 90.2, optional = true, dungeon = "Razorfen Kraul", note = "Dungeon: Razorfen Kraul (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFK" }, -- déplacement
-    { "accept", 1142, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)
-    { "complete", 1142, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)
-    { "turnin", 1142, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 33)
+    { "accept", 1142, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
+    { "complete", 1142, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
+    { "turnin", 1142, at = { 1457, 69.54, 67.75 }, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
   },
 })

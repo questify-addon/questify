@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
--- Simulation : 51 étapes, niveau final 55.00, ~58744 xp/h, 178 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 51 étapes, niveau final 54.40, ~62784 xp/h, 66 min.
 Q:RegisterGuide({
   id = "AD_28",
   title = "Burning Steppes",
@@ -11,12 +11,14 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 53, maxLevel = 55,
   next = "AD_29",
-  sim = { steps = 51, endLevel = 55.00, xpPerHour = 58744, minutes = 178 },
+  sim = { steps = 51, endLevel = 54.40, xpPerHour = 62784, minutes = 66 },
   steps = {
-    { "hearth", 1434 }, -- pierre de foyer
+    { "hearth", 1445 }, -- pierre de foyer
+    { "goto", 1445, 67.48, 51.3, note = "Flight master" }, -- déplacement
+    { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
+    { "boat", 1413, 63.54, 38.61, note = "Take the boat to Booty Bay (Stranglethorn Vale)" }, -- bateau
     { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
-    { "fly", 1433, node = 5, note = "Lakeshire, Redridge" }, -- vol
-    { "fp", 1428, 84.33, 68.33 }, -- point de vol
+    { "fly", 1428, node = 71, note = "Morgan's Vigil, Burning Steppes" }, -- vol
     { "accept", 3823 }, -- Extinguish the Firegut (lvl 52, ~5100 xp, sim lvl 54)
     { "accept", 4283 }, -- FIFTY! YEP! (lvl 56, ~5800 xp, sim lvl 54)
     { "accept", 4286, optional = true, dungeon = "Blackrock Depths", phase = "prep", rung = "BRD" }, -- The Good Stuff (lvl 56, ~0 xp, sim lvl 54)
@@ -49,20 +51,18 @@ Q:RegisterGuide({
     { "accept", 3825 }, -- Ogre Head On A Stick = Party (lvl 53, ~5250 xp, sim lvl 54)
     { "complete", 3825, at = { 1428, 81, 46.79 } }, -- Ogre Head On A Stick = Party (lvl 53, ~5250 xp, sim lvl 54)
     { "turnin", 3825, xp = 5250 }, -- Ogre Head On A Stick = Party (lvl 53, ~5250 xp, sim lvl 54)
-    { "fly", 1433, node = 5, note = "Lakeshire, Redridge" }, -- vol
     { "turnin", 4183, xp = 4100 }, -- The True Masters (lvl 54, ~4100 xp, sim lvl 54)
     { "goto", 1433, 25.5, 59.41, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
     { "turnin", 81953, xp = 195 }, -- Stonewrought Design (lvl 45, ~195 xp, sim lvl 54)
-    { "level", 55, at = { 1428, 36, 60.37 }, note = "About 318 more mobs here (Flamekin Rager, level 55)" }, -- farm de niveau
     { "goto", 1427, 34.8, 85.3, optional = true, dungeon = "Blackrock Depths", note = "Dungeon: Blackrock Depths (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "BRD" }, -- déplacement
-    { "complete", 4024, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Taste of Flame (lvl 58, ~3100 xp, sim lvl 55)
-    { "complete", 4123, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 55)
-    { "complete", 4136, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 55)
-    { "complete", 4286, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Good Stuff (lvl 56, ~2900 xp, sim lvl 55)
-    { "turnin", 4024, xp = 3100, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Taste of Flame (lvl 58, ~3100 xp, sim lvl 55)
-    { "turnin", 4123, xp = 2825, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 55)
-    { "turnin", 4136, xp = 1325, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 55)
-    { "turnin", 4286, xp = 2900, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Good Stuff (lvl 56, ~2900 xp, sim lvl 55)
+    { "complete", 4024, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Taste of Flame (lvl 58, ~3100 xp, sim lvl 54)
+    { "complete", 4123, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 54)
+    { "complete", 4136, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 54)
+    { "complete", 4286, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Good Stuff (lvl 56, ~2900 xp, sim lvl 54)
+    { "turnin", 4024, at = { 1428, 95.09, 31.56 }, xp = 3100, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Taste of Flame (lvl 58, ~3100 xp, sim lvl 54)
+    { "turnin", 4123, at = { 1428, 65.15, 23.91 }, xp = 2825, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 54)
+    { "turnin", 4136, at = { 1428, 66.06, 21.95 }, xp = 1325, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 54)
+    { "turnin", 4286, at = { 1428, 84.56, 68.68 }, xp = 2900, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Good Stuff (lvl 56, ~2900 xp, sim lvl 54)
   },
 })

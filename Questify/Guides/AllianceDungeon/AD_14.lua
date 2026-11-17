@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
--- Simulation : 60 étapes, niveau final 36.00, ~35720 xp/h, 218 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 60 étapes, niveau final 36.00, ~35714 xp/h, 218 min.
 Q:RegisterGuide({
   id = "AD_14",
   title = "Desolace",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 33, maxLevel = 36,
   next = "AD_15",
-  sim = { steps = 60, endLevel = 36.00, xpPerHour = 35720, minutes = 218 },
+  sim = { steps = 60, endLevel = 36.00, xpPerHour = 35714, minutes = 218 },
   steps = {
     { "hearth", 1431 }, -- pierre de foyer
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
@@ -19,9 +19,9 @@ Q:RegisterGuide({
     { "boat", 1453, 24.1, 55.4, note = "Take the boat to Auberdine (Stormwind Harbor)" }, -- bateau
     { "goto", 1439, 36.34, 45.58, note = "Flight master" }, -- déplacement
     { "fly", 1442, node = 33, note = "Stonetalon Peak, Stonetalon Mountains" }, -- vol
-    { "turnin", 2928, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Gyrodrillmatic Excavationators (lvl 30, ~1225 xp, sim lvl 31)
-    { "turnin", 92489, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Power Overwhelming (lvl 33, ~1325 xp, sim lvl 30)
-    { "turnin", 92456, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- A Green Sample (lvl 33, ~1325 xp, sim lvl 30)
+    { "turnin", 2928, at = { 1453, 62.63, 34.11 }, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Gyrodrillmatic Excavationators (lvl 30, ~1225 xp, sim lvl 31)
+    { "turnin", 92489, at = { 1453, 48.71, 87.62 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Power Overwhelming (lvl 33, ~1325 xp, sim lvl 29)
+    { "turnin", 92456, at = { 1453, 31.5, 62.61 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- A Green Sample (lvl 33, ~1325 xp, sim lvl 29)
     { "fp", 1443, 64.66, 10.54 }, -- point de vol
     { "accept", 1437 }, -- Vahlarriel's Search (lvl 33, ~1950 xp, sim lvl 34)
     { "accept", 97284 }, -- Vahlarriel's Vengeance (lvl 33, ~2650 xp, sim lvl 34)
@@ -72,6 +72,6 @@ Q:RegisterGuide({
     { "boat", 1453, 24.1, 55.4, note = "Take the boat to Auberdine (Stormwind Harbor)" }, -- bateau
     { "goto", 1439, 36.34, 45.58, note = "Flight master" }, -- déplacement
     { "fly", 1443, node = 37, note = "Nijel's Point, Desolace" }, -- vol
-    { "level", 36, at = { 1443, 57.31, 48.35 }, note = "About 230 more mobs here (Hulking Gritjaw Basilisk, level 35)" }, -- farm de niveau
+    { "level", 36, at = { 1443, 57.31, 48.35 }, note = "About 229 more mobs here (Hulking Gritjaw Basilisk, level 35)" }, -- farm de niveau
   },
 })

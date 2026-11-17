@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Simulation : 11 étapes, niveau final 15.00, ~0 xp/h, 7 min.
 Q:RegisterGuide({
   id = "AD_01",
@@ -22,8 +22,8 @@ Q:RegisterGuide({
     { "complete", 96393, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Old Ironforge Incursion (lvl 16, ~575 xp, sim lvl 15)
     { "complete", 96394, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Restless Dead (lvl 15, ~525 xp, sim lvl 15)
     { "complete", 96403, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Important Heirlooms (lvl 15, ~525 xp, sim lvl 15)
-    { "turnin", 96393, xp = 575, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Old Ironforge Incursion (lvl 16, ~575 xp, sim lvl 15)
-    { "turnin", 96394, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Restless Dead (lvl 15, ~525 xp, sim lvl 15)
-    { "turnin", 96403, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Important Heirlooms (lvl 15, ~525 xp, sim lvl 15)
+    { "turnin", 96393, at = { 1455, 39.09, 56.2 }, xp = 575, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Old Ironforge Incursion (lvl 16, ~575 xp, sim lvl 15)
+    { "turnin", 96394, at = { 1455, 33.23, 48.01 }, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Restless Dead (lvl 15, ~525 xp, sim lvl 15)
+    { "turnin", 96403, at = { 1455, 32.18, 44.5 }, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Important Heirlooms (lvl 15, ~525 xp, sim lvl 15)
   },
 })

@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
--- Simulation : 6 étapes, niveau final 43.00, ~0 xp/h, 24 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 6 étapes, niveau final 43.00, ~0 xp/h, 20 min.
 Q:RegisterGuide({
   id = "AD_21",
   title = "Aerie Peak",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 43, maxLevel = 45,
   next = "AD_22",
-  sim = { steps = 6, endLevel = 43.00, xpPerHour = 0, minutes = 24 },
+  sim = { steps = 6, endLevel = 43.00, xpPerHour = 0, minutes = 20 },
   steps = {
     { "goto", 1443, 64.66, 10.54, note = "Flight master", phase = "prep", rung = "ST" }, -- déplacement
     { "fly", 1439, node = 26, note = "Auberdine, Darkshore", phase = "prep", rung = "ST" }, -- vol

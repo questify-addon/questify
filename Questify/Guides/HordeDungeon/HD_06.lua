@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-15.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Simulation : 71 étapes, niveau final 25.00, ~26721 xp/h, 240 min.
 Q:RegisterGuide({
   id = "HD_06",
@@ -74,15 +74,15 @@ Q:RegisterGuide({
     { "goto", 1440, 14.5, 14.2, optional = true, dungeon = "Blackfathom Deeps", note = "Dungeon: Blackfathom Deeps (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "BFD" }, -- déplacement
     { "complete", 6563, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- The Essence of Aku'Mai (lvl 22, ~875 xp, sim lvl 25)
     { "complete", 6921, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Amongst the Ruins (lvl 27, ~1375 xp, sim lvl 25)
-    { "turnin", 6562, xp = 215, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Trouble in the Deeps (lvl 22, ~215 xp, sim lvl 25)
-    { "turnin", 6563, xp = 875, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- The Essence of Aku'Mai (lvl 22, ~875 xp, sim lvl 25)
-    { "turnin", 6921, xp = 1375, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Amongst the Ruins (lvl 27, ~1375 xp, sim lvl 25)
+    { "turnin", 6562, at = { 1440, 11.56, 34.29 }, xp = 215, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Trouble in the Deeps (lvl 22, ~215 xp, sim lvl 25)
+    { "turnin", 6563, at = { 1440, 11.56, 34.29 }, xp = 875, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- The Essence of Aku'Mai (lvl 22, ~875 xp, sim lvl 25)
+    { "turnin", 6921, at = { 1440, 11.56, 34.29 }, xp = 1375, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Amongst the Ruins (lvl 27, ~1375 xp, sim lvl 25)
     { "accept", 6561, optional = true, dungeon = "Blackfathom Deeps", note = "Starts inside the dungeon", phase = "run", rung = "BFD" }, -- Blackfathom Villainy (lvl 27, ~825 xp, sim lvl 25)
     { "accept", 6564, optional = true, dungeon = "Blackfathom Deeps", note = "Starts inside the dungeon", phase = "run", rung = "BFD" }, -- Allegiance to the Old Gods (lvl 22, ~650 xp, sim lvl 25)
     { "accept", 6922, optional = true, dungeon = "Blackfathom Deeps", note = "Starts inside the dungeon", phase = "run", rung = "BFD" }, -- Baron Aquanis (lvl 30, ~1525 xp, sim lvl 25)
     { "complete", 6561, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Blackfathom Villainy (lvl 27, ~825 xp, sim lvl 25)
-    { "turnin", 6564, xp = 650, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Allegiance to the Old Gods (lvl 22, ~650 xp, sim lvl 25)
-    { "turnin", 6922, xp = 1525, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Baron Aquanis (lvl 30, ~1525 xp, sim lvl 25)
-    { "turnin", 6561, xp = 825, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Blackfathom Villainy (lvl 27, ~825 xp, sim lvl 25)
+    { "turnin", 6564, at = { 1440, 11.56, 34.29 }, xp = 650, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Allegiance to the Old Gods (lvl 22, ~650 xp, sim lvl 25)
+    { "turnin", 6922, at = { 1440, 11.56, 34.29 }, xp = 1525, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Baron Aquanis (lvl 30, ~1525 xp, sim lvl 25)
+    { "turnin", 6561, at = { 1456, 71.06, 34.19 }, xp = 825, optional = true, dungeon = "Blackfathom Deeps", phase = "run", rung = "BFD" }, -- Blackfathom Villainy (lvl 27, ~825 xp, sim lvl 25)
   },
 })

@@ -2269,8 +2269,24 @@ function sim.chapter(D, W, plan, state, opts)
   end
   if finish then cur = sim.travel(ctx, steps, cur, finish, fms) end
 
-  -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif
-  if state.level < plan.maxLevel then
+  -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif.
+  -- Chapitre qui finit à l'entrée d'un donjon (plan.grindCap, mode « Donjons ») : pas de farm quand le niveau
+  -- minimal du donjon est déjà atteint (plan.grindFloor) et qu'il faudrait plus de plan.grindCap mobs ; le
+  -- donjon et ses quêtes donnent cette XP (AD_09 demandait ~430 mobs avant la Cité de Dalaran).
+  local skipGrind = false
+  if plan.grindCap and state.level < plan.maxLevel and state.level >= (plan.grindFloor or plan.maxLevel) then
+    local probe, n = { level = state.level, xp = state.xp }, 0
+    while probe.level < plan.maxLevel and n <= plan.grindCap do
+      xpm.addXP(probe, math.max(xpm.mobXP(probe.level, probe.level), 1))
+      n = n + 1
+    end
+    if n > plan.grindCap then
+      skipGrind = true
+      report.grindSkipped = ("level %d reached for the dungeon, %d+ mobs to %d left to the instance")
+        :format(state.level, plan.grindCap, plan.maxLevel)
+    end
+  end
+  if state.level < plan.maxLevel and not skipGrind then
     local mobLevel = state.level
     if lastSite and lastSite.kills[1] then mobLevel = lastSite.kills[1][1] end
     local grind = sim.grindSite(ctx, cur, state.level)

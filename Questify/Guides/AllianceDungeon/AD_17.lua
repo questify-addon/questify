@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
--- Simulation : 39 étapes, niveau final 39.00, ~38440 xp/h, 89 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 39 étapes, niveau final 39.00, ~38161 xp/h, 83 min.
 Q:RegisterGuide({
   id = "AD_17",
   title = "Badlands",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 37, maxLevel = 39,
   next = "AD_18",
-  sim = { steps = 39, endLevel = 39.00, xpPerHour = 38440, minutes = 89 },
+  sim = { steps = 39, endLevel = 39.00, xpPerHour = 38161, minutes = 83 },
   steps = {
     { "boat", 1453, 69.6, 30.3, note = "Take the Deeprun Tram to Ironforge" }, -- bateau
     { "fp", 1432, 33.94, 50.95 }, -- point de vol
@@ -41,16 +41,16 @@ Q:RegisterGuide({
     { "turnin", 733, xp = 3150 }, -- Scrounging (lvl 40, ~3150 xp, sim lvl 38)
     { "turnin", 703, xp = 2350 }, -- Barbecued Buzzard Wings (lvl 40, ~2350 xp, sim lvl 38)
     { "turnin", 711, xp = 3000 }, -- Study of the Elements: Rock (lvl 39, ~3000 xp, sim lvl 38)
-    { "level", 39, at = { 1418, 42.03, 29.15 }, note = "About 31 more mobs here (Shadowforge Warrior, level 38)" }, -- farm de niveau
+    { "level", 39, at = { 1418, 42.03, 29.15 }, note = "About 13 more mobs here (Shadowforge Warrior, level 38)" }, -- farm de niveau
     { "goto", 1418, 44.6, 12.1, optional = true, dungeon = "Uldaman", note = "Dungeon: Uldaman (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "ULDAMAN" }, -- déplacement
     { "complete", 709, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 39)
     { "complete", 2418, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~1750 xp, sim lvl 39)
-    { "turnin", 709, xp = 1575, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 39)
-    { "turnin", 721, xp = 1375, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- A Sign of Hope (lvl 35, ~1375 xp, sim lvl 39)
-    { "turnin", 2418, xp = 1750, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~1750 xp, sim lvl 39)
-    { "turnin", 2198, xp = 1650, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Shattered Necklace (lvl 41, ~1650 xp, sim lvl 39)
+    { "turnin", 709, at = { 1418, 51.39, 76.87 }, xp = 1575, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 39)
+    { "turnin", 721, at = { 1418, 37.9, 10.59 }, xp = 1375, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- A Sign of Hope (lvl 35, ~1375 xp, sim lvl 39)
+    { "turnin", 2418, at = { 1418, 42.39, 52.93 }, xp = 1750, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~1750 xp, sim lvl 39)
+    { "turnin", 2198, at = { 1455, 36.38, 3.61 }, xp = 1650, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Shattered Necklace (lvl 41, ~1650 xp, sim lvl 39)
     { "accept", 2240, optional = true, dungeon = "Uldaman", note = "Starts inside the dungeon", phase = "run", rung = "ULDAMAN" }, -- The Hidden Chamber (lvl 40, ~1950 xp, sim lvl 39)
     { "complete", 2240, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Hidden Chamber (lvl 40, ~1950 xp, sim lvl 39)
-    { "turnin", 2240, xp = 1950, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Hidden Chamber (lvl 40, ~1950 xp, sim lvl 39)
+    { "turnin", 2240, at = { 1455, 74.64, 11.74 }, xp = 1950, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Hidden Chamber (lvl 40, ~1950 xp, sim lvl 39)
   },
 })

@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-15.
--- Simulation : 49 étapes, niveau final 49.00, ~41446 xp/h, 383 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 45 étapes, niveau final 49.00, ~44084 xp/h, 360 min.
 Q:RegisterGuide({
   id = "HD_21",
   title = "Stranglethorn Vale",
@@ -11,12 +11,10 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 47, maxLevel = 49,
   next = "HD_22",
-  sim = { steps = 49, endLevel = 49.00, xpPerHour = 41446, minutes = 383 },
+  sim = { steps = 45, endLevel = 49.00, xpPerHour = 44084, minutes = 360 },
   steps = {
     { "note", "Not running Razorfen Downs? Abandon Bring the End", optional = true, dungeon = "Razorfen Downs" },
-    { "goto", 1444, 75.45, 44.36, note = "Flight master" }, -- déplacement
-    { "fly", 1413, node = 80, note = "Ratchet, The Barrens" }, -- vol
-    { "boat", 1413, 63.54, 38.61, note = "Take the boat to Booty Bay (Stranglethorn Vale)" }, -- bateau
+    { "hearth", 1434 }, -- pierre de foyer
     { "accept", 617 }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 47)
     { "accept", 209 }, -- Skullsplitter Tusks (lvl 42, ~3450 xp, sim lvl 47)
     { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 47)
@@ -29,7 +27,6 @@ Q:RegisterGuide({
     { "complete", 617, at = { 1434, 26, 28.52 } }, -- Akiris by the Bundle (lvl 43, ~3600 xp, sim lvl 47)
     { "accept", 97386 }, -- The Offense of Grom'gol (lvl 44, ~4650 xp, sim lvl 47)
     { "accept", 572 }, -- Mok'thardin's Enchantment (lvl 41, ~1960 xp, sim lvl 47)
-    { "sethearth", 1434, 31.49, 29.75 }, -- lier la pierre de foyer
     { "accept", 591 }, -- The Mind's Eye (lvl 46, ~5050 xp, sim lvl 47)
     { "accept", 95326 }, -- The Big Payback (lvl 39, ~1200 xp, sim lvl 47)
     { "complete", 95326, at = { 1434, 43.87, 20.41 } }, -- The Big Payback (lvl 39, ~1200 xp, sim lvl 47)
@@ -37,7 +34,6 @@ Q:RegisterGuide({
     { "complete", 97386, at = { 1434, 51.63, 27.42 } }, -- The Offense of Grom'gol (lvl 44, ~4650 xp, sim lvl 47)
     { "complete", 591, at = { 1434, 52.93, 27.6 } }, -- The Mind's Eye (lvl 46, ~5050 xp, sim lvl 47)
     { "complete", 209, at = { 1434, 47.41, 39.79 } }, -- Skullsplitter Tusks (lvl 42, ~3450 xp, sim lvl 47)
-    { "hearth", 1434 }, -- pierre de foyer
     { "turnin", 591, xp = 5050 }, -- The Mind's Eye (lvl 46, ~5050 xp, sim lvl 47)
     { "accept", 592 }, -- Saving Yenniku (lvl 46, ~5050 xp, sim lvl 47)
     { "turnin", 97386, xp = 4650 }, -- The Offense of Grom'gol (lvl 44, ~4650 xp, sim lvl 47)
