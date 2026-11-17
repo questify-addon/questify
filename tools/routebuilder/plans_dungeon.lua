@@ -97,7 +97,7 @@ M.TRUNK = {
   { id = "AD_18", base = "A_15", title = "Dustwallow Marsh", min = 38, max = 40, run = { "RFD" } },
   -- Riverglades (Forever, 150 quêtes de niveau 38-44) : zone absente des guides habituels
   { id = "AD_19", zones = { RIVERGLADES }, entryHub = RIVERGLADES, title = "Riverglades", min = 39, max = 43,
-    alt = { "ULDAMAN", "RFD" }, set = { logCap = 17 } },
+    alt = { "ULDAMAN", "RFD" }, set = { logCap = 17, force = plansm.RIVERGLADES_FORCE } },
   -- Désolace : déjà faite en AD_15 ; restes et quêtes de Maraudon
   { id = "AD_20", base = "A_11", title = "Desolace", min = 42, max = 43, noLevel = true, prepFor = "MARAUDON",
     run = { "MARAUDON" } },

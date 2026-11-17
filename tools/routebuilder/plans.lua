@@ -50,6 +50,37 @@ local DESOLACE, FERALAS, DUSTWALLOW, TANARIS, AZSHARA, FELWOOD, UNGORO, SILITHUS
 
 local plans = {}
 
+-- Riverglades (A_31, AD_19) sur QuestieDB 1.1.x : les relations tracées (foreverQuestRelationTraces.lua) ferment une
+-- vingtaine de chaînes dont la première quête a pour objectif un objet sans aucune position dans QuestieDB (Foal Play
+-- 94615, Unsavory Plant Food 94842, Scraps of Knowledge 94879, Twilight Mementos 94983...). Moins d'XP tôt : le niveau 41
+-- n'est plus atteint par les quêtes et la simulation écarte en cascade les quêtes « trop dangereuses avant 41-42 » que
+-- la route 1.0.15 faisait (A_31 : 65 -> 18 quêtes, 264 -> 410 min, ~1009 monstres). Ces quêtes, toutes faites par la
+-- route 1.0.15 aux mêmes niveaux, sont gardées (mesures : docs/routes/A_31.md, audit 2026-11-17).
+-- Bats in the Belfry (95603, « trop dangereuse avant 53 ») n'est pas forcée : à vérifier en jeu.
+local RIVERGLADES_FORCE = {
+  [94614] = true,
+  [94881] = true,
+  [94884] = true,
+  [94885] = true,
+  [94887] = true,
+  [94892] = true,
+  [94925] = true,
+  [94927] = true,
+  [94928] = true,
+  [94961] = true,
+  [94963] = true,
+  [95064] = true,
+  [95120] = true,
+  [95562] = true,
+  [95643] = true,
+  [95912] = true,
+  [95991] = true,
+  [96125] = true,
+  [96126] = true,
+  [95122] = true,
+}
+plans.RIVERGLADES_FORCE = RIVERGLADES_FORCE
+
 plans.Alliance = {
   -- Nain / Gnome : Coldridge, Dun Morogh (pré-quêtes de Hall of Thanes), Loch Modan (avec les allers-retours
   -- à Ironforge des suites « Honor Students » et « Report to Ironforge »), puis Marche de l'Ouest par le tram.
@@ -334,6 +365,7 @@ plans.Alliance = {
     id = "A_31", title = "Riverglades", faction = "Alliance", zones = { RIVERGLADES },
     minLevel = 40, maxLevel = 43, entry = { RIVERGLADES, 59.53, 63.97 }, next = "A_17", logCap = 17,
     flightPaths = { "Farholde Keep, Riverglades" },
+    force = RIVERGLADES_FORCE,
   },
   {
     -- A_15 et A_16 : hors du parcours depuis Riverglades (A_31), gardés comme modèles du mode « Donjons »
