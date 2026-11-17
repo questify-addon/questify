@@ -240,7 +240,7 @@ return {
     local f = QuestifyOptions
     t.ok(f and f:IsShown())
     t.eq(f._template, "ButtonFrameTemplate")
-    t.eq({ f:GetSize() }, { 760, 560 })
+    t.eq({ f:GetSize() }, { 900, 660 })
     t.ok(f:IsMovable(), "movable")
     t.ok(contains(UISpecialFrames, "QuestifyOptions"), "closes with Escape")
     t.eq(O.searchBox._template, "SearchBoxTemplate")
@@ -585,6 +585,35 @@ return {
   ---------------------------------------------------------------------------
   -- Thème
   ---------------------------------------------------------------------------
+  -- Pied du menu : version, journal des versions (à la place de la liste) et fenêtre des nouveautés.
+  sidebar_footer_version_changelog_and_news = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    O:Open("route")
+    t.ok(O.versionText:GetText():find(tostring(Q.version), 1, true), "version shown")
+    Mock.click(O.changelogButton, "LeftButton")
+    local P = Q.UI.ChangelogPanel
+    t.ok(P:IsShown(), "changelog shown")
+    t.ok(not O.scroll:IsShown(), "in place of the option list")
+    t.ok(P.count > 10, "versions and lines: " .. tostring(P.count))
+    t.eq(P.rows[1].text:GetText(), Q.L.OPT_CHANGELOG_UNRELEASED, "newest first")
+    for _, b in ipairs(O.sectionButtons) do t.ok(not b.selected:IsShown(), "no section selected") end
+    O:SelectSection("navigation")
+    t.ok(not P:IsShown() and O.scroll:IsShown(), "back to the options")
+    local shown = 0
+    rawset(Q.UI.News, "Show", function() shown = shown + 1; return true end)
+    Mock.click(O.newsButton, "LeftButton")
+    t.eq(shown, 1, "news window opened")
+    noErrors(t)
+  end,
+
+  -- Data/Changelog.lua suit CHANGELOG.md (tools/build_changelog.lua).
+  changelog_data_up_to_date = function(t)
+    local p = io.popen("cd '" .. Mock.root .. "' && luajit tools/build_changelog.lua --check 2>&1; echo \"rc=$?\"")
+    local out = p:read("*a"); p:close()
+    t.ok(out:find("rc=0", 1, true), out)
+  end,
+
   theme_section_cards_segments_swatches_and_preview = function(t)
     local Q = load()
     local O = Q.UI.Options
@@ -626,10 +655,10 @@ return {
     t.eq(O.frame.qvTheme.key, "horde", "the window follows the theme")
     -- fenêtre élargie pour l'aperçu en direct
     t.ok(O.preview:IsShown(), "live preview shown")
-    t.eq(O.frame:GetWidth(), 760 + O.PREVIEW_W)
+    t.eq(O.frame:GetWidth(), O.WIDTH + O.PREVIEW_W)
     O:SelectSection("route")
     t.ok(not O.preview:IsShown())
-    t.eq(O.frame:GetWidth(), 760)
+    t.eq(O.frame:GetWidth(), O.WIDTH)
     O:SelectSection("theme")
     -- segments : fond du suivi
     local st = O:Widget("tracker.style")

@@ -28,22 +28,24 @@ local L = Q.L
 local S = Q.OptionsSchema
 
 local FRAME_NAME = "QuestifyOptions"
-local WIDTH, HEIGHT = 760, 560
-local SIDEBAR_W = 168
-local SECTION_ROW_H = 24
+-- Fenêtre large et haute (retour en jeu : « il faut que ça respire »).
+local WIDTH, HEIGHT = 900, 660
+local SIDEBAR_W = 190
+local SECTION_ROW_H = 28
 local CONTENT_X = SIDEBAR_W + 22          -- début de la liste défilante (depuis le bord du cadre)
 local CONTENT_W = WIDTH - CONTENT_X - 34  -- largeur utile (barre de défilement à droite)
 local HEADER_H = 40                       -- en-tête en aplat du thème
 local CONTENT_TOP, CONTENT_BOTTOM = HEADER_H + 10, 34
 local PREVIEW_W = 340                     -- aperçu en direct (section Thème)
-local ROW_GAP = 4
-local INDENT = 10
+local ROW_GAP = 7
+local INDENT = 14
 local INFO_TEXTURE = "Interface\\common\\help-i"
 local INFO_SIZE = 20
 local CONFIRM_DIALOG = "QUESTIFY_OPTIONS_CONFIRM"
 local CARD_COLS, CARD_H, CARD_GAP = 3, 46, 6
 local SWATCH = 18
 Options.CONTENT_W = CONTENT_W
+Options.WIDTH, Options.HEIGHT = WIDTH, HEIGHT
 Options.PREVIEW_W = PREVIEW_W
 
 local function theme() return Q.Themes and Q.Themes:Current() end
@@ -1255,6 +1257,29 @@ function Options:Create()
   divider:SetWidth(1)
   self.sidebar, self.sideBg, self.divider = side, sideBg, divider
   for i, s in ipairs(S.SECTIONS) do self.sectionButtons[i] = sectionButton(i, s) end
+  -- pied du menu : version, journal des versions (UI/ChangelogPanel.lua) et fenêtre des nouveautés (UI/News.lua)
+  local function footButton(label, onClick)
+    local b = CreateFrame("Button", nil, side, "UIPanelButtonTemplate")
+    b:SetSize(SIDEBAR_W - 16, 22)
+    b:SetText(label)
+    b:SetScript("OnClick", safe(function()
+      playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+      onClick()
+    end))
+    if Q.Themes then Q.Themes:SkinButton(b, "secondary") end
+    return b
+  end
+  self.newsButton = footButton(L.OPT_NEWS_BUTTON, function()
+    local N = Q.UI.News
+    if N and not N:Show() then Q:Print(L.OPT_NEWS_NONE) end
+  end)
+  self.newsButton:SetPoint("BOTTOMLEFT", side, "BOTTOMLEFT", 8, 8)
+  self.changelogButton = footButton(L.OPT_CHANGELOG_BUTTON, function() Options:ShowChangelog() end)
+  self.changelogButton:SetPoint("BOTTOMLEFT", self.newsButton, "TOPLEFT", 0, 4)
+  local version = side:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  version:SetPoint("BOTTOMLEFT", self.changelogButton, "TOPLEFT", 2, 6)
+  version:SetText(string.format(L.OPT_VERSION, tostring(Q.version or "dev")))
+  self.versionText = version
 
   -- liste défilante des contrôles
   local scroll = CreateFrame("ScrollFrame", FRAME_NAME .. "Scroll", f, "UIPanelScrollFrameTemplate")
@@ -1306,6 +1331,7 @@ function Options:Open(sectionId)
   self:Create()
   if sectionId and S:Section(sectionId) then
     self.section = sectionId
+    self.changelog = nil
     if self.query ~= "" then self:SetSearch("") end
   end
   self.frame:Show()
@@ -1321,9 +1347,22 @@ function Options:Close()
   if self.frame then self.frame:Hide() end
 end
 
+-- ShowChangelog() : journal des versions à la place de la liste (aucune section choisie dans le menu).
+function Options:ShowChangelog()
+  self:Create()
+  self.changelog = true
+  if self.query ~= "" then
+    self.query = ""
+    if self.searchBox then self.searchBox:SetText("") end
+  end
+  self.frame:Show()
+  self:Render()
+end
+
 -- SelectSection(id) : section affichée (vide la recherche).
 function Options:SelectSection(id)
   if not S:Section(id) then return end
+  self.changelog = nil
   self.section = id
   if self.query ~= "" then
     self.query = ""
@@ -1343,6 +1382,7 @@ function Options:OnSearchChanged(text)
   text = tostring(text or "")
   if text == self.query then return end
   self.query = text
+  if text ~= "" then self.changelog = nil end
   if self:IsShown() then self:Render() end
 end
 
@@ -1420,7 +1460,7 @@ end
 function Options:UpdateSidebar()
   local searching = self.query ~= ""
   for _, b in ipairs(self.sectionButtons) do
-    local on = b.sectionId == self.section
+    local on = not self.changelog and b.sectionId == self.section
     if on then b.selected:Show(); b.bar:Show() else b.selected:Hide(); b.bar:Hide() end
     b.selected:SetColorTexture(tc("sel"))
     b.bar:SetColorTexture(tc("accent"))
@@ -1472,6 +1512,13 @@ function Options:Render(keepScroll)
     self.countText:SetText("")
     local s = S:Section(self.section) or S.SECTIONS[1]
     self.section = s.id
+    if self.changelog then
+      self.frame:SetWidth(WIDTH)
+      if self.preview then self.preview:Hide() end
+      self:ShowPanel("ChangelogPanel")
+      self:UpdateSidebar()
+      return
+    end
     if s.panel then
       self:ShowPanel(s.panel)
       self:UpdateSidebar()

@@ -72,6 +72,7 @@ Data\ClassText_frFR.lua
 Data\ClassText_deDE.lua
 Data\ClassText_esES.lua
 Data\News.lua
+Data\Changelog.lua
 
 Engine\Guides.lua
 Engine\DungeonMode.lua
@@ -156,6 +157,7 @@ UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua
 UI\News.lua
+UI\ChangelogPanel.lua
 UI\QuestItemButton.lua
 UI\Report.lua
 UI\AuctionPanel.lua
