@@ -192,10 +192,39 @@ plans.Alliance = {
     -- (Cozy Sleeping Bag) la faisait passer sous le seuil de 25 : 9 quêtes de niveau 30 perdues, A_04 +50 min.
     widen = true,
     flightPaths = { "Lakeshire, Redridge", "Darkshire, Duskwood" },
-    optional = { [253] = "Group quest: Eliza, level 31 elite" },
+    optional = { [253] = "Group quest: Eliza, level 31 elite",
+                 -- Stonewatch Keep / Render's Valley (QuestieDB 1.0.15-1.0.16) : élites 21-26 et Dro'zem (rare élite 23)
+                 [115] = "Group quest: Blackrock Shadowcasters, level 22-23 elites (Stonewatch Keep)",
+                 [19] = "Group quest: Tharil'zun, level 24 elite",
+                 [169] = "Group quest: Gath'Ilzogg, level 26 elite",
+                 [95999] = "Group quest: Incinerator Gar'im, level 23 elite" },
+    -- 2026-11-12 (retour en jeu, chaman 23 : « carmine et duskwood impossible ») : au 22, la route attaquait
+    -- Ira's Dagger (Black Ravagers 23-25 en meute), le Totem of Infliction (goules 24-30 ; Mor'Ladim, élite 35,
+    -- autour du cimetière de Raven Hill) et Mary's Looking Glass (Insane Ghoul 26). Niveaux de sécurité relevés.
+    safeLevel = { [96137] = 24, [101] = 25, [177] = 25, [133] = 26 },
     -- Worgen in the Woods (173) : écartée ici seulement (chaîne de Nightbane 27-31) ; faite en A_07 (30-34).
     -- Avant le lot H (2026-11-06), écartée dans overrides.lua pour toute la route.
-    drop = { [173] = "Worgen in the Woods chain: Nightbane mobs 27-31, above the 22-26 band" },
+    drop = { [173] = "Worgen in the Woods chain: Nightbane mobs 27-31, above the 22-26 band",
+             -- Duskwood Nightmare Incursion (Field Captain Palandar) : niveau 27, requis 23, monstres 26, boss à
+             -- niveau d'échelle (9999 dans QuestieDB), XP estimée ; trois « Rescue » sans objectif émis prise puis rendu.
+             [81730] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81731] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81732] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81733] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81734] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81735] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81736] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81737] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81738] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81739] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81740] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81741] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81742] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81743] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81744] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81745] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB",
+             [81746] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB",
+             [81747] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB" },
     -- rendus au passage vers le port de Stormwind (A_04) : Stalvan 67 / 69, Seeking Wisdom 269, An Old History
     -- Book 337 (lot Alliance 2026-11-07 : avec A_02, 1-30 -53 min sur Humain, Nain/Gnome et Skyborne)
     endZones = { STORMWIND, ELWYNN, WESTFALL },
