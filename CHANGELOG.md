@@ -34,6 +34,10 @@
 - Excavation Site: Wetlands (Alliance): Highland Hides needs Young Crocolisk Skins first, and Horrors in the
   Highland the Tramping Paws, Fire Taboo and Blisters on The Land chain. The routes no longer send you to pick
   them up before that, and the Dungeons tab shows the quests to do first.
+- Dungeon quests checked against the DungeonJournal addon's lists: 46 quests added to 17 dungeons (picked up in
+  another zone's town, or taken and turned in inside), and 15 missing links in quest chains. Each one checked
+  against QuestieDB first; the links QuestieDB contradicts were left out. Dire Maul, Scarlet Monastery and
+  Stratholme quests whose wing is unknown show in the Dungeons tab but stay off the automatic route.
 - Automatic route with dungeons: no more long grind before a dungeon once you reach its minimum level (the
   Alterac chapter asked for about 430 mobs before the City of Dalaran).
 - Journal, Dungeons tab: a clearer layout with the pick-up route from where you are, quests grouped by stop, then
@@ -110,6 +114,11 @@
 - Site de fouilles des Paluns (Alliance) : Highland Hides demande d'abord Young Crocolisk Skins, et Horrors in the
   Highland la chaîne Tramping Paws, Fire Taboo et Blisters on The Land. Les routes ne font plus prendre ces quêtes
   avant, et l'onglet Donjons montre les quêtes à faire d'abord.
+- Quêtes de donjon vérifiées avec les listes de l'addon DungeonJournal : 46 quêtes ajoutées à 17 donjons (prises
+  dans la ville d'une autre zone, ou prises et rendues dans l'instance), et 15 maillons de chaînes manquants. Chacun
+  vérifié d'abord dans QuestieDB ; ceux que QuestieDB contredit sont écartés. Les quêtes de Hache-Tripes, du
+  Monastère écarlate et de Stratholme dont l'aile n'est pas connue sont dans l'onglet Donjons, hors route
+  automatique.
 - Route automatique avec les donjons : plus de long farm avant un donjon dont tu as le niveau minimal (le chapitre
   d'Alterac demandait environ 430 monstres avant la Cité de Dalaran).
 - Journal, onglet Donjons : présentation plus lisible avec l'itinéraire de prise depuis ta position, les quêtes par

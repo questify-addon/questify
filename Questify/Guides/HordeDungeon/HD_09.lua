@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 73 étapes, niveau final 32.85, ~34501 xp/h, 377 min.
+-- Simulation : 76 étapes, niveau final 32.85, ~34501 xp/h, 377 min.
 Q:RegisterGuide({
   id = "HD_09",
   title = "Alterac Mountains and Arathi Highlands",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 29, maxLevel = 31,
   next = "HD_10",
-  sim = { steps = 73, endLevel = 32.85, xpPerHour = 34501, minutes = 377 },
+  sim = { steps = 76, endLevel = 32.85, xpPerHour = 34501, minutes = 377 },
   steps = {
     { "goto", 1421, 45.62, 42.6, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 13, note = "Tarren Mill, Hillsbrad" }, -- vol
@@ -81,6 +81,9 @@ Q:RegisterGuide({
     { "complete", 96988, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Source of Power (lvl 33, ~1325 xp, sim lvl 32)
     { "turnin", 96986, at = { 1424, 62.63, 20.65 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- The Grave Knight (lvl 33, ~1325 xp, sim lvl 32)
     { "turnin", 96988, at = { 1458, 46.61, 74.09 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Source of Power (lvl 33, ~1325 xp, sim lvl 32)
+    { "accept", 96987, optional = true, dungeon = "City of Dalaran", note = "Starts inside the dungeon", phase = "run", rung = "DALARAN" }, -- Opportunistic Education (lvl 33, ~1325 xp, sim lvl 32)
+    { "complete", 96987, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Opportunistic Education (lvl 33, ~1325 xp, sim lvl 32)
+    { "turnin", 96987, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Opportunistic Education (lvl 33, ~1325 xp, sim lvl 32)
     { "goto", 1420, 82.6, 33.8, optional = true, dungeon = "Scarlet Monastery", note = "Dungeon: Scarlet Monastery: Graveyard (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "SM_GY" }, -- déplacement
     { "accept", 1051, optional = true, dungeon = "Scarlet Monastery", note = "Starts inside the dungeon", phase = "run", rung = "SM_GY" }, -- Vorrel's Revenge (lvl 33, ~1650 xp, sim lvl 32)
     { "complete", 1051, optional = true, dungeon = "Scarlet Monastery", phase = "run", rung = "SM_GY" }, -- Vorrel's Revenge (lvl 33, ~1650 xp, sim lvl 32)

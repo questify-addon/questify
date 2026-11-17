@@ -677,7 +677,9 @@ return {
             t.ok(type(e.giver) == "number" or type(e.obj) == "number", d.key .. " quest " .. e.id .. " starter")
             if not e.bc then town = town + 1 end
           else
-            t.ok(type(e.endAt) == "table", d.key .. " inside quest " .. e.id .. " turn-in position")
+            -- rendue à un PNJ placé, ou prise et rendue dans l'instance (quête en plus de overrides.lua)
+            t.ok(type(e.endAt) == "table" or (e.at == nil and e.giver == nil),
+              d.key .. " inside quest " .. e.id .. " turn-in position")
           end
         end
         t.ok(town > 0, d.key .. " has a quest to pick up in town for " .. f)

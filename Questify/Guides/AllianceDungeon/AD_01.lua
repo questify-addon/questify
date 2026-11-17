@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 11 étapes, niveau final 15.00, ~0 xp/h, 7 min.
+-- Simulation : 13 étapes, niveau final 15.00, ~0 xp/h, 7 min.
 Q:RegisterGuide({
   id = "AD_01",
   title = "Ironforge",
@@ -12,7 +12,7 @@ Q:RegisterGuide({
   after = { "A_Human_03", "A_DwarfGnome_04", "A_Skyborne_01" },
   minLevel = 15, maxLevel = 16,
   next = "AD_02",
-  sim = { steps = 11, endLevel = 15.00, xpPerHour = 0, minutes = 7 },
+  sim = { steps = 13, endLevel = 15.00, xpPerHour = 0, minutes = 7 },
   steps = {
     { "boat", 1453, 69.6, 30.3, note = "Take the Deeprun Tram to Ironforge", phase = "prep", rung = "THANES" }, -- bateau
     { "fp", 1455, 55.5, 47.74, phase = "prep", rung = "THANES" }, -- point de vol
@@ -25,5 +25,7 @@ Q:RegisterGuide({
     { "turnin", 96393, at = { 1455, 39.09, 56.2 }, xp = 575, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Old Ironforge Incursion (lvl 16, ~575 xp, sim lvl 15)
     { "turnin", 96394, at = { 1455, 33.23, 48.01 }, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Restless Dead (lvl 15, ~525 xp, sim lvl 15)
     { "turnin", 96403, at = { 1455, 32.18, 44.5 }, xp = 525, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- Important Heirlooms (lvl 15, ~525 xp, sim lvl 15)
+    { "accept", 98423, optional = true, dungeon = "The Hall of Thanes", note = "Starts inside the dungeon", phase = "run", rung = "THANES" }, -- The Treaty of Understanding (lvl 16, ~580 xp, sim lvl 15)
+    { "turnin", 98423, at = { 1455, 39.09, 56.2 }, xp = 580, optional = true, dungeon = "The Hall of Thanes", phase = "run", rung = "THANES" }, -- The Treaty of Understanding (lvl 16, ~580 xp, sim lvl 15)
   },
 })

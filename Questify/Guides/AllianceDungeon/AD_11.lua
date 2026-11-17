@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 20 étapes, niveau final 31.00, ~0 xp/h, 21 min.
+-- Simulation : 23 étapes, niveau final 31.00, ~0 xp/h, 20 min.
 Q:RegisterGuide({
   id = "AD_11",
   title = "Dun Morogh",
@@ -11,11 +11,11 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 30, maxLevel = 32,
   next = "AD_12",
-  sim = { steps = 20, endLevel = 31.00, xpPerHour = 0, minutes = 21 },
+  sim = { steps = 23, endLevel = 31.00, xpPerHour = 0, minutes = 20 },
   steps = {
     { "note", "Not running Gnomeregan? Abandon Save Techbot's Brain!, Tinkmaster Overspark", optional = true, dungeon = "Gnomeregan", phase = "prep", rung = "GNOMER" },
     { "note", "Not running Razorfen Kraul? Abandon Blueleaf Tubers", optional = true, dungeon = "Razorfen Kraul", phase = "prep", rung = "GNOMER" },
-    { "goto", 1436, 56.55, 52.64, note = "Flight master", phase = "prep", rung = "GNOMER" }, -- déplacement
+    { "goto", 1431, 77.49, 44.29, note = "Flight master", phase = "prep", rung = "GNOMER" }, -- déplacement
     { "fly", 1455, node = 6, note = "Ironforge, Dun Morogh", phase = "prep", rung = "GNOMER" }, -- vol
     { "accept", 2926, optional = true, dungeon = "Gnomeregan", phase = "prep", rung = "GNOMER" }, -- Gnogaine (lvl 27, ~0 xp, sim lvl 31)
     { "accept", 1179, phase = "prep", rung = "GNOMER" }, -- The Brassbolts Brothers (lvl 30, ~0 xp, sim lvl 31)
@@ -31,7 +31,10 @@ Q:RegisterGuide({
     { "turnin", 2929, at = { 1455, 68.75, 48.97 }, xp = 1375, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- The Grand Betrayal (lvl 35, ~1375 xp, sim lvl 31)
     { "turnin", 2930, at = { 1455, 69.83, 48.1 }, xp = 1825, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Data Rescue (lvl 30, ~1825 xp, sim lvl 31)
     { "accept", 2904, optional = true, dungeon = "Gnomeregan", note = "Starts inside the dungeon", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 31)
+    { "accept", 2951, optional = true, dungeon = "Gnomeregan", note = "Starts inside the dungeon", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 31)
     { "complete", 2904, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 31)
+    { "complete", 2951, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 31)
+    { "turnin", 2951, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 31)
     { "turnin", 2904, at = { 1434, 27.6, 77.48 }, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 31)
   },
 })

@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 56 étapes, niveau final 58.00, ~53635 xp/h, 156 min.
+-- Simulation : 56 étapes, niveau final 58.00, ~53171 xp/h, 158 min.
 Q:RegisterGuide({
   id = "HD_31",
   title = "Felwood and Winterspring",
@@ -11,11 +11,11 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 57, maxLevel = 58,
   next = "HD_32",
-  sim = { steps = 56, endLevel = 58.00, xpPerHour = 53635, minutes = 156 },
+  sim = { steps = 56, endLevel = 58.00, xpPerHour = 53171, minutes = 158 },
   steps = {
-    { "hearth", 1458, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- pierre de foyer
-    { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- bateau
-    { "goto", 1454, 45.12, 63.89, note = "Flight master", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- déplacement
+    { "hearth", 1434, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- pierre de foyer
+    { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- bateau
+    { "goto", 1413, 63.08, 37.16, note = "Flight master", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- déplacement
     { "fly", 1447, node = 44, note = "Valormok, Azshara", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- vol
     { "fp", 1452, 60.47, 36.3, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- point de vol
     { "accept", 3783, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- Are We There, Yeti? (lvl 56, ~4350 xp, sim lvl 57)
@@ -68,6 +68,6 @@ Q:RegisterGuide({
     { "turnin", 5156, xp = 6800, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- Verifying the Corruption (lvl 54, ~6800 xp, sim lvl 57)
     { "turnin", 4721, xp = 6400, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- Wild Guardians (lvl 59, ~6400 xp, sim lvl 57)
     { "turnin", 4882, xp = 3200, alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- Guarding Secrets (lvl 59, ~3200 xp, sim lvl 57)
-    { "level", 58, at = { 1452, 64.35, 22.54 }, note = "About 80 more mobs near the last objective", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- farm de niveau
+    { "level", 58, at = { 1452, 64.35, 22.54 }, note = "About 81 more mobs near the last objective", alt = { "DM_EAST", "DM_WEST", "DM_NORTH", "SCHOLO" }, below = 58 }, -- farm de niveau
   },
 })

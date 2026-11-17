@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 29 étapes, niveau final 40.11, ~40569 xp/h, 120 min.
+-- Simulation : 34 étapes, niveau final 40.11, ~40569 xp/h, 120 min.
 Q:RegisterGuide({
   id = "HD_15",
   title = "Badlands",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 39, maxLevel = 40,
   next = "HD_16",
-  sim = { steps = 29, endLevel = 40.11, xpPerHour = 40569, minutes = 120 },
+  sim = { steps = 34, endLevel = 40.11, xpPerHour = 40569, minutes = 120 },
   steps = {
     { "fp", 1418, 3.99, 44.78 }, -- point de vol
     { "accept", 97663 }, -- Supplies and Studies (lvl 40, ~3150 xp, sim lvl 39)
@@ -42,5 +42,10 @@ Q:RegisterGuide({
     { "turnin", 2202, at = { 1418, 2.42, 46.06 }, xp = 1725, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Uldaman Reagent Run (lvl 42, ~1725 xp, sim lvl 40)
     { "turnin", 2418, at = { 1418, 42.39, 52.93 }, xp = 1750, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~1750 xp, sim lvl 40)
     { "turnin", 2342, at = { 1458, 62.32, 48.61 }, xp = 1800, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Reclaimed Treasures (lvl 43, ~1800 xp, sim lvl 40)
+    { "accept", 2278, optional = true, dungeon = "Uldaman", note = "Starts inside the dungeon", phase = "run", rung = "ULDAMAN" }, -- The Platinum Discs (lvl 47, ~2100 xp, sim lvl 40)
+    { "complete", 2278, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Platinum Discs (lvl 47, ~2100 xp, sim lvl 40)
+    { "turnin", 2278, xp = 2100, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Platinum Discs (lvl 47, ~2100 xp, sim lvl 40)
+    { "accept", 2280, optional = true, dungeon = "Uldaman", note = "Starts inside the dungeon", phase = "run", rung = "ULDAMAN" }, -- The Platinum Discs (lvl 47, ~2625 xp, sim lvl 40)
+    { "turnin", 2280, at = { 1456, 34.4, 46.87 }, xp = 2625, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- The Platinum Discs (lvl 47, ~2625 xp, sim lvl 40)
   },
 })

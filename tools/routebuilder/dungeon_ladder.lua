@@ -24,6 +24,8 @@
 --
 -- Les niveaux des zones viennent de la répartition des niveaux de quêtes Alliance de QuestieDB par zone
 -- (1er décile - 9e décile, tableau de docs/dungeon-mode/README.md) ; aucune coordonnée ici.
+-- Quêtes ajoutées à DungeonData par overrides.dungeonQuests dont l'aile n'est pas connue.
+local EXTRA_WHY = "quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons"
 local L = {}
 
 L.ENTRY_OFFSET = 2   -- niveau d'entrée = bas de la plage + 2 : ni rouge-orange à l'entrée, ni vert au fond
@@ -105,6 +107,7 @@ L.rungs = {
     alt = { zone = "Desolace", from = 33, to = 36 },
     verify = { "plage de l'aile", "Herod (In the Name of the Light, 1053) est compté avec la Cathédrale" } },
   { key = "SM_CATH", dungeon = "SM", wing = "Cathedral", min = 35, max = 45, quests = { 1052, 1053 },
+    skip = { [6141] = EXTRA_WHY },
     before = { { zone = "Desolace", from = 34, to = 37, role = "prep" },
                { zone = "Stranglethorn Vale", from = 35, to = 37, role = "zone" } },
     alt = { zone = "Alterac Mountains", from = 36, to = 39 },
@@ -149,6 +152,7 @@ L.rungs = {
     alt = { zone = "Winterspring", from = 57, to = 60 },
     verify = { "plage de l'aile", "Elven Legends (7482, restes de Telmius Dreamseeker) : aile Ouest" } },
   { key = "DM_NORTH", dungeon = "DIREMAUL", wing = "North", min = 56, max = 60, quests = { 8948 },
+    skip = { [5247] = EXTRA_WHY, [5250] = EXTRA_WHY, [5518] = EXTRA_WHY, [5525] = EXTRA_WHY, [5526] = EXTRA_WHY, [7461] = EXTRA_WHY, [7703] = EXTRA_WHY },
     before = { { zone = "Feralas", from = 58, to = 58, role = "prep" } },
     alt = { zone = "Mount Hyjal", from = 57, to = 60 },
     verify = { "plage de l'aile", "Anthion's Old Friend (8948, bibliothèque de Hache-Tripes) : niveau requis 58, suite 8947 ; aile à confirmer" } },
@@ -254,6 +258,7 @@ H.rungs = {
     alt = { zone = "Stranglethorn Vale", from = 35, to = 42 },
     verify = { "plage de l'aile", "Herod (Into The Scarlet Monastery, 1048) est compté avec la Cathédrale" } },
   { key = "SM_CATH", dungeon = "SM", wing = "Cathedral", min = 35, max = 45, quests = { 1048 },
+    skip = { [1394] = EXTRA_WHY },
     before = { { zone = "Arathi Highlands", from = 37, to = 38, role = "zone" } },
     alt = { zone = "Stranglethorn Vale", from = 38, to = 42 },
     verify = { "plage de l'aile", "Into The Scarlet Monastery (1048) : niveau requis 33, Loksey, Herod, Mograine et Whitemane" } },
@@ -297,10 +302,12 @@ H.rungs = {
     alt = { zone = "Winterspring", from = 57, to = 58 },
     verify = { "plage de l'aile", "Elven Legends (7481) : aile Ouest" } },
   { key = "DM_NORTH", dungeon = "DIREMAUL", wing = "North", min = 56, max = 60, quests = { 8948 },
+    skip = { [5518] = EXTRA_WHY, [5525] = EXTRA_WHY, [5526] = EXTRA_WHY, [7461] = EXTRA_WHY, [7703] = EXTRA_WHY },
     before = { { zone = "Feralas", from = 56, to = 57, role = "prep" } },
     alt = { zone = "Winterspring", from = 57, to = 58 },
     verify = { "plage de l'aile", "Anthion's Old Friend (8948) : niveau requis 58, suite 8947 ; aile à confirmer" } },
   { key = "STRAT_LIVE", dungeon = "STRAT", wing = "Live", quests = { 5214, 5243, 5251, 5262, 5281, 5282, 5846, 5848 },
+    skip = { [5961] = EXTRA_WHY },
     before = { { zone = "Eastern Plaguelands", from = 58, to = 59, role = "zone" } },
     alt = { zone = "Silithus", from = 59, to = 60 },
     verify = { "répartition des quêtes entre les deux côtés de Stratholme" } },

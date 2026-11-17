@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 17 étapes, niveau final 19.66, ~4081 xp/h, 29 min.
+-- Simulation : 19 étapes, niveau final 19.66, ~4081 xp/h, 29 min.
 Q:RegisterGuide({
   id = "AD_03",
   title = "Westfall",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 18, maxLevel = 20,
   next = "AD_04",
-  sim = { steps = 17, endLevel = 19.66, xpPerHour = 4081, minutes = 29 },
+  sim = { steps = 19, endLevel = 19.66, xpPerHour = 4081, minutes = 29 },
   steps = {
     { "boat", 1439, 32.7, 41.8, note = "Take the boat to Stormwind Harbor" }, -- bateau
     { "fp", 1436, 56.55, 52.64 }, -- point de vol
@@ -30,5 +30,7 @@ Q:RegisterGuide({
     { "turnin", 167, at = { 1453, 70.31, 40.82 }, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Oh Brother. . . (lvl 20, ~775 xp, sim lvl 19)
     { "turnin", 168, at = { 1453, 70.31, 40.82 }, xp = 675, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Collecting Memories (lvl 18, ~675 xp, sim lvl 19)
     { "turnin", 2040, at = { 1453, 62.63, 34.11 }, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Underground Assault (lvl 20, ~775 xp, sim lvl 19)
+    { "accept", 373, optional = true, dungeon = "The Deadmines", note = "Starts inside the dungeon", phase = "run", rung = "DM" }, -- The Unsent Letter (lvl 22, ~870 xp, sim lvl 19)
+    { "turnin", 373, at = { 1453, 57.74, 47.86 }, xp = 870, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- The Unsent Letter (lvl 22, ~870 xp, sim lvl 19)
   },
 })

@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 29 étapes, niveau final 31.41, ~16156 xp/h, 77 min.
+-- Simulation : 32 étapes, niveau final 31.41, ~16156 xp/h, 77 min.
 Q:RegisterGuide({
   id = "AD_12",
   title = "Thousand Needles",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 31, maxLevel = 33,
   next = "AD_13",
-  sim = { steps = 29, endLevel = 31.41, xpPerHour = 16156, minutes = 77 },
+  sim = { steps = 32, endLevel = 31.41, xpPerHour = 16156, minutes = 77 },
   steps = {
     { "hearth", 1431 }, -- pierre de foyer
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau
@@ -40,7 +40,10 @@ Q:RegisterGuide({
     { "accept", 1115 }, -- The Rumormonger (lvl 36, ~0 xp, sim lvl 31)
     { "goto", 1413, 42.9, 90.2, optional = true, dungeon = "Razorfen Kraul", note = "Dungeon: Razorfen Kraul (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFK" }, -- déplacement
     { "accept", 1142, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
+    { "accept", 1144, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 31)
     { "complete", 1142, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
+    { "complete", 1144, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 31)
+    { "turnin", 1144, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 31)
     { "turnin", 1142, at = { 1457, 69.54, 67.75 }, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Mortality Wanes (lvl 30, ~1525 xp, sim lvl 31)
   },
 })

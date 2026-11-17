@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 40 étapes, niveau final 33.00, ~7853 xp/h, 64 min.
+-- Simulation : 43 étapes, niveau final 33.00, ~7853 xp/h, 64 min.
 Q:RegisterGuide({
   id = "HD_10",
   title = "Thousand Needles",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 31, maxLevel = 33,
   next = "HD_11",
-  sim = { steps = 40, endLevel = 33.00, xpPerHour = 7853, minutes = 64 },
+  sim = { steps = 43, endLevel = 33.00, xpPerHour = 7853, minutes = 64 },
   steps = {
     { "note", "Not running Razorfen Kraul? Abandon Blueleaf Tubers", optional = true, dungeon = "Razorfen Kraul" },
     { "note", "Not running Wailing Caverns? Abandon Smart Drinks", optional = true, dungeon = "Wailing Caverns" },
@@ -53,5 +53,8 @@ Q:RegisterGuide({
     { "accept", 1115 }, -- The Rumormonger (lvl 36, ~0 xp, sim lvl 32)
     { "level", 33, note = "About 18 more mobs" }, -- farm de niveau
     { "goto", 1413, 42.9, 90.2, optional = true, dungeon = "Razorfen Kraul", note = "Dungeon: Razorfen Kraul (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFK" }, -- déplacement
+    { "accept", 1144, optional = true, dungeon = "Razorfen Kraul", note = "Starts inside the dungeon", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 33)
+    { "complete", 1144, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 33)
+    { "turnin", 1144, xp = 1525, optional = true, dungeon = "Razorfen Kraul", phase = "run", rung = "RFK" }, -- Willix the Importer (lvl 30, ~1525 xp, sim lvl 33)
   },
 })

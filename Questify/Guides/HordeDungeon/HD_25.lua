@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 86 étapes, niveau final 53.00, ~62941 xp/h, 153 min.
+-- Simulation : 95 étapes, niveau final 53.00, ~62941 xp/h, 153 min.
 Q:RegisterGuide({
   id = "HD_25",
   title = "Searing Gorge and Burning Steppes",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 52, maxLevel = 53,
   next = "HD_26",
-  sim = { steps = 86, endLevel = 53.00, xpPerHour = 62941, minutes = 153 },
+  sim = { steps = 95, endLevel = 53.00, xpPerHour = 62941, minutes = 153 },
   steps = {
     { "goto", 1435, 46.07, 54.83, note = "Flight master" }, -- déplacement
     { "fly", 1418, node = 21, note = "Kargath, Badlands" }, -- vol
@@ -99,5 +99,14 @@ Q:RegisterGuide({
     { "turnin", 4134, at = { 1418, 2.9, 47.76 }, xp = 2825, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Lost Thunderbrew Recipe (lvl 55, ~2825 xp, sim lvl 53)
     { "turnin", 4123, at = { 1428, 65.15, 23.91 }, xp = 2825, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Heart of the Mountain (lvl 55, ~2825 xp, sim lvl 53)
     { "turnin", 4136, at = { 1428, 66.06, 21.95 }, xp = 1325, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- Ribbly Screwspigot (lvl 53, ~1325 xp, sim lvl 53)
+    { "accept", 4083, optional = true, dungeon = "Blackrock Depths", note = "Starts inside the dungeon", phase = "run", rung = "BRD" }, -- The Spectral Chalice (lvl 55, ~280 xp, sim lvl 53)
+    { "accept", 4201, optional = true, dungeon = "Blackrock Depths", note = "Starts inside the dungeon", phase = "run", rung = "BRD" }, -- The Love Potion (lvl 54, ~2725 xp, sim lvl 53)
+    { "accept", 7604, optional = true, dungeon = "Blackrock Depths", note = "Starts inside the dungeon", phase = "run", rung = "BRD" }, -- A Binding Contract (lvl 60, ~3300 xp, sim lvl 53)
+    { "complete", 4083, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Spectral Chalice (lvl 55, ~280 xp, sim lvl 53)
+    { "complete", 4201, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Love Potion (lvl 54, ~2725 xp, sim lvl 53)
+    { "complete", 7604, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Binding Contract (lvl 60, ~3300 xp, sim lvl 53)
+    { "turnin", 4083, xp = 280, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Spectral Chalice (lvl 55, ~280 xp, sim lvl 53)
+    { "turnin", 4201, xp = 2725, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- The Love Potion (lvl 54, ~2725 xp, sim lvl 53)
+    { "turnin", 7604, xp = 3300, optional = true, dungeon = "Blackrock Depths", phase = "run", rung = "BRD" }, -- A Binding Contract (lvl 60, ~3300 xp, sim lvl 53)
   },
 })

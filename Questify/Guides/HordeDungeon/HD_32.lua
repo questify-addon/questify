@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 22 étapes, niveau final 58.04, ~26072 xp/h, 17 min.
+-- Simulation : 24 étapes, niveau final 58.04, ~17189 xp/h, 26 min.
 Q:RegisterGuide({
   id = "HD_32",
   title = "Eastern Plaguelands",
@@ -11,9 +11,11 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 58, maxLevel = 59,
   next = "HD_33",
-  sim = { steps = 22, endLevel = 58.04, xpPerHour = 26072, minutes = 17 },
+  sim = { steps = 24, endLevel = 58.04, xpPerHour = 17189, minutes = 26 },
   steps = {
-    { "hearth", 1458 }, -- pierre de foyer
+    { "hearth", 1434 }, -- pierre de foyer
+    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
+    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
     { "turnin", 6029, xp = 2040 }, -- The Everlook Report (lvl 52, ~2040 xp, sim lvl 58)
     { "turnin", 84397, xp = 1650 }, -- Northern Kalimdor - A Comprehensive Guide (lvl 60, ~1650 xp, sim lvl 58)
     { "turnin", 84399, xp = 1650 }, -- Ka-Boom! (lvl 60, ~1650 xp, sim lvl 58)

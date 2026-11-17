@@ -19,6 +19,10 @@
 --     que la quête n'est pas dans le journal ;
 --   * préquête « de passage » (bc) : préquête sans objectif (parler à quelqu'un) d'une quête de
 --     donjon, jusqu'à 3 niveaux : l'addon peut l'enchaîner (prendre, rendre) avant la quête ;
+--   * quêtes du donjon en plus (overrides.lua, champ dungeonQuests[zone du donjon]) : quêtes de donjon que la
+--     règle de zone manque (prises en ville d'une autre zone, ou prises et rendues dans l'instance), relevées dans
+--     DungeonJournal et vérifiées dans QuestieDB ; mêmes filtres (liste noire, répétables, classe, faction).
+--     Prise et rendu dans l'instance : seulement « faire » et « rendre » dans l'instance ;
 --   * une faction n'est autorisée que si elle a au moins une quête en ville, que le donjon ne lui est
 --     pas interdit (only) et que l'entrée n'est pas dans une capitale de l'autre faction.
 --     Le Gouffre de Ragefeu (Orgrimmar) est donc Horde seulement.
@@ -175,11 +179,12 @@ end
 ---------------------------------------------------------------------------
 -- Quêtes d'un donjon pour une faction
 ---------------------------------------------------------------------------
-local function collectQuests(W, D, areas, faction, near)
+local function collectQuests(W, D, areas, faction, near, extra)
   local list, listed = {}, {}
+  extra = extra or {}
   for _, id in ipairs(qdb.sortedKeys(D.quests)) do
     local q = D.quests[id]
-    if areas[q.zoneOrSort] and basicOk(q, faction) then
+    if (areas[q.zoneOrSort] or extra[id]) and basicOk(q, faction) then
       local e = questEntry(W, D, q, faction, near)
       if e.at then
         -- sans objectif (parler à quelqu'un) : l'addon peut l'enchaîner avant une quête qui la demande
@@ -187,6 +192,10 @@ local function collectQuests(W, D, areas, faction, near)
         list[#list + 1] = e; listed[id] = true
       elseif e.endAt and (#q.starters.items > 0 or #q.starters.npcs > 0 or #q.starters.objects > 0) then
         -- commencée dans le donjon (objet ramassé ou PNJ de l'instance) : seulement « faire » et « rendre »
+        e.inside, e.item = true, q.starters.items[1]
+        list[#list + 1] = e; listed[id] = true
+      elseif extra[id] and not talkOnly(q) then
+        -- en plus (overrides.lua) : prise et rendue dans l'instance, « faire » et « rendre » sur place
         e.inside, e.item = true, q.starters.items[1]
         list[#list + 1] = e; listed[id] = true
       end
@@ -341,7 +350,9 @@ local function main(argv)
                 name = (entry and entry[1]) or Ds.Alliance.areaName[def.area] or def.key,
                 entrance = entrance, source = source, quests = {}, factions = {} }
     for _, f in ipairs(FACTIONS) do
-      local list = collectQuests(W, Ds[f], areas, f, entrance)
+      local extra = {}
+      for _, id in ipairs(ov.dungeonQuests and ov.dungeonQuests[def.area] or {}) do extra[id] = true end
+      local list = collectQuests(W, Ds[f], areas, f, entrance, extra)
       local town = 0
       for _, e in ipairs(list) do if not e.inside and not e.bc then town = town + 1 end end
       local allowed = town > 0 and (def.only == nil or def.only == f)

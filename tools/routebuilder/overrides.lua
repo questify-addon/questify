@@ -58,6 +58,47 @@ return {
     -- 2.0.9 et vues en jeu (Highland Hides n'est proposée qu'après Young Crocolisk Skins, chez James Halloran).
     [98815] = { 484 }, -- Highland Hides après Young Crocolisk Skins
     [95646] = { 275 }, -- Horrors in the Highland après Blisters on The Land (Tramping Paws 276 -> Fire Taboo 277 -> 275)
+    -- Chaînes de donjon relevées dans DungeonJournal 2.0.9 (2026-11-17), gardées seulement quand QuestieDB (c7ccd23)
+    -- n'a aucune préquête pour la quête et que le PNJ qui rend l'une donne la suivante. Écartées : celles que
+    -- QuestieDB contredit (chaînes en parallèle mises bout à bout, ordre inversé) et celles sans indice.
+    [95682] = { 95663 }, -- Open the Maw après Dragonmaw Rumors
+    [93404] = { 93594 }, -- Rot and Regret après Word of the Woods
+    [92744] = { 92742 }, -- Murloc Gills après Testing the Wells
+    [8420] = { 8419 }, -- Hot and Itchy après An Imp's Request
+    [79946] = { 79945 }, -- A Brother In Need après Orders from the Grand Crusader
+    [79940] = { 79939 }, -- A Lost Brother après The Broken Hammer
+    [78092] = { 78091 }, -- It Must Be Destroyed après Earning Your Salt
+    [78091] = { 78090 }, -- Earning Your Salt après A Second Opinion
+    [78090] = { 78089 }, -- A Second Opinion après Advice From Stormwind
+    [78089] = { 78088 }, -- Advice From Stormwind après A Strange Artifact
+    [7623] = { 7564 }, -- Lord Banehollow après Wildeyes
+    [6042] = { 6133 }, -- Un-Life's Little Annoyances après The Ranger Lord's Behest
+    [6022] = { 6042 }, -- To Kill With Purpose après Un-Life's Little Annoyances
+    [5544] = { 5543 }, -- Carrion Grubbage après Blood Tinged Skies
+    [5543] = { 5542 }, -- Blood Tinged Skies après Demon Dogs
+  },
+  -- Quêtes de donjon en plus, par zone du donjon (build_dungeons.lua) : celles que la règle de zone de QuestieDB
+  -- manque, relevées dans DungeonJournal 2.0.9 (2026-11-17) et vérifiées dans QuestieDB (présentes, ni de classe
+  -- ni en liste noire). Les cinq donjons absents du catalogue (Blackmaw Hold, Krol'dok, Alcaz, Shaper's Terrace,
+  -- Drowned City) et le pic Rochenoire n'y sont pas.
+  dungeonQuests = {
+    [491] = { 1144 }, -- RFK : Willix the Importer
+    [719] = { 3765 }, -- BFD : The Corruption Abroad
+    [721] = { 2948, 2950, 2951 }, -- GNOMER : Gnome Improvement, Nogg's Ring Redo, The Sparklematic 5200!
+    [722] = { 3525 }, -- RFD : Extinguishing the Idol
+    [796] = { 1394, 6141 }, -- SM : Final Passage, Brother Anton
+    [1176] = { 2769 }, -- ZF : The Brassbolts Brothers
+    [1337] = { 707, 2201, 2278 }, -- ULDAMAN : Ironband Wants You!, Find the Gems, The Platinum Discs
+    [1477] = { 3373, 4143, 4146 }, -- ST : The Essence of Eranikus, Haze of Evil, Zapper Fuel
+    [1581] = { 373 }, -- DM : The Unsent Letter
+    [1584] = { 3982, 4083, 4201, 7604, 7848 }, -- BRD : What Is Going On?, The Spectral Chalice, The Love Potion, A Binding Contract, Attunement to the Core
+    [2017] = { 5122, 5125, 5961 }, -- STRAT : The Medallion of Faith, Aurius' Reckoning, The Champion of the Banshee Queen
+    [2100] = { 7046, 93404 }, -- MARAUDON : The Scepter of Celebras, Rot and Regret
+    [2557] = { 5247, 5250, 5518, 5525, 5526, 7461, 7483, 7484, 7485, 7703 }, -- DIREMAUL : Fragments of the Past, Starfall, The Gordok Ogre Suit, Free Knot!, Shards of the Felvine, The Madness Within, Libram of Rapidity, Libram of Focus, Libram of Protection, Unfinished Gordok Business
+    [16544] = { 96987 }, -- DALARAN : Opportunistic Education
+    [16611] = { 92415, 95189, 95195, 95250 }, -- LORDAERON : Remember That I Love You, Crest of Lordaeron, Bloodied Insignia, Abominable Creatures
+    [16732] = { 95682, 95795, 95809 }, -- EXCAVATION : Open the Maw, Fallen in the Fen, Heartwoven
+    [16919] = { 96395, 98423 }, -- THANES : An Ancient Grudge, The Treaty of Understanding
   },
   notes = {
     -- QuestieDB fait partir Stepping Stones des quatre objets (Burned-Out Remains et Nailed Plank, Tarides et Marche

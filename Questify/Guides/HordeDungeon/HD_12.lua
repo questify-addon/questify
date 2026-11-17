@@ -3,7 +3,7 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 93 étapes, niveau final 37.40, ~39610 xp/h, 257 min.
+-- Simulation : 96 étapes, niveau final 37.40, ~39610 xp/h, 257 min.
 Q:RegisterGuide({
   id = "HD_12",
   title = "Stranglethorn Vale",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 35, maxLevel = 37,
   next = "HD_13",
-  sim = { steps = 93, endLevel = 37.40, xpPerHour = 39610, minutes = 257 },
+  sim = { steps = 96, endLevel = 37.40, xpPerHour = 39610, minutes = 257 },
   steps = {
     { "goto", 1442, 45.12, 59.84, note = "Flight master" }, -- déplacement
     { "fly", 1454, node = 23, note = "Orgrimmar, Durotar" }, -- vol
@@ -104,7 +104,10 @@ Q:RegisterGuide({
     { "turnin", 2842, at = { 1434, 27.6, 77.48 }, xp = 135, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Chief Engineer Scooty (lvl 35, ~135 xp, sim lvl 37)
     { "turnin", 2841, at = { 1454, 75.99, 25.41 }, xp = 1375, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Rig Wars (lvl 35, ~1375 xp, sim lvl 37)
     { "accept", 2904, optional = true, dungeon = "Gnomeregan", note = "Starts inside the dungeon", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 37)
+    { "accept", 2951, optional = true, dungeon = "Gnomeregan", note = "Starts inside the dungeon", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 37)
     { "complete", 2904, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 37)
+    { "complete", 2951, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 37)
+    { "turnin", 2951, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- The Sparklematic 5200! (lvl 30, ~1225 xp, sim lvl 37)
     { "turnin", 2904, at = { 1434, 27.6, 77.48 }, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- A Fine Mess (lvl 30, ~1225 xp, sim lvl 37)
   },
 })

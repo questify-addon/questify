@@ -20,8 +20,8 @@ Q:RegisterGuide({
     { "goto", 1439, 36.34, 45.58, note = "Flight master" }, -- déplacement
     { "fly", 1442, node = 33, note = "Stonetalon Peak, Stonetalon Mountains" }, -- vol
     { "turnin", 2928, at = { 1453, 62.63, 34.11 }, xp = 1225, optional = true, dungeon = "Gnomeregan", phase = "run", rung = "GNOMER" }, -- Gyrodrillmatic Excavationators (lvl 30, ~1225 xp, sim lvl 31)
-    { "turnin", 92489, at = { 1453, 48.71, 87.62 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Power Overwhelming (lvl 33, ~1325 xp, sim lvl 29)
-    { "turnin", 92456, at = { 1453, 31.5, 62.61 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- A Green Sample (lvl 33, ~1325 xp, sim lvl 29)
+    { "turnin", 92489, at = { 1453, 48.71, 87.62 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- Power Overwhelming (lvl 33, ~1325 xp, sim lvl 28)
+    { "turnin", 92456, at = { 1453, 31.5, 62.61 }, xp = 1325, optional = true, dungeon = "City of Dalaran", phase = "run", rung = "DALARAN" }, -- A Green Sample (lvl 33, ~1325 xp, sim lvl 28)
     { "fp", 1443, 64.66, 10.54 }, -- point de vol
     { "accept", 1437 }, -- Vahlarriel's Search (lvl 33, ~1950 xp, sim lvl 34)
     { "accept", 97284 }, -- Vahlarriel's Vengeance (lvl 33, ~2650 xp, sim lvl 34)

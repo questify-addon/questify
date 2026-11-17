@@ -3,14 +3,14 @@ local addonName, Q = ...
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
 -- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 36 étapes, niveau final 60.00, ~69387 xp/h, 271 min.
+-- Simulation : 36 étapes, niveau final 60.00, ~69372 xp/h, 271 min.
 Q:RegisterGuide({
   id = "AD_34",
   title = "Silithus",
   faction = "Alliance",
   mode = "dungeon",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 36, endLevel = 60.00, xpPerHour = 69387, minutes = 271 },
+  sim = { steps = 36, endLevel = 60.00, xpPerHour = 69372, minutes = 271 },
   steps = {
     { "hearth", 1445, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- pierre de foyer
     { "goto", 1445, 67.48, 51.3, note = "Flight master", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- déplacement
