@@ -596,7 +596,8 @@ return {
     t.ok(P:IsShown(), "changelog shown")
     t.ok(not O.scroll:IsShown(), "in place of the option list")
     t.ok(P.count > 10, "versions and lines: " .. tostring(P.count))
-    t.eq(P.rows[1].text:GetText(), Q.L.OPT_CHANGELOG_UNRELEASED, "newest first")
+    local newest = Q.ChangelogData[1].title
+    t.eq(P.rows[1].text:GetText(), newest == "Unreleased" and Q.L.OPT_CHANGELOG_UNRELEASED or newest, "newest first")
     for _, b in ipairs(O.sectionButtons) do t.ok(not b.selected:IsShown(), "no section selected") end
     O:SelectSection("navigation")
     t.ok(not P:IsShown() and O.scroll:IsShown(), "back to the options")

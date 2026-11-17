@@ -1,8 +1,19 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (2026-11-17)
 
 ### English
+
+**Routes checked against QuestieDB 1.1.2**
+- Both factions' routes, the usual ones and the automatic route with dungeons, are rebuilt on QuestieDB 1.1.2.
+  They follow the quest chains QuestieDB 1.1 traced from real players: no more steps asking for a quest the game
+  does not offer yet because its previous quest was skipped.
+- Alliance, levels 22-23: Redridge Mountains come before Duskwood, with their elites optional, and the Nightmare
+  Incursion missions move to the Duskwood chapter at level 30-33, where they are safe.
+- Riverglades keeps the quest chains that start with an item QuestieDB has no position for.
+- The Undead paladin's Fenris / Moonsilver class chain is now one chain.
+- QuestieDB 1.1.2 or newer is now required for every step to have its arrow; an older version shows a warning at
+  login.
 
 **What's new window**
 - After an update that brings news, a window shows them step by step, 3 seconds after you log in (never in
@@ -80,6 +91,17 @@
 - The gold ring around quest objects only shows when the game's waypoint is on the object.
 
 ### Français
+
+**Routes vérifiées sur QuestieDB 1.1.2**
+- Les routes des deux factions, habituelles et automatique avec donjons, sont régénérées sur QuestieDB 1.1.2.
+  Elles suivent les chaînes de quêtes relevées chez les joueurs par QuestieDB 1.1 : plus d'étape qui demande une
+  quête que le jeu ne propose pas encore parce que sa quête précédente n'a pas été faite.
+- Alliance, niveaux 22-23 : les Carmines passent avant le Bois de la Pénombre, leurs élites sont facultatifs, et
+  les missions de l'Incursion du cauchemar passent au chapitre du Bois de la Pénombre de niveau 30-33, sans danger.
+- Riverglades garde les chaînes qui commencent par un objet sans position dans QuestieDB.
+- La chaîne de classe Fenris / Moonsilver du paladin mort-vivant est d'un seul tenant.
+- QuestieDB 1.1.2 ou plus récent est désormais requis pour que chaque étape ait sa flèche ; une version plus
+  ancienne affiche un avertissement à la connexion.
 
 **Fenêtre des nouveautés**
 - Après une mise à jour qui apporte des nouveautés, une fenêtre les présente étape par étape, 3 secondes après

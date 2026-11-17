@@ -3,8 +3,14 @@ local addonName, Q = ...
 -- Journal des versions des options (UI/ChangelogPanel.lua) : les 8 dernières versions,
 -- lignes { kind = "head" | "item", text } en anglais (en) et en français (fr).
 Q.ChangelogData = {
-  { title = "Unreleased",
+  { title = "1.0.0 (2026-11-17)",
     en = {
+      { kind = "head", text = "Routes checked against QuestieDB 1.1.2" },
+      { kind = "item", text = "Both factions' routes, the usual ones and the automatic route with dungeons, are rebuilt on QuestieDB 1.1.2. They follow the quest chains QuestieDB 1.1 traced from real players: no more steps asking for a quest the game does not offer yet because its previous quest was skipped." },
+      { kind = "item", text = "Alliance, levels 22-23: Redridge Mountains come before Duskwood, with their elites optional, and the Nightmare Incursion missions move to the Duskwood chapter at level 30-33, where they are safe." },
+      { kind = "item", text = "Riverglades keeps the quest chains that start with an item QuestieDB has no position for." },
+      { kind = "item", text = "The Undead paladin's Fenris / Moonsilver class chain is now one chain." },
+      { kind = "item", text = "QuestieDB 1.1.2 or newer is now required for every step to have its arrow; an older version shows a warning at login." },
       { kind = "head", text = "What's new window" },
       { kind = "item", text = "After an update that brings news, a window shows them step by step, 3 seconds after you log in (never in combat). Each step has a button that takes you where to set or use it: options, journal tab, wizard page." },
       { kind = "item", text = "Close it and it comes back at the next login; « Don't show again » hides it for this version on the whole account. Type /qf news to see it again, or use the button on the wizard's summary page." },
@@ -44,6 +50,12 @@ Q.ChangelogData = {
       { kind = "item", text = "The gold ring around quest objects only shows when the game's waypoint is on the object." },
     },
     fr = {
+      { kind = "head", text = "Routes vérifiées sur QuestieDB 1.1.2" },
+      { kind = "item", text = "Les routes des deux factions, habituelles et automatique avec donjons, sont régénérées sur QuestieDB 1.1.2. Elles suivent les chaînes de quêtes relevées chez les joueurs par QuestieDB 1.1 : plus d'étape qui demande une quête que le jeu ne propose pas encore parce que sa quête précédente n'a pas été faite." },
+      { kind = "item", text = "Alliance, niveaux 22-23 : les Carmines passent avant le Bois de la Pénombre, leurs élites sont facultatifs, et les missions de l'Incursion du cauchemar passent au chapitre du Bois de la Pénombre de niveau 30-33, sans danger." },
+      { kind = "item", text = "Riverglades garde les chaînes qui commencent par un objet sans position dans QuestieDB." },
+      { kind = "item", text = "La chaîne de classe Fenris / Moonsilver du paladin mort-vivant est d'un seul tenant." },
+      { kind = "item", text = "QuestieDB 1.1.2 ou plus récent est désormais requis pour que chaque étape ait sa flèche ; une version plus ancienne affiche un avertissement à la connexion." },
       { kind = "head", text = "Fenêtre des nouveautés" },
       { kind = "item", text = "Après une mise à jour qui apporte des nouveautés, une fenêtre les présente étape par étape, 3 secondes après la connexion (jamais en combat). Chaque étape a un bouton qui mène à l'endroit où la régler ou l'utiliser : options, onglet du journal, page de l'assistant." },
       { kind = "item", text = "Ferme-la et elle revient à la connexion suivante ; « Ne plus afficher » la masque pour cette version sur tout le compte. Tape /qf news pour la revoir, ou utilise le bouton de la page « Récapitulatif » de l'assistant." },
