@@ -72,6 +72,12 @@ local function enable(Q, inGroup)
 end
 
 return {
+  button_acts_on_release_for_the_click_macro = function(t)
+    local Q = load()
+    Q.UI.RaidMarks:Apply()
+    t.eq(QuestifyMarkObjectives:GetAttribute("useOnKeyDown"), false, "/click sends a release: must act on it")
+  end,
+
   hidden_button_off_by_default = function(t)
     local Q = load()
     acceptWolves()

@@ -162,6 +162,10 @@ local function button()
   b:RegisterForClicks("AnyUp", "AnyDown")
   b:SetAttribute("type", "macro")
   b:SetAttribute("macrotext", "")
+  -- « /click » envoie un clic relâché (down = false) : avec ActionButtonUseKeyDown (actif par défaut), un
+  -- bouton sécurisé n'agit qu'à l'appui et la macro du joueur ne ferait rien. Le bouton agit donc au
+  -- relâché, pour la macro comme pour le raccourci (SecureActionButton_ShouldUseOnKeyDown).
+  b:SetAttribute("useOnKeyDown", false)
   b:Hide()
   RaidMarks.button = b
   return b
