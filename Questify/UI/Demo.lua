@@ -15,7 +15,7 @@ local addonName, Q = ...
 -- Hors combat seulement : en combat un message le dit et rien ne s'ouvre ; un début de combat range tout.
 -- Données : les vraies (chaînes de la classe du joueur, donjon de sa faction, guides livrés, grottes) ;
 -- exemples fixes : la suite de Loch Modan est calculée pour un Nain de l'Alliance (quelle que soit la
--- position réelle), les objets viennent de Demo.ITEMS (le premier connu du client est pris).
+-- position réelle), les objets viennent de Demo:ItemSet() (le premier connu du client est pris).
 -- Une donnée ou une API absente : la scène le dit dans la discussion et ne lève jamais d'erreur.
 Q.UI = Q.UI or {}
 local Demo = {}
@@ -35,6 +35,34 @@ Demo.ITEMS = {
   off = { 2362, 2129 },
   quest = 13892,   -- Kodo Kombobulator : objet de quête à utiliser, absent des sacs (le clic ne fait rien)
 }
+
+-- Jeux d'objets par niveau (récompenses de quête vérifiées dans QuestieDB, niveau d'objet entre
+-- parenthèses) : le comparatif de l'annonce montre un vrai gain face à l'équipement d'un personnage de ce
+-- niveau. Demo:ItemSet() prend le plus haut jeu dont le niveau ne dépasse pas celui du joueur + 4.
+Demo.ITEM_SETS = {
+  { level = 1, upgrade = Demo.ITEMS.upgrade, main = Demo.ITEMS.main, off = Demo.ITEMS.off },
+  { level = 28,
+    upgrade = { 6972, 7133 },       -- Fire Hardened Hauberk (30), Brutal Hauberk (30)
+    main = { 19292, 4978 },         -- Last Month's Mutton (34), Ryedol's Hammer (36)
+    off = { 9607, 16660 } },        -- Bastion of Stormwind (25), Driftmire Shield (27)
+  { level = 36,
+    upgrade = { 4508, 6773 },       -- Blood-tinged Armor (42), Gelkis Marauder Chain (42)
+    main = { 4511, 6804 },          -- Black Water Hammer (40), Windstorm Hammer (38)
+    off = { 4507, 9661 } },         -- Pit Fighter's Shield (42), Earthclasp Barrier (43)
+  { level = 50,
+    upgrade = { 12049, 9650 },      -- Splintsteel Armor (53), Honorguard Chestpiece (55)
+    main = { 11120, 9651 },         -- Belgrom's Hammer (55), Gryphon Rider's Stormhammer (53)
+    off = { 10686, 11915 } },       -- Aegis of Battle (55), Shizzle's Drizzle Blocker (55)
+}
+
+function Demo:ItemSet()
+  local level = tonumber(Q.Player and Q.Player.level) or 1
+  local best = self.ITEM_SETS[1]
+  for _, set in ipairs(self.ITEM_SETS) do
+    if set.level <= level + 4 then best = set end
+  end
+  return best
+end
 
 -- Liste d'achats d'exemple (Guides/AuctionItemData.lua) : objets de collecte à acheter à l'hôtel des ventes,
 -- chapitre en cours (Loch Modan, Marche de l'Ouest) puis chapitre suivant (Darkshore).
@@ -310,13 +338,14 @@ local function demoGain(link)
 end
 
 function SCENE.upgrade()
-  return announce("upgrade", { Demo.ITEMS.upgrade }, function(items)
+  return announce("upgrade", { Demo:ItemSet().upgrade }, function(items)
     return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true }
   end)
 end
 
 function SCENE.pair()
-  return announce("pair", { Demo.ITEMS.main, Demo.ITEMS.off }, function(items)
+  local set = Demo:ItemSet()
+  return announce("pair", { set.main, set.off }, function(items)
     return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true,
       pair = { main = items[1].link, off = items[2].link } }
   end)

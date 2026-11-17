@@ -192,6 +192,17 @@ return {
     noErrors(t)
   end,
 
+  item_set_follows_the_player_level = function(t)
+    local Q = load()
+    local D = Q.UI.Demo
+    Q.Player.level = 1
+    t.eq(D:ItemSet().level, 1)
+    Q.Player.level = 32
+    t.eq(D:ItemSet().level, 36, "a set a little above the player")
+    Q.Player.level = 60
+    t.eq(D:ItemSet().level, 50)
+  end,
+
   auction_scene_fills_the_shopping_list_and_off_restores = function(t)
     local Q = load()
     local D = Q.UI.Demo
