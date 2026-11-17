@@ -39,6 +39,11 @@
   marks the quest giver (or where to turn it in) on the world map and the minimap, points the navigation there and
   opens the world map. A second click removes the marker.
 
+**Options**
+- Class > Macros: a long macro no longer spills out of its box, and its keys and needs are spaced from it.
+- Theme: the objectives layout (list, bars, by quest) and details are also set here, next to the preview. They
+  are the same settings as in Tracker.
+
 ### Français
 
 **Fenêtre des nouveautés**
@@ -78,6 +83,11 @@
   boutons : « i » (ou un clic sur son nom) montre son objectif, l'XP à ton niveau et ses récompenses ; le bouton
   carte marque le donneur (ou le receveur) sur la carte du monde et la minicarte, y dirige la navigation et ouvre
   la carte du monde. Un second clic retire le repère.
+
+**Options**
+- Classe > Macros : une longue macro ne déborde plus de sa boîte, et ses touches et prérequis en sont écartés.
+- Thème : la disposition des objectifs (liste, barres, par quête) et leur détail se règlent aussi ici, à côté de
+  l'aperçu. Ce sont les mêmes réglages que dans Suivi.
 
 ## 0.8.1 (2026-11-16)
 

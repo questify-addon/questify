@@ -146,6 +146,13 @@ return {
     t.eq(S:Entry("nav.arrowLocked").category, "display")
     t.eq(S:Entry("nav.arrowPos").type, "hidden", "arrow position: a profile value without a control")
     t.eq(S:Entry("autoFly").category, "flights")
+    -- disposition et détail des objectifs : aussi dans Thème, sur le même réglage
+    for _, k in ipairs({ "objLayout", "objDetail" }) do
+      local e = S:Entry("theme." .. k)
+      t.ok(e and e.section == "theme" and e.category == "objectives", "theme." .. k)
+      t.eq(e and e.path, "tracker." .. k)
+      t.eq(S:EntryForPath("tracker." .. k).id, "tracker." .. k, "the tracker entry stays the profile's")
+    end
   end,
 
   strings_complete_in_both_languages = function(t)

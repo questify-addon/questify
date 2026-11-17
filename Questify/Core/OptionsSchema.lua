@@ -63,7 +63,8 @@ Schema.SECTIONS = {
   { id = "theme", label = "OPT_SEC_THEME", icon = "INV_Misc_Gem_Variety_01", categories = {
     { id = "theme", label = "OPT_CAT_THEME_COLORS" },
     { id = "arrow", label = "OPT_CAT_THEME_ARROW" },
-    { id = "background", label = "OPT_CAT_THEME_LOOK" } } },
+    { id = "background", label = "OPT_CAT_THEME_LOOK" },
+    { id = "objectives", label = "OPT_CAT_THEME_OBJECTIVES" } } },
   { id = "comfort", label = "OPT_SEC_COMFORT", icon = "INV_Misc_Rune_01", categories = {
     { id = "hearth", label = "OPT_CAT_COMFORT_HEARTH" },
     { id = "warnings", label = "OPT_CAT_COMFORT_WARNINGS" } } },
@@ -458,7 +459,7 @@ add({ id = "trackerResetPosition", section = "tracker", category = "layout", typ
 -- Ancien réglage des monstres du suivi, remplacé par tracker.objDetail (gardé pour les profils).
 add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "hidden", path = "tracker.showMobs" })
 -- Objectifs de l'étape (Engine/Objectives.lua) : aussi choisis dans l'assistant, avec un aperçu.
-add({ id = "tracker.objLayout", section = "tracker", category = "content", type = "select", style = "dropdown",
+local objLayout = add({ id = "tracker.objLayout", section = "tracker", category = "content", type = "select", style = "dropdown",
   path = "tracker.objLayout", label = "OPT_OBJ_LAYOUT", tip = "OPT_TIP_OBJ_LAYOUT",
   keywords = "suivi objectifs mise en page liste barres quete tracker objectives layout list bars quest",
   values = { "list", "bars", "quest" },
@@ -467,7 +468,7 @@ add({ id = "tracker.objLayout", section = "tracker", category = "content", type 
     return { { value = "list", text = l.OBJ_LAYOUT_LIST }, { value = "bars", text = l.OBJ_LAYOUT_BARS },
       { value = "quest", text = l.OBJ_LAYOUT_QUEST } }
   end })
-add({ id = "tracker.objDetail", section = "tracker", category = "content", type = "select", style = "dropdown",
+local objDetail = add({ id = "tracker.objDetail", section = "tracker", category = "content", type = "select", style = "dropdown",
   path = "tracker.objDetail", label = "OPT_OBJ_DETAIL", tip = "OPT_TIP_OBJ_DETAIL",
   keywords = "suivi objectifs detail monstres distance compteur tracker objectives detail monsters mobs distance count",
   values = { "count", "mobs", "distance" },
@@ -547,6 +548,14 @@ add({ id = "theme.fontScale", section = "theme", category = "background", type =
 add({ id = "tracker.opacity", section = "theme", category = "background", type = "slider", path = "tracker.opacity",
   label = "OPT_OPACITY", tip = "OPT_TIP_OPACITY", min = 0, max = 1, step = 0.05, format = percent,
   keywords = "theme fond transparence opacite alpha background opacity transparency" })
+-- Objectifs : les deux réglages du suivi repris ici, à côté de l'aperçu en direct (même chemin de réglage).
+for _, src in ipairs({ objLayout, objDetail }) do
+  local copy = {}
+  for k, v in pairs(src) do copy[k] = v end
+  copy.id = "theme." .. src.path:match("%.(.+)$")
+  copy.section, copy.category = "theme", "objectives"
+  add(copy)
+end
 
 -- Confort -----------------------------------------------------------------
 add({ id = "hearthHints", section = "comfort", category = "hearth", type = "toggle", path = "hearthHints",
@@ -646,7 +655,7 @@ end
 for i, e in ipairs(E) do
   e.order = i
   byId[e.id] = e
-  if e.path then byPath[e.path] = e end
+  if e.path and not byPath[e.path] then byPath[e.path] = e end   -- un réglage montré deux fois : la 1re entrée
 end
 
 function Schema:Entry(id) return byId[id] end

@@ -850,8 +850,7 @@ local function macroCard(parent)
   c.codeBox.bg:SetAllPoints(c.codeBox)
   border(c.codeBox, "line")
   c.code = wrap(text(c.codeBox, "ChatFontSmall", "text"))
-  c.code:SetPoint("TOPLEFT", c.codeBox, "TOPLEFT", 6, -5)
-  c.code:SetPoint("RIGHT", c.codeBox, "RIGHT", -6, 0)
+  c.code:SetPoint("TOPLEFT", c.codeBox, "TOPLEFT", 6, -5)   -- largeur posée au rendu (RenderMacros)
   c.mods = wrap(text(c, "GameFontHighlightSmall", "textDim"))
   c.req = wrap(text(c, "GameFontHighlightSmall", "textMuted"))
   c.main = button(c, "", "primary", function(b) Panel:MacroAction(b:GetParent(), "main") end)
@@ -988,6 +987,9 @@ function Panel:CreateMacros(m)
   rule:SetHeight(1)
 end
 
+-- Écarts sous la boîte de code (touches) et entre les touches et les notes (« Needs: … »).
+local CODE_GAP, NOTE_GAP = 8, 6
+
 local function th(fs) return tonumber(fs:GetText() ~= nil and fs:GetText() ~= "" and fs:GetStringHeight()) or 0 end
 
 function Panel:RenderMacros()
@@ -1049,6 +1051,9 @@ function Panel:RenderMacros()
     c.codeBox:ClearAllPoints()
     c.codeBox:SetPoint("TOPLEFT", c.use, "BOTTOMLEFT", 0, -5)
     c.codeBox:SetWidth(bodyW)
+    -- largeur posée avant la mesure : les ancres ne sont résolues qu'au rendu, et sans largeur le texte n'est
+    -- pas replié (hauteur trop petite, le code déborde de sa boîte)
+    c.code:SetWidth(bodyW - 12)
     c.code:SetText(M:Highlight(mac, body, hex("quest")))
     c.codeBox:SetHeight(th(c.code) + 10)
     local mods = {}
@@ -1057,14 +1062,15 @@ function Panel:RenderMacros()
       mods[#mods + 1] = colored("text", key) .. " " .. md.does
     end
     c.mods:ClearAllPoints()
-    c.mods:SetPoint("TOPLEFT", c.codeBox, "BOTTOMLEFT", 0, -4)
+    c.mods:SetPoint("TOPLEFT", c.codeBox, "BOTTOMLEFT", 0, -CODE_GAP)
     c.mods:SetWidth(bodyW)
     c.mods:SetText(table.concat(mods, "  ·  "))
     c.req:ClearAllPoints()
-    c.req:SetPoint("TOPLEFT", c.mods, "BOTTOMLEFT", 0, #mods > 0 and -3 or 0)
+    c.req:SetPoint("TOPLEFT", c.mods, "BOTTOMLEFT", 0, #mods > 0 and -NOTE_GAP or 0)
     c.req:SetWidth(bodyW)
     c.req:SetText(tx.requires ~= "" and string.format(L.CLASS_REQUIRES, tx.requires) or "")
-    local h = 9 + 15 + 3 + 12 + 4 + th(c.use) + 5 + (th(c.code) + 10) + 4 + th(c.mods) + 3 + th(c.req) + 9
+    local h = 9 + 15 + 3 + 12 + 4 + th(c.use) + 5 + (th(c.code) + 10) + CODE_GAP + th(c.mods)
+      + (#mods > 0 and NOTE_GAP or 0) + th(c.req) + 9
     -- action
     local state = self:MacroState(mac)
     c.state = state
