@@ -1,5 +1,45 @@
 # Changelog
 
+## Unreleased
+
+### English
+
+**Dungeon quests: pick-up route and Dungeons tab**
+- Adding a dungeon replaces the one already added: only one dungeon is followed at a time.
+- Pick-ups are ordered for your character: from where you are, each giver at its nearest spot (a quest giver
+  standing in several places is visited at the closest one), with flight and boat times when ShortestPathForever
+  is installed, and the route ends at the dungeon entrance without going back and forth.
+- Turn-ins after a dungeon now point at the quest giver by the entrance. City of Dalaran: the Image of Archmage
+  Modera by Lordamere Lake, no longer the one in Southshore nor a point 185 yd away in Alterac.
+- City of Dalaran: An Alarming Request (Alliance) and Blood in the Streets (Horde) are now required before the
+  Image of Archmage Modera's quests, as in the game. They were missing from QuestieDB.
+- Automatic route with dungeons: no more long grind before a dungeon once you reach its minimum level (the
+  Alterac chapter asked for about 430 mobs before the City of Dalaran).
+- Journal, Dungeons tab: a clearer layout with the pick-up route from where you are, quests grouped by stop, then
+  the ones in your quest log (with their progress), the locked ones and the turned-in ones. Each quest has two
+  buttons: "i" (also a click on its name) shows its objective, XP at your level and its rewards; the map button
+  marks the quest giver (or where to turn it in) on the world map and the minimap, points the navigation there and
+  opens the world map. A second click removes the marker.
+
+### Français
+
+**Quêtes de donjon : route de prise et onglet Donjons**
+- Ajouter un donjon remplace celui déjà ajouté : un seul donjon est suivi à la fois.
+- Les prises sont ordonnées pour ton personnage : depuis ta position, chaque donneur à son point le plus proche
+  (un donneur présent en plusieurs lieux est pris au plus près), avec les temps de vol et de bateau quand
+  ShortestPathForever est installé, et la route finit à l'entrée du donjon sans aller-retour.
+- Les rendus après un donjon visent le donneur devant l'entrée. Cité de Dalaran : l'image de l'archimage Modera au
+  bord du lac Lordamere, et non plus celle d'Austrebrune ni un point à 185 m dans Alterac.
+- Cité de Dalaran : Une requête alarmante (Alliance) et Du sang dans les rues (Horde) sont maintenant demandées
+  avant les quêtes de l'image de Modera, comme en jeu. Elles manquaient à QuestieDB.
+- Route automatique avec les donjons : plus de long farm avant un donjon dont tu as le niveau minimal (le chapitre
+  d'Alterac demandait environ 430 monstres avant la Cité de Dalaran).
+- Journal, onglet Donjons : présentation plus lisible avec l'itinéraire de prise depuis ta position, les quêtes par
+  arrêt, puis celles de ton journal (avec leur progression), les bloquées et les rendues. Chaque quête a deux
+  boutons : « i » (ou un clic sur son nom) montre son objectif, l'XP à ton niveau et ses récompenses ; le bouton
+  carte marque le donneur (ou le receveur) sur la carte du monde et la minicarte, y dirige la navigation et ouvre
+  la carte du monde. Un second clic retire le repère.
+
 ## 0.8.1 (2026-11-16)
 
 ### English

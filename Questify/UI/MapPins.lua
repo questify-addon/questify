@@ -237,6 +237,12 @@ local function onEnter(self)
       return
     end
     GameTooltip:AddLine(d.name or d.title or "", 1, 0.82, 0)
+    if d.order == 0 then
+      GameTooltip:AddLine(d.title or "", 1, 1, 1, true)
+      GameTooltip:AddLine(L.MAP_PIN_MARKED, 0.7, 0.7, 0.7)
+      GameTooltip:Show()
+      return
+    end
     if d.order == 1 then
       GameTooltip:AddLine(L.MAP_PIN_CURRENT, 0.7, 0.7, 0.7)
     else
@@ -362,8 +368,9 @@ local function dress(f, style, action, order, onMinimap)
     end
   end
   f:SetSize(size, size)
-  f:SetAlpha(current and 1 or 0.85)
-  f.num:SetText(style == "zone" and "" or tostring(order))
+  f:SetAlpha((current or order == 0) and 1 or 0.85)
+  -- order 0 : repère posé depuis le journal (Mark), sans numéro d'étape
+  f.num:SetText((style == "zone" or order == 0) and "" or tostring(order))
 end
 
 ---------------------------------------------------------------------------
@@ -434,6 +441,14 @@ function MapPins:Refresh()
   -- d'une prise, d'un rendu ou d'un déplacement avant elle), pas du joueur. Un rendu après un donjon vise
   -- ainsi le PNJ devant l'entrée, même quand un autre point d'apparition est plus près du joueur.
   local from
+  -- repère posé depuis le journal (onglet Donjons) : en plus des étapes, jusqu'à ce qu'il soit retiré
+  local m = MapPins.marked
+  if m then
+    local entry = { step = { action = m.style } }
+    local p = { mapId = m.mapId, x = m.x, y = m.y, name = m.name }
+    place(lib, "world", entry, 0, m.style, p, m.title)
+    place(lib, "mini", entry, 0, m.style, p, m.title, true)
+  end
   for order, entry in ipairs(window()) do
     local pts, style = pointsFor(entry, order > 1 and from or nil)
     if style and style ~= "objective" and pts[1] then from = { pts[1].mapId, pts[1].x, pts[1].y } end
@@ -446,6 +461,28 @@ function MapPins:Refresh()
       end
     end
   end
+end
+
+-- Mark(t) : repère posé depuis le journal (bouton carte de l'onglet Donjons), en plus de ceux des étapes :
+-- t = { mapId, x, y (0-100), style = "accept" | "turnin" | "goto", name, title, key }, nil pour le retirer.
+-- La navigation le prend pour cible (Q.Nav:SetManualTarget) ; le retirer lui rend l'étape courante.
+-- -> vrai si un repère est posé.
+function MapPins:Mark(t)
+  if type(t) == "table" and type(t.mapId) == "number" and validCoord(t.x) and validCoord(t.y) then
+    self.marked = { mapId = t.mapId, x = t.x, y = t.y, style = t.style or "goto", name = t.name, title = t.title,
+      key = t.key }
+    if Q.Nav and Q.Nav.SetManualTarget then Q.Nav:SetManualTarget(t.mapId, t.x, t.y, t.name or t.title) end
+  else
+    local had = self.marked ~= nil
+    self.marked = nil
+    if had and Q.Nav and Q.Nav.ReleaseManual then Q.Nav:ReleaseManual() end
+  end
+  self:Update()
+  return self.marked ~= nil
+end
+
+function MapPins:MarkedKey()
+  return self.marked and self.marked.key or nil
 end
 
 -- Dessine maintenant, ou à la fin du combat.

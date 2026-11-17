@@ -34,6 +34,8 @@ local QDB = {
       questLevel = 33, requiredRaces = ALLIANCE, objectives = { nil, nil, { { 251983 } } }, zoneOrSort = 16544 },
     [92457] = { name = "Starving Arcane", startedBy = { { 269127 } }, finishedBy = { { 269127 } }, requiredLevel = 24,
       questLevel = 33, requiredRaces = ALLIANCE, objectives = { { { 247003 } } }, zoneOrSort = 16544 },
+    [92432] = { name = "An Alarming Request", startedBy = { { 247264 } }, finishedBy = { { 269127 } }, requiredLevel = 30,
+      questLevel = 33, requiredRaces = ALLIANCE, zoneOrSort = 36 },
     [92458] = { name = "Heart of Disruption", startedBy = { { 269127 } }, finishedBy = { { 269127 } },
       requiredLevel = 24, questLevel = 33, requiredRaces = ALLIANCE, objectives = { nil, nil, { { 251961 } } },
       zoneOrSort = 16544 },
@@ -42,6 +44,7 @@ local QDB = {
     [269127] = { name = "Image of Archmage Modera", friendlyToFaction = "AH",
       spawns = { [36] = { { ALTERAC[2], ALTERAC[3] } }, [130] = { { LAKE[2], LAKE[3] } },
                  [267] = { { SOUTHSHORE[2], SOUTHSHORE[3] } } } },
+    [247264] = { name = "Emissary Jacques", friendlyToFaction = "A", spawns = { [267] = { { 48.34, 60.03 } } } },
     [5502] = { name = "Shylamiir", friendlyToFaction = "A", spawns = { [1519] = { { 31.5, 62.61 } } } },
     [247003] = { name = "Seeking Remnant", spawns = {} },
   },
@@ -59,13 +62,23 @@ local function setupMaps()
     height = 1158.34, parent = 1415 }
 end
 
-local function load()
+local function load(opts)
+  opts = opts or {}
   setupMaps()
   Mock.player.raceId, Mock.player.faction, Mock.player.level = 1, "Alliance", 30
   Mock.player.map, Mock.player.x, Mock.player.y = 1424, 49.3, 52.3       -- Austrebrune, point de vol
   local d = data()
+  if opts.alarming then
+    -- An Alarming Request (92432) : préquête des deux quêtes de Modera (overrides.lua -> Q.QuestPrereqFix)
+    table.insert(d[1].quests.Alliance, { id = 92432, bc = true, giver = 247264, at = { 1424, 48.34, 60.03 },
+      ender = 269127, endAt = LAKE, level = 33, reqLevel = 30, races = ALLIANCE })
+  end
   local Q = Mock.loadAddon(TOC, { extraFiles = { GUIDES }, skipGuides = true, qdb = QDB,
-    beforeLogin = function(Q) Q.DungeonData = d; Ext.spy(Q) end })
+    beforeLogin = function(Q)
+      Q.DungeonData = d
+      Q.QuestPrereqFix = opts.alarming and { [92457] = { 92432 }, [92458] = { 92432 } } or {}
+      Ext.spy(Q)
+    end })
   Mock.advance(0.3)
   return Q
 end
@@ -166,6 +179,91 @@ return {
     local first = units[1]
     t.ok(first.quest.id == 92457 or first.quest.id == 92458, "image first")
     t.ok(yardsFrom(Q, ENTRANCE, first.at[1], first.at[2], first.at[3]) < 60, "lake spawn")
+    noErrors(t)
+  end,
+
+  -- Préquête partagée (QuestieDB ne la connaît pas, Q.QuestPrereqFix si) : prise et rendue une seule fois, avant
+  -- les deux quêtes qu'elle débloque, à Austrebrune où sont l'émissaire et une image de Modera.
+  shared_prerequisite_is_taken_once_before_both = function(t)
+    local Q = load({ alarming = true })
+    t.eq(Q.Dungeons:Add("DALARAN"), true)
+    local seq = {}
+    for _, e in ipairs(Q.Progress:Entries()) do
+      if e.tag == "dg:DALARAN" and (e.step.action == "accept" or e.step.action == "turnin") then
+        seq[#seq + 1] = e.step.action .. e.step.questId
+      end
+    end
+    local text = table.concat(seq, " ")
+    local function pos(k) for i, v in ipairs(seq) do if v == k then return i end end end
+    local n = 0
+    for _, v in ipairs(seq) do if v == "accept92432" then n = n + 1 end end
+    t.eq(n, 1, "92432 accepted once: " .. text)
+    t.ok(pos("turnin92432") < pos("accept92457") and pos("turnin92432") < pos("accept92458"), text)
+    t.eq(Q.Targets:ForEntry(Q.Progress:Current()).id, 247264, "starts at the emissary in Southshore")
+    noErrors(t)
+  end,
+
+  -- Onglet Donjons (maquette journal-donjons.html) : itinéraire en pastilles, arrêt d'Austrebrune avec la
+  -- préquête (débloque 2) et les quêtes de Modera, Hurlevent, entrée ; clic sur le nom = plus d'infos ; bouton
+  -- carte = repère posé (épingle sans numéro, navigation), carte du monde ouverte, nouveau clic = retiré.
+  journal_route_rows_info_and_map_marker = function(t)
+    local Q = load({ alarming = true })
+    local J = Q.UI.Journal
+    J:ShowTab("dungeons")
+    J.dungeonSel = "DALARAN"
+    J:RefreshDungeonTab()
+    local pills = {}
+    for _, p in ipairs(J.dgPills or {}) do if p:IsShown() then pills[#pills + 1] = p.text:GetText() end end
+    t.eq(pills, { "Hillsbrad Foothills", "Stormwind City", Q.L.DUNGEON_ROUTE_ENTRANCE })
+    local rows, byQ = {}, {}
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() then rows[#rows + 1] = r.qid; byQ[r.qid] = r end end
+    t.eq(rows, { 92432, 92457, 92458, 92456 })
+    t.ok(byQ[92432].name:GetText():find(string.format(Q.L.DUNGEON_TAG_UNLOCKS, 2), 1, true), byQ[92432].name:GetText())
+    t.ok(byQ[92457].sub:GetText():find("Image of Archmage Modera", 1, true), "giver under the name")
+    -- clic sur la ligne (nom) : plus d'infos
+    Mock.click(byQ[92457], "LeftButton")
+    local m = J.dgMores[1]
+    t.ok(m and m:IsShown(), "info panel")
+    local texts = {}
+    for _, fs in ipairs(m.lines) do if fs:IsShown() then texts[#texts + 1] = fs:GetText() end end
+    t.ok(table.concat(texts, "\n"):find(" XP", 1, true), table.concat(texts, " / "))
+    Mock.click(J.dgQRows[2].info, "LeftButton")
+    t.ok(not J.dgMores[1]:IsShown(), "closed by the i button")
+    -- bouton carte : repère posé et carte ouverte, puis retiré
+    local row
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() and r.qid == 92457 then row = r end end
+    Mock.click(row.map, "LeftButton")
+    t.eq(Q.UI.MapPins:MarkedKey(), "q:92457")
+    t.ok(Q.Nav:HasManualTarget(), "navigation follows the marker")
+    local marked = 0
+    for _, p in ipairs(Q.UI.MapPins.active) do if p.order == 0 and p.where == "world" then marked = marked + 1 end end
+    t.eq(marked, 1, "one marked pin on the world map")
+    t.ok(WorldMapFrame:IsShown(), "world map opened")
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() and r.qid == 92457 then row = r end end
+    t.ok(row.map.pin:IsShown(), "pinned state on the button")
+    Mock.click(row.map, "LeftButton")
+    t.eq(Q.UI.MapPins:MarkedKey(), nil)
+    t.ok(not Q.Nav:HasManualTarget(), "navigation back to the step")
+    noErrors(t)
+  end,
+
+  -- Quête déjà au journal : groupe « Dans ton journal », état et compteur, bouton carte sur le receveur.
+  journal_quest_in_log_shows_progress = function(t)
+    Mock.quests.log[92458] = { complete = false, objectives = { { text = "Arcane Mote: 0/1", finished = false,
+      numFulfilled = 0, numRequired = 1 } } }
+    local Q = load()
+    local J = Q.UI.Journal
+    J:ShowTab("dungeons")
+    J.dungeonSel = "DALARAN"
+    J:RefreshDungeonTab()
+    local row
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() and r.qid == 92458 then row = r end end
+    t.ok(row and row.inLog, "row in the log group")
+    t.ok(row.sub:GetText():find(Q.L.DUNGEON_STATE_INPROGRESS .. " · 0/1", 1, true), row.sub:GetText())
+    Mock.click(row.map, "LeftButton")
+    local m = Q.UI.MapPins.marked
+    t.ok(m and m.style == "turnin", "turn-in marker")
+    t.ok(yardsFrom(Q, ENTRANCE, m.mapId, m.x, m.y) < 60, "by the entrance")
     noErrors(t)
   end,
 }

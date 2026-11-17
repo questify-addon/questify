@@ -1149,8 +1149,8 @@ end
 -- (grisées avec la raison quand elles ne sont pas à prendre), et Ajouter / Ignorer / Réactiver.
 -- Note : une à trois étoiles selon les quêtes qu'il reste à y faire (DungeonStars).
 ---------------------------------------------------------------------------
-local DG_LIST_W, DG_ROW_H, DG_HEAD_H = 210, 18, 20
-local DG_DETAIL_X, DG_DETAIL_W = 244, 226
+local DG_LIST_W, DG_ROW_H, DG_HEAD_H = 176, 18, 20
+local DG_DETAIL_X, DG_DETAIL_W = 210, 272
 local DG_STATE_TEXT = {
   available = "DUNGEON_STATE_AVAILABLE", upcoming = "DUNGEON_STATE_UPCOMING", added = "DUNGEON_STATE_ADDED",
   ignored = "DUNGEON_STATE_IGNORED", done = "DUNGEON_STATE_DONE", past = "DUNGEON_STATE_PAST",
@@ -1295,7 +1295,7 @@ local function dgRow(i)
   for s, tex in ipairs(stars) do tex:SetPoint("LEFT", row, "LEFT", 2 + (s - 1) * 9, 0) end
   local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   name:SetPoint("LEFT", row, "LEFT", 32, 0)
-  name:SetWidth(DG_LIST_W - 32 - 50)
+  name:SetWidth(DG_LIST_W - 32 - 44)
   name:SetJustifyH("LEFT")
   name:SetWordWrap(false)
   local lvl = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -1303,7 +1303,7 @@ local function dgRow(i)
   lvl:SetJustifyH("RIGHT")
   local dot = row:CreateTexture(nil, "ARTWORK")
   dot:SetTexture(Q.Themes and Q.Themes.GLYPH_DOT or ROUTE_DOT)
-  dot:SetSize(10, 10)
+  dot:SetSize(8, 8)
   dot:SetPoint("RIGHT", row, "RIGHT", -38, 0)
   dot:Hide()
   row.selected, row.stars, row.name, row.levels, row.routeDot = sel, stars, name, lvl, dot
@@ -1318,18 +1318,288 @@ local function dgRow(i)
   return row
 end
 
--- Lignes de quête du détail (créées à la demande).
-local function dgLine(i)
-  Journal.dgLines = Journal.dgLines or {}
-  local fs = Journal.dgLines[i]
-  if fs then return fs end
-  fs = Journal.dgDetail:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  fs:SetWidth(DG_DETAIL_W - 10)
-  fs:SetJustifyH("LEFT")
-  fs:SetWordWrap(true)
-  styled(fs, "text")
-  Journal.dgLines[i] = fs
+-- Détail du donjon (maquette docs/media/apercus/src/themes/journal-donjons.html, sections B à G) : widgets créés à
+-- la demande dans la colonne de droite et rangés de haut en bas à chaque affichage.
+local DG_BACKDROP = {
+  bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8",
+  edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 },
+}
+local MAP_ICON = "Interface\\Icons\\INV_Misc_Map_01"
+local QUEST_ICON = {
+  accept = "Interface\\GossipFrame\\AvailableQuestIcon",
+  turnin = "Interface\\GossipFrame\\ActiveQuestIcon",
+  lock = "Interface\\LFGFrame\\UI-LFG-ICON-LOCK",
+}
+local CIRCLE_MASK = "Interface\\CHARACTERFRAME\\TempPortraitAlphaMask"
+
+-- Cadre à fond et bordure de 1 px (rôles du thème), repeint au changement de thème.
+local function boxFrame(parent, bgRole, edgeRole, kind)
+  local ok, f = pcall(CreateFrame, kind or "Frame", nil, parent, "BackdropTemplate")
+  if not ok or not f then f = CreateFrame(kind or "Frame", nil, parent) end
+  f.bgRole, f.edgeRole = bgRole, edgeRole
+  if f.SetBackdrop then f:SetBackdrop(DG_BACKDROP) end
+  Journal.dgBoxes = Journal.dgBoxes or {}
+  Journal.dgBoxes[#Journal.dgBoxes + 1] = f
+  return f
+end
+
+local function paintBox(f, bgRole, edgeRole)
+  if not f.SetBackdrop then return end
+  bgRole, edgeRole = bgRole or f.bgRole, edgeRole or f.edgeRole
+  local r, g, b, a = tc(bgRole)
+  if bgRole == "none" then f:SetBackdropColor(0, 0, 0, 0) else f:SetBackdropColor(r, g, b, a) end
+  f:SetBackdropBorderColor(tc(edgeRole))
+end
+
+-- Disque teinté (masque circulaire) : numéros d'arrêt, point « repère posé ».
+local function disc(parent, size, layer)
+  local tex = parent:CreateTexture(nil, layer or "ARTWORK")
+  tex:SetSize(size, size)
+  local m = parent:CreateMaskTexture()
+  m:SetTexture(CIRCLE_MASK, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+  m:SetAllPoints(tex)
+  tex:AddMaskTexture(m)
+  return tex
+end
+
+-- Numéro d'arrêt : disque d'accent et chiffre. -> cadre (champs .disc, .text).
+local function stopNumber(parent, size)
+  local f = CreateFrame("Frame", nil, parent)
+  f:SetSize(size, size)
+  f.disc = disc(f, size, "ARTWORK")
+  f.disc:SetPoint("CENTER", f, "CENTER", 0, 0)
+  f.text = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  f.text:SetPoint("CENTER", f, "CENTER", 0, 0)
+  return f
+end
+
+local function paintNumber(f, role)
+  f.disc:SetColorTexture(tc(role or "accent"))
+  local T = Q.Themes
+  if T then f.text:SetTextColor(T:Color("onAccent")) else f.text:SetTextColor(0, 0, 0) end
+end
+
+-- Pastille arrondie (bords en disques masqués, comme UI/DungeonChainPopup.lua) avec numéro et nom de lieu.
+local PILL_H = 17
+local function pillPart(p, sublevel, inset)
+  local h = PILL_H - 2 * inset
+  local left = disc(p, h, "BACKGROUND")
+  left:SetDrawLayer("BACKGROUND", sublevel)
+  left:SetPoint("LEFT", p, "LEFT", inset, 0)
+  local right = disc(p, h, "BACKGROUND")
+  right:SetDrawLayer("BACKGROUND", sublevel)
+  right:SetPoint("RIGHT", p, "RIGHT", -inset, 0)
+  local mid = p:CreateTexture(nil, "BACKGROUND", nil, sublevel)
+  mid:SetPoint("TOPLEFT", p, "TOPLEFT", inset + h / 2, -inset)
+  mid:SetPoint("BOTTOMRIGHT", p, "BOTTOMRIGHT", -(inset + h / 2), inset)
+  return { left, right, mid }
+end
+
+local function dgPill(i)
+  Journal.dgPills = Journal.dgPills or {}
+  local p = Journal.dgPills[i]
+  if p then return p end
+  p = CreateFrame("Frame", nil, Journal.dgDetail)
+  p:SetHeight(PILL_H)
+  p.edge = pillPart(p, 1, 0)
+  p.fill = pillPart(p, 2, 1)
+  p.num = stopNumber(p, 12)
+  p.num:SetPoint("LEFT", p, "LEFT", 3, 0)
+  p.text = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  p.text:SetPoint("LEFT", p.num, "RIGHT", 4, 0)
+  p.trip = Journal.dgDetail:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  Journal.dgPills[i] = p
+  return p
+end
+
+local function paintPill(p, here)
+  for _, t in ipairs(p.edge) do t:SetColorTexture(tc("edge")) end
+  for _, t in ipairs(p.fill) do t:SetColorTexture(tc("panelAlt")) end
+  paintNumber(p.num, here and "success" or "accent")
+  paint(p.text, "textDim")
+  paint(p.trip, "textMuted")
+end
+
+-- Titre de section (.h3 de la maquette) : texte discret en capitales, valeur à droite, filet dessous.
+local function dgH3(i)
+  Journal.dgH3s = Journal.dgH3s or {}
+  local h = Journal.dgH3s[i]
+  if h then return h end
+  local parent = Journal.dgDetail
+  h = { text = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"),
+        right = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"),
+        rule = parent:CreateTexture(nil, "BORDER") }
+  h.text:SetJustifyH("LEFT")
+  h.right:SetJustifyH("RIGHT")
+  h.rule:SetHeight(1)
+  Journal.dgH3s[i] = h
+  return h
+end
+
+-- En-tête d'arrêt : numéro, lieu, trajet à droite.
+local function dgStop(i)
+  Journal.dgStops = Journal.dgStops or {}
+  local s = Journal.dgStops[i]
+  if s then return s end
+  local parent = Journal.dgDetail
+  s = { num = stopNumber(parent, 15), name = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"),
+        right = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall") }
+  s.name:SetJustifyH("LEFT")
+  s.name:SetWordWrap(false)
+  s.right:SetJustifyH("RIGHT")
+  Journal.dgStops[i] = s
+  return s
+end
+
+-- Petit bouton carré de 20 px (i ou carte) ; pin = point « repère posé ».
+local function smallButton(parent)
+  local b = boxFrame(parent, "panelAlt", "edge", "Button")
+  b:SetSize(20, 20)
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetPoint("TOPLEFT", b, "TOPLEFT", 1, -1)
+  hl:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+  hl:SetColorTexture(1, 1, 1, 0.08)
+  b.pin = disc(b, 7, "OVERLAY")
+  b.pin:SetPoint("CENTER", b, "TOPRIGHT", -1, -1)
+  b.pin:Hide()
+  b:SetScript("OnLeave", hideTooltip)
+  return b
+end
+
+local function setPinned(b, on)
+  if on then
+    paintBox(b, "panelAlt", "warning")
+    b.pin:SetColorTexture(tc("warning"))
+    b.pin:Show()
+  else
+    paintBox(b, "panelAlt", "edge")
+    b.pin:Hide()
+  end
+end
+
+local function setOpen(b, on)
+  paintBox(b, on and "sel" or "panelAlt", on and "accent" or "edge")
+  paint(b.glyph, on and "accent" or "textDim")
+end
+
+-- Ligne de quête : icône d'état, nom (clic : plus d'infos), donneur ou état dessous, boutons i et carte.
+local Q_ROW_W = DG_DETAIL_W - 6
+local function dgQRow(i)
+  Journal.dgQRows = Journal.dgQRows or {}
+  local r = Journal.dgQRows[i]
+  if r then return r end
+  r = CreateFrame("Button", nil, Journal.dgDetail)
+  r:SetWidth(Q_ROW_W)
+  hoverHighlight(r)
+  -- ligne ouverte : fond « panel » et filets « edge » en haut et sur les côtés (le panneau d'infos la prolonge)
+  r.bg = r:CreateTexture(nil, "BACKGROUND")
+  r.bg:SetAllPoints(r)
+  r.edges = {}
+  for _, side in ipairs({ { "TOPLEFT", "TOPRIGHT", nil, 1 }, { "TOPLEFT", "BOTTOMLEFT", 1, nil },
+                          { "TOPRIGHT", "BOTTOMRIGHT", 1, nil } }) do
+    local e = r:CreateTexture(nil, "BORDER")
+    e:SetPoint(side[1], r, side[1], 0, 0)
+    e:SetPoint(side[2], r, side[2], 0, 0)
+    if side[3] then e:SetWidth(side[3]) else e:SetHeight(side[4]) end
+    r.edges[#r.edges + 1] = e
+  end
+  r.icon = r:CreateTexture(nil, "ARTWORK")
+  r.icon:SetSize(16, 16)
+  r.icon:SetPoint("TOPLEFT", r, "TOPLEFT", 4, -4)
+  r.name = r:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  r.name:SetPoint("TOPLEFT", r, "TOPLEFT", 26, -4)
+  r.name:SetWidth(Q_ROW_W - 26 - 50)
+  r.name:SetJustifyH("LEFT")
+  r.sub = r:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  r.sub:SetPoint("TOPLEFT", r.name, "BOTTOMLEFT", 0, -1)
+  r.sub:SetWidth(Q_ROW_W - 26 - 50)
+  r.sub:SetJustifyH("LEFT")
+  r.map = smallButton(r)
+  r.map:SetPoint("TOPRIGHT", r, "TOPRIGHT", -4, -4)
+  r.map.icon = r.map:CreateTexture(nil, "ARTWORK")
+  r.map.icon:SetSize(16, 16)
+  r.map.icon:SetPoint("CENTER", r.map, "CENTER", 0, 0)
+  r.map.icon:SetTexture(MAP_ICON)
+  r.map.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+  r.info = smallButton(r)
+  r.info:SetPoint("RIGHT", r.map, "LEFT", -3, 0)
+  r.info.glyph = r.info:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  r.info.glyph:SetPoint("CENTER", r.info, "CENTER", 0, 0)
+  r.info.glyph:SetText("i")
+  r:SetScript("OnClick", safe(function(self) Journal:ToggleQuestInfo(self.qid) end))
+  r.info:SetScript("OnClick", safe(function(self) Journal:ToggleQuestInfo(self:GetParent().qid) end))
+  r.info:SetScript("OnEnter", safe(function(self) showTooltip(self, { L.DUNGEON_INFO_TIP }) end))
+  r.map:SetScript("OnClick", safe(function(self) Journal:MarkQuest(self:GetParent()) end))
+  r.map:SetScript("OnEnter", safe(function(self)
+    local row = self:GetParent()
+    local tip = row.markKey and row.markKey == (Q.UI.MapPins and Q.UI.MapPins:MarkedKey()) and L.DUNGEON_MAP_TIP_OFF
+      or row.inLog and L.DUNGEON_MAP_TIP_ENDER or L.DUNGEON_MAP_TIP_GIVER
+    showTooltip(self, { tip })
+  end))
+  Journal.dgQRows[i] = r
+  return r
+end
+
+-- Panneau « plus d'infos » sous une quête : objectif, XP et réputation, objectifs et receveur pour une quête
+-- du journal, récompenses avec les boutons d'objet de UI/ClassQuestPopup.lua (infobulle et comparaison du sac).
+local function dgMore(i)
+  Journal.dgMores = Journal.dgMores or {}
+  local m = Journal.dgMores[i]
+  if m then return m end
+  m = CreateFrame("Frame", nil, Journal.dgDetail)
+  m:SetWidth(Q_ROW_W)
+  -- fond « panel », filets « edge » sur les côtés et en bas : il prolonge la ligne ouverte (maquette, section E)
+  m.bg = m:CreateTexture(nil, "BACKGROUND")
+  m.bg:SetAllPoints(m)
+  m.edges = {}
+  for _, side in ipairs({ { "BOTTOMLEFT", "BOTTOMRIGHT", nil, 1 }, { "TOPLEFT", "BOTTOMLEFT", 1, nil },
+                          { "TOPRIGHT", "BOTTOMRIGHT", 1, nil } }) do
+    local e = m:CreateTexture(nil, "BORDER")
+    e:SetPoint(side[1], m, side[1], 0, 0)
+    e:SetPoint(side[2], m, side[2], 0, 0)
+    if side[3] then e:SetWidth(side[3]) else e:SetHeight(side[4]) end
+    m.edges[#m.edges + 1] = e
+  end
+  m.lines, m.labels, m.items, m.bars = {}, {}, {}, {}
+  Journal.dgMores[i] = m
+  return m
+end
+
+local function moreText(m, kind, i, font)
+  local list = m[kind]
+  local fs = list[i]
+  if not fs then
+    fs = m:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
+    fs:SetJustifyH("LEFT")
+    fs:SetWordWrap(true)
+    list[i] = fs
+  end
   return fs
+end
+
+local function moreBar(m, i)
+  local b = m.bars[i]
+  if not b then
+    b = { back = m:CreateTexture(nil, "ARTWORK"), front = m:CreateTexture(nil, "OVERLAY") }
+    b.back:SetHeight(3)
+    b.front:SetHeight(3)
+    m.bars[i] = b
+  end
+  return b
+end
+
+local function moreItem(m, i)
+  local it = m.items[i]
+  if not it then
+    local P = Q.UI.ClassQuestPopup
+    it = { button = P.CreateItemButton(m, 24), name = m:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"),
+           slot = m:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall") }
+    it.name:SetJustifyH("LEFT")
+    it.name:SetWordWrap(false)
+    it.slot:SetJustifyH("RIGHT")
+    m.items[i] = it
+  end
+  return it
 end
 
 -- Quête bloquée par une chaîne de préquêtes : infobulle (quêtes à faire, zones, XP, récompenses) et boutons
@@ -1466,7 +1736,7 @@ function Journal:BuildDungeons(panel)
   -- Tri : niveau ou nombre de quêtes
   local function sortButton(key, label)
     local b = CreateFrame("Button", nil, panel)
-    b:SetSize(48, 14)
+    b:SetSize(44, 14)
     local fs = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     fs:SetAllPoints(b)
     fs:SetText(label)
@@ -1495,21 +1765,44 @@ function Journal:BuildDungeons(panel)
   dScroll:SetPoint("TOPLEFT", panel, "TOPLEFT", DG_DETAIL_X, -4)
   self.dgDetailScroll, self.dgDetail = dScroll, dChild
 
+  -- B. en-tête : nom, pastilles (niveaux, état), étoiles, entrée et son bouton carte, synthèse
   local title = dChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
   title:SetPoint("TOPLEFT", dChild, "TOPLEFT", 2, -2)
   title:SetWidth(DG_DETAIL_W - 6)
   title:SetJustifyH("LEFT")
-  local meta = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  meta:SetWidth(DG_DETAIL_W - 6)
-  meta:SetJustifyH("LEFT")
-  local stars = newStars(dChild, 13)
-  local score = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  score:SetWidth(DG_DETAIL_W - 50)
-  score:SetJustifyH("LEFT")
-  styled(title, "title")
-  styled(meta, "textDim")
-  styled(score, "textDim")
-  self.dgTitle, self.dgMeta, self.dgStars, self.dgScore = title, meta, stars, score
+  self.dgTitle = title
+  local function chip()
+    local c = boxFrame(dChild, "panelAlt", "edge")
+    c:SetHeight(16)
+    c.text = c:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    c.text:SetPoint("CENTER", c, "CENTER", 0, 0)
+    return c
+  end
+  self.dgLevelChip, self.dgStateChip = chip(), chip()
+  self.dgStars = newStars(dChild, 11)
+  local ent = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  ent:SetWidth(DG_DETAIL_W - 34)
+  ent:SetJustifyH("LEFT")
+  self.dgEntrance = ent
+  local entBtn = smallButton(dChild)
+  entBtn.icon = entBtn:CreateTexture(nil, "ARTWORK")
+  entBtn.icon:SetSize(16, 16)
+  entBtn.icon:SetPoint("CENTER", entBtn, "CENTER", 0, 0)
+  entBtn.icon:SetTexture(MAP_ICON)
+  entBtn.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+  entBtn:SetScript("OnClick", safe(function() Journal:MarkEntrance() end))
+  entBtn:SetScript("OnEnter", safe(function(self)
+    local d = Journal.dgItem and Journal.dgItem.dungeon
+    local on = d and ("ent:" .. d.key) == (Q.UI.MapPins and Q.UI.MapPins:MarkedKey())
+    showTooltip(self, { on and L.DUNGEON_MAP_TIP_OFF or L.DUNGEON_MAP_TIP_ENTRANCE })
+  end))
+  self.dgEntBtn = entBtn
+  local sum = boxFrame(dChild, "panel", "line")
+  sum.text = sum:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  sum.text:SetPoint("TOPLEFT", sum, "TOPLEFT", 7, -5)
+  sum.text:SetWidth(DG_DETAIL_W - 22)
+  sum.text:SetJustifyH("LEFT")
+  self.dgSummary = sum
 
   local function button(label, width)
     local b = CreateFrame("Button", nil, dChild, "UIPanelButtonTemplate")
@@ -1534,59 +1827,445 @@ function Journal:BuildDungeons(panel)
   self.dgEmpty = empty
 end
 
+---------------------------------------------------------------------------
+-- Textes du détail
+---------------------------------------------------------------------------
+local function fmtXP(n)
+  local P = Q.UI.DungeonChainPopup
+  if P and P.FormatNumber then return P.FormatNumber(n) end
+  return tostring(math.floor(tonumber(n) or 0))
+end
+
+-- Trajet d'un arrêt : « tu y es », « vol 7 min », « bateau 4 min », « 3 min à pied », « ~5 min » ; "" si inconnu.
+function Journal.TripText(t)
+  if type(t) ~= "table" or type(t.seconds) ~= "number" then return "" end
+  if t.seconds < 45 then return L.DUNGEON_ROUTE_HERE end
+  local min = math.max(1, math.floor(t.seconds / 60 + 0.5))
+  if t.flight then return string.format(L.DUNGEON_TRIP_FLY, min) end
+  if t.boat or t.tram then return string.format(L.DUNGEON_TRIP_BOAT, min) end
+  if t.walk then return string.format(L.DUNGEON_TRIP_WALK, min) end
+  return string.format(L.DUNGEON_ROUTE_TIME, min)
+end
+
+local function placeName(kind, id)
+  if kind == "npc" then return Q.QDB:NpcName(id) end
+  if kind == "object" then return Q.QDB:ObjectName(id) end
+  return nil
+end
+
+local function itemFacts(itemId)
+  local name, quality, equipLoc
+  if C_Item and C_Item.GetItemInfo then
+    local ok, n, _, q, _, _, _, _, _, loc = pcall(C_Item.GetItemInfo, itemId)
+    if ok then name, quality, equipLoc = n, q, loc end
+  end
+  if not name and C_Item and C_Item.GetItemNameByID then
+    local ok, n = pcall(C_Item.GetItemNameByID, itemId)
+    if ok then name = n end
+  end
+  if not name then name = Q.QDB:ItemName(itemId) end
+  local color = "|cffffffff"
+  local qc = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+  if qc and qc.hex then color = qc.hex end
+  local slot = type(equipLoc) == "string" and equipLoc ~= "" and _G[equipLoc] or ""
+  return color .. tostring(name or ("#" .. itemId)) .. "|r", type(slot) == "string" and slot or ""
+end
+
+local function factionName(id)
+  if GetFactionInfoByID then
+    local ok, name = pcall(GetFactionInfoByID, id)
+    if ok and type(name) == "string" and name ~= "" then return name end
+  end
+  return "#" .. tostring(id)
+end
+
+---------------------------------------------------------------------------
+-- Actions des boutons de ligne
+---------------------------------------------------------------------------
+function Journal:ToggleQuestInfo(qid)
+  if type(qid) ~= "number" then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  self.dgOpen = self.dgOpen or {}
+  self.dgOpen[qid] = not self.dgOpen[qid] or nil
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+-- Carte du monde ouverte sur la carte du repère (jamais en combat).
+local function openMapAt(mapId)
+  if InCombatLockdown and InCombatLockdown() then return end
+  if type(OpenWorldMap) == "function" then
+    pcall(OpenWorldMap, mapId)
+  elseif WorldMapFrame then
+    if not WorldMapFrame:IsShown() and type(ToggleWorldMap) == "function" then pcall(ToggleWorldMap) end
+    if WorldMapFrame.SetMapID then pcall(WorldMapFrame.SetMapID, WorldMapFrame, mapId) end
+  end
+end
+
+-- Pose (ou retire) le repère d'un lieu : épingle de la carte (UI/MapPins.lua), cible de la navigation, carte du
+-- monde ouverte dessus.
+local function toggleMark(key, at, style, name, title)
+  local MP = Q.UI.MapPins
+  if not MP or not MP.Mark then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  if MP:MarkedKey() == key then
+    MP:Mark(nil)
+  elseif type(at) == "table" and type(at[1]) == "number" then
+    MP:Mark({ mapId = at[1], x = at[2], y = at[3], style = style, name = name, title = title, key = key })
+    openMapAt(at[1])
+  end
+end
+
+function Journal:MarkQuest(row)
+  local item = self.dgItem
+  if not (item and row and row.qid) then return end
+  local info = Q.Dungeons:QuestInfo(item.dungeon, row.qid)
+  local place = info and (row.inLog and info.ender or info.giver)
+  toggleMark(row.markKey, place and place.at, row.inLog and "turnin" or "accept",
+    place and placeName(place.kind, place.id), Q.QDB:QuestName(row.qid))
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+function Journal:MarkEntrance()
+  local item = self.dgItem
+  if not item then return end
+  local d = item.dungeon
+  local name = Q.UI.DungeonPopup.DungeonName(d)
+  toggleMark("ent:" .. d.key, d.entrance, "goto", name, string.format(L.DUNGEON_ROUTE_ENTRANCE_STOP, name))
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+---------------------------------------------------------------------------
 -- Détail du donjon choisi (item de dungeonItems) ; nil vide la colonne.
+---------------------------------------------------------------------------
+local function hideAll(list, field)
+  for _, w in ipairs(list or {}) do
+    local f = field and w[field] or w
+    if f and f.Hide then f:Hide() end
+  end
+end
+
 function Journal:ShowDungeonDetail(item)
   self.dgItem = item
   local child = self.dgDetail
-  local lines = self.dgLines or {}
-  local widgets = { self.dgTitle, self.dgMeta, self.dgScore, self.dgAdd, self.dgIgnore, self.dgUnignore }
+  hideAll(self.dgQRows)
+  hideAll(self.dgMores)
+  hideAll(self.dgChains, "box")
+  hideAll(self.dgPills)
+  for _, p in ipairs(self.dgPills or {}) do p.trip:Hide() end
+  for _, h in ipairs(self.dgH3s or {}) do h.text:Hide(); h.right:Hide(); h.rule:Hide() end
+  for _, s in ipairs(self.dgStops or {}) do s.num:Hide(); s.name:Hide(); s.right:Hide() end
+  local header = { self.dgTitle, self.dgLevelChip, self.dgStateChip, self.dgEntrance, self.dgEntBtn, self.dgSummary,
+    self.dgAdd, self.dgIgnore, self.dgUnignore }
   if not item then
-    for _, w in ipairs(widgets) do w:Hide() end
+    for _, w in ipairs(header) do w:Hide() end
     setStars(self.dgStars, 0)
-    for _, fs in ipairs(lines) do fs:Hide() end
-    for _, w in ipairs(self.dgChains or {}) do w.box:Hide() end
     child:SetHeight(1)
     return
   end
+  local D, P = Q.Dungeons, Q.UI.DungeonPopup
   local d, state = item.dungeon, item.state
-  self.dgTitle:SetText(Q.UI.DungeonPopup.DungeonName(d))
+  local W = DG_DETAIL_W - 6
+  local MP = Q.UI.MapPins
+  local marked = MP and MP.MarkedKey and MP:MarkedKey() or nil
+  self.dgOpen = self.dgOpen or {}
+
+  -- B. en-tête
+  self.dgTitle:SetText(P.DungeonName(d))
+  paint(self.dgTitle, "quest")
   self.dgTitle:Show()
-  local key = DG_STATE_TEXT[state]
-  local meta = string.format(L.DUNGEON_ROW_INFO, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60,
-    recolor((DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r"))
-  if type(d.entrance) == "table" and type(d.entrance[1]) == "number" then
-    meta = meta .. "\n" .. string.format(L.DUNGEON_ENTRANCE, Q.Maps:MapName(d.entrance[1]))
+  local y = 2 + math.max(18, self.dgTitle:GetStringHeight() or 18) + 4
+  local x = 2
+  local function chip(c, text, edge, role)
+    c.text:SetText(text)
+    paint(c.text, role)
+    paintBox(c, "panelAlt", edge)
+    c:SetWidth(math.floor((c.text:GetStringWidth() or 40) + 12))
+    c:ClearAllPoints()
+    c:SetPoint("TOPLEFT", child, "TOPLEFT", x, -y)
+    c:Show()
+    x = x + c:GetWidth() + 5
   end
-  self.dgMeta:SetText(meta)
-  local y = 2 + (self.dgTitle:GetStringHeight() or 16) + 4
-  self.dgMeta:ClearAllPoints()
-  self.dgMeta:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
-  self.dgMeta:Show()
-  y = y + (self.dgMeta:GetStringHeight() or 24) + 8
-  -- note et décompte
+  chip(self.dgLevelChip, string.format(L.DUNGEON_CHIP_LEVELS, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60),
+    "edge", "textDim")
+  local good = state == "available" or state == "added"
+  local key = DG_STATE_TEXT[state]
+  chip(self.dgStateChip, key and L[key] or tostring(state), good and "success" or "edge", good and "success" or "textMuted")
   local count = Journal.DungeonStars(item.todo)
   setStars(self.dgStars, count)
   for i, tex in ipairs(self.dgStars) do
     tex:ClearAllPoints()
-    tex:SetPoint("TOPLEFT", child, "TOPLEFT", 2 + (i - 1) * 13, -y)
+    tex:SetPoint("TOPLEFT", child, "TOPLEFT", x + (i - 1) * 11, -(y + 3))
   end
-  self.dgScore:ClearAllPoints()
-  self.dgScore:SetPoint("TOPLEFT", child, "TOPLEFT", count > 0 and 44 or 2, -y)
-  if item.todo > 0 then
-    self.dgScore:SetFormattedText(L.DUNGEON_SCORE, item.todo, item.now)
-  else
-    self.dgScore:SetText(L.DUNGEON_SCORE_NONE)
+  y = y + 16 + 6
+  local zone = type(d.entrance) == "table" and type(d.entrance[1]) == "number" and Q.Maps:MapName(d.entrance[1]) or "?"
+  self.dgEntrance:SetText(string.format(L.DUNGEON_ENTRANCE, hexOf("zone", "ff7fe08a") .. zone .. "|r"))
+  paint(self.dgEntrance, "textDim")
+  self.dgEntrance:ClearAllPoints()
+  self.dgEntrance:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -(y + 4))
+  self.dgEntrance:Show()
+  self.dgEntBtn:ClearAllPoints()
+  self.dgEntBtn:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -y)
+  setPinned(self.dgEntBtn, marked == "ent:" .. d.key)
+  self.dgEntBtn:Show()
+  y = y + 24
+
+  -- quêtes : rangées par groupe
+  local byId, pick, log, locked, done = {}, {}, {}, {}, {}
+  for _, r in ipairs(item.details) do
+    byId[r.id] = r
+    if r.done then done[#done + 1] = r
+    elseif r.reason == "log" then log[#log + 1] = r
+    elseif r.ok then pick[#pick + 1] = r
+    else locked[#locked + 1] = r end
   end
-  self.dgScore:Show()
-  y = y + math.max(14, self.dgScore:GetStringHeight() or 12) + 8
-  -- quêtes
-  local P = Q.UI.DungeonPopup
-  local nChain, nLine = 0, 0
-  local boxW = DG_DETAIL_W - 14
-  local inner = boxW - 14
-  -- quêtes débloquées par une même suite : un seul encadré, à la place de la première, qui les nomme toutes
+  local infos = {}
+  local function infoOf(id)
+    if infos[id] == nil then
+      local ok, info = pcall(D.QuestInfo, D, d, id)
+      if not ok then Q:ReportError(info) end
+      infos[id] = ok and info or false
+    end
+    return infos[id] or nil
+  end
+  local xp = 0
+  for _, list in ipairs({ pick, log }) do
+    for _, r in ipairs(list) do
+      local info = infoOf(r.id)
+      xp = xp + (info and info.xp or 0)
+    end
+  end
+  local parts = {}
+  local num = hexOf("text", "ffffffff")
+  if #pick > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_PICK, num .. #pick .. "|r") end
+  if #log > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_LOG, num .. #log .. "|r") end
+  if #pick + #log > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_INSIDE, num .. (#pick + #log) .. "|r") end
+  if xp > 0 then parts[#parts + 1] = hexOf("xp", "ff9fc4ff") .. string.format(L.DUNGEON_SUM_XP, fmtXP(xp)) .. "|r" end
+  if #parts == 0 then parts[1] = L.DUNGEON_SCORE_NONE end
+  local sum = self.dgSummary
+  sum.text:SetText(table.concat(parts, "   "))
+  paint(sum.text, "textDim")
+  paintBox(sum, "panel", "line")
+  local sumH = (sum.text:GetStringHeight() or 12) + 10
+  sum:SetSize(W, sumH)
+  sum:ClearAllPoints()
+  sum:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+  sum:Show()
+  y = y + sumH + 4
+
+  local nH3, nPill, nStop, nRow, nMore, nChain = 0, 0, 0, 0, 0, 0
+  local function h3(text, right)
+    nH3 = nH3 + 1
+    local h = dgH3(nH3)
+    y = y + 8
+    h.text:SetText(string.upper(text))
+    paint(h.text, "textMuted")
+    h.text:ClearAllPoints()
+    h.text:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    h.text:Show()
+    h.right:SetText(right or "")
+    paint(h.right, "textMuted")
+    h.right:ClearAllPoints()
+    h.right:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -y)
+    h.right:Show()
+    y = y + (h.text:GetStringHeight() or 11) + 3
+    h.rule:SetColorTexture(tc("line"))
+    h.rule:ClearAllPoints()
+    h.rule:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    h.rule:SetWidth(W)
+    h.rule:Show()
+    y = y + 5
+  end
+
+  -- E. plus d'infos, sous la ligne ouverte
+  local inner = Q_ROW_W - 34
+  local function more(qid, inLog)
+    nMore = nMore + 1
+    local m = dgMore(nMore)
+    m.bg:SetColorTexture(tc("panel"))
+    for _, e in ipairs(m.edges) do e:SetColorTexture(tc("edge")) end
+    m:ClearAllPoints()
+    m:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    local info = infoOf(qid) or { xp = 0, items = {}, reputation = {}, objectives = {} }
+    local my, nl, nlab, nbar = 4, 0, 0, 0
+    local function line(text, role, font)
+      nl = nl + 1
+      local fs = moreText(m, "lines", nl, font)
+      fs:SetWidth(inner)
+      fs:SetText(text)
+      paint(fs, role or "textDim")
+      fs:ClearAllPoints()
+      fs:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+      fs:Show()
+      my = my + (fs:GetStringHeight() or 12) + 2
+      return fs
+    end
+    local function label(text)
+      nlab = nlab + 1
+      local fs = moreText(m, "labels", nlab, "GameFontDisableSmall")
+      fs:SetWidth(inner)
+      fs:SetText(string.upper(text))
+      paint(fs, "textMuted")
+      fs:ClearAllPoints()
+      my = my + 4
+      fs:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+      fs:Show()
+      my = my + (fs:GetStringHeight() or 10) + 3
+    end
+    local CQP = Q.UI.ClassQuestPopup
+    local obj = CQP and CQP.ObjectivesText and CQP.ObjectivesText(qid) or ""
+    if obj ~= "" then line(obj, "textDim") end
+    if inLog and #info.objectives > 0 then
+      label(L.DUNGEON_INFO_OBJECTIVES)
+      for _, o in ipairs(info.objectives) do
+        local fs = line(o.text, o.done and "success" or "textDim")
+        nbar = nbar + 1
+        local b = moreBar(m, nbar)
+        local frac = o.need > 0 and math.min(1, o.have / o.need) or (o.done and 1 or 0)
+        b.back:SetColorTexture(tc("line"))
+        b.front:SetColorTexture(tc(o.done and "success" or "accent"))
+        b.back:ClearAllPoints()
+        b.back:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+        b.back:SetWidth(inner)
+        b.front:ClearAllPoints()
+        b.front:SetPoint("TOPLEFT", b.back, "TOPLEFT", 0, 0)
+        b.front:SetWidth(math.max(1, inner * frac))
+        b.back:Show()
+        if frac > 0 then b.front:Show() else b.front:Hide() end
+        my = my + 6
+        fs:SetWidth(inner)
+      end
+      if info.ender then
+        label(L.DUNGEON_INFO_TURNIN)
+        line(hexOf("npc", "ff94caff") .. tostring(placeName(info.ender.kind, info.ender.id) or "?") .. "|r ("
+          .. Q.Maps:MapName(info.ender.at[1]) .. ")")
+      end
+    end
+    label(L.DUNGEON_INFO_GIVES)
+    local lvl = Q.Player and Q.Player.level or 1
+    local xpText = hexOf("xp", "ff9fc4ff") .. string.format(L.DUNGEON_INFO_XP, fmtXP(info.xp or 0)) .. "|r  "
+      .. string.format(info.est and L.DUNGEON_INFO_XP_EST or L.DUNGEON_INFO_XP_AT, lvl)
+    line(xpText, "textMuted")
+    for _, rep in ipairs(info.reputation or {}) do
+      line(hexOf("success", "ff6bd99a") .. string.format(L.DUNGEON_REP, factionName(rep[1]), rep[2]) .. "|r")
+    end
+    local items = info.items or {}
+    for i = 1, #m.items do
+      local it = m.items[i]
+      it.button:Hide(); it.name:Hide(); it.slot:Hide()
+    end
+    if #items > 0 then
+      label(L.DUNGEON_INFO_REWARDS)
+      local CQ = Q.UI.ClassQuestPopup
+      for i, itemId in ipairs(items) do
+        local it = moreItem(m, i)
+        CQ.SetItemButton(it.button, itemId)
+        it.button:ClearAllPoints()
+        it.button:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+        local name, slot = itemFacts(itemId)
+        it.name:SetText(name)
+        it.name:SetWidth(inner - 30 - 60)
+        it.name:ClearAllPoints()
+        it.name:SetPoint("LEFT", it.button, "RIGHT", 6, 0)
+        it.name:Show()
+        it.slot:SetText(slot)
+        paint(it.slot, "textMuted")
+        it.slot:ClearAllPoints()
+        it.slot:SetPoint("RIGHT", m, "TOPLEFT", Q_ROW_W - 8, -(my + 12))
+        it.slot:Show()
+        my = my + 27
+      end
+    end
+    for i = nl + 1, #m.lines do m.lines[i]:Hide() end
+    for i = nlab + 1, #m.labels do m.labels[i]:Hide() end
+    for i = nbar + 1, #m.bars do m.bars[i].back:Hide(); m.bars[i].front:Hide() end
+    local h = my + 6
+    m:SetHeight(h)
+    m:Show()
+    y = y + h + 4
+  end
+
+  -- D. ligne de quête ; kind : "accept" (à prendre), "log" (au journal), "lock" (bloquée), "done" (rendue)
+  local function row(qid, kind, r, tag)
+    nRow = nRow + 1
+    local w = dgQRow(nRow)
+    w.qid, w.inLog = qid, kind == "log"
+    w.markKey = "q:" .. qid
+    local info = kind == "log" and infoOf(qid) or nil
+    local icon = w.icon
+    icon:SetDesaturated(false)
+    icon:SetVertexColor(1, 1, 1, 1)
+    if kind == "accept" then
+      icon:SetTexture(QUEST_ICON.accept)
+    elseif kind == "log" then
+      icon:SetTexture(QUEST_ICON.turnin)
+      icon:SetDesaturated(not (info and info.complete))
+    elseif kind == "lock" then
+      icon:SetTexture(QUEST_ICON.lock)
+    else
+      setStateIcon(icon, "done")
+    end
+    local name = Q.QDB:QuestName(qid)
+    if tag then name = name .. "  " .. hexOf("warning", "fffabf4d") .. tag .. "|r" end
+    w.name:SetText(name)
+    paint(w.name, (kind == "lock" or kind == "done") and "textMuted" or "quest")
+    local sub
+    local npc = hexOf("npc", "ff94caff")
+    if kind == "log" then
+      local state
+      if info and info.complete then
+        state = hexOf("success", "ff6bd99a") .. L.DUNGEON_STATE_READY .. "|r"
+      else
+        local have, need = 0, 0
+        for _, o in ipairs(info and info.objectives or {}) do have, need = have + o.have, need + o.need end
+        state = L.DUNGEON_STATE_INPROGRESS .. (need > 0 and (" · " .. have .. "/" .. need) or "")
+      end
+      local who = info and info.ender and placeName(info.ender.kind, info.ender.id)
+      sub = state .. (who and (" · " .. string.format(L.DUNGEON_SUB_TURNIN, npc .. who .. "|r")) or "")
+    elseif kind == "done" then
+      sub = L.DUNGEON_DONE_TAG
+    else
+      local who = r and (r.giver and Q.QDB:NpcName(r.giver) or r.obj and Q.QDB:ObjectName(r.obj)) or nil
+      if not who then
+        local q = Q.QDB:Quest(qid)
+        local id = q and q.starters.npcs[1]
+        who = id and Q.QDB:NpcName(id) or nil
+      end
+      local why
+      if kind == "lock" and r then
+        if r.reason == "level" then why = string.format(L.DUNGEON_LOCKED_LEVEL, tonumber(r.level) or 1)
+        else why = L.DUNGEON_LOCKED_PREREQ end
+      else
+        local q = Q.QDB:Quest(qid)
+        local lvl = q and q.reqLevel or (r and r.level)
+        if lvl and lvl > 1 then why = string.format(L.DUNGEON_SUB_LEVEL, lvl) end
+      end
+      sub = (who and (npc .. who .. "|r") or "") .. ((who and why) and " · " or "") .. (why or "")
+    end
+    w.sub:SetText(sub)
+    paint(w.sub, "textMuted")
+    local open = self.dgOpen[qid] == true
+    setOpen(w.info, open)
+    if kind == "done" then w.map:Hide() else w.map:Show() end
+    setPinned(w.map, marked == w.markKey)
+    local h = math.max(28, 4 + (w.name:GetStringHeight() or 14) + 1 + (w.sub:GetStringHeight() or 12) + 5)
+    w:SetHeight(h)
+    w.bg:SetColorTexture(tc("panel"))
+    w.bg:SetShown(open)
+    for _, e in ipairs(w.edges) do
+      e:SetColorTexture(tc("edge"))
+      e:SetShown(open)
+    end
+    w:ClearAllPoints()
+    w:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    w:Show()
+    y = y + h + (open and 0 or 2)
+    if open then more(qid, kind == "log") end
+  end
+
+  local boxW = W - 22
+  local textW = boxW - 14
   local function isSuite(c) return type(c) == "table" and not c.reason and (tonumber(c.count) or 0) > 0 and c.sig end
-  local bySig = {}
+  local bySig, boxed = {}, {}
   for _, r in ipairs(item.details) do
     if isSuite(r.chain) then
       bySig[r.chain.sig] = bySig[r.chain.sig] or {}
@@ -1596,9 +2275,10 @@ function Journal:ShowDungeonDetail(item)
   local function box(r, chain, rows)
     nChain = nChain + 1
     local w = dgChain(nChain)
+    paintChainBox(w.box)
     w.box.row, w.add.row, w.info.row = r, r, r
     w.box.rows = rows
-    w.text:SetWidth(inner)
+    w.text:SetWidth(textW)
     w.text:SetText(chainBoxText(chain, rows))
     local textH = w.text:GetStringHeight() or 12
     local buttonsH = 0
@@ -1607,15 +2287,14 @@ function Journal:ShowDungeonDetail(item)
       w.info:Hide()
     else
       w.add:SetText(chain.chosen and L.DUNGEON_CHAIN_REMOVE or L.DUNGEON_CHAIN_ADD)
-      local wi, wa = fitButton(w.info, inner), fitButton(w.add, inner)
+      local wi, wa = fitButton(w.info, textW), fitButton(w.add, textW)
       w.info:ClearAllPoints()
       w.add:ClearAllPoints()
       w.info:SetPoint("TOPLEFT", w.box, "TOPLEFT", 7, -(textH + 12))
-      if wi + 4 + wa <= inner then
+      if wi + 4 + wa <= textW then
         w.add:SetPoint("LEFT", w.info, "RIGHT", 4, 0)
         buttonsH = 24
       else
-        -- trop étroit côte à côte : l'un sous l'autre
         w.add:SetPoint("TOPLEFT", w.info, "BOTTOMLEFT", 0, -3)
         buttonsH = 47
       end
@@ -1624,43 +2303,162 @@ function Journal:ShowDungeonDetail(item)
     end
     local boxH = textH + 14 + buttonsH
     w.box:ClearAllPoints()
-    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 8, -y)
+    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 24, -y)
     w.box:SetSize(boxW, boxH)
     w.box:Show()
-    y = y + boxH + 6
+    y = y + boxH + 4
   end
-  for _, r in ipairs(item.details) do
-    local chain = type(r.chain) == "table" and r.chain or nil
+  -- encadré de la suite d'une quête (une fois par suite) : sous la quête bloquée, ou sous la quête prise après
+  -- une suite ajoutée (pour la retirer)
+  local function chainBoxFor(r)
+    local chain = type(r) == "table" and type(r.chain) == "table" and r.chain or nil
+    if not chain then return end
     if isSuite(chain) then
-      local rows = bySig[chain.sig]
-      if rows[1] == r then box(r, chain, rows) end
-    else
-      nLine = nLine + 1
-      local fs = dgLine(nLine)
-      local prefix = r.done and (checkMarkup(12) .. " ") or "- "
-      fs:SetText(prefix .. recolor(P.QuestLine(r, chain and { box = true } or nil)))
-      fs:ClearAllPoints()
-      fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
-      fs:Show()
-      y = y + (fs:GetStringHeight() or 12) + 4
-      -- quête sans suite : niveau seul, ou suite hors de portée (raison, sans bouton)
-      if chain then box(r, chain, { r }) end
+      if not boxed[chain.sig] then
+        boxed[chain.sig] = true
+        box(r, chain, bySig[chain.sig])
+      end
+    elseif not r.ok then
+      box(r, chain, { r })
     end
   end
-  for i = nLine + 1, #(self.dgLines or {}) do self.dgLines[i]:Hide() end
-  for i = nChain + 1, #(self.dgChains or {}) do self.dgChains[i].box:Hide() end
+
+  -- C. itinéraire, puis D. les arrêts
+  local okR, route = pcall(D.Route, D, d)
+  if not okR then Q:ReportError(route); route = nil end
+  local placed = {}
+  local stops = route and route.stops or {}
+  if #stops > 0 then
+    local total = route.seconds and string.format(L.DUNGEON_ROUTE_TIME, math.max(1, math.floor(route.seconds / 60 + 0.5)))
+    h3(L.DUNGEON_ROUTE_HEADER, total)
+    local px = 2
+    local legs = {}
+    for i, s in ipairs(stops) do legs[i] = { name = Q.Maps:MapName(s.mapId), trip = s.trip } end
+    legs[#legs + 1] = { name = L.DUNGEON_ROUTE_ENTRANCE, trip = route.entrance.trip }
+    for i, lg in ipairs(legs) do
+      if i > 1 then
+        local tt = Journal.TripText(lg.trip)
+        local prev = self.dgPills[nPill]
+        if tt ~= "" and prev then
+          prev.trip:SetText(tt)
+          local tw = (prev.trip:GetStringWidth() or 30) + 6
+          if px + tw > W then px, y = 2, y + PILL_H + 3 end
+          prev.trip:ClearAllPoints()
+          prev.trip:SetPoint("TOPLEFT", child, "TOPLEFT", px, -(y + 3))
+          prev.trip:Show()
+          px = px + tw
+        end
+      end
+      nPill = nPill + 1
+      local p = dgPill(nPill)
+      p.num.text:SetText(i)
+      p.text:SetText(lg.name)
+      local pw = math.floor((p.text:GetStringWidth() or 50) + 26)
+      if px > 2 and px + pw > W then px, y = 2, y + PILL_H + 3 end
+      paintPill(p, i == 1 and lg.trip and lg.trip.seconds and lg.trip.seconds < 45)
+      p:SetWidth(pw)
+      p:ClearAllPoints()
+      p:SetPoint("TOPLEFT", child, "TOPLEFT", px, -y)
+      p:Show()
+      px = px + pw + 4
+    end
+    y = y + PILL_H + 4
+    local function stopHeader(i, name, right)
+      nStop = nStop + 1
+      local s = dgStop(nStop)
+      y = y + 6
+      s.num.text:SetText(i)
+      paintNumber(s.num, "accent")
+      s.num:ClearAllPoints()
+      s.num:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+      s.num:Show()
+      s.name:SetText(hexOf("zone", "ff7fe08a") .. name .. "|r")
+      paint(s.name, "text")
+      s.right:SetText(right or "")
+      paint(s.right, "textMuted")
+      s.right:ClearAllPoints()
+      s.right:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -(y + 2))
+      s.right:Show()
+      s.name:SetWidth(W - 24 - (s.right:GetStringWidth() or 0) - 6)
+      s.name:ClearAllPoints()
+      s.name:SetPoint("TOPLEFT", child, "TOPLEFT", 22, -(y + 2))
+      s.name:Show()
+      y = y + 18
+    end
+    for i, s in ipairs(stops) do
+      stopHeader(i, Q.Maps:MapName(s.mapId), Journal.TripText(s.trip))
+      for j, qid in ipairs(s.quests) do
+        local r = byId[qid]
+        local tag
+        if not r then
+          -- préquête de passage : elle débloque les quêtes du donjon prises après elle à cet arrêt
+          local n = 0
+          for k = j + 1, #s.quests do if byId[s.quests[k]] then n = n + 1 end end
+          if n > 0 then tag = string.format(L.DUNGEON_TAG_UNLOCKS, n) end
+        end
+        if not placed[qid] then
+          placed[qid] = true
+          row(qid, "accept", r, tag)
+          chainBoxFor(r)
+        end
+      end
+    end
+    local name = P.DungeonName(d)
+    local near = false
+    local function close(at)
+      if type(at) ~= "table" or type(at[1]) ~= "number" then return false end
+      local dd = Q.Maps:Distance(d.entrance[1], d.entrance[2], d.entrance[3], at[1], at[2], at[3])
+      return dd ~= nil and dd < 100
+    end
+    for _, list in ipairs({ pick, log }) do
+      for _, r in ipairs(list) do
+        local info = infoOf(r.id)
+        if info and info.ender and close(info.ender.at) then near = true end
+      end
+    end
+    stopHeader(#stops + 1, string.format(L.DUNGEON_ROUTE_ENTRANCE_STOP, name), near and L.DUNGEON_ROUTE_TURNINS or "")
+  end
+  -- à prendre hors itinéraire (itinéraire indisponible)
+  local rest = {}
+  for _, r in ipairs(pick) do if not placed[r.id] then rest[#rest + 1] = r end end
+  if #rest > 0 then
+    h3(L.DUNGEON_GROUP_PICK, tostring(#rest))
+    for _, r in ipairs(rest) do
+      row(r.id, "accept", r)
+      chainBoxFor(r)
+    end
+  end
+  -- G. dans le journal
+  if #log > 0 then
+    h3(L.DUNGEON_GROUP_LOG, tostring(#log))
+    for _, r in ipairs(log) do row(r.id, "log", r) end
+  end
+  -- F. bloquées, avec l'encadré de leur suite (une seule fois par suite)
+  if #locked > 0 then
+    h3(L.DUNGEON_GROUP_LOCKED, tostring(#locked))
+    for _, r in ipairs(locked) do
+      row(r.id, "lock", r)
+      chainBoxFor(r)
+    end
+  end
+  if #done > 0 then
+    h3(L.DUNGEON_GROUP_DONE, tostring(#done))
+    for _, r in ipairs(done) do row(r.id, "done", r) end
+  end
+  for i = nRow + 1, #(self.dgQRows or {}) do self.dgQRows[i]:Hide() end
+
   -- actions
-  y = y + 6
+  y = y + 10
   local canAdd = state == "available" or state == "upcoming" or state == "past" or state == "ignored"
   local canIgnore = state == "available" or state == "upcoming" or state == "past" or state == "added"
-  local x = 2
+  local bx = 2
   for _, pair in ipairs({ { self.dgAdd, canAdd }, { self.dgUnignore, state == "ignored" }, { self.dgIgnore, canIgnore } }) do
     local b, shown = pair[1], pair[2]
     b:ClearAllPoints()
     if shown then
-      b:SetPoint("TOPLEFT", child, "TOPLEFT", x, -y)
+      b:SetPoint("TOPLEFT", child, "TOPLEFT", bx, -y)
       b:Show()
-      x = x + b:GetWidth() + 6
+      bx = bx + b:GetWidth() + 6
     else
       b:Hide()
     end
