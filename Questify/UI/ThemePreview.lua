@@ -5,6 +5,8 @@ local addonName, Q = ...
 -- vigueur, sur un fond clair de paysage enneigé (le cas le plus dur), et la flèche flottante à sa
 -- couleur. Trois onglets : monstres à tuer, zone à plusieurs quêtes, objet à utiliser (bouton
 -- de l'objet à gauche du suivi). Redessiné à chaque changement de thème ou de réglage.
+-- Onglet « Monstres » : objectifs dessinés comme dans le suivi (UI/ObjectiveRows.lua, exemple de l'assistant),
+-- selon la disposition et le détail des objectifs (tracker.objLayout, tracker.objDetail).
 Q.UI = Q.UI or {}
 local Preview = { scene = "kill" }
 Q.UI.ThemePreview = Preview
@@ -268,7 +270,18 @@ function Preview:Refresh()
   self.dist:SetText(head[5])
   T:StyleText(self.dist, "distance", variant)
   local x0 = PAD + 40
-  local lines = LINES[self.scene] or LINES.kill
+  local R, Wz = Q.UI.ObjectiveRows, Q.UI.Wizard
+  self.objHost = self.objHost or { parent = trk }
+  self.objHost.theme = variant
+  local rows = self.scene == "kill" and R and Wz and Wz.PreviewSegments
+  if rows then
+    for i, fs in ipairs(self.lines) do fs:Hide(); self.skulls[i]:Hide() end
+    local segs = Wz.PreviewSegments(setting("tracker.objLayout"), setting("tracker.objDetail"))
+    y = y + R:Render(self.objHost, segs, x0, W - x0 - PAD, y)
+  elseif R then
+    R:Render(self.objHost, {}, x0, W - x0 - PAD, y)
+  end
+  local lines = rows and {} or LINES[self.scene] or LINES.kill
   for i, fs in ipairs(self.lines) do
     local spec = lines[i]
     local sk = self.skulls[i]
@@ -325,7 +338,7 @@ Q:On("THEME_CHANGED", function() if Preview.panel and Preview.panel:IsVisible() 
 Q:On("SETTINGS_CHANGED", function(path)
   if not (Preview.panel and Preview.panel:IsVisible()) then return end
   if path == "tracker.opacity" or path == "tracker.style" or path == "arrow.color" or path == "arrow.show"
-    or path == "theme.font" or path == "theme.icons" then
+    or path == "theme.font" or path == "theme.icons" or path == "tracker.objLayout" or path == "tracker.objDetail" then
     Q.SafeCall(Preview.Refresh, Preview)
   end
 end)

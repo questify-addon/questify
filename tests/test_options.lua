@@ -564,6 +564,24 @@ return {
     local Q = load()
     local O = Q.UI.Options
     O:Open("theme")
+    -- aperçu : les objectifs suivent la disposition et le détail choisis
+    local P = Q.UI.ThemePreview
+    local function rows(name)
+      local n = 0
+      for _, r in ipairs(P.objHost and P.objHost[name] or {}) do
+        local f = r.frame or r.label or r.text or r.name or r
+        if f.IsShown and f:IsShown() then n = n + 1 end
+      end
+      return n
+    end
+    Q.Settings:Set("tracker.objLayout", "list")
+    Q.Settings:Set("tracker.objDetail", "count")
+    t.eq(rows("mobRows"), 0, "counter only: no monster row")
+    t.eq(rows("questHeads"), 0)
+    Q.Settings:Set("tracker.objDetail", "mobs")
+    t.ok(rows("mobRows") > 0, "targetable monsters shown")
+    Q.Settings:Set("tracker.objLayout", "quest")
+    t.eq(rows("questHeads"), 1, "by quest: quest heading")
     local w = O:Widget("tracker.theme")
     local list = Q.Themes:List()
     t.eq(#w.cards, #list, "one card per theme")
