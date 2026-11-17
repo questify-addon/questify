@@ -705,6 +705,7 @@ function Wizard:ApplyTheme(key)
   for _, b in ipairs({ self.prevButton, self.skipButton }) do if b then T:SkinButton(b, "secondary", theme) end end
   for _, b in ipairs({ self.nextButton, self.finishButton }) do if b then T:SkinButton(b, "primary", theme) end end
   if self.stepText then T:StyleText(self.stepText, "muted", theme) end
+  if self.newsText then T:StyleText(self.newsText, "muted", theme) end
   for _, g in ipairs(self.themeGroupLabels or {}) do T:StyleText(g, "muted", theme) end
 end
 
@@ -770,7 +771,32 @@ function Wizard:BuildRecapPage(page)
     anchor = line
     gap = 6
   end
-  paragraph(page, L.UI_WIZ_RECAP_AFTER, anchor, 16, "GameFontDisableSmall")
+  local after = paragraph(page, L.UI_WIZ_RECAP_AFTER, anchor, 16, "GameFontDisableSmall")
+  -- nouveautés de la version (UI/News.lua) : filet, icône de Questify, texte, bouton
+  local line = page:CreateTexture(nil, "BORDER")
+  line:SetPoint("TOPLEFT", after, "BOTTOMLEFT", 0, -14)
+  line:SetSize(INNER, 1)
+  line:SetColorTexture(1, 1, 1, 0.12)
+  self.newsLine = line
+  local logo = page:CreateTexture(nil, "ARTWORK")
+  logo:SetSize(20, 20)
+  logo:SetPoint("TOPLEFT", line, "BOTTOMLEFT", 0, -10)
+  logo:SetTexture("Interface\\AddOns\\Questify\\Media\\Icon")
+  local open = newButton("Button", page, "UIPanelButtonTemplate")
+  open:SetSize(150, 22)
+  open:SetPoint("RIGHT", line, "RIGHT", 0, 0)
+  open:SetPoint("TOP", logo, "TOP", 0, 1)
+  open:SetText(L.UI_WIZ_NEWS_OPEN)
+  open:SetScript("OnClick", safe(function()
+    if Q.UI.News then Q.UI.News:Show() end
+  end))
+  self.newsButton = open
+  local note = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  note:SetPoint("LEFT", logo, "RIGHT", 8, 0)
+  note:SetPoint("RIGHT", open, "LEFT", -8, 0)
+  note:SetJustifyH("LEFT")
+  note:SetText(L.UI_WIZ_NEWS_TEXT)
+  self.newsText = note
 end
 
 function Wizard:Create()
@@ -1171,6 +1197,8 @@ function Wizard:Finish()
     Q.char.wizardPage = nil
     Q.char.wizardDraft = nil
   end
+  -- personnage configuré : les nouveautés de cette version n'ont plus rien à lui apprendre
+  if Q.UI.News then Q.UI.News:MarkSeen() end
   self.frame:Hide()   -- OnHide : étape suivante de l'accueil, le choix des métiers
   playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
   Q:Print(L.UI_WIZ_DONE)
@@ -1183,7 +1211,9 @@ local waitingCombat = false
 
 -- Assistant terminé avant que la page des objectifs existe : elle est proposée une fois
 -- (Q.char.wizardObjectivesSeen), les autres pages gardant les réglages en vigueur.
+-- Les nouveautés de la version (UI/News.lua) passent avant : une de leurs étapes mène à cette page.
 local function newPagePending()
+  if Q.UI.News and Q.UI.News:Pending() then return false end
   return Q.char ~= nil and Q.char.wizardDone == true and not Q.char.wizardObjectivesSeen
 end
 

@@ -4,6 +4,13 @@
 
 ### English
 
+**What's new window**
+- After an update that brings news, a window shows them step by step, 3 seconds after you log in (never in
+  combat). Each step has a button that takes you where to set or use it: options, journal tab, wizard page.
+- Close it and it comes back at the next login; « Don't show again » hides it for this version on the whole
+  account. Type /qf news to see it again, or use the button on the wizard's summary page.
+- A new character goes through the start wizard instead.
+
 **Raid icons on objective monsters (key)**
 - New option in Options > Automation > Targeting, off by default: bind a key, then each press puts a free raid
   icon (skull, cross, diamond…) on the quest objective monsters whose nameplate is shown, 8 at most.
@@ -16,6 +23,14 @@
   onto your action bar. If your macros are full, Questify tells you to make room first.
 
 ### Français
+
+**Fenêtre des nouveautés**
+- Après une mise à jour qui apporte des nouveautés, une fenêtre les présente étape par étape, 3 secondes après
+  la connexion (jamais en combat). Chaque étape a un bouton qui mène à l'endroit où la régler ou l'utiliser :
+  options, onglet du journal, page de l'assistant.
+- Ferme-la et elle revient à la connexion suivante ; « Ne plus afficher » la masque pour cette version sur tout
+  le compte. Tape /qf news pour la revoir, ou utilise le bouton de la page « Récapitulatif » de l'assistant.
+- Un nouveau personnage passe par l'assistant de départ à la place.
 
 **Icônes de raid sur les monstres d'objectif (touche)**
 - Nouvelle option dans Options > Automatisation > Ciblage, coupée par défaut : choisis une touche, puis chaque

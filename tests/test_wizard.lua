@@ -619,8 +619,9 @@ return {
   end,
 
   -- Assistant terminé avant la page des objectifs : elle est proposée une seule fois, avec un message.
+  -- (sans nouveautés de version à montrer : sinon elles passent avant, voir tests/test_news.lua)
   wizard_offers_the_objectives_page_once = function(t)
-    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true } } })
+    local Q = load({ savedVariables = { QuestifyDB = { newsSeen = "999.0.0" }, QuestifyCharDB = { wizardDone = true } } })
     local W = Q.UI.Wizard
     t.ok(not shown(W), "not before 3 s")
     Mock.advance(3)
@@ -632,7 +633,8 @@ return {
     W.frame:Hide()
 
     Mock.reset()
-    Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
+    Q = load({ savedVariables = { QuestifyDB = { newsSeen = "999.0.0" },
+      QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
     Mock.advance(3)
     t.ok(not shown(Q.UI.Wizard), "not offered again")
     t.eq(Mock.countPrinted(Q.L.UI_WIZ_NEW_OBJECTIVES), 0)

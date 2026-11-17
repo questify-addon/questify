@@ -47,6 +47,7 @@ Locales\StringsQuestValue.lua
 Locales\StringsPace.lua
 Locales\StringsClass.lua
 Locales\StringsThemes.lua
+Locales\StringsNews.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -70,6 +71,7 @@ Data\ClassMacros.lua
 Data\ClassText_frFR.lua
 Data\ClassText_deDE.lua
 Data\ClassText_esES.lua
+Data\News.lua
 
 Engine\Guides.lua
 Engine\DungeonMode.lua
@@ -143,6 +145,7 @@ UI\RouteLine.lua
 UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua
+UI\News.lua
 UI\QuestItemButton.lua
 UI\Report.lua
 UI\AuctionPanel.lua

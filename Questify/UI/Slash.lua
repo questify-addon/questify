@@ -198,6 +198,12 @@ COMMANDS.wizard = function()
   if Q.UI and Q.UI.Wizard then Q.UI.Wizard:Show() end
 end
 
+-- Nouveautés de la dernière version (UI/News.lua), même déjà vues.
+COMMANDS.news = function()
+  if Q.UI and Q.UI.News then Q.UI.News:Show() end
+end
+COMMANDS.nouveautes = COMMANDS.news
+
 COMMANDS.export = function()
   local O = Q.UI and Q.UI.Options
   if O then
