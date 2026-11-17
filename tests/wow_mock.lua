@@ -691,7 +691,7 @@ end
 local function defaultNavLoad()
   Mock.navEngine = Mock.navEngine or Mock.newNavEngine()
   Questify_NavEngine = Mock.navEngine
-  QuestifyPathData = { [0] = { part = "Questify_Nav_EK" }, [1] = { part = "Questify_Nav_Kalimdor" } }
+  QuestifyPathData = { [0] = {}, [1] = {} }
 end
 
 ---------------------------------------------------------------------------
@@ -1531,9 +1531,15 @@ function Mock.loadAddon(toc, opts)
   for _, path in ipairs(files) do
     -- opts.skipGuides : n'exécute pas le dossier Guides/ (guides livrés, ClassQuestData), pour
     -- tester le moteur sur les seules fixtures.
-    if not (opts.skipGuides and path:find("/Guides/", 1, true)) then
+    -- NavEngine/ (routeur de marche et 36 Mo de cartes) : remplacé par le routeur factice, sauf opts.realNav.
+    local nav = path:find("/NavEngine/", 1, true) ~= nil
+    if not (opts.skipGuides and path:find("/Guides/", 1, true)) and (not nav or opts.realNav) then
       if path:match("%.xml$") then runXml(path, ns) else runFile(path, ns) end
     end
+  end
+  -- routeur intégré factice (Mock.addons.Questify_Nav = false : installation abîmée, sans routeur)
+  if not opts.realNav and Mock.addons.Questify_Nav ~= false and Mock.onLoadAddOn.Questify_Nav then
+    Mock.onLoadAddOn.Questify_Nav()
   end
   for _, path in ipairs(opts.extraFiles or {}) do runFile(path, ns) end
 

@@ -7,8 +7,7 @@
 # Le premier contrôle qui échoue arrête tout : aucun zip n'est produit.
 #
 # La version vient de « ## Version: » dans Questify/Questify.toc (0.1.0 si absente).
-# Quatre dossiers à la racine du zip : Questify/ et le routeur de marche (Questify_Nav, Questify_Nav_EK,
-# Questify_Nav_Kalimdor). LICENSE est copiée dans Questify/ (GPL) ; .DS_Store et les fichiers temporaires
+# Un seul dossier à la racine du zip : Questify/ (routeur de marche et cartes compris, NavEngine/). LICENSE est copiée dans Questify/ (GPL) ; .DS_Store et les fichiers temporaires
 # d'éditeur sont exclus. tests/, tools/ et docs/ n'y figurent jamais.
 set -u
 set -o pipefail
@@ -19,8 +18,8 @@ ADDON_DIR="$ROOT/$ADDON"
 TOC="$ADDON_DIR/$ADDON.toc"
 TOC_FOREVER="$ADDON_DIR/${ADDON}_Camelot.toc"
 DEFAULT_VERSION="0.1.0"
-NAV_ADDONS=(Questify_Nav Questify_Nav_EK Questify_Nav_Kalimdor)
-ROOTS=("$ADDON" "${NAV_ADDONS[@]}")
+# Le routeur de marche et ses cartes sont dans Questify/NavEngine (anciens addons Questify_Nav, _EK, _Kalimdor).
+ROOTS=("$ADDON")
 
 LUAJIT="${LUAJIT:-luajit}"
 if ! command -v "$LUAJIT" >/dev/null 2>&1; then

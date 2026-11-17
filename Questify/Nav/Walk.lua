@@ -1,6 +1,6 @@
 local addonName, Q = ...
 
--- Pont de marche entre Questify et le routeur intégré (Questify_Nav, chargé à la demande) :
+-- Pont de marche entre Questify et le routeur intégré (NavEngine/, chargé avec Questify) :
 -- spec du routeur intégré, § 2, § 2 bis et § 3 bis.
 --
 -- À chaque cible (message NAV_TARGET de Nav/Navigation.lua), quand le routeur actif est Questify
@@ -30,12 +30,12 @@ local addonName, Q = ...
 --   Q.Walk:Status() -> { loaded, maps = { [0] = bool, [1] = bool }, reason, search } (/qf check)
 --   Q.Walk:DangerTable(fromMap, toMap) -> { [uiMapID] = 2 | 4 } | nil
 --   Q.Walk:Perf() -> { worstMs, avgMs, frames, searches, loadMs,
---                      memKB = { Questify, Questify_Nav, Questify_Nav_EK, Questify_Nav_Kalimdor } }
---     loadMs : temps passé à charger Questify_Nav et ses parties (hors images mesurées)
+--                      memKB = { Questify } }   (routeur et cartes compris)
+--     loadMs : temps de chargement mesuré (0 : tout est chargé avec Questify)
 --   Q.Walk:ResetPerf()
 --
--- Règles : Questify_Nav puis la partie du continent se chargent à la première route, jamais en combat
--- (le chargement construit des dizaines de Mo de chaînes) ; au plus un calcul par seconde, le calcul
+-- Règles : le routeur et les cartes des deux continents sont chargés avec Questify (anciens addons
+-- Questify_Nav, _EK et _Kalimdor, fusionnés) ; au plus un calcul par seconde, le calcul
 -- en cours annulé avant d'en lancer un ; relance quand la cible change, quand le joueur s'écarte de
 -- plus de OFF_PATH yd du chemin, à la fin d'un trajet et après un écran de chargement. En combat, le
 -- routeur met lui-même ses calculs en pause (Routing/PathJobs.lua) et les reprend après.
@@ -56,15 +56,10 @@ local ARRIVE_RIDE = 60       -- yards : bout d'un vol, d'un bateau, d'une pierre
 local JUMP = 150             -- yards entre deux relevés : au-delà, téléporté (voyage replanifié)
 local LEVEL_X2, LEVEL_X4 = 5, 10   -- écart de niveau d'une zone : coût ×2, ×4 (style « safe »)
 local SAMPLE = 40            -- yards entre deux points testés pour les zones traversées
-local ROUTER = "Questify_Nav"
--- Parties des cartes par continent, si QuestifyPathData[instance].part ne les nomme pas.
-local PARTS = { [0] = "Questify_Nav_EK", [1] = "Questify_Nav_Kalimdor" }
 -- Raisons qui tiennent à l'installation : inutile de relancer un calcul.
 local FINAL = { noaddon = true, noengine = true, nodata = true, cave = true }
 -- Échecs de la marche qui peuvent venir d'un plan dépassé (joueur passé de l'autre côté de l'eau).
 local STRANDED = { unreachable = true, outside = true }
--- Mémoire rapportée par Perf : Questify, le routeur et les parties des cartes.
-local MEM_ADDONS = { ROUTER, PARTS[0], PARTS[1] }
 
 Walk.OFF_PATH, Walk.LOOKAHEAD = OFF_PATH, LOOKAHEAD
 
@@ -75,7 +70,6 @@ local lastLaunch = -math.huge
 local pending         -- relance retardée : "launch" (prochain calcul) ou "replan" (après chargement)
 local timer           -- minuteur de la relance retardée
 local ticker          -- minuterie de suivi, tant qu'une route existe
-local routerTried     -- chargement de Questify_Nav tenté (une fois)
 local loadReason      -- pourquoi le routeur ou les cartes manquent (nil : rien ne manque)
 local lastSearch      -- raison du dernier calcul échoué (nil : réussi)
 local maps = {}       -- [instance] = true (cartes prêtes) | false (absentes) ; nil : pas encore tenté
@@ -211,7 +205,7 @@ local function segDist(a, b, p)
 end
 
 ---------------------------------------------------------------------------
--- Routeur : chargement à la demande
+-- Routeur (NavEngine/, chargé avec Questify)
 ---------------------------------------------------------------------------
 local function engine()
   local E = Questify_NavEngine
@@ -219,53 +213,19 @@ local function engine()
   return nil
 end
 
-local function loadAddOn(name)
-  local load = C_AddOns and C_AddOns.LoadAddOn
-  if type(load) ~= "function" then return false end
-  local t0 = clock()
-  local ok, loaded = pcall(load, name)
-  local ms = clock() - t0
-  if ms > 0 then
-    loadSpent = loadSpent + ms
-    perf.loadMs = perf.loadMs + ms
-  end
-  return ok and loaded == true
-end
-
 -- Routeur prêt pour ce continent ? -> E ou nil, raison.
 local function ensureEngine(instance)
   local E = engine()
   if not E then
-    if routerTried then return nil, loadReason end
-    if inCombat() then
-      loadReason = "combat"
-      return nil, loadReason
-    end
-    routerTried = true
-    local loaded = loadAddOn(ROUTER)
-    E = engine()
-    if not E then
-      loadReason = loaded and "noengine" or "noaddon"
-      return nil, loadReason
-    end
+    -- routeur chargé avec Questify (NavEngine/) : absent, c'est une installation abîmée
+    loadReason = "noengine"
+    return nil, loadReason
   end
   wrapAfter(E)
   if maps[instance] == nil then
-    if inCombat() then
-      loadReason = "combat"
-      return nil, loadReason
-    end
+    -- cartes des deux continents chargées avec Questify (NavEngine/Maps)
     local ok, has = pcall(E.Available, instance)
-    if ok and has then
-      local D = type(QuestifyPathData) == "table" and QuestifyPathData[instance] or nil
-      -- partie nommée par les données ; nom par défaut seulement si les données manquent (cartes
-      -- livrées entières : aucune partie à charger)
-      local part
-      if type(D) == "table" then part = D.part else part = PARTS[instance] end
-      if part then loadAddOn(part) end
-      ok, has = pcall(E.Available, instance)
-      if ok and has and type(E.Resident) == "function" then ok, has = pcall(E.Resident, instance) end
-    end
+    if ok and has and type(E.Resident) == "function" then ok, has = pcall(E.Resident, instance) end
     maps[instance] = ok and has == true
   end
   if not maps[instance] then
@@ -714,7 +674,7 @@ function Walk:Perf()
   local update = (C_AddOns and C_AddOns.UpdateAddOnMemoryUsage) or UpdateAddOnMemoryUsage
   local get = (C_AddOns and C_AddOns.GetAddOnMemoryUsage) or GetAddOnMemoryUsage
   if type(update) == "function" then pcall(update) end
-  for _, name in ipairs({ addonName, unpack(MEM_ADDONS) }) do
+  for _, name in ipairs({ addonName }) do   -- routeur et cartes compris (chargés avec Questify)
     local ok, kb = false, nil
     if type(get) == "function" then ok, kb = pcall(get, name) end
     mem[name] = ok and tonumber(kb) or 0
@@ -778,7 +738,7 @@ Q:RegisterEvent("PLAYER_ENTERING_WORLD", measured(function()
   route = nil
   if had then publish() end
   if not target then return end
-  -- partie des cartes du nouveau continent chargée maintenant, derrière l'écran de chargement
+  -- cartes du nouveau continent vérifiées maintenant, derrière l'écran de chargement
   local me = active() and playerWorld()
   if me then ensureEngine(me.instance) end
   pending = "replan"

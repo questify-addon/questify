@@ -648,14 +648,14 @@ return {
     t.eq(Q2.Nav:ProviderLabel("questify"), "Questify Nav")
   end,
 
-  -- Questify_Nav est chargé à la demande : installé et activé suffit (pas encore chargé).
-  detect_questify_nav_on_demand = function(t)
-    Mock.addons.Questify_Nav = "demand"
+  -- Routeur intégré (NavEngine/, chargé avec Questify) : présent dès le chargement ; sans lui (installation
+  -- abîmée), plus de routeur Questify.
+  detect_embedded_questify_nav = function(t)
     local Q = load()
     t.eq(Q.Nav:Detect().questify, true)
     t.eq((Q.Nav:Active()), "questify")
     Mock.reset()
-    Mock.addons.Questify_Nav = "disabled"
+    Mock.addons.Questify_Nav = false
     local Q2 = load()
     t.eq(Q2.Nav:Detect().questify, false)
   end,

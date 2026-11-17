@@ -285,9 +285,7 @@ COMMANDS.navperf = function(rest)
   end
   local p = W:Perf()
   local m = p.memKB
-  Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (m.Questify or 0) / 1024,
-    (m.Questify_Nav or 0) / 1024, ((m.Questify_Nav_EK or 0) + (m.Questify_Nav_Kalimdor or 0)) / 1024,
-    p.loadMs or 0)
+  Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (m.Questify or 0) / 1024)
 end
 
 -- Flèche Questify (UI/Arrow.lua) : « reset » la remet à sa place par défaut.

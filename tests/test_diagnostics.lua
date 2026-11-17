@@ -93,7 +93,7 @@ return {
     t.eq(run(Q).navigation.status, "warn")
     Q.Settings:Set("nav.router", "none")
     t.eq(run(Q).navigation.status, "ok")
-    Mock.addons.Questify_Nav = false              -- routeur Questify choisi, Questify_Nav absent
+    Questify_NavEngine = nil                      -- routeur Questify choisi, routeur intégré absent
     Q.Settings:Set("nav.router", "questify")
     r = run(Q)
     t.eq(r.navigation.status, "warn")

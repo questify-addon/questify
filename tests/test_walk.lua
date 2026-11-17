@@ -51,17 +51,17 @@ local function samePoint(t, p, w, msg)
 end
 
 return {
-  loads_parts_on_demand = function(t)
+  -- Routeur et cartes chargés avec Questify (NavEngine/) : aucun addon chargé à la demande.
+  routes_with_embedded_maps = function(t)
     local Q = load()
-    t.eq(loads(), {}, "nothing loaded before the first route")
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
-    t.eq(loads(), { "Questify_Nav", "Questify_Nav_EK" }, "router, then the Eastern Kingdoms part only")
+    t.eq(loads(), {}, "no load-on-demand addon")
     t.eq(#finds(), 1)
     t.eq(finds()[1].map, 0, "search on the Eastern Kingdoms (instance 0)")
     local st = Q.Walk:Status()
     t.eq(st.loaded, true)
     t.eq(st.maps[0], true)
-    t.eq(st.maps[1], false, "Kalimdor not loaded")
+    t.eq(st.maps[1], false, "Kalimdor not checked yet")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -114,26 +114,20 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  no_data_straight_when_load_fails = function(t)
+  no_router_straight = function(t)
     local Q = load()
-    Mock.onLoadAddOn.Questify_Nav = function() return false end
+    Questify_NavEngine = nil                     -- installation abîmée : routeur absent
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
-    local r = Q.Walk:Route()
-    t.ok(r, "a route all the same")
-    t.eq(r.straight, true)
-    samePoint(t, r.nextPoint, world(Q, ELWYNN, 60, 50), "points at the target")
+    t.eq((Q.Nav:Active()), nil, "no Questify router: the arrow points straight at the target")
+    t.eq(Q.Walk:Route(), nil, "no walking route")
     t.eq(Q.Walk:Status().loaded, false)
-    t.ok(Q.Walk:Status().reason, "reason given")
+    t.eq(#finds(), 0)
     t.eq(#Mock.errors, 0)
   end,
 
   no_data_straight_when_map_missing = function(t)
     local Q = load()
-    Mock.onLoadAddOn.Questify_Nav = function()
-      Mock.navEngine = Mock.newNavEngine()
-      Mock.navEngine.available[0] = false
-      Questify_NavEngine = Mock.navEngine
-    end
+    Mock.navEngine.available[0] = false
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
     local r = Q.Walk:Route()
     t.eq(r.straight, true)
@@ -227,7 +221,7 @@ return {
 
   perf_counters = function(t)
     local Q = load()
-    Mock.addonMemory.Questify, Mock.addonMemory.Questify_Nav = 2048, 9000
+    Mock.addonMemory.Questify = 2048
     routeEast(Q)
     Q.Nav:SetTarget(ELWYNN, 70, 50, "Far")
     Mock.advance(1.1)
@@ -237,7 +231,6 @@ return {
     t.ok(p.avgMs >= 0)
     t.ok(p.frames > 0, "frames counted")
     t.eq(p.memKB.Questify, 2048)
-    t.eq(p.memKB.Questify_Nav, 9000)
     Q.Walk:ResetPerf()
     p = Q.Walk:Perf()
     t.eq(p.searches, 0)
@@ -280,21 +273,6 @@ return {
     t.eq(p.frames, 1)
     t.near(p.worstMs, 6, 1e-6, "3 + 3 ms in one frame")
     t.near(p.avgMs, 6, 1e-6)
-    t.eq(#Mock.errors, 0)
-  end,
-
-  -- Cartes livrées entières (pas de champ part) : aucune partie chargée.
-  whole_data_loads_no_part = function(t)
-    local Q = load()
-    Mock.onLoadAddOn.Questify_Nav = function()
-      Mock.navEngine = Mock.newNavEngine()
-      Questify_NavEngine = Mock.navEngine
-      QuestifyPathData = { [0] = {} }
-    end
-    Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
-    t.eq(loads(), { "Questify_Nav" })
-    t.eq(Q.Walk:Status().maps[0], true)
-    t.eq(#finds(), 1)
     t.eq(#Mock.errors, 0)
   end,
 
@@ -353,17 +331,12 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  no_load_in_combat = function(t)
+  -- Cartes déjà chargées : la recherche part aussi en combat (le routeur se met lui-même en pause).
+  search_starts_in_combat = function(t)
     local Q = load()
     Mock.player.combat = true
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
-    t.eq(loads(), {}, "no addon loaded in combat")
-    t.eq(Q.Walk:Route().straight, true, "straight meanwhile")
-    t.eq(Q.Walk:Status().reason, "combat")
-    Mock.player.combat = false
-    Mock.fire("PLAYER_REGEN_ENABLED")
-    Mock.advance(1.1)
-    t.eq(loads(), { "Questify_Nav", "Questify_Nav_EK" })
+    t.eq(loads(), {}, "nothing to load")
     t.eq(#finds(), 1)
     t.eq(#Mock.errors, 0)
   end,
@@ -511,42 +484,12 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  -- Écran de chargement vers un autre continent : sa partie des cartes est chargée tout de suite,
-  -- derrière l'écran ; le temps de chargement n'entre pas dans la pire image (loadMs à part).
-  preload_part_behind_loading_screen = function(t)
-    local Q = load()
-    routeEast(Q)
-    Mock.onLoadAddOn.Questify_Nav_Kalimdor = function() Mock.cpuMs = Mock.cpuMs + 80 end
-    Q.Walk:ResetPerf()
-    Mock.player.map, Mock.player.x, Mock.player.y = 1411, 50, 50
-    Mock.fire("PLAYER_ENTERING_WORLD", false, false)
-    t.eq(loads(), { "Questify_Nav", "Questify_Nav_EK", "Questify_Nav_Kalimdor" }, "Kalimdor part loaded at once")
-    Mock.advance(0.1)
-    local p = Q.Walk:Perf()
-    t.ok(p.worstMs < 80, "load time not in the worst frame (" .. p.worstMs .. ")")
-    t.ok(p.loadMs >= 80, "load time reported apart (" .. tostring(p.loadMs) .. ")")
-    Q.Walk:ResetPerf()
-    t.eq(Q.Walk:Perf().loadMs, 0)
-    t.eq(#Mock.errors, 0)
-  end,
-
-  perf_memory_of_map_parts = function(t)
-    local Q = load()
-    Mock.addonMemory.Questify_Nav_EK, Mock.addonMemory.Questify_Nav_Kalimdor = 16384, 15360
-    local p = Q.Walk:Perf()
-    t.eq(p.memKB.Questify_Nav_EK, 16384)
-    t.eq(p.memKB.Questify_Nav_Kalimdor, 15360)
-    SlashCmdList.QUESTIFY("navperf")
-    t.ok(Mock.printed("maps 31.0 MB"), "map parts in /qf navperf")
-    t.eq(#Mock.errors, 0)
-  end,
-
   diagnostics_report_walk = function(t)
     local Q = load()
     local function walkCheck()
       for _, r in ipairs(Q.Diagnostics:Run()) do if r.id == "walk" then return r end end
     end
-    t.eq(walkCheck().status, "info", "not loaded yet")
+    t.eq(walkCheck().status, "ok", "router loaded with Questify")
     routeEast(Q)
     local r = walkCheck()
     t.eq(r.status, "ok")

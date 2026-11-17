@@ -104,6 +104,16 @@ Engine\TalentTree.lua
 Engine\ClassGuide.lua
 Engine\ClassMacros.lua
 
+# Routeur de marche (repris de Polestar_Nav, lui-même issu de Shortest Path Forever) et cartes de marche des
+# deux continents : chargés avec Questify (anciens addons Questify_Nav, _EK et _Kalimdor). Licences dans NavEngine.
+NavEngine\Maps\Nav.xml
+NavEngine\Maps\EK\EK.xml
+NavEngine\Maps\Kalimdor\Kalimdor.xml
+NavEngine\Routing\Costs.lua
+NavEngine\Routing\PathGrid.lua
+NavEngine\Routing\Path.lua
+NavEngine\Routing\PathJobs.lua
+NavEngine\API.lua
 Nav\Caves.lua
 Nav\Travel.lua
 Nav\Walk.lua

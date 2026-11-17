@@ -1,4 +1,4 @@
--- Tests du routeur de marche embarqué (Questify_Nav, _EK, _Kalimdor), copié de Polestar_Nav 0.3.7.2.
+-- Tests du routeur de marche embarqué dans Questify (NavEngine/ : routeur et cartes), copié de Polestar_Nav 0.3.7.2.
 local function root() return Mock.root end
 
 local function read(path)
@@ -53,50 +53,58 @@ local function countFiles(dir, pat)
   return n
 end
 
+-- Fichiers listés par un XML (balises <Script file="…"/>), relatifs à son dossier.
+local function xmlFiles(path)
+  local out = {}
+  for f in (read(root() .. "/" .. path) or ""):gmatch('<Script file="([^"]+)"') do out[#out + 1] = f end
+  return out
+end
+
+local NAV = "Questify/NavEngine"
+
 return {
   no_polestar_globals = function(t)
     local tokens = { "PolestarPathData", "Polestar_NavEngine", "Polestar_NavCosts", "PolestarNavChokepoints",
       '"Polestar_Nav_EK"', '"Polestar_Nav_Kalimdor"' }
     local seen = 0
-    for _, dir in ipairs({ "Questify_Nav", "Questify_Nav_EK", "Questify_Nav_Kalimdor" }) do
-      for _, f in ipairs(luaFiles(dir)) do
-        seen = seen + 1
-        local s = read(f)
-        for _, tok in ipairs(tokens) do
-          t.ok(not s:find(tok, 1, true), f .. " contient " .. tok)
-        end
+    for _, f in ipairs(luaFiles(NAV)) do
+      seen = seen + 1
+      local s = read(f)
+      for _, tok in ipairs(tokens) do
+        t.ok(not s:find(tok, 1, true), f .. " contient " .. tok)
       end
     end
     t.ok(seen > 90, "fichiers Lua trouvés : " .. seen)
   end,
 
-  tocs = function(t)
-    local nav = "Questify_Nav"
-    t.ok(tocHas(nav, nav, "## LoadOnDemand: 1"))
-    t.ok(tocHas(nav, nav, "## Dependencies: Questify"))
-    t.ok(tocHas(nav, nav, "## Interface: 16001"))
-    t.ok(tocHas(nav, nav, "## X-License: GPL-3.0-or-later"))
-    t.ok(tocHas(nav, nav, "## Title: Questify Nav"))
-    for _, p in ipairs({ "Questify_Nav_EK", "Questify_Nav_Kalimdor" }) do
-      t.ok(tocHas(p, p, "## Dependencies: Questify_Nav"), p .. " dépend de Questify_Nav")
-      t.ok(tocHas(p, p, "## LoadOnDemand: 1"))
-    end
-    for _, p in ipairs({ "Questify_Nav", "Questify_Nav_EK", "Questify_Nav_Kalimdor" }) do
-      local files = tocFiles(p, p)
-      t.ok(#files > 0, p .. " liste des fichiers")
-      for _, f in ipairs(files) do
-        t.ok(read(root() .. "/" .. p .. "/" .. f) ~= nil, p .. " : fichier absent " .. f)
+  -- Routeur et cartes chargés avec Questify : plus d'addon Questify_Nav, _EK ni _Kalimdor.
+  loaded_by_questify = function(t)
+    for _, toc in ipairs({ "Questify", "Questify_Camelot" }) do
+      for _, line in ipairs({ "NavEngine\\Maps\\Nav.xml", "NavEngine\\Maps\\EK\\EK.xml",
+        "NavEngine\\Maps\\Kalimdor\\Kalimdor.xml", "NavEngine\\Routing\\Path.lua", "NavEngine\\API.lua" }) do
+        t.ok(tocHas("Questify", toc, line), toc .. " charge " .. line)
       end
+    end
+    for _, dir in ipairs({ "Questify_Nav", "Questify_Nav_EK", "Questify_Nav_Kalimdor" }) do
+      t.eq(read(root() .. "/" .. dir .. "/" .. dir .. ".toc"), nil, dir .. " n'est plus un addon")
+    end
+    for _, x in ipairs({ NAV .. "/Maps/Nav.xml", NAV .. "/Maps/EK/EK.xml", NAV .. "/Maps/Kalimdor/Kalimdor.xml" }) do
+      local dir = x:match("^(.*)/[^/]+$")
+      local files = xmlFiles(x)
+      t.ok(#files > 0, x .. " liste des fichiers")
+      for _, f in ipairs(files) do t.ok(read(root() .. "/" .. dir .. "/" .. f) ~= nil, x .. " : fichier absent " .. f) end
     end
   end,
 
   parts_complete = function(t)
-    t.eq(countFiles("Questify_Nav_EK", "^Nav0_%d+%.lua$"), 41)
-    t.eq(countFiles("Questify_Nav_Kalimdor", "^Nav1_%d+%.lua$"), 51)
+    t.eq(countFiles(NAV .. "/Maps/EK", "^Nav0_%d+%.lua$"), 41)
+    t.eq(countFiles(NAV .. "/Maps/Kalimdor", "^Nav1_%d+%.lua$"), 51)
+    t.eq(#xmlFiles(NAV .. "/Maps/EK/EK.xml"), 41)
+    t.eq(#xmlFiles(NAV .. "/Maps/Kalimdor/Kalimdor.xml"), 51)
   end,
 
   credits = function(t)
-    local s = read(root() .. "/Questify_Nav/CREDITS.md")
+    local s = read(root() .. "/" .. NAV .. "/CREDITS.md")
     t.ok(s, "CREDITS.md présent")
     t.ok(s:find("Polestar", 1, true) and s:find("0.3.7.2", 1, true))
     t.ok(s:find("Cillian Berragan", 1, true))

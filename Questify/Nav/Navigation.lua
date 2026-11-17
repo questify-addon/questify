@@ -1,7 +1,7 @@
 local addonName, Q = ...
 
 -- Navigation : une seule interface (SetTarget / Clear), deux réglages (spec du routeur intégré, § 5) :
---   nav.router  : "questify" (Questify_Nav, défaut), "spf" (ShortestPath Forever), "azerothgps" (AzerothGPS
+--   nav.router  : "questify" (routeur intégré, NavEngine/, défaut), "spf" (ShortestPath Forever), "azerothgps" (AzerothGPS
 --                 1.3.6 et plus suit lui-même la cible de Questify par Questify.Nav:Status : Questify ne calcule
 --                 rien et cache sa flèche) ou "none" ;
 --   nav.display : "arrow" (flèche Questify, défaut), "waypointui", "tomtom" ou "native".
@@ -55,18 +55,9 @@ local function hasTomTom()
   return type(TomTom) == "table" and type(TomTom.AddWaypoint) == "function"
 end
 
--- Questify_Nav (routeur de marche, chargé à la demande) : installé et activé suffit.
+-- Routeur de marche intégré (NavEngine/, chargé avec Questify) : son moteur Questify_NavEngine.
 local function hasQuestifyNav()
-  local api = C_AddOns
-  if not api then return false end
-  if type(api.IsAddOnLoaded) == "function" then
-    local ok, loaded = pcall(api.IsAddOnLoaded, "Questify_Nav")
-    if ok and loaded then return true end
-  end
-  if type(api.GetAddOnInfo) ~= "function" then return false end
-  local ok, _, _, _, loadable, reason = pcall(api.GetAddOnInfo, "Questify_Nav")
-  if not ok then return false end
-  return loadable == true or reason == "DEMAND_LOADED"
+  return type(Questify_NavEngine) == "table" and type(Questify_NavEngine.Find) == "function"
 end
 
 -- Detect() -> { questify, shortestpath, waypointui, tomtom, native = true }

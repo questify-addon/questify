@@ -209,8 +209,8 @@ return {
 
   straight_without_questify_nav = function(t)
     local Q = load()
-    Mock.addons.Questify_Nav = nil
-    Q.Settings:Set("nav.router", "questify")     -- relu : Questify_Nav absent, aucun routeur
+    Questify_NavEngine = nil                      -- installation abîmée : plus de routeur intégré
+    Q.Settings:Set("nav.router", "questify")     -- relu : routeur absent, aucun routeur
     t.eq((Q.Nav:Active()), nil, "Questify_Nav missing: no router")
     Q.Nav:SetTarget(ELWYNN, 60, 50, "East")
     t.ok(shown(Q), "still guided, straight")
