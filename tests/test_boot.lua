@@ -31,7 +31,7 @@ return {
   end,
 
   no_questiedb_line_when_recent_or_unknown_version = function(t)
-    for _, v in ipairs({ "1.0.15", "1.0.16", "1.1.0", "v2.0.0", "dev" }) do
+    for _, v in ipairs({ "1.1.2", "1.1.3", "1.2.0", "v2.0.0", "dev" }) do
       Mock.reset()
       Mock.qdbMeta.Version = v
       Mock.loadAddon(TOC)

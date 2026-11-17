@@ -66,7 +66,7 @@ end
 -- Version de QuestieDB sur laquelle les routes livrées ont été générées (tools/routebuilder/build.lua).
 -- Avec une version plus ancienne, des quêtes des routes sont inconnues : étape sans flèche, à passer à la
 -- main. À relever à chaque régénération des routes sur une nouvelle version de QuestieDB.
-QDB.MIN_DATA_VERSION = "1.0.15"
+QDB.MIN_DATA_VERSION = "1.1.2"
 
 -- "1.0.15", "v1.0.15", "1.0.15-beta" -> { 1, 0, 15 } ; autre chose -> nil
 local function parseVersion(s)
