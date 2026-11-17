@@ -192,6 +192,39 @@ return {
     noErrors(t)
   end,
 
+  auction_scene_fills_the_shopping_list_and_off_restores = function(t)
+    local Q = load()
+    local D = Q.UI.Demo
+    for _, e in ipairs(D.AUCTION) do
+      Mock.items[e.item] = { id = e.item, name = "Item " .. e.item,
+        link = "|cffffffff|Hitem:" .. e.item .. "::::::::|h[Item " .. e.item .. "]|h|r", classID = 12 }
+    end
+    local before = #Q.AuctionItems:Rows()
+    qf("demo auction")
+    Mock.advance(1)
+    local P = Q.UI.AuctionPanel
+    t.ok(P.list and P.list:IsShown(), "list shown")
+    local rows = Q.AuctionItems:Rows()
+    t.eq(#rows, #D.AUCTION, "one row per example item")
+    t.eq(rows[1].chapter, "current")
+    t.eq(rows[#rows].chapter, "next")
+    for _, r in ipairs(rows) do t.ok(r.need > 0, r.item .. ": something to buy") end
+    qf("demo off")
+    t.ok(not P.list:IsShown(), "list closed")
+    t.eq(#Q.AuctionItems:Rows(), before, "real rows back")
+    noErrors(t)
+  end,
+
+  route_scene_ranks_at_the_chapter_end_level = function(t)
+    local Q = load()
+    Q.Player.level = 34
+    qf("demo route")
+    local P = Q.UI.RouteChoicePopup
+    t.ok(P:IsShown(), "window shown")
+    for _, c in ipairs(P.cards) do t.eq(c.over, 0, c.id .. ": not too low for the chapter's end level") end
+    noErrors(t)
+  end,
+
   supplies_scene_shows_line_message_and_chat = function(t)
     local Q = load()
     qf("demo supplies")

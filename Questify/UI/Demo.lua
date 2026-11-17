@@ -25,7 +25,7 @@ local L = Q.L
 
 -- Ordre de /qf demo all.
 Demo.SCENES = { "tracker", "zone", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
-  "profession", "questitem", "theme", "options" }
+  "profession", "questitem", "auction", "theme", "options" }
 
 -- Objets d'exemple (ID de WoW Classic) : par liste, le premier que le client connaît est pris.
 -- upgrade : annonce simple ; main + off : une arme à une main et un bouclier (annonce de paire).
@@ -34,6 +34,14 @@ Demo.ITEMS = {
   main = { 36, 37 },
   off = { 2362, 2129 },
   quest = 13892,   -- Kodo Kombobulator : objet de quête à utiliser, absent des sacs (le clic ne fait rien)
+}
+
+-- Liste d'achats d'exemple (Guides/AuctionItemData.lua) : objets de collecte à acheter à l'hôtel des ventes,
+-- chapitre en cours (Loch Modan, Marche de l'Ouest) puis chapitre suivant (Darkshore).
+Demo.AUCTION = {
+  { item = 814, quest = 103, count = 5, chapter = "current" },   -- Flask of Oil : Keeper of the Flame
+  { item = 723, quest = 22, count = 8, chapter = "current" },    -- Goretusk Liver : Goretusk Liver Pie
+  { item = 3712, quest = 555, count = 10, chapter = "next" },    -- Turtle Meat : Soothing Turtle Bisque
 }
 
 local ROUTE_FROM = "A_DwarfGnome_03"            -- Loch Modan : Marche de l'Ouest ou Sombrivage
@@ -53,6 +61,7 @@ local savedNav             -- { target = ... } : repère d'avant la scène
 local coverActive          -- étape « tuer » simulée : la route est recalculée à la fermeture
 local zoneActive           -- zone d'exemple : suivi, carte et minicarte redessinés à la fermeture
 local optionsOpened        -- fenêtre d'options ouverte par la scène « options »
+local auctionOpened        -- liste d'achats ouverte par la scène « auction »
 Demo.themeIndex = 0        -- dernier thème montré par la scène « theme » (le suivant au prochain appel)
 local seq                  -- { i = scène courante de /qf demo all }
 
@@ -321,7 +330,9 @@ function SCENE.route()
   if not (P and guide and Q.RouteChoice) then return false, WHY_DATA end
   local options = Q.Guides:Choices(guide, ROUTE_RACE, ROUTE_FACTION)
   if #options < 2 then return false, WHY_DATA end
-  local cards = Q.RouteChoice:Rank(options)
+  -- classées au niveau de fin du chapitre, pas au niveau réel : un personnage plus haut verrait toutes les
+  -- cartes en « quêtes faciles »
+  local cards = Q.RouteChoice:Rank(options, tonumber(guide.maxLevel))
   cards.demo = true
   P.resume = nil
   P.fromId, P.manual, P.cards = ROUTE_FROM, true, cards
@@ -560,6 +571,36 @@ function SCENE.theme()
 end
 
 -- Fenêtre d'options sur la section Automatisation (bouton de la touche de ciblage).
+-- Liste des objets de quête à acheter (UI/AuctionPanel.lua) remplie avec Demo.AUCTION, prix réels de la
+-- source de prix (Auctionator) quand il y en a une. Chez un encanteur, la liste d'achats à côté de l'HV
+-- reprend les mêmes lignes.
+function SCENE.auction()
+  local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+  if not (AI and AI.Rows and P and P.ShowList and Q.API and Q.API.GetItemInfo) then return false, WHY_API end
+  local lists = {}
+  for i, e in ipairs(Demo.AUCTION) do lists[i] = { e.item } end
+  whenItems(token, "auction", lists, function()
+    patch(AI, "Rows", function()
+      return function(self)
+        local out = {}
+        for _, e in ipairs(Demo.AUCTION) do
+          local have = math.min(self:Count(e.item), e.count - 1)
+          local price, source = self:Price(e.item)
+          out[#out + 1] = { item = e.item, name = self:Name(e.item), total = e.count, have = have,
+            need = e.count - have, approx = false, quests = { e.quest }, chapter = e.chapter, state = "ok",
+            skipped = false, price = price, source = source }
+        end
+        return out
+      end
+    end)
+    auctionOpened = true
+    P:ShowList()
+    if AI.IsOpen and AI:IsOpen() and P.ShowShop then P:ShowShop() end
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+  end, 0)
+  return true
+end
+
 function SCENE.options()
   local O = Q.UI.Options
   if not (O and O.Open) then return false, WHY_API end
@@ -591,6 +632,12 @@ function Demo:Reset()
   end
   unpatch()
   extraLines = {}
+  if auctionOpened then
+    auctionOpened = nil
+    local ap = Q.UI.AuctionPanel
+    if ap and ap.list then ap.list:Hide() end
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+  end
   if zoneActive then
     zoneActive = nil
     Q:Fire("ZONEMODE_CHANGED", Q.ZoneMode and Q.ZoneMode:Current())
