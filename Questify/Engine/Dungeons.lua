@@ -950,9 +950,9 @@ local function blockSteps(d, p, rung)
   return steps
 end
 
--- Add(key) : insère avant la route les quêtes à prendre et celles qui y mènent, l'entrée du donjon, « faire »
--- et « rendre » pour chaque quête (blockSteps), puis le retour au point où la route en était (étape « goto »
--- marquée du donjon).
+-- Add(key) : remplace le donjon déjà ajouté, s'il y en a un, puis insère avant la route les quêtes à prendre
+-- et celles qui y mènent, l'entrée du donjon, « faire » et « rendre » pour chaque quête (blockSteps), puis le
+-- retour au point où la route en était (étape « goto » marquée du donjon).
 function Dungeons:Add(key)
   local s = saved()
   if not s or not enabled() then return false end
@@ -964,6 +964,14 @@ function Dungeons:Add(key)
     if not e.inside then hasQuest = true end
   end
   if not hasQuest then return false end
+  -- Un seul donjon suivi à la fois : celui déjà ajouté quitte la route (ses quêtes prises restent dans le
+  -- journal) et redevient proposable. Retiré avant returnPoint, qui ne doit pas viser ses étapes.
+  for other in pairs(s.added) do
+    if other ~= d.key then
+      s.added[other] = nil
+      Q.Progress:RemoveInserted(TAG_PREFIX .. other)
+    end
+  end
   local name = self:Name(d)
   local back = returnPoint(TAG_PREFIX .. d.key)
   local steps = blockSteps(d, p)

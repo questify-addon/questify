@@ -298,6 +298,29 @@ return {
     noErrors(t)
   end,
 
+  adding_a_dungeon_replaces_the_one_already_added = function(t)
+    alliance(17)
+    -- second donjon Alliance : une quête de DM (167) déplacée dans un donjon voisin
+    local data = testData()
+    local dm = data[2].quests.Alliance
+    local moved = table.remove(dm, 2)
+    data[#data + 1] = { key = "DM2", name = "Other Dungeon", areaId = 1582, minLevel = 17, maxLevel = 26,
+      factions = { "Alliance" }, entrance = { 1436, 40, 70 }, entranceSource = "manual",
+      quests = { Alliance = { moved } } }
+    local Q = load({ data = data })
+    t.eq(Q.Dungeons:Add("DM"), true)
+    t.ok(#tagged(Q, "dg:DM") > 0)
+    t.eq(Q.Dungeons:Add("DM2"), true)
+    t.eq(#tagged(Q, "dg:DM"), 0, "the first dungeon's steps leave the route")
+    t.ok(#tagged(Q, "dg:DM2") > 0)
+    t.eq(Q.char.dungeons.added.DM, nil)
+    t.eq(Q.char.dungeons.added.DM2, true)
+    t.eq(stateOf(Q, "DM"), "available", "the replaced dungeon can be added again")
+    t.eq(stateOf(Q, "DM2"), "added")
+    t.eq(Q.Progress:Current().key, "i:dg:DM2:1")
+    noErrors(t)
+  end,
+
   dungeon_removes_itself_when_everything_is_turned_in = function(t)
     alliance(17)
     local Q = load()
