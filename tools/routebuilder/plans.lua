@@ -81,6 +81,60 @@ local RIVERGLADES_FORCE = {
 }
 plans.RIVERGLADES_FORCE = RIVERGLADES_FORCE
 
+-- Même cas côté Horde (H_31, HD_16) : sur QuestieDB 1.1.2, A Message in Blood (93786, écartée « far ») et Food for
+-- the Taking (93787, Feed Satchel 616740 sans position) ferment la chaîne Show Them How It's Done -> Bloodmaster's Ring
+-- (preQuestGroup tracés) ; la simulation écartait ensuite en cascade les quêtes « trop dangereuses avant 41-42 »
+-- (H_31 : 42 -> 8 quêtes, ~933 monstres). Quêtes que la route 1.0.15 faisait, gardées (audit Horde 2026-11-17).
+-- Food for the Taking reste écartée tant que l'objet n'a pas de position : à relever en jeu.
+local RIVERGLADES_FORCE_HORDE = {
+  [93786] = true,
+  [93976] = true,
+  [94480] = true,
+  [94483] = true,
+  [94532] = true,
+  [94535] = true,
+  [94556] = true,
+  [94668] = true,
+  [94669] = true,
+  [94670] = true,
+  [94672] = true,
+  [94680] = true,
+  [94727] = true,
+  [94733] = true,
+  [94737] = true,
+  [94739] = true,
+  [94744] = true,
+  [94961] = true,
+  [94962] = true,
+  [94963] = true,
+  [94964] = true,
+  [94965] = true,
+  [95063] = true,
+  [95118] = true,
+  [95163] = true,
+  [95165] = true,
+  [95183] = true,
+  [95278] = true,
+  [95293] = true,
+  [95294] = true,
+  [95327] = true,
+  [95417] = true,
+  [95418] = true,
+  [95420] = true,
+  [95424] = true,
+  [95425] = true,
+  [95427] = true,
+  [95428] = true,
+  [95431] = true,
+  [95432] = true,
+  [95601] = true,
+  [95602] = true,
+  [96067] = true,
+  [96105] = true,
+  [96109] = true,
+}
+plans.RIVERGLADES_FORCE_HORDE = RIVERGLADES_FORCE_HORDE
+
 plans.Alliance = {
   -- Nain / Gnome : Coldridge, Dun Morogh (pré-quêtes de Hall of Thanes), Loch Modan (avec les allers-retours
   -- à Ironforge des suites « Honor Students » et « Report to Ironforge »), puis Marche de l'Ouest par le tram.
@@ -798,6 +852,7 @@ plans.Horde = {
     id = "H_31", title = "Riverglades", faction = "Horde", zones = { RIVERGLADES },
     minLevel = 37, maxLevel = 40, entry = { RIVERGLADES, 65.58, 21.45 }, next = "H_13", logCap = 17,
     flightPaths = { "Rog'mar, Riverglades", "Powderfuse Port, Riverglades" },
+    force = RIVERGLADES_FORCE_HORDE,
   },
   {
     id = "H_30", title = "Silithus", faction = "Horde", zones = { WINTERSPRING, SILITHUS },

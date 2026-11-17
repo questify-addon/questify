@@ -170,7 +170,7 @@ M.HORDE_TRUNK = {
   { id = "HD_15", base = "H_12", title = "Badlands", min = 39, max = 40, run = { "ULDAMAN" } },
   -- Riverglades (Forever, quêtes de niveau 38-44) : zone absente des guides habituels
   { id = "HD_16", zones = { RIVERGLADES }, entryHub = RIVERGLADES, title = "Riverglades", min = 39, max = 43,
-    alt = { "RFD", "ULDAMAN" }, set = { logCap = 17 } },
+    alt = { "RFD", "ULDAMAN" }, set = { logCap = 17, force = plansm.RIVERGLADES_FORCE_HORDE } },
   { id = "HD_17", base = "H_13", title = "Stranglethorn Vale", min = 40, max = 42,
     alt = { "GNOMER", "SM_ARM", "SM_CATH" } },
   -- Désolace : déjà faite en HD_11 ; restes et quêtes de Maraudon
