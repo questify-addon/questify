@@ -57,13 +57,15 @@ local MAX_BC_DEPTH = 3
 ---------------------------------------------------------------------------
 local function parseArgs(argv)
   local o = { db = qdb.DEFAULT_DB, questie = qdb.DEFAULT_QUESTIE, data = "tools/routebuilder/data",
-              out = "Questify/Guides/DungeonData.lua", date = os.date("%Y-%m-%d") }
+              out = "Questify/Guides/DungeonData.lua", date = os.date("%Y-%m-%d"),
+              overrides = "tools/routebuilder/overrides.lua" }
   local i = 1
   while i <= #argv do
     local k, v = argv[i], argv[i + 1]
     if k == "--db" then o.db = v elseif k == "--questie" then o.questie = v
     elseif k == "--data" then o.data = v elseif k == "--out" then o.out = v
     elseif k == "--date" then o.date = v
+    elseif k == "--overrides" then o.overrides = v
     else error("option inconnue : " .. tostring(k)) end
     i = i + 2
   end
@@ -267,6 +269,20 @@ function M.emitRewards(rewards)
   return table.concat(lines, "\n") .. "\n"
 end
 
+-- Texte Lua de Q.QuestPrereqFix : préquêtes que QuestieDB ne connaît pas (overrides.lua, champ pre), au moins une
+-- exigée. Engine/Dungeons.lua les ajoute à celles de QuestieDB, qu'il lit en jeu.
+function M.emitPrereqFix(pre)
+  local lines = {
+    "-- Préquêtes absentes de QuestieDB (tools/routebuilder/overrides.lua) : au moins une doit être rendue.",
+    "Q.QuestPrereqFix = {",
+  }
+  for _, id in ipairs(qdb.sortedKeys(pre or {})) do
+    lines[#lines + 1] = ("  [%d] = { %s },"):format(id, table.concat(pre[id], ", "))
+  end
+  lines[#lines + 1] = "}"
+  return table.concat(lines, "\n") .. "\n"
+end
+
 ---------------------------------------------------------------------------
 -- Écriture
 ---------------------------------------------------------------------------
@@ -297,7 +313,11 @@ local function main(argv)
   local o = parseArgs(argv)
   local W = world.load(o.data)
   local Ds = {}
-  for _, f in ipairs(FACTIONS) do Ds[f] = qdb.load({ db = o.db, questie = o.questie, faction = f }) end
+  local ov = {}
+  if o.overrides and o.overrides ~= "" then ov = dofile(o.overrides) end
+  for _, f in ipairs(FACTIONS) do
+    Ds[f] = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = f }), ov.pre)
+  end
   local support = loadDungeonSupport(o.db)
 
   local out, rewards = {}, {}
@@ -382,6 +402,7 @@ local function main(argv)
   end
   lines[#lines + 1] = "}"
   lines[#lines + 1] = M.emitRewards(rewards)
+  lines[#lines + 1] = M.emitPrereqFix(ov.pre)
   local f = assert(io.open(o.out, "w"))
   f:write(table.concat(lines, "\n"), "\n")
   f:close()

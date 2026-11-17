@@ -157,12 +157,13 @@ Q.DungeonData = {
     quests = {
       Alliance = {
         { id = 92456, giver = 5502, at = { 1453, 31.5, 62.61 }, ender = 5502, endAt = { 1453, 31.5, 62.61 }, level = 33, reqLevel = 24, races = 4294967373 }, -- A Green Sample
-        { id = 92457, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Starving Arcane
-        { id = 92458, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Heart of Disruption
+        { id = 92457, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373, pre = { 92432 } }, -- Starving Arcane
+        { id = 92458, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373, pre = { 92432 } }, -- Heart of Disruption
         { id = 92489, giver = 5694, at = { 1453, 48.71, 87.62 }, ender = 5694, endAt = { 1453, 48.71, 87.62 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Power Overwhelming
+        { id = 92432, bc = true, giver = 247264, at = { 1424, 48.34, 60.03 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 30, races = 4294967373 }, -- An Alarming Request
       },
       Horde = {
-        { id = 96984, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 2410, endAt = { 1424, 61.6, 20.85 }, level = 33, reqLevel = 24, races = 8589934770 }, -- Heart of Disruption
+        { id = 96984, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 2410, endAt = { 1424, 61.6, 20.85 }, level = 33, reqLevel = 24, races = 8589934770, pre = { 92434 } }, -- Heart of Disruption
         { id = 96986, giver = 2278, at = { 1424, 62.63, 20.65 }, ender = 2278, endAt = { 1424, 62.63, 20.65 }, level = 33, reqLevel = 24, races = 8589934770 }, -- The Grave Knight
         { id = 96988, giver = 11044, at = { 1458, 46.61, 74.09 }, ender = 11044, endAt = { 1458, 46.61, 74.09 }, level = 33, reqLevel = 24, races = 8589934770 }, -- Source of Power
       },
@@ -531,6 +532,8 @@ Q.QuestRewardData = {
   [447] = { xp = 910, items = { 3448 } },
   [450] = { xp = 1350, items = {  } },
   [451] = { xp = 2050, items = { 2458, 2459, 3451, 3582, 276723 } },
+  [544] = { xp = 3300, items = {  } },
+  [545] = { xp = 2050, items = {  } },
   [704] = { xp = 1425, items = { 4980, 270059, 270060 } },
   [709] = { xp = 1575, items = { 4746, 270074, 270075 } },
   [720] = { xp = 1350, items = {  } },
@@ -866,6 +869,8 @@ Q.QuestRewardData = {
   [92401] = { xp = 875, est = true, items = { 251485, 251486 } },
   [92421] = { xp = 875, est = true, items = { 279874, 279875 } },
   [92422] = { xp = 875, est = true, items = { 251533, 251534 } },
+  [92432] = { xp = 660, items = {  } },
+  [92434] = { xp = 270, items = {  } },
   [92456] = { xp = 1325, est = true, items = { 279835, 279836 } },
   [92457] = { xp = 1325, est = true, items = { 279837, 279838 } },
   [92458] = { xp = 1325, est = true, items = { 279839, 279840, 279841 } },
@@ -913,5 +918,18 @@ Q.QuestRewardData = {
   [98823] = { xp = 625, est = true, items = { 271766, 271767 } },
   [98824] = { xp = 625, est = true, items = { 271766, 271767 } },
   [99156] = { xp = 910, items = { 286742, 286743, 286744 } },
+}
+
+-- Préquêtes absentes de QuestieDB (tools/routebuilder/overrides.lua) : au moins une doit être rendue.
+Q.QuestPrereqFix = {
+  [79192] = { 79007, 79008 },
+  [79974] = { 79980 },
+  [79975] = { 79974 },
+  [79976] = { 79975 },
+  [79980] = { 79192 },
+  [92434] = { 545 },
+  [92457] = { 92432 },
+  [92458] = { 92432 },
+  [96984] = { 92434 },
 }
 

@@ -46,6 +46,14 @@ return {
     [79974] = { 79980 }, -- Wet Job après Scramble
     [79975] = { 79974 }, -- Eagle's Fist après Wet Job
     [79976] = { 79975 }, -- This Must Be The Place après Eagle's Fist (récompense : Cozy Sleeping Bag 211527)
+    -- Cité de Dalaran : préquêtes absentes de QuestieDB (commit c7ccd23), relevées dans l'addon DungeonJournal
+    -- 2.0.9 (listes « requises pour débloquer », sans les quêtes facultatives) et cohérentes avec QuestieDB : An
+    -- Alarming Request (92432) se rend à l'image de Modera (269127) qui donne les deux quêtes ; Blood in the Streets
+    -- (92434) aussi, côté Horde, après Dalaran Patrols (545, qui suit Prison Break In 544). À vérifier en jeu.
+    [92457] = { 92432 }, -- Starving Arcane après An Alarming Request (Alliance)
+    [92458] = { 92432 }, -- Heart of Disruption après An Alarming Request (Alliance)
+    [96984] = { 92434 }, -- Heart of Disruption après Blood in the Streets (Horde)
+    [92434] = { 545 }, -- Blood in the Streets après Dalaran Patrols (Horde)
   },
   notes = {
     -- QuestieDB fait partir Stepping Stones des quatre objets (Burned-Out Remains et Nailed Plank, Tarides et Marche
