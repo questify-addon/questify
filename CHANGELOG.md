@@ -40,9 +40,26 @@
   opens the world map. A second click removes the marker.
 
 **Options**
+- A larger window with more room between the lines. At the bottom of the menu: the version, the changelog (shown
+  in the window) and the What's new window. The start wizard leaves Tools: /qf wizard and the minimap menu.
 - Class > Macros: a long macro no longer spills out of its box, and its keys and needs are spaced from it.
-- Theme: the objectives layout (list, bars, by quest) and details are also set here, next to the preview. They
-  are the same settings as in Tracker.
+- Class > Talents: « My points » follows the tree where you spent the most points, « My choice » the spec you
+  clicked (marked « YOUR CHOICE »). The tree tabs show each tree's icon and points, the name on hover.
+- Theme: the objectives layout (list, bars, by quest) and details are also set here, and the live preview
+  follows them. They are the same settings as in Tracker.
+- What's new: a step that leads to a wizard page opens that page alone, with Cancel and Save.
+
+**Route and navigation**
+- Change route: the current chapter and up to 4 chapters for your level (one level below their start, two above
+  their end), ranked like a fork. It no longer reopens an old fork (Westfall or Darkshore at level 30).
+- Auction house: a coin button in the tracker opens the shopping list and glows while items of the chapter are
+  left to buy; in the journal's Manual view, « To buy (N) » shows beside the steps' title.
+- Shaman: Astral Recall counts as a way home. On a hearthstone step, it is offered when the stone is on cooldown,
+  and the trip goes through the inn as soon as one of them is ready.
+- Route planner: AzerothGPS (1.3.6 or newer) follows each Questify step with its own route and arrow; Questify
+  then plans nothing and hides its arrow. The Questify arrow is now marked « (built-in) ».
+- The walking router and its maps are now part of Questify: Questify Nav, Eastern Kingdoms and Kalimdor no
+  longer show as separate addons. Delete those three folders from your AddOns folder if they are still there.
 
 ### Français
 
@@ -85,9 +102,27 @@
   la carte du monde. Un second clic retire le repère.
 
 **Options**
+- Une fenêtre plus grande, plus aérée. En bas du menu : la version, le journal des versions (dans la fenêtre) et
+  la fenêtre des nouveautés. L'assistant de départ quitte Outils : /qf wizard et le menu de la minicarte.
 - Classe > Macros : une longue macro ne déborde plus de sa boîte, et ses touches et prérequis en sont écartés.
-- Thème : la disposition des objectifs (liste, barres, par quête) et leur détail se règlent aussi ici, à côté de
-  l'aperçu. Ce sont les mêmes réglages que dans Suivi.
+- Classe > Talents : « Mes points » suit l'arbre où tu as le plus de points, « Mon choix » la spé cliquée
+  (marquée « TON CHOIX »). Les onglets de l'arbre montrent l'icône et les points de chaque arbre, le nom au survol.
+- Thème : la disposition des objectifs (liste, barres, par quête) et leur détail se règlent aussi ici, et
+  l'aperçu en direct les suit. Ce sont les mêmes réglages que dans Suivi.
+- Nouveautés : une étape qui mène à une page de l'assistant ouvre cette page seule, avec Annuler et Enregistrer.
+
+**Route et navigation**
+- Changer de route : le chapitre en cours et jusqu'à 4 chapitres de ton niveau (un niveau sous leur début, deux
+  au-dessus de leur fin), classés comme un embranchement. Plus de retour à un vieil embranchement (Marche de
+  l'Ouest ou Sombrivage au niveau 30).
+- Hôtel des ventes : un bouton pièces d'or du suivi ouvre la liste d'achats et brille tant qu'il reste des objets
+  du chapitre à acheter ; dans le journal, vue Manuel, « À acheter (N) » s'affiche à côté du titre des étapes.
+- Chaman : le Rappel astral compte comme retour au foyer. Sur une étape de pierre de foyer, il est proposé quand
+  la pierre recharge, et le trajet passe par l'auberge dès que l'un des deux est prêt.
+- Planificateur : AzerothGPS (1.3.6 ou plus) suit chaque étape de Questify avec son trajet et sa flèche ; Questify
+  ne calcule alors rien et cache sa flèche. La flèche Questify est marquée « (intégrée) ».
+- Le routeur de marche et ses cartes font partie de Questify : Questify Nav, Eastern Kingdoms et Kalimdor
+  n'apparaissent plus comme addons séparés. Supprime ces trois dossiers de ton dossier AddOns s'ils y sont encore.
 
 ## 0.8.1 (2026-11-16)
 

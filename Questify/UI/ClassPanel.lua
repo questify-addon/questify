@@ -417,6 +417,11 @@ local function specCard(parent, i)
   c:SetScript("OnEnter", function(self)
     showTip(self, { L.CLASS_SPEC_TIP, L.CLASS_SPEC_TIP_AUTO })
   end)
+  -- pastille (« tes points » ou « ton choix ») à la largeur de son texte
+  function c.auto:SetLabel(s)
+    self.text:SetText(s)
+    self:SetWidth((tonumber(self.text:GetStringWidth()) or 50) + 6)
+  end
   c:SetScript("OnLeave", hideTip)
   c.index = i
   return c
@@ -467,6 +472,19 @@ function Panel:CreateTalents(t)
   self.specHead:SetPoint("TOPLEFT", t, "TOPLEFT", 0, 0)
   self.specHead:SetPoint("TOPRIGHT", t, "TOPRIGHT", 0, 0)
   for i = 1, 3 do self.cards[i] = specCard(t, i) end
+  -- mode : suivre l'arbre où le joueur a le plus de points, ou la spé choisie à la main
+  self.specMode = segmented(t, function(v)
+    local G = Q.ClassGuide
+    if v == "auto" then
+      G:Choose(nil)
+    else
+      local cur = G:Current(G:Tree())
+      if cur then G:Choose(cur.key) end
+    end
+    Panel.treeGroup = nil
+    Panel:Refresh()
+  end, 18)
+  self.specMode:SetPoint("TOPRIGHT", t, "TOPRIGHT", 0, 2)
 
   -- arbre
   local box = CreateFrame("Frame", nil, t)
@@ -477,8 +495,15 @@ function Panel:CreateTalents(t)
     local b = CreateFrame("Button", nil, box)
     b:SetSize(TREE_W / 3, 18)
     b:SetPoint("TOPLEFT", box, "TOPLEFT", (i - 1) * TREE_W / 3, 0)
-    b.label = text(b, "GameFontHighlightSmall", "textMuted", "CENTER")
-    b.label:SetPoint("CENTER", b, "CENTER", 0, 1)
+    -- icône de l'arbre et points dépensés : le nom (trop long pour un tiers de l'arbre) en infobulle
+    b.icon = b:CreateTexture(nil, "ARTWORK")
+    b.icon:SetSize(14, 14)
+    b.icon:SetPoint("RIGHT", b, "CENTER", -2, 1)
+    if b.icon.SetTexCoord then b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92) end
+    b.label = text(b, "GameFontHighlightSmall", "textMuted", "LEFT")
+    b.label:SetPoint("LEFT", b, "CENTER", 2, 1)
+    b:SetScript("OnEnter", function(self) if self.name then showTip(self, { self.name }) end end)
+    b:SetScript("OnLeave", hideTip)
     b.line = rect(b, "accent", "ARTWORK")
     b.line:SetPoint("BOTTOMLEFT", b, "BOTTOMLEFT", 6, 0)
     b.line:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -6, 0)
@@ -617,12 +642,14 @@ function Panel:RenderTalents()
   local auto = G:AutoSpec(tree)
 
   -- spécialisations
-  self.specHead:Set(L.CLASS_SPEC, L.CLASS_SPEC_HINT)
+  self.specHead:Set(L.CLASS_SPEC, "")
+  self.specMode:Set({ { "auto", L.CLASS_SPEC_MODE_AUTO }, { "choice", L.CLASS_SPEC_MODE_CHOICE } },
+    how == "choice" and "choice" or "auto")
   local cardW = (width - 12) / 3
   for i, s in ipairs(G:Specs() or {}) do
     local c = self.cards[i]
     c:ClearAllPoints()
-    c:SetPoint("TOPLEFT", t, "TOPLEFT", (i - 1) * (cardW + 6), -22)
+    c:SetPoint("TOPLEFT", t, "TOPLEFT", (i - 1) * (cardW + 6), -26)
     c:SetWidth(cardW)
     c.key = s.key
     c.icon:SetTexture(iconPath(s.icon))
@@ -631,7 +658,15 @@ function Panel:RenderTalents()
     c.points:SetText((spent[s.group] or 0) > 0 and tostring(spent[s.group]) or "")
     local on = s.key == spec.key
     if on then paint(c.bg, "sel"); setBorder(c, "accent") else paint(c.bg, "panelAlt"); setBorder(c, "edge") end
-    if s.key == auto then c.auto:Show() else c.auto:Hide() end
+    if how == "choice" and on then
+      c.auto:SetLabel(L.CLASS_SPEC_CHOSEN)
+      c.auto:Show()
+    elseif s.key == auto then
+      c.auto:SetLabel(L.CLASS_SPEC_AUTO)
+      c.auto:Show()
+    else
+      c.auto:Hide()
+    end
     c:Show()
   end
 
@@ -642,11 +677,14 @@ function Panel:RenderTalents()
     group = ns and ns.group or spec.group
   end
   self.treeBox:ClearAllPoints()
-  self.treeBox:SetPoint("TOPLEFT", t, "TOPLEFT", 0, -66)
+  self.treeBox:SetPoint("TOPLEFT", t, "TOPLEFT", 0, -72)
   for i, s in ipairs(G:Specs() or {}) do
     local b = self.treeTabs[i]
     b.group = s.group
-    b.label:SetText(string.format("%s |c%s%d|r", G:SpecName(s, tree), hex("textDim"), spent[s.group] or 0))
+    b.icon:SetTexture(iconPath(s.icon))
+    b.icon:Show()
+    b.name = G:SpecName(s, tree)
+    b.label:SetText(tostring(spent[s.group] or 0))
     local on = s.group == group
     ink(b.label, on and "text" or "textMuted")
     if on then b.line:Show() else b.line:Hide() end

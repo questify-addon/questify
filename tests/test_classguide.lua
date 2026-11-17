@@ -372,9 +372,26 @@ return {
     t.ok(credit:find("CC BY 4.0", 1, true) and credit:find("classicwowforever.com", 1, true), "crédit")
     Mock.click(P.talentCredit)
     t.eq(P.copied, spec.url, "lien à copier")
-    -- clic sur une spé : choix gardé
+    -- mode : « mes points » au départ ; clic sur une spé : choix gardé, badge « ton choix »
+    t.eq(P.specMode.items[1].on, true, "following the points")
     Mock.click(P.cards[2])
     t.eq(Q.char.classGuide.spec, "fire")
+    t.eq(P.specMode.items[2].on, true, "manual choice")
+    t.eq(P.cards[2].auto.text:GetText(), Q.L.CLASS_SPEC_CHOSEN, "badge on the chosen spec")
+    -- retour aux points
+    Mock.click(P.specMode.items[1])
+    t.eq(Q.char.classGuide.spec, nil, "back to the points")
+    t.eq(P.cards[3].auto.text:GetText(), Q.L.CLASS_SPEC_AUTO)
+    -- choix manuel par le sélecteur : la spé suivie devient le choix
+    Mock.click(P.specMode.items[2])
+    t.eq(Q.char.classGuide.spec, "frost")
+    -- onglets de l'arbre : icône et points (le nom en infobulle), lisibles à leur largeur
+    for i = 1, 3 do
+      local b = P.treeTabs[i]
+      t.ok(b.icon:IsShown(), "tab icon " .. i)
+      t.ok(not b.label:GetText():find("%a"), "tab label: points only, got " .. tostring(b.label:GetText()))
+    end
+    Mock.click(P.cards[2])
     -- Macros
     P:ShowTab("macros")
     t.ok(P.macros:IsShown() and not P.talents:IsShown())
