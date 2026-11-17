@@ -373,7 +373,7 @@ function Travel:Plan(from, to)
     end
   end
   local inn
-  local left = Q.Hearth and Q.Hearth:Remaining()
+  local left = Q.Hearth and Q.Hearth:BestRemaining()   -- pierre ou Rappel astral (chaman)
   if left == 0 then
     local p = point({ Q.Hearth:BindPos() })
     if p then p.kind = "inn"; inn = p; nodes[#nodes + 1] = p end

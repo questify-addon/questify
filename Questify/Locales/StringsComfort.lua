@@ -28,6 +28,8 @@ Q:RegisterStrings({
     -- Pierre de foyer
     COMFORT_HEARTH_READY = "Hearthstone ready",
     COMFORT_HEARTH_WAIT = "Hearthstone in %s",
+    COMFORT_RECALL_READY = "Astral Recall ready",
+    COMFORT_RECALL_WAIT = "Astral Recall in %s",
     COMFORT_HEARTH_WALK = "On foot: about %s (%s)",
     COMFORT_HEARTH_FLY = "Faster: fly to %s",
     COMFORT_HEARTH_BIND = "Current home: %s",
@@ -79,6 +81,8 @@ Q:RegisterStrings({
 
     COMFORT_HEARTH_READY = "Pierre prête",
     COMFORT_HEARTH_WAIT = "Pierre dans %s",
+    COMFORT_RECALL_READY = "Rappel astral prêt",
+    COMFORT_RECALL_WAIT = "Rappel astral dans %s",
     COMFORT_HEARTH_WALK = "À pied : environ %s (%s)",
     COMFORT_HEARTH_FLY = "Plus rapide : vol vers %s",
     COMFORT_HEARTH_BIND = "Foyer actuel : %s",

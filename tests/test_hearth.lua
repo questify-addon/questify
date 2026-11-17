@@ -61,6 +61,32 @@ return {
     t.ok(has(trackerText(Q), "30 min"), "tracker refreshed")
   end,
 
+  -- Chaman : Rappel astral (556, 15 min) proposé quand la pierre attend.
+  shaman_astral_recall = function(t)
+    local Q = load()
+    local cur = hearthStep(Q)
+    local recall = { startTime = 0, duration = 0 }
+    IsPlayerSpell = function(id) return id == 556 end
+    C_Spell = C_Spell or {}
+    local saved = C_Spell.GetSpellCooldown
+    C_Spell.GetSpellCooldown = function(id) if id == 556 then return recall end end
+    cooldown(30 * 60)
+    local lines = Q.Hearth:Lines(cur)
+    t.eq(plain(lines[1]), Q.L.COMFORT_RECALL_READY, "stone waiting, recall ready")
+    t.eq(plain(lines[2]), string.format(Q.L.COMFORT_HEARTH_WAIT, "30 min"))
+    t.eq(Q.Hearth:BestRemaining(), 0)
+    recall = { startTime = Mock.now, duration = 15 * 60 }
+    lines = Q.Hearth:Lines(cur)
+    t.eq(plain(lines[1]), string.format(Q.L.COMFORT_HEARTH_WAIT, "30 min"))
+    t.eq(plain(lines[2]), string.format(Q.L.COMFORT_RECALL_WAIT, "15 min"))
+    t.ok(lines[3], "travel hint for the soonest return")
+    t.eq(Q.Hearth:BestRemaining(), 15 * 60)
+    IsPlayerSpell = nil
+    C_Spell.GetSpellCooldown = saved
+    t.eq(Q.Hearth:RecallRemaining(), nil, "not a shaman")
+    t.eq(#Mock.errors, 0)
+  end,
+
   no_hint_when_ready_soon = function(t)
     local Q = load()
     local cur = hearthStep(Q)
