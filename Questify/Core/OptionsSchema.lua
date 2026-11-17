@@ -215,14 +215,15 @@ add({ id = "routeClicks", section = "route", category = "progress", type = "info
 add({ id = "nav.router", section = "navigation", category = "routing", type = "select", path = "nav.router",
   label = "OPT_NAV_ROUTER", tip = "OPT_TIP_NAV_ROUTER", style = "radio",
   keywords = "routeur itineraire trajet calcul chemin vols bateaux portails shortestpath spf aucun "
-    .. "router route planning path planner flights boats portals none",
-  values = { "questify", "spf", "none" },
+    .. "router route planning path planner flights boats portals none azerothgps gps",
+  values = { "questify", "spf", "azerothgps", "none" },
   choices = function()
     local d = detected()
     local Lx = L()
     return {
       { value = "questify", text = Lx.NAV_ROUTER_QUESTIFY, disabled = d.questify == false },
       { value = "spf", text = Lx.NAV_ROUTER_SPF, disabled = not d.shortestpath },
+      { value = "azerothgps", text = Lx.NAV_ROUTER_AZEROTHGPS, disabled = not d.azerothgps },
       { value = "none", text = Lx.NAV_ROUTER_NONE },
     }
   end })

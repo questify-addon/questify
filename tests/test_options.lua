@@ -343,6 +343,31 @@ return {
     noErrors(t)
   end,
 
+  -- AzerothGPS (1.3.6 et plus suit Questify lui-même, par Questify.Nav:Status) : choix du planificateur grisé
+  -- tant qu'il manque ; choisi, Questify ne calcule plus de trajet et cache sa flèche (celle d'AzerothGPS suit).
+  azerothgps_is_a_route_planner = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    O:Open("navigation")
+    local router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.azerothgps and not router.azerothgps:IsEnabled(), "greyed without AzerothGPS")
+    t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.router"), "azerothgps"), "missing addon refused")
+    AzerothGPS = { version = 20 }
+    O:Open("navigation")
+    router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.azerothgps:IsEnabled(), "AzerothGPS installed")
+    Mock.click(router.azerothgps, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "azerothgps")
+    t.eq((Q.Nav:Active()), "azerothgps", "AzerothGPS plans the trip")
+    t.ok(not Q.OptionsSchema:Enabled(Q.OptionsSchema:Entry("nav.routeStyle")), "no Questify route style")
+    AzerothGPS = nil
+    t.eq((Q.Nav:Active()), "questify", "AzerothGPS gone: back to Questify")
+    t.ok(type(Questify) == "table" and type(Questify.Nav.Status) == "function", "what AzerothGPS reads")
+    noErrors(t)
+  end,
+
   -- Style de trajet et de ligne : propres au routeur Questify, grisés avec SPF ou sans routeur ;
   -- verrou de la flèche : grisé quand la flèche ne s'affiche pas (SPF, autre affichage).
   nav_options_follow_the_router = function(t)

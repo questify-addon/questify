@@ -1,7 +1,9 @@
 local addonName, Q = ...
 
 -- Navigation : une seule interface (SetTarget / Clear), deux réglages (spec du routeur intégré, § 5) :
---   nav.router  : "questify" (Questify_Nav, défaut), "spf" (ShortestPath Forever) ou "none" ;
+--   nav.router  : "questify" (Questify_Nav, défaut), "spf" (ShortestPath Forever), "azerothgps" (AzerothGPS
+--                 1.3.6 et plus suit lui-même la cible de Questify par Questify.Nav:Status : Questify ne calcule
+--                 rien et cache sa flèche) ou "none" ;
 --   nav.display : "arrow" (flèche Questify, défaut), "waypointui", "tomtom" ou "native".
 -- Chaque pose ou retrait de cible est annoncé : Q:Fire("NAV_TARGET", { mapId, x, y, title } ou nil),
 -- en 0-100, quel que soit le routeur (Nav:Active() dit qui calcule). Avec le routeur Questify, le
@@ -44,6 +46,11 @@ local function hasWaypointUI()
     and type(WaypointUIAPI.Navigation.NewUserNavigation) == "function"
 end
 
+-- AzerothGPS (API publique _G.AzerothGPS) : il lit la cible de Questify lui-même (son module Questify.lua).
+local function hasAzerothGPS()
+  return type(AzerothGPS) == "table"
+end
+
 local function hasTomTom()
   return type(TomTom) == "table" and type(TomTom.AddWaypoint) == "function"
 end
@@ -67,6 +74,7 @@ function Nav:Detect()
   return {
     questify = hasQuestifyNav(),
     shortestpath = hasShortestPath(),
+    azerothgps = hasAzerothGPS(),
     waypointui = hasWaypointUI(),
     tomtom = hasTomTom(),
     native = true,
@@ -82,7 +90,13 @@ end
 local function questifyOn()
   local router = Q.Settings:Get("nav.router")
   if router == "spf" and not hasShortestPath() then router = "questify" end
+  if router == "azerothgps" and not hasAzerothGPS() then router = "questify" end
   return router == "questify" and hasQuestifyNav()
+end
+
+-- AzerothGPS trace-t-il le trajet ? (choisi et chargé)
+local function azerothOn()
+  return Q.Settings:Get("nav.router") == "azerothgps" and hasAzerothGPS()
 end
 
 -- Fournisseur d'affichage effectif : celui du réglage, sinon la flèche Questify s'il manque.
@@ -97,10 +111,11 @@ local function displayProvider()
   return "arrow"
 end
 
--- Active() -> routeur qui calcule ("questify", "shortestpath") ou nil, fournisseur d'affichage.
+-- Active() -> routeur qui calcule ("questify", "shortestpath", "azerothgps") ou nil, fournisseur d'affichage.
 -- Quand ShortestPath calcule, c'est lui qui transmet la destination à cet affichage.
 function Nav:Active()
-  local router = (routingOn() and "shortestpath") or (questifyOn() and "questify") or nil
+  local router = (routingOn() and "shortestpath") or (azerothOn() and "azerothgps") or (questifyOn() and "questify")
+    or nil
   return router, displayProvider()
 end
 

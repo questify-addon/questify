@@ -635,12 +635,14 @@ return {
 
   detect_lists_installed_providers = function(t)
     local Q = load()
-    t.eq(Q.Nav:Detect(), { questify = true, shortestpath = false, waypointui = false, tomtom = false, native = true })
+    t.eq(Q.Nav:Detect(), { questify = true, shortestpath = false, azerothgps = false, waypointui = false, tomtom = false,
+      native = true })
     Mock.reset()
     Mock.addons.TomTom = true
     Mock.addons.ShortestPathForever = true
     local Q2 = load()
-    t.eq(Q2.Nav:Detect(), { questify = true, shortestpath = true, waypointui = false, tomtom = true, native = true })
+    t.eq(Q2.Nav:Detect(), { questify = true, shortestpath = true, azerothgps = false, waypointui = false, tomtom = true,
+      native = true })
     t.eq(Q2.Nav:ProviderLabel("native"), "Built-in waypoint")
     t.eq(Q2.Nav:ProviderLabel("arrow"), "Questify arrow")
     t.eq(Q2.Nav:ProviderLabel("questify"), "Questify Nav")
@@ -665,7 +667,7 @@ return {
     for k in pairs(captured.enUS) do t.ok(captured.frFR[k], "frFR has " .. k) end
     for k in pairs(captured.frFR) do t.ok(captured.enUS[k], "enUS has " .. k) end
     t.eq(captured.frFR.NAV_ROUTER_QUESTIFY, "Questify (intégré)")
-    t.eq(captured.frFR.UI_NAV_ARROW, "Flèche Questify")
+    t.eq(captured.frFR.UI_NAV_ARROW, "Flèche Questify (intégrée)")
   end,
 
   step_target_follows_the_current_step = function(t)
