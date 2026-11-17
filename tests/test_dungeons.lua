@@ -298,6 +298,29 @@ return {
     noErrors(t)
   end,
 
+  adding_a_dungeon_replaces_the_one_already_added = function(t)
+    alliance(17)
+    -- second donjon Alliance : une quête de DM (167) déplacée dans un donjon voisin
+    local data = testData()
+    local dm = data[2].quests.Alliance
+    local moved = table.remove(dm, 2)
+    data[#data + 1] = { key = "DM2", name = "Other Dungeon", areaId = 1582, minLevel = 17, maxLevel = 26,
+      factions = { "Alliance" }, entrance = { 1436, 40, 70 }, entranceSource = "manual",
+      quests = { Alliance = { moved } } }
+    local Q = load({ data = data })
+    t.eq(Q.Dungeons:Add("DM"), true)
+    t.ok(#tagged(Q, "dg:DM") > 0)
+    t.eq(Q.Dungeons:Add("DM2"), true)
+    t.eq(#tagged(Q, "dg:DM"), 0, "the first dungeon's steps leave the route")
+    t.ok(#tagged(Q, "dg:DM2") > 0)
+    t.eq(Q.char.dungeons.added.DM, nil)
+    t.eq(Q.char.dungeons.added.DM2, true)
+    t.eq(stateOf(Q, "DM"), "available", "the replaced dungeon can be added again")
+    t.eq(stateOf(Q, "DM2"), "added")
+    t.eq(Q.Progress:Current().key, "i:dg:DM2:1")
+    noErrors(t)
+  end,
+
   dungeon_removes_itself_when_everything_is_turned_in = function(t)
     alliance(17)
     local Q = load()
@@ -479,15 +502,15 @@ return {
     t.ok(row.selected:IsShown(), "first suggested dungeon selected")
     -- détail du donjon choisi
     t.eq(J.dgTitle:GetText(), "The Deadmines")
-    t.ok(plain(J.dgMeta:GetText()):find(Q.L.DUNGEON_STATE_AVAILABLE, 1, true), "state shown")
+    t.eq(J.dgStateChip.text:GetText(), Q.L.DUNGEON_STATE_AVAILABLE, "state shown")
     local item = J.dgItem
     t.ok(item.todo > 0, "quests to do")
-    t.eq(plain(J.dgScore:GetText()), string.format(Q.L.DUNGEON_SCORE, item.todo, item.now))
-    t.ok(J.dgLines[1]:IsShown(), "quest lines")
+    t.ok(plain(J.dgSummary.text:GetText()):find(string.format(Q.L.DUNGEON_SUM_PICK, item.now), 1, true), "summary")
+    t.ok(J.dgQRows[1]:IsShown(), "quest rows")
     t.ok(J.dgAdd:IsShown() and J.dgIgnore:IsShown())
     Mock.click(J.dgAdd, "LeftButton")
     t.eq(stateOf(Q, "DM"), "added")
-    t.ok(plain(J.dgMeta:GetText()):find(Q.L.DUNGEON_STATE_ADDED, 1, true), "refreshed")
+    t.eq(J.dgStateChip.text:GetText(), Q.L.DUNGEON_STATE_ADDED, "refreshed")
     t.ok(J.dgRows[1].routeDot:IsShown(), "route mark in the list")
     Mock.click(J.dgIgnore, "LeftButton")
     t.ok(J.dgUnignore:IsShown(), "Réactiver")

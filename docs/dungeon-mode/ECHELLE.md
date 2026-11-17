@@ -1,6 +1,6 @@
 # Mode « Donjons » Alliance : échelle 1-60
 
-Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-13 à partir de
+Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
 `tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 
@@ -29,7 +29,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 | 5 | 26 | Blackfathom Deeps | 24-32 | 5 | 5875 | 16 % | ★★ | Ashenvale (24-27) | Stonetalon Mountains (24-27) |
 | 6 | 26 | Excavation Site: Wetlands | 24-29 | 7 | ~4950 | 14 % | ★★ | Wetlands (24-28) | Wetlands (26-29) |
 | 7 | 27 | Shadowfang Keep | 22-30 | 0 | 0 | 0 % | — | Hillsbrad Foothills (26-28) | Hillsbrad Foothills (27-29) |
-| 8 | 30 | City of Dalaran | 28-33 | 4 | ~5300 | 11 % | ★ | Duskwood (27-30) ; Alterac Mountains (30, accès) | Hillsbrad Foothills (29-32) |
+| 8 | 30 | City of Dalaran | 28-33 | 5 | ~5960 | 13 % | ★★ | Duskwood (27-30) ; Alterac Mountains (30, accès) | Hillsbrad Foothills (29-32) |
 | 9 | 30 | Scarlet Monastery : Graveyard | 28-38 | 0 | 0 | 0 % | — | Hillsbrad Foothills (29-31) | Thousand Needles (29-32) |
 | 10 | 31 | Gnomeregan | 29-38 | 13 | 12625 | 25 % | ★★ | Ironforge (30-31, accès) | Thousand Needles (30-33) |
 | 11 | 31 | Scarlet Monastery : Library | 29-39 | 2 | ~3200 | 6 % | ★ | Ironforge (31, accès) | Arathi Highlands (31-34) |
@@ -126,6 +126,7 @@ Aucune quête Alliance.
 
 ### City of Dalaran (`DALARAN`, entrée 30)
 
+- 92432 An Alarming Request : 660 XP
 - 92456 A Green Sample : ~1325 XP
 - 92457 Starving Arcane : ~1325 XP
 - 92458 Heart of Disruption : ~1325 XP

@@ -988,6 +988,15 @@ function Mock.installMapLibsApi(P)
     return newPool(createFunc, resetFunc)
   end
   WorldMapFrame = newWorldMap()
+  -- ouverture de la carte du monde (Blizzard_WorldMap) : affichée sur la carte donnée
+  OpenWorldMap = function(mapID)
+    Mock.record("OpenWorldMap", mapID)
+    WorldMapFrame:Show()
+    if mapID then WorldMapFrame:SetMapID(mapID) end
+  end
+  ToggleWorldMap = function()
+    if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
+  end
 end
 
 local function installApi()

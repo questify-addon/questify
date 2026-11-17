@@ -1,6 +1,6 @@
 # Mode « Donjons » Horde : échelle 1-60
 
-Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-15 à partir de
+Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
 `tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 

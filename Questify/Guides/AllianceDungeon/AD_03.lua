@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Simulation : 17 étapes, niveau final 19.66, ~4081 xp/h, 29 min.
 Q:RegisterGuide({
   id = "AD_03",
@@ -27,8 +27,8 @@ Q:RegisterGuide({
     { "complete", 167, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Oh Brother. . . (lvl 20, ~775 xp, sim lvl 19)
     { "complete", 168, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Collecting Memories (lvl 18, ~675 xp, sim lvl 19)
     { "complete", 2040, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Underground Assault (lvl 20, ~775 xp, sim lvl 19)
-    { "turnin", 167, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Oh Brother. . . (lvl 20, ~775 xp, sim lvl 19)
-    { "turnin", 168, xp = 675, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Collecting Memories (lvl 18, ~675 xp, sim lvl 19)
-    { "turnin", 2040, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Underground Assault (lvl 20, ~775 xp, sim lvl 19)
+    { "turnin", 167, at = { 1453, 70.31, 40.82 }, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Oh Brother. . . (lvl 20, ~775 xp, sim lvl 19)
+    { "turnin", 168, at = { 1453, 70.31, 40.82 }, xp = 675, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Collecting Memories (lvl 18, ~675 xp, sim lvl 19)
+    { "turnin", 2040, at = { 1453, 62.63, 34.11 }, xp = 775, race = { "Dwarf", "Gnome" }, optional = true, dungeon = "The Deadmines", phase = "run", rung = "DM" }, -- Underground Assault (lvl 20, ~775 xp, sim lvl 19)
   },
 })

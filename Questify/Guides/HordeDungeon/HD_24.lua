@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-15.
--- Simulation : 28 étapes, niveau final 52.00, ~63567 xp/h, 142 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 28 étapes, niveau final 52.00, ~65000 xp/h, 139 min.
 Q:RegisterGuide({
   id = "HD_24",
   title = "Blasted Lands",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 51, maxLevel = 52,
   next = "HD_25",
-  sim = { steps = 28, endLevel = 52.00, xpPerHour = 63567, minutes = 142 },
+  sim = { steps = 28, endLevel = 52.00, xpPerHour = 65000, minutes = 139 },
   steps = {
     { "accept", 2601, alt = "ST", below = 52 }, -- The Basilisk's Bite (lvl 50, ~4700 xp, sim lvl 51)
     { "accept", 81917, alt = "ST", below = 52 }, -- Chains That Bind (lvl 54, ~5450 xp, sim lvl 51)

@@ -77,6 +77,8 @@ local function objectivesOf(questId)
   return table.concat(lines, "\n")
 end
 
+Popup.ObjectivesText = objectivesOf
+
 -- Donneur (PNJ, objet du monde ou objet) le plus proche du joueur parmi ceux de la quête, et sa
 -- zone (Q.ClassQuests:Starter).
 local function starterOf(questId)

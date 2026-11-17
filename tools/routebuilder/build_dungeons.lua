@@ -57,13 +57,15 @@ local MAX_BC_DEPTH = 3
 ---------------------------------------------------------------------------
 local function parseArgs(argv)
   local o = { db = qdb.DEFAULT_DB, questie = qdb.DEFAULT_QUESTIE, data = "tools/routebuilder/data",
-              out = "Questify/Guides/DungeonData.lua", date = os.date("%Y-%m-%d") }
+              out = "Questify/Guides/DungeonData.lua", date = os.date("%Y-%m-%d"),
+              overrides = "tools/routebuilder/overrides.lua" }
   local i = 1
   while i <= #argv do
     local k, v = argv[i], argv[i + 1]
     if k == "--db" then o.db = v elseif k == "--questie" then o.questie = v
     elseif k == "--data" then o.data = v elseif k == "--out" then o.out = v
     elseif k == "--date" then o.date = v
+    elseif k == "--overrides" then o.overrides = v
     else error("option inconnue : " .. tostring(k)) end
     i = i + 2
   end
@@ -94,37 +96,46 @@ local function loadDungeonSupport(dbRoot)
   return modules.ZoneDB.private.dungeons or {}
 end
 
--- Première position d'une liste de spawns { [uiMapId] = { {x, y}, ... } } sur une carte de zone
--- (Type 3 : zone ou ville, jamais une instance), hors capitale de l'autre faction.
-local function locate(W, spawns, faction)
+-- Position d'une liste de spawns { [uiMapId] = { {x, y}, ... } } sur une carte de zone (Type 3 : zone ou
+-- ville, jamais une instance), hors capitale de l'autre faction : la plus proche de `near` (entrée du donjon)
+-- quand il est donné, sinon la première (cartes par ID croissant). Un PNJ placé en plusieurs lieux (l'image de
+-- Modera : Austrebrune, la rive du lac devant la Cité de Dalaran, Alterac) est ainsi noté devant l'entrée, là
+-- où se font les rendus ; l'addon choisit lui-même le lieu de prise le plus proche du personnage.
+local function locate(W, spawns, faction, near)
+  local best, bestD
   for _, m in ipairs(qdb.sortedKeys(spawns or {})) do
     local info = W.maps[m]
     local owner = CAPITAL[m]
     if info and info.type == 3 and (owner == nil or owner == faction) then
-      local p = spawns[m][1]
-      if p and p[1] and p[2] then return { m, round2(p[1]), round2(p[2]) } end
+      for _, p in ipairs(spawns[m]) do
+        if p and p[1] and p[2] then
+          if not near then return { m, round2(p[1]), round2(p[2]) } end
+          local d = W.dist(near[1], near[2], near[3], m, p[1], p[2]) or math.huge
+          if not best or d < bestD then best, bestD = { m, round2(p[1]), round2(p[2]) }, d end
+        end
+      end
     end
   end
-  return nil
+  return best
 end
 
 -- PNJ amical (ou neutre) pour la faction, avec une position utilisable -> id, position.
-local function npcLocation(W, D, ids, faction)
+local function npcLocation(W, D, ids, faction, near)
   for _, id in ipairs(ids or {}) do
     local n = D.npcs[id]
     local fr = n and n.friendly
     if n and (fr == nil or fr:find(LETTER[faction], 1, true)) then
-      local at = locate(W, n.spawns, faction)
+      local at = locate(W, n.spawns, faction, near)
       if at then return id, at end
     end
   end
   return nil
 end
 
-local function objectLocation(W, D, ids, faction)
+local function objectLocation(W, D, ids, faction, near)
   for _, id in ipairs(ids or {}) do
     local o = D.objects[id]
-    local at = o and locate(W, o.spawns, faction)
+    local at = o and locate(W, o.spawns, faction, near)
     if at then return id, at end
   end
   return nil
@@ -143,20 +154,20 @@ local function talkOnly(q)
 end
 
 -- Entrée de données d'une quête (positions de départ et de fin, niveaux, masques, préquêtes).
-local function questEntry(W, D, q, faction)
+local function questEntry(W, D, q, faction, near)
   local e = { id = q.id, name = q.name, level = q.level, reqLevel = q.reqLevel }
   if q.races and q.races ~= 0 then e.races = q.races end
   if q.classes and q.classes ~= 0 then e.classes = q.classes end
   if #q.preSingle > 0 then e.pre = q.preSingle end
   if #q.preGroup > 0 then e.preAll = q.preGroup end
-  local giver, at = npcLocation(W, D, q.starters.npcs, faction)
+  local giver, at = npcLocation(W, D, q.starters.npcs, faction, near)
   if giver then
     e.giver, e.at = giver, at
   else
-    local obj, oat = objectLocation(W, D, q.starters.objects, faction)
+    local obj, oat = objectLocation(W, D, q.starters.objects, faction, near)
     if obj then e.obj, e.at = obj, oat end
   end
-  local ender, endAt = npcLocation(W, D, q.finishers.npcs, faction)
+  local ender, endAt = npcLocation(W, D, q.finishers.npcs, faction, near)
   if ender then e.ender, e.endAt = ender, endAt end
   return e
 end
@@ -164,12 +175,12 @@ end
 ---------------------------------------------------------------------------
 -- Quêtes d'un donjon pour une faction
 ---------------------------------------------------------------------------
-local function collectQuests(W, D, areas, faction)
+local function collectQuests(W, D, areas, faction, near)
   local list, listed = {}, {}
   for _, id in ipairs(qdb.sortedKeys(D.quests)) do
     local q = D.quests[id]
     if areas[q.zoneOrSort] and basicOk(q, faction) then
-      local e = questEntry(W, D, q, faction)
+      local e = questEntry(W, D, q, faction, near)
       if e.at then
         -- sans objectif (parler à quelqu'un) : l'addon peut l'enchaîner avant une quête qui la demande
         if talkOnly(q) then e.talk = true end
@@ -186,7 +197,7 @@ local function collectQuests(W, D, areas, faction)
     if listed[id] or depth > MAX_BC_DEPTH then return end
     local q = D.quests[id]
     if not (q and basicOk(q, faction) and talkOnly(q)) then return end
-    local e = questEntry(W, D, q, faction)
+    local e = questEntry(W, D, q, faction, near)
     if not (e.giver and e.at) then return end
     e.bc = true
     list[#list + 1] = e; listed[id] = true
@@ -258,6 +269,20 @@ function M.emitRewards(rewards)
   return table.concat(lines, "\n") .. "\n"
 end
 
+-- Texte Lua de Q.QuestPrereqFix : préquêtes que QuestieDB ne connaît pas (overrides.lua, champ pre), au moins une
+-- exigée. Engine/Dungeons.lua les ajoute à celles de QuestieDB, qu'il lit en jeu.
+function M.emitPrereqFix(pre)
+  local lines = {
+    "-- Préquêtes absentes de QuestieDB (tools/routebuilder/overrides.lua) : au moins une doit être rendue.",
+    "Q.QuestPrereqFix = {",
+  }
+  for _, id in ipairs(qdb.sortedKeys(pre or {})) do
+    lines[#lines + 1] = ("  [%d] = { %s },"):format(id, table.concat(pre[id], ", "))
+  end
+  lines[#lines + 1] = "}"
+  return table.concat(lines, "\n") .. "\n"
+end
+
 ---------------------------------------------------------------------------
 -- Écriture
 ---------------------------------------------------------------------------
@@ -288,7 +313,11 @@ local function main(argv)
   local o = parseArgs(argv)
   local W = world.load(o.data)
   local Ds = {}
-  for _, f in ipairs(FACTIONS) do Ds[f] = qdb.load({ db = o.db, questie = o.questie, faction = f }) end
+  local ov = {}
+  if o.overrides and o.overrides ~= "" then ov = dofile(o.overrides) end
+  for _, f in ipairs(FACTIONS) do
+    Ds[f] = qdb.addPrereqs(qdb.load({ db = o.db, questie = o.questie, faction = f }), ov.pre)
+  end
   local support = loadDungeonSupport(o.db)
 
   local out, rewards = {}, {}
@@ -312,7 +341,7 @@ local function main(argv)
                 name = (entry and entry[1]) or Ds.Alliance.areaName[def.area] or def.key,
                 entrance = entrance, source = source, quests = {}, factions = {} }
     for _, f in ipairs(FACTIONS) do
-      local list = collectQuests(W, Ds[f], areas, f)
+      local list = collectQuests(W, Ds[f], areas, f, entrance)
       local town = 0
       for _, e in ipairs(list) do if not e.inside and not e.bc then town = town + 1 end end
       local allowed = town > 0 and (def.only == nil or def.only == f)
@@ -373,6 +402,7 @@ local function main(argv)
   end
   lines[#lines + 1] = "}"
   lines[#lines + 1] = M.emitRewards(rewards)
+  lines[#lines + 1] = M.emitPrereqFix(ov.pre)
   local f = assert(io.open(o.out, "w"))
   f:write(table.concat(lines, "\n"), "\n")
   f:close()

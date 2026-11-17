@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-15.
--- Simulation : 60 étapes, niveau final 35.00, ~34939 xp/h, 206 min.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Simulation : 60 étapes, niveau final 35.00, ~34980 xp/h, 208 min.
 Q:RegisterGuide({
   id = "HD_11",
   title = "Desolace",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 33, maxLevel = 35,
   next = "HD_12",
-  sim = { steps = 60, endLevel = 35.00, xpPerHour = 34939, minutes = 206 },
+  sim = { steps = 60, endLevel = 35.00, xpPerHour = 34980, minutes = 208 },
   steps = {
     { "accept", 92755, alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- Mysterious Mysticism (lvl 35, ~2050 xp, sim lvl 33)
     { "turnin", 92755, xp = 2050, alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- Mysterious Mysticism (lvl 35, ~2050 xp, sim lvl 33)
@@ -72,6 +72,6 @@ Q:RegisterGuide({
     { "turnin", 1436, xp = 2650, alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- Alliance Relations (lvl 33, ~2650 xp, sim lvl 34)
     { "goto", 1454, 45.12, 63.89, note = "Flight master", alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- déplacement
     { "fly", 1442, node = 29, note = "Sun Rock Retreat, Stonetalon Mountains", alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- vol
-    { "level", 35, at = { 1443, 69.99, 58.55 }, note = "About 59 more mobs here (Raging Thunder Lizard, level 33)", alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- farm de niveau
+    { "level", 35, at = { 1443, 69.99, 58.55 }, note = "About 66 more mobs here (Raging Thunder Lizard, level 33)", alt = { "SFK", "EXCAVATION", "DALARAN", "SM_GY", "SM_LIB", "RFK" }, below = 35 }, -- farm de niveau
   },
 })

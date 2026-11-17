@@ -561,6 +561,14 @@ function Nav:HasManualTarget()
   return manual == true
 end
 
+-- Rend la main à l'étape courante après une cible choisie par le joueur (repère retiré dans le journal).
+function Nav:ReleaseManual()
+  if not manual then return false end
+  manual = nil
+  self:Refresh()
+  return true
+end
+
 -- Status() -> copie de l'état pour /qf check et /qf bug :
 -- { target = { mapId, x, y, title } ou nil, provider = fournisseur posé ou nil,
 --   wanted = fournisseur qui serait utilisé, retryPending = bool,

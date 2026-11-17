@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-13.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Simulation : 74 étapes, niveau final 21.40, ~19443 xp/h, 125 min.
 Q:RegisterGuide({
   id = "AD_04",
@@ -81,11 +81,11 @@ Q:RegisterGuide({
     { "complete", 959, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Trouble at the Docks (lvl 18, ~675 xp, sim lvl 21)
     { "complete", 1486, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Hides (lvl 17, ~800 xp, sim lvl 21)
     { "complete", 1487, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Eradication (lvl 21, ~1025 xp, sim lvl 21)
-    { "turnin", 959, xp = 675, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Trouble at the Docks (lvl 18, ~675 xp, sim lvl 21)
-    { "turnin", 1486, xp = 800, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Hides (lvl 17, ~800 xp, sim lvl 21)
-    { "turnin", 1487, xp = 1025, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Eradication (lvl 21, ~1025 xp, sim lvl 21)
+    { "turnin", 959, at = { 1413, 63.09, 37.61 }, xp = 675, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Trouble at the Docks (lvl 18, ~675 xp, sim lvl 21)
+    { "turnin", 1486, at = { 1413, 45.99, 35.66 }, xp = 800, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Hides (lvl 17, ~800 xp, sim lvl 21)
+    { "turnin", 1487, at = { 1413, 46.01, 35.74 }, xp = 1025, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- Deviate Eradication (lvl 21, ~1025 xp, sim lvl 21)
     { "accept", 6981, optional = true, dungeon = "Wailing Caverns", note = "Starts inside the dungeon", phase = "run", rung = "WC" }, -- The Glowing Shard (lvl 26, ~1325 xp, sim lvl 21)
     { "complete", 6981, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- The Glowing Shard (lvl 26, ~1325 xp, sim lvl 21)
-    { "turnin", 6981, xp = 1325, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- The Glowing Shard (lvl 26, ~1325 xp, sim lvl 21)
+    { "turnin", 6981, at = { 1413, 48.18, 32.78 }, xp = 1325, optional = true, dungeon = "Wailing Caverns", phase = "run", rung = "WC" }, -- The Glowing Shard (lvl 26, ~1325 xp, sim lvl 21)
   },
 })

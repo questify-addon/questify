@@ -2,7 +2,7 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-15.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Simulation : 12 étapes, niveau final 16.22, ~3432 xp/h, 12 min.
 Q:RegisterGuide({
   id = "HD_02",
@@ -23,7 +23,7 @@ Q:RegisterGuide({
     { "goto", 1454, 52.6, 49, optional = true, dungeon = "Ragefire Chasm", note = "Dungeon: Ragefire Chasm (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "RFC" }, -- déplacement
     { "complete", 5728, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Hidden Enemies (lvl 16, ~575 xp, sim lvl 16)
     { "complete", 5761, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Slaying the Beast (lvl 16, ~575 xp, sim lvl 16)
-    { "turnin", 5728, xp = 575, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Hidden Enemies (lvl 16, ~575 xp, sim lvl 16)
-    { "turnin", 5761, xp = 575, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Slaying the Beast (lvl 16, ~575 xp, sim lvl 16)
+    { "turnin", 5728, at = { 1454, 31.73, 37.82 }, xp = 575, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Hidden Enemies (lvl 16, ~575 xp, sim lvl 16)
+    { "turnin", 5761, at = { 1454, 49.47, 50.59 }, xp = 575, race = { "Orc", "Troll" }, optional = true, dungeon = "Ragefire Chasm", phase = "run", rung = "RFC" }, -- Slaying the Beast (lvl 16, ~575 xp, sim lvl 16)
   },
 })

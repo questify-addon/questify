@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeon_route.lua. Ne pas modifier à la main :
 -- corriger tools/routebuilder/dungeon_ladder.lua, puis relancer le script.
--- Source : Questify/Guides/DungeonData.lua (QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce), généré le 2026-11-15.
+-- Source : Questify/Guides/DungeonData.lua (QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce), généré le 2026-11-17.
 -- Échelles du mode « Donjons », par faction : un échelon par donjon 5 joueurs ou par aile, dans l'ordre joué.
 -- entry = niveau d'entrée conseillé ; quests = quêtes de l'échelon pour la faction ; xp = somme de leur XP de
 -- base (est = au moins une valeur estimée) ; pct = part du niveau d'entrée ; stars = 0 à 3 (0 : aucune quête).
@@ -25,7 +25,7 @@ Q.DungeonRouteData = {
       { key = "SFK", dungeon = "SFK", name = "Shadowfang Keep", areaId = 209, minLevel = 22, maxLevel = 30, entry = 27,
         quests = {  }, xp = 0, pct = 0.000, stars = 0 },
       { key = "DALARAN", dungeon = "DALARAN", name = "City of Dalaran", areaId = 16544, minLevel = 28, maxLevel = 33, entry = 30,
-        quests = { 92456, 92457, 92458, 92489 }, xp = 5300, est = true, pct = 0.112, stars = 1 },
+        quests = { 92432, 92456, 92457, 92458, 92489 }, xp = 5960, est = true, pct = 0.126, stars = 2 },
       { key = "SM_GY", dungeon = "SM", wing = "Graveyard", name = "Scarlet Monastery", areaId = 796, minLevel = 28, maxLevel = 38, entry = 30,
         quests = {  }, xp = 0, pct = 0.000, stars = 0 },
       { key = "GNOMER", dungeon = "GNOMER", name = "Gnomeregan", areaId = 721, minLevel = 29, maxLevel = 38, entry = 31,
