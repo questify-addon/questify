@@ -90,20 +90,6 @@ while IFS= read -r line; do
       ;;
   esac
 done < "$TOC"
-# TOC du routeur de marche : chaque fichier listé doit exister dans son dossier.
-for nav in "${NAV_ADDONS[@]}"; do
-  navtoc="$ROOT/$nav/$nav.toc"
-  [ -f "$navtoc" ] || fail "TOC introuvable : $navtoc"
-  while IFS= read -r line; do
-    line="$(printf '%s' "$line" | tr -d '\r')"
-    case "$line" in ""|"#"*) continue ;; esac
-    rel="${line//\\//}"
-    if [ ! -f "$ROOT/$nav/$rel" ]; then
-      echo "fichier du TOC absent : $nav/$rel" >&2
-      missing=1
-    fi
-  done < "$navtoc"
-done
 [ "$missing" -eq 0 ] || fail "des fichiers listés dans le TOC ou dans un XML sont absents"
 echo "OK"
 
@@ -121,20 +107,17 @@ stageAddon() {
   if [ -f "$ROOT/LICENSE" ]; then
     cp "$ROOT/LICENSE" "$dir/$ADDON/LICENSE" || fail "copie de LICENSE échouée"
   fi
-  for nav in "${NAV_ADDONS[@]}"; do
-    cp -R "$ROOT/$nav" "$dir/$nav" || fail "copie de $nav échouée"
-  done
   find "$dir" \( -name '.DS_Store' -o -name '._*' -o -name '*.swp' -o -name '*~' \) -delete
 }
 
-# zipAddon <saveur> : zippe $STAGE/<saveur>/ (les quatre dossiers) en dist/Questify-<version>-<saveur>.zip.
+# zipAddon <saveur> : zippe $STAGE/<saveur>/ (le dossier Questify) en dist/Questify-<version>-<saveur>.zip.
 zipAddon() {
   ZIP="$ROOT/dist/$ADDON-$VERSION-$1.zip"
   rm -f "$ZIP"
   ( cd "$STAGE/$1" && zip -r -X -q "$ZIP" "${ROOTS[@]}" ) || fail "zip $1 a échoué"
 }
 
-# checkZip <entrée requise...> : tout sous les quatre dossiers, rien d'interdit, entrées requises présentes.
+# checkZip <entrée requise...> : tout sous le dossier Questify, rien d'interdit, entrées requises présentes.
 checkZip() {
   local entries bad required nav
   entries="$(unzip -Z1 "$ZIP")" || fail "zip illisible : $ZIP"
@@ -144,9 +127,6 @@ $bad"
   bad="$(printf '%s\n' "$entries" | grep -E '(^|/)(\.DS_Store|tests|tools|docs|dist|\.cache|\.superpowers)(/|$)' || true)"
   [ -z "$bad" ] || fail "entrées interdites dans $ZIP :
 $bad"
-  for nav in "${NAV_ADDONS[@]}"; do
-    printf '%s\n' "$entries" | grep -qx "$nav/$nav.toc" || fail "absent de $ZIP : $nav/$nav.toc"
-  done
   for required in "$@"; do
     printf '%s\n' "$entries" | grep -qx "$ADDON/$required" || fail "absent de $ZIP : $required"
   done
