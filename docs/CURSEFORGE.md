@@ -190,8 +190,9 @@ découpées dans `docs/media/apercus/src/en/captures/` et posées dans les gabar
 Rendu avec `sh docs/media/apercus/src/render.sh docs/media/apercus/src/en/*.html`. Colle la légende dans le
 champ « Description » de chaque image (le titre peut reprendre sa première partie).
 
-Pour la 1.0, on garde les sept images de l'essentiel. Les captures en jeu sont détourées au ras de l'interface ;
-l'onglet Donjons, sans capture à jour, vient de sa maquette validée (badge « Interface preview »).
+Pour la 1.0, on garde les huit images de l'essentiel. Les captures en jeu sont détourées au ras de l'interface ;
+l'onglet Donjons vient de sa maquette validée et l'annonce d'équipement est redessinée d'après les captures,
+avec un objet du niveau du personnage (badge « Interface preview »).
 
 | # | Fichier | Légende (anglais) |
 |---|---|---|
@@ -201,4 +202,5 @@ l'onglet Donjons, sans capture à jour, vient de sa maquette validée (badge « 
 | 4 | `en/08c-journal-dungeons.png` | Dungeons tab: the pick-up route from where you are, each quest with its giver, objective, XP and rewards, the quests to do first, and one click to mark a giver on the map or add it all to your route. |
 | 5 | `en/21-class-talents.png` | Talent guides for the three specializations: follow your points or your choice, see the next point and the gap with your tree. |
 | 6 | `en/22-class-macros.png` | Class macros, filtered by spec and PvE or PvP, created in game in one click with your client's spell names. |
-| 7 | `en/10-quest-item.png` | The quest item button: use the item of the current step in one click, or with a key. |
+| 7 | `en/14-equip-upgrade.png` | Gear upgrades: a better item is announced with its main gain and the item it replaces, compared stat by stat for your class, and equipped in one click. |
+| 8 | `en/10-quest-item.png` | The quest item button: use the item of the current step in one click, or with a key. |
