@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<!-- Cartes de marche : Kalimdor (51 parties), chargées avec Questify. -->
+	<!-- Cartes de marche : Kalimdor, chargées avec Questify (tools/nav/import_polestar_nav.sh). -->
 	<Script file="Nav1_1.lua"/>
 	<Script file="Nav1_2.lua"/>
 	<Script file="Nav1_3.lua"/>

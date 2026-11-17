@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<!-- Cartes de marche : Royaumes de l'Est (41 parties), chargées avec Questify. -->
+	<!-- Cartes de marche : Royaumes de l'Est, chargées avec Questify (tools/nav/import_polestar_nav.sh). -->
 	<Script file="Nav0_1.lua"/>
 	<Script file="Nav0_2.lua"/>
 	<Script file="Nav0_3.lua"/>

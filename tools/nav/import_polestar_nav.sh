@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Copie le routeur de marche de Polestar (Polestar_Nav, _EK, _Kalimdor) en Questify_Nav, _EK, _Kalimdor.
+# Copie le routeur de marche de Polestar (Polestar_Nav, _EK, _Kalimdor) dans Questify/NavEngine : routeur
+# (Routing/, API.lua), PACK.json, licences, et cartes dans NavEngine/Maps (EK/ et Kalimdor/ avec leurs XML), chargés
+# avec Questify. Les dossiers Questify_Nav, _EK et _Kalimdor ne sont qu'une étape de travail dans le dossier temporaire.
 #
 # Usage : tools/nav/import_polestar_nav.sh "<dossier AddOns>"
 #   ex. : tools/nav/import_polestar_nav.sh "/Applications/World of Warcraft/_forever_/Interface/AddOns"
@@ -9,7 +11,7 @@
 # réécrit les trois TOC, recalcule PACK.json (sha256) et copie LICENSE.
 # Compte chaque jeton avant et après : si un compte diffère de l'attendu (0.3.7.2), le script échoue
 # avant de toucher aux dossiers cibles (mettre alors RENAMES à jour après vérification manuelle).
-# Questify_Nav/CREDITS.md est écrit à la main : il doit exister et il est conservé.
+# Questify/NavEngine/CREDITS.md est écrit à la main : il doit exister et il est conservé.
 set -u
 set -o pipefail
 
@@ -21,7 +23,7 @@ VERSION_ATTENDUE="0.3.7.2"
 
 grep -q "^## Version: $VERSION_ATTENDUE\$" "$SRC/Polestar_Nav/Polestar_Nav.toc" \
   || fail "Polestar_Nav n'est pas en version $VERSION_ATTENDUE (comptes attendus à revoir)"
-[ -f "$ROOT/Questify_Nav/CREDITS.md" ] || fail "Questify_Nav/CREDITS.md absent : l'écrire d'abord (il n'est pas généré)"
+[ -f "$ROOT/Questify/NavEngine/CREDITS.md" ] || fail "Questify/NavEngine/CREDITS.md absent : l'écrire d'abord (il n'est pas généré)"
 
 # jeton source | jeton cible | occurrences attendues dans Polestar_Nav | _EK | _Kalimdor
 RENAMES=(
@@ -156,12 +158,29 @@ PY
 for k in "${DIRS[@]}"; do
   cp "$SRC/Polestar_Nav/LICENSE" "$TMP/$(newDir "$k")/LICENSE" || fail "LICENSE"
 done
-cp "$ROOT/Questify_Nav/CREDITS.md" "$TMP/Questify_Nav/CREDITS.md" || fail "CREDITS.md"
+cp "$ROOT/Questify/NavEngine/CREDITS.md" "$TMP/Questify_Nav/CREDITS.md" || fail "CREDITS.md"
 
-# 8. Mise en place.
-for k in "${DIRS[@]}"; do
-  d="$(newDir "$k")"
-  rm -rf "${ROOT:?}/$d"
-  cp -R "$TMP/$d" "$ROOT/$d" || fail "installation de $d"
-done
-echo "Questify_Nav, Questify_Nav_EK et Questify_Nav_Kalimdor installés."
+# 8. Mise en place dans Questify/NavEngine (chargé par les TOC de Questify ; cartes par les XML écrits ici).
+NE="$ROOT/Questify/NavEngine"
+rm -rf "${NE:?}"
+mkdir -p "$NE/Maps/EK" "$NE/Maps/Kalimdor" || fail "NavEngine"
+cp -R "$TMP/Questify_Nav/Routing" "$NE/Routing" || fail "Routing"
+cp "$TMP/Questify_Nav/API.lua" "$TMP/Questify_Nav/PACK.json" "$TMP/Questify_Nav/LICENSE" \
+  "$TMP/Questify_Nav/CREDITS.md" "$NE/" || fail "routeur"
+cp "$TMP/Questify_Nav/Nav/"* "$NE/Maps/" || fail "cartes"
+# partXml <dossier temporaire> <dossier des cartes> <titre> : parties copiées dans l'ordre de leur TOC, et leur XML.
+partXml() {
+  cp "$TMP/$1/LICENSE" "$NE/Maps/$2/LICENSE" || fail "LICENSE $2"
+  {
+    printf '<Ui xmlns="http://www.blizzard.com/wow/ui/">\n'
+    printf '\t<!-- Cartes de marche : %s, chargées avec Questify (tools/nav/import_polestar_nav.sh). -->\n' "$3"
+    grep -E '^Nav[0-9]+_[0-9]+\.lua' "$TMP/$1/$1.toc" | tr -d '\r' | while read -r f; do
+      cp "$TMP/$1/$f" "$NE/Maps/$2/$f" || exit 1
+      printf '\t<Script file="%s"/>\n' "$f"
+    done
+    printf '</Ui>\n'
+  } > "$NE/Maps/$2/$2.xml" || fail "XML $2"
+}
+partXml Questify_Nav_EK EK "Royaumes de l'Est"
+partXml Questify_Nav_Kalimdor Kalimdor "Kalimdor"
+echo "Routeur et cartes installés dans Questify/NavEngine (luajit tools/nav/check_nav.lua pour vérifier)."
