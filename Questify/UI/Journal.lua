@@ -513,6 +513,28 @@ function Journal:ShowTab(name, keepRouteMode)
   self:RefreshTab(name, true)
 end
 
+-- Bouton « Objets à acheter (N) » de l'en-tête des étapes : visible tant qu'il reste des objets du chapitre à
+-- acheter ; le titre des étapes se raccourcit d'autant.
+function Journal:UpdateAuctionButton()
+  local b = self.ahButton
+  if not b then return end
+  local AI = Q.AuctionItems
+  local n = 0
+  if AI and AI.Wanted then
+    local ok, list = pcall(AI.Wanted, AI)
+    if ok and type(list) == "table" then n = #list end
+  end
+  if n > 0 then
+    b:SetText(string.format(L.UI_ROUTE_AH_BUTTON, n))
+    fitButton(b, 170, 60, 18)
+    b:Show()
+    self.stepHeader:SetWidth(math.max(80, STEP_W - (tonumber(b:GetWidth()) or 0) - 6))
+  else
+    b:Hide()
+    self.stepHeader:SetWidth(STEP_W)
+  end
+end
+
 -- Bouton de la zone de secours : « Zone alternative », ou « Revenir à ma route » sur une zone de secours.
 function Journal:UpdateDetourButton()
   if not self.detourButton then return end
@@ -605,6 +627,19 @@ function Journal:BuildRoute(panel)
   styled(stHeader, "textMuted")
   columnRule(panel, CHAPTER_W + 32, -20, STEP_W + 18)
   self.stepHeader = stHeader
+  -- Objets du chapitre à acheter à l'hôtel des ventes (Engine/AuctionItems.lua) : bouton à droite de l'en-tête,
+  -- visible seulement quand il en reste ; il ouvre la liste (comme /qf hv et le bouton HV du suivi).
+  local ah = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+  ah:SetHeight(18)
+  ah:SetPoint("BOTTOMRIGHT", panel, "TOPLEFT", CHAPTER_W + 34 + STEP_W + 16, -20)
+  ah:SetScript("OnClick", safe(function()
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+    local P = Q.UI.AuctionPanel
+    if P then P:ToggleList() end
+  end))
+  skin(ah, "secondary")
+  ah:Hide()
+  self.ahButton = ah
 
   local chScroll, chChild = newScroll(panel, "QuestifyJournalChapterScroll", CHAPTER_W, LIST_H)
   chScroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 2, -24)
@@ -924,6 +959,7 @@ function Journal:RefreshRoute(scrollToCurrent)
     self.routeMessage:Hide()
   end
   self.stepHeader:SetText(guide and (L.UI_ROUTE_STEPS .. " - " .. Q.Guides:DisplayTitle(guide)) or L.UI_ROUTE_STEPS)
+  self:UpdateAuctionButton()
   local cur = guide and Q.Progress:Current() or nil
   local curIndex
   for i, e in ipairs(entries) do
@@ -2585,4 +2621,5 @@ Q:On("GUIDE_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("STEP_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("CLASSQUESTS_CHANGED", function() refreshIfShown("class") end)
 Q:On("DUNGEONS_CHANGED", function() refreshIfShown("dungeons") end)
+Q:On("AUCTION_ITEMS_CHANGED", function() if Journal.ahButton then Q.SafeCall(Journal.UpdateAuctionButton, Journal) end end)
 Q:On("DETOUR_CHANGED", function() if Journal:IsShown() then Journal:UpdateDetourButton() end end)

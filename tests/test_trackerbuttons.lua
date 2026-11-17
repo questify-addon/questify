@@ -45,8 +45,8 @@ return {
   four_buttons_right_of_the_title = function(t)
     local Q = load()
     local T, B = Q.UI.Tracker, Q.UI.TrackerButtons
-    t.eq(#B.ORDER, 4)
-    t.eq(B.ORDER, { "route", "dungeons", "class", "options" })
+    t.eq(#B.ORDER, 5)
+    t.eq(B.ORDER, { "ah", "route", "dungeons", "class", "options" })
     local x = {}
     for i, key in ipairs(B.ORDER) do
       local b = B.buttons[key]
@@ -56,12 +56,31 @@ return {
       t.eq(by, -5, "centred in the theme header (28 - 18) / 2")
       x[i] = bx
     end
-    t.eq(x[4], -8, "options at the right edge")
-    t.ok(x[1] < x[2] and x[2] < x[3] and x[3] < x[4], "left to right in ORDER")
+    t.eq(x[5], -8, "options at the right edge")
+    t.ok(x[1] < x[2] and x[2] < x[3] and x[3] < x[4] and x[4] < x[5], "left to right in ORDER")
     -- le titre s'arrête avant les boutons ; les niveaux passent sous la barre
     t.eq(T.title:GetWidth(), T.Width() - 16 - B:Width() - 6)
     t.ok(not T.levels:IsShown(), "levels no longer beside the title")
     t.ok(T.barText:GetText():find("lvl 1-6", 1, true), "levels in the progress bar")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Hôtel des ventes : le bouton brille tant qu'il reste des objets du chapitre à acheter, et ouvre la liste.
+  ah_button_glows_when_items_are_to_buy = function(t)
+    local Q = load()
+    local B = Q.UI.TrackerButtons
+    local wanted = {}
+    Q.AuctionItems.Wanted = function() return wanted end
+    B:UpdateGlows()
+    t.ok(not B.buttons.ah.glow:IsShown(), "nothing to buy: no glow")
+    wanted = { { item = 2589, need = 4, quests = {} }, { item = 2592, need = 2, quests = {} } }
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+    t.eq(B.ahCount, 2)
+    t.ok(B.buttons.ah.glow:IsShown(), "items to buy: glow")
+    local toggled = 0
+    Q.UI.AuctionPanel.ToggleList = function() toggled = toggled + 1 end
+    Mock.click(B.buttons.ah, "LeftButton")
+    t.eq(toggled, 1, "opens the shopping list")
     t.eq(#Mock.errors, 0)
   end,
 

@@ -37,6 +37,24 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  steps_header_shows_the_items_to_buy = function(t)
+    local Q = load()
+    local wanted = {}
+    Q.AuctionItems.Wanted = function() return wanted end
+    local J = Q.UI.Journal
+    J:ShowTab("route")
+    t.ok(not J.ahButton:IsShown(), "nothing to buy: no button")
+    wanted = { { item = 2589, need = 4, quests = {} } }
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+    t.ok(J.ahButton:IsShown(), "items to buy: button")
+    t.ok(plain(J.ahButton:GetText()):find("(1)", 1, true), "count in the label")
+    local toggled = 0
+    Q.UI.AuctionPanel.ToggleList = function() toggled = toggled + 1 end
+    Mock.click(J.ahButton, "LeftButton")
+    t.eq(toggled, 1, "opens the shopping list")
+    t.eq(#Mock.errors, 0)
+  end,
+
   journal_frame_layout = function(t)
     local Q = load()
     Q.UI.Journal:Toggle()

@@ -3,6 +3,8 @@ local addonName, Q = ...
 -- Boutons d'accès rapide dans l'en-tête du suivi, à droite du titre du chapitre (UI/Tracker.lua).
 -- Beaucoup de joueurs ne retrouvent plus le bouton de la minicarte parmi ceux de leurs addons, alors
 -- que le suivi reste à l'écran, à l'endroit qu'ils ont choisi.
+--   « ah »       : pièces d'or -> liste des objets du chapitre à acheter à l'hôtel des ventes
+--                  (UI/AuctionPanel.lua, comme /qf hv) ;
 --   « route »    : point d'exclamation de quête sur un chemin -> journal, onglet Route ;
 --   « dungeons » : portail de donjon (atlas du jeu « dungeon ») et point d'exclamation -> journal,
 --                  onglet Donjons ;
@@ -14,18 +16,19 @@ local addonName, Q = ...
 --   Classe brille tant qu'un point de talent est à dépenser et que le guide de classe en prévoit un
 --   (Engine/ClassGuide.lua) ;
 --   Donjons brille tant qu'un donjon est conseillé (Dungeons:Suggested) et qu'aucun n'est ajouté à
---   la route.
+--   la route ;
+--   HV brille tant qu'il reste des objets du chapitre à acheter (AuctionItems:Wanted).
 -- Des boutons simples, jamais sécurisés : un enfant sécurisé rendrait le suivi protégé (impossible
 -- à redimensionner en combat).
 Q.UI = Q.UI or {}
-local Buttons = { buttons = {}, classCount = 0, dungeonCount = 0 }
+local Buttons = { buttons = {}, classCount = 0, dungeonCount = 0, ahCount = 0 }
 Q.UI.TrackerButtons = Buttons
 
 local L = Q.L
 
 local SIZE = 18
 local GAP = 3
-local ORDER = { "route", "dungeons", "class", "options" }
+local ORDER = { "ah", "route", "dungeons", "class", "options" }
 Buttons.ORDER, Buttons.SIZE, Buttons.GAP = ORDER, SIZE, GAP
 
 local QUEST_MARK = "Interface\\GossipFrame\\AvailableQuestIcon"
@@ -35,6 +38,7 @@ local DUNGEON_FALLBACK = "Interface\\Icons\\INV_Misc_Bone_HumanSkull_01"   -- at
 local CLASS_SHEET = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
 local CLASS_FALLBACK = "Interface\\Icons\\INV_Misc_QuestionMark"
 local GEAR = "Interface\\Icons\\Trade_Engineering"
+local COINS = "Interface\\Icons\\INV_Misc_Coin_01"
 local HIGHLIGHT = "Interface\\Buttons\\ButtonHilight-Square"
 local ICON_CROP = { 0.08, 0.92, 0.08, 0.92 }   -- bord des icônes de sort et d'objet
 local BORDER_COLOR = { 0.72, 0.55, 0.25, 1 }
@@ -44,7 +48,7 @@ local GLOW_COLOR = { 1, 0.78, 0.1, 1 }
 local TABS = { route = "route", dungeons = "dungeons" }
 local NAMES = {
   route = "UI_TRACKER_BTN_ROUTE", dungeons = "UI_TRACKER_BTN_DUNGEONS",
-  class = "UI_TRACKER_BTN_CLASS", options = "UI_TRACKER_BTN_OPTIONS",
+  class = "UI_TRACKER_BTN_CLASS", options = "UI_TRACKER_BTN_OPTIONS", ah = "UI_TRACKER_BTN_AH",
 }
 Buttons.TEXTURES = { questMark = QUEST_MARK, routePath = ROUTE_PATH, dungeonAtlas = DUNGEON_ATLAS,
   dungeonFallback = DUNGEON_FALLBACK, classSheet = CLASS_SHEET, classFallback = CLASS_FALLBACK, gear = GEAR }
@@ -91,6 +95,18 @@ function Buttons.DungeonGlow()
   return type(suggested) == "table" and #suggested or 0
 end
 
+-- AuctionGlow() -> nombre d'objets du chapitre encore à acheter à l'hôtel des ventes (option coupée : 0).
+function Buttons.AuctionGlow()
+  local AI = Q.AuctionItems
+  if not (AI and AI.Wanted) then return 0 end
+  local ok, list = pcall(AI.Wanted, AI)
+  if not ok then
+    Q:ReportError(list)
+    return 0
+  end
+  return type(list) == "table" and #list or 0
+end
+
 local function setGlow(b, on)
   if on then
     b.glow:Show()
@@ -105,7 +121,9 @@ function Buttons:UpdateGlows()
   if not self.frame then return end
   self.classCount = Buttons.ClassGlow()
   self.dungeonCount = Buttons.DungeonGlow()
+  self.ahCount = Buttons.AuctionGlow()
   setGlow(self.buttons.class, self.classCount > 0)
+  setGlow(self.buttons.ah, self.ahCount > 0)
   setGlow(self.buttons.dungeons, self.dungeonCount > 0)
 end
 
@@ -115,6 +133,15 @@ end
 -- Click(clé) : ouvre le journal sur l'onglet du bouton ; s'il y est déjà, le ferme. L'engrenage
 -- ouvre ou ferme la fenêtre d'options.
 function Buttons:Click(key)
+  if key == "ah" then
+    local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+    if AI and not AI:Enabled() then
+      Q:Print(L.AH_SLASH_OFF)
+    elseif P then
+      P:ToggleList()
+    end
+    return
+  end
   if key == "options" then
     local O = Q.UI.Options
     if O then O:Toggle() end
@@ -159,7 +186,12 @@ function Buttons:Tooltip(owner, key)
   if key == "dungeons" and self.dungeonCount > 0 then
     GameTooltip:AddLine(string.format(L.UI_TRACKER_BTN_DUNGEON_GLOW, self.dungeonCount), 1, 1, 1, true)
   end
-  GameTooltip:AddLine(L.UI_TRACKER_BTN_HINT, 0.7, 0.7, 0.7, true)
+  if key == "ah" then
+    GameTooltip:AddLine(self.ahCount > 0 and string.format(L.UI_TRACKER_BTN_AH_GLOW, self.ahCount)
+      or L.UI_TRACKER_BTN_AH_NONE, 1, 1, 1, true)
+  else
+    GameTooltip:AddLine(L.UI_TRACKER_BTN_HINT, 0.7, 0.7, 0.7, true)
+  end
   GameTooltip:Show()
 end
 
@@ -286,6 +318,9 @@ function Buttons:Create(f)
   -- Classe
   self.classIconSet = false
   self:SetClassIcon()
+  -- Hôtel des ventes
+  B.ah.icon:SetTexture(COINS)
+  B.ah.icon:SetTexCoord(ICON_CROP[1], ICON_CROP[2], ICON_CROP[3], ICON_CROP[4])
   -- Options
   B.options.icon:SetTexture(GEAR)
   B.options.icon:SetTexCoord(ICON_CROP[1], ICON_CROP[2], ICON_CROP[3], ICON_CROP[4])
@@ -320,6 +355,9 @@ function Buttons:Layout(f, pad, top)
   if Q.UI.Tracker and Q.UI.Tracker.theme then self:ApplyTheme(Q.UI.Tracker.theme) end
   self:UpdateGlows()
 end
+
+-- Objets à acheter changés (sacs, journal, chapitre, option) : lueur du bouton HV.
+Q:On("AUCTION_ITEMS_CHANGED", function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
 
 -- Points de talent gagnés ou dépensés : lueur du bouton Classe.
 Q:On("TALENTS_CHANGED", function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
