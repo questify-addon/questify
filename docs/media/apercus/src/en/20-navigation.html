@@ -5,9 +5,10 @@
 <title>Questify, capture 20: navigation</title>
 <link rel="stylesheet" href="../apercu.css">
 <style>
-  /* In-game capture: captures/20-navigation.png. */
+  /* In-game capture: minimap cut out round (captures/20-minimap-cut.png), world map part (captures/20-navigation-map.png); the arrow is the addon texture (Media/Themes/arrow.tga) tinted as in game, with the same text. */
   :root { --sans: "Avenir Next", "Avenir", "Inter", "Helvetica Neue", sans-serif; }
-  .shot { position: absolute; display: block; border-radius: 10px;
+  .cut { position: absolute; display: block; filter: drop-shadow(0 18px 36px rgba(0,0,0,.7)); }
+  .map { position: absolute; display: block; border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 20px 56px rgba(0,0,0,.65); }
   .lbl { position: absolute; font-family: var(--sans); font-size: 17px; font-weight: 600; letter-spacing: .04em;
     color: #ead9a6; padding: 6px 12px; border-radius: 8px; background: rgba(0,0,0,.62); }
@@ -15,16 +16,26 @@
 </head>
 <body>
 <div class="stage">
+  <style>
+    .arrow { position: absolute; left: 790px; top: 250px; width: 260px; text-align: center;
+      font-family: "Optima", "Palatino", serif; color: #fff; text-shadow: 0 1px 2px #000, 0 0 6px rgba(0,0,0,.8); }
+    .arrow img { display: block; margin: 0 auto 6px; width: 110px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.6)); }
+    .arrow .d { font-size: 40px; font-weight: 600; }
+    .arrow .t { font-size: 24px; }
+    .arrow .s { margin-top: 8px; font-size: 22px; color: #f0e6c8; }
+  </style>
   <div class="cap" style="width:600px">
     <div class="brand">Questify</div>
     <h1>Built-in guidance</h1>
     <p>An arrow on screen with the distance and the time to the next step, and the path drawn on the minimap and the world map.</p>
     <p>Questify plans the trip on foot around walls and cliffs, and adds flights, boats and your hearthstone when they are faster. No other addon needed.</p>
   </div>
-  <div class="lbl" style="left:760px; top:150px">Arrow and minimap</div>
-  <img class="shot" style="left:760px; top:198px; width:700px" src="captures/20-navigation.png" alt="">
-  <div class="lbl" style="left:760px; top:620px">World map</div>
-  <img class="shot" style="left:760px; top:668px; width:380px" src="captures/20-navigation-map.png" alt="">
+  <div class="arrow"><img src="captures/20-arrow-cut.png" alt=""><div class="d">293 yd</div><div class="t">about 40 s</div><div class="s">Walk to Wetlands</div></div>
+  <img class="cut" style="left:1100px; top:150px; width:420px" src="captures/20-minimap-cut.png" alt="">
+  <div class="lbl" style="left:1150px; top:96px">Path on the minimap</div>
+  <img class="map" style="left:1400px; top:560px; width:420px" src="captures/20-navigation-map.png" alt="">
+  <div class="lbl" style="left:1400px; top:506px">And on the world map</div>
+  <div class="lbl" style="left:820px; top:196px">The arrow</div>
   <div class="badge"><div class="t">In-game capture</div><div class="s">World of Warcraft: Forever</div></div>
 </div>
 </body>

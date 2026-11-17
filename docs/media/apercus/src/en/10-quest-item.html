@@ -5,9 +5,10 @@
 <title>Questify, capture 10: quest item</title>
 <link rel="stylesheet" href="../apercu.css">
 <style>
-  /* In-game capture (/qf demo questitem): captures/10-quest-item.png. */
+  /* In-game capture (/qf demo questitem), cut out: captures/10-quest-item-cut.png and the round item button captures/10-quest-item-button.png. */
   :root { --sans: "Avenir Next", "Avenir", "Inter", "Helvetica Neue", sans-serif; }
-  .shot { position: absolute; display: block; border-radius: 10px;
+  .cut { position: absolute; display: block; filter: drop-shadow(0 18px 36px rgba(0,0,0,.7)); }
+  .map { position: absolute; display: block; border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 20px 56px rgba(0,0,0,.65); }
   .lbl { position: absolute; font-family: var(--sans); font-size: 17px; font-weight: 600; letter-spacing: .04em;
     color: #ead9a6; padding: 6px 12px; border-radius: 8px; background: rgba(0,0,0,.62); }
@@ -21,8 +22,9 @@
     <p>When the current step asks you to use an item, a button appears to the left of the tracker. Click it to use the item.</p>
     <p>You can also give it a key, in the options or in the game’s Key Bindings.</p>
   </div>
-  <img class="shot" style="left:800px; top:250px; width:760px" src="captures/10-quest-item.png" alt="">
-  <div class="lbl" style="left:800px; top:196px">The quest item button</div>
+  <img class="cut" style="left:1000px; top:270px; width:648px" src="captures/10-quest-item-cut.png" alt="">
+  <img class="cut" style="left:910px; top:340px; width:72px" src="captures/10-quest-item-button.png" alt="">
+  <div class="lbl" style="left:670px; top:358px">The quest item button</div>
   <div class="badge"><div class="t">In-game capture</div><div class="s">World of Warcraft: Forever</div></div>
 </div>
 </body>

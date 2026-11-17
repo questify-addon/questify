@@ -65,7 +65,7 @@ A **free and open-source** leveling guide for World of Warcraft: Forever, **leve
 follows your quest log and always shows you the next thing to do.
 
 ## What Questify does
-- **Optimised 1-60 routes.** Every chapter is built from QuestieDB and measured with a route simulator: all of a
+- **Optimised 1-60 routes.** Every chapter is built from QuestieDB, checked against the quest chains it traced from real players, and measured with a route simulator: all of a
   hub's quests picked up at once, one pass per objective area, grouped turn-ins, smart hearthstone use, minimal
   grinding. Steps tick themselves as you play; `/qf skip` and `/qf back` when you want to go your own way.
 - **Your route, your choice.** At the end of a chapter, one card per possible zone with levels, quests, simulated
@@ -97,13 +97,11 @@ follows your quest log and always shows you the next thing to do.
   shareable option profiles, a first-run wizard and a What's new window after each update. English and French.
 
 ## Requirements
-- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 or newer.
+- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.1.2 or newer.
 - **Optional:** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
-  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), Auctionator or TradeSkillMaster (prices).
-
-Upgrading from 0.x: delete the old `Questify_Nav`, `Questify_Nav_EK` and `Questify_Nav_Kalimdor` folders from
-your AddOns folder; the walking router is now part of Questify.
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), [Auctionator](https://www.curseforge.com/wow/addons/auctionator) or
+  [TradeSkillMaster](https://www.curseforge.com/wow/addons/tradeskill-master) (prices).
 
 ## Commands
 `/qf` journal · `/qf route` change route · `/qf options` options · `/qf skip` / `/qf back` skip or reopen a
@@ -126,7 +124,7 @@ Guide de leveling **gratuit et open source** pour World of Warcraft: Forever, **
 suit ton journal de quêtes et t'indique toujours quoi faire ensuite.
 
 ## Ce que fait Questify
-- **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB et mesuré au simulateur ; toutes
+- **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB, vérifié sur les chaînes de quêtes relevées chez les joueurs et mesuré au simulateur ; toutes
   les quêtes d'un avant-poste prises d'un coup, un seul passage par zone d'objectifs, rendus groupés, pierre de
   foyer bien utilisée, farm minimal. Les étapes se cochent seules ; `/qf skip` et `/qf back` quand tu veux faire à
   ta façon.
@@ -163,13 +161,11 @@ suit ton journal de quêtes et t'indique toujours quoi faire ensuite.
   chaque mise à jour. Anglais et français.
 
 ## Prérequis
-- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 ou plus récent.
+- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.1.2 ou plus récent.
 - **Optionnels :** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
-  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), Auctionator ou TradeSkillMaster (prix).
-
-Mise à jour depuis une 0.x : supprime les anciens dossiers `Questify_Nav`, `Questify_Nav_EK` et
-`Questify_Nav_Kalimdor` de ton dossier AddOns ; le routeur de marche fait maintenant partie de Questify.
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), [Auctionator](https://www.curseforge.com/wow/addons/auctionator) ou
+  [TradeSkillMaster](https://www.curseforge.com/wow/addons/tradeskill-master) (prix).
 
 ## Commandes
 `/qf` journal · `/qf route` changer de route · `/qf options` options · `/qf skip` / `/qf back` passer ou rouvrir
@@ -194,20 +190,15 @@ découpées dans `docs/media/apercus/src/en/captures/` et posées dans les gabar
 Rendu avec `sh docs/media/apercus/src/render.sh docs/media/apercus/src/en/*.html`. Colle la légende dans le
 champ « Description » de chaque image (le titre peut reprendre sa première partie).
 
+Pour la 1.0, on garde les sept images de l'essentiel. Les captures en jeu sont détourées au ras de l'interface ;
+l'onglet Donjons, sans capture à jour, vient de sa maquette validée (badge « Interface preview »).
+
 | # | Fichier | Légende (anglais) |
 |---|---|---|
 | 1 (couverture) | `en/01-tracker.png` | The tracker: chapter progress, the current step with its objectives as progress bars, the monsters to kill and their distance, your XP per hour and pace, and five buttons for the auction house list, the route, the dungeons, your class and the options. |
-| 2 | `en/20-navigation.png` | Built-in guidance: an arrow on screen with the distance and the time left, and the route drawn on the minimap, around obstacles. |
-| 3 | `en/20b-navigation-map.png` | The whole trip on the world map: on foot, by flight, boat, zeppelin, tram, portal or hearthstone, chosen by Questify. |
-| 4 | `en/16-route-choice.png` | Change route: the current chapter and the chapters that fit your level, with quests, simulated time and XP per hour. The recommended one glows. |
-| 5 | `en/08-journal-route.png` | The journal (/qf): your chapters grouped by level and every step of the route, with the automatic route with dungeons one click away. |
-| 6 | `en/08c-journal-dungeons.png` | Dungeons tab: the pick-up route from where you are, each quest with its objective, XP and rewards, the quests to do first, and one click to mark its giver on the map. |
-| 7 | `en/21-class-talents.png` | Talent guides for the three specializations: follow your points or your choice, see the next point and the gap with your tree. |
-| 8 | `en/22-class-macros.png` | Class macros, filtered by spec and PvE or PvP, created in game in one click with your client's spell names. |
-| 9 | `en/23-trainer.png` | At your class trainer: the spells to learn with their price, then an offer to replace the old ranks on your bars. |
-| 10 | `en/24-raid-marks.png` | One key puts raid icons on the objective monsters around you, so you see them from afar. |
-| 11 | `en/12-pace.png` | Your pace: XP per hour, ahead or behind the simulated route, time per chapter and per session. |
-| 12 | `en/25-auction.png` | Quest items you can buy at the auction house, listed for the chapter with Auctionator or TSM prices, docked to the auction house window. |
-| 13 | `en/14-equip-pair.png` | Loot: the reward that upgrades your gear is marked, and looted upgrades are equipped in one click. |
-| 14 | `en/26-themes.png` | 13 colour themes (your race, your faction, Questify, high contrast) with a live preview of the tracker. |
-| 15 | `en/27-news.png` | After each update, a What's new window walks you through the changes, with a button to each setting. |
+| 2 | `en/20-navigation.png` | Built-in guidance: an arrow on screen with the distance and the time left, the path drawn on the minimap around obstacles, and the whole trip on the world map. |
+| 3 | `en/16-route-choice.png` | Your route, your choice: at the end of a chapter, one card per zone with levels, quests, simulated time and XP per hour. The recommended one glows. |
+| 4 | `en/08c-journal-dungeons.png` | Dungeons tab: the pick-up route from where you are, each quest with its giver, objective, XP and rewards, the quests to do first, and one click to mark a giver on the map or add it all to your route. |
+| 5 | `en/21-class-talents.png` | Talent guides for the three specializations: follow your points or your choice, see the next point and the gap with your tree. |
+| 6 | `en/22-class-macros.png` | Class macros, filtered by spec and PvE or PvP, created in game in one click with your client's spell names. |
+| 7 | `en/10-quest-item.png` | The quest item button: use the item of the current step in one click, or with a key. |
