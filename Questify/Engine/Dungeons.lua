@@ -537,6 +537,20 @@ local function plan(d, only)
 end
 Dungeons.Plan = function(_, d) return plan(d) end
 
+-- Point d'apparition d'une liste QuestieDB (starters ou finishers) le plus proche de (m, x, y) : { m, x, y }, ou
+-- nil. Sans distance calculable (autre continent) : le premier point connu.
+local function spawnNear(list, m, x, y)
+  local best, bestD
+  local function try(rec)
+    if type(rec) ~= "table" or type(rec.spawns) ~= "table" then return end
+    local bm, bx, by, d = Q.Maps:Nearest(rec.spawns, m, x, y)
+    if bm and (not best or (d and (not bestD or d < bestD))) then best, bestD = { bm, bx, by }, d end
+  end
+  for _, id in ipairs(list and list.npcs or {}) do try(Q.QDB:Npc(id)) end
+  for _, id in ipairs(list and list.objects or {}) do try(Q.QDB:Object(id)) end
+  return best
+end
+
 ---------------------------------------------------------------------------
 -- Ordre : le plus proche d'abord, en finissant la carte (ville) en cours avant d'en changer
 ---------------------------------------------------------------------------
@@ -563,6 +577,112 @@ local function orderNearest(items, m, x, y)
   end
   return out
 end
+
+-- Ordre des prises optimisé pour le personnage : départ de sa position, fin à l'entrée du donjon. Chaque unité
+-- (une quête et les préquêtes qui y mènent) commence chez le donneur de sa première étape, au point d'apparition
+-- le plus proche de l'endroit où la route en est (un PNJ placé en plusieurs lieux est pris au plus près), et
+-- finit chez le donneur de la quête. Coût d'un trajet : le temps de ShortestPathForever (vols, bateaux, tram)
+-- quand il est là (Dungeons:Trip), sinon la distance à pied. Jusqu'à EXACT_UNITS unités : tous les ordres
+-- (le meilleur, sans aller-retour) ; au-delà : le plus proche d'abord.
+local EXACT_UNITS = 7
+local RUN_SPEED = 7          -- yards par seconde, à pied
+local FAR = 3600             -- secondes : trajet inconnu (autre continent sans ShortestPathForever)
+
+local function stepList(st)
+  local q = type(st) == "table" and Q.QDB:Quest(st[2])
+  if not q then return nil end
+  return st[1] == "accept" and q.starters or q.finishers
+end
+
+local function newCost()
+  local cache = {}
+  return function(a, b)
+    if not (isPoint(a) and isPoint(b)) then return FAR end
+    local key = table.concat({ a[1], a[2], a[3], b[1], b[2], b[3] }, ",")
+    local c = cache[key]
+    if c then return c end
+    local trip = Dungeons:Trip(a[1], a[2], a[3], b[1], b[2], b[3])
+    if trip then
+      c = trip.seconds
+    else
+      local d = Q.Maps:Distance(a[1], a[2], a[3], b[1], b[2], b[3])
+      c = d and d / RUN_SPEED or FAR
+    end
+    cache[key] = c
+    return c
+  end
+end
+
+-- Lieux d'une unité en arrivant de `from` : début, fin.
+local function unitPlaces(u, from)
+  local start = u.start
+  local list = stepList(u.steps and u.steps[1])
+  if list and isPoint(from) then start = spawnNear(list, from[1], from[2], from[3]) or start end
+  local finish = u.finish or start
+  local q = u.quest and Q.QDB:Quest(u.quest.id)
+  if q and isPoint(start) then finish = spawnNear(q.starters, start[1], start[2], start[3]) or finish end
+  return start, finish
+end
+
+-- orderUnits(units, from, to) -> units dans l'ordre ; from = position du joueur (ou nil), to = entrée du donjon.
+-- Chaque unité reçoit `at` (lieu de sa première étape sur ce trajet).
+local function orderUnits(units, from, to)
+  local n = #units
+  if n == 0 then return {} end
+  local cost = newCost()
+  if not isPoint(from) then from = nil end
+  local function legs(order)
+    local total, pos, places = 0, from, {}
+    for i, u in ipairs(order) do
+      local st, fin = unitPlaces(u, pos or u.start)
+      if pos then total = total + cost(pos, st) end
+      total = total + (isPoint(st) and isPoint(fin) and cost(st, fin) or 0)
+      places[i] = st
+      pos = isPoint(fin) and fin or pos
+    end
+    if pos and isPoint(to) then total = total + cost(pos, to) end
+    return total, places
+  end
+  local best, bestCost
+  if n <= EXACT_UNITS then
+    local used, cur = {}, {}
+    local function dfs(depth)
+      if depth > n then
+        local c = legs(cur)
+        if not bestCost or c < bestCost then bestCost = c; best = { unpack(cur) } end
+        return
+      end
+      for i = 1, n do
+        if not used[i] then
+          used[i] = true; cur[depth] = units[i]
+          dfs(depth + 1)
+          used[i] = false; cur[depth] = nil
+        end
+      end
+    end
+    dfs(1)
+  else
+    local left, pos = {}, from
+    for i, u in ipairs(units) do left[i] = u end
+    best = {}
+    while #left > 0 do
+      local bi, bc
+      for i, u in ipairs(left) do
+        local st = unitPlaces(u, pos or u.start)
+        local c = pos and cost(pos, st) or 0
+        if not bc or c < bc then bi, bc = i, c end
+      end
+      local u = table.remove(left, bi)
+      best[#best + 1] = u
+      local _, fin = unitPlaces(u, pos or u.start)
+      pos = isPoint(fin) and fin or pos
+    end
+  end
+  local _, places = legs(best)
+  for i, u in ipairs(best) do u.at = places[i] end
+  return best
+end
+Dungeons.OrderUnits = function(_, units, from, to) return orderUnits(units, from, to) end
 
 ---------------------------------------------------------------------------
 -- États
@@ -924,28 +1044,31 @@ local function blockSteps(d, p, rung)
     if rung then st.rung, st.phase = rung, phase end
     steps[#steps + 1] = st
   end
+  local ent = d.entrance
   local pm, px, py = Q.Maps:PlayerPos()
-  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+  for _, u in ipairs(orderUnits(p.units, pm and { pm, px, py } or nil, ent)) do
     for _, st in ipairs(u.steps) do add({ st[1], st[2], dungeon = name }, "prep") end
   end
-  local ent = d.entrance
   add({ "goto", ent[1], ent[2], ent[3], note = string.format(Q.L.DUNGEON_GOTO_NOTE, name) }, "run")
   for _, e in ipairs(p.active) do
     if not e.talk then add({ "complete", e.id, dungeon = name }, "run") end
   end
   -- Rendus : d'abord ceux qui se font dans le donjon (PNJ de fin sans position), puis du plus proche
-  -- de l'entrée au plus loin.
+  -- de l'entrée au plus loin. Chaque rendu porte le point du receveur le plus proche de l'entrée : la cible
+  -- tant que la position du joueur est inconnue (dans l'instance), au lieu du premier point connu du PNJ.
   local inside, outside = {}, {}
   for _, e in ipairs(p.active) do
-    if isPoint(e.endAt) then
-      outside[#outside + 1] = { start = e.endAt, quest = e }
+    local q = Q.QDB:Quest(e.id)
+    local at = q and spawnNear(q.finishers, ent[1], ent[2], ent[3]) or (isPoint(e.endAt) and e.endAt or nil)
+    if at then
+      outside[#outside + 1] = { start = at, quest = e }
     else
       inside[#inside + 1] = e
     end
   end
   for _, e in ipairs(inside) do add({ "turnin", e.id, dungeon = name }, "run") end
   for _, it in ipairs(orderNearest(outside, ent[1], ent[2], ent[3])) do
-    add({ "turnin", it.quest.id, dungeon = name }, "run")
+    add({ "turnin", it.quest.id, dungeon = name, at = { it.start[1], it.start[2], it.start[3] } }, "run")
   end
   return steps
 end
@@ -1047,13 +1170,13 @@ function Dungeons:Extras(key)
   if #p.units == 0 then return nil end
   local pm, px, py = Q.Maps:PlayerPos()
   local quests = {}
-  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+  for _, u in ipairs(orderUnits(p.units, pm and { pm, px, py } or nil, d.entrance)) do
     local e = u.quest
     local pre = {}
     for _, st in ipairs(u.steps) do
       if st[1] == "accept" and st[2] ~= e.id then pre[#pre + 1] = st[2] end
     end
-    quests[#quests + 1] = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, start = u.start or e.at, pre = pre }
+    quests[#quests + 1] = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, start = u.at or u.start or e.at, pre = pre }
   end
   return { rung = r, dungeon = d, quests = quests, plan = p }
 end

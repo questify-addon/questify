@@ -199,7 +199,8 @@ local function targetName(tg)
 end
 
 -- -> liste de points { mapId, x (0-100), y, name }, style (nil si l'étape n'a pas de repère).
-local function pointsFor(entry)
+-- from = { m, x, y } : point d'où la route arrive à l'étape (étapes à venir), ou nil (depuis le joueur).
+local function pointsFor(entry, from)
   local step = entry.step
   local style = STYLES[step.action]
   if not style then return {}, nil end
@@ -208,13 +209,13 @@ local function pointsFor(entry)
     if #pts > 0 then return pts, style end
     -- aucun point d'apparition connu : la cible de l'étape (zone d'objectif) seule
   end
-  local tg = Q.Targets:ForEntry(entry)
+  local tg = Q.Targets:ForEntry(entry, from)
   if not tg or type(tg.mapId) ~= "number" or not validCoord(tg.x) or not validCoord(tg.y) then
     return {}, style
   end
   return { { mapId = tg.mapId, x = tg.x, y = tg.y, name = targetName(tg) } }, style
 end
-MapPins.PointsFor = function(_, entry) return pointsFor(entry) end
+MapPins.PointsFor = function(_, entry, from) return pointsFor(entry, from) end
 
 ---------------------------------------------------------------------------
 -- Cadres des repères (une réserve pour la carte du monde, une pour la minicarte)
@@ -429,8 +430,13 @@ function MapPins:Refresh()
   -- mode zone : repère vert au centre (minicarte : hors de la zone seulement, au bord)
   local okZ, err = pcall(MapPins.PlaceZone, MapPins, lib)
   if not okZ then Q:ReportError("MapPins: " .. tostring(err)) end
+  -- Étapes à venir : le donneur ou le receveur le plus proche de l'endroit où la route en sera (le dernier lieu
+  -- d'une prise, d'un rendu ou d'un déplacement avant elle), pas du joueur. Un rendu après un donjon vise
+  -- ainsi le PNJ devant l'entrée, même quand un autre point d'apparition est plus près du joueur.
+  local from
   for order, entry in ipairs(window()) do
-    local pts, style = pointsFor(entry)
+    local pts, style = pointsFor(entry, order > 1 and from or nil)
+    if style and style ~= "objective" and pts[1] then from = { pts[1].mapId, pts[1].x, pts[1].y } end
     if style and #pts > 0 then
       local title = Q.Format:StepTitle(entry)
       for i, p in ipairs(pts) do
