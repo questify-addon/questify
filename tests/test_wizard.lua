@@ -40,25 +40,26 @@ return {
     t.ok(f and f:IsShown(), "shown 3 s after login")
     t.eq(Q.char.wizardDone, nil, "not marked done while open")
     t.eq(W.page, 1)
-    t.eq(W.NUM_PAGES, 6)
+    t.eq(W.NUM_PAGES, 10)
     t.ok(not W.finishButton:IsShown(), "finish only on the last page")
     goToPage(W, 4)
     t.ok(W.radios.tomtom:IsEnabled(), "TomTom present")
-    t.ok(W.radios.tomtom:GetChecked(), "best installed marker preselected on first run")
+    t.ok(W.radios.arrow:GetChecked() and not W.radios.tomtom:GetChecked(),
+      "Questify arrow preselected on first run, even with TomTom installed")
     Mock.click(W.radios.native, "LeftButton")
     t.ok(W.radios.native:GetChecked() and not W.radios.tomtom:GetChecked())
     Mock.click(W.radios.tomtom, "LeftButton")
     t.ok(W.radios.tomtom:GetChecked() and not W.radios.native:GetChecked(), "one choice only")
     goToPage(W, 5)
     W.checks.autoReward:SetChecked(false)
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(W.finishButton:IsShown())
     t.ok(not W.nextButton:IsShown() and not W.skipButton:IsShown(), "no Next / Skip on the last page")
     t.ok(plain(W.recap.display:GetText()):find("TomTom", 1, true), "summary shows the marker")
     t.ok(plain(W.recap.autoReward:GetText()):find(Q.L.UI_WIZ_OFF, 1, true), "summary reads the boxes")
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.eq(Q.Settings:Get("nav.routing"), false)
+    t.eq(Q.Settings:Get("nav.router"), "questify")
     t.eq(Q.Settings:Get("autoQuest"), true)
     t.eq(Q.Settings:Get("autoReward"), false)
     t.eq(Q.Settings:Get("sellJunk"), true)
@@ -176,7 +177,7 @@ return {
     t.eq(W2.page, 4, "same page")
     t.ok(W2.pages[4]:IsShown())
     t.ok(W2.radios.waypointui:IsEnabled(), "WaypointUI now loaded")
-    t.ok(W2.radios.waypointui:GetChecked(), "best marker preselected")
+    t.ok(W2.radios.arrow:GetChecked() and not W2.radios.waypointui:GetChecked(), "Questify arrow preselected")
     t.eq(W2.addonRows.waypointui.state, "loaded")
     t.ok(not W2.reloadButton:IsShown(), "nothing left to reload")
     t.eq(#Mock.errors, 0)
@@ -257,8 +258,8 @@ return {
     t.eq(Q.char.wizardDraft.display, "native")
     Mock.click(W.skipButton, "LeftButton")
     t.eq(W.page, 5)
-    t.eq(W.choice.display, "tomtom", "skipped page keeps the starting choice")
-    t.ok(W.radios.tomtom:GetChecked() and not W.radios.native:GetChecked())
+    t.eq(W.choice.display, "arrow", "skipped page keeps the starting choice")
+    t.ok(W.radios.arrow:GetChecked() and not W.radios.native:GetChecked())
     t.eq(Q.char.wizardDraft.display, nil)
     W.checks.autoQuest:SetChecked(false)
     Mock.click(W.checks.autoQuest, "LeftButton")
@@ -284,7 +285,7 @@ return {
     Mock.click(W.checks.sellJunk, "LeftButton")
     t.eq(Q.char.wizardPage, 5)
     t.eq(Q.char.wizardDraft.sellJunk, false)
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.eq(Q.char.wizardDone, true)
     t.eq(Q.char.wizardPage, nil, "page cleared")
@@ -303,7 +304,7 @@ return {
     QuestifyWizard:Hide()
     t.eq(Q.char.wizardDone, nil, "closing is not finishing")
     t.eq(Q.char.wizardPage, 4, "page kept")
-    t.eq(Q.Settings:Get("nav.display"), "native", "settings unchanged")
+    t.eq(Q.Settings:Get("nav.display"), "arrow", "settings unchanged")
     -- pas de nouvelle ouverture automatique dans la même session
     Q:Fire("LOGIN")
     Mock.advance(5)
@@ -337,7 +338,7 @@ return {
     t.eq(W2.page, 5)
     t.ok(not W2.checks.autoReward:GetChecked(), "unsaved choice kept across /reload")
     t.ok(W2.radios.native:GetChecked() and not W2.radios.tomtom:GetChecked())
-    goToPage(W2, 6)
+    goToPage(W2, W2.NUM_PAGES)
     Mock.click(W2.finishButton, "LeftButton")
     t.eq(Q2.Settings:Get("nav.display"), "native")
     t.eq(Q2.Settings:Get("autoReward"), false)
@@ -355,12 +356,15 @@ return {
     t.ok(not W.radios.tomtom:IsEnabled(), "TomTom missing")
     t.ok(not W.radios.waypointui:IsEnabled(), "WaypointUI missing")
     t.ok(W.radios.native:IsEnabled(), "native always available")
-    t.ok(W.radios.native:GetChecked(), "native selected by default")
+    t.ok(W.radios.arrow:IsEnabled(), "Questify arrow always available")
+    t.ok(W.radios.arrow:GetChecked(), "Questify arrow selected by default")
     Mock.click(W.radios.tomtom, "LeftButton")          -- bouton désactivé : ignoré
-    t.ok(W.radios.native:GetChecked())
-    goToPage(W, 6)
+    t.ok(W.radios.arrow:GetChecked())
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.display:GetText()):find("Questify arrow", 1, true), "summary shows the arrow")
     Mock.click(W.finishButton, "LeftButton")
-    t.eq(Q.Settings:Get("nav.display"), "native")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
+    t.eq(Q.Settings:Get("nav.router"), "questify")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -375,13 +379,27 @@ return {
     W.checks.routing:SetChecked(true)
     Mock.click(W.checks.routing, "LeftButton")
     goToPage(W, 4)
-    t.ok(W.radios.waypointui:GetChecked(), "WaypointUI preferred on first run")
+    t.ok(W.radios.arrow:GetChecked(), "Questify arrow on first run")
     Mock.click(W.radios.waypointui, "LeftButton")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(plain(W.recap.routing:GetText()):find("ShortestPath Forever", 1, true))
     Mock.click(W.finishButton, "LeftButton")
-    t.eq(Q.Settings:Get("nav.routing"), true)
+    t.eq(Q.Settings:Get("nav.router"), "spf")
     t.eq(Q.Settings:Get("nav.display"), "waypointui")
+  end,
+
+  -- La case ShortestPath ne touche qu'au choix SPF : un routeur « Aucun » choisi dans les options reste.
+  wizard_keeps_router_none = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true },
+      QuestifyDB = { profiles = { Default = { settings = { nav = { router = "none", migrated = 1 } } } } } } })
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, 3)
+    t.eq(W.checks.routing:GetChecked(), false)
+    goToPage(W, 6)
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "none")
   end,
 
   wizard_rerun_keeps_current_choice = function(t)
@@ -436,7 +454,7 @@ return {
   end,
 
   wizard_slash_command = function(t)
-    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true } } })
+    local Q = load({ savedVariables = { QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
     Mock.advance(3)
     t.ok(not shown(Q.UI.Wizard))
     SlashCmdList.QUESTIFY("wizard")
@@ -472,7 +490,7 @@ return {
     t.eq(Q.char.wizardDraft.route, "manual")
     Mock.click(W.routeRadios.auto, "LeftButton")
     t.ok(W.routeRadios.auto:GetChecked() and not W.routeRadios.manual:GetChecked(), "one choice only")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     t.ok(plain(W.recap.route:GetText()):find(Q.L.DGMODE_TAB_AUTO, 1, true), "summary shows the route")
     Mock.click(W.finishButton, "LeftButton")
     t.ok(Q.DungeonMode:IsOn(), "automatic mode on")
@@ -480,7 +498,7 @@ return {
     W:Show(2)
     t.ok(W.routeRadios.auto:GetChecked())
     Mock.click(W.routeRadios.manual, "LeftButton")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.ok(not Q.DungeonMode:IsOn(), "back to the manual route")
     t.eq(#Mock.errors, 0)
@@ -496,9 +514,210 @@ return {
     t.ok(W.routeRadios.manual:GetChecked())
     Mock.click(W.routeRadios.auto, "LeftButton")
     t.eq(W.choice.route, "manual")
-    goToPage(W, 6)
+    goToPage(W, W.NUM_PAGES)
     Mock.click(W.finishButton, "LeftButton")
     t.ok(not Q.DungeonMode:IsOn())
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_tracker_page_hides_the_game_tracker = function(t)
+    local otf = CreateFrame("Frame", "ObjectiveTrackerFrame", UIParent)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, 6)
+    t.ok(W.pages[6]:IsShown())
+    local cb = W.checks.hideBlizzard
+    t.ok(cb:IsShown(), "box on the tracker page")
+    t.ok(not cb:GetChecked(), "unticked: the option is off by default")
+    t.eq(W.hideBlizzardNote:GetText(), "Untick it at any time in the options (Tracker > Content) to bring it back.")
+    cb:SetChecked(true)
+    Mock.click(cb, "LeftButton")
+    t.eq(Q.char.wizardDraft.hideBlizzard, true, "draft kept for /reload")
+    t.ok(otf:IsShown(), "nothing changes before Finish")
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.hideBlizzard:GetText()):find(Q.L.UI_WIZ_HIDDEN, 1, true), "summary says hidden")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.hideBlizzard"), true)
+    t.ok(not otf:IsShown(), "hidden once saved")
+    -- relancé : la case reprend le réglage
+    W:Show(6)
+    t.ok(W.checks.hideBlizzard:GetChecked())
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_tracker_page_skip_keeps_the_setting = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show(6)
+    W.checks.hideBlizzard:SetChecked(true)
+    Mock.click(W.checks.hideBlizzard, "LeftButton")
+    Mock.click(W.skipButton, "LeftButton")
+    t.eq(W.page, W.PAGE_OBJECTIVES, "skipped: on to the objectives page")
+    t.ok(not W.checks.hideBlizzard:GetChecked(), "skipped: back to the current setting")
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.hideBlizzard:GetText()):find(Q.L.UI_WIZ_SHOWN, 1, true))
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.hideBlizzard"), false)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_tracker_page_french = function(t)
+    Mock.locale = "frFR"
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show(6)
+    t.eq(W.checks.hideBlizzard.label:GetText(), "Masquer le suivi d'objectifs du jeu")
+    t.eq(W.hideBlizzardNote:GetText(), "Décoche-le à tout moment dans les options (Suivi > Contenu) pour le retrouver.")
+    goToPage(W, W.NUM_PAGES)
+    t.eq(plain(W.recap.hideBlizzard:GetText()), "Suivi du jeu : affiché")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  wizard_objectives_page_previews_and_saves = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    t.ok(W.pages[W.PAGE_OBJECTIVES]:IsShown(), "objectives page")
+    t.ok(W.objRadios.objLayout.list:GetChecked() and W.objRadios.objDetail.mobs:GetChecked(), "defaults checked")
+    local Rows = Q.UI.ObjectiveRows
+    local host = W.preview.host
+    local function shownBars()
+      local n = 0
+      for _, r in ipairs(host.objRows or {}) do if r.barBg:IsShown() then n = n + 1 end end
+      return n
+    end
+    local function shownMobs()
+      local n = 0
+      for _, r in ipairs(host.mobRows or {}) do if r.name:IsShown() then n = n + 1 end end
+      return n
+    end
+    t.eq(shownBars(), 0, "list: no bars")
+    t.eq(shownMobs(), 2, "mobs under their objectives")
+    local h1 = W.preview.frame:GetHeight()
+    -- chaque clic redessine l'aperçu
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    t.eq(W.choice.objLayout, "bars")
+    t.ok(W.objRadios.objLayout.bars:GetChecked() and not W.objRadios.objLayout.list:GetChecked())
+    t.eq(shownBars(), 3, "one bar per objective")
+    t.ok(W.preview.frame:GetHeight() > h1, "taller with bars")
+    Mock.click(W.objRadios.objDetail.count, "LeftButton")
+    t.eq(shownMobs(), 0, "counter only: no mob lines")
+    Mock.click(W.objRadios.objDetail.distance, "LeftButton")
+    t.ok(Rows:VisibleText(host):find("64 yd", 1, true), "distance shown: " .. Rows:VisibleText(host))
+    Mock.click(W.objRadios.objLayout.quest, "LeftButton")
+    t.ok(Rows:VisibleText(host):find(Q.L.UI_WIZ_OBJ_SAMPLE_QUEST .. " · 1/4", 1, true), "quest heading")
+    t.eq(Q.char.wizardDraft.objLayout, "quest", "draft kept")
+    -- récapitulatif puis « Terminer » : réglages enregistrés
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.objectives:GetText()):find(Q.L.OBJ_LAYOUT_QUEST, 1, true), "recap line")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.objLayout"), "quest")
+    t.eq(Q.Settings:Get("tracker.objDetail"), "distance")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Assistant terminé avant la page des objectifs : elle est proposée une seule fois, avec un message.
+  -- (sans nouveautés de version à montrer : sinon elles passent avant, voir tests/test_news.lua)
+  wizard_offers_the_objectives_page_once = function(t)
+    local Q = load({ savedVariables = { QuestifyDB = { newsSeen = "999.0.0" }, QuestifyCharDB = { wizardDone = true } } })
+    local W = Q.UI.Wizard
+    t.ok(not shown(W), "not before 3 s")
+    Mock.advance(3)
+    t.ok(shown(W), "shown for the new page")
+    t.eq(W.page, W.PAGE_OBJECTIVES)
+    t.eq(Q.char.wizardObjectivesSeen, true)
+    t.eq(Q.char.wizardDone, true, "still done")
+    t.eq(Mock.countPrinted(Q.L.UI_WIZ_NEW_OBJECTIVES), 1)
+    W.frame:Hide()
+
+    Mock.reset()
+    Q = load({ savedVariables = { QuestifyDB = { newsSeen = "999.0.0" },
+      QuestifyCharDB = { wizardDone = true, wizardObjectivesSeen = true } } })
+    Mock.advance(3)
+    t.ok(not shown(Q.UI.Wizard), "not offered again")
+    t.eq(Mock.countPrinted(Q.L.UI_WIZ_NEW_OBJECTIVES), 0)
+  end,
+
+  wizard_objectives_skip_restores = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show()
+    goToPage(W, W.PAGE_OBJECTIVES)
+    Mock.click(W.objRadios.objLayout.bars, "LeftButton")
+    Mock.click(W.skipButton, "LeftButton")
+    t.eq(W.choice.objLayout, "list", "skip keeps the starting choice")
+    t.eq(W.page, W.PAGE_OBJECTIVES + 1, "skip: on to the next page")
+  end,
+
+  wizard_theme_page_previews_and_saves_the_theme = function(t)
+    local Q = load()
+    local W = Q.UI.Wizard
+    W:Show(W.PAGE_THEME)
+    t.ok(W.frame.qvDecor and W.frame.qvDecor.header, "themed window: banner and crest")
+    t.eq(#W.themeCards, #Q.Themes:List(), "one card per theme")
+    t.eq(W.choice.theme, "dwarf", "the race theme first")
+    t.ok(W.checks.followRace:GetChecked(), "follows the race")
+    t.ok(W.themeCards[5].check:IsShown(), "dwarf card ticked")
+    Mock.click(W.themeCards[9], "LeftButton")
+    t.eq(W.choice.theme, "horde")
+    t.eq(W.choice.followRace, false, "another theme unticks the race")
+    t.eq(W.frame.qvThemeKey, "horde", "the window previews the choice")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral", "nothing saved yet")
+    goToPage(W, W.NUM_PAGES)
+    t.ok(W.recap.theme:GetText():find("Horde", 1, true), "in the summary")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
+    t.eq(Q.Settings:Get("theme.followRace"), false)
+    t.eq(Q.UI.Tracker.themeKey, "horde")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Page « Marquage » : option des icônes de raid et macro du joueur (/click QuestifyMarkObjectives).
+  wizard_marks_page_creates_the_macro = function(t)
+    local Q = load()
+    local made = {}
+    MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS = 120, 18
+    GetNumMacros = function() return #made, 0 end
+    GetMacroIndexByName = function(name)
+      for i, m in ipairs(made) do if m.name == name then return i end end
+      return 0
+    end
+    CreateMacro = function(name, icon, body)
+      made[#made + 1] = { name = name, icon = icon, body = body }
+      return #made
+    end
+    ShowMacroFrame = function() Mock.record("ShowMacroFrame") end
+    local W = Q.UI.Wizard
+    W:Show(W.PAGE_MARKS)
+    t.eq(W.PAGE_MARKS, W.NUM_PAGES - 1, "just before the summary")
+    t.ok(W.pages[W.PAGE_MARKS]:IsShown())
+    t.ok(not W.checks.raidMarks:GetChecked(), "off by default")
+    t.ok(W.marksOpenButton, "button to open the macros")
+    -- case seule : enregistrée à la fin
+    W.checks.raidMarks:SetChecked(true)
+    Mock.click(W.checks.raidMarks, "LeftButton")
+    t.eq(W.choice.raidMarks, true)
+    t.eq(Q.Settings:Get("raidMarks.enabled"), false, "nothing saved yet")
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.eq(#made, 1, "macro created")
+    t.eq(made[1].body, "/click QuestifyMarkObjectives")
+    t.ok(plain(W.marksResult:GetText()):find("/macro", 1, true), "says where to get it: " .. plain(W.marksResult:GetText()))
+    t.eq(Mock.countPrinted("/macro"), 1, "also in the chat")
+    Mock.click(W.marksOpenButton, "LeftButton")
+    t.eq(Mock.countCalls("ShowMacroFrame"), 1)
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.eq(#made, 1, "no duplicate")
+    -- macros pleines : message, pas d'erreur
+    made = {}
+    GetNumMacros = function() return 120, 18 end
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.ok(plain(W.marksResult:GetText()):find(plain(Q.L.UI_RAIDMARKS_MACRO_FULL), 1, true), "full")
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.raidMarks:GetText()):find(Q.L.UI_WIZ_ON, 1, true), "recap line")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("raidMarks.enabled"), true)
     t.eq(#Mock.errors, 0)
   end,
 }

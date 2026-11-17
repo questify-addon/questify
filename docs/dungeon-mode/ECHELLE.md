@@ -1,7 +1,7 @@
 # Mode « Donjons » Alliance : échelle 1-60
 
-Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-13 à partir de
-`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
+Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
+`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 
 ## Départs par race (1-15)
@@ -22,26 +22,26 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 
 | # | Entrée | Échelon | Plage | Quêtes | XP de quêtes | % niveau | Étoiles | Zones avant l'échelon | Alternative en extérieur |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 15 | The Hall of Thanes | 13-18 | 3 | ~1625 | 11 % | ★ | Ironforge (15, accès) | Loch Modan (14-17) |
-| 2 | 19 | The Deadmines | 17-26 | 9 | ~5635 | 26 % | ★★ | Stormwind City (15-16, accès) ; Westfall (15-19) | Redridge Mountains (17-20) |
+| 1 | 15 | The Hall of Thanes | 13-18 | 5 | ~2730 | 19 % | ★★ | Ironforge (15, accès) | Loch Modan (14-17) |
+| 2 | 19 | The Deadmines | 17-26 | 10 | ~6505 | 31 % | ★★★ | Stormwind City (15-16, accès) ; Westfall (15-19) | Redridge Mountains (17-20) |
 | 3 | 19 | Wailing Caverns | 17-24 | 5 | 4500 | 21 % | ★★ | Darkshore (19-21) ; The Barrens (19-21, accès) | Redridge Mountains (19-22) |
 | 4 | 26 | The Stockade | 24-32 | 7 | 7985 | 22 % | ★★ | Redridge Mountains (21-24) ; Duskwood (24-26) ; Stormwind City (26, accès) | Duskwood (26-28) |
-| 5 | 26 | Blackfathom Deeps | 24-32 | 5 | 5875 | 16 % | ★★ | Ashenvale (24-27) | Stonetalon Mountains (24-27) |
+| 5 | 26 | Blackfathom Deeps | 24-32 | 6 | 7325 | 20 % | ★★ | Ashenvale (24-27) | Stonetalon Mountains (24-27) |
 | 6 | 26 | Excavation Site: Wetlands | 24-29 | 7 | ~4950 | 14 % | ★★ | Wetlands (24-28) | Wetlands (26-29) |
 | 7 | 27 | Shadowfang Keep | 22-30 | 0 | 0 | 0 % | — | Hillsbrad Foothills (26-28) | Hillsbrad Foothills (27-29) |
-| 8 | 30 | City of Dalaran | 28-33 | 4 | ~5300 | 11 % | ★ | Duskwood (27-30) ; Alterac Mountains (30, accès) | Hillsbrad Foothills (29-32) |
+| 8 | 30 | City of Dalaran | 28-33 | 5 | ~5960 | 13 % | ★★ | Duskwood (27-30) ; Alterac Mountains (30, accès) | Hillsbrad Foothills (29-32) |
 | 9 | 30 | Scarlet Monastery : Graveyard | 28-38 | 0 | 0 | 0 % | — | Hillsbrad Foothills (29-31) | Thousand Needles (29-32) |
-| 10 | 31 | Gnomeregan | 29-38 | 13 | 12625 | 25 % | ★★ | Ironforge (30-31, accès) | Thousand Needles (30-33) |
+| 10 | 31 | Gnomeregan | 29-38 | 15 | ~16600 | 33 % | ★★★ | Ironforge (30-31, accès) | Thousand Needles (30-33) |
 | 11 | 31 | Scarlet Monastery : Library | 29-39 | 2 | ~3200 | 6 % | ★ | Ironforge (31, accès) | Arathi Highlands (31-34) |
-| 12 | 31 | Razorfen Kraul | 29-38 | 3 | 4250 | 8 % | ★ | Thousand Needles (29-32) | Stranglethorn Vale (31-34) |
+| 12 | 31 | Razorfen Kraul | 29-38 | 4 | 5775 | 11 % | ★ | Thousand Needles (29-32) | Stranglethorn Vale (31-34) |
 | 13 | 34 | Scarlet Monastery : Armory | 32-42 | 0 | 0 | 0 % | — | Arathi Highlands (32-35) | Desolace (33-36) |
 | 14 | 37 | Scarlet Monastery : Cathedral | 35-45 | 2 | 3900 | 5 % | ★ | Desolace (34-37, accès) ; Stranglethorn Vale (35-37) | Alterac Mountains (36-39) |
-| 15 | 38 | Uldaman | 36-47 | 16 | 26295 | 33 % | ★★★ | Badlands (37-39, accès) ; Loch Modan (38, accès) | Riverglades (38-41) |
-| 16 | 39 | Razorfen Downs | 37-46 | 3 | ~5525 | 6 % | ★ | Dustwallow Marsh (36-39) | Shen'dralas (38-42) |
-| 17 | 44 | Maraudon | 42-52 | 7 | 17500 | 16 % | ★★ | Riverglades (39-43) ; Desolace (42-44, accès) | Swamp of Sorrows (40-44) |
-| 18 | 46 | Zul'Farrak | 44-54 | 11 | ~23895 | 19 % | ★★ | Feralas (43-46) ; Tanaris (45-46, accès) | The Hinterlands (44-48) |
-| 19 | 52 | The Temple of Atal'Hakkar | 50-60 | 6 | 18975 | 12 % | ★ | The Hinterlands (46-49, accès) ; Searing Gorge (48-50) ; Tanaris (49-52) | Azshara (49-53) |
-| 20 | 54 | Blackrock Depths | 52-60 | 17 | 44860 | 26 % | ★★ | Un'Goro Crater (52-54) ; Burning Steppes (53-54, accès) | Felwood (53-56) |
+| 15 | 38 | Uldaman | 36-47 | 19 | 30905 | 38 % | ★★★ | Badlands (37-39, accès) ; Loch Modan (38, accès) | Riverglades (38-41) |
+| 16 | 39 | Razorfen Downs | 37-46 | 4 | ~7650 | 9 % | ★ | Dustwallow Marsh (36-39) | Shen'dralas (38-42) |
+| 17 | 44 | Maraudon | 42-52 | 10 | ~25260 | 23 % | ★★ | Riverglades (39-43) ; Desolace (42-44, accès) | Swamp of Sorrows (40-44) |
+| 18 | 46 | Zul'Farrak | 44-54 | 12 | ~24300 | 20 % | ★★ | Feralas (43-46) ; Tanaris (45-46, accès) | The Hinterlands (44-48) |
+| 19 | 52 | The Temple of Atal'Hakkar | 50-60 | 8 | 27875 | 17 % | ★★ | The Hinterlands (46-49, accès) ; Searing Gorge (48-50) ; Tanaris (49-52) | Azshara (49-53) |
+| 20 | 54 | Blackrock Depths | 52-60 | 21 | ~54465 | 31 % | ★★★ | Un'Goro Crater (52-54) ; Burning Steppes (53-54, accès) | Felwood (53-56) |
 | 21 | 57 | Dire Maul : East | 55-60 | 3 | 8400 | 4 % | ★ | Felwood (54-56) ; Feralas (56-57, accès) | Western Plaguelands (55-58) |
 | 22 | 57 | Scholomance | 55-60 | 10 | 37825 | 19 % | ★★ | Western Plaguelands (55-57) | Winterspring (56-59) |
 | 23 | 58 | Dire Maul : West | 56-60 | 1 | 4150 | 2 % | ★ | Feralas (58, accès) | Winterspring (57-60) |
@@ -55,7 +55,9 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 
 - 96393 Old Ironforge Incursion : ~575 XP
 - 96394 The Restless Dead : ~525 XP
+- 96395 An Ancient Grudge : ~525 XP
 - 96403 Important Heirlooms : ~525 XP
+- 98423 The Treaty of Understanding : ~580 XP
 
 - à vérifier en jeu : plage 13-18 annoncée par Blizzard
 - à vérifier en jeu : accès de 96393 par la suite de Dun Morogh pour les Humains et les Elfes de la nuit
@@ -66,6 +68,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 - 167 Oh Brother. . . : 775 XP
 - 168 Collecting Memories : 675 XP
 - 214 Red Silk Bandanas : 625 XP
+- 373 The Unsent Letter : 870 XP
 - 2040 Underground Assault : 775 XP
 - 92750 Detonation at a Distance : 115 XP
 - 92751 Detonation at a Distance : 115 XP
@@ -102,6 +105,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 - 1199 Twilight Falls : 1275 XP
 - 1200 Blackfathom Villainy : 825 XP
 - 1275 Researching the Corruption : 1200 XP
+- 3765 The Corruption Abroad : 1450 XP
 
 ### Excavation Site: Wetlands (`EXCAVATION`, entrée 26)
 
@@ -126,6 +130,7 @@ Aucune quête Alliance.
 
 ### City of Dalaran (`DALARAN`, entrée 30)
 
+- 92432 An Alarming Request : 660 XP
 - 92456 A Green Sample : ~1325 XP
 - 92457 Starving Arcane : ~1325 XP
 - 92458 Heart of Disruption : ~1325 XP
@@ -154,6 +159,8 @@ Aucune quête Alliance.
 - 2930 Data Rescue : 1825 XP
 - 2931 Castpipe's Task : 115 XP
 - 2947 Return of the Ring : 1350 XP
+- 2948 Gnome Improvement : 2750 XP
+- 2951 The Sparklematic 5200! : ~1225 XP
 - 2962 The Only Cure is More Green Glow : 1225 XP
 
 ### Scarlet Monastery : Library (`SM_LIB`, entrée 31)
@@ -168,6 +175,7 @@ Aucune quête Alliance.
 
 - 1101 The Crone of the Kraul : 1675 XP
 - 1142 Mortality Wanes : 1525 XP
+- 1144 Willix the Importer : 1525 XP
 - 1221 Blueleaf Tubers : 1050 XP
 
 - à vérifier en jeu : The Crone of the Kraul (1101) : niveau requis 29, suite 1100
@@ -183,6 +191,7 @@ Aucune quête Alliance.
 
 - 1052 Down the Scarlet Path : 1550 XP
 - 1053 In the Name of the Light : 2350 XP
+- hors route : 6141 Brother Anton (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
 
 - à vérifier en jeu : plage de l'aile
 - à vérifier en jeu : In the Name of the Light (1053) : Loksey (Bibliothèque), Herod (Armurerie), Mograine et Whitemane (Cathédrale) ; rendue après la Cathédrale
@@ -191,6 +200,7 @@ Aucune quête Alliance.
 
 - 17 Uldaman Reagent Run : 1725 XP
 - 704 Agmond's Fate : 1425 XP
+- 707 Ironband Wants You! : 710 XP
 - 709 Solution to Doom : 1575 XP
 - 721 A Sign of Hope : 1375 XP
 - 722 Amulet of Secrets : 1575 XP
@@ -199,8 +209,10 @@ Aucune quête Alliance.
 - 2198 The Shattered Necklace : 1650 XP
 - 2199 Lore for a Price : 1225 XP
 - 2200 Back to Uldaman : 1275 XP
+- 2201 Find the Gems : 1800 XP
 - 2204 Restoring the Necklace : 465 XP
 - 2240 The Hidden Chamber : 1950 XP
+- 2278 The Platinum Discs : 2100 XP
 - 2279 The Platinum Discs : 2625 XP
 - 2361 Restoring the Necklace : 2800 XP
 - 2398 The Lost Dwarves : 155 XP
@@ -208,6 +220,7 @@ Aucune quête Alliance.
 
 ### Razorfen Downs (`RFD`, entrée 39)
 
+- 3525 Extinguishing the Idol : 2125 XP
 - 3636 Bring the Light : 2150 XP
 - 6626 A Host of Evil : 1725 XP
 - 96773 The Coldbringer's Eye : ~1650 XP
@@ -217,16 +230,20 @@ Aucune quête Alliance.
 - 7028 Twisted Evils : 2625 XP
 - 7041 Vyletongue Corruption : 2625 XP
 - 7044 Legends of Maraudon : 1700 XP
+- 7046 The Scepter of Celebras : 2850 XP
 - 7065 Corruption of Earth and Seed : 3050 XP
 - 7066 Seed of Life : 3050 XP
 - 7067 The Pariah's Instructions : 2725 XP
 - 7070 Shadowshard Fragments : 1725 XP
+- 93404 Rot and Regret : ~4550 XP
+- 93594 Word of the Woods : 360 XP
 
 - à vérifier en jeu : Maraudon en un seul échelon (une seule zone 2100 dans QuestieDB) : parties orange, violette et intérieure à distinguer en jeu si besoin
 
 ### Zul'Farrak (`ZF`, entrée 46)
 
 - 2768 Divino-matic Rod : 3150 XP
+- 2769 The Brassbolts Brothers : 405 XP
 - 2770 Gahz'rilla : 3550 XP
 - 2846 Tiara of the Deep : 3025 XP
 - 2861 Tabetha's Task : 200 XP
@@ -246,6 +263,8 @@ Aucune quête Alliance.
 - 3446 Into the Depths : 2450 XP
 - 3447 Secret of the Circle : 3050 XP
 - 3528 The God Hakkar : 3950 XP
+- 4142 A Visit to Gregan : 3800 XP
+- 4143 Haze of Evil : 5100 XP
 - hors route : 8733 Eranikus, Tyrant of the Dream (niveau requis 60)
 
 ### Blackrock Depths (`BRD`, entrée 54)
@@ -253,10 +272,12 @@ Aucune quête Alliance.
 - 3801 Dark Iron Legacy : 255 XP
 - 3802 Dark Iron Legacy : 2550 XP
 - 4024 A Taste of Flame : 3100 XP
+- 4083 The Spectral Chalice : 280 XP
 - 4123 The Heart of the Mountain : 2825 XP
 - 4126 Hurley Blackbreath : 2825 XP
 - 4128 Ragnar Thunderbrew : 280 XP
 - 4136 Ribbly Screwspigot : 1325 XP
+- 4201 The Love Potion : 2725 XP
 - 4241 Marshal Windsor : 2725 XP
 - 4242 Abandoned Hope : 2725 XP
 - 4263 Incendius! : 2900 XP
@@ -267,6 +288,8 @@ Aucune quête Alliance.
 - 4361 The Bearer of Bad News : 3200 XP
 - 4362 The Fate of the Kingdom : 4025 XP
 - 4363 The Princess's Surprise : 4825 XP
+- 7604 A Binding Contract : ~3300 XP
+- 7848 Attunement to the Core : 3300 XP
 - hors route : 9015 The Challenge (niveau requis 58, suite de l'ensemble de donjon)
 
 ### Dire Maul : East (`DM_EAST`, entrée 57)
@@ -301,6 +324,13 @@ Aucune quête Alliance.
 ### Dire Maul : North (`DM_NORTH`, entrée 58)
 
 - 8948 Anthion's Old Friend : 3300 XP
+- hors route : 5247 Fragments of the Past (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5250 Starfall (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5518 The Gordok Ogre Suit (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5525 Free Knot! (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5526 Shards of the Felvine (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 7461 The Madness Within (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 7703 Unfinished Gordok Business (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
 
 - à vérifier en jeu : plage de l'aile
 - à vérifier en jeu : Anthion's Old Friend (8948, bibliothèque de Hache-Tripes) : niveau requis 58, suite 8947 ; aile à confirmer

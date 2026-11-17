@@ -6,10 +6,14 @@ local addonName, Q = ...
 --   /qf back       rouvre l'étape précédente
 --   /qf classe     journal sur l'onglet Quêtes de classe (alias /qf class)
 --   /qf sacs       quêtes qui donnent un sac, avec leur état (alias /qf bags) ; /qf sacs reset repropose les ignorées
+--   /qf hv         objets de quête achetables à l'hôtel des ventes (alias /qf ah) ; /qf hv reset recoche tout
 --   /qf options    fenêtre d'options (/qf options <texte> : avec cette recherche)
 --   /qf wizard     assistant de navigation
 --   /qf export     mesures de temps, prêtes à copier
+--   /qf session    résumé de la session de jeu (temps actif, temps mort, XP/h par zone)
 --   /qf debug      messages de débogage (QuestifyDB.debug)
+--   /qf navperf    mesures du routeur intégré (pire image, moyenne, calculs, mémoire) ; « reset » : à zéro
+--   /qf arrow reset     flèche Questify (UI/Arrow.lua) remise à sa place par défaut
 --   /qf check      autodiagnostic du client (API, QuestieDB, navigation, route) ; alias /qf diag
 --   /qf bug        rapport de bug prêt à copier (alias /qf report) ; /qf bug clear vide les erreurs gardées
 --   /qf theme <clé>     thème du suivi (parchment, dark, transparent, gradient) ; seul : la liste
@@ -120,6 +124,20 @@ COMMANDS.classe = function()
 end
 COMMANDS.class = COMMANDS.classe
 
+-- Anciens rangs sur les barres d'action (Engine/ActionRanks.lua) : ouvre l'assistant ; « reset » repropose
+-- les rangs ignorés.
+COMMANDS.rangs = function(rest)
+  local R = Q.ActionRanks
+  if not R then return end
+  local arg = tostring(rest or ""):lower():match("^%s*(%S*)")
+  if arg == "reset" then
+    R:ForgetIgnored()
+    Q:Print(L.RANKS_FORGOTTEN)
+  end
+  if not R:Check(true) then Q:Print(L.RANKS_NONE) end
+end
+COMMANDS.ranks = COMMANDS.rangs
+
 -- Quêtes de sac (Engine/BagQuests.lua) : liste dans la discussion ; « reset » repropose les quêtes ignorées.
 local function bagsText(eq)
   local parts = {}
@@ -152,6 +170,22 @@ COMMANDS.sacs = function(rest)
 end
 COMMANDS.bags = COMMANDS.sacs
 
+-- Objets achetables à l'hôtel des ventes (Engine/AuctionItems.lua) : liste ; « reset » recoche les objets.
+COMMANDS.hv = function(rest)
+  local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+  if not (AI and P) then return end
+  if rest == "reset" then
+    Q:Print(L.AH_SLASH_RESET, AI:ResetChoices())
+    return
+  end
+  if not AI:Enabled() then
+    Q:Print(L.AH_SLASH_OFF)
+    return
+  end
+  P:ToggleList()
+end
+COMMANDS.ah = COMMANDS.hv
+
 COMMANDS.options = function(rest)
   local O = Q.UI and Q.UI.Options
   if not O then return end
@@ -164,11 +198,31 @@ COMMANDS.wizard = function()
   if Q.UI and Q.UI.Wizard then Q.UI.Wizard:Show() end
 end
 
+-- Nouveautés de la dernière version (UI/News.lua), même déjà vues.
+COMMANDS.news = function()
+  if Q.UI and Q.UI.News then Q.UI.News:Show() end
+end
+COMMANDS.nouveautes = COMMANDS.news
+
 COMMANDS.export = function()
   local O = Q.UI and Q.UI.Options
   if O then
     O:ShowTelemetryExport()
     Q:Print(L.UI_SLASH_EXPORTED)
+  end
+end
+
+-- Résumé de la session (Engine/Pace.lua) : temps de jeu, actif, temps mort, XP/h par zone ; la
+-- session précédente suit si elle existe.
+COMMANDS.session = function()
+  local P = Q.Pace
+  if not P then return end
+  Q:Print(L.PACE_SESSION_HEADER)
+  for _, line in ipairs(P:SessionLines()) do Q:Print("%s", line) end
+  local last = P:LastSession()
+  if last then
+    Q:Print(L.PACE_SESSION_PREVIOUS)
+    for _, line in ipairs(P:SessionLines(last)) do Q:Print("%s", line) end
   end
 end
 
@@ -192,12 +246,18 @@ COMMANDS.theme = function(rest)
     Q:Print(L.UI_SLASH_THEME_LIST, themeList(), L[T:Current().label])
     return
   end
+  -- « /qf theme race » : le thème suit de nouveau la race du personnage
+  if rest:lower() == "race" or rest:lower() == L.UI_THEME_MY_RACE:lower() then
+    Q.Settings:Set("theme.followRace", true)
+    Q:Print(L.UI_SLASH_THEME_SET, L[T:Current().label])
+    return
+  end
   local key = T:Find(rest)
   if not key then
     Q:Print(L.UI_SLASH_THEME_UNKNOWN, rest, themeList())
     return
   end
-  Q.Settings:Set("tracker.theme", key)
+  T:Choose(key)
   Q:Print(L.UI_SLASH_THEME_SET, L[T:Get(key).label])
 end
 
@@ -212,6 +272,32 @@ COMMANDS.opacity = function(rest)
   n = math.max(0, math.min(100, math.floor(n + 0.5)))
   Q.Settings:Set("tracker.opacity", n / 100)
   Q:Print(L.UI_SLASH_OPACITY_SET, n)
+end
+
+-- Mesures du routeur intégré (Nav/Walk.lua, spec § 3 bis) ; « reset » les remet à zéro.
+COMMANDS.navperf = function(rest)
+  local W = Q.Walk
+  if not W then return end
+  if rest == "reset" then
+    W:ResetPerf()
+    Q:Print(L.UI_NAVPERF_RESET)
+    return
+  end
+  local p = W:Perf()
+  local m = p.memKB
+  Q:Print(L.UI_NAVPERF, p.worstMs, p.avgMs, p.frames, p.searches, (m.Questify or 0) / 1024)
+end
+
+-- Flèche Questify (UI/Arrow.lua) : « reset » la remet à sa place par défaut.
+COMMANDS.arrow = function(rest)
+  local A = Q.Arrow
+  if not A then return end
+  if rest == "reset" then
+    A:ResetPosition()
+    Q:Print(L.UI_ARROW_RESET)
+    return
+  end
+  Q:Print(L.UI_ARROW_HELP)
 end
 
 COMMANDS.check = function()

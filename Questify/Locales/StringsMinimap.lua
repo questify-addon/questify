@@ -10,8 +10,9 @@ Q:RegisterStrings({
     -- bulle d'aide du bouton : titre, profil de butin actuel, puis les clics
     MINIMAP_TIP_TITLE = "Questify",
     MINIMAP_TIP_ROLE = "Loot: %s",
-    MINIMAP_TIP_LEFT = "Left-click: quick choices",
-    MINIMAP_TIP_RIGHT = "Right-click: journal",
+    MINIMAP_TIP_LEFT = "Left-click: options",
+    MINIMAP_TIP_RIGHT = "Right-click: route options",
+    MINIMAP_TIP_SHIFT = "Shift+click: quick choices",
     MINIMAP_TIP_CTRL = "Ctrl+click: setup wizard",
     MINIMAP_TIP_DRAG = "Drag: move",
     -- menu des choix rapides (clic gauche)
@@ -38,8 +39,9 @@ Q:RegisterStrings({
     MINIMAP_OPT = "Bouton de la minicarte",
     MINIMAP_TIP_TITLE = "Questify",
     MINIMAP_TIP_ROLE = "Butin : %s",
-    MINIMAP_TIP_LEFT = "Clic gauche : choix rapides",
-    MINIMAP_TIP_RIGHT = "Clic droit : journal",
+    MINIMAP_TIP_LEFT = "Clic gauche : options",
+    MINIMAP_TIP_RIGHT = "Clic droit : options de route",
+    MINIMAP_TIP_SHIFT = "Maj+clic : choix rapides",
     MINIMAP_TIP_CTRL = "Ctrl+clic : assistant de démarrage",
     MINIMAP_TIP_DRAG = "Glisser : déplacer",
     MINIMAP_MENU_TITLE = "Questify",

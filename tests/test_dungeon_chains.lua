@@ -251,17 +251,17 @@ return {
     t.eq(w.text:GetText(), string.format(Q.L.DUNGEON_CHAIN_BOX_PL, "|cffffffffThe Defias Brotherhood, Red Silk Bandanas|r",
       6, "Westfall, Redridge Mountains, Stormwind City"))
     t.eq(boxes[2040].text:GetText(), string.format(Q.L.DUNGEON_CHAIN_BOX_LEVEL, 20))
-    local shown = {}
-    for _, fs in ipairs(J.dgLines) do if fs:IsShown() then shown[#shown + 1] = fs:GetText() end end
-    t.eq(#shown, 2, "lines: Underground Assault and Oh Brother only")
-    t.ok(not table.concat(shown, "|"):find("Red Silk Bandanas", 1, true), "shared-chain quests named in the box only")
+    -- une ligne « bloquée » par quête (166, 214, 2040), l'encadré de la suite commune sous la première
+    local locked = {}
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() and r.icon:GetTexture() == "Interface\\LFGFrame\\UI-LFG-ICON-LOCK" then locked[#locked + 1] = r.qid end end
+    t.eq(#locked, 3, "three locked rows")
     for _, b in pairs(boxes) do
       t.eq(b.add:GetText(), Q.L.DUNGEON_CHAIN_ADD)
       t.eq(b.info:GetText(), Q.L.DUNGEON_CHAIN_INFO)
       t.ok(b.add:IsShown() and b.info:IsShown(), "two buttons")
-      -- dans la colonne de détail (226 px), boutons compris
+      -- dans la colonne de détail (272 px), boutons compris
       local x = select(4, b.box:GetPoint(1))
-      t.ok(x + b.box:GetWidth() <= 226, "box inside the column")
+      t.ok(x + b.box:GetWidth() <= 272, "box inside the column")
       t.ok(b.info:GetWidth() <= b.box:GetWidth() - 14 and b.add:GetWidth() <= b.box:GetWidth() - 14, "buttons fit")
     end
     -- survol de l'encadré : nombre de quêtes, zones, XP, récompenses
@@ -297,7 +297,7 @@ return {
     for _, p in ipairs(P.pills) do
       if p:IsShown() then
         local r = p.text:GetTextColor()
-        t.eq(r, p.onRoute and 0.6 or 0.910, "text colour follows the route")
+        t.eq(r, (Q.Themes:Color(p.onRoute and "zone" or "textDim")), "text colour follows the route (theme tokens)")
       end
     end
     t.ok(P.lines[6]:IsShown() and not (P.lines[7] and P.lines[7]:IsShown()), "six steps")
@@ -383,8 +383,12 @@ return {
     for _, it in ipairs(J.DungeonItems()) do if it.dungeon.key == "DM" then item = it end end
     t.eq({ item.todo, item.now }, { 3, 0 }, "turned-in quest out of the counters")
     local last
-    for _, fs in ipairs(J.dgLines) do if fs:IsShown() then last = fs:GetText() end end
-    t.ok(last:find("ReadyCheck-Ready", 1, true) and last:find("(" .. Q.L.DUNGEON_DONE_TAG .. ")", 1, true), last)
+    for _, r in ipairs(J.dgQRows) do if r:IsShown() then last = r end end
+    -- dernière ligne : la quête rendue, coche du thème, « fait », sans bouton carte
+    t.eq(last.qid, 167)
+    t.eq(last.icon:GetTexture(), Q.Themes.GLYPH_CHECK)
+    t.eq(last.sub:GetText(), Q.L.DUNGEON_DONE_TAG)
+    t.ok(not last.map:IsShown(), "no map button on a turned-in quest")
     noErrors(t)
   end,
 

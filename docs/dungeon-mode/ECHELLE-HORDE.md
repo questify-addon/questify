@@ -1,7 +1,7 @@
 # Mode « Donjons » Horde : échelle 1-60
 
-Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-15 à partir de
-`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
+Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
+`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 
 ## Départs par race (1-12)
@@ -29,19 +29,19 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 | 4 | 26 | Blackfathom Deeps | 24-32 | 7 | 6790 | 19 % | ★★ | Ashenvale (21-26) | Thousand Needles (25-27) |
 | 5 | 27 | Shadowfang Keep | 22-30 | 3 | 3700 | 10 % | ★ | Hillsbrad Foothills (27-29) | Desolace (28-35) |
 | 6 | 28 | Excavation Site: Wetlands | 24-29 | 4 | ~3750 | 9 % | ★ | Arathi Highlands (29-31) | Desolace (28-35) |
-| 7 | 30 | City of Dalaran | 28-33 | 3 | ~3975 | 8 % | ★ | Alterac Mountains (29-31) | Desolace (31-35) |
+| 7 | 30 | City of Dalaran | 28-33 | 4 | ~5300 | 11 % | ★ | Alterac Mountains (29-31) | Desolace (31-35) |
 | 8 | 30 | Scarlet Monastery : Graveyard | 28-38 | 1 | 1650 | 3 % | ★ | Alterac Mountains (29-31) | Desolace (31-35) |
 | 9 | 31 | Scarlet Monastery : Library | 29-39 | 3 | 4025 | 8 % | ★ | Arathi Highlands (30-31) | Desolace (32-35) |
-| 10 | 31 | Razorfen Kraul | 29-38 | 2 | 3075 | 6 % | ★ | Thousand Needles (31-33) | Desolace (32-35) |
+| 10 | 31 | Razorfen Kraul | 29-38 | 3 | 4600 | 9 % | ★ | Thousand Needles (31-33) | Desolace (32-35) |
 | 11 | 34 | Scarlet Monastery : Armory | 32-42 | 0 | 0 | 0 % | — | Arathi Highlands (37-38) | Stranglethorn Vale (35-42) |
-| 12 | 35 | Gnomeregan | 29-38 | 5 | ~5460 | 8 % | ★ | Stranglethorn Vale (35-37) | Stranglethorn Vale (36-42) |
+| 12 | 35 | Gnomeregan | 29-38 | 7 | ~9435 | 14 % | ★★ | Stranglethorn Vale (35-37) | Stranglethorn Vale (36-42) |
 | 13 | 37 | Scarlet Monastery : Cathedral | 35-45 | 1 | 2575 | 3 % | ★ | Arathi Highlands (37-38) | Stranglethorn Vale (38-42) |
-| 14 | 38 | Uldaman | 36-47 | 12 | 18125 | 22 % | ★★ | Badlands (38-40) | Riverglades (39-43) |
-| 15 | 39 | Razorfen Downs | 37-46 | 5 | ~9375 | 11 % | ★ | Dustwallow Marsh (38-40) | Riverglades (39-43) |
-| 16 | 44 | Maraudon | 42-52 | 8 | ~19950 | 18 % | ★★ | Riverglades (39-43) ; Desolace (42-44, accès) | Feralas (45-47) |
+| 14 | 38 | Uldaman | 36-47 | 13 | 20225 | 25 % | ★★ | Badlands (38-40) | Riverglades (39-43) |
+| 15 | 39 | Razorfen Downs | 37-46 | 6 | ~11500 | 13 % | ★★ | Dustwallow Marsh (38-40) | Riverglades (39-43) |
+| 16 | 44 | Maraudon | 42-52 | 11 | ~27710 | 25 % | ★★ | Riverglades (39-43) ; Desolace (42-44, accès) | Feralas (45-47) |
 | 17 | 46 | Zul'Farrak | 44-54 | 11 | ~24495 | 20 % | ★★ | Tanaris (44-46) | Feralas (45-47) |
-| 18 | 52 | The Temple of Atal'Hakkar | 50-60 | 8 | 25000 | 16 % | ★★ | Stranglethorn Vale (47-49) ; The Hinterlands (49-51) ; Swamp of Sorrows (50-52, accès) | Blasted Lands (51-53) |
-| 19 | 54 | Blackrock Depths | 52-60 | 23 | ~57405 | 33 % | ★★★ | Searing Gorge (52-54) ; Burning Steppes (53-54, accès) | Azshara (53-55) |
+| 18 | 52 | The Temple of Atal'Hakkar | 50-60 | 10 | 32650 | 20 % | ★★ | Stranglethorn Vale (47-49) ; The Hinterlands (49-51) ; Swamp of Sorrows (50-52, accès) | Blasted Lands (51-53) |
+| 19 | 54 | Blackrock Depths | 52-60 | 27 | ~65230 | 38 % | ★★★ | Searing Gorge (52-54) ; Burning Steppes (53-54, accès) | Azshara (53-55) |
 | 20 | 57 | Dire Maul : East | 55-60 | 3 | 8400 | 4 % | ★ | Felwood (54-56) ; Un'Goro Crater (55-56) ; Feralas (56-57, accès) | Winterspring (57-58) |
 | 21 | 57 | Scholomance | 55-60 | 10 | 37825 | 19 % | ★★ | Western Plaguelands (57-58) | Winterspring (57-58) |
 | 22 | 58 | Dire Maul : West | 56-60 | 1 | 4150 | 2 % | ★ | Feralas (56-57, accès) | Winterspring (57-58) |
@@ -130,6 +130,7 @@ Niveau d'entrée imposé : joué depuis Hammerfall, au passage des Hautes-terres
 
 - 96984 Heart of Disruption : ~1325 XP
 - 96986 The Grave Knight : ~1325 XP
+- 96987 Opportunistic Education : ~1325 XP
 - 96988 Source of Power : ~1325 XP
 
 - à vérifier en jeu : plage 28-33 annoncée, quêtes de niveau 33
@@ -155,6 +156,7 @@ Niveau d'entrée imposé : joué depuis Hammerfall, au passage des Hautes-terres
 ### Razorfen Kraul (`RFK`, entrée 31)
 
 - 1102 A Vengeful Fate : 2025 XP
+- 1144 Willix the Importer : 1525 XP
 - 1221 Blueleaf Tubers : 1050 XP
 - hors route : 1109 Going, Going, Guano! (prise et rendue à Fossoyeuse, loin de la route après le Kraal)
 
@@ -174,6 +176,8 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 2843 Gnomer-gooooone! : ~1375 XP
 - 2904 A Fine Mess : 1225 XP
 - 2949 Return of the Ring : 1350 XP
+- 2950 Nogg's Ring Redo : 2750 XP
+- 2951 The Sparklematic 5200! : ~1225 XP
 
 - à vérifier en jeu : Chief Engineer Scooty (2842) puis Gnomer-gooooone! (2843) ouvrent le transpondeur de Booty Bay
 - à vérifier en jeu : la route envoie à Scooty (Booty Bay), pas à l'entrée de Dun Morogh : position du transpondeur à vérifier
@@ -181,6 +185,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 ### Scarlet Monastery : Cathedral (`SM_CATH`, entrée 37)
 
 - 1048 Into The Scarlet Monastery : 2575 XP
+- hors route : 1394 Final Passage (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
 
 - à vérifier en jeu : plage de l'aile
 - à vérifier en jeu : Into The Scarlet Monastery (1048) : niveau requis 33, Loksey, Herod, Mograine et Whitemane
@@ -189,6 +194,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 
 - 709 Solution to Doom : 1575 XP
 - 2202 Uldaman Reagent Run : 1725 XP
+- 2278 The Platinum Discs : 2100 XP
 - 2280 The Platinum Discs : 2625 XP
 - 2283 Necklace Recovery : 1225 XP
 - 2284 Necklace Recovery, Take 2 : 1225 XP
@@ -203,6 +209,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 ### Razorfen Downs (`RFD`, entrée 39)
 
 - 3341 Bring the End : 2150 XP
+- 3525 Extinguishing the Idol : 2125 XP
 - 6521 An Unholy Alliance : 2100 XP
 - 6522 An Unholy Alliance : 1750 XP
 - 6626 A Host of Evil : 1725 XP
@@ -213,10 +220,13 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 7028 Twisted Evils : 2625 XP
 - 7029 Vyletongue Corruption : 2625 XP
 - 7044 Legends of Maraudon : 1700 XP
+- 7046 The Scepter of Celebras : 2850 XP
 - 7064 Corruption of Earth and Seed : 3050 XP
 - 7066 Seed of Life : 3050 XP
 - 7067 The Pariah's Instructions : 2725 XP
 - 7068 Shadowshard Fragments : 1725 XP
+- 93404 Rot and Regret : ~4550 XP
+- 93594 Word of the Woods : 360 XP
 - 96776 An'she's Radiance : ~2450 XP
 
 - à vérifier en jeu : Maraudon en un seul échelon (une seule zone 2100 dans QuestieDB)
@@ -245,6 +255,8 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 3446 Into the Depths : 2450 XP
 - 3447 Secret of the Circle : 3050 XP
 - 3528 The God Hakkar : 3950 XP
+- 4146 Zapper Fuel : 5100 XP
+- 4147 Marvon's Workshop : 2550 XP
 - hors route : 8733 Eranikus, Tyrant of the Dream (niveau requis 60)
 
 ### Blackrock Depths (`BRD`, entrée 54)
@@ -254,7 +266,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 3907 Disharmony of Fire : 3650 XP
 - 3981 Commander Gor'shak : 2550 XP
 - 4001 What Is Going On? : 270 XP
-- 4002 The Eastern Kingdom : ~2050 XP
+- 4002 The Eastern Kingdom : 270 XP
 - 4003 The Royal Rescue : 4025 XP
 - 4004 The Princess Saved? : 4975 XP
 - 4024 A Taste of Flame : 3100 XP
@@ -262,6 +274,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 4063 The Rise of the Machines : 3100 XP
 - 4081 KILL ON SIGHT: Dark Iron Dwarves : 2550 XP
 - 4082 KILL ON SIGHT: High Ranking Dark Iron Officials : 2725 XP
+- 4083 The Spectral Chalice : 280 XP
 - 4121 Precarious Predicament : 3875 XP
 - 4122 Grark Lorkrub : 3100 XP
 - 4123 The Heart of the Mountain : 2825 XP
@@ -269,8 +282,11 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 4133 Vivian Lagrave : 280 XP
 - 4134 Lost Thunderbrew Recipe : 2825 XP
 - 4136 Ribbly Screwspigot : 1325 XP
+- 4201 The Love Potion : 2725 XP
 - 4324 Yuka Screwspigot : 1325 XP
 - 7201 The Last Element : 2725 XP
+- 7604 A Binding Contract : ~3300 XP
+- 7848 Attunement to the Core : 3300 XP
 - 97197 Fragment of the Firelands : ~2100 XP
 - hors route : 9015 The Challenge (niveau requis 58, suite de l'ensemble de donjon)
 
@@ -308,6 +324,11 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 ### Dire Maul : North (`DM_NORTH`, entrée 58)
 
 - 8948 Anthion's Old Friend : 3300 XP
+- hors route : 5518 The Gordok Ogre Suit (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5525 Free Knot! (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 5526 Shards of the Felvine (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 7461 The Madness Within (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
+- hors route : 7703 Unfinished Gordok Business (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
 
 - à vérifier en jeu : plage de l'aile
 - à vérifier en jeu : Anthion's Old Friend (8948) : niveau requis 58, suite 8947 ; aile à confirmer
@@ -322,6 +343,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 5282 The Restless Souls : 4150 XP
 - 5846 Of Love and Family : 6200 XP
 - 5848 Of Love and Family : 3300 XP
+- hors route : 5961 The Champion of the Banshee Queen (quête en plus (DungeonJournal), aile à confirmer : hors route automatique, dans la fenêtre Donjons)
 
 - à vérifier en jeu : répartition des quêtes entre les deux côtés de Stratholme
 

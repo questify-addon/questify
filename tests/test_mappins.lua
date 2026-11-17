@@ -269,7 +269,12 @@ return {
     local Q = load()
     WorldMapFrame:Show()
     WorldMapFrame:SetMapID(1426)
-    local acquired = Mock.callsTo("WorldMapFrame:AcquirePin")
+    -- sans les repères de la ligne de route (UI/RouteLine.lua, clé Questify_RouteLine)
+    local line = Ext.pins().worldmapPinRegistry["Questify_RouteLine"] or {}
+    local acquired = {}
+    for _, c in ipairs(Mock.callsTo("WorldMapFrame:AcquirePin")) do
+      if not line[c.args[2]] then acquired[#acquired + 1] = c end
+    end
     t.eq(#acquired, #active(Q, "world"), "every pin drawn on Dun Morogh")
     local found
     for _, c in ipairs(acquired) do
@@ -285,7 +290,11 @@ return {
     -- autre zone : rien
     Mock.calls = {}
     WorldMapFrame:SetMapID(1429)
-    t.eq(Mock.countCalls("WorldMapFrame:AcquirePin"), 0)
+    local other = 0
+    for _, c in ipairs(Mock.callsTo("WorldMapFrame:AcquirePin")) do
+      if not line[c.args[2]] then other = other + 1 end
+    end
+    t.eq(other, 0)
     t.eq(#Mock.errors, 0)
   end,
 

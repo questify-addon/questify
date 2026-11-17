@@ -2,6 +2,7 @@
 # Vérification syntaxique de tous les fichiers Lua du projet (addon, outils, tests).
 # Compile chaque fichier avec luajit -bl (aucune exécution) et refuse la syntaxe Lua 5.2+
 # que LuaJIT accepte mais que le client WoW (Lua 5.1) refuse : goto et étiquettes ::nom::.
+# Questify/NavEngine/Maps (37 Mo de données zlib générées) n'est pas scanné : trop lent.
 # Sans erreur : aucune sortie, code de retour 0.
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -24,5 +25,5 @@ while IFS= read -r -d '' file; do
       fi
       ;;
   esac
-done < <(find "$ROOT/Questify" "$ROOT/tools" "$ROOT/tests" -type f -name '*.lua' -print0 2>/dev/null)
+done < <(find "$ROOT/Questify" "$ROOT/tools" "$ROOT/tests" -type f -name '*.lua' -not -path '*/NavEngine/Maps/*' -print0 2>/dev/null)
 exit $status

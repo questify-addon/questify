@@ -6,32 +6,202 @@ local addonName, Q = ...
 --               faits, dépassés ou d'une autre race ; coche verte sur un chapitre fini), étapes du
 --               chapitre à droite (icône d'état, clic = étape courante) ;
 --   « Donjons » : liste groupée et notée (étoiles) à gauche, détail du donjon choisi à droite ;
---   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver.
+--   « Quêtes de classe » : une ligne par chaîne avec son état et Ajouter / Ignorer / Réactiver ;
+--   « Rythme » : écart avec la route simulée, chapitres mesurés, session (UI/PacePanel.lua).
 -- Le bouton « Options… » en bas à droite ouvre la fenêtre d'options (UI/Options.lua).
+-- Habillage du thème (UI/Themes.lua, maquette docs/media/apercus/src/themes/maquette.html, journal(t)) :
+-- gabarit de Blizzard caché, bandeau illustré de 52 px avec blason, titre et onglets en texte (onglet
+-- ouvert souligné de l'accent), barre latérale des listes (chapitres, donjons), sélection et étape
+-- courante sur fond « sel » avec barre d'accent, pied aux couleurs du thème (boutons plats, Options… en
+-- action principale). Tout est repeint à chaque changement de thème (THEME_CHANGED).
 Q.UI = Q.UI or {}
-local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {} }
+local Journal = { tab = "route", panels = {}, tabs = {}, chapterRows = {}, stepRows = {}, classRows = {},
+  buttons = {}, fills = {}, texts = {} }
 Q.UI.Journal = Journal
 
 local L = Q.L
 
 local FRAME_NAME = "QuestifyJournal"
 local WIDTH, HEIGHT = 520, 560
-local TAB_NAMES = { "route", "dungeons", "class" }
-local TAB_INDEX = { route = 1, dungeons = 2, class = 3 }
+local TAB_NAMES = { "route", "dungeons", "class", "pace" }
+local TAB_INDEX = { route = 1, dungeons = 2, class = 3, pace = 4 }
 
+local HEADER_H, FOOTER_H = 40, 34      -- en-tête en aplat, pied
+local CONTENT_TOP = HEADER_H + 8
 local CHAPTER_W, CHAPTER_ROW_H = 150, 20
 local STEP_W, STEP_ROW_H = 290, 18
 local CLASS_W, CLASS_ROW_H = 456, 46
 local CLASS_ITEMS = 3
 local LIST_H = 432
 
+local Themes0 = Q.Themes
 Journal.STATE_ICONS = {
-  done = "Interface\\RaidFrame\\ReadyCheck-Ready",
-  skipped = "Interface\\RaidFrame\\ReadyCheck-NotReady",
+  done = Themes0 and Themes0.GLYPH_CHECK or "Interface\\RaidFrame\\ReadyCheck-Ready",
+  skipped = Themes0 and Themes0.GLYPH_CLOSE or "Interface\\RaidFrame\\ReadyCheck-NotReady",
   current = "Interface\\ChatFrame\\ChatFrameExpandArrow",
   blocked = "Interface\\LFGFrame\\UI-LFG-ICON-LOCK",
 }
 local ICONS = Journal.STATE_ICONS
+-- Teinte de chaque icône d'état (jetons du thème) ; le verrou garde ses couleurs.
+local STATE_TINT = { done = "success", skipped = "textMuted", current = "accent" }
+
+---------------------------------------------------------------------------
+-- Couleurs du thème (UI/Themes.lua). Sans module de thèmes : couleurs d'avant la refonte.
+---------------------------------------------------------------------------
+local FALLBACK = { sel = { 1, 0.82, 0, 0.25 }, accent = { 1, 0.82, 0, 1 }, quest = { 1, 0.82, 0, 1 },
+  line = { 1, 1, 1, 0.1 }, sidebar = { 0, 0, 0, 0.25 }, footer = { 0, 0, 0, 0.3 }, edge = { 0.5, 0.5, 0.5, 1 },
+  panel = { 0.1, 0.1, 0.1, 0.9 }, textMuted = { 0.6, 0.6, 0.6, 1 }, textDim = { 0.8, 0.8, 0.8, 1 } }
+local WHITE = { 1, 1, 1, 1 }
+local TEXT_ROLES = { text = "body", textDim = "dim", textMuted = "muted" }
+
+-- tc(rôle) -> r, g, b, a du jeton.
+local function tc(role)
+  local T = Q.Themes
+  if T then return T:Color(role) end
+  local c = FALLBACK[role] or WHITE
+  return c[1], c[2], c[3], c[4]
+end
+
+-- Couleur, ombre et police d'une ligne de texte ; rôles des jetons (text, textDim, textMuted) ou du
+-- texte (accent, quest, success, danger, title…).
+local function paint(fs, role)
+  local T = Q.Themes
+  if T and fs then T:StyleText(fs, TEXT_ROLES[role] or role) end
+end
+
+-- Codes de couleur des textes remplacés par ceux du thème.
+local function recolor(text)
+  local T = Q.Themes
+  if T then return T:Recolor(text) end
+  return text
+end
+
+-- "|c" + couleur du rôle, pour les textes composés.
+local function hexOf(role, fallback)
+  local T = Q.Themes
+  return "|c" .. (T and T:Hex(role) or fallback)
+end
+
+-- Texture teintée d'un jeton, retenue pour être repeinte au changement de thème.
+local function fill(tex, role)
+  tex:SetColorTexture(tc(role))
+  Journal.fills[#Journal.fills + 1] = { tex, role }
+  return tex
+end
+
+-- Texte peint d'un rôle, retenu pour être repeint au changement de thème.
+local function styled(fs, role)
+  paint(fs, role)
+  Journal.texts[#Journal.texts + 1] = { fs, role }
+  return fs
+end
+
+-- Bouton plat du thème ("primary", "secondary", "ghost"), repeint au changement de thème.
+local function skin(btn, kind)
+  btn.qvButtonKind = kind
+  Journal.buttons[#Journal.buttons + 1] = btn
+  local T = Q.Themes
+  if T then T:SkinButton(btn, kind) end
+  return btn
+end
+
+-- Coche « fait » en texte (glyphe teint de la couleur de réussite).
+local function checkMarkup(size)
+  local T = Q.Themes
+  if not T then return "|TInterface\\RaidFrame\\ReadyCheck-Ready:" .. size .. ":" .. size .. "|t" end
+  local r, g, b = T:Color("success")
+  return string.format("|T%s:%d:%d:0:0:16:16:0:16:0:16:%d:%d:%d|t", T.GLYPH_CHECK, size, size,
+    math.floor(r * 255 + 0.5), math.floor(g * 255 + 0.5), math.floor(b * 255 + 0.5))
+end
+
+-- Icône d'état d'une étape ou d'un chapitre, teinte du thème.
+local function setStateIcon(tex, state)
+  local icon = ICONS[state]
+  tex:SetTexture(icon)
+  local tint = STATE_TINT[state]
+  -- la flèche du jeu est dorée : grisée puis teinte de l'accent
+  tex:SetDesaturated(state == "current" and Q.Themes ~= nil)
+  if tint and Q.Themes then
+    local r, g, b = tc(tint)
+    tex:SetVertexColor(r, g, b, 1)
+  else
+    tex:SetVertexColor(1, 1, 1, 1)
+  end
+end
+
+-- Survol d'une ligne : voile blanc léger.
+local function hoverHighlight(row)
+  local hl = row:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetAllPoints(row)
+  hl:SetColorTexture(1, 1, 1, 0.05)
+  return hl
+end
+
+-- Sélection de la maquette : fond « sel » et barre d'accent de 2 px à gauche. -> texture du fond
+-- (champ .bar : la barre).
+local function newSelection(row)
+  local sel = row:CreateTexture(nil, "BACKGROUND")
+  sel:SetAllPoints(row)
+  sel:Hide()
+  local bar = row:CreateTexture(nil, "ARTWORK")
+  bar:SetPoint("TOPLEFT", row, "TOPLEFT", 0, 0)
+  bar:SetPoint("BOTTOMLEFT", row, "BOTTOMLEFT", 0, 0)
+  bar:SetWidth(2)
+  bar:Hide()
+  sel.bar = bar
+  return sel
+end
+
+local function showSelection(sel, on)
+  if on then
+    sel:SetColorTexture(tc("sel"))
+    sel.bar:SetColorTexture(tc("accent"))
+    sel:Show()
+    sel.bar:Show()
+  else
+    sel:Hide()
+    sel.bar:Hide()
+  end
+end
+
+-- Barre latérale d'une liste (fond « sidebar » et filet à droite), de sous le bandeau jusqu'au pied.
+local function sidebar(panel, width)
+  local f = Journal.frame
+  local bg = panel:CreateTexture(nil, "BACKGROUND")
+  bg:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -(HEADER_H + 1))
+  bg:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, FOOTER_H + 1)
+  bg:SetWidth(width)
+  fill(bg, "sidebar")
+  local divider = panel:CreateTexture(nil, "BORDER")
+  divider:SetPoint("TOPLEFT", bg, "TOPRIGHT", 0, 0)
+  divider:SetPoint("BOTTOMLEFT", bg, "BOTTOMRIGHT", 0, 0)
+  divider:SetWidth(1)
+  fill(divider, "line")
+  return bg
+end
+
+-- Titre de colonne de la maquette (.h3) : texte discret et filet dessous.
+local function columnRule(panel, x, y, width)
+  local rule = panel:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", panel, "TOPLEFT", x, y)
+  rule:SetSize(width, 1)
+  fill(rule, "line")
+  return rule
+end
+
+-- Largeur d'un bouton d'après son texte (texte + pad, 18 px par défaut), entre min (60) et max.
+local function fitButton(b, max, min, pad)
+  local w
+  local ok, tw = pcall(function() return b:GetTextWidth() end)
+  if ok and type(tw) == "number" and tw > 0 then w = tw end
+  if not w then
+    local fs = b.GetFontString and b:GetFontString()
+    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
+  end
+  w = math.floor((w or #(b:GetText() or "") * 6) + (pad or 18))
+  b:SetWidth(math.min(max, math.max(min or 60, w)))
+  return b:GetWidth()
+end
 
 local CQ_STATE_TEXT = {
   available = "UI_CQ_AVAILABLE", upcoming = "UI_CQ_UPCOMING", added = "UI_CQ_ADDED",
@@ -56,8 +226,12 @@ local function showTooltip(owner, lines, anchor)
   if not GameTooltip then return end
   GameTooltip:SetOwner(owner, anchor or "ANCHOR_RIGHT")
   GameTooltip:ClearLines()
+  -- titre aux couleurs des quêtes du thème, lignes au texte du thème (codes de couleur repris)
+  local hr, hg, hb = tc("quest")
+  local r, g, b = tc("text")
   for i, line in ipairs(lines) do
-    if i == 1 then GameTooltip:AddLine(line, 1, 0.82, 0, true) else GameTooltip:AddLine(line, 1, 1, 1, true) end
+    if i == 1 then GameTooltip:AddLine(recolor(line), hr, hg, hb, true)
+    else GameTooltip:AddLine(recolor(line), r, g, b, true) end
   end
   GameTooltip:Show()
 end
@@ -96,6 +270,22 @@ local function newFrame()
   return CreateFrame("Frame", FRAME_NAME, UIParent, "BackdropTemplate")
 end
 
+-- Habillage du thème : gabarit caché, bordure de 1 px, fond, bandeau illustré avec blason et titre,
+-- coins, liseré, filigrane et croix plate. Le gabarit n'a pas de BackdropTemplate : sans lui, pas de
+-- bordure (Q.Themes:Apply ne pose que le fond).
+local function skinWindow(f, title)
+  local T = Q.Themes
+  if not T then return end
+  T:StripTemplate(f)
+  if not f.SetBackdrop and type(Mixin) == "function" and type(BackdropTemplateMixin) == "table" then
+    Mixin(f, BackdropTemplateMixin)
+    if f.OnBackdropSizeChanged then f:HookScript("OnSizeChanged", f.OnBackdropSizeChanged) end
+  end
+  T:Apply(f, T:CurrentKey(), 1)
+  T:Decorate(f, { header = HEADER_H, title = title })
+  T:SkinClose(f)
+end
+
 function Journal:Create()
   if self.frame then return self.frame end
   local f = newFrame()
@@ -114,13 +304,34 @@ function Journal:Create()
   if f.SetPortraitToAsset then pcall(f.SetPortraitToAsset, f, "Interface\\Icons\\INV_Misc_Book_09") end
   if UISpecialFrames then tinsert(UISpecialFrames, FRAME_NAME) end
 
-  -- Zone de contenu : intérieur du cadre « Inset » du modèle (60 px en haut, 26 px en bas).
+  local title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  title:SetText(L.UI_JOURNAL_TITLE)
+  self.titleText = title
+  skinWindow(f, title)
+  local header = f.qvDecor and f.qvDecor.header
+  if header then styled(title, "title") else title:Hide() end
+
+  -- Pied : fond du thème et filet au-dessus
+  local foot = f:CreateTexture(nil, "BACKGROUND", nil, -3)
+  foot:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 1, 1)
+  foot:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -1, 1)
+  foot:SetHeight(FOOTER_H)
+  fill(foot, "footer")
+  local footLine = f:CreateTexture(nil, "BORDER")
+  footLine:SetPoint("BOTTOMLEFT", foot, "TOPLEFT", 0, 0)
+  footLine:SetPoint("BOTTOMRIGHT", foot, "TOPRIGHT", 0, 0)
+  footLine:SetHeight(1)
+  fill(footLine, "line")
+  self.footer = foot
+
+  -- Zone de contenu : sous le bandeau, au-dessus du pied.
   local content = CreateFrame("Frame", nil, f)
-  content:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -64)
-  content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 30)
+  content:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -CONTENT_TOP)
+  content:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, FOOTER_H + 2)
   self.content = content
 
-  -- libellés précédés de l'icône du bouton du suivi correspondant
+  -- Onglets en texte dans le bandeau, à droite du titre, soulignés de l'accent quand ils sont ouverts ;
+  -- libellés précédés de l'icône du bouton du suivi correspondant.
   local B = Q.UI.TrackerButtons
   local function label(key, text)
     if B and B.IconMarkup then
@@ -129,22 +340,37 @@ function Journal:Create()
     end
     return text
   end
-  local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS) }
+  local labels = { label("route", L.UI_TAB_ROUTE), label("dungeons", L.UI_TAB_DUNGEONS), label("class", L.UI_TAB_CLASS), label("pace", L.PACE_TAB) }
+  local tabX = 12 + math.floor(tonumber(title:GetStringWidth()) or 60) + 20
   for i, name in ipairs(TAB_NAMES) do
-    local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, f, "PanelTabButtonTemplate")
+    local tab = CreateFrame("Button", FRAME_NAME .. "Tab" .. i, header or f)
     tab:SetID(i)
+    local text = tab:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    text:SetPoint("CENTER", tab, "CENTER", 0, 1)
+    tab:SetFontString(text)
     tab:SetText(labels[i])
+    tab.text = text
+    local w = tonumber(text:GetStringWidth()) or 0
+    if w <= 0 then w = #(L[({ "UI_TAB_ROUTE", "UI_TAB_DUNGEONS", "UI_TAB_CLASS", "PACE_TAB" })[i]] or "") * 7 + 18 end
+    tab:SetSize(math.floor(w) + 4, header and HEADER_H - 2 or 24)
+    local underline = tab:CreateTexture(nil, "OVERLAY")
+    underline:SetPoint("BOTTOMLEFT", tab, "BOTTOMLEFT", 0, 0)
+    underline:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", 0, 0)
+    underline:SetHeight(2)
+    underline:Hide()
+    tab.underline = underline
     if i == 1 then
-      tab:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 12, 2)
+      if header then tab:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", tabX, 0)
+      else tab:SetPoint("TOPLEFT", f, "TOPLEFT", 64, -30) end
     else
-      -- même ancre que PanelTemplates_AnchorTabs : l'appel suivant la remplace sans conflit
-      tab:SetPoint("TOPLEFT", self.tabs[i - 1], "TOPRIGHT", 3, 0)
+      tab:SetPoint("BOTTOMLEFT", self.tabs[i - 1], "BOTTOMRIGHT", 18, 0)
     end
     tab:SetScript("OnClick", safe(function()
       playSound("IG_CHARACTER_INFO_TAB")
       Journal:ShowTab(name)
     end))
-    if PanelTemplates_TabResize then pcall(PanelTemplates_TabResize, tab, 0) end
+    tab:SetScript("OnEnter", function(self) if not self.selected then paint(self.text, "text") end end)
+    tab:SetScript("OnLeave", function(self) if not self.selected then paint(self.text, "textDim") end end)
     self.tabs[i] = tab
 
     local panel = CreateFrame("Frame", nil, content)
@@ -152,7 +378,6 @@ function Journal:Create()
     panel:Hide()
     self.panels[name] = panel
   end
-  if PanelTemplates_SetNumTabs then pcall(PanelTemplates_SetNumTabs, f, #TAB_NAMES) end
 
   -- Onglet Route : deux vues. « Manuel » : chapitres et étapes ; « Automatique » : parcours complet avec les
   -- donjons (UI/DungeonModePanel.lua), proposé seulement quand il existe pour le personnage.
@@ -167,47 +392,65 @@ function Journal:Create()
   self:BuildRoute(self.routePanels.manual)
   local auto = Q.UI.DungeonModePanel
   if auto and auto.Build then auto:Build(self.routePanels.auto) end
+  -- « Manuel » / « Automatique » : à gauche du pied, collés (vue ouverte en action principale)
   self.routeModeButtons = {}
-  for i, mode in ipairs({ "manual", "auto" }) do
+  local prevMode
+  for _, mode in ipairs({ "manual", "auto" }) do
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    b:SetSize(112, 22)
-    b:SetPoint("TOPLEFT", f, "TOPLEFT", 62 + (i - 1) * 116, -34)
+    b:SetHeight(22)
+    if b.SetNormalFontObject then
+      pcall(b.SetNormalFontObject, b, "GameFontHighlightSmall")
+      pcall(b.SetHighlightFontObject, b, "GameFontHighlightSmall")
+      pcall(b.SetDisabledFontObject, b, "GameFontHighlightSmall")
+    end
     b:SetText(mode == "manual" and L.DGMODE_TAB_MANUAL or L.DGMODE_TAB_AUTO)
+    fitButton(b, 110, 50, 16)
+    if prevMode then b:SetPoint("LEFT", prevMode, "RIGHT", -1, 0)
+    else b:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 8, (FOOTER_H - 22) / 2 + 1) end
+    prevMode = b
     b:SetScript("OnClick", safe(function()
       playSound("IG_CHARACTER_INFO_TAB")
       Journal:ShowRouteMode(mode)
     end))
     b:Hide()
+    skin(b, "secondary")
     self.routeModeButtons[mode] = b
   end
   self:BuildDungeons(self.panels.dungeons)
   self:BuildClass(self.panels.class)
-  -- Options : fenêtre à part (UI/Options.lua)
+  local pace = Q.UI.PacePanel
+  if pace and pace.Build then pace:Build(self.panels.pace) end
+  -- Options : fenêtre à part (UI/Options.lua) ; action principale du pied
   local opt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  opt:SetSize(120, 22)
-  opt:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 4)
+  opt:SetHeight(24)
+  opt:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, (FOOTER_H - 24) / 2 + 1)
   opt:SetText(L.OPT_JOURNAL_OPTIONS)
+  fitButton(opt, 140, 76, 24)
   opt:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     if Q.UI.Options then Q.UI.Options:Open() end
   end))
+  skin(opt, "primary")
   self.optionsButton = opt
   -- Choix de suite (UI/RouteChoicePopup.lua) : rouvre le choix du chapitre courant ou du dernier choisi
   local route = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  route:SetSize(130, 22)
+  route:SetHeight(24)
   route:SetPoint("RIGHT", opt, "LEFT", -6, 0)
   route:SetText(L.UI_ROUTECHOICE_JOURNAL)
+  fitButton(route, 150, 76, 24)
   route:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     local P = Q.UI.RouteChoicePopup
     if P then P:OpenForPlayer() end
   end))
+  skin(route, "secondary")
   self.routeButton = route
   -- Zone de secours (Engine/Detour.lua) : autre zone du niveau du personnage, puis retour à la route
   local alt = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-  alt:SetSize(140, 22)
+  alt:SetHeight(24)
   alt:SetPoint("RIGHT", route, "LEFT", -6, 0)
   alt:SetText(L.DETOUR_BTN)
+  fitButton(alt, 160, 76, 24)
   alt:SetScript("OnClick", safe(function()
     playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     local go = Q.UI.Detour
@@ -219,8 +462,10 @@ function Journal:Create()
     showTooltip(self, { back and L.DETOUR_BTN_BACK or L.DETOUR_BTN, back and L.DETOUR_TIP_BACK or L.DETOUR_TIP })
   end))
   alt:SetScript("OnLeave", hideTooltip)
+  skin(alt, "secondary")
   self.detourButton = alt
   f:Hide()
+  self:ApplyTheme()
   -- Sons d'ouverture et de fermeture branchés après le Hide() initial (pas de son à la création).
   f:HookScript("OnShow", function() playSound("IG_CHARACTER_INFO_OPEN") end)
   f:HookScript("OnHide", function() playSound("IG_CHARACTER_INFO_CLOSE") end)
@@ -246,7 +491,7 @@ function Journal:ResolveTab(name)
   return name
 end
 
--- ShowTab("route" | "class" | "dungeons") : ouvre le journal sur cet onglet. "options" ouvre la
+-- ShowTab("route" | "class" | "dungeons" | "pace") : ouvre le journal sur cet onglet. "options" ouvre la
 -- fenêtre d'options (l'ancien onglet Options). À l'ouverture du journal, l'onglet Route revient sur la vue
 -- de la route choisie (Automatique si le mode automatique est actif), sauf keepRouteMode (ShowRouteMode).
 function Journal:ShowTab(name, keepRouteMode)
@@ -258,7 +503,7 @@ function Journal:ShowTab(name, keepRouteMode)
   self:Create()
   if not keepRouteMode and not self.frame:IsShown() then self.routeMode = nil end
   self.tab = name
-  if PanelTemplates_SetTab then pcall(PanelTemplates_SetTab, self.frame, TAB_INDEX[name]) end
+  self:UpdateTabs()
   for n, panel in pairs(self.panels) do
     if n == name then panel:Show() else panel:Hide() end
   end
@@ -268,11 +513,45 @@ function Journal:ShowTab(name, keepRouteMode)
   self:RefreshTab(name, true)
 end
 
+-- Bouton « Objets à acheter (N) » de l'en-tête des étapes : visible tant qu'il reste des objets du chapitre à
+-- acheter ; le titre des étapes se raccourcit d'autant.
+function Journal:UpdateAuctionButton()
+  local b = self.ahButton
+  if not b then return end
+  local AI = Q.AuctionItems
+  local n = 0
+  if AI and AI.Wanted then
+    local ok, list = pcall(AI.Wanted, AI)
+    if ok and type(list) == "table" then n = #list end
+  end
+  if n > 0 then
+    b:SetText(string.format(L.UI_ROUTE_AH_BUTTON, n))
+    fitButton(b, 170, 60, 18)
+    b:Show()
+    self.stepHeader:SetWidth(math.max(80, STEP_W - (tonumber(b:GetWidth()) or 0) - 6))
+  else
+    b:Hide()
+    self.stepHeader:SetWidth(STEP_W)
+  end
+end
+
 -- Bouton de la zone de secours : « Zone alternative », ou « Revenir à ma route » sur une zone de secours.
 function Journal:UpdateDetourButton()
   if not self.detourButton then return end
   local back = Q.Detour and Q.Detour:Current()
   self.detourButton:SetText(back and L.DETOUR_BTN_BACK or L.DETOUR_BTN)
+  fitButton(self.detourButton, 160, 76, 24)
+end
+
+-- Onglets : celui ouvert en texte principal et souligné de l'accent (2 px), les autres en texte secondaire.
+function Journal:UpdateTabs()
+  for i, tab in ipairs(self.tabs) do
+    local on = TAB_NAMES[i] == self.tab
+    tab.selected = on
+    paint(tab.text, on and "text" or "textDim")
+    tab.underline:SetColorTexture(tc("accent"))
+    if on then tab.underline:Show() else tab.underline:Hide() end
+  end
 end
 
 -- Vue de l'onglet Route réellement affichée : celle choisie par les boutons, sinon celle de la route du
@@ -293,8 +572,10 @@ function Journal:UpdateRouteMode()
   local show = self.tab == "route" and D ~= nil and D:Available()
   for m, b in pairs(self.routeModeButtons) do
     if show then b:Show() else b:Hide() end
-    -- vue ouverte : bouton enfoncé
+    -- vue ouverte : bouton enfoncé, en action principale
     if m == mode then b:Disable() else b:Enable() end
+    b.qvButtonKind = m == mode and "primary" or "secondary"
+    if Q.Themes then Q.Themes:SkinButton(b, b.qvButtonKind) end
   end
   for m, sub in pairs(self.routePanels) do
     if m == mode then sub:Show() else sub:Hide() end
@@ -315,6 +596,9 @@ function Journal:RefreshTab(name, scroll)
     self:RefreshDungeonTab()
   elseif name == "class" then
     self:RefreshClass()
+  elseif name == "pace" then
+    local pace = Q.UI.PacePanel
+    if pace and pace.Refresh then pace:Refresh() end
   end
 end
 
@@ -327,16 +611,35 @@ end
 -- Onglet Route
 ---------------------------------------------------------------------------
 function Journal:BuildRoute(panel)
+  -- barre latérale des chapitres (jusqu'à la barre de défilement comprise)
+  sidebar(panel, CHAPTER_W + 37)
   local chHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   chHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
   chHeader:SetText(L.UI_ROUTE_CHAPTERS)
+  styled(chHeader, "textMuted")
+  columnRule(panel, 2, -20, CHAPTER_W + 20)
   local stHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   stHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", CHAPTER_W + 34, -4)
   stHeader:SetWidth(STEP_W)
   stHeader:SetJustifyH("LEFT")
   stHeader:SetWordWrap(false)
   stHeader:SetText(L.UI_ROUTE_STEPS)
+  styled(stHeader, "textMuted")
+  columnRule(panel, CHAPTER_W + 32, -20, STEP_W + 18)
   self.stepHeader = stHeader
+  -- Objets du chapitre à acheter à l'hôtel des ventes (Engine/AuctionItems.lua) : bouton à droite de l'en-tête,
+  -- visible seulement quand il en reste ; il ouvre la liste (comme /qf hv et le bouton HV du suivi).
+  local ah = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+  ah:SetHeight(18)
+  ah:SetPoint("BOTTOMRIGHT", panel, "TOPLEFT", CHAPTER_W + 34 + STEP_W + 16, -20)
+  ah:SetScript("OnClick", safe(function()
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+    local P = Q.UI.AuctionPanel
+    if P then P:ToggleList() end
+  end))
+  skin(ah, "secondary")
+  ah:Hide()
+  self.ahButton = ah
 
   local chScroll, chChild = newScroll(panel, "QuestifyJournalChapterScroll", CHAPTER_W, LIST_H)
   chScroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 2, -24)
@@ -351,6 +654,7 @@ function Journal:BuildRoute(panel)
   msg:SetWidth(STEP_W - 8)
   msg:SetJustifyH("LEFT")
   msg:Hide()
+  styled(msg, "textDim")
   self.routeMessage = msg
 end
 
@@ -359,16 +663,11 @@ local function chapterRow(i)
   if row then return row end
   row = CreateFrame("Button", nil, Journal.chapterChild)
   row:SetSize(CHAPTER_W, CHAPTER_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local sel = row:CreateTexture(nil, "BACKGROUND")
-  sel:SetAllPoints(row)
-  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  sel:SetBlendMode("ADD")
-  sel:SetVertexColor(1, 0.82, 0, 0.5)
-  sel:Hide()
-  -- coche verte : chapitre fini (Q.Progress:ChapterDone)
+  hoverHighlight(row)
+  local sel = newSelection(row)
+  -- coche de réussite : chapitre fini (Q.Progress:ChapterDone)
   local check = row:CreateTexture(nil, "ARTWORK")
-  check:SetTexture(ICONS.done)
+  setStateIcon(check, "done")
   check:SetSize(12, 12)
   check:SetPoint("LEFT", row, "LEFT", 2, 0)
   check:Hide()
@@ -393,7 +692,7 @@ local function chapterRow(i)
     if self.guide then
       local lines = { Q.Guides:DisplayTitle(self.guide),
         string.format(L.UI_TRACKER_LEVELS, self.guide.minLevel or 1, self.guide.maxLevel or 60) }
-      if self.done then lines[#lines + 1] = "|cff40e050" .. L.UI_ROUTE_CHAPTER_DONE .. "|r" end
+      if self.done then lines[#lines + 1] = hexOf("success", "ff40e050") .. L.UI_ROUTE_CHAPTER_DONE .. "|r" end
       lines[#lines + 1] = L.UI_ROUTE_CHAPTER_HINT
       showTooltip(self, lines)
     end
@@ -436,7 +735,7 @@ local function stepTooltip(row)
   if row.isCurrent then label = L.UI_STATE_CURRENT end
   if reason and reason ~= "" then label = label .. " - " .. Q.Format:Reason(reason) end
   lines[#lines + 1] = "|cffaaaaaa" .. label .. "|r"
-  lines[#lines + 1] = "|cff66bbff" .. L.UI_ROUTE_STEP_HINT .. "|r"
+  lines[#lines + 1] = hexOf("accent", "ff66bbff") .. L.UI_ROUTE_STEP_HINT .. "|r"
   showTooltip(row, lines)
 end
 
@@ -446,13 +745,8 @@ local function stepRow(i)
   row = CreateFrame("Button", nil, Journal.stepChild)
   row:SetSize(STEP_W, STEP_ROW_H)
   row:SetPoint("TOPLEFT", Journal.stepChild, "TOPLEFT", 0, -(i - 1) * STEP_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local bg = row:CreateTexture(nil, "BACKGROUND")
-  bg:SetAllPoints(row)
-  bg:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  bg:SetBlendMode("ADD")
-  bg:SetVertexColor(1, 0.82, 0, 0.45)
-  bg:Hide()
+  hoverHighlight(row)
+  local bg = newSelection(row)
   local state = row:CreateTexture(nil, "ARTWORK")
   state:SetSize(14, 14)
   state:SetPoint("LEFT", row, "LEFT", 2, 0)
@@ -540,6 +834,7 @@ local function chapterHeader(i)
   h:SetJustifyH("LEFT")
   h:SetWidth(CHAPTER_W - 8)
   h:SetWordWrap(false)
+  styled(h, "textMuted")
   Journal.chapterHeaders[i] = h
   return h
 end
@@ -548,36 +843,46 @@ local function setStepRow(row, e, cur)
   local state, reason = Q.Progress:State(e)
   local isCurrent = cur ~= nil and e.key == cur.key
   row.entry, row.isCurrent = e, isCurrent
-  row.action:SetTexture(Q.Format:ActionIcon(e.step.action))
+  -- icône de l'action : glyphe plat teinté du thème (prendre, rendre) ou icône du jeu
+  local T = Q.Themes
+  local tex, r, g, b
+  if T then tex, r, g, b = T:StepIcon(e.step.action) else tex = Q.Format:ActionIcon(e.step.action) end
+  row.action:SetTexture(tex)
+  if r then row.action:SetVertexColor(r, g, b, 1) else row.action:SetVertexColor(1, 1, 1, 1) end
   local text = Q.Util.StripColors(Q.Format:StepTitle(e))
   local icon
   if isCurrent then
-    icon = ICONS.current
-  elseif state == "done" then
-    icon = ICONS.done
-  elseif state == "skipped" then
-    icon = ICONS.skipped
-  elseif state == "blocked" then
-    icon = ICONS.blocked
+    icon = "current"
+  elseif state == "done" or state == "skipped" or state == "blocked" then
+    icon = state
   end
   if state == "blocked" and reason then
     text = text .. " |cffff5555(" .. Q.Format:Reason(reason) .. ")|r"
   end
-  row.state:SetTexture(icon)
-  row.state:SetDesaturated(state == "skipped")
-  if icon then row.state:Show() else row.state:Hide() end
-  row.action:SetDesaturated(state == "done" or state == "skipped")
-  row.text:SetText(text)
-  if isCurrent then
-    row.text:SetTextColor(1, 0.82, 0)
-  elseif state == "skipped" then
-    row.text:SetTextColor(0.5, 0.5, 0.5)
-  elseif state == "done" then
-    row.text:SetTextColor(0.75, 0.75, 0.75)
+  if icon then
+    setStateIcon(row.state, icon)
+    row.state:Show()
   else
-    row.text:SetTextColor(1, 1, 1)
+    row.state:SetTexture(nil)
+    row.state:Hide()
   end
-  if isCurrent then row.currentBg:Show() else row.currentBg:Hide() end
+  row.action:SetDesaturated(state == "skipped")
+  row.text:SetText(recolor(text))
+  -- maquette : étape courante en texte principal sur fond « sel », faites et passées en texte discret
+  if isCurrent then
+    paint(row.text, "text")
+  elseif state == "skipped" or state == "done" then
+    paint(row.text, "textMuted")
+  else
+    paint(row.text, "text")
+  end
+  if not Q.Themes then
+    if isCurrent then row.text:SetTextColor(1, 0.82, 0)
+    elseif state == "skipped" then row.text:SetTextColor(0.5, 0.5, 0.5)
+    elseif state == "done" then row.text:SetTextColor(0.75, 0.75, 0.75)
+    else row.text:SetTextColor(1, 1, 1) end
+  end
+  showSelection(row.currentBg, isCurrent)
   row:Show()
 end
 
@@ -613,15 +918,22 @@ function Journal:RefreshRoute(scrollToCurrent)
       row:SetPoint("TOPLEFT", child, "TOPLEFT", 0, -y)
       row.text:SetText(Q.Guides:DisplayTitle(g))
       row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, g.minLevel or 1, g.maxLevel or 60)
-      if it.done then row.check:Show() else row.check:Hide() end
-      local selected = guide ~= nil and guide.id == g.id
-      if selected then row.selected:Show() else row.selected:Hide() end
-      if selected then
-        row.text:SetTextColor(1, 0.82, 0)
-      elseif grp.key == "now" then
-        row.text:SetTextColor(1, 1, 1)
+      if it.done then
+        setStateIcon(row.check, "done")
+        row.check:Show()
       else
-        row.text:SetTextColor(0.6, 0.6, 0.6)
+        row.check:Hide()
+      end
+      local selected = guide ~= nil and guide.id == g.id
+      showSelection(row.selected, selected)
+      -- maquette : chapitre choisi en texte principal, conseillés en secondaire, les autres discrets
+      if not Q.Themes then
+        if selected then row.text:SetTextColor(1, 0.82, 0)
+        elseif grp.key == "now" then row.text:SetTextColor(1, 1, 1)
+        else row.text:SetTextColor(0.6, 0.6, 0.6) end
+      else
+        paint(row.text, selected and "text" or grp.key == "now" and "textDim" or "textMuted")
+        paint(row.levels, selected and "textDim" or "textMuted")
       end
       row:Show()
       y = y + CHAPTER_ROW_H
@@ -647,6 +959,7 @@ function Journal:RefreshRoute(scrollToCurrent)
     self.routeMessage:Hide()
   end
   self.stepHeader:SetText(guide and (L.UI_ROUTE_STEPS .. " - " .. Q.Guides:DisplayTitle(guide)) or L.UI_ROUTE_STEPS)
+  self:UpdateAuctionButton()
   local cur = guide and Q.Progress:Current() or nil
   local curIndex
   for i, e in ipairs(entries) do
@@ -673,6 +986,7 @@ function Journal:BuildClass(panel)
   empty:SetWidth(CLASS_W - 16)
   empty:SetJustifyH("LEFT")
   empty:Hide()
+  styled(empty, "textDim")
   self.classEmpty = empty
 end
 
@@ -723,7 +1037,7 @@ local function classTooltip(row)
   local lines = { Q.UI.ClassQuestPopup.ChainTitle(chain), L.UI_CLASS_QUESTS }
   for _, id in ipairs(chain.quests or {}) do
     local q = Q.QDB:Quest(id)
-    local lvl = q and q.level and (" |cffaaaaaa(" .. q.level .. ")|r") or ""
+    local lvl = q and q.level and (" |cffaaaaaa(" .. q.level .. ")|r") or ""   -- recoloré par showTooltip
     lines[#lines + 1] = "- " .. Q.QDB:QuestName(id) .. lvl
   end
   local xp = 0
@@ -756,6 +1070,8 @@ local function classRow(i)
   info:SetWidth(150)
   info:SetJustifyH("LEFT")
   info:SetWordWrap(false)
+  styled(title, "quest")
+  styled(info, "textDim")
   row.title, row.info, row.items = title, info, {}
   for j = 1, CLASS_ITEMS do
     local b = Q.UI.ClassQuestPopup.CreateItemButton(row, 24)
@@ -769,10 +1085,10 @@ local function classRow(i)
     b:Hide()
     return b
   end
-  row.ignoreButton = button(L.UI_BTN_IGNORE, 80)
-  row.unignoreButton = button(L.UI_BTN_UNIGNORE, 80)
-  row.addButton = button(L.UI_BTN_ADD_ROUTE, 118)
-  row.trackButton = button(L.UI_BTN_TRACK, 118)
+  row.ignoreButton = skin(button(L.UI_BTN_IGNORE, 80), "ghost")
+  row.unignoreButton = skin(button(L.UI_BTN_UNIGNORE, 80), "secondary")
+  row.addButton = skin(button(L.UI_BTN_ADD_ROUTE, 118), "primary")
+  row.trackButton = skin(button(L.UI_BTN_TRACK, 118), "secondary")
   row.ignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
   row.unignoreButton:SetPoint("RIGHT", row, "RIGHT", -6, 0)
   -- Ignorer et Réactiver occupent la même place (jamais affichés ensemble) : Ajouter à leur gauche.
@@ -799,10 +1115,10 @@ local function setClassRow(row, item)
   local stateKey = CQ_STATE_TEXT[state]
   local stateText = stateKey and L[stateKey] or tostring(state)
   if isLate(chain, state) then
-    row.info:SetText(CQ_LATE_COLOR .. string.format(L.UI_CQ_LATE, tonumber(chain.level) or 1) .. "|r")
+    row.info:SetText(hexOf("danger", CQ_LATE_COLOR:sub(3)) .. string.format(L.UI_CQ_LATE, tonumber(chain.level) or 1) .. "|r")
   else
-    row.info:SetText(string.format(L.UI_CLASS_ROW_INFO, tonumber(chain.level) or 1,
-      (CQ_STATE_COLOR[state] or "|cffffffff") .. stateText .. "|r"))
+    row.info:SetText(recolor(string.format(L.UI_CLASS_ROW_INFO, tonumber(chain.level) or 1,
+      (CQ_STATE_COLOR[state] or "|cffffffff") .. stateText .. "|r")))
   end
   local items, n = {}, 0
   local rewards = type(chain.rewards) == "table" and chain.rewards or {}
@@ -869,8 +1185,8 @@ end
 -- (grisées avec la raison quand elles ne sont pas à prendre), et Ajouter / Ignorer / Réactiver.
 -- Note : une à trois étoiles selon les quêtes qu'il reste à y faire (DungeonStars).
 ---------------------------------------------------------------------------
-local DG_LIST_W, DG_ROW_H, DG_HEAD_H = 210, 18, 20
-local DG_DETAIL_X, DG_DETAIL_W = 244, 226
+local DG_LIST_W, DG_ROW_H, DG_HEAD_H = 176, 18, 20
+local DG_DETAIL_X, DG_DETAIL_W = 210, 272
 local DG_STATE_TEXT = {
   available = "DUNGEON_STATE_AVAILABLE", upcoming = "DUNGEON_STATE_UPCOMING", added = "DUNGEON_STATE_ADDED",
   ignored = "DUNGEON_STATE_IGNORED", done = "DUNGEON_STATE_DONE", past = "DUNGEON_STATE_PAST",
@@ -885,7 +1201,7 @@ local GROUP_ORDER = { "now", "next", "past" }
 local DG_GROUP_TEXT = { now = "DUNGEON_GROUP_NOW", next = "DUNGEON_GROUP_NEXT", past = "DUNGEON_GROUP_PAST" }
 local STAR_ON, STAR_OFF = "tradeskills-star", "tradeskills-star-off"
 local STAR_FALLBACK = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1"   -- étoile des marqueurs de raid
-local ROUTE_DOT = "Interface\\COMMON\\Indicator-Green"
+local ROUTE_DOT = "Interface\\COMMON\\Indicator-Green"   -- sans thème ; sinon point plat teinté de réussite
 
 -- DungeonStars(n) -> 0 à 3 étoiles pour n quêtes à faire : 1-3 -> 1, 4-7 -> 2, 8 et plus -> 3.
 function Journal.DungeonStars(n)
@@ -998,6 +1314,7 @@ local function dgHeader(i)
   h:SetJustifyH("LEFT")
   h:SetWidth(DG_LIST_W - 8)
   h:SetWordWrap(false)
+  styled(h, "textMuted")
   Journal.dgHeaders[i] = h
   return h
 end
@@ -1008,26 +1325,21 @@ local function dgRow(i)
   if row then return row end
   row = CreateFrame("Button", nil, Journal.dgChild)
   row:SetSize(DG_LIST_W, DG_ROW_H)
-  row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-  local sel = row:CreateTexture(nil, "BACKGROUND")
-  sel:SetAllPoints(row)
-  sel:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-  sel:SetBlendMode("ADD")
-  sel:SetVertexColor(1, 0.82, 0, 0.5)
-  sel:Hide()
+  hoverHighlight(row)
+  local sel = newSelection(row)
   local stars = newStars(row, 9)
   for s, tex in ipairs(stars) do tex:SetPoint("LEFT", row, "LEFT", 2 + (s - 1) * 9, 0) end
   local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   name:SetPoint("LEFT", row, "LEFT", 32, 0)
-  name:SetWidth(DG_LIST_W - 32 - 50)
+  name:SetWidth(DG_LIST_W - 32 - 44)
   name:SetJustifyH("LEFT")
   name:SetWordWrap(false)
   local lvl = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   lvl:SetPoint("RIGHT", row, "RIGHT", -4, 0)
   lvl:SetJustifyH("RIGHT")
   local dot = row:CreateTexture(nil, "ARTWORK")
-  dot:SetTexture(ROUTE_DOT)
-  dot:SetSize(10, 10)
+  dot:SetTexture(Q.Themes and Q.Themes.GLYPH_DOT or ROUTE_DOT)
+  dot:SetSize(8, 8)
   dot:SetPoint("RIGHT", row, "RIGHT", -38, 0)
   dot:Hide()
   row.selected, row.stars, row.name, row.levels, row.routeDot = sel, stars, name, lvl, dot
@@ -1042,17 +1354,288 @@ local function dgRow(i)
   return row
 end
 
--- Lignes de quête du détail (créées à la demande).
-local function dgLine(i)
-  Journal.dgLines = Journal.dgLines or {}
-  local fs = Journal.dgLines[i]
-  if fs then return fs end
-  fs = Journal.dgDetail:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  fs:SetWidth(DG_DETAIL_W - 10)
-  fs:SetJustifyH("LEFT")
-  fs:SetWordWrap(true)
-  Journal.dgLines[i] = fs
+-- Détail du donjon (maquette docs/media/apercus/src/themes/journal-donjons.html, sections B à G) : widgets créés à
+-- la demande dans la colonne de droite et rangés de haut en bas à chaque affichage.
+local DG_BACKDROP = {
+  bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8",
+  edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 },
+}
+local MAP_ICON = "Interface\\Icons\\INV_Misc_Map_01"
+local QUEST_ICON = {
+  accept = "Interface\\GossipFrame\\AvailableQuestIcon",
+  turnin = "Interface\\GossipFrame\\ActiveQuestIcon",
+  lock = "Interface\\LFGFrame\\UI-LFG-ICON-LOCK",
+}
+local CIRCLE_MASK = "Interface\\CHARACTERFRAME\\TempPortraitAlphaMask"
+
+-- Cadre à fond et bordure de 1 px (rôles du thème), repeint au changement de thème.
+local function boxFrame(parent, bgRole, edgeRole, kind)
+  local ok, f = pcall(CreateFrame, kind or "Frame", nil, parent, "BackdropTemplate")
+  if not ok or not f then f = CreateFrame(kind or "Frame", nil, parent) end
+  f.bgRole, f.edgeRole = bgRole, edgeRole
+  if f.SetBackdrop then f:SetBackdrop(DG_BACKDROP) end
+  Journal.dgBoxes = Journal.dgBoxes or {}
+  Journal.dgBoxes[#Journal.dgBoxes + 1] = f
+  return f
+end
+
+local function paintBox(f, bgRole, edgeRole)
+  if not f.SetBackdrop then return end
+  bgRole, edgeRole = bgRole or f.bgRole, edgeRole or f.edgeRole
+  local r, g, b, a = tc(bgRole)
+  if bgRole == "none" then f:SetBackdropColor(0, 0, 0, 0) else f:SetBackdropColor(r, g, b, a) end
+  f:SetBackdropBorderColor(tc(edgeRole))
+end
+
+-- Disque teinté (masque circulaire) : numéros d'arrêt, point « repère posé ».
+local function disc(parent, size, layer)
+  local tex = parent:CreateTexture(nil, layer or "ARTWORK")
+  tex:SetSize(size, size)
+  local m = parent:CreateMaskTexture()
+  m:SetTexture(CIRCLE_MASK, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+  m:SetAllPoints(tex)
+  tex:AddMaskTexture(m)
+  return tex
+end
+
+-- Numéro d'arrêt : disque d'accent et chiffre. -> cadre (champs .disc, .text).
+local function stopNumber(parent, size)
+  local f = CreateFrame("Frame", nil, parent)
+  f:SetSize(size, size)
+  f.disc = disc(f, size, "ARTWORK")
+  f.disc:SetPoint("CENTER", f, "CENTER", 0, 0)
+  f.text = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  f.text:SetPoint("CENTER", f, "CENTER", 0, 0)
+  return f
+end
+
+local function paintNumber(f, role)
+  f.disc:SetColorTexture(tc(role or "accent"))
+  local T = Q.Themes
+  if T then f.text:SetTextColor(T:Color("onAccent")) else f.text:SetTextColor(0, 0, 0) end
+end
+
+-- Pastille arrondie (bords en disques masqués, comme UI/DungeonChainPopup.lua) avec numéro et nom de lieu.
+local PILL_H = 17
+local function pillPart(p, sublevel, inset)
+  local h = PILL_H - 2 * inset
+  local left = disc(p, h, "BACKGROUND")
+  left:SetDrawLayer("BACKGROUND", sublevel)
+  left:SetPoint("LEFT", p, "LEFT", inset, 0)
+  local right = disc(p, h, "BACKGROUND")
+  right:SetDrawLayer("BACKGROUND", sublevel)
+  right:SetPoint("RIGHT", p, "RIGHT", -inset, 0)
+  local mid = p:CreateTexture(nil, "BACKGROUND", nil, sublevel)
+  mid:SetPoint("TOPLEFT", p, "TOPLEFT", inset + h / 2, -inset)
+  mid:SetPoint("BOTTOMRIGHT", p, "BOTTOMRIGHT", -(inset + h / 2), inset)
+  return { left, right, mid }
+end
+
+local function dgPill(i)
+  Journal.dgPills = Journal.dgPills or {}
+  local p = Journal.dgPills[i]
+  if p then return p end
+  p = CreateFrame("Frame", nil, Journal.dgDetail)
+  p:SetHeight(PILL_H)
+  p.edge = pillPart(p, 1, 0)
+  p.fill = pillPart(p, 2, 1)
+  p.num = stopNumber(p, 12)
+  p.num:SetPoint("LEFT", p, "LEFT", 3, 0)
+  p.text = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  p.text:SetPoint("LEFT", p.num, "RIGHT", 4, 0)
+  p.trip = Journal.dgDetail:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  Journal.dgPills[i] = p
+  return p
+end
+
+local function paintPill(p, here)
+  for _, t in ipairs(p.edge) do t:SetColorTexture(tc("edge")) end
+  for _, t in ipairs(p.fill) do t:SetColorTexture(tc("panelAlt")) end
+  paintNumber(p.num, here and "success" or "accent")
+  paint(p.text, "textDim")
+  paint(p.trip, "textMuted")
+end
+
+-- Titre de section (.h3 de la maquette) : texte discret en capitales, valeur à droite, filet dessous.
+local function dgH3(i)
+  Journal.dgH3s = Journal.dgH3s or {}
+  local h = Journal.dgH3s[i]
+  if h then return h end
+  local parent = Journal.dgDetail
+  h = { text = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"),
+        right = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall"),
+        rule = parent:CreateTexture(nil, "BORDER") }
+  h.text:SetJustifyH("LEFT")
+  h.right:SetJustifyH("RIGHT")
+  h.rule:SetHeight(1)
+  Journal.dgH3s[i] = h
+  return h
+end
+
+-- En-tête d'arrêt : numéro, lieu, trajet à droite.
+local function dgStop(i)
+  Journal.dgStops = Journal.dgStops or {}
+  local s = Journal.dgStops[i]
+  if s then return s end
+  local parent = Journal.dgDetail
+  s = { num = stopNumber(parent, 15), name = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"),
+        right = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall") }
+  s.name:SetJustifyH("LEFT")
+  s.name:SetWordWrap(false)
+  s.right:SetJustifyH("RIGHT")
+  Journal.dgStops[i] = s
+  return s
+end
+
+-- Petit bouton carré de 20 px (i ou carte) ; pin = point « repère posé ».
+local function smallButton(parent)
+  local b = boxFrame(parent, "panelAlt", "edge", "Button")
+  b:SetSize(20, 20)
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetPoint("TOPLEFT", b, "TOPLEFT", 1, -1)
+  hl:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+  hl:SetColorTexture(1, 1, 1, 0.08)
+  b.pin = disc(b, 7, "OVERLAY")
+  b.pin:SetPoint("CENTER", b, "TOPRIGHT", -1, -1)
+  b.pin:Hide()
+  b:SetScript("OnLeave", hideTooltip)
+  return b
+end
+
+local function setPinned(b, on)
+  if on then
+    paintBox(b, "panelAlt", "warning")
+    b.pin:SetColorTexture(tc("warning"))
+    b.pin:Show()
+  else
+    paintBox(b, "panelAlt", "edge")
+    b.pin:Hide()
+  end
+end
+
+local function setOpen(b, on)
+  paintBox(b, on and "sel" or "panelAlt", on and "accent" or "edge")
+  paint(b.glyph, on and "accent" or "textDim")
+end
+
+-- Ligne de quête : icône d'état, nom (clic : plus d'infos), donneur ou état dessous, boutons i et carte.
+local Q_ROW_W = DG_DETAIL_W - 6
+local function dgQRow(i)
+  Journal.dgQRows = Journal.dgQRows or {}
+  local r = Journal.dgQRows[i]
+  if r then return r end
+  r = CreateFrame("Button", nil, Journal.dgDetail)
+  r:SetWidth(Q_ROW_W)
+  hoverHighlight(r)
+  -- ligne ouverte : fond « panel » et filets « edge » en haut et sur les côtés (le panneau d'infos la prolonge)
+  r.bg = r:CreateTexture(nil, "BACKGROUND")
+  r.bg:SetAllPoints(r)
+  r.edges = {}
+  for _, side in ipairs({ { "TOPLEFT", "TOPRIGHT", nil, 1 }, { "TOPLEFT", "BOTTOMLEFT", 1, nil },
+                          { "TOPRIGHT", "BOTTOMRIGHT", 1, nil } }) do
+    local e = r:CreateTexture(nil, "BORDER")
+    e:SetPoint(side[1], r, side[1], 0, 0)
+    e:SetPoint(side[2], r, side[2], 0, 0)
+    if side[3] then e:SetWidth(side[3]) else e:SetHeight(side[4]) end
+    r.edges[#r.edges + 1] = e
+  end
+  r.icon = r:CreateTexture(nil, "ARTWORK")
+  r.icon:SetSize(16, 16)
+  r.icon:SetPoint("TOPLEFT", r, "TOPLEFT", 4, -4)
+  r.name = r:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  r.name:SetPoint("TOPLEFT", r, "TOPLEFT", 26, -4)
+  r.name:SetWidth(Q_ROW_W - 26 - 50)
+  r.name:SetJustifyH("LEFT")
+  r.sub = r:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  r.sub:SetPoint("TOPLEFT", r.name, "BOTTOMLEFT", 0, -1)
+  r.sub:SetWidth(Q_ROW_W - 26 - 50)
+  r.sub:SetJustifyH("LEFT")
+  r.map = smallButton(r)
+  r.map:SetPoint("TOPRIGHT", r, "TOPRIGHT", -4, -4)
+  r.map.icon = r.map:CreateTexture(nil, "ARTWORK")
+  r.map.icon:SetSize(16, 16)
+  r.map.icon:SetPoint("CENTER", r.map, "CENTER", 0, 0)
+  r.map.icon:SetTexture(MAP_ICON)
+  r.map.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+  r.info = smallButton(r)
+  r.info:SetPoint("RIGHT", r.map, "LEFT", -3, 0)
+  r.info.glyph = r.info:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  r.info.glyph:SetPoint("CENTER", r.info, "CENTER", 0, 0)
+  r.info.glyph:SetText("i")
+  r:SetScript("OnClick", safe(function(self) Journal:ToggleQuestInfo(self.qid) end))
+  r.info:SetScript("OnClick", safe(function(self) Journal:ToggleQuestInfo(self:GetParent().qid) end))
+  r.info:SetScript("OnEnter", safe(function(self) showTooltip(self, { L.DUNGEON_INFO_TIP }) end))
+  r.map:SetScript("OnClick", safe(function(self) Journal:MarkQuest(self:GetParent()) end))
+  r.map:SetScript("OnEnter", safe(function(self)
+    local row = self:GetParent()
+    local tip = row.markKey and row.markKey == (Q.UI.MapPins and Q.UI.MapPins:MarkedKey()) and L.DUNGEON_MAP_TIP_OFF
+      or row.inLog and L.DUNGEON_MAP_TIP_ENDER or L.DUNGEON_MAP_TIP_GIVER
+    showTooltip(self, { tip })
+  end))
+  Journal.dgQRows[i] = r
+  return r
+end
+
+-- Panneau « plus d'infos » sous une quête : objectif, XP et réputation, objectifs et receveur pour une quête
+-- du journal, récompenses avec les boutons d'objet de UI/ClassQuestPopup.lua (infobulle et comparaison du sac).
+local function dgMore(i)
+  Journal.dgMores = Journal.dgMores or {}
+  local m = Journal.dgMores[i]
+  if m then return m end
+  m = CreateFrame("Frame", nil, Journal.dgDetail)
+  m:SetWidth(Q_ROW_W)
+  -- fond « panel », filets « edge » sur les côtés et en bas : il prolonge la ligne ouverte (maquette, section E)
+  m.bg = m:CreateTexture(nil, "BACKGROUND")
+  m.bg:SetAllPoints(m)
+  m.edges = {}
+  for _, side in ipairs({ { "BOTTOMLEFT", "BOTTOMRIGHT", nil, 1 }, { "TOPLEFT", "BOTTOMLEFT", 1, nil },
+                          { "TOPRIGHT", "BOTTOMRIGHT", 1, nil } }) do
+    local e = m:CreateTexture(nil, "BORDER")
+    e:SetPoint(side[1], m, side[1], 0, 0)
+    e:SetPoint(side[2], m, side[2], 0, 0)
+    if side[3] then e:SetWidth(side[3]) else e:SetHeight(side[4]) end
+    m.edges[#m.edges + 1] = e
+  end
+  m.lines, m.labels, m.items, m.bars = {}, {}, {}, {}
+  Journal.dgMores[i] = m
+  return m
+end
+
+local function moreText(m, kind, i, font)
+  local list = m[kind]
+  local fs = list[i]
+  if not fs then
+    fs = m:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
+    fs:SetJustifyH("LEFT")
+    fs:SetWordWrap(true)
+    list[i] = fs
+  end
   return fs
+end
+
+local function moreBar(m, i)
+  local b = m.bars[i]
+  if not b then
+    b = { back = m:CreateTexture(nil, "ARTWORK"), front = m:CreateTexture(nil, "OVERLAY") }
+    b.back:SetHeight(3)
+    b.front:SetHeight(3)
+    m.bars[i] = b
+  end
+  return b
+end
+
+local function moreItem(m, i)
+  local it = m.items[i]
+  if not it then
+    local P = Q.UI.ClassQuestPopup
+    it = { button = P.CreateItemButton(m, 24), name = m:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"),
+           slot = m:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall") }
+    it.name:SetJustifyH("LEFT")
+    it.name:SetWordWrap(false)
+    it.slot:SetJustifyH("RIGHT")
+    m.items[i] = it
+  end
+  return it
 end
 
 -- Quête bloquée par une chaîne de préquêtes : infobulle (quêtes à faire, zones, XP, récompenses) et boutons
@@ -1088,10 +1671,17 @@ end
 
 -- Encadré d'une chaîne de préquêtes sous la quête qu'elle débloque : « Demande une suite de 6 quêtes, hors de ta
 -- route (zones) », infobulle au survol, boutons « Voir la suite » (annexe du journal) et « Ajouter la suite ».
+-- Panneau du thème (fond « panel », bordure « edge » de 1 px), comme les info-bulles de la maquette.
 local CHAIN_BACKDROP = {
-  bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-  tile = true, tileSize = 16, edgeSize = 12, insets = { left = 3, right = 3, top = 3, bottom = 3 },
+  bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8",
+  edgeSize = 1, insets = { left = 1, right = 1, top = 1, bottom = 1 },
 }
+
+local function paintChainBox(box)
+  if not box.SetBackdrop then return end
+  box:SetBackdropColor(tc("panel"))
+  box:SetBackdropBorderColor(tc("edge"))
+end
 
 local function dgChain(i)
   Journal.dgChains = Journal.dgChains or {}
@@ -1100,11 +1690,8 @@ local function dgChain(i)
   local parent = Journal.dgDetail
   local ok, box = pcall(CreateFrame, "Frame", nil, parent, "BackdropTemplate")
   if not ok or not box then box = CreateFrame("Frame", nil, parent) end
-  if box.SetBackdrop then
-    box:SetBackdrop(CHAIN_BACKDROP)
-    box:SetBackdropColor(0.12, 0.09, 0.05, 0.85)
-    box:SetBackdropBorderColor(0.6, 0.5, 0.3, 0.9)
-  end
+  if box.SetBackdrop then box:SetBackdrop(CHAIN_BACKDROP) end
+  paintChainBox(box)
   box:EnableMouse(true)
   box:SetScript("OnEnter", safe(function(self) chainTooltip(self) end))
   box:SetScript("OnLeave", hideTooltip)
@@ -1112,12 +1699,13 @@ local function dgChain(i)
   text:SetPoint("TOPLEFT", box, "TOPLEFT", 7, -7)
   text:SetJustifyH("LEFT")
   text:SetWordWrap(true)
-  local function button(width)
+  styled(text, "textDim")
+  local function button(width, kind)
     local b = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
     b:SetSize(width, 20)
-    return b
+    return skin(b, kind)
   end
-  local info, add = button(100), button(100)
+  local info, add = button(100, "ghost"), button(100, "secondary")
   info:SetText(L.DUNGEON_CHAIN_INFO)
   add:SetScript("OnClick", safe(function(self) chainAction(self.row) end))
   info:SetScript("OnClick", safe(function(self)
@@ -1173,28 +1761,18 @@ local function chainBoxText(chain, rows)
   return text
 end
 
--- Largeur d'un bouton d'après son texte (texte + 18 px), sans dépasser `max`.
-local function fitButton(b, max)
-  local w
-  local ok, tw = pcall(function() return b:GetTextWidth() end)
-  if ok and type(tw) == "number" and tw > 0 then w = tw end
-  if not w then
-    local fs = b.GetFontString and b:GetFontString()
-    w = fs and fs.GetStringWidth and fs:GetStringWidth() or nil
-  end
-  w = math.floor((w or #(b:GetText() or "") * 6) + 18)
-  b:SetWidth(math.min(max, math.max(60, w)))
-  return b:GetWidth()
-end
-
 function Journal:BuildDungeons(panel)
+  -- barre latérale de la liste (jusqu'à la barre de défilement comprise)
+  sidebar(panel, DG_LIST_W + 37)
   local head = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   head:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
   head:SetText(L.DUNGEON_SECTION)
+  styled(head, "textMuted")
+  columnRule(panel, 2, -20, DG_LIST_W + 20)
   -- Tri : niveau ou nombre de quêtes
   local function sortButton(key, label)
     local b = CreateFrame("Button", nil, panel)
-    b:SetSize(48, 14)
+    b:SetSize(44, 14)
     local fs = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     fs:SetAllPoints(b)
     fs:SetText(label)
@@ -1213,6 +1791,7 @@ function Journal:BuildDungeons(panel)
   local sortLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   sortLabel:SetPoint("RIGHT", byLevel, "LEFT", -2, 0)
   sortLabel:SetText(L.DUNGEON_SORT)
+  styled(sortLabel, "textMuted")
   self.dgSortButtons = { level = byLevel, quests = byQuests }
 
   local scroll, child = newScroll(panel, "QuestifyJournalDungeonScroll", DG_LIST_W, LIST_H)
@@ -1222,18 +1801,44 @@ function Journal:BuildDungeons(panel)
   dScroll:SetPoint("TOPLEFT", panel, "TOPLEFT", DG_DETAIL_X, -4)
   self.dgDetailScroll, self.dgDetail = dScroll, dChild
 
+  -- B. en-tête : nom, pastilles (niveaux, état), étoiles, entrée et son bouton carte, synthèse
   local title = dChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
   title:SetPoint("TOPLEFT", dChild, "TOPLEFT", 2, -2)
   title:SetWidth(DG_DETAIL_W - 6)
   title:SetJustifyH("LEFT")
-  local meta = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  meta:SetWidth(DG_DETAIL_W - 6)
-  meta:SetJustifyH("LEFT")
-  local stars = newStars(dChild, 13)
-  local score = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  score:SetWidth(DG_DETAIL_W - 50)
-  score:SetJustifyH("LEFT")
-  self.dgTitle, self.dgMeta, self.dgStars, self.dgScore = title, meta, stars, score
+  self.dgTitle = title
+  local function chip()
+    local c = boxFrame(dChild, "panelAlt", "edge")
+    c:SetHeight(16)
+    c.text = c:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    c.text:SetPoint("CENTER", c, "CENTER", 0, 0)
+    return c
+  end
+  self.dgLevelChip, self.dgStateChip = chip(), chip()
+  self.dgStars = newStars(dChild, 11)
+  local ent = dChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  ent:SetWidth(DG_DETAIL_W - 34)
+  ent:SetJustifyH("LEFT")
+  self.dgEntrance = ent
+  local entBtn = smallButton(dChild)
+  entBtn.icon = entBtn:CreateTexture(nil, "ARTWORK")
+  entBtn.icon:SetSize(16, 16)
+  entBtn.icon:SetPoint("CENTER", entBtn, "CENTER", 0, 0)
+  entBtn.icon:SetTexture(MAP_ICON)
+  entBtn.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+  entBtn:SetScript("OnClick", safe(function() Journal:MarkEntrance() end))
+  entBtn:SetScript("OnEnter", safe(function(self)
+    local d = Journal.dgItem and Journal.dgItem.dungeon
+    local on = d and ("ent:" .. d.key) == (Q.UI.MapPins and Q.UI.MapPins:MarkedKey())
+    showTooltip(self, { on and L.DUNGEON_MAP_TIP_OFF or L.DUNGEON_MAP_TIP_ENTRANCE })
+  end))
+  self.dgEntBtn = entBtn
+  local sum = boxFrame(dChild, "panel", "line")
+  sum.text = sum:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  sum.text:SetPoint("TOPLEFT", sum, "TOPLEFT", 7, -5)
+  sum.text:SetWidth(DG_DETAIL_W - 22)
+  sum.text:SetJustifyH("LEFT")
+  self.dgSummary = sum
 
   local function button(label, width)
     local b = CreateFrame("Button", nil, dChild, "UIPanelButtonTemplate")
@@ -1242,9 +1847,9 @@ function Journal:BuildDungeons(panel)
     b:Hide()
     return b
   end
-  self.dgAdd = button(L.UI_BTN_ADD_ROUTE, 130)
-  self.dgIgnore = button(L.UI_BTN_IGNORE, 80)
-  self.dgUnignore = button(L.UI_BTN_UNIGNORE, 90)
+  self.dgAdd = skin(button(L.UI_BTN_ADD_ROUTE, 130), "primary")
+  self.dgIgnore = skin(button(L.UI_BTN_IGNORE, 80), "ghost")
+  self.dgUnignore = skin(button(L.UI_BTN_UNIGNORE, 90), "secondary")
   self.dgAdd:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Add", Journal.dgItem.dungeon.key) end end))
   self.dgIgnore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Ignore", Journal.dgItem.dungeon.key) end end))
   self.dgUnignore:SetScript("OnClick", safe(function() if Journal.dgItem then dungeonAction("Unignore", Journal.dgItem.dungeon.key) end end))
@@ -1254,62 +1859,449 @@ function Journal:BuildDungeons(panel)
   empty:SetWidth(DG_LIST_W + DG_DETAIL_W)
   empty:SetJustifyH("LEFT")
   empty:Hide()
+  styled(empty, "textDim")
   self.dgEmpty = empty
 end
 
+---------------------------------------------------------------------------
+-- Textes du détail
+---------------------------------------------------------------------------
+local function fmtXP(n)
+  local P = Q.UI.DungeonChainPopup
+  if P and P.FormatNumber then return P.FormatNumber(n) end
+  return tostring(math.floor(tonumber(n) or 0))
+end
+
+-- Trajet d'un arrêt : « tu y es », « vol 7 min », « bateau 4 min », « 3 min à pied », « ~5 min » ; "" si inconnu.
+function Journal.TripText(t)
+  if type(t) ~= "table" or type(t.seconds) ~= "number" then return "" end
+  if t.seconds < 45 then return L.DUNGEON_ROUTE_HERE end
+  local min = math.max(1, math.floor(t.seconds / 60 + 0.5))
+  if t.flight then return string.format(L.DUNGEON_TRIP_FLY, min) end
+  if t.boat or t.tram then return string.format(L.DUNGEON_TRIP_BOAT, min) end
+  if t.walk then return string.format(L.DUNGEON_TRIP_WALK, min) end
+  return string.format(L.DUNGEON_ROUTE_TIME, min)
+end
+
+local function placeName(kind, id)
+  if kind == "npc" then return Q.QDB:NpcName(id) end
+  if kind == "object" then return Q.QDB:ObjectName(id) end
+  return nil
+end
+
+local function itemFacts(itemId)
+  local name, quality, equipLoc
+  if C_Item and C_Item.GetItemInfo then
+    local ok, n, _, q, _, _, _, _, _, loc = pcall(C_Item.GetItemInfo, itemId)
+    if ok then name, quality, equipLoc = n, q, loc end
+  end
+  if not name and C_Item and C_Item.GetItemNameByID then
+    local ok, n = pcall(C_Item.GetItemNameByID, itemId)
+    if ok then name = n end
+  end
+  if not name then name = Q.QDB:ItemName(itemId) end
+  local color = "|cffffffff"
+  local qc = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+  if qc and qc.hex then color = qc.hex end
+  local slot = type(equipLoc) == "string" and equipLoc ~= "" and _G[equipLoc] or ""
+  return color .. tostring(name or ("#" .. itemId)) .. "|r", type(slot) == "string" and slot or ""
+end
+
+local function factionName(id)
+  if GetFactionInfoByID then
+    local ok, name = pcall(GetFactionInfoByID, id)
+    if ok and type(name) == "string" and name ~= "" then return name end
+  end
+  return "#" .. tostring(id)
+end
+
+---------------------------------------------------------------------------
+-- Actions des boutons de ligne
+---------------------------------------------------------------------------
+function Journal:ToggleQuestInfo(qid)
+  if type(qid) ~= "number" then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  self.dgOpen = self.dgOpen or {}
+  self.dgOpen[qid] = not self.dgOpen[qid] or nil
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+-- Carte du monde ouverte sur la carte du repère (jamais en combat).
+local function openMapAt(mapId)
+  if InCombatLockdown and InCombatLockdown() then return end
+  if type(OpenWorldMap) == "function" then
+    pcall(OpenWorldMap, mapId)
+  elseif WorldMapFrame then
+    if not WorldMapFrame:IsShown() and type(ToggleWorldMap) == "function" then pcall(ToggleWorldMap) end
+    if WorldMapFrame.SetMapID then pcall(WorldMapFrame.SetMapID, WorldMapFrame, mapId) end
+  end
+end
+
+-- Pose (ou retire) le repère d'un lieu : épingle de la carte (UI/MapPins.lua), cible de la navigation, carte du
+-- monde ouverte dessus.
+local function toggleMark(key, at, style, name, title)
+  local MP = Q.UI.MapPins
+  if not MP or not MP.Mark then return end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  if MP:MarkedKey() == key then
+    MP:Mark(nil)
+  elseif type(at) == "table" and type(at[1]) == "number" then
+    MP:Mark({ mapId = at[1], x = at[2], y = at[3], style = style, name = name, title = title, key = key })
+    openMapAt(at[1])
+  end
+end
+
+function Journal:MarkQuest(row)
+  local item = self.dgItem
+  if not (item and row and row.qid) then return end
+  local info = Q.Dungeons:QuestInfo(item.dungeon, row.qid)
+  local place = info and (row.inLog and info.ender or info.giver)
+  toggleMark(row.markKey, place and place.at, row.inLog and "turnin" or "accept",
+    place and placeName(place.kind, place.id), Q.QDB:QuestName(row.qid))
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+function Journal:MarkEntrance()
+  local item = self.dgItem
+  if not item then return end
+  local d = item.dungeon
+  local name = Q.UI.DungeonPopup.DungeonName(d)
+  toggleMark("ent:" .. d.key, d.entrance, "goto", name, string.format(L.DUNGEON_ROUTE_ENTRANCE_STOP, name))
+  self:ShowDungeonDetail(self.dgItem)
+end
+
+---------------------------------------------------------------------------
 -- Détail du donjon choisi (item de dungeonItems) ; nil vide la colonne.
+---------------------------------------------------------------------------
+local function hideAll(list, field)
+  for _, w in ipairs(list or {}) do
+    local f = field and w[field] or w
+    if f and f.Hide then f:Hide() end
+  end
+end
+
 function Journal:ShowDungeonDetail(item)
   self.dgItem = item
   local child = self.dgDetail
-  local lines = self.dgLines or {}
-  local widgets = { self.dgTitle, self.dgMeta, self.dgScore, self.dgAdd, self.dgIgnore, self.dgUnignore }
+  hideAll(self.dgQRows)
+  hideAll(self.dgMores)
+  hideAll(self.dgChains, "box")
+  hideAll(self.dgPills)
+  for _, p in ipairs(self.dgPills or {}) do p.trip:Hide() end
+  for _, h in ipairs(self.dgH3s or {}) do h.text:Hide(); h.right:Hide(); h.rule:Hide() end
+  for _, s in ipairs(self.dgStops or {}) do s.num:Hide(); s.name:Hide(); s.right:Hide() end
+  local header = { self.dgTitle, self.dgLevelChip, self.dgStateChip, self.dgEntrance, self.dgEntBtn, self.dgSummary,
+    self.dgAdd, self.dgIgnore, self.dgUnignore }
   if not item then
-    for _, w in ipairs(widgets) do w:Hide() end
+    for _, w in ipairs(header) do w:Hide() end
     setStars(self.dgStars, 0)
-    for _, fs in ipairs(lines) do fs:Hide() end
-    for _, w in ipairs(self.dgChains or {}) do w.box:Hide() end
     child:SetHeight(1)
     return
   end
+  local D, P = Q.Dungeons, Q.UI.DungeonPopup
   local d, state = item.dungeon, item.state
-  self.dgTitle:SetText(Q.UI.DungeonPopup.DungeonName(d))
+  local W = DG_DETAIL_W - 6
+  local MP = Q.UI.MapPins
+  local marked = MP and MP.MarkedKey and MP:MarkedKey() or nil
+  self.dgOpen = self.dgOpen or {}
+
+  -- B. en-tête
+  self.dgTitle:SetText(P.DungeonName(d))
+  paint(self.dgTitle, "quest")
   self.dgTitle:Show()
-  local key = DG_STATE_TEXT[state]
-  local meta = string.format(L.DUNGEON_ROW_INFO, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60,
-    (DG_STATE_COLOR[state] or "|cffffffff") .. (key and L[key] or tostring(state)) .. "|r")
-  if type(d.entrance) == "table" and type(d.entrance[1]) == "number" then
-    meta = meta .. "\n" .. string.format(L.DUNGEON_ENTRANCE, Q.Maps:MapName(d.entrance[1]))
+  local y = 2 + math.max(18, self.dgTitle:GetStringHeight() or 18) + 4
+  local x = 2
+  local function chip(c, text, edge, role)
+    c.text:SetText(text)
+    paint(c.text, role)
+    paintBox(c, "panelAlt", edge)
+    c:SetWidth(math.floor((c.text:GetStringWidth() or 40) + 12))
+    c:ClearAllPoints()
+    c:SetPoint("TOPLEFT", child, "TOPLEFT", x, -y)
+    c:Show()
+    x = x + c:GetWidth() + 5
   end
-  self.dgMeta:SetText(meta)
-  local y = 2 + (self.dgTitle:GetStringHeight() or 16) + 4
-  self.dgMeta:ClearAllPoints()
-  self.dgMeta:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
-  self.dgMeta:Show()
-  y = y + (self.dgMeta:GetStringHeight() or 24) + 8
-  -- note et décompte
+  chip(self.dgLevelChip, string.format(L.DUNGEON_CHIP_LEVELS, tonumber(d.minLevel) or 1, tonumber(d.maxLevel) or 60),
+    "edge", "textDim")
+  local good = state == "available" or state == "added"
+  local key = DG_STATE_TEXT[state]
+  chip(self.dgStateChip, key and L[key] or tostring(state), good and "success" or "edge", good and "success" or "textMuted")
   local count = Journal.DungeonStars(item.todo)
   setStars(self.dgStars, count)
   for i, tex in ipairs(self.dgStars) do
     tex:ClearAllPoints()
-    tex:SetPoint("TOPLEFT", child, "TOPLEFT", 2 + (i - 1) * 13, -y)
+    tex:SetPoint("TOPLEFT", child, "TOPLEFT", x + (i - 1) * 11, -(y + 3))
   end
-  self.dgScore:ClearAllPoints()
-  self.dgScore:SetPoint("TOPLEFT", child, "TOPLEFT", count > 0 and 44 or 2, -y)
-  if item.todo > 0 then
-    self.dgScore:SetFormattedText(L.DUNGEON_SCORE, item.todo, item.now)
-  else
-    self.dgScore:SetText(L.DUNGEON_SCORE_NONE)
+  y = y + 16 + 6
+  local zone = type(d.entrance) == "table" and type(d.entrance[1]) == "number" and Q.Maps:MapName(d.entrance[1]) or "?"
+  self.dgEntrance:SetText(string.format(L.DUNGEON_ENTRANCE, hexOf("zone", "ff7fe08a") .. zone .. "|r"))
+  paint(self.dgEntrance, "textDim")
+  self.dgEntrance:ClearAllPoints()
+  self.dgEntrance:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -(y + 4))
+  self.dgEntrance:Show()
+  self.dgEntBtn:ClearAllPoints()
+  self.dgEntBtn:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -y)
+  setPinned(self.dgEntBtn, marked == "ent:" .. d.key)
+  self.dgEntBtn:Show()
+  y = y + 24
+
+  -- quêtes : rangées par groupe
+  local byId, pick, log, locked, done = {}, {}, {}, {}, {}
+  for _, r in ipairs(item.details) do
+    byId[r.id] = r
+    if r.done then done[#done + 1] = r
+    elseif r.reason == "log" then log[#log + 1] = r
+    elseif r.ok then pick[#pick + 1] = r
+    else locked[#locked + 1] = r end
   end
-  self.dgScore:Show()
-  y = y + math.max(14, self.dgScore:GetStringHeight() or 12) + 8
-  -- quêtes
-  local P = Q.UI.DungeonPopup
-  local nChain, nLine = 0, 0
-  local boxW = DG_DETAIL_W - 14
-  local inner = boxW - 14
-  -- quêtes débloquées par une même suite : un seul encadré, à la place de la première, qui les nomme toutes
+  local infos = {}
+  local function infoOf(id)
+    if infos[id] == nil then
+      local ok, info = pcall(D.QuestInfo, D, d, id)
+      if not ok then Q:ReportError(info) end
+      infos[id] = ok and info or false
+    end
+    return infos[id] or nil
+  end
+  local xp = 0
+  for _, list in ipairs({ pick, log }) do
+    for _, r in ipairs(list) do
+      local info = infoOf(r.id)
+      xp = xp + (info and info.xp or 0)
+    end
+  end
+  local parts = {}
+  local num = hexOf("text", "ffffffff")
+  if #pick > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_PICK, num .. #pick .. "|r") end
+  if #log > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_LOG, num .. #log .. "|r") end
+  if #pick + #log > 0 then parts[#parts + 1] = string.format(L.DUNGEON_SUM_INSIDE, num .. (#pick + #log) .. "|r") end
+  if xp > 0 then parts[#parts + 1] = hexOf("xp", "ff9fc4ff") .. string.format(L.DUNGEON_SUM_XP, fmtXP(xp)) .. "|r" end
+  if #parts == 0 then parts[1] = L.DUNGEON_SCORE_NONE end
+  local sum = self.dgSummary
+  sum.text:SetText(table.concat(parts, "   "))
+  paint(sum.text, "textDim")
+  paintBox(sum, "panel", "line")
+  local sumH = (sum.text:GetStringHeight() or 12) + 10
+  sum:SetSize(W, sumH)
+  sum:ClearAllPoints()
+  sum:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+  sum:Show()
+  y = y + sumH + 4
+
+  local nH3, nPill, nStop, nRow, nMore, nChain = 0, 0, 0, 0, 0, 0
+  local function h3(text, right)
+    nH3 = nH3 + 1
+    local h = dgH3(nH3)
+    y = y + 8
+    h.text:SetText(string.upper(text))
+    paint(h.text, "textMuted")
+    h.text:ClearAllPoints()
+    h.text:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    h.text:Show()
+    h.right:SetText(right or "")
+    paint(h.right, "textMuted")
+    h.right:ClearAllPoints()
+    h.right:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -y)
+    h.right:Show()
+    y = y + (h.text:GetStringHeight() or 11) + 3
+    h.rule:SetColorTexture(tc("line"))
+    h.rule:ClearAllPoints()
+    h.rule:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    h.rule:SetWidth(W)
+    h.rule:Show()
+    y = y + 5
+  end
+
+  -- E. plus d'infos, sous la ligne ouverte
+  local inner = Q_ROW_W - 34
+  local function more(qid, inLog)
+    nMore = nMore + 1
+    local m = dgMore(nMore)
+    m.bg:SetColorTexture(tc("panel"))
+    for _, e in ipairs(m.edges) do e:SetColorTexture(tc("edge")) end
+    m:ClearAllPoints()
+    m:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    local info = infoOf(qid) or { xp = 0, items = {}, reputation = {}, objectives = {} }
+    local my, nl, nlab, nbar = 4, 0, 0, 0
+    local function line(text, role, font)
+      nl = nl + 1
+      local fs = moreText(m, "lines", nl, font)
+      fs:SetWidth(inner)
+      fs:SetText(text)
+      paint(fs, role or "textDim")
+      fs:ClearAllPoints()
+      fs:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+      fs:Show()
+      my = my + (fs:GetStringHeight() or 12) + 2
+      return fs
+    end
+    local function label(text)
+      nlab = nlab + 1
+      local fs = moreText(m, "labels", nlab, "GameFontDisableSmall")
+      fs:SetWidth(inner)
+      fs:SetText(string.upper(text))
+      paint(fs, "textMuted")
+      fs:ClearAllPoints()
+      my = my + 4
+      fs:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+      fs:Show()
+      my = my + (fs:GetStringHeight() or 10) + 3
+    end
+    local CQP = Q.UI.ClassQuestPopup
+    local obj = CQP and CQP.ObjectivesText and CQP.ObjectivesText(qid) or ""
+    if obj ~= "" then line(obj, "textDim") end
+    if inLog and #info.objectives > 0 then
+      label(L.DUNGEON_INFO_OBJECTIVES)
+      for _, o in ipairs(info.objectives) do
+        local fs = line(o.text, o.done and "success" or "textDim")
+        nbar = nbar + 1
+        local b = moreBar(m, nbar)
+        local frac = o.need > 0 and math.min(1, o.have / o.need) or (o.done and 1 or 0)
+        b.back:SetColorTexture(tc("line"))
+        b.front:SetColorTexture(tc(o.done and "success" or "accent"))
+        b.back:ClearAllPoints()
+        b.back:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+        b.back:SetWidth(inner)
+        b.front:ClearAllPoints()
+        b.front:SetPoint("TOPLEFT", b.back, "TOPLEFT", 0, 0)
+        b.front:SetWidth(math.max(1, inner * frac))
+        b.back:Show()
+        if frac > 0 then b.front:Show() else b.front:Hide() end
+        my = my + 6
+        fs:SetWidth(inner)
+      end
+      if info.ender then
+        label(L.DUNGEON_INFO_TURNIN)
+        line(hexOf("npc", "ff94caff") .. tostring(placeName(info.ender.kind, info.ender.id) or "?") .. "|r ("
+          .. Q.Maps:MapName(info.ender.at[1]) .. ")")
+      end
+    end
+    label(L.DUNGEON_INFO_GIVES)
+    local lvl = Q.Player and Q.Player.level or 1
+    local xpText = hexOf("xp", "ff9fc4ff") .. string.format(L.DUNGEON_INFO_XP, fmtXP(info.xp or 0)) .. "|r  "
+      .. string.format(info.est and L.DUNGEON_INFO_XP_EST or L.DUNGEON_INFO_XP_AT, lvl)
+    line(xpText, "textMuted")
+    for _, rep in ipairs(info.reputation or {}) do
+      line(hexOf("success", "ff6bd99a") .. string.format(L.DUNGEON_REP, factionName(rep[1]), rep[2]) .. "|r")
+    end
+    local items = info.items or {}
+    for i = 1, #m.items do
+      local it = m.items[i]
+      it.button:Hide(); it.name:Hide(); it.slot:Hide()
+    end
+    if #items > 0 then
+      label(L.DUNGEON_INFO_REWARDS)
+      local CQ = Q.UI.ClassQuestPopup
+      for i, itemId in ipairs(items) do
+        local it = moreItem(m, i)
+        CQ.SetItemButton(it.button, itemId)
+        it.button:ClearAllPoints()
+        it.button:SetPoint("TOPLEFT", m, "TOPLEFT", 26, -my)
+        local name, slot = itemFacts(itemId)
+        it.name:SetText(name)
+        it.name:SetWidth(inner - 30 - 60)
+        it.name:ClearAllPoints()
+        it.name:SetPoint("LEFT", it.button, "RIGHT", 6, 0)
+        it.name:Show()
+        it.slot:SetText(slot)
+        paint(it.slot, "textMuted")
+        it.slot:ClearAllPoints()
+        it.slot:SetPoint("RIGHT", m, "TOPLEFT", Q_ROW_W - 8, -(my + 12))
+        it.slot:Show()
+        my = my + 27
+      end
+    end
+    for i = nl + 1, #m.lines do m.lines[i]:Hide() end
+    for i = nlab + 1, #m.labels do m.labels[i]:Hide() end
+    for i = nbar + 1, #m.bars do m.bars[i].back:Hide(); m.bars[i].front:Hide() end
+    local h = my + 6
+    m:SetHeight(h)
+    m:Show()
+    y = y + h + 4
+  end
+
+  -- D. ligne de quête ; kind : "accept" (à prendre), "log" (au journal), "lock" (bloquée), "done" (rendue)
+  local function row(qid, kind, r, tag)
+    nRow = nRow + 1
+    local w = dgQRow(nRow)
+    w.qid, w.inLog = qid, kind == "log"
+    w.markKey = "q:" .. qid
+    local info = kind == "log" and infoOf(qid) or nil
+    local icon = w.icon
+    icon:SetDesaturated(false)
+    icon:SetVertexColor(1, 1, 1, 1)
+    if kind == "accept" then
+      icon:SetTexture(QUEST_ICON.accept)
+    elseif kind == "log" then
+      icon:SetTexture(QUEST_ICON.turnin)
+      icon:SetDesaturated(not (info and info.complete))
+    elseif kind == "lock" then
+      icon:SetTexture(QUEST_ICON.lock)
+    else
+      setStateIcon(icon, "done")
+    end
+    local name = Q.QDB:QuestName(qid)
+    if tag then name = name .. "  " .. hexOf("warning", "fffabf4d") .. tag .. "|r" end
+    w.name:SetText(name)
+    paint(w.name, (kind == "lock" or kind == "done") and "textMuted" or "quest")
+    local sub
+    local npc = hexOf("npc", "ff94caff")
+    if kind == "log" then
+      local state
+      if info and info.complete then
+        state = hexOf("success", "ff6bd99a") .. L.DUNGEON_STATE_READY .. "|r"
+      else
+        local have, need = 0, 0
+        for _, o in ipairs(info and info.objectives or {}) do have, need = have + o.have, need + o.need end
+        state = L.DUNGEON_STATE_INPROGRESS .. (need > 0 and (" · " .. have .. "/" .. need) or "")
+      end
+      local who = info and info.ender and placeName(info.ender.kind, info.ender.id)
+      sub = state .. (who and (" · " .. string.format(L.DUNGEON_SUB_TURNIN, npc .. who .. "|r")) or "")
+    elseif kind == "done" then
+      sub = L.DUNGEON_DONE_TAG
+    else
+      local who = r and (r.giver and Q.QDB:NpcName(r.giver) or r.obj and Q.QDB:ObjectName(r.obj)) or nil
+      if not who then
+        local q = Q.QDB:Quest(qid)
+        local id = q and q.starters.npcs[1]
+        who = id and Q.QDB:NpcName(id) or nil
+      end
+      local why
+      if kind == "lock" and r then
+        if r.reason == "level" then why = string.format(L.DUNGEON_LOCKED_LEVEL, tonumber(r.level) or 1)
+        else why = L.DUNGEON_LOCKED_PREREQ end
+      else
+        local q = Q.QDB:Quest(qid)
+        local lvl = q and q.reqLevel or (r and r.level)
+        if lvl and lvl > 1 then why = string.format(L.DUNGEON_SUB_LEVEL, lvl) end
+      end
+      sub = (who and (npc .. who .. "|r") or "") .. ((who and why) and " · " or "") .. (why or "")
+    end
+    w.sub:SetText(sub)
+    paint(w.sub, "textMuted")
+    local open = self.dgOpen[qid] == true
+    setOpen(w.info, open)
+    if kind == "done" then w.map:Hide() else w.map:Show() end
+    setPinned(w.map, marked == w.markKey)
+    local h = math.max(28, 4 + (w.name:GetStringHeight() or 14) + 1 + (w.sub:GetStringHeight() or 12) + 5)
+    w:SetHeight(h)
+    w.bg:SetColorTexture(tc("panel"))
+    w.bg:SetShown(open)
+    for _, e in ipairs(w.edges) do
+      e:SetColorTexture(tc("edge"))
+      e:SetShown(open)
+    end
+    w:ClearAllPoints()
+    w:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+    w:Show()
+    y = y + h + (open and 0 or 2)
+    if open then more(qid, kind == "log") end
+  end
+
+  local boxW = W - 22
+  local textW = boxW - 14
   local function isSuite(c) return type(c) == "table" and not c.reason and (tonumber(c.count) or 0) > 0 and c.sig end
-  local bySig = {}
+  local bySig, boxed = {}, {}
   for _, r in ipairs(item.details) do
     if isSuite(r.chain) then
       bySig[r.chain.sig] = bySig[r.chain.sig] or {}
@@ -1319,9 +2311,10 @@ function Journal:ShowDungeonDetail(item)
   local function box(r, chain, rows)
     nChain = nChain + 1
     local w = dgChain(nChain)
+    paintChainBox(w.box)
     w.box.row, w.add.row, w.info.row = r, r, r
     w.box.rows = rows
-    w.text:SetWidth(inner)
+    w.text:SetWidth(textW)
     w.text:SetText(chainBoxText(chain, rows))
     local textH = w.text:GetStringHeight() or 12
     local buttonsH = 0
@@ -1330,15 +2323,14 @@ function Journal:ShowDungeonDetail(item)
       w.info:Hide()
     else
       w.add:SetText(chain.chosen and L.DUNGEON_CHAIN_REMOVE or L.DUNGEON_CHAIN_ADD)
-      local wi, wa = fitButton(w.info, inner), fitButton(w.add, inner)
+      local wi, wa = fitButton(w.info, textW), fitButton(w.add, textW)
       w.info:ClearAllPoints()
       w.add:ClearAllPoints()
       w.info:SetPoint("TOPLEFT", w.box, "TOPLEFT", 7, -(textH + 12))
-      if wi + 4 + wa <= inner then
+      if wi + 4 + wa <= textW then
         w.add:SetPoint("LEFT", w.info, "RIGHT", 4, 0)
         buttonsH = 24
       else
-        -- trop étroit côte à côte : l'un sous l'autre
         w.add:SetPoint("TOPLEFT", w.info, "BOTTOMLEFT", 0, -3)
         buttonsH = 47
       end
@@ -1347,43 +2339,162 @@ function Journal:ShowDungeonDetail(item)
     end
     local boxH = textH + 14 + buttonsH
     w.box:ClearAllPoints()
-    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 8, -y)
+    w.box:SetPoint("TOPLEFT", child, "TOPLEFT", 24, -y)
     w.box:SetSize(boxW, boxH)
     w.box:Show()
-    y = y + boxH + 6
+    y = y + boxH + 4
   end
-  for _, r in ipairs(item.details) do
-    local chain = type(r.chain) == "table" and r.chain or nil
+  -- encadré de la suite d'une quête (une fois par suite) : sous la quête bloquée, ou sous la quête prise après
+  -- une suite ajoutée (pour la retirer)
+  local function chainBoxFor(r)
+    local chain = type(r) == "table" and type(r.chain) == "table" and r.chain or nil
+    if not chain then return end
     if isSuite(chain) then
-      local rows = bySig[chain.sig]
-      if rows[1] == r then box(r, chain, rows) end
-    else
-      nLine = nLine + 1
-      local fs = dgLine(nLine)
-      local prefix = r.done and "|TInterface\\RaidFrame\\ReadyCheck-Ready:12:12|t " or "- "
-      fs:SetText(prefix .. P.QuestLine(r, chain and { box = true } or nil))
-      fs:ClearAllPoints()
-      fs:SetPoint("TOPLEFT", child, "TOPLEFT", 4, -y)
-      fs:Show()
-      y = y + (fs:GetStringHeight() or 12) + 4
-      -- quête sans suite : niveau seul, ou suite hors de portée (raison, sans bouton)
-      if chain then box(r, chain, { r }) end
+      if not boxed[chain.sig] then
+        boxed[chain.sig] = true
+        box(r, chain, bySig[chain.sig])
+      end
+    elseif not r.ok then
+      box(r, chain, { r })
     end
   end
-  for i = nLine + 1, #(self.dgLines or {}) do self.dgLines[i]:Hide() end
-  for i = nChain + 1, #(self.dgChains or {}) do self.dgChains[i].box:Hide() end
+
+  -- C. itinéraire, puis D. les arrêts
+  local okR, route = pcall(D.Route, D, d)
+  if not okR then Q:ReportError(route); route = nil end
+  local placed = {}
+  local stops = route and route.stops or {}
+  if #stops > 0 then
+    local total = route.seconds and string.format(L.DUNGEON_ROUTE_TIME, math.max(1, math.floor(route.seconds / 60 + 0.5)))
+    h3(L.DUNGEON_ROUTE_HEADER, total)
+    local px = 2
+    local legs = {}
+    for i, s in ipairs(stops) do legs[i] = { name = Q.Maps:MapName(s.mapId), trip = s.trip } end
+    legs[#legs + 1] = { name = L.DUNGEON_ROUTE_ENTRANCE, trip = route.entrance.trip }
+    for i, lg in ipairs(legs) do
+      if i > 1 then
+        local tt = Journal.TripText(lg.trip)
+        local prev = self.dgPills[nPill]
+        if tt ~= "" and prev then
+          prev.trip:SetText(tt)
+          local tw = (prev.trip:GetStringWidth() or 30) + 6
+          if px + tw > W then px, y = 2, y + PILL_H + 3 end
+          prev.trip:ClearAllPoints()
+          prev.trip:SetPoint("TOPLEFT", child, "TOPLEFT", px, -(y + 3))
+          prev.trip:Show()
+          px = px + tw
+        end
+      end
+      nPill = nPill + 1
+      local p = dgPill(nPill)
+      p.num.text:SetText(i)
+      p.text:SetText(lg.name)
+      local pw = math.floor((p.text:GetStringWidth() or 50) + 26)
+      if px > 2 and px + pw > W then px, y = 2, y + PILL_H + 3 end
+      paintPill(p, i == 1 and lg.trip and lg.trip.seconds and lg.trip.seconds < 45)
+      p:SetWidth(pw)
+      p:ClearAllPoints()
+      p:SetPoint("TOPLEFT", child, "TOPLEFT", px, -y)
+      p:Show()
+      px = px + pw + 4
+    end
+    y = y + PILL_H + 4
+    local function stopHeader(i, name, right)
+      nStop = nStop + 1
+      local s = dgStop(nStop)
+      y = y + 6
+      s.num.text:SetText(i)
+      paintNumber(s.num, "accent")
+      s.num:ClearAllPoints()
+      s.num:SetPoint("TOPLEFT", child, "TOPLEFT", 2, -y)
+      s.num:Show()
+      s.name:SetText(hexOf("zone", "ff7fe08a") .. name .. "|r")
+      paint(s.name, "text")
+      s.right:SetText(right or "")
+      paint(s.right, "textMuted")
+      s.right:ClearAllPoints()
+      s.right:SetPoint("TOPRIGHT", child, "TOPLEFT", W, -(y + 2))
+      s.right:Show()
+      s.name:SetWidth(W - 24 - (s.right:GetStringWidth() or 0) - 6)
+      s.name:ClearAllPoints()
+      s.name:SetPoint("TOPLEFT", child, "TOPLEFT", 22, -(y + 2))
+      s.name:Show()
+      y = y + 18
+    end
+    for i, s in ipairs(stops) do
+      stopHeader(i, Q.Maps:MapName(s.mapId), Journal.TripText(s.trip))
+      for j, qid in ipairs(s.quests) do
+        local r = byId[qid]
+        local tag
+        if not r then
+          -- préquête de passage : elle débloque les quêtes du donjon prises après elle à cet arrêt
+          local n = 0
+          for k = j + 1, #s.quests do if byId[s.quests[k]] then n = n + 1 end end
+          if n > 0 then tag = string.format(L.DUNGEON_TAG_UNLOCKS, n) end
+        end
+        if not placed[qid] then
+          placed[qid] = true
+          row(qid, "accept", r, tag)
+          chainBoxFor(r)
+        end
+      end
+    end
+    local name = P.DungeonName(d)
+    local near = false
+    local function close(at)
+      if type(at) ~= "table" or type(at[1]) ~= "number" then return false end
+      local dd = Q.Maps:Distance(d.entrance[1], d.entrance[2], d.entrance[3], at[1], at[2], at[3])
+      return dd ~= nil and dd < 100
+    end
+    for _, list in ipairs({ pick, log }) do
+      for _, r in ipairs(list) do
+        local info = infoOf(r.id)
+        if info and info.ender and close(info.ender.at) then near = true end
+      end
+    end
+    stopHeader(#stops + 1, string.format(L.DUNGEON_ROUTE_ENTRANCE_STOP, name), near and L.DUNGEON_ROUTE_TURNINS or "")
+  end
+  -- à prendre hors itinéraire (itinéraire indisponible)
+  local rest = {}
+  for _, r in ipairs(pick) do if not placed[r.id] then rest[#rest + 1] = r end end
+  if #rest > 0 then
+    h3(L.DUNGEON_GROUP_PICK, tostring(#rest))
+    for _, r in ipairs(rest) do
+      row(r.id, "accept", r)
+      chainBoxFor(r)
+    end
+  end
+  -- G. dans le journal
+  if #log > 0 then
+    h3(L.DUNGEON_GROUP_LOG, tostring(#log))
+    for _, r in ipairs(log) do row(r.id, "log", r) end
+  end
+  -- F. bloquées, avec l'encadré de leur suite (une seule fois par suite)
+  if #locked > 0 then
+    h3(L.DUNGEON_GROUP_LOCKED, tostring(#locked))
+    for _, r in ipairs(locked) do
+      row(r.id, "lock", r)
+      chainBoxFor(r)
+    end
+  end
+  if #done > 0 then
+    h3(L.DUNGEON_GROUP_DONE, tostring(#done))
+    for _, r in ipairs(done) do row(r.id, "done", r) end
+  end
+  for i = nRow + 1, #(self.dgQRows or {}) do self.dgQRows[i]:Hide() end
+
   -- actions
-  y = y + 6
+  y = y + 10
   local canAdd = state == "available" or state == "upcoming" or state == "past" or state == "ignored"
   local canIgnore = state == "available" or state == "upcoming" or state == "past" or state == "added"
-  local x = 2
+  local bx = 2
   for _, pair in ipairs({ { self.dgAdd, canAdd }, { self.dgUnignore, state == "ignored" }, { self.dgIgnore, canIgnore } }) do
     local b, shown = pair[1], pair[2]
     b:ClearAllPoints()
     if shown then
-      b:SetPoint("TOPLEFT", child, "TOPLEFT", x, -y)
+      b:SetPoint("TOPLEFT", child, "TOPLEFT", bx, -y)
       b:Show()
-      x = x + b:GetWidth() + 6
+      bx = bx + b:GetWidth() + 6
     else
       b:Hide()
     end
@@ -1397,7 +2508,8 @@ function Journal:RefreshDungeonTab()
   local items = qdbOk and dungeonItems() or nil
   local sort = self.dungeonSort or "level"
   for key, b in pairs(self.dgSortButtons) do
-    if key == sort then b.text:SetTextColor(1, 0.82, 0) else b.text:SetTextColor(0.6, 0.6, 0.6) end
+    if Q.Themes then paint(b.text, key == sort and "accent" or "textMuted")
+    elseif key == sort then b.text:SetTextColor(1, 0.82, 0) else b.text:SetTextColor(0.6, 0.6, 0.6) end
   end
   local groups = items and Journal.DungeonGroups(items, sort) or {}
   -- sélection : celle d'avant si le donjon est encore là, sinon le premier conseillé, sinon le premier
@@ -1430,13 +2542,16 @@ function Journal:RefreshDungeonTab()
       row.name:SetText(Q.UI.DungeonPopup.DungeonName(it.dungeon))
       row.levels:SetFormattedText(L.UI_TRACKER_LEVELS, tonumber(it.dungeon.minLevel) or 1, tonumber(it.dungeon.maxLevel) or 60)
       local isSel = it == selected
-      if isSel then row.selected:Show() else row.selected:Hide() end
-      if isSel then
-        row.name:SetTextColor(1, 0.82, 0)
-      elseif g.key == "now" then
-        row.name:SetTextColor(1, 1, 1)
+      showSelection(row.selected, isSel)
+      if not Q.Themes then
+        if isSel then row.name:SetTextColor(1, 0.82, 0)
+        elseif g.key == "now" then row.name:SetTextColor(1, 1, 1)
+        else row.name:SetTextColor(0.6, 0.6, 0.6) end
       else
-        row.name:SetTextColor(0.6, 0.6, 0.6)
+        paint(row.name, isSel and "text" or g.key == "now" and "textDim" or "textMuted")
+        paint(row.levels, isSel and "textDim" or "textMuted")
+        local r, gg, b = tc("success")
+        row.routeDot:SetVertexColor(r, gg, b, 1)
       end
       if it.state == "added" then row.routeDot:Show() else row.routeDot:Hide() end
       row:Show()
@@ -1471,6 +2586,31 @@ function Journal:ShowExport()
 end
 
 ---------------------------------------------------------------------------
+-- Thème : couleurs repeintes (le fond, le bandeau, le blason, les coins et le liseré sont repeints par
+-- UI/Themes.lua) ; les lignes des listes reprennent les couleurs à leur rafraîchissement.
+---------------------------------------------------------------------------
+function Journal:ApplyTheme()
+  local f, T = self.frame, Q.Themes
+  if not (f and T) then return end
+  T:SkinClose(f)
+  for _, it in ipairs(self.fills) do it[1]:SetColorTexture(tc(it[2])) end
+  for _, it in ipairs(self.texts) do paint(it[1], it[2]) end
+  for _, b in ipairs(self.buttons) do T:SkinButton(b, b.qvButtonKind) end
+  for _, w in ipairs(self.dgChains or {}) do paintChainBox(w.box) end
+  self:UpdateTabs()
+  local P = Q.UI.DungeonModePanel
+  if P and P.ApplyTheme then P:ApplyTheme() end
+  if self:IsShown() then
+    self:UpdateRouteMode()
+    self:RefreshTab(self.tab)
+  end
+end
+
+Q:On("THEME_CHANGED", function()
+  if Journal.frame then Q.SafeCall(Journal.ApplyTheme, Journal) end
+end)
+
+---------------------------------------------------------------------------
 -- Messages
 ---------------------------------------------------------------------------
 Q:On("PROGRESS_UPDATED", function()
@@ -1481,4 +2621,5 @@ Q:On("GUIDE_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("STEP_CHANGED", function() refreshIfShown("route", true) end)
 Q:On("CLASSQUESTS_CHANGED", function() refreshIfShown("class") end)
 Q:On("DUNGEONS_CHANGED", function() refreshIfShown("dungeons") end)
+Q:On("AUCTION_ITEMS_CHANGED", function() if Journal.ahButton then Q.SafeCall(Journal.UpdateAuctionButton, Journal) end end)
 Q:On("DETOUR_CHANGED", function() if Journal:IsShown() then Journal:UpdateDetourButton() end end)

@@ -63,13 +63,17 @@ local function refreshPlayer(level)
 end
 Progress.RefreshPlayer = function(_, level) refreshPlayer(level) end
 
-local EMPTY_CHAR = { manual = {}, skipped = {}, inserted = {} }
+-- Q.char.dropped[questId] = quête racine : quêtes passées parce qu'elles ne rapportent plus assez
+-- (Engine/QuestValue.lua). Toutes leurs étapes sont passées, et les quêtes qui en dépendent aussi
+-- (préquête jamais faite) ; la racine sert à tout rouvrir d'un coup (Progress:UndropQuests).
+local EMPTY_CHAR = { manual = {}, skipped = {}, inserted = {}, dropped = {} }
 local function charState()
   local c = Q.char
   if not c then return EMPTY_CHAR end
   c.manual = c.manual or {}
   c.skipped = c.skipped or {}
   c.inserted = c.inserted or {}
+  if type(c.dropped) ~= "table" then c.dropped = {} end
   return c
 end
 
@@ -192,6 +196,7 @@ local computeBase
 
 -- Un prérequis est « en cours » s'il est dans le journal ou prévu par une étape non sautée.
 local function prereqPending(ctx, p)
+  if charState().dropped[p] then return false end   -- quête passée : même dans le journal, sans suite
   if Progress:InLog(p) then return true end
   local list = ctx.byQuest[p]
   if list then
@@ -312,6 +317,7 @@ local function evaluate(ctx, e)
   local P = Q.Player
   if c.manual[e.key] then return "done", "manual" end
   if c.skipped[e.key] then return "skipped", "manual" end
+  if step.questId ~= nil and c.dropped[step.questId] then return "skipped", "dropped" end
   local f = filterSkip(step)
   if f then return "skipped", f end
 
@@ -492,7 +498,26 @@ local function optionsOf(g)
   return Q.Guides:Choices(g, P.raceKey, P.faction)
 end
 
--- Suite du chapitre fini g : -> chapitre, ou nil, true quand le joueur doit choisir. Une seule suite, ou
+-- Toutes les suites sont sous le niveau du joueur (niveau >= leur maxLevel) : -> le chapitre de son
+-- niveau dans le même parcours (Q.Guides:ForPlayer), pris sans demander ; nil quand une suite lui
+-- convient encore ou qu'aucun chapitre plus loin n'existe.
+local function aheadOf(g, options)
+  local P = Q.Player or {}
+  local level = tonumber(P.level)
+  if not level then return nil end
+  local top = g.minLevel or 1
+  for _, o in ipairs(options) do
+    local max = o.guide.maxLevel or 61
+    if level < max then return nil end
+    if max > top then top = max end
+  end
+  local target = Q.Guides:ForPlayer(P.faction, P.raceKey, level, g.mode)
+  if not target or target == g or target.mode ~= g.mode or (target.minLevel or 1) < top then return nil end
+  return target
+end
+
+-- Suite du chapitre fini g : -> chapitre, ou nil, true quand le joueur doit choisir. Suites toutes
+-- sous le niveau du joueur : le chapitre de son niveau, sans demander (aheadOf). Une seule suite, ou
 -- l'option route.choicePopup coupée : la suite par défaut, sans demander. Un choix déjà fait est repris.
 -- La demande (ROUTE_CHOICE_NEEDED) part une fois par chapitre et par session, hors de Update (le
 -- gestionnaire peut rappeler Progress, voir Progress:ChooseRoute).
@@ -504,6 +529,8 @@ local function resolveNext(g)
   for _, o in ipairs(options) do
     if o.guide.id == stored then return o.guide end
   end
+  local ahead = aheadOf(g, options)
+  if ahead then return ahead end
   if Q.Settings:Get("route.choicePopup") == false then
     for _, o in ipairs(options) do
       if o.default then return o.guide end
@@ -535,7 +562,7 @@ local function checkRollover()
     if nxt and not visited[nxt.id] then
       Q.char.guideId = nxt.id
       invalidate()
-      Q:Fire("GUIDE_CHANGED", nxt)
+      Q:Fire("GUIDE_CHANGED", nxt, g)   -- g : chapitre fini qu'on quitte (Engine/Pace.lua)
       Q:Print(Q.L.ROUTE_NEXT, Q.Guides:DisplayTitle(nxt))
       Progress:Recompute()
     else
@@ -639,6 +666,43 @@ function Progress:MarkDone(key)
   self:Update()
 end
 
+-- Passe les quêtes `ids` (liste d'IDs, la racine en tête) : leurs étapes deviennent « passées »
+-- (raison "dropped"). -> vrai si fait.
+function Progress:DropQuests(ids)
+  if type(ids) ~= "table" or type(ids[1]) ~= "number" or not Q.char then return false end
+  local c = charState()
+  local root = ids[1]
+  for _, id in ipairs(ids) do
+    if type(id) == "number" then c.dropped[id] = root end
+  end
+  cache = nil
+  self:Update()
+  return true
+end
+
+-- Rouvre les quêtes passées avec la racine `root`. -> vrai si une quête a été rouverte.
+function Progress:UndropQuests(root)
+  if type(root) ~= "number" or not Q.char then return false end
+  local c = charState()
+  local found = false
+  for id, r in pairs(c.dropped) do
+    if r == root then
+      c.dropped[id] = nil
+      found = true
+    end
+  end
+  if found then
+    cache = nil
+    self:Update()
+  end
+  return found
+end
+
+-- Quête racine du saut qui a passé `questId`, ou nil.
+function Progress:DroppedRoot(questId)
+  return charState().dropped[questId]
+end
+
 -- Revient en arrière : rouvre l'étape la plus proche avant l'étape courante que le joueur a
 -- cochée, passée, ou qui a été validée par la position.
 function Progress:Back()
@@ -654,6 +718,11 @@ function Progress:Back()
   for i = start, 1, -1 do
     local e = entries[i]
     local k = e.key
+    local root = e.step.questId ~= nil and c.dropped[e.step.questId]
+    if root then
+      self:UndropQuests(root)
+      return e
+    end
     if c.manual[k] or c.skipped[k] or reached[k] then
       c.manual[k] = nil
       c.skipped[k] = nil
@@ -678,8 +747,15 @@ function Progress:JumpTo(key)
     if e.key == key then target = e; break end
   end
   if not target then return false end
-  if not cache then self:Recompute() end
   local c = charState()
+  local root = target.step.questId ~= nil and c.dropped[target.step.questId]
+  if root then
+    for id, r in pairs(c.dropped) do
+      if r == root then c.dropped[id] = nil end
+    end
+    cache = nil
+  end
+  if not cache then self:Recompute() end
   local before = true
   for _, e in ipairs(entries) do
     local k = e.key
@@ -724,6 +800,17 @@ function Progress:ResetGuide(guideId)
   local id = guideId or charState().guideId
   if type(id) ~= "string" or id == "" then return false end
   clearKeys("g:" .. id .. ":")
+  -- quêtes passées (peu rentables) du chapitre : rouvertes avec toute leur chaîne
+  local g = Q.Guides:Get(id)
+  local c = charState()
+  for _, step in ipairs(g and g.steps or {}) do
+    local root = step.questId ~= nil and c.dropped[step.questId]
+    if root then
+      for qid, r in pairs(c.dropped) do
+        if r == root then c.dropped[qid] = nil end
+      end
+    end
+  end
   endPrinted[id] = nil
   cache = nil
   self:Update()
@@ -801,6 +888,19 @@ local function nextOnRoute(g)
     if o.default then return o.guide end
   end
   return options[1].guide
+end
+
+-- NextGuide() -> chapitre qui suit le chapitre courant sur la route du joueur (sans rien demander), ou nil.
+function Progress:NextGuide()
+  local g = self:Guide()
+  return g and nextOnRoute(g) or nil
+end
+
+-- FilterSkip(step) -> raison ("race", "class", "optional"…) quand l'étape ne concerne pas le personnage,
+-- sinon nil (mêmes filtres que l'évaluation des étapes, pour un chapitre qui n'est pas le courant).
+function Progress:FilterSkip(step)
+  if type(step) ~= "table" then return nil end
+  return filterSkip(step)
 end
 
 -- Rendus (étapes « turnin » qui concernent le personnage) des chapitres qui suivent g sur la route.

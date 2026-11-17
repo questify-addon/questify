@@ -9,14 +9,34 @@ Q.Settings = Settings
 Settings.defaults = {
   autoQuest = true,
   autoReward = true,
+  rewardPick = "upgrade",   -- Automation/Rewards.lua : "upgrade" (amélioration d'abord) ou "value" (le plus cher)
+  rewardMarks = true,       -- UI/RewardMarks.lua : flèche et pièce sur les choix de récompense
   dungeonQuests = true,
-  nav = { routing = false, display = "native" },
+  -- Nav/Navigation.lua : routeur ("questify" | "spf" | "none") et affichage ("arrow" | "waypointui" |
+  -- "tomtom" | "native") ; style de trajet et de ligne du routeur Questify ; flèche (UI/Arrow.lua),
+  -- dont la position (nav.arrowPos = { point, point relatif, x, y }) n'a pas de défaut.
+  -- Migration des anciens réglages (nav.routing) : Core/Profiles.lua.
+  nav = { router = "questify", display = "arrow", routeStyle = "optimized", lineStyle = "dots", arrowLocked = false },
+  -- Flèche Questify (UI/Arrow.lua) : affichée, couleur ("cyan" | "theme" | "gold" | "green" | "white" |
+  -- "pink"). Mêmes réglages que la session ui-themes (Options › Thème chez elle).
+  arrow = { show = true, color = "cyan" },
   tracker = { locked = false, scale = 1, width = 260, nextSteps = 3, showMobs = true, autoTarget = false,
-    theme = "parchment", opacity = 0.9,     -- UI/Themes.lua : thème et opacité du fond (0 à 1)
-    foldBlizzard = true },                  -- UI/BlizzardTracker.lua : suivi de Blizzard replié
+    theme = "neutral", opacity = 0.9,       -- UI/Themes.lua : thème choisi et opacité du fond (0 à 1)
+    style = "solid",                        -- UI/Themes.lua : fond du suivi (solid, fade, none)
+    foldBlizzard = true,                    -- UI/BlizzardTracker.lua : suivi de Blizzard replié
+    hideBlizzard = false,                   -- UI/BlizzardTracker.lua : suivi de Blizzard masqué
+    objLayout = "list", objDetail = "mobs" },   -- Engine/Objectives.lua : objectifs de l'étape
+  -- Thème de toutes les fenêtres (UI/Themes.lua) : suivre la race, police, icônes des étapes
+  theme = { followRace = true, font = "game", icons = "flat", fontScale = 1 },
   nameplates = true,
+  -- UI/RaidMarks.lua : touche qui pose les icônes de raid sur les monstres d'objectif visibles ;
+  -- inGroup : aussi en groupe et en instance (sinon rien ne s'y passe)
+  raidMarks = { enabled = false, inGroup = false },
   objectGlow = true,
   trainerAlert = true,
+  classGuide = { levelUp = true },   -- UI/TalentAdvice.lua : encart « point de talent » au passage de niveau
+  trainerPanel = true,      -- UI/TrainerPanel.lua : panneau des sorts à côté du maître de classe
+  oldRanks = true,          -- Engine/ActionRanks.lua : assistant des anciens rangs sur les barres
   upgradePopup = true,
   sellJunk = true,
   questItemButton = true,
@@ -25,14 +45,19 @@ Settings.defaults = {
   autoFly = true,           -- Automation/Taxi.lua
   hearthHints = true,       -- Engine/Hearth.lua
   dangerAlert = true,       -- Engine/Danger.lua
+  questValue = true,        -- Engine/QuestValue.lua : passer une quête devenue peu rentable
   supplyReminders = true,   -- Engine/Supplies.lua
   showXPRate = true,        -- Engine/XPRate.lua
+  showPace = true,          -- Engine/Pace.lua : avance ou retard sur la route dans le suivi
   -- Donjons selon le niveau et la faction (alerte du suivi)
   dungeonSuggest = true,    -- Engine/Dungeons.lua
   classQuestOffer = true,   -- Engine/ClassQuestOffer.lua
   bagQuestOffer = true,     -- Engine/BagQuestOffer.lua
+  -- Objets de collecte achetables à l'hôtel des ventes (alerte, liste, panneau à côté de l'HV)
+  auctionItems = true,      -- Engine/AuctionItems.lua
   -- Repères des étapes sur la carte du monde et la minicarte
   mapPins = true,           -- UI/MapPins.lua
+  zoneOverlay = true,       -- UI/ZoneOverlay.lua : zone du mode zone tracée sur la carte et la minicarte
   -- Objectifs proches de plusieurs quêtes regroupés en une seule visite
   zoneMode = true,          -- Engine/ZoneMode.lua
   -- Fin de chapitre à plusieurs suites : cartes à choisir (sinon la suite par défaut, sans demander)

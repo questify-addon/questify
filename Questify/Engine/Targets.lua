@@ -89,23 +89,31 @@ local function spawnsOf(kind, id)
 end
 
 -- Plus proche spawn parmi des candidats { kind, id } : -> mapId, x, y, kind, id.
-local function nearest(cands)
-  local pm, px, py = Q.Maps:PlayerPos()
-  local best, bestD, first
-  for _, c in ipairs(cands) do
-    local spawns = spawnsOf(c.kind, c.id)
-    if spawns then
-      local m, x, y, d = Q.Maps:Nearest(spawns, pm, px, py)
-      if m then
-        if d and (not bestD or d < bestD) then
-          best, bestD = { m, x, y, c.kind, c.id }, d
-        elseif not first then
-          first = { m, x, y, c.kind, c.id }
+-- anchors : points de référence { m, x, y } essayés dans l'ordre (nil = position du joueur) ; le premier dont
+-- une distance se calcule décide. Aucun : le premier spawn connu (cartes par ID croissant).
+local function nearest(cands, anchors)
+  anchors = anchors or { false }
+  local first
+  for _, a in ipairs(anchors) do
+    local pm, px, py
+    if a then pm, px, py = a[1], a[2], a[3] else pm, px, py = Q.Maps:PlayerPos() end
+    local best, bestD
+    for _, c in ipairs(cands) do
+      local spawns = spawnsOf(c.kind, c.id)
+      if spawns then
+        local m, x, y, d = Q.Maps:Nearest(spawns, pm, px, py)
+        if m then
+          if d and (not bestD or d < bestD) then
+            best, bestD = { m, x, y, c.kind, c.id }, d
+          elseif not first then
+            first = { m, x, y, c.kind, c.id }
+          end
         end
       end
     end
+    if best then return best[1], best[2], best[3], best[4], best[5] end
   end
-  local r = best or first
+  local r = first
   if not r then return nil end
   return r[1], r[2], r[3], r[4], r[5]
 end
@@ -177,7 +185,8 @@ local function title(entry)
   return step.text or step.note or step.action
 end
 
-local function compute(entry)
+-- from : point { m, x, y } d'où la route arrive à cette étape (repères des étapes à venir), ou nil.
+local function compute(entry, from)
   local step = entry.step
   local a = step.action
   local mapId, x, y, kind, id, group
@@ -189,7 +198,14 @@ local function compute(entry)
     local starter = Q.Progress:StarterState(step)
     if starter == "held" then return nil end
     if not starter then
-      mapId, x, y, kind, id = nearest(givers(a == "accept" and q.starters or q.finishers))
+      -- d'où la route arrive, sinon le joueur, sinon le point de l'étape (dans une instance : le receveur
+      -- devant l'entrée plutôt que le premier point connu, ailleurs sur la carte)
+      local hint = type(step.at) == "table" and type(step.at[1]) == "number" and step.at or nil
+      local anchors = {}
+      if from then anchors[#anchors + 1] = from end
+      anchors[#anchors + 1] = false
+      if hint then anchors[#anchors + 1] = hint end
+      mapId, x, y, kind, id = nearest(givers(a == "accept" and q.starters or q.finishers), anchors)
     end
     -- donneur sans position connue : le point choisi par le générateur, s'il existe
     if not mapId and step.at then
@@ -250,18 +266,21 @@ local function compute(entry)
   return { mapId = mapId, x = x, y = y, kind = kind, id = id, group = group, title = title(entry) }
 end
 
--- Q.Targets:ForEntry(entry) -> { mapId, x, y, title, kind = "npc"|"object"|"area"|"point"|"zone", id,
+-- Q.Targets:ForEntry(entry[, from]) -> { mapId, x, y, title, kind = "npc"|"object"|"area"|"point"|"zone", id,
 --   group (étape « complete » : objectifs visés, "1,3") } | nil
+-- from = { m, x, y } : point d'où la route arrive à l'étape (étape à venir) ; le donneur ou le receveur le plus
+-- proche de ce point plutôt que du joueur. nil : depuis le joueur.
 -- Étape qui porte une zone (Engine/ZoneMode.lua, option zoneMode) : centre de la zone hors de
 -- celle-ci, objectif prioritaire le plus proche dedans (kind = "zone"). Sinon, calcul habituel.
-function Targets:ForEntry(entry)
+function Targets:ForEntry(entry, from)
   if type(entry) ~= "table" or type(entry.step) ~= "table" then return nil end
+  if type(from) ~= "table" or type(from[1]) ~= "number" then from = nil end
   local Z = Q.ZoneMode
   if Z and Z.TargetFor then
     local okZ, zt = Q.SafeCall(Z.TargetFor, Z, entry)
     if okZ and zt then return zt end
   end
-  local ok, target = Q.SafeCall(compute, entry)
+  local ok, target = Q.SafeCall(compute, entry, from)
   if ok then return target end
   return nil
 end

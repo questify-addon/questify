@@ -5,14 +5,18 @@ local addonName, Q = ...
 --   quêtes de classe, options), puis barre de progression « faites/total · niveaux » ;
 --   alerte de quête de classe (lueur pulsée) quand une chaîne devient disponible ;
 --   alerte de donjon conseillé (Engine/Dungeons.lua), clic = fenêtre du donjon ;
---   étape courante en gros : icône d'action, texte coloré, distance (mise à jour toutes les 0,5 s),
---   et sous chaque ligne d'objectif les monstres à tuer (crâne, nom, niveau) ;
+--   étape courante en gros : icône d'action, texte coloré, distance (mise à jour toutes les 0,5 s) ;
+--   étape « Faire » : un objectif par ligne (Engine/Objectives.lua, rendu UI/ObjectiveRows.lua) :
+--   icône du type, libellé, compteur à droite (vert une fois fait, puis replié dans « ✓ N faits »),
+--   trait sur l'objectif visé par la flèche ; mise en page (liste, barres, par quête) et détail
+--   (compteur seul, monstres ciblables, monstres et distance) au choix du joueur ;
 --   les étapes suivantes en petit et en gris.
 -- Mode zone (Engine/ZoneMode.lua) : l'étape qui porte la zone est remplacée par la zone (pastille
--- verte). Hors de la zone : « Zone : <nom> — N objectifs (Q quêtes) » et les quêtes concernées ;
--- dedans : tous les objectifs de la zone groupés par priorité (objets, élites et nommés,
--- monstres), chacun avec son avancement, les monstres sous forme de lignes ciblables (nommés
--- d'abord). Les étapes regroupées dans la zone ne sont pas répétées dans les étapes suivantes.
+-- arrondie : nom, N objectifs · Q quêtes). Hors de la zone : les quêtes concernées ; dedans : tous
+-- les objectifs de la zone groupés par priorité (objets, élites et nommés, monstres), numérotés
+-- dans l'ordre à suivre (numéros des points de la carte, UI/ZoneOverlay.lua), chacun avec son
+-- avancement et ses monstres ciblables. Les étapes regroupées dans la zone ne sont pas répétées
+-- dans les étapes suivantes.
 -- Confort de jeu (Engine/XPRate, Hearth, Danger, Supplies) : ligne XP/h sous la barre, XP restante
 -- du chapitre dans la barre, lignes de la pierre de foyer sous l'étape, avertissements (danger,
 -- sacs, réparation, nourriture, boisson) sous l'étape courante. Chaque module est lu sous pcall : absent ou en erreur,
@@ -20,9 +24,14 @@ local addonName, Q = ...
 -- Le clic sur un monstre passe par les boutons sécurisés d'UI/MobPanel.lua, posés par-dessus ses
 -- lignes sans s'ancrer au suivi : un enfant sécurisé rendrait le suivi protégé (impossible à
 -- redimensionner en combat). Ici, les lignes de monstres ne sont que du texte et des textures.
--- Apparence (UI/Themes.lua) : fond, bordure, couleurs du texte, de la barre et des lueurs selon
--- tracker.theme et tracker.opacity, réappliqués à chaud ; les codes de couleur des textes passent
--- par Q.Themes:Recolor (teintes foncées sur parchemin).
+-- Hôtel des ventes (Engine/AuctionItems.lua) : alerte « N objets de quête à l'hôtel des ventes » (début de
+-- chapitre, près d'un encanteur ; clic = liste, clic droit = masquée pour le chapitre) et, sous une étape
+-- « Prendre » ou « Terminer », une petite ligne grisée avec l'icône de l'objet (infobulle d'objet du jeu).
+-- Apparence (UI/Themes.lua) : thème en vigueur (race du personnage ou tracker.theme), fond du suivi
+-- (tracker.style : plein avec bandeau illustré et blason, fondu ou sans fond) et opacité, réappliqués
+-- à chaud ; les codes de couleur des textes passent par Q.Themes:Recolor. En fond plein, le titre
+-- du chapitre est dans l'en-tête en aplat ; la barre de progression est un trait fin à la couleur
+-- du thème, son texte dessous.
 Q.UI = Q.UI or {}
 local Tracker = {}
 Q.UI.Tracker = Tracker
@@ -32,6 +41,10 @@ local L = Q.L
 local WIDTH = 260           -- largeur par défaut (réglage tracker.width, poignée en bas à droite)
 local MIN_WIDTH, MAX_WIDTH = 220, 480
 local PAD = 8
+local HEADER_H = 28         -- en-tête en aplat (fond plein)
+local HEADER_PLAIN = 20     -- ligne du titre (fondu, sans fond)
+local BAR_H = 4             -- barre de progression
+local BAR_TEXT_H = 13       -- texte de la barre, sous la barre
 local ICON = 22             -- icône de l'action courante
 local ICON_COL = 38         -- colonne de l'icône et de la distance
 local NEXT_HEIGHT = 15
@@ -44,28 +57,21 @@ local XP_LINE_H = 13        -- ligne XP/h sous la barre
 local WARN_LINE_H = 14      -- avertissements de confort sous l'étape courante
 local MAX_WARN = 4
 
-local MOB_ROW_H = 16
-local MOB_INDENT = 10       -- retrait des lignes de monstres sous leur objectif
-local MOB_LEVEL_W = 62
-local SKULL_ICON = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_8"
-
 local REASON_COLOR = "|cffff5555"
 local ZONE_ICON = "Interface\\COMMON\\Indicator-Green"   -- pastille verte du mode zone
-local ZONE_COLOR = "|cff40e050"
-local ZONE_GROUP_COLOR = "|cffffd100"
-local ZONE_LEAD_COLOR = "|cffffffff"      -- objectif suivi par la flèche
-local ZONE_TODO_COLOR = "|cffc8c8c8"
 local ZONE_NOTE_COLOR = "|cff999999"
-local ZONE_QUEST_COLOR = "|cffffd100"
 Tracker.ZONE_ICON = ZONE_ICON
-local MOB_COLOR = "|cffff6060"
-local MOB_DONE_COLOR = "|cff808080"
-local LEVEL_COLOR = "|cffaaaaaa"
 
 ---------------------------------------------------------------------------
 -- Outils
 ---------------------------------------------------------------------------
 local function setting(path) return Q.Settings:Get(path) end
+-- Hauteur d'une ligne de texte selon la taille du texte (theme.fontScale, UI/Themes.lua).
+local function tsz(h)
+  local T = Q.Themes
+  local k = T and T.FontScale and T:FontScale() or 1
+  return math.floor(h * k + 0.5)
+end
 
 -- Codes de couleur d'un texte adaptés au thème courant.
 local function paint(text)
@@ -107,7 +113,8 @@ end
 -- Position :
 --   settings.tracker.point = { point, relativePoint, x, y } par rapport à UIParent, x et y en
 --   unités d'UIParent (indépendants de la taille du suivi) ;
---   sinon à gauche du suivi d'objectifs de Blizzard (placé sous la minimap) ;
+--   sinon à gauche du suivi d'objectifs de Blizzard (placé sous la minimap), ou à sa place quand
+--   Questify le masque (UI/BlizzardTracker.lua) ;
 --   sinon sous la minimap.
 local function applyPosition(f)
   f:ClearAllPoints()
@@ -117,7 +124,12 @@ local function applyPosition(f)
     f:SetPoint(p[1], UIParent, type(p[2]) == "string" and p[2] or p[1], (tonumber(p[3]) or 0) / k,
       (tonumber(p[4]) or 0) / k)
   elseif ObjectiveTrackerFrame then
-    f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPLEFT", -8, 0)
+    local B = Q.UI.BlizzardTracker
+    if B and B:IsHidden() then
+      f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPRIGHT", 0, 0)
+    else
+      f:SetPoint("TOPRIGHT", ObjectiveTrackerFrame, "TOPLEFT", -8, 0)
+    end
   elseif MinimapCluster then
     f:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", 0, -10)
   else
@@ -130,7 +142,9 @@ local function showTooltip(owner, lines)
   GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
   GameTooltip:ClearLines()
   for i, line in ipairs(lines) do
-    if i == 1 then
+    if type(line) == "table" then   -- { gauche, droite } : deux colonnes (sorts du maître et leur prix)
+      GameTooltip:AddDoubleLine(line[1], line[2], 1, 1, 1, 1, 1, 1)
+    elseif i == 1 then
       GameTooltip:AddLine(line, 1, 0.82, 0, true)
     else
       GameTooltip:AddLine(line, 1, 1, 1, true)
@@ -213,7 +227,7 @@ end
 -- Petit bouton du suivi (mode de la route, « Passer ce donjon ») : texte en petite police, largeur ajustée.
 local function smallButton(parent, onClick, onEnter)
   local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-  b:SetSize(110, MODE_H)
+  b:SetSize(110, tsz(MODE_H))
   if b.SetNormalFontObject then b:SetNormalFontObject("GameFontNormalSmall") end
   if b.SetHighlightFontObject then b:SetHighlightFontObject("GameFontHighlightSmall") end
   b:SetScript("OnClick", function(btn) Q.SafeCall(onClick, btn) end)
@@ -342,35 +356,58 @@ function Tracker:Create()
   title:SetWordWrap(false)
   self.title = title
 
-  -- Niveaux du chapitre : écrits dans la barre (la place à droite du titre est aux boutons).
+  -- Niveaux du chapitre : écrits sous la barre (la place à droite du titre est aux boutons).
   local levels = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   levels:SetPoint("TOPRIGHT", -PAD, -PAD - 1)
   levels:SetJustifyH("RIGHT")
   levels:Hide()
   self.levels = levels
 
+  -- En-tête en aplat et liseré du thème (UI/Themes.lua) ; le titre y est posé.
+  if Q.Themes and Q.Themes.Decorate then
+    f.qvOwnTheme = true   -- le suivi se repeint lui-même (variante du fond)
+    self.decor = Q.Themes:Decorate(f, { header = HEADER_H, title = title })
+  end
+
   local bar = CreateFrame("StatusBar", nil, f)
-  bar:SetHeight(12)
-  bar:SetPoint("TOPLEFT", PAD, -PAD - 18)
-  bar:SetPoint("TOPRIGHT", -PAD, -PAD - 18)
-  bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+  bar:SetHeight(BAR_H)
+  bar:SetPoint("TOPLEFT", PAD, -HEADER_H - 6)
+  bar:SetPoint("TOPRIGHT", -PAD, -HEADER_H - 6)
+  bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
   bar:SetMinMaxValues(0, 1)
   bar:SetValue(0)
   local barBg = bar:CreateTexture(nil, "BACKGROUND")
   barBg:SetAllPoints(bar)
   local barText = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  barText:SetPoint("LEFT", bar, "LEFT", 2, 0)
-  barText:SetPoint("RIGHT", bar, "RIGHT", -2, 0)
-  barText:SetJustifyH("CENTER")
+  barText:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, -3)
+  barText:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, -3)
+  barText:SetJustifyH("LEFT")
   barText:SetWordWrap(false)
   self.bar, self.barBg, self.barText = bar, barBg, barText
 
-  -- XP/h et temps avant le prochain niveau (Engine/XPRate.lua)
+  -- XP/h et temps avant le prochain niveau (Engine/XPRate.lua), ou XP/h et écart de rythme
+  -- (Engine/Pace.lua) : survol = détail du rythme, clic = onglet Rythme du journal
   local xpLine = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   xpLine:SetJustifyH("LEFT")
   xpLine:SetWordWrap(false)
   xpLine:Hide()
   self.xpLine = xpLine
+  local xpHover = CreateFrame("Button", nil, f)
+  xpHover:SetAllPoints(xpLine)
+  xpHover:RegisterForClicks("LeftButtonUp")
+  xpHover:SetScript("OnEnter", function(btn)
+    local lines = comfort("Pace", "TooltipLines")
+    if type(lines) == "table" then Q.SafeCall(showTooltip, btn, lines) end
+  end)
+  xpHover:SetScript("OnLeave", hideTooltip)
+  xpHover:SetScript("OnClick", function()
+    Q.SafeCall(function()
+      local J = Q.UI.Journal
+      if J and comfort("Pace", "TooltipLines") then J:ShowTab("pace") end
+    end)
+  end)
+  xpHover:Hide()
+  self.xpHover = xpHover
 
   -- Avertissements de confort (danger, sacs, réparation, nourriture, boisson), créés à la demande
   self.warnLines = {}
@@ -468,6 +505,7 @@ function Tracker:Create()
   tr:SetScript("OnLeave", hideTooltip)
   tr:Hide()
   self.trainerAlert, self.trainerText, self.trainerPulse = tr, trText, trPulse
+  self:CreateAuctionAlert(f)
 
   -- Route : « Mode : Manuel / Automatique » ; en automatique, bouton du chemin alternatif (Engine/Detour.lua)
   local modeText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -551,6 +589,7 @@ function Tracker:Create()
   -- Texte de l'étape en morceaux, entrecoupés des lignes de monstres : le premier morceau
   -- (titre et premiers objectifs) est currentText.
   self.textChunks, self.mobRows, self.mobSlots = {}, {}, {}
+  self.host = { parent = cur, textChunks = self.textChunks, mobRows = self.mobRows }
   self.currentText = self:TextChunk(1)
 
   self.nextLines = {}
@@ -605,14 +644,58 @@ local TEXT_ROLES = {
 function Tracker:ApplyTheme(force)
   local f, T = self.frame, Q.Themes
   if not (f and T) then return false end
-  local key = T:Resolve(setting("tracker.theme"))
+  local key = T.CurrentKey and T:CurrentKey() or T:Resolve(setting("tracker.theme"))
+  local style = T.Style and T:Style() or "solid"
+  local font, icons = setting("theme.font"), setting("theme.icons")
+  local scale = T.FontScale and T:FontScale() or 1
   local opacity = T:Opacity(setting("tracker.opacity"))
-  if not force and key == self.themeKey and opacity == self.themeOpacity then return false end
-  local restyle = force or key ~= self.themeKey
-  self.theme = T:Apply(f, key, opacity)
-  self.themeKey, self.themeOpacity = key, opacity
-  if restyle then self:StyleAll() end
+  if not force and key == self.themeKey and opacity == self.themeOpacity and style == self.themeStyle
+    and font == self.themeFont and icons == self.themeIcons and scale == self.themeScale then return false end
+  self.theme = T:Apply(f, key, opacity, style)
+  if self.host then self.host.theme = self.theme end
+  self.themeKey, self.themeOpacity, self.themeStyle = key, opacity, style
+  self.themeFont, self.themeIcons, self.themeScale = font, icons, scale
+  self:PlaceHeader()
+  self:StyleAll()
+  if T.ScaleTree then T:ScaleTree(f) end
   return true
+end
+
+-- Hauteur du haut du suivi : bandeau en fond plein, simple ligne de titre sinon.
+function Tracker:HeaderHeight()
+  local th = self.theme
+  return (th and th.decor and self.decor) and HEADER_H or HEADER_PLAIN
+end
+
+-- Titre dans le bandeau (à droite du blason) ou en haut à gauche ; barre sous le haut du suivi.
+function Tracker:PlaceHeader()
+  local f, title = self.frame, self.title
+  local d = self.decor
+  local h = self:HeaderHeight()
+  title:ClearAllPoints()
+  if d and d.header then d.header:SetHeight(h) end
+  if d and d.header and h == HEADER_H then
+    title:SetPoint("LEFT", d.header, "LEFT", PAD, 0)
+  else
+    title:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD + 2)
+  end
+  local bar = self.bar
+  bar:ClearAllPoints()
+  bar:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -h - 6)
+  bar:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -h - 6)
+end
+
+-- Haut de la zone sous la barre et son texte.
+function Tracker:BodyTop()
+  return self:HeaderHeight() + 6 + BAR_H + 3 + tsz(BAR_TEXT_H) + 4
+end
+
+-- Icône d'une étape : glyphe plat du thème (prendre, rendre) ou icône du jeu. -> texture, r, g, b
+-- (nil : pas de teinte), plate.
+function Tracker:StepIcon(action)
+  local T = Q.Themes
+  if T and T.StepIcon then return T:StepIcon(action, self.theme) end
+  return Q.Format:ActionIcon(action)
 end
 
 -- Couleurs du thème sur toutes les lignes existantes (les lignes créées ensuite les prennent à
@@ -621,56 +704,31 @@ function Tracker:StyleAll()
   local th = self.theme
   if not th then return end
   for field, role in pairs(TEXT_ROLES) do style(self[field], role) end
-  for _, chunk in ipairs(self.textChunks) do style(chunk, "body") end
-  for _, row in ipairs(self.mobRows) do
-    style(row.name, "body")
-    style(row.level, "dim")
-  end
+  self.host.theme = th
+  Q.UI.ObjectiveRows:Restyle(self.host)
   for _, line in ipairs(self.nextLines) do style(line.text, "dim") end
   for _, line in ipairs(self.warnLines) do style(line, "warn") end
+  for _, row in ipairs(self.ahHints or {}) do style(row.text, "dim") end
+  if self.ahText then style(self.ahText, "warn") end
   local bar = th.bar
   if bar then
     self.bar:SetStatusBarColor(bar.fill[1], bar.fill[2], bar.fill[3])
     self.barBg:SetColorTexture(bar.bg[1], bar.bg[2], bar.bg[3], bar.bg[4] or 1)
   end
+  if self.title and self.title.SetFontObject and not self.titleFontSet then
+    -- titre du chapitre en 15, comme la maquette
+    local file, _, flags = self.title:GetFont()
+    if type(file) == "string" then pcall(self.title.SetFont, self.title, file, 15, flags or "") end
+    self.title.qvBaseFont = nil
+    self.titleFontSet = true
+    style(self.title, "title")
+  end
   for _, g in ipairs(self.glows) do g:SetBlendMode(th.glowBlend or "ADD") end
 end
 
--- Morceau de texte de l'étape courante (créé à la demande).
+-- Morceau de texte de l'étape courante (créé à la demande, UI/ObjectiveRows.lua).
 function Tracker:TextChunk(i)
-  local chunk = self.textChunks[i]
-  if chunk then return chunk end
-  chunk = self.current:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  chunk:SetJustifyH("LEFT")
-  chunk:SetJustifyV("TOP")
-  chunk:SetWordWrap(true)
-  chunk:Hide()
-  style(chunk, "body")
-  self.textChunks[i] = chunk
-  return chunk
-end
-
--- Ligne de monstre sous un objectif : crâne, nom, niveau (créée à la demande).
-function Tracker:MobRow(i)
-  local row = self.mobRows[i]
-  if row then return row end
-  local cur = self.current
-  row = {}
-  row.skull = cur:CreateTexture(nil, "ARTWORK")
-  row.skull:SetTexture(SKULL_ICON)
-  row.skull:SetSize(12, 12)
-  row.name = cur:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  row.name:SetJustifyH("LEFT")
-  row.name:SetWordWrap(false)
-  row.level = cur:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-  row.level:SetJustifyH("RIGHT")
-  row.level:SetWordWrap(false)
-  row.level:SetWidth(MOB_LEVEL_W)
-  style(row.name, "body")
-  style(row.level, "dim")
-  row.skull:Hide(); row.name:Hide(); row.level:Hide()
-  self.mobRows[i] = row
-  return row
+  return Q.UI.ObjectiveRows.TextChunk(self.host, i)
 end
 
 ---------------------------------------------------------------------------
@@ -679,6 +737,11 @@ end
 function Tracker:UpdateDistance(retarget)
   if not self.frame then return end
   local entry = self.entry
+  -- détail « distance » : les distances des objectifs suivent le joueur (toutes les 2 s, avec la cible)
+  if retarget and entry and Q.Objectives and Q.Objectives:Detail() == "distance" then
+    self.target = Q.Targets:ForEntry(entry)
+    return self:Refresh()
+  end
   if retarget and entry then self.target = Q.Targets:ForEntry(entry) end
   local tg = self.target
   local text = ""
@@ -844,7 +907,16 @@ function Tracker:TrainerTooltip(owner)
       lines[#lines + 1] = "..."
       break
     end
-    lines[#lines + 1] = "- " .. name
+    -- icône, nom, rang (gris) et prix de chaque sort ; sans ligne du maître, le nom seul
+    local s = alert.spells and alert.spells[i]
+    if type(s) == "table" then
+      local icon = Q.Trainer.ServiceIcon(s)
+      local left = (icon and ("|T" .. tostring(icon) .. ":16:16:0:0|t ") or "") .. tostring(s.name)
+      if s.rank and s.rank ~= "" then left = left .. " |cffaaaaaa" .. s.rank .. "|r" end
+      lines[#lines + 1] = { left, (s.cost or 0) > 0 and money(s.cost) or "" }
+    else
+      lines[#lines + 1] = "- " .. name
+    end
   end
   if alert.known and alert.cost > 0 then lines[#lines + 1] = string.format(L.UI_TRAINER_COST, money(alert.cost)) end
   if alert.known and alert.missing > 0 then
@@ -879,6 +951,126 @@ function Tracker:LayoutTrainerAlert(y)
 end
 
 ---------------------------------------------------------------------------
+-- Hôtel des ventes (Engine/AuctionItems.lua, UI/AuctionPanel.lua)
+---------------------------------------------------------------------------
+local AH_ICON = "Interface\\Icons\\INV_Misc_Coin_01"
+local AH_HINT_H = 14
+local AH_HINT_INDENT = 10   -- retrait de la ligne « à l'hôtel des ventes », comme les monstres (UI/ObjectiveRows.lua)
+
+local function auctionPanel() return Q.UI.AuctionPanel end
+
+-- Alerte « N objets de quête à l'hôtel des ventes » : clic = liste, clic droit = masquée pour le chapitre.
+function Tracker:CreateAuctionAlert(f)
+  local b = CreateFrame("Button", nil, f)
+  b:SetHeight(20)
+  b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+  hl:SetBlendMode("ADD")
+  hl:SetAllPoints(b)
+  local icon = b:CreateTexture(nil, "ARTWORK")
+  icon:SetTexture(AH_ICON)
+  icon:SetSize(16, 16)
+  icon:SetPoint("LEFT", b, "LEFT", 2, 0)
+  local t = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  t:SetPoint("LEFT", icon, "RIGHT", 4, 0)
+  t:SetPoint("RIGHT", b, "RIGHT", -2, 0)
+  t:SetJustifyH("LEFT")
+  t:SetWordWrap(false)
+  style(t, "warn")
+  b:SetScript("OnClick", function(_, button)
+    Q.SafeCall(function()
+      if button == "RightButton" then
+        Q.AuctionItems:HideAlert()
+      elseif auctionPanel() then
+        auctionPanel():ShowList()
+      end
+    end)
+  end)
+  b:SetScript("OnEnter", function(btn)
+    Q.SafeCall(showTooltip, btn, { t:GetText() or "", L.AH_ALERT_TIP, L.AH_ALERT_CLICK, L.AH_ALERT_RIGHT })
+  end)
+  b:SetScript("OnLeave", hideTooltip)
+  b:Hide()
+  self.ahAlert, self.ahText = b, t
+end
+
+-- Place l'alerte à la hauteur y si elle doit s'afficher ; -> nouvelle hauteur.
+function Tracker:LayoutAuctionAlert(y)
+  local b = self.ahAlert
+  if not b then return y end
+  local AI = Q.AuctionItems
+  local ok, alert = pcall(function() return AI and AI:Alert() end)
+  if not ok then Q:ReportError(alert); alert = nil end
+  if not alert then
+    b:Hide()
+    return y
+  end
+  if alert.count == 1 then self.ahText:SetText(L.AH_ALERT_ONE) else self.ahText:SetFormattedText(L.AH_ALERT, alert.count) end
+  local f = self.frame
+  b:ClearAllPoints()
+  b:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -y)
+  b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+  b:Show()
+  return y + 20 + 4
+end
+
+-- Ligne d'indice sous l'étape : petite, grisée, icône de l'objet ; survol = infobulle de l'objet (comme un
+-- objet des sacs, avec les lignes des addons de prix) ; clic = liste.
+local function hintRow(self, i)
+  self.ahHints = self.ahHints or {}
+  local h = self.ahHints[i]
+  if h then return h end
+  local row = CreateFrame("Button", nil, self.current)
+  row:SetHeight(AH_HINT_H)
+  local icon = row:CreateTexture(nil, "ARTWORK")
+  icon:SetSize(12, 12)
+  icon:SetPoint("LEFT", row, "LEFT", 0, 0)
+  local t = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  t:SetPoint("LEFT", icon, "RIGHT", 3, 0)
+  t:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+  t:SetJustifyH("LEFT")
+  t:SetWordWrap(false)
+  style(t, "dim")
+  row:SetScript("OnEnter", function(btn)
+    Q.SafeCall(function()
+      if not (btn.item and GameTooltip) then return end
+      GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
+      GameTooltip:SetItemByID(btn.item)
+      if btn.missing and btn.quest then
+        GameTooltip:AddLine(string.format(L.AH_TIP_MISSING, btn.missing, btn.quest), 0.2, 0.8, 1, true)
+      end
+      GameTooltip:Show()
+    end)
+  end)
+  row:SetScript("OnLeave", hideTooltip)
+  row:SetScript("OnClick", function() Q.SafeCall(function() if auctionPanel() then auctionPanel():ShowList() end end) end)
+  row:Hide()
+  h = { row = row, icon = icon, text = t }
+  self.ahHints[i] = h
+  return h
+end
+
+-- Place la ligne d'indice i à la hauteur yy (dans l'étape courante) ; -> hauteur prise.
+function Tracker:LayoutAuctionHint(i, ah, yy)
+  local h = hintRow(self, i)
+  local row = h.row
+  row:ClearAllPoints()
+  row:SetPoint("TOPLEFT", self.current, "TOPLEFT", ICON_COL + 2 + AH_HINT_INDENT, -yy - 1)
+  row:SetWidth(textWidth() - AH_HINT_INDENT)
+  h.icon:SetTexture(Q.AuctionItems:Icon(ah.item))
+  if ah.approx then
+    h.text:SetText(string.format(L.AH_HINT_APPROX, ah.name or ""))
+  else
+    h.text:SetText(string.format(L.AH_HINT, ah.need or 0, ah.name or ""))
+  end
+  row.item, row.missing = ah.item, ah.need
+  row.quest = auctionPanel() and auctionPanel().QuestNames(ah) or nil
+  row:Show()
+  return AH_HINT_H + 2
+end
+
+---------------------------------------------------------------------------
 -- Route automatique (Engine/DungeonMode.lua) : mode, chemin alternatif, donjon passé
 ---------------------------------------------------------------------------
 -- Ligne « Mode : … » à la hauteur y quand le personnage a le choix de la route ; -> nouvelle hauteur.
@@ -907,7 +1099,7 @@ function Tracker:LayoutMode(y)
   text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 2, -y - 3)
   text:SetWidth(W - 2 * PAD - 4 - (auto and (btn:GetWidth() or 0) + 4 or 0))
   text:Show()
-  return y + MODE_H + 4
+  return y + tsz(MODE_H) + 4
 end
 
 -- Rappel du premier donjon passé dont le personnage est dans la tranche de niveaux ; -> nouvelle hauteur.
@@ -940,7 +1132,7 @@ function Tracker:LayoutSkip(entry, y)
     b:ClearAllPoints()
     b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
     b:Show()
-    y = y + MODE_H + 6
+    y = y + tsz(MODE_H) + 6
   else
     b:Hide()
   end
@@ -969,7 +1161,7 @@ function Tracker:LayoutExtra(entry, y)
   b:ClearAllPoints()
   b:SetPoint("TOPLEFT", self.frame, "TOPLEFT", PAD + ICON_COL, -y)
   b:Show()
-  return y + MODE_H + 6
+  return y + tsz(MODE_H) + 6
 end
 
 -- « ~4 min, vol, nouveau point de vol » : trajet de Q.Dungeons:Trip.
@@ -1085,11 +1277,15 @@ function Tracker:ShowMessage(text)
   self.mobSlots = {}
   for _, line in ipairs(self.nextLines) do line.icon:Hide(); line.text:Hide() end
   self.xpLine:Hide()
+  self.xpHover:Hide()
   for _, line in ipairs(self.warnLines) do line:Hide() end
   self.alertPulse:Stop()
   self.message:SetText(paint(text))
+  local top = (self.theme and self.theme.decor and self.decor) and HEADER_H or 0
+  self.message:ClearAllPoints()
+  self.message:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD - top)
   self.message:Show()
-  f:SetHeight(PAD * 2 + (self.message:GetStringHeight() or 12))
+  f:SetHeight(PAD * 2 + top + (self.message:GetStringHeight() or 12))
 end
 
 local function applyLock(f)
@@ -1116,12 +1312,33 @@ local function chapterProgress()
   return done, total
 end
 
--- Morceaux de l'étape courante : { text = "..." } ou { mob = ligne de MobPanel:MobsFor }.
--- Les monstres d'un objectif suivent sa ligne ; ceux dont l'objectif n'est pas affiché viennent
--- après le dernier objectif. Notes et raison du blocage ferment la liste.
+-- Objet de l'étape achetable à l'hôtel des ventes (Engine/AuctionItems.lua), ou nil.
+local function auctionHint(entry)
+  local AI = Q.AuctionItems
+  if not AI then return nil end
+  local ok, row = pcall(AI.HintFor, AI, entry)
+  if not ok then Q:ReportError(row); return nil end
+  return row
+end
+
+
+-- Morceaux de l'étape courante pour UI/ObjectiveRows.lua : { text }, { obj }, { mob }, { quest }, { fold }.
+-- Étape « Faire » : un objectif par ligne (Engine/Objectives.lua) selon la mise en page et le détail
+-- choisis (tracker.objLayout, tracker.objDetail) ; les monstres d'un objectif suivent sa ligne, ceux
+-- dont l'objectif n'est pas affiché viennent après le dernier. Autres étapes : le texte de l'étape.
+-- Notes et raison du blocage ferment la liste.
 local function stepSegments(entry, mobs)
+  local O = Q.Objectives
   local parts = Q.Format:StepParts(entry)
-  local segs, buf = {}, { parts.head }
+  local data
+  if O then
+    local ok, res = pcall(O.ForStep, O, entry)
+    if ok then data = res else Q:ReportError(res) end
+  end
+  if data and #data.rows == 0 then data = nil end
+  local layout = data and O:Layout() or "list"
+  local detail = data and O:Detail() or "mobs"
+  local segs, buf = {}, {}
   local function flush()
     if #buf > 0 then segs[#segs + 1] = { text = table.concat(buf, "\n") } end
     buf = {}
@@ -1136,11 +1353,36 @@ local function stepSegments(entry, mobs)
     byIndex[k] = byIndex[k] or {}
     table.insert(byIndex[k], mob)
   end
-  for _, o in ipairs(parts.objectives) do
-    buf[#buf + 1] = Q.Format:ObjectiveLine(o.text)
-    if byIndex[o.index] and not placed[o.index] then
-      placed[o.index] = true
-      addMobs(byIndex[o.index])
+  if data then
+    if layout == "quest" then
+      local done = 0
+      for _, r in ipairs(data.rows) do if r.done then done = done + 1 end end
+      segs[#segs + 1] = { quest = Q.QDB:QuestName(data.questId), sub = "· " .. done .. "/" .. #data.rows }
+    else
+      buf[#buf + 1] = parts.head
+      flush()
+    end
+    for _, r in ipairs(data.shown) do
+      local dist
+      if detail == "distance" and not r.done then
+        local d = O:Distance(data.questId, r.index)
+        if d then dist = Q.Util.FormatDistance(d) end
+      end
+      segs[#segs + 1] = { obj = r, bars = layout == "bars", dist = dist }
+      placed[r.index] = true
+      if byIndex[r.index] then addMobs(byIndex[r.index]) end
+    end
+    for _, r in ipairs(data.folded) do placed[r.index] = true end
+    local fold = O:FoldText(data.folded)
+    if fold then segs[#segs + 1] = { fold = fold } end
+  else
+    buf[#buf + 1] = parts.head
+    for _, o in ipairs(parts.objectives) do
+      buf[#buf + 1] = Q.Format:ObjectiveLine(o.text)
+      if byIndex[o.index] and not placed[o.index] then
+        placed[o.index] = true
+        addMobs(byIndex[o.index])
+      end
     end
   end
   local rest = {}
@@ -1155,12 +1397,18 @@ local function stepSegments(entry, mobs)
       if type(line) == "string" then buf[#buf + 1] = line end
     end
   end
+  local travel = comfort("Travel", "Lines", entry)
+  if type(travel) == "table" then
+    for _, line in ipairs(travel) do
+      if type(line) == "string" then buf[#buf + 1] = line end
+    end
+  end
   local state, reason = Q.Progress:State(entry)
   if state == "blocked" and reason then
     buf[#buf + 1] = REASON_COLOR .. Q.Format:Reason(reason) .. "|r"
   end
   flush()
-  return segs
+  return segs, data
 end
 
 ---------------------------------------------------------------------------
@@ -1187,35 +1435,54 @@ local function mobName(name)
   return (name:gsub("[\r\n]", " "))
 end
 
--- Morceaux de la zone (même forme que stepSegments) : titre, puis hors de la zone les quêtes
--- concernées, dedans les objectifs par priorité. Sous un monstre, l'avancement de son objectif.
-local function zoneSegments(z)
-  local Z = Q.ZoneMode
-  local F = Q.Format
-  local segs, buf = {}, { ZONE_COLOR .. Z:Headline(z) .. "|r" }
-  local function flush()
-    if #buf > 0 then segs[#segs + 1] = { text = table.concat(buf, "\n") } end
-    buf = {}
+local function plural(n, one, many) return string.format(n == 1 and L[one] or L[many], n) end
+
+-- Ligne d'objectif de la zone (même forme que celles de Q.Objectives:ForStep).
+local function zoneRow(Z, o, lead)
+  local text = Z:ProgressText(o)
+  local label, have, need = Q.Objectives:Split(text)
+  if o.start or o.key then label, have, need = text, nil, nil end
+  if not o.start and not o.key and o.name and not label:find(o.name, 1, true) then
+    label = o.name .. " — " .. label
   end
+  if o.blocked then
+    local needs = " (" .. string.format(L.ZONE_NEEDS, Q.QDB:ItemName(o.blocked.item)) .. ")"
+    label, text = label .. needs, text .. needs
+  end
+  return { label = label, have = have, need = need, done = false, lead = o == lead, text = text,
+    kind = o.kind, questId = o.questId, index = o.objIndex }
+end
+
+-- Morceaux de la zone : pastille (nom, objectifs, quêtes), puis hors de la zone les quêtes
+-- concernées, dedans les objectifs groupés par priorité et numérotés dans l'ordre à suivre (les
+-- numéros des repères de la carte). Sous un objectif, ses monstres ciblables (détail ≠ count).
+local function zoneSegments(z)
+  local Z, O = Q.ZoneMode, Q.Objectives
+  local layout, detail = O:Layout(), O:Detail()
+  local nq = z.questCount or 1
+  local segs = { { pill = z.name or "?", sub = string.format(L.ZONE_PILL_SUB,
+    plural(#z.objectives, "ZONE_N_OBJ_ONE", "ZONE_N_OBJ"), plural(nq, "ZONE_N_QUEST_ONE", "ZONE_N_QUEST")) } }
   if not z.inside then
-    local seen = {}
+    local count, order = {}, {}
     for _, o in ipairs(z.objectives) do
-      if not seen[o.questId] then
-        seen[o.questId] = true
-        buf[#buf + 1] = F:ObjectiveLine(ZONE_QUEST_COLOR .. Q.QDB:QuestName(o.questId) .. "|r")
-      end
+      if not count[o.questId] then order[#order + 1] = o.questId end
+      count[o.questId] = (count[o.questId] or 0) + 1
     end
-    buf[#buf + 1] = ZONE_NOTE_COLOR .. L.ZONE_HINT_OUTSIDE .. "|r"
-    flush()
+    for _, qid in ipairs(order) do
+      segs[#segs + 1] = { quest = Q.QDB:QuestName(qid),
+        sub = "· " .. plural(count[qid], "ZONE_N_OBJ_ONE", "ZONE_N_OBJ") }
+    end
+    segs[#segs + 1] = { text = ZONE_NOTE_COLOR .. L.ZONE_HINT_OUTSIDE .. "|r" }
     return segs
   end
-  local rows = Q.UI.MobPanel and setting("tracker.showMobs") ~= false
-  -- Groupes dans l'ordre à suivre (celui de la flèche) ; dans un groupe, ordre stable (étapes puis
-  -- objectifs) : les lignes ciblables ne bougent pas à chaque pas du joueur, même en combat.
+  local rows = Q.UI.MobPanel and detail ~= "count"
+  -- Numéros : rang dans l'ordre à suivre (celui de la flèche et de la carte). Affichage par groupes
+  -- dans l'ordre stable des étapes : les lignes ciblables ne bougent pas à chaque pas du joueur.
   local ordered = Z:Objectives(z)
   local lead = ordered[1]
-  local groupRank, list = {}, {}
+  local rank, groupRank, list = {}, {}, {}
   for i, o in ipairs(ordered) do
+    rank[o] = i
     local group = ZONE_GROUPS[o.kind] or "ZONE_GROUP_MOBS"
     if not groupRank[group] then groupRank[group] = i end
     list[i] = o
@@ -1232,45 +1499,43 @@ local function zoneSegments(z)
     local group = ZONE_GROUPS[o.kind] or "ZONE_GROUP_MOBS"
     if group ~= lastGroup then
       lastGroup = group
-      buf[#buf + 1] = ZONE_GROUP_COLOR .. L[group] .. "|r"
+      segs[#segs + 1] = { group = L[group] }
     end
-    local color = o == lead and ZONE_LEAD_COLOR or ZONE_TODO_COLOR
-    local text = Z:ProgressText(o)
-    if o.blocked then
-      text = text .. " (" .. string.format(L.ZONE_NEEDS, Q.QDB:ItemName(o.blocked.item)) .. ")"
+    local tk = o.questId .. ":" .. o.objIndex
+    if not shownText[tk] or o.start or o.key then
+      shownText[tk] = true
+      local dist = detail == "distance" and o.distance and Q.Util.FormatDistance(o.distance) or nil
+      segs[#segs + 1] = { obj = zoneRow(Z, o, lead), num = rank[o], bars = layout == "bars", dist = dist }
     end
     local name = o.targetKind == "npc" and mobName(o.name)
-    if rows and name and (shownMob[o.id] or nRows < MAX_ZONE_ROWS) then
+    if rows and name and not shownMob[o.id] and nRows < MAX_ZONE_ROWS then
       -- ligne ciblable (bouton sécurisé de MobPanel), une par monstre
-      if not shownMob[o.id] then
-        shownMob[o.id] = true
-        nRows = nRows + 1
-        flush()
-        segs[#segs + 1] = { mob = { npcId = o.id, name = name, minLevel = o.minLevel, maxLevel = o.maxLevel,
-          questId = o.questId, objIndex = o.objIndex, done = false, viaItem = o.viaItem } }
-      end
-      local tk = o.questId .. ":" .. o.objIndex
-      if not shownText[tk] then
-        shownText[tk] = true
-        buf[#buf + 1] = F:ObjectiveLine(F:ObjectiveLine(color .. text .. "|r"))
-      end
-    else
-      if o.targetKind == "object" and not o.start and not text:find(o.name, 1, true) then
-        text = o.name .. " — " .. text
-      elseif o.targetKind == "npc" and not o.start and not o.key and not text:find(o.name, 1, true) then
-        text = o.name .. " — " .. text
-      end
-      buf[#buf + 1] = F:ObjectiveLine(color .. text .. "|r")
+      shownMob[o.id] = true
+      nRows = nRows + 1
+      segs[#segs + 1] = { mob = { npcId = o.id, name = name, minLevel = o.minLevel, maxLevel = o.maxLevel,
+        questId = o.questId, objIndex = o.objIndex, done = false, viaItem = o.viaItem } }
     end
   end
-  flush()
   return segs
+end
+Tracker.ZoneSegments = function(_, z) return zoneSegments(z) end
+
+-- Repli d'un objectif fini : un nouveau rendu quand son délai est passé (Engine/Objectives.lua).
+function Tracker:ScheduleFold(data)
+  local O = Q.Objectives
+  local left = O and data and O:NextFold(data)
+  if not left or type(C_Timer) ~= "table" or type(C_Timer.After) ~= "function" then return end
+  self.foldToken = (self.foldToken or 0) + 1
+  local token = self.foldToken
+  C_Timer.After(left, function()
+    if Tracker.foldToken == token then Q.SafeCall(Tracker.Refresh, Tracker) end
+  end)
 end
 
 -- Met en page l'étape courante dans son bouton ; yTop = haut du bouton dans le suivi.
 -- -> hauteur du contenu ; remplit self.mobSlots pour les boutons de ciblage.
 function Tracker:LayoutCurrent(cur, yTop, zone)
-  local segs
+  local segs, data
   if zone then
     -- erreur dans la zone : signalée, puis l'étape s'affiche comme d'habitude
     local ok, res = pcall(zoneSegments, zone)
@@ -1278,68 +1543,60 @@ function Tracker:LayoutCurrent(cur, yTop, zone)
   end
   if not segs and cur then
     local mobs = Q.UI.MobPanel and Q.UI.MobPanel:MobsFor(cur) or {}
-    segs = stepSegments(cur, mobs)
+    segs, data = stepSegments(cur, mobs)
   elseif not segs then
     -- chapitre fini qui attend le choix de sa suite : un clic rouvre le choix (onCurrentClick)
     local pending = Q.Progress.PendingChoice and Q.Progress:PendingChoice()
     segs = { { text = pending and L.UI_ROUTECHOICE_TRACKER or L.UI_TRACKER_DONE } }
   end
-  local slots = {}
-  local nText, nMob, yy = 0, 0, 0
-  for _, seg in ipairs(segs) do
-    if seg.text then
-      nText = nText + 1
-      local chunk = self:TextChunk(nText)
-      chunk:SetWidth(textWidth())
-      chunk:ClearAllPoints()
-      chunk:SetPoint("TOPLEFT", self.current, "TOPLEFT", ICON_COL + 2, -yy)
-      chunk:SetText(paint(seg.text))
-      chunk:Show()
-      yy = yy + (chunk:GetStringHeight() or 14)
-    else
-      nMob = nMob + 1
-      local mob, row = seg.mob, self:MobRow(nMob)
-      local x = ICON_COL + 2 + MOB_INDENT
-      row.skull:ClearAllPoints()
-      row.skull:SetPoint("TOPLEFT", self.current, "TOPLEFT", x, -yy - 2)
-      row.skull:SetDesaturated(mob.done and true or false)
-      row.skull:SetAlpha(mob.done and 0.5 or 1)
-      row.skull:Show()
-      row.name:SetWidth(textWidth() - MOB_INDENT - 16 - MOB_LEVEL_W)
-      row.name:ClearAllPoints()
-      row.name:SetPoint("TOPLEFT", self.current, "TOPLEFT", x + 16, -yy - 2)
-      row.name:SetText(paint((mob.done and MOB_DONE_COLOR or MOB_COLOR) .. mob.name .. "|r"))
-      row.name:Show()
-      local lvl = Q.UI.MobPanel:LevelText(mob)
-      row.level:ClearAllPoints()
-      row.level:SetPoint("TOPRIGHT", self.current, "TOPRIGHT", 0, -yy - 2)
-      row.level:SetText(lvl ~= "" and paint(LEVEL_COLOR .. lvl .. "|r") or "")
-      row.level:Show()
-      row.mob = mob
-      -- zone du bouton de ciblage, depuis le coin haut gauche du suivi
-      slots[#slots + 1] = { mob = mob, x = PAD + x - 2, y = yTop + yy, w = textWidth() - MOB_INDENT + 2, h = MOB_ROW_H }
-      yy = yy + MOB_ROW_H
-    end
+  self.host.theme = self.theme
+  local h, slots = Q.UI.ObjectiveRows:Render(self.host, segs, ICON_COL + 2, textWidth(), 0)
+  -- zones des boutons de ciblage, depuis le coin haut gauche du suivi
+  for _, slot in ipairs(slots) do
+    slot.x = PAD + slot.x
+    slot.y = yTop + slot.y
   end
-  for i = nText + 1, #self.textChunks do self.textChunks[i]:Hide() end
-  for i = nMob + 1, #self.mobRows do
-    local row = self.mobRows[i]
-    row.mob = nil
-    row.skull:Hide(); row.name:Hide(); row.level:Hide()
+  -- objet de l'étape achetable à l'hôtel des ventes : une ligne sous les objectifs
+  local nHint = 0
+  local ah = cur and not zone and auctionHint(cur) or nil
+  if ah then
+    nHint = 1
+    h = h + self:LayoutAuctionHint(1, ah, h)
   end
+  for i = nHint + 1, #(self.ahHints or {}) do self.ahHints[i].row.item = nil; self.ahHints[i].row:Hide() end
   self.mobSlots = slots
-  return yy
+  self:ScheduleFold(data)
+  return h
+end
+
+-- Texte visible de l'étape courante, sans couleurs (tests, diagnostic).
+function Tracker:CurrentText()
+  if not self.host then return "" end
+  return Q.UI.ObjectiveRows:VisibleText(self.host)
 end
 
 ---------------------------------------------------------------------------
 -- Confort : ligne XP/h et avertissements
 ---------------------------------------------------------------------------
+-- Texte de la ligne XP/h : avec un écart de rythme (Engine/Pace.lua), « 21.3k XP/h · +12 min ahead »
+-- (le temps avant le niveau passe dans l'infobulle) ; sinon « 21.3k XP/h · level in 38 min ».
+local function xpLineText()
+  local pace = comfort("Pace", "TrackerText")
+  if type(pace) == "string" and pace ~= "" then
+    local rate = comfort("XPRate", "RateText")
+    if type(rate) == "string" and rate ~= "" then return rate .. " · " .. pace end
+    return pace
+  end
+  return comfort("XPRate", "Text")
+end
+
 -- Place la ligne XP/h à la hauteur y si elle a un texte ; -> nouvelle hauteur.
 function Tracker:LayoutXPLine(y)
-  local text = comfort("XPRate", "Text")
+  local text = xpLineText()
   local line = self.xpLine
   if type(text) ~= "string" or text == "" then
     line:Hide()
+    self.xpHover:Hide()
     return y
   end
   local f = self.frame
@@ -1348,7 +1605,8 @@ function Tracker:LayoutXPLine(y)
   line:SetWidth(curWidth() - 2 * PAD)
   line:SetText(paint(text))
   line:Show()
-  return y + XP_LINE_H
+  self.xpHover:Show()
+  return y + tsz(XP_LINE_H)
 end
 
 -- Nouveau texte XP/h sans refaire toute la mise en page ; faux si la ligne doit apparaître ou
@@ -1356,7 +1614,7 @@ end
 function Tracker:UpdateXPLine()
   local line = self.xpLine
   if not line or not self.title:IsShown() then return false end
-  local text = comfort("XPRate", "Text")
+  local text = xpLineText()
   local has = type(text) == "string" and text ~= ""
   if has ~= line:IsShown() then return false end
   if has then line:SetText(paint(text)) end
@@ -1403,7 +1661,7 @@ function Tracker:LayoutWarnings(y)
     line:SetWidth(curWidth() - 2 * PAD - 4)
     line:SetText(paint(text))
     line:Show()
-    y = y + WARN_LINE_H
+    y = y + tsz(WARN_LINE_H)
   end
   for i = n + 1, #self.warnLines do self.warnLines[i]:Hide() end
   if n > 0 then y = y + 2 end
@@ -1415,7 +1673,9 @@ end
 local function layoutButtons(f)
   local B = Q.UI.TrackerButtons
   if not (B and B.Layout) then return 0 end
-  local ok, err = pcall(B.Layout, B, f, PAD)
+  local h = Tracker:HeaderHeight()
+  local top = math.floor((h - (B.SIZE or 18)) / 2 + 0.5)
+  local ok, err = pcall(B.Layout, B, f, PAD, h == HEADER_H and top or nil)
   if not ok then
     Q:ReportError(err)
     return 0
@@ -1482,7 +1742,7 @@ function Tracker:Refresh()
     self.barText:SetText((self.barText:GetText() or "") .. "  ·  " .. chapterXP)
   end
   self.bar:Show()
-  local y = PAD + 18 + 12 + 6
+  local y = self:BodyTop()
   y = self:LayoutXPLine(y)
   y = self:LayoutMode(y)
   y = self:LayoutResume(y)
@@ -1515,6 +1775,7 @@ function Tracker:Refresh()
   end
   y = self:LayoutDungeonAlert(y)
   y = self:LayoutTrainerAlert(y)
+  y = self:LayoutAuctionAlert(y)
 
   -- Étape courante
   local entries = Q.Progress:Entries()
@@ -1542,6 +1803,7 @@ function Tracker:Refresh()
   cur_:Show()
   y = y + h + 6
   y = self:LayoutSkip(cur, y)
+  y = self:LayoutAdvice(cur, y)
   y = self:LayoutWarnings(y)
 
   -- Étapes suivantes
@@ -1555,17 +1817,25 @@ function Tracker:Refresh()
         if s ~= "done" and s ~= "skipped" and not (zone and zone.entryKeys[e.key]) then
           n = n + 1
           local line = self.nextLines[n]
-          line.icon:SetTexture(Q.Format:ActionIcon(e.step.action))
+          local tex, r, g, b = self:StepIcon(e.step.action)
+          line.icon:SetTexture(tex)
           line.icon:ClearAllPoints()
           line.icon:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 2, -y - 1)
-          line.icon:SetDesaturated(true)
-          line.icon:SetAlpha(0.7)
+          if r then
+            line.icon:SetDesaturated(false)
+            line.icon:SetVertexColor(r, g, b, 1)
+            line.icon:SetAlpha(1)
+          else
+            line.icon:SetVertexColor(1, 1, 1, 1)
+            line.icon:SetDesaturated(true)
+            line.icon:SetAlpha(0.7)
+          end
           line.icon:Show()
           line.text:ClearAllPoints()
           line.text:SetPoint("TOPLEFT", f, "TOPLEFT", PAD + 18, -y)
           line.text:SetText(Q.Util.StripColors(Q.Format:StepTitle(e)))
           line.text:Show()
-          y = y + NEXT_HEIGHT
+          y = y + tsz(NEXT_HEIGHT)
           if n >= wanted then break end
         end
       elseif e == cur then
@@ -1607,8 +1877,13 @@ Q:On("CLASSQUESTS_CHANGED", refresh)
 Q:On("BAGQUESTS_CHANGED", refresh)
 Q:On("DUNGEONS_CHANGED", refresh)
 Q:On("TRAINER_CHANGED", refresh)
+Q:On("AUCTION_ITEMS_CHANGED", refresh)
 Q:On("DUNGEON_MODE_CHANGED", refresh)
 Q:On("DETOUR_CHANGED", refresh)
+-- Fin du combat : un objectif fini pendant le combat peut maintenant se replier.
+Q:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+  if Tracker.frame and Tracker.entry then Q.SafeCall(Tracker.Refresh, Tracker) end
+end)
 -- Mode zone : entrée ou sortie, objectif en tête changé : nouvelle cible, nouvelle liste.
 Q:On("ZONEMODE_CHANGED", function()
   if not Tracker.frame then return end
@@ -1618,9 +1893,14 @@ end)
 -- Confort : un nouveau texte XP/h se met à jour sur place ; le reste redessine le suivi.
 Q:On("COMFORT_CHANGED", function(kind)
   if not Tracker.frame then return end
-  if kind == "xp" and Tracker:UpdateXPLine() then return end
+  if (kind == "xp" or kind == "pace") and Tracker:UpdateXPLine() then return end
   Tracker:Refresh()
 end)
+-- Suivi de Blizzard masqué ou rendu : le suivi prend sa place ou revient à sa gauche.
+Q:On("BLIZZARD_TRACKER_HIDDEN", function()
+  if Tracker.frame and not Tracker.moving then applyPosition(Tracker.frame) end
+end)
+
 Q:On("SETTINGS_CHANGED", function(path)
   if not Tracker.frame then return end
   if path == "tracker.point" and not Tracker.moving then applyPosition(Tracker.frame) end

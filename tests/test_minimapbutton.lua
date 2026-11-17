@@ -65,7 +65,8 @@ return {
     t.eq(lines[1], "Questify")
     t.eq(lines[2], string.format(Q.L.MINIMAP_TIP_ROLE, Q.L.REWARD_SPEC_SHAMAN_CASTER))
     t.eq(lines[3], Q.L.MINIMAP_TIP_LEFT)
-    t.eq(#lines, 6)
+    t.eq(lines[4], Q.L.MINIMAP_TIP_RIGHT)
+    t.eq(#lines, 7)
     B.button._scripts.OnEnter(B.button)
     noErrors(t)
   end,
@@ -74,7 +75,7 @@ return {
     local Q, Ext = load("SHAMAN", { menu = true })
     local B = Q.UI.MinimapButton
     Q.Rewards:SetRole("melee")
-    Mock.click(B.button, "LeftButton")
+    B:OpenMenu()
     t.eq(Mock.countCalls("MenuUtil.CreateContextMenu"), 1)
     t.eq(Mock.lastMenu.owner, B.button)
     local titles = Ext.menuElements("title")
@@ -95,7 +96,7 @@ return {
     local Q, Ext = load("ROGUE", { menu = true })
     local B = Q.UI.MinimapButton
     t.ok(B:IsShown(), "button kept for journal access")
-    Mock.click(B.button, "LeftButton")
+    B:OpenMenu()
     t.eq(keys(Ext.menuElements("radio")), { "auto", "melee" })
     noErrors(t)
   end,
@@ -103,7 +104,7 @@ return {
   selecting_a_role_changes_the_setting_and_icon = function(t)
     local Q, Ext = load("SHAMAN", { menu = true })
     local B = Q.UI.MinimapButton
-    Mock.click(B.button, "LeftButton")
+    B:OpenMenu()
     local healer = Ext.menuElements("radio", "healer")[1]
     healer.setSelected(healer.data)
     t.eq(Q.Rewards:Role(), "healer")
@@ -118,7 +119,7 @@ return {
     local B = Q.UI.MinimapButton
     local seen = {}
     Q:On("SETTINGS_CHANGED", function(path, value) seen[#seen + 1] = path .. "=" .. tostring(value) end)
-    Mock.click(B.button, "LeftButton")
+    B:OpenMenu()
     for _, def in ipairs(B.TOGGLES) do
       local cb = Ext.menuElements("checkbox", def[1])[1]
       t.ok(cb.isSelected(cb.data), def[1] .. " on by default")
@@ -135,7 +136,7 @@ return {
   options_entry_opens_the_options_window = function(t)
     local Q, Ext = load("SHAMAN", { menu = true })
     local B = Q.UI.MinimapButton
-    Mock.click(B.button, "LeftButton")
+    B:OpenMenu()
     Ext.menuElements("button", "options")[1].setSelected()
     local O = Q.UI.Options
     t.ok(QuestifyOptions and QuestifyOptions:IsShown(), "options window open")
@@ -156,14 +157,20 @@ return {
     noErrors(t)
   end,
 
-  right_click_toggles_the_journal_and_ctrl_click_opens_the_wizard = function(t)
+  clicks_open_the_options_and_ctrl_click_opens_the_wizard = function(t)
     local Q = load("SHAMAN", { menu = true })
     local B = Q.UI.MinimapButton
-    local J = Q.UI.Journal
+    local O = Q.UI.Options
+    Mock.click(B.button, "LeftButton")
+    t.ok(O:IsShown(), "left click opens the options")
+    t.eq(Mock.countCalls("MenuUtil.CreateContextMenu"), 0, "no menu on a plain click")
+    Mock.click(B.button, "LeftButton")
+    t.ok(not O:IsShown(), "left click again closes them")
+    O:Open("map")
     Mock.click(B.button, "RightButton")
-    t.ok(J:IsShown())
-    Mock.click(B.button, "RightButton")
-    t.ok(not J:IsShown())
+    t.ok(O:IsShown(), "right click opens the options")
+    t.eq(O.section, "route", "on the route section")
+    O:Close()
     local opened = 0
     Q.UI.Wizard = { Show = function() opened = opened + 1 end }
     Mock.player.ctrl = true

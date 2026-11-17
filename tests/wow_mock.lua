@@ -20,6 +20,10 @@
 --   Mock.missingFiles                    fichiers listés dans le TOC/XML mais absents
 --   Mock.secret(v)                       crée une « valeur secrète » (issecretvalue -> true)
 --   Mock.strictSecret(v)                 valeur secrète dont toute opération lève une erreur
+--   Mock.navEngine                       routeur factice (Mock.newNavEngine), posé par
+--                                        C_AddOns.LoadAddOn("Questify_Nav") ; Mock.onLoadAddOn[nom]
+--   Mock.addonMemory[nom], Mock.areaNames[id]   GetAddOnMemoryUsage, C_Map.GetAreaInfo
+--   Mock.cpuMs                           millisecondes ajoutées à debugprofilestop (travail simulé)
 
 Mock = Mock or {}
 Mock.root = Mock.root or "."
@@ -357,6 +361,10 @@ function Object:RegisterForDrag(...) rawset(self, "_drag", { ... }) end
 function Object:EnableMouse(b) rawset(self, "_mouse", b ~= false) end
 function Object:IsMouseEnabled() return self._mouse == true end
 function Object:SetMovable(b) rawset(self, "_movable", b and true or false) end
+function Object:StartMoving() rawset(self, "_moving", true); record("StartMoving", self) end
+function Object:StopMovingOrSizing() rawset(self, "_moving", false); record("StopMovingOrSizing", self) end
+function Object:SetRotation(r) rawset(self, "_rotation", r) end
+function Object:GetRotation() return self._rotation or 0 end
 function Object:IsMovable() return self._movable == true end
 function Object:GetChildren() return unpack(self._children) end
 function Object:GetNumChildren() return #self._children end
@@ -628,6 +636,65 @@ local function installQuestieDB(extra)
 end
 
 ---------------------------------------------------------------------------
+-- Routeur de marche factice (Questify_NavEngine, Questify_Nav/API.lua) : installé par
+-- C_AddOns.LoadAddOn("Questify_Nav") (Mock.onLoadAddOn). Find note chaque demande et ne répond
+-- jamais seul : le test répond avec engine.resolve(job, points, cost, hubs) ou engine.fail(job, reason).
+--   engine.finds        demandes Find dans l'ordre : { map, from, to, callback, opts, cancelled }
+--   engine.cancels      jobs passés à Cancel
+--   engine.available    [map] = false : pas de cartes pour ce continent (Available, Resident)
+--   engine.zones        fonction (map, x, y) -> uiMapID, pour ZoneAt
+---------------------------------------------------------------------------
+function Mock.newNavEngine()
+  local E = { finds = {}, cancels = {}, available = {}, zones = nil }
+  function E.Find(map, from, to, callback, opts)
+    -- comme Path.Find : les options sont recopiées dans le job, lues au début du calcul
+    local o = type(opts) == "table" and opts or {}
+    local job = { map = map, from = from, to = to, callback = callback, opts = opts,
+      profile = o.profile, style = o.style, danger = o.danger }
+    E.finds[#E.finds + 1] = job
+    record("NavEngine.Find", map, from, to, opts)
+    return job
+  end
+  function E.Cancel(job)
+    if job then job.cancelled = true end
+    E.cancels[#E.cancels + 1] = job
+    record("NavEngine.Cancel", job)
+  end
+  function E.Busy() return false end
+  function E.Available(map) return map ~= nil and E.available[map] ~= false end
+  function E.Resident(map) return E.Available(map) end
+  function E.ZoneAt(map, x, y) return E.zones and E.zones(map, x, y) or nil end
+  -- Réponse du routeur : points { { map, x, y } } (repère monde), hubs { { id, name, areaId } }.
+  function E.resolve(job, points, cost, hubs)
+    job.done, job.hubs = true, hubs or {}
+    local out = {}
+    for i, p in ipairs(points) do out[i] = { map = p.map or job.map, x = p.x, y = p.y, z = p.z } end
+    local ok, err = pcall(job.callback, out, cost or 0, job)
+    if not ok then pushError(err) end
+  end
+  function E.fail(job, reason)
+    job.done, job.reason = true, reason
+    local ok, err = pcall(job.callback, nil, reason, job)
+    if not ok then pushError(err) end
+  end
+  -- Demandes encore en cours (ni annulées ni terminées).
+  function E.pending()
+    local out = {}
+    for _, j in ipairs(E.finds) do
+      if not j.cancelled and not j.done then out[#out + 1] = j end
+    end
+    return out
+  end
+  return E
+end
+
+local function defaultNavLoad()
+  Mock.navEngine = Mock.navEngine or Mock.newNavEngine()
+  Questify_NavEngine = Mock.navEngine
+  QuestifyPathData = { [0] = {}, [1] = {} }
+end
+
+---------------------------------------------------------------------------
 -- Addons de navigation factices (selon Mock.addons)
 ---------------------------------------------------------------------------
 local function installNavAddons()
@@ -649,6 +716,8 @@ local function installNavAddons()
         NewUserNavigation = function(t)
           record("WaypointUIAPI.Navigation.NewUserNavigation", t)
           if Mock.maps[t.mapID] == nil then return nil end
+          -- comme WaypointUI (syncNativeWaypoint) : le repère du jeu suit, sans passer par notre C_Map
+          Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(t.mapID, t.x / 100, t.y / 100)
           return { name = t.name, mapID = t.mapID, x = t.x / 100, y = t.y / 100 }
         end,
         ClearUserNavigation = function() record("WaypointUIAPI.Navigation.ClearUserNavigation") end,
@@ -667,6 +736,16 @@ local function installNavAddons()
           return Mock.navigateResult
         end,
         Cancel = function(owner) record("ShortestPathForever.API.Cancel", owner) end,
+        -- trajet guidé (Mock.spfJourney : { owner = nil pour celui du joueur }), et ses abonnés
+        Active = function() return Mock.spfJourney ~= nil end,
+        Journey = function()
+          local j = Mock.spfJourney
+          return j and { owner = j.owner, guided = true } or nil
+        end,
+        Subscribe = function(callback)
+          Mock.spfSubscribers[#Mock.spfSubscribers + 1] = callback
+          return function() end
+        end,
       },
     }
   end
@@ -921,6 +1000,15 @@ function Mock.installMapLibsApi(P)
     return newPool(createFunc, resetFunc)
   end
   WorldMapFrame = newWorldMap()
+  -- ouverture de la carte du monde (Blizzard_WorldMap) : affichée sur la carte donnée
+  OpenWorldMap = function(mapID)
+    Mock.record("OpenWorldMap", mapID)
+    WorldMapFrame:Show()
+    if mapID then WorldMapFrame:SetMapID(mapID) end
+  end
+  ToggleWorldMap = function()
+    if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
+  end
 end
 
 local function installApi()
@@ -978,6 +1066,10 @@ local function installApi()
   issecretvalue = function(v) return secrets[v] == true end
   canaccessvalue = function(v) return secrets[v] ~= true end
   GetTime = function() return Mock.now end
+  -- Horloge en millisecondes (Mock.now) ; mémoire des addons en Ko (Mock.addonMemory[nom]).
+  debugprofilestop = function() return Mock.now * 1000 + Mock.cpuMs end
+  UpdateAddOnMemoryUsage = function() record("UpdateAddOnMemoryUsage") end
+  GetAddOnMemoryUsage = function(name) return Mock.addonMemory[name] or 0 end
   time = function() return 1762300800 + floor(Mock.now) end
   date = os.date
   GetLocale = function() return Mock.locale end
@@ -1002,7 +1094,7 @@ local function installApi()
   PanelTemplates_SetNumTabs, PanelTemplates_SetTab, PanelTemplates_TabResize, PanelTemplates_UpdateTabs =
     noop, noop, noop, noop
   SetPortraitToTexture, CloseDropDownMenus, GameTooltip_Hide = noop, noop, noop
-  IsInGroup = function() return false end
+  IsInGroup = function() return P().group == true end   -- Mock.player.group = true : en groupe
   GetNumGroupMembers = function() return 0 end
   Settings = {
     RegisterCanvasLayoutCategory = function(frame, name)
@@ -1071,7 +1163,11 @@ local function installApi()
   end
   UnitExists = function(unit) return unit == "player" or Mock.units[unit] ~= nil end
   UnitIsDead = function(unit) local u = Mock.units[unit]; return u and u.dead or false end
+  UnitOnTaxi = function(unit) return unit == "player" and P().onTaxi == true end
   UnitCanAttack = function(_, unit) local u = Mock.units[unit]; return u and u.hostile ~= false end
+  -- Mock.units[unit].tapDenied : tagué par un autre joueur ; .raidMark : icône de raid posée (1 à 8)
+  UnitIsTapDenied = function(unit) local u = Mock.units[unit]; return u and u.tapDenied or false end
+  GetRaidTargetIndex = function(unit) local u = Mock.units[unit]; return u and u.raidMark end
   UnitIsPlayer = function(unit) return unit == "player" end
   UnitAffectingCombat = function(unit) return unit == "player" and P().combat end
   InCombatLockdown = function() return P().combat == true end
@@ -1079,6 +1175,13 @@ local function installApi()
   IsControlKeyDown = function() return P().ctrl == true end
   IsAltKeyDown = function() return P().alt == true end
   GetBindLocation = function() return P().bind or "Coldridge Valley" end
+  -- Compétences (fenêtre des compétences) : Mock.skills = { { name, header, rank, max } }
+  GetNumSkillLines = function() return #Mock.skills end
+  GetSkillLineInfo = function(i)
+    local s = Mock.skills[i]
+    if not s then return nil end
+    return s.name, s.header == true, false, s.rank or 0, 0, 0, s.max or 0
+  end
   IsInInstance = function() return P().instance == true, P().instance and "party" or "none" end
 
   -- Addons
@@ -1094,7 +1197,27 @@ local function installApi()
       return nil
     end,
     GetNumAddOns = function() return 0 end,
-    LoadAddOn = function(name) return Mock.addons[name] == true end,
+    -- Chargé, ou chargeable à la demande : chargé (une fois), avec Mock.onLoadAddOn[nom] (qui peut
+    -- renvoyer false : échec du chargement). Chaque appel est noté.
+    LoadAddOn = function(name)
+      record("C_AddOns.LoadAddOn", name)
+      local v = Mock.addons[name]
+      if v ~= true and v ~= "demand" then return false, v == "disabled" and "DISABLED" or "MISSING" end
+      if Mock.loadedAddOns[name] then return true end
+      local hook = Mock.onLoadAddOn[name]
+      if hook and hook(name) == false then return false, "CORRUPT" end
+      Mock.loadedAddOns[name] = true
+      Mock.addons[name] = true
+      return true
+    end,
+    -- Mock.addons[nom] : true (chargé), "demand" (installé, chargé à la demande), "disabled", sinon absent
+    GetAddOnInfo = function(name)
+      local v = Mock.addons[name]
+      if v == true then return name, name, "", true, nil, "INSECURE", false end
+      if v == "demand" then return name, name, "", true, "DEMAND_LOADED", "INSECURE", false end
+      if v == "disabled" then return name, name, "", false, "DISABLED", "INSECURE", false end
+      return name, nil, nil, false, "MISSING", "INSECURE", false
+    end,
   }
 
   -- Minuteurs
@@ -1254,6 +1377,7 @@ local function installApi()
       if pos.GetXY then x, y = pos:GetXY() end
       return m.continent, vector(m.top - y * m.height, m.left - x * m.width)
     end,
+    GetAreaInfo = function(areaId) return Mock.areaNames[areaId] end,
     GetMapInfo = function(mapID)
       local m = Mock.maps[mapID]
       if not m then return nil end
@@ -1263,12 +1387,13 @@ local function installApi()
     SetUserWaypoint = function(point) Mock.userWaypoint = point; record("C_Map.SetUserWaypoint", point) end,
     ClearUserWaypoint = function() Mock.userWaypoint = nil; record("C_Map.ClearUserWaypoint") end,
     HasUserWaypoint = function() return Mock.userWaypoint ~= nil end,
+    GetUserWaypoint = function() return Mock.userWaypoint end,
   }
   C_SuperTrack = {
     SetSuperTrackedUserWaypoint = function(b) record("C_SuperTrack.SetSuperTrackedUserWaypoint", b) end,
     IsSuperTrackingUserWaypoint = function() return false end,
   }
-  C_TaxiMap = { GetAllTaxiNodes = function() return {} end }
+  C_TaxiMap = { GetAllTaxiNodes = function() return {} end, GetTaxiNodesForMap = function() return {} end }
 
   -- Barres de nom
   C_NamePlate = {
@@ -1315,7 +1440,16 @@ function Mock.reset()
   Mock.quests = { log = {}, completed = {} }
   Mock.titles = {}
   Mock.calls = {}
-  Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false }
+  Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false,
+    Questify_Nav = true, Questify_Nav_EK = "demand", Questify_Nav_Kalimdor = "demand" }
+  Mock.spfJourney = nil                          -- trajet ShortestPath guidé (voir installNavAddons)
+  Mock.spfSubscribers = {}
+  Mock.loadedAddOns = {}                         -- addons chargés par C_AddOns.LoadAddOn
+  Mock.onLoadAddOn = { Questify_Nav = defaultNavLoad }
+  Mock.navEngine = nil                           -- routeur factice (Mock.newNavEngine), créé au chargement
+  Mock.addonMemory = {}
+  Mock.cpuMs = 0                                 -- ms ajoutées à debugprofilestop (travail simulé)
+  Mock.areaNames = {}
   Mock.qdbMeta = {}                              -- métadonnées du TOC de QuestieDB (Version : aucune par défaut)
   Mock.errors = {}
   Mock.prints = {}
@@ -1325,6 +1459,7 @@ function Mock.reset()
   Mock.questFrame = { questId = 0, numChoices = nil, completable = false, choices = {} }
   Mock.items = {}
   Mock.inventory = {}
+  Mock.skills = {}
   Mock.units = {}
   Mock.nameplates = {}
   Mock.modelFileIDs = {}
@@ -1343,6 +1478,10 @@ end
 ---------------------------------------------------------------------------
 local ADDON = "Questify"
 
+-- Gros fichiers de données (Data/ClassGuides.lua…) : compilés une fois pour toute la série de tests.
+local CACHE_MIN = 100000
+local chunkCache = {}
+
 local function runFile(path, ns)
   local full = rootPath(path)
   local f = io.open(full, "rb")
@@ -1350,8 +1489,13 @@ local function runFile(path, ns)
     Mock.missingFiles[#Mock.missingFiles + 1] = path
     return false
   end
+  local size = f:seek("end")
   f:close()
-  local chunk, err = loadfile(full)
+  local chunk, err = chunkCache[full], nil
+  if not chunk then
+    chunk, err = loadfile(full)
+    if chunk and size >= CACHE_MIN then chunkCache[full] = chunk end
+  end
   if not chunk then pushError(err); return false end
   local ok, rerr = pcall(chunk, ADDON, ns)
   if not ok then pushError(rerr); return false end
@@ -1401,9 +1545,15 @@ function Mock.loadAddon(toc, opts)
   for _, path in ipairs(files) do
     -- opts.skipGuides : n'exécute pas le dossier Guides/ (guides livrés, ClassQuestData), pour
     -- tester le moteur sur les seules fixtures.
-    if not (opts.skipGuides and path:find("/Guides/", 1, true)) then
+    -- NavEngine/ (routeur de marche et 36 Mo de cartes) : remplacé par le routeur factice, sauf opts.realNav.
+    local nav = path:find("/NavEngine/", 1, true) ~= nil
+    if not (opts.skipGuides and path:find("/Guides/", 1, true)) and (not nav or opts.realNav) then
       if path:match("%.xml$") then runXml(path, ns) else runFile(path, ns) end
     end
+  end
+  -- routeur intégré factice (Mock.addons.Questify_Nav = false : installation abîmée, sans routeur)
+  if not opts.realNav and Mock.addons.Questify_Nav ~= false and Mock.onLoadAddOn.Questify_Nav then
+    Mock.onLoadAddOn.Questify_Nav()
   end
   for _, path in ipairs(opts.extraFiles or {}) do runFile(path, ns) end
 

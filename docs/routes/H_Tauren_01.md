@@ -1,6 +1,6 @@
 # H_Tauren_01 — Camp Narache
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
+Generated on 2026-11-17 from QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb` by `tools/routebuilder/build.lua`. Simulated race: Tauren.
 
 | Item | Value |
 |---|---|
@@ -13,7 +13,7 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Quests turned in | 12 |
 | Hubs | 5 |
 | Median ratio (XP/s) | 2.75 |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -30,8 +30,8 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7 | 3376 | Break Sharptusk! | 5 | 670 | 5 |
 | 8 | 781 | Attack on Camp Narache | 4 | 355 | 6 |
 | 9 | 757 | Rite of Strength | 4 | 445 | 6 |
-| 10 | 745 | Sharing the Land | 8 | 700 | 6 |
-| 11 | 763 | Rites of the Earthmother | 5 | 335 | 6 |
+| 10 | 763 | Rites of the Earthmother | 5 | 335 | 6 |
+| 11 | 745 | Sharing the Land | 8 | 700 | 6 |
 | 12 | 749 | The Ravaged Caravan | 8 | 530 | 6 |
 
 ## Dropped quests
@@ -141,7 +141,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 95805 | Grace of An'she and Mu'sha | 4 | 355 | 0 | 216 | 30 | 1.64 | 11.47 | 0 | level band reached |
 | 96605 | The Great Outdoors | 6 | 405 | 0 | 62 | 62 | 6.47 | 6.47 | 1 | level band reached |
 | 96659 | The Adventurer | 6 | 555 | 150 | 91 | 17 | 6.18 | 13.76 | 0 | level band reached |
-| 98430 | The Longwalkers | 8 | 700 | 0 | 168 | 46 | 4.15 | 14.90 | 1 |  |
+| 98430 | The Longwalkers | 8 | 700 | 0 | 168 | 46 | 4.16 | 14.96 | 1 |  |
 | 99079 | Longwalker Malah | 9 | 80 | 0 | 109 | 16 | 0.89 | 4.55 | 0 | level band reached |
 | 99081 | Grim Tidings | 9 | 80 | 0 | 109 | 16 | 1.09 | 4.34 | 0 | level band reached |
 | 99101 | Our Ancient Enemy | 9 | 80 | 0 | 21 | 21 | 3.79 | 3.79 | 0 | level band reached |
@@ -186,11 +186,11 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 29 | A | 98430 | The Longwalkers | 1412 | 33.1, 66.0 | 795 |  |
 | 30 | O | 98430 | The Longwalkers | 1412 | 37.2, 64.6 | 256 |  |
 | 31 | O | 745 | Sharing the Land | 1412 | 36.0, 65.0 | 76 |  |
-| 32 | T | 745 | Sharing the Land | 1412 | 46.7, 63.4 | 661 | near #22 (went 841 yd away) |
-| 33 | T | 763 | Rites of the Earthmother | 1412 | 46.7, 63.4 | 0 | near #22 (went 841 yd away) |
+| 32 | T | 763 | Rites of the Earthmother | 1412 | 46.7, 63.4 | 661 | near #22 (went 840 yd away) |
+| 33 | T | 745 | Sharing the Land | 1412 | 46.7, 63.4 | 0 | near #22 (went 840 yd away) |
 | 34 | T | 749 | The Ravaged Caravan | 1412 | 51.9, 53.4 | 520 |  |
 
-Walking between tasks: 8402 yd (~20 min at 7 yd/s).
+Walking between tasks: 8401 yd (~20 min at 7 yd/s).
 
 ## Qualité
 

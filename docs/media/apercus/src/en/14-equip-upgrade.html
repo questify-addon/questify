@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Questify, image 14: gear upgrade</title>
+<link rel="stylesheet" href="../apercu.css">
+<style>
+  /* Mock-up of the upgrade announcement (UI/UpgradePopup.lua, UI/UpgradeCompare.lua), drawn from the in-game
+     captures of 17/11 (captures/brutes-2026-11-17/upgrade-demo-niveau-bas.png): same layout, colours and texts,
+     with a level-appropriate item (Heavehammer, Wetlands quest reward) instead of the low-level demo item. */
+  :root { --sans: "Avenir Next", "Avenir", "Inter", "Helvetica Neue", sans-serif;
+    --game: "Friz Quadrata TT", "Optima", "Palatino", serif; }
+  .lbl { position: absolute; font-family: var(--sans); font-size: 17px; font-weight: 600; letter-spacing: .04em;
+    color: #ead9a6; padding: 6px 12px; border-radius: 8px; background: rgba(0,0,0,.62); }
+  .ui { position: absolute; zoom: 1.6; font-family: var(--game); color: #fff;
+    filter: drop-shadow(0 12px 22px rgba(0,0,0,.7)); }
+  .ico { width: 22px; height: 22px; border: 1px solid #000; outline: 1px solid #5a5a5a; vertical-align: middle; }
+  .blue { color: #0070dd; } .green { color: #1eff00; } .gain { color: #4fd24f; } .loss { color: #ff4f4f; }
+  /* annonce */
+  .pop { width: 380px; background: #1c1d20; border: 1px solid #45403a; padding: 8px 8px 0; }
+  .pop .top { display: flex; gap: 8px; align-items: flex-start; }
+  .pop .big { width: 40px; height: 40px; border: 1px solid #000; outline: 1px solid #8a8a8a; flex: none; }
+  .pop .k { font-size: 11px; color: #c8c8c8; }
+  .pop .n { font-size: 13px; }
+  .pop .g { font-size: 11px; color: #4fd24f; }
+  .pop .i { font-size: 11px; color: #c8c8c8; }
+  .pop .bt { display: flex; gap: 8px; margin: 8px 0 7px; }
+  .pop .bt span { flex: 1; text-align: center; font-size: 12px; padding: 4px 0; border: 1px solid #555; background: #222327; }
+  .pop .bt .eq { background: #8f7300; border-color: #f2c400; color: #fff; }
+  .pop .bar { height: 3px; background: #d4823b; margin: 0 0 6px; }
+  /* comparaison */
+  .cmp { width: 290px; background: #1c1d20; border: 1px solid #45403a; padding: 8px 10px; font-size: 11px; }
+  .cmp .h { color: #c8c8c8; margin: 2px 0 4px; }
+  .cmp .it { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .cmp table { width: 100%; border-collapse: collapse; margin-top: 6px; border-top: 1px solid #3a3a3a; }
+  .cmp th { font-weight: normal; color: #c8c8c8; text-align: right; padding: 4px 0 2px; }
+  .cmp th:first-child, .cmp td:first-child { text-align: left; }
+  .cmp td { text-align: right; padding: 1px 0; }
+  .cmp .fx { border-top: 1px solid #3a3a3a; margin-top: 6px; padding-top: 6px; color: #c8c8c8; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="cap" style="width:600px">
+    <div class="brand">Questify</div>
+    <h1>Gear upgrades</h1>
+    <p>When a better item lands in your bags, Questify announces it with its main gain and the item it replaces. One click equips it.</p>
+    <p>Next to it, the comparison stat by stat for your class and spec: damage per second, primary stats, armor, and the effects it cannot score.</p>
+    <p>Dwarf shaman, level 30, Wetlands.</p>
+  </div>
+
+  <div class="ui" style="left:462px; top:212px">
+    <div class="cmp">
+      <div class="h">Before</div>
+      <div class="it"><img class="ico" src="https://wow.zamimg.com/images/wow/icons/large/inv_staff_08.jpg" alt=""><span class="blue">[Defender of Dalaran]</span></div>
+      <div class="h">After</div>
+      <div class="it"><img class="ico" src="https://wow.zamimg.com/images/wow/icons/large/inv_hammer_10.jpg" alt=""><span class="green">[Heavehammer]</span></div>
+      <table>
+        <tr><th>Stat</th><th>Before</th><th>After</th><th>Change</th></tr>
+        <tr><td>damage per second</td><td>31.2</td><td>36.8</td><td class="gain">+5.6</td></tr>
+        <tr><td>Intellect</td><td>9</td><td>4</td><td class="loss">−5</td></tr>
+        <tr><td>Strength</td><td>9</td><td>14</td><td class="gain">+5</td></tr>
+        <tr><td>Stamina</td><td>13</td><td>15</td><td class="gain">+2</td></tr>
+      </table>
+      <div class="fx">Effects (not scored)<br><span style="color:#fff">No change</span></div>
+    </div>
+  </div>
+
+  <div class="ui" style="left:762px; top:212px">
+    <div class="pop">
+      <div class="top">
+        <img class="big" src="https://wow.zamimg.com/images/wow/icons/large/inv_hammer_10.jpg" alt="">
+        <div>
+          <div class="k">Upgrade found</div>
+          <div class="n">[Heavehammer]</div>
+          <div class="g">+5.6 damage per second</div>
+          <div class="i">instead of <span class="blue">[Defender of Dalaran]</span></div>
+        </div>
+      </div>
+      <div class="bt"><span class="eq">Equip</span><span>No</span></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <div class="lbl" style="left:1220px; top:286px">One click to equip</div>
+  <div class="lbl" style="left:740px; top:286px">Stat by stat</div>
+  <div class="badge"><div class="t">Interface preview</div><div class="s">Mock-up drawn from in-game captures</div></div>
+</div>
+</body>
+</html>

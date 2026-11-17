@@ -10,7 +10,11 @@ local function load(opts)
   opts = opts or {}
   opts.extraFiles = opts.extraFiles or { GUIDES }
   if opts.skipGuides == nil then opts.skipGuides = true end
-  return Mock.loadAddon(TOC, opts)
+  local Q = Mock.loadAddon(TOC, opts)
+  -- profils et import : le thème choisi s'applique (pas celui de la race du personnage de test)
+  if Q and Q.Settings then Q.Settings.defaults.theme.followRace = false end
+  if Q and Q.UI and Q.UI.Tracker and Q.UI.Tracker.frame then Q.UI.Tracker:Refresh() end
+  return Q
 end
 
 local function noErrors(t)
@@ -110,7 +114,7 @@ return {
         t.ok(Q.L[c.label] ~= c.label, "category label " .. c.label)
       end
     end
-    t.eq(order, { "route", "navigation", "automation", "loot", "class", "map", "tracker", "theme", "comfort",
+    t.eq(order, { "route", "navigation", "automation", "loot", "classguide", "class", "map", "tracker", "theme", "comfort",
       "tools", "profiles" })
     local seen = {}
     for _, e in ipairs(S.entries) do
@@ -135,9 +139,20 @@ return {
     t.eq(S:Entry("autoReward").category, "auto")
     t.eq(S:Entry("rewardRole").category, "profile")
     t.eq(S:Entry("specRolePrompt").category, "profile")
-    t.eq(S:Entry("nav.routing").category, "routing")
+    t.eq(S:Entry("nav.router").category, "routing")
+    t.eq(S:Entry("nav.routeStyle").category, "routing")
     t.eq(S:Entry("nav.display").category, "display")
+    t.eq(S:Entry("nav.lineStyle").category, "display")
+    t.eq(S:Entry("nav.arrowLocked").category, "display")
+    t.eq(S:Entry("nav.arrowPos").type, "hidden", "arrow position: a profile value without a control")
     t.eq(S:Entry("autoFly").category, "flights")
+    -- disposition et détail des objectifs : aussi dans Thème, sur le même réglage
+    for _, k in ipairs({ "objLayout", "objDetail" }) do
+      local e = S:Entry("theme." .. k)
+      t.ok(e and e.section == "theme" and e.category == "objectives", "theme." .. k)
+      t.eq(e and e.path, "tracker." .. k)
+      t.eq(S:EntryForPath("tracker." .. k).id, "tracker." .. k, "the tracker entry stays the profile's")
+    end
   end,
 
   strings_complete_in_both_languages = function(t)
@@ -169,8 +184,8 @@ return {
     t.eq(ids(S:Search("THÈME", Q.Player)), theme, "accented capital")
     t.ok(contains(ids(S:Search("opacité", Q.Player)), "tracker.opacity"))
     t.ok(contains(ids(S:Search("recompense", Q.Player)), "autoReward"), "« récompense » without accent")
-    t.ok(contains(ids(S:Search("parchemin", Q.Player)), "tracker.theme"), "choice labels are searched")
-    t.ok(contains(ids(S:Search("vols bateaux", Q.Player)), "nav.routing"), "every word must match")
+    t.ok(contains(ids(S:Search("mort-vivant", Q.Player)), "tracker.theme"), "choice labels are searched")
+    t.ok(contains(ids(S:Search("vols bateaux", Q.Player)), "nav.router"), "every word must match")
     t.eq(#S:Search("zzzz", Q.Player), 0)
     t.eq(#S:Search("   ", Q.Player), 0, "blank search")
     -- les entrées invisibles pour la classe ne sortent pas
@@ -225,13 +240,13 @@ return {
     local f = QuestifyOptions
     t.ok(f and f:IsShown())
     t.eq(f._template, "ButtonFrameTemplate")
-    t.eq({ f:GetSize() }, { 760, 560 })
+    t.eq({ f:GetSize() }, { 900, 660 })
     t.ok(f:IsMovable(), "movable")
     t.ok(contains(UISpecialFrames, "QuestifyOptions"), "closes with Escape")
     t.eq(O.searchBox._template, "SearchBoxTemplate")
-    t.eq(#O.sectionButtons, 11)
+    t.eq(#O.sectionButtons, 12)
     t.eq(O.sectionButtons[1].text:GetText(), Q.L.OPT_SEC_ROUTE)
-    t.eq(O.sectionButtons[11].text:GetText(), Q.L.OPT_SEC_PROFILES)
+    t.eq(O.sectionButtons[12].text:GetText(), Q.L.OPT_SEC_PROFILES)
     t.ok(O.sectionButtons[1].selected:IsShown(), "selected highlight")
     Mock.click(O.sectionButtons[4], "LeftButton")
     t.eq(O.section, "loot")
@@ -288,11 +303,11 @@ return {
     Mock.click(cb, "LeftButton")
     t.eq(Q.Settings:Get("tracker.locked"), true)
     t.ok(not Q.UI.Tracker.frame:IsMovable(), "tracker follows")
-    -- addon facultatif absent : case grisée
     O:Open("navigation")
-    local routing = O:Widget("nav.routing")
-    t.ok(not routing.check:IsEnabled(), "routing needs ShortestPath")
-    t.ok(plain(routing.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
+    cb = O:Widget("nav.arrowLocked").check
+    cb:SetChecked(true)
+    Mock.click(cb, "LeftButton")
+    t.eq(Q.Settings:Get("nav.arrowLocked"), true)
     noErrors(t)
   end,
 
@@ -305,15 +320,86 @@ return {
     local byValue = {}
     for _, r in ipairs(w.radios) do byValue[r.value] = r end
     t.eq(byValue.native._template, "UIRadioButtonTemplate")
-    t.ok(byValue.native:GetChecked(), "current value checked")
+    t.ok(byValue.arrow:GetChecked(), "current value checked")
+    t.ok(byValue.arrow:IsEnabled() and byValue.native:IsEnabled(), "always available")
     t.ok(byValue.tomtom:IsEnabled(), "TomTom installed")
     t.ok(not byValue.waypointui:IsEnabled(), "WaypointUI missing")
     t.ok(plain(byValue.waypointui.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
     Mock.click(byValue.tomtom, "LeftButton")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.ok(byValue.tomtom:GetChecked() and not byValue.native:GetChecked())
+    t.ok(byValue.tomtom:GetChecked() and not byValue.arrow:GetChecked())
     t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.display"), "waypointui"), "missing addon refused")
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
+    -- routeur : ShortestPath Forever absent, grisé
+    local router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.questify:GetChecked(), "Questify by default")
+    t.ok(not router.spf:IsEnabled(), "SPF needs ShortestPath Forever")
+    t.ok(plain(router.spf.label:GetText()):find(Q.L.OPT_NOT_INSTALLED, 1, true))
+    t.ok(router.none:IsEnabled())
+    Mock.click(router.none, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "none")
+    t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.router"), "spf"), "missing addon refused")
+    noErrors(t)
+  end,
+
+  -- AzerothGPS (1.3.6 et plus suit Questify lui-même, par Questify.Nav:Status) : choix du planificateur grisé
+  -- tant qu'il manque ; choisi, Questify ne calcule plus de trajet et cache sa flèche (celle d'AzerothGPS suit).
+  azerothgps_is_a_route_planner = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    O:Open("navigation")
+    local router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.azerothgps and not router.azerothgps:IsEnabled(), "greyed without AzerothGPS")
+    t.ok(not Q.OptionsSchema:Set(Q.OptionsSchema:Entry("nav.router"), "azerothgps"), "missing addon refused")
+    AzerothGPS = { version = 20 }
+    O:Open("navigation")
+    router = {}
+    for _, r in ipairs(O:Widget("nav.router").radios) do router[r.value] = r end
+    t.ok(router.azerothgps:IsEnabled(), "AzerothGPS installed")
+    Mock.click(router.azerothgps, "LeftButton")
+    t.eq(Q.Settings:Get("nav.router"), "azerothgps")
+    t.eq((Q.Nav:Active()), "azerothgps", "AzerothGPS plans the trip")
+    t.ok(not Q.OptionsSchema:Enabled(Q.OptionsSchema:Entry("nav.routeStyle")), "no Questify route style")
+    AzerothGPS = nil
+    t.eq((Q.Nav:Active()), "questify", "AzerothGPS gone: back to Questify")
+    t.ok(type(Questify) == "table" and type(Questify.Nav.Status) == "function", "what AzerothGPS reads")
+    noErrors(t)
+  end,
+
+  -- Style de trajet et de ligne : propres au routeur Questify, grisés avec SPF ou sans routeur ;
+  -- verrou de la flèche : grisé quand la flèche ne s'affiche pas (SPF, autre affichage).
+  nav_options_follow_the_router = function(t)
+    Mock.addons.ShortestPathForever = true
+    Mock.addons.TomTom = true
+    local Q = load()
+    local S = Q.OptionsSchema
+    local function on(id) return S:Enabled(S:Entry(id)) end
+    t.ok(on("nav.routeStyle") and on("nav.lineStyle") and on("nav.arrowLocked"), "Questify router, arrow")
+    Q.Settings:Set("nav.router", "spf")
+    t.ok(not on("nav.routeStyle"), "SPF: no route style")
+    t.ok(not on("nav.lineStyle"), "SPF: no line")
+    t.ok(not on("nav.arrowLocked"), "SPF: no arrow")
+    Q.Settings:Set("nav.router", "none")
+    t.ok(not on("nav.routeStyle") and not on("nav.lineStyle"), "no router")
+    t.ok(on("nav.arrowLocked"), "no router: the arrow points at the target")
+    Q.Settings:Set("nav.router", "questify")
+    Q.Settings:Set("nav.display", "tomtom")
+    t.ok(on("nav.routeStyle") and on("nav.lineStyle"), "TomTom display: still the Questify route")
+    t.ok(not on("nav.arrowLocked"), "TomTom display: no arrow")
+    -- fenêtre : les choix d'un réglage grisé sont grisés
+    Q.Settings:Set("nav.router", "spf")
+    local O = Q.UI.Options
+    O:Open("navigation")
+    for _, r in ipairs(O:Widget("nav.routeStyle").radios) do
+      if r:IsShown() then t.ok(not r:IsEnabled(), "route style radio greyed: " .. tostring(r.value)) end
+    end
+    t.ok(not O:Widget("nav.arrowLocked").check:IsEnabled(), "arrow lock greyed")
+    Q.Settings:Set("nav.router", "questify")
+    for _, r in ipairs(O:Widget("nav.routeStyle").radios) do
+      if r:IsShown() then t.ok(r:IsEnabled(), "route style radio back: " .. tostring(r.value)) end
+    end
     noErrors(t)
   end,
 
@@ -409,9 +495,8 @@ return {
     Q.Telemetry = nil
     Mock.click(ex.button, "LeftButton")
     t.eq(ex.box:GetText(), Q.L.UI_TELEMETRY_UNAVAILABLE)
-    -- assistant
-    Mock.click(O:Widget("wizard").button, "LeftButton")
-    t.ok(QuestifyWizard and QuestifyWizard:IsShown(), "wizard opened")
+    -- l'assistant de départ n'est plus dans Outils
+    t.eq(Q.OptionsSchema:Entry("wizard"), nil)
     -- position du suivi remise à sa place
     O:Open("tracker")
     Q.Settings:Set("tracker.point", { "TOPLEFT", "BOTTOMLEFT", 100, 200 })
@@ -500,32 +585,100 @@ return {
   ---------------------------------------------------------------------------
   -- Thème
   ---------------------------------------------------------------------------
-  theme_section_previews_every_theme_and_applies_live = function(t)
+  -- Pied du menu : version, journal des versions (à la place de la liste) et fenêtre des nouveautés.
+  sidebar_footer_version_changelog_and_news = function(t)
+    local Q = load()
+    local O = Q.UI.Options
+    O:Open("route")
+    t.ok(O.versionText:GetText():find(tostring(Q.version), 1, true), "version shown")
+    Mock.click(O.changelogButton, "LeftButton")
+    local P = Q.UI.ChangelogPanel
+    t.ok(P:IsShown(), "changelog shown")
+    t.ok(not O.scroll:IsShown(), "in place of the option list")
+    t.ok(P.count > 10, "versions and lines: " .. tostring(P.count))
+    local newest = Q.ChangelogData[1].title
+    t.eq(P.rows[1].text:GetText(), newest == "Unreleased" and Q.L.OPT_CHANGELOG_UNRELEASED or newest, "newest first")
+    for _, b in ipairs(O.sectionButtons) do t.ok(not b.selected:IsShown(), "no section selected") end
+    O:SelectSection("navigation")
+    t.ok(not P:IsShown() and O.scroll:IsShown(), "back to the options")
+    local shown = 0
+    rawset(Q.UI.News, "Show", function() shown = shown + 1; return true end)
+    Mock.click(O.newsButton, "LeftButton")
+    t.eq(shown, 1, "news window opened")
+    noErrors(t)
+  end,
+
+  -- Data/Changelog.lua suit CHANGELOG.md (tools/build_changelog.lua).
+  changelog_data_up_to_date = function(t)
+    local p = io.popen("cd '" .. Mock.root .. "' && luajit tools/build_changelog.lua --check 2>&1; echo \"rc=$?\"")
+    local out = p:read("*a"); p:close()
+    t.ok(out:find("rc=0", 1, true), out)
+  end,
+
+  theme_section_cards_segments_swatches_and_preview = function(t)
     local Q = load()
     local O = Q.UI.Options
     O:Open("theme")
+    -- aperçu : les objectifs suivent la disposition et le détail choisis
+    local P = Q.UI.ThemePreview
+    local function rows(name)
+      local n = 0
+      for _, r in ipairs(P.objHost and P.objHost[name] or {}) do
+        local f = r.frame or r.label or r.text or r.name or r
+        if f.IsShown and f:IsShown() then n = n + 1 end
+      end
+      return n
+    end
+    Q.Settings:Set("tracker.objLayout", "list")
+    Q.Settings:Set("tracker.objDetail", "count")
+    t.eq(rows("mobRows"), 0, "counter only: no monster row")
+    t.eq(rows("questHeads"), 0)
+    Q.Settings:Set("tracker.objDetail", "mobs")
+    t.ok(rows("mobRows") > 0, "targetable monsters shown")
+    Q.Settings:Set("tracker.objLayout", "quest")
+    t.eq(rows("questHeads"), 1, "by quest: quest heading")
     local w = O:Widget("tracker.theme")
     local list = Q.Themes:List()
-    t.eq(#w.tiles, #list)
+    t.eq(#w.cards, #list, "one card per theme")
     for i, th in ipairs(list) do
-      local tile = w.tiles[i]
-      t.eq(tile.value, th.key)
-      t.eq({ tile.swatch:GetSize() }, { 80, 40 }, "80 x 40 preview")
-      t.eq(tile.swatch.qvThemeKey, th.key, "theme applied on the preview")
-      t.eq(tile.name:GetText(), th.label)
+      local card = w.cards[i]
+      t.eq(card.value, th.key)
+      t.eq(card.name:GetText(), th.label)
+      t.eq(card.emblem, nil, "no crest: colour themes only")
     end
-    t.ok(w.tiles[1].selected:IsShown(), "parchment selected")
-    Mock.click(w.tiles[2], "LeftButton")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
-    t.eq(Q.UI.Tracker.themeKey, "dark", "tracker restyled at once")
-    t.ok(w.tiles[2].selected:IsShown() and not w.tiles[1].selected:IsShown())
-    -- opacité 0 à 100 % sur tracker.opacity, aperçus compris
+    t.ok(w.cards[1].check:IsShown(), "Questify chosen")
+    t.ok(w.cards[5].mine:IsShown() and not w.cards[1].mine:IsShown(), "the race card is marked")
+    Mock.click(w.cards[9], "LeftButton")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
+    t.eq(Q.Settings:Get("theme.followRace"), false)
+    t.eq(Q.UI.Tracker.themeKey, "horde", "tracker restyled at once")
+    t.ok(w.cards[9].check:IsShown() and not w.cards[1].check:IsShown())
+    t.eq(O.frame.qvTheme.key, "horde", "the window follows the theme")
+    -- fenêtre élargie pour l'aperçu en direct
+    t.ok(O.preview:IsShown(), "live preview shown")
+    t.eq(O.frame:GetWidth(), O.WIDTH + O.PREVIEW_W)
+    O:SelectSection("route")
+    t.ok(not O.preview:IsShown())
+    t.eq(O.frame:GetWidth(), O.WIDTH)
+    O:SelectSection("theme")
+    -- segments : fond du suivi
+    local st = O:Widget("tracker.style")
+    t.eq(#st.segs, 3)
+    Mock.click(st.segs[2], "LeftButton")
+    t.eq(Q.Settings:Get("tracker.style"), "fade")
+    t.eq(Q.UI.Tracker.themeStyle, "fade")
+    t.ok(st.segs[2].under:IsShown() and not st.segs[1].under:IsShown())
+    -- couleurs de la flèche
+    local sw = O:Widget("arrow.color")
+    t.eq(#sw.swatches, 6)
+    Mock.click(sw.swatches[3], "LeftButton")
+    t.eq(Q.Settings:Get("arrow.color"), "gold")
+    -- opacité 0 à 100 % sur tracker.opacity
     local op = O:Widget("tracker.opacity")
     t.eq(plain(op.value:GetText()), "90 %")
     op.slider:SetValue(0.5)
     t.near(Q.Settings:Get("tracker.opacity"), 0.5, 1e-9)
     t.near(Q.UI.Tracker.themeOpacity, 0.5, 1e-9, "tracker background follows")
-    t.near(w.tiles[1].swatch.qvThemeOpacity, 0.5, 1e-9, "previews follow")
     t.eq(plain(op.value:GetText()), "50 %")
     noErrors(t)
   end,
@@ -539,9 +692,9 @@ return {
     t.eq(P:Active(), "Default")
     t.eq(P:Mode(), "account")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Default")
-    Q.Settings:Set("tracker.theme", "dark")
+    Q.Settings:Set("tracker.theme", "horde")
     Q.Settings:Set("tracker.point", { "TOPLEFT", "BOTTOMLEFT", 50, 60 })
-    t.eq(Q.UI.Tracker.themeKey, "dark")
+    t.eq(Q.UI.Tracker.themeKey, "horde")
     t.eq(P:Create("Raid"), "Raid")
     t.eq(select(2, P:Create("Raid")), Q.L.PROFILE_ERR_EXISTS)
     t.eq(select(2, P:Create("  ")), Q.L.PROFILE_ERR_NAME)
@@ -553,15 +706,15 @@ return {
     Q:On("PROFILE_CHANGED", function(name) changed = name end)
     t.ok(P:SetActive("Raid"))
     t.eq(changed, "Raid")
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment", "new profile has the defaults")
-    t.eq(Q.UI.Tracker.themeKey, "parchment", "tracker theme re-applied live")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral", "new profile has the defaults")
+    t.eq(Q.UI.Tracker.themeKey, "neutral", "tracker theme re-applied live")
     t.ok(contains(fired, "tracker.theme") and contains(fired, "tracker.point"), "changed paths fired")
     t.ok(not contains(fired, "autoQuest"), "unchanged paths not fired")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Raid", "mapping saved")
     t.eq(P:Mode(), "custom")
     -- copie : le profil actif prend les valeurs de l'autre
     t.ok(P:CopyFrom("Default"))
-    t.eq(Q.UI.Tracker.themeKey, "dark")
+    t.eq(Q.UI.Tracker.themeKey, "horde")
     t.eq(Q.Settings:Get("tracker.point")[3], 50)
     t.eq(select(2, P:CopyFrom("Raid")), Q.L.PROFILE_ERR_SAME)
     Q.Settings:Set("autoQuest", false)
@@ -576,9 +729,9 @@ return {
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Default")
     -- remise à zéro : valeurs par défaut, position comprise
     t.ok(P:Reset())
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral")
     t.eq(Q.Settings:Get("tracker.point"), nil)
-    t.eq(Q.UI.Tracker.themeKey, "parchment")
+    t.eq(Q.UI.Tracker.themeKey, "neutral")
     -- après /reload, le profil actif et ses valeurs restent
     P:Create("Solo")
     P:SetActive("Solo")
@@ -679,19 +832,19 @@ return {
   per_character_mode = function(t)
     local Q = load()
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "gradient")
+    Q.Settings:Set("tracker.theme", "alliance")
     t.ok(P:SetMode("character"))
     t.eq(P:Active(), "Testeur - Testrealm", "profile named after the character")
     t.eq(P:Mode(), "character")
     t.eq(QuestifyDB.profileMode, "character")
-    t.eq(Q.Settings:Get("tracker.theme"), "gradient", "copied from the current profile")
-    Q.Settings:Set("tracker.theme", "dark")
-    t.eq(QuestifyDB.profiles.Default.settings.tracker.theme, "gradient", "shared profile untouched")
+    t.eq(Q.Settings:Get("tracker.theme"), "alliance", "copied from the current profile")
+    Q.Settings:Set("tracker.theme", "horde")
+    t.eq(QuestifyDB.profiles.Default.settings.tracker.theme, "alliance", "shared profile untouched")
     -- un autre personnage, vu pour la première fois : son propre profil, copié de « Default »
     Mock.player.name = "Autre"
     local Q2 = Mock.reload()
     t.eq(Q2.Profiles:Active(), "Autre - Testrealm")
-    t.eq(Q2.Settings:Get("tracker.theme"), "gradient")
+    t.eq(Q2.Settings:Get("tracker.theme"), "alliance")
     t.eq(QuestifyDB.profileKeys["Testeur - Testrealm"], "Testeur - Testrealm", "first character kept")
     -- retour au profil partagé
     t.ok(Q2.Profiles:SetMode("account"))
@@ -706,7 +859,7 @@ return {
   migration_from_old_settings_keeps_everything = function(t)
     local old = {
       settings = { autoQuest = false, nav = { display = "tomtom", routing = false },
-        tracker = { theme = "dark", opacity = 0.4, scale = 1.2, width = 300, point = { "TOPLEFT", "BOTTOMLEFT", 10, 20 },
+        tracker = { theme = "horde", opacity = 0.4, scale = 1.2, width = 300, point = { "TOPLEFT", "BOTTOMLEFT", 10, 20 },
           locked = true, nextSteps = 3, showMobs = true, autoTarget = false } },
       debug = false, minimapAngle = 123,
     }
@@ -719,11 +872,11 @@ return {
     t.eq(d.profiles.Default.settings.autoQuest, false)
     t.eq(Q.Settings:Get("autoQuest"), false)
     t.eq(Q.Settings:Get("nav.display"), "tomtom")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     t.near(Q.Settings:Get("tracker.opacity"), 0.4, 1e-9)
     t.eq(Q.Settings:Get("tracker.point")[4], 20)
     t.eq(Q.Settings:Get("tracker.locked"), true)
-    t.eq(Q.UI.Tracker.themeKey, "dark", "tracker starts with the migrated theme")
+    t.eq(Q.UI.Tracker.themeKey, "horde", "tracker starts with the migrated theme")
     t.eq(Q.Rewards:Role(), "tank", "loot profile kept for this character")
     t.eq(Q.char.rewardRole, "tank", "still in the character data")
     t.eq(d.profiles.Default.rewardRole, nil, "never in a profile")
@@ -791,7 +944,7 @@ return {
     Mock.player.classFile = "SHAMAN"
     local Q = load()
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "transparent")
+    Q.Settings:Set("tracker.theme", "undead")
     Q.Settings:Set("tracker.opacity", 0.35)
     Q.Settings:Set("tracker.scale", 1.15)
     Q.Settings:Set("tracker.width", 312)
@@ -812,8 +965,8 @@ return {
     t.ok(ok, msg)
     t.eq(P:Active(), "Copie")
     t.eq(P:Payload("Copie"), P:Payload("Default"), "identical values")
-    t.eq(Q.Settings:Get("tracker.theme"), "transparent")
-    t.eq(Q.UI.Tracker.themeKey, "transparent", "applied live")
+    t.eq(Q.Settings:Get("tracker.theme"), "undead")
+    t.eq(Q.UI.Tracker.themeKey, "undead", "applied live")
     t.eq(Q.Rewards:Role(), "caster", "import never sets the loot profile")
     t.ok(plain(msg):find("Copie", 1, true))
     -- dans le profil actuel
@@ -827,6 +980,31 @@ return {
     -- chaîne recopiée avec des retours à la ligne et des espaces
     local wrapped = s:sub(1, 20) .. "\n  " .. s:sub(21, 60) .. " \r\n" .. s:sub(61)
     t.ok(P:Decode(wrapped), "whitespace ignored")
+    noErrors(t)
+  end,
+
+  -- Navigation : une chaîne récente garde son affichage (pas de seconde migration) ; la position de la
+  -- flèche est contrôlée comme celle du suivi.
+  nav_values_export_and_import = function(t)
+    local Q = load()
+    local P = Q.Profiles
+    Q.Settings:Set("nav.display", "native")
+    Q.Settings:Set("nav.router", "none")
+    Q.Settings:Set("nav.lineStyle", "dashes")
+    Q.Settings:Set("nav.arrowPos", { "CENTER", "BOTTOMLEFT", 12.34, -8 })
+    local s = P:Export()
+    t.ok(P:Import(s, "Copie"))
+    t.eq(P:Active(), "Copie")
+    t.eq(Q.Settings:Get("nav.display"), "native", "not migrated again")
+    t.eq(Q.Settings:Get("nav.router"), "none")
+    t.eq(Q.Settings:Get("nav.lineStyle"), "dashes")
+    t.eq(Q.Settings:Get("nav.arrowPos"), { "CENTER", "BOTTOMLEFT", 12.3, -8 })
+    local function encode(tbl) return "QFY1:" .. P.Base64Encode(P.Serialize(tbl)) end
+    local clean = P:Decode(encode({ v = 1, settings = { nav = { router = "questify", lineStyle = "zigzag",
+      arrowPos = { "NOWHERE", "CENTER", 1, 2 } } } }))
+    t.eq(clean.settings.nav.arrowPos, nil, "bad anchor")
+    t.eq(clean.settings.nav.lineStyle, nil, "unknown style")
+    t.eq(clean.settings.nav.router, "questify")
     noErrors(t)
   end,
 
@@ -869,7 +1047,8 @@ return {
     t.eq(clean.settings.autoQuest, nil)
     t.eq(clean.settings.autoReward, false)
     t.eq(clean.settings.nav.display, nil)
-    t.eq(clean.settings.nav.routing, true)
+    t.eq(clean.settings.nav.routing, nil, "string from before the built-in router: migrated")
+    t.eq(clean.settings.nav.router, "spf")
     t.eq(clean.settings.nav.junk, nil)
     t.eq(clean.settings.tracker.scale, 1.6, "clamped to max")
     t.eq(clean.settings.tracker.nextSteps, 0, "clamped to min")
@@ -915,10 +1094,10 @@ return {
     t.eq(names, { "Default", "Raid" })
     t.eq(active.radios[1].label:GetText(), Q.L.PROFILE_DEFAULT_NAME)
     t.ok(active.radios[2]:GetChecked())
-    Q.Settings:Set("tracker.theme", "dark")
+    Q.Settings:Set("tracker.theme", "horde")
     Mock.click(active.radios[1], "LeftButton")
     t.eq(P:Active(), "Default")
-    t.eq(Q.UI.Tracker.themeKey, "parchment")
+    t.eq(Q.UI.Tracker.themeKey, "neutral")
     -- Copier depuis… : liste des autres profils, puis confirmation
     t.eq(O:RunAction(Q.OptionsSchema:Entry("profile.copy"), O:Widget("profile.copy").button,
       O:Widget("profile.copy")), "fallback")
@@ -928,9 +1107,9 @@ return {
     Mock.click(picker.buttons[1], "LeftButton")
     t.ok(not picker:IsShown())
     t.eq(Mock.lastCall("StaticPopup_Show").args[1], "QUESTIFY_OPTIONS_CONFIRM")
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment", "nothing before confirmation")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral", "nothing before confirmation")
     confirm()
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     -- Supprimer… : jamais le profil actif ni « Default »
     Mock.click(O:Widget("profile.delete").button, "LeftButton")
     t.ok(picker:IsShown())
@@ -943,9 +1122,9 @@ return {
     t.eq(plain(O.statusText:GetText()), Q.L.OPT_PICK_NONE)
     -- Réinitialiser, après confirmation
     Mock.click(O:Widget("profile.reset").button, "LeftButton")
-    t.eq(Q.Settings:Get("tracker.theme"), "dark")
+    t.eq(Q.Settings:Get("tracker.theme"), "horde")
     confirm()
-    t.eq(Q.Settings:Get("tracker.theme"), "parchment")
+    t.eq(Q.Settings:Get("tracker.theme"), "neutral")
     -- type de profil : par personnage
     local mode = O:Widget("profile.mode")
     t.ok(mode.radios[1]:GetChecked(), "per account")
@@ -980,7 +1159,7 @@ return {
     local Q = load()
     local O = Q.UI.Options
     local P = Q.Profiles
-    Q.Settings:Set("tracker.theme", "gradient")
+    Q.Settings:Set("tracker.theme", "alliance")
     O:Open("profiles")
     local ex = O:Widget("profile.export")
     Mock.click(ex.button, "LeftButton")
@@ -1003,7 +1182,7 @@ return {
     t.eq(im.status:GetText(), Q.L.PROFILE_ERR_CORRUPT)
     t.eq(Mock.countCalls("StaticPopup_Show"), popups, "no confirmation for a bad string")
     -- chaîne valide dans un nouveau profil, après confirmation
-    Q.Settings:Set("tracker.theme", "parchment")
+    Q.Settings:Set("tracker.theme", "neutral")
     im.box:SetText(s)
     im.target:SetText("Partage")
     Mock.click(im.apply, "LeftButton")
@@ -1012,8 +1191,8 @@ return {
     t.eq(P:Active(), "Default", "nothing before confirmation")
     confirm()
     t.eq(P:Active(), "Partage")
-    t.eq(Q.Settings:Get("tracker.theme"), "gradient")
-    t.eq(Q.UI.Tracker.themeKey, "gradient")
+    t.eq(Q.Settings:Get("tracker.theme"), "alliance")
+    t.eq(Q.UI.Tracker.themeKey, "alliance")
     t.ok(plain(im.status:GetText()):find("Partage", 1, true))
     noErrors(t)
   end,

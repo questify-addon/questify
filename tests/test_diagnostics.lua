@@ -43,7 +43,9 @@ return {
     t.eq(r.automation.status, "ok")
     t.eq(r.position.status, "ok")
     t.eq(r.waypoint.status, "ok")
-    t.eq(r.waypoint.detail, Q.L.DIAG_WAYPOINT_PLACED, "pin of the current step is placed")
+    t.eq(r.waypoint.detail, Q.L.DIAG_WAYPOINT_READY, "the Questify arrow shows the step, no game pin")
+    t.eq(r.navigation.status, "ok")
+    t.ok(r.navigation.detail:find("Questify Nav > Questify arrow", 1, true), "router and display")
     t.eq(r.route.status, "ok")
     t.ok(r.route.detail:find("A_DwarfGnome_01", 1, true))
     t.eq(r.errors.status, "ok")
@@ -69,7 +71,8 @@ return {
   end,
 
   check_waypoint_refused_and_lost = function(t)
-    local Q = load()
+    local Q = load({ beforeLogin = function(Q) Q.Settings:Set("nav.display", "native") end })
+    t.eq(run(Q).waypoint.detail, Q.L.DIAG_WAYPOINT_PLACED, "pin of the current step is placed")
     Mock.userWaypoint = nil                       -- le jeu a retiré le repère posé par Questify
     t.eq(run(Q).waypoint.detail, Q.L.DIAG_WAYPOINT_LOST)
     Q.Nav:SetTarget(99999, 50, 50, "Nowhere")     -- carte inconnue : le jeu refuse le repère
@@ -86,8 +89,26 @@ return {
     t.eq(r.navigation.status, "warn")
     t.ok(r.navigation.detail:find("TomTom", 1, true))
     Q.Settings:Set("nav.display", "native")
-    Q.Settings:Set("nav.routing", true)           -- ShortestPath choisi mais absent
+    Q.Settings:Set("nav.router", "spf")           -- ShortestPath choisi mais absent
     t.eq(run(Q).navigation.status, "warn")
+    Q.Settings:Set("nav.router", "none")
+    t.eq(run(Q).navigation.status, "ok")
+    Questify_NavEngine = nil                      -- routeur Questify choisi, routeur intégré absent
+    Q.Settings:Set("nav.router", "questify")
+    r = run(Q)
+    t.eq(r.navigation.status, "warn")
+    t.ok(r.navigation.detail:find("Questify Nav", 1, true))
+  end,
+
+  check_navigation_yielded_to_a_journey = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = load()
+    Mock.spfJourney = { owner = nil }             -- trajet lancé par le joueur
+    Q.Nav:SetTarget(1426, 40, 60, "Elsewhere")
+    local r = run(Q)
+    t.eq(r.navigation.status, "info")
+    t.ok(r.navigation.detail:find("ShortestPath", 1, true))
+    t.eq(#Mock.errors, 0)
   end,
 
   check_navigation_with_tomtom = function(t)
@@ -215,7 +236,7 @@ return {
     t.ok(text:find("Route: A_DwarfGnome_01", 1, true), "route line")
     t.ok(text:find("Step: g:A_DwarfGnome_01:1", 1, true), "step line")
     t.ok(text:find("Target: Dun Morogh (1426)", 1, true), "target line")
-    t.ok(text:find("nav.display=native", 1, true), "settings line")
+    t.ok(text:find("nav.display=arrow nav.router=questify", 1, true), "settings line")
     -- toutes les autres options, en court (on/off)
     for _, opt in ipairs({ "dungeonSuggest=on", "autoFly=on", "hearthHints=on", "dangerAlert=on",
       "supplyReminders=on", "showXPRate=on", "sellJunk=on", "questItemButton=on", "tracker.autoTarget=off",
@@ -237,7 +258,7 @@ return {
     t.ok(QuestifyReport:IsShown(), "/qf bug opens the report window")
     local text = Q.UI.Report.box:GetText()
     for _, needle in ipairs({ "Addons: QuestieDB", "WARRIOR", "(1426)", "Route: A_DwarfGnome_01", "accept 179",
-      "  next: g:A_DwarfGnome_01:", "Step target: ", "Navigation: routing -, display native",
+      "  next: g:A_DwarfGnome_01:", "Step target: ", "Navigation: routing questify, display arrow",
       "Quest log (1): 179*", "boom" }) do
       t.ok(text:find(needle, 1, true), needle)
     end

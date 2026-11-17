@@ -182,24 +182,43 @@ end)
 check("navigation", "DIAG_NAVIGATION", function()
   local d = Q.Nav:Detect()
   local found = {}
-  for _, id in ipairs({ "shortestpath", "waypointui", "tomtom" }) do
+  for _, id in ipairs({ "questify", "shortestpath", "waypointui", "tomtom" }) do
     if d[id] then found[#found + 1] = providerLabel(id) end
   end
   local installed = #found > 0 and table.concat(found, ", ") or L.DIAG_NONE
   local routing, display = Q.Nav:Active()
   local wanted = Q.Settings:Get("nav.display")
-  if wanted ~= "native" and display ~= wanted then
+  -- la flèche Questify ne manque jamais ; avec SPF, le repère du jeu la remplace (voulu)
+  if wanted ~= "native" and wanted ~= "arrow" and display ~= wanted then
     return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel(wanted), providerLabel(display))
   end
-  if Q.Settings:Get("nav.routing") == true and not routing then
-    return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel("shortestpath"), providerLabel(display))
+  -- routeur choisi mais absent (Questify_Nav ou ShortestPath Forever)
+  local router = ({ questify = "questify", spf = "shortestpath" })[Q.Settings:Get("nav.router")]
+  if router and routing ~= router then
+    return "warn", string.format(L.DIAG_NAV_FALLBACK, providerLabel(router), providerLabel(display))
   end
   local st = Q.Nav:Status()
   local using = routing and (providerLabel(routing) .. " > " .. providerLabel(display)) or providerLabel(display)
+  if st.yielded then return "info", string.format(L.DIAG_NAV_YIELDED, providerLabel("shortestpath")) end
   if st.target and not st.provider then
     return "warn", string.format(L.DIAG_NAV_NOT_PLACED, using)
   end
   return "ok", string.format(L.DIAG_NAV_OK, using, installed)
+end)
+
+-- Chemins à pied du routeur intégré (Nav/Walk.lua) : chargé ou non, cartes de chaque continent.
+local WALK_REASONS = { noaddon = "DIAG_WALK_NOADDON", noengine = "DIAG_WALK_NOENGINE", nodata = "DIAG_WALK_NODATA" }
+check("walk", "DIAG_WALK", function()
+  if Q.Nav:Active() ~= "questify" or not Q.Walk then return "info", L.DIAG_WALK_OFF end
+  local st = Q.Walk:Status()
+  if WALK_REASONS[st.reason] then
+    return "warn", string.format(L.DIAG_WALK_STRAIGHT, L[WALK_REASONS[st.reason]])
+  end
+  if st.reason == "combat" then return "info", L.DIAG_WALK_COMBAT end
+  if not st.loaded then return "info", L.DIAG_WALK_IDLE end
+  local maps = string.format("%s %s, %s %s", Q.Maps:MapName(1415), onOff(st.maps[0]),
+    Q.Maps:MapName(1414), onOff(st.maps[1]))
+  return "ok", string.format(L.DIAG_WALK_OK, maps)
 end)
 
 check("route", "DIAG_ROUTE", function()
@@ -295,7 +314,7 @@ end
 -- Rapport de bug (texte brut, prêt à coller dans une issue)
 ---------------------------------------------------------------------------
 local SETTING_PATHS = {
-  "autoQuest", "autoReward", "dungeonQuests", "nav.display", "nav.routing",
+  "autoQuest", "autoReward", "dungeonQuests", "nav.display", "nav.router",
   "tracker.locked", "tracker.scale", "tracker.nextSteps", "tracker.showMobs", "nameplates", "telemetry",
 }
 
@@ -464,6 +483,11 @@ function Diag:Report()
   local routing, display
   if Q.Nav and Q.Nav.Active then routing, display = Q.Nav:Active() end
   add("Navigation: routing %s, display %s", tostring(routing or "-"), tostring(display or "-"))
+  if Q.Walk then
+    local w = Q.Walk:Status()
+    add("Walk: loaded %s, maps 0=%s 1=%s, reason %s, last search %s", tostring(w.loaded), tostring(w.maps[0]),
+      tostring(w.maps[1]), tostring(w.reason or "-"), tostring(w.search or "ok"))
+  end
 
   local log = questLog()
   add("Quest log (%d): %s", #log, #log > 0 and table.concat(log, ", ") or "-")

@@ -96,6 +96,16 @@ end
 ---------------------------------------------------------------------------
 -- Bouton
 ---------------------------------------------------------------------------
+-- Anneau teinté du métal du thème, lueur de son accent.
+function Btn:ApplyTheme()
+  local T = Q.Themes
+  if not (T and self.ring) then return end
+  local c = T:Current().colors
+  self.ring:SetVertexColor(c.metal[1], c.metal[2], c.metal[3], 1)
+  self.glow:SetVertexColor(c.accent[1], c.accent[2], c.accent[3], 1)
+end
+Q:On("THEME_CHANGED", function() Btn:ApplyTheme() end)
+
 function Btn:Create()
   if self.button then return self.button end
   local b = CreateFrame("Button", BUTTON_NAME, UIParent, "SecureActionButtonTemplate")
@@ -103,14 +113,27 @@ function Btn:Create()
   b:SetFrameStrata("MEDIUM")
   b:RegisterForClicks("AnyUp", "AnyDown")
   b:SetAttribute("type", "item")
+  -- icône ronde dans l'anneau de métal du thème, lueur de la couleur du thème (UI/Themes.lua)
   local icon = b:CreateTexture(nil, "ARTWORK")
-  icon:SetAllPoints(b)
+  icon:SetPoint("TOPLEFT", b, "TOPLEFT", SIZE * 0.09, -SIZE * 0.09)
+  icon:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -SIZE * 0.09, SIZE * 0.09)
+  local T = Q.Themes
+  if T and b.CreateMaskTexture and icon.AddMaskTexture then
+    local mask = b:CreateMaskTexture()
+    mask:SetAllPoints(icon)
+    mask:SetTexture(T.TEX.mask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    icon:AddMaskTexture(mask)
+  end
+  local ring = b:CreateTexture(nil, "OVERLAY", nil, 1)
+  ring:SetAllPoints(b)
+  if T then ring:SetTexture(T.TEX.ring) end
   local border = b:CreateTexture(nil, "OVERLAY")
   border:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
   border:SetBlendMode("ADD")
   border:SetVertexColor(1, 0.82, 0)
   border:SetPoint("CENTER", b, "CENTER", 0, 0)
   border:SetSize(SIZE * 1.8, SIZE * 1.8)
+  self.ring, self.glow = ring, border
   local count = b:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
   count:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -2, 2)
   local hl = b:CreateTexture(nil, "HIGHLIGHT")
@@ -129,6 +152,7 @@ function Btn:Create()
   b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
   b:Hide()
   self.button, self.icon, self.count, self.cooldown = b, icon, count, cd
+  self:ApplyTheme()
   return b
 end
 

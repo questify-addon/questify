@@ -192,7 +192,23 @@ end
 --      arrivent d'autres parcours, l'état est fusionné (build.mergeStates).
 --   3. Filtres de race (build.raceFilters) : chaque parcours de race est rejoué (paths.replay) ; une
 --      étape d'un chapitre partagé qui n'est pas valide pour une race reçoit un filtre `race` sans elle.
-function build.simulateFaction(D, W, faction, ov, only)
+-- fopts.lookahead = N (> 0) : liaisons de la pierre choisies avec les N chapitres suivants en vue. Un premier
+-- passage (inchangé, sans filtres de race) garde la séquence ordonnée de chaque chapitre (report.hearthLook) ;
+-- le second rejoue toute la faction, sim.planHearth recevant les séquences des N chapitres suivants du
+-- parcours de la race simulée (opts.lookahead), et ses liaisons sont celles des étapes émises.
+function build.simulateFaction(D, W, faction, ov, only, fopts)
+  local n = fopts and fopts.lookahead or 0
+  if n <= 0 then return build.simulatePass(D, W, faction, ov, only) end
+  local first = build.simulatePass(D, W, faction, ov, only, nil, true)
+  local looks = {}
+  for id, r in pairs(first) do looks[id] = r.report.hearthLook end
+  first = nil
+  return build.simulatePass(D, W, faction, ov, only, { looks = looks, n = n })
+end
+
+-- Un passage de build.simulateFaction. look = { looks = { [planId] = report.hearthLook }, n } ou nil ;
+-- noFilters : filtres de race non calculés (premier passage).
+function build.simulatePass(D, W, faction, ov, only, look, noFilters)
   local list = plansm[faction]
   -- --only sur un chapitre propre à une race : seul le parcours de cette race jusqu'au chapitre est simulé
   local onlyPlan = only and plansm.find(only)
@@ -232,11 +248,30 @@ function build.simulateFaction(D, W, faction, ov, only)
       if n then return (n.arrive and n.arrive.via) or n.entry end
     end
   end
+  -- séquences du premier passage des look.n chapitres suivants du parcours (sim.planHearth, opts.lookahead)
+  local function lookahead(plan, race)
+    if not look then return nil end
+    local path = plansm.pathFor(faction, race)
+    for i, p in ipairs(path) do
+      if p.id == plan.id then
+        local out = {}
+        for k = i + 1, math.min(i + look.n, #path) do
+          local L = look.looks[path[k].id]
+          -- chapitre sans séquence ou sans point de départ : la fenêtre s'arrête là (voulu, les suivants
+          -- ne sont pas vus non plus)
+          if not L or not L.entry then break end
+          out[#out + 1] = L
+        end
+        return #out > 0 and out or nil
+      end
+    end
+  end
   local function run(plan, state, race, exitTo)
     -- plan.before / plan.after : crochets du mode « Donjons » (plans_dungeon.lua) ; aucun plan habituel n'en a
     if plan.before then plan.before(plan, state, D, W) end
     local steps, report = sim.chapter(D, W, plan, state, { overrides = ov, carryZones = carryZones(plan, race),
-      exitTo = exitTo, nextEntry = exitTo or nextEntry(plan, race) })
+      exitTo = exitTo, nextEntry = exitTo or nextEntry(plan, race), lookahead = lookahead(plan, race) })
+    if look then report.hearthLook = nil end
     build.applyInserts(plan.id, steps, ov)
     build.applyNotes(steps, ov)
     if plan.after then plan.after(plan, state, steps, report, D, W) end
@@ -252,7 +287,7 @@ function build.simulateFaction(D, W, faction, ov, only)
       run(plan, state, onlyLead)
       if plan.id == only then break end
     end
-    build.raceFilters(D, W, faction, results)
+    if not noFilters then build.raceFilters(D, W, faction, results) end
     return results, order
   end
   -- Point où le parcours principal entre dans le tronc ; un autre parcours qui rejoint le même
@@ -302,7 +337,7 @@ function build.simulateFaction(D, W, faction, ov, only)
     -- Lordaeron pour les Morts-vivants...) occupent le journal de l'autre parcours jusqu'au bout
     run(plan, tstate, simRace)
   end
-  build.raceFilters(D, W, faction, results)
+  if not noFilters then build.raceFilters(D, W, faction, results) end
   return results, order
 end
 
@@ -592,6 +627,8 @@ function build.writeXml(out)
   for _, rel in ipairs(entries) do lines[#lines + 1] = ('  <Script file="%s"/>'):format((rel:gsub("/", "\\"))) end
   lines[#lines + 1] = '  <Script file="ClassQuestData.lua"/>'
   lines[#lines + 1] = '  <Script file="BagQuestData.lua"/>'
+  -- objets achetables à l'hôtel des ventes : tools/routebuilder/build_auction_items.lua, à relancer après build.lua
+  lines[#lines + 1] = '  <Script file="AuctionItemData.lua"/>'
   lines[#lines + 1] = "</Ui>"
   writeFile(out .. "/Guides.xml", table.concat(lines, "\n") .. "\n")
   return #entries
@@ -623,6 +660,9 @@ function build.main(argv)
     factions = { f }
   end
   local ov = build.loadOverrides(o.overrides)
+  -- liaisons de la pierre avec les chapitres suivants en vue (sim.planHearth) ; ROUTEBUILDER_HEARTH_LOOKAHEAD=0
+  -- pour l'ancien calcul (liaisons choisies sur le seul chapitre)
+  local lookahead = tonumber(os.getenv("ROUTEBUILDER_HEARTH_LOOKAHEAD") or "") or sim.CONST.HEARTH_LOOKAHEAD
   local W = world.load(here .. "/data")
   local Ds = {}
   local function D(f)
@@ -635,7 +675,7 @@ function build.main(argv)
   for _, faction in ipairs(factions) do
     local d = D(faction)
     local meta = { commit = d.commit, date = o.date }
-    local results, order = build.simulateFaction(d, W, faction, ov, o.only)
+    local results, order = build.simulateFaction(d, W, faction, ov, o.only, { lookahead = lookahead })
     for _, id in ipairs(order) do
       local r = results[id]
       if not o.only or id == o.only then

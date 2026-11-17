@@ -7,7 +7,7 @@ return {
     local Q = Mock.loadAddon(TOC, { beforeLogin = function(Q) Q:On("LOGIN", function() loginSeen = true end) end })
     t.ok(Questify == Q, "global set")
     t.ok(loginSeen, "LOGIN fired")
-    t.eq(Q.Settings:Get("nav.display"), "native")
+    t.eq(Q.Settings:Get("nav.display"), "arrow")
     t.ok(Q.IsForever())
     t.eq(#Mock.errors, 0, "no Lua error")
   end,
@@ -31,7 +31,7 @@ return {
   end,
 
   no_questiedb_line_when_recent_or_unknown_version = function(t)
-    for _, v in ipairs({ "1.0.15", "1.0.16", "1.1.0", "v2.0.0", "dev" }) do
+    for _, v in ipairs({ "1.1.2", "1.1.3", "1.2.0", "v2.0.0", "dev" }) do
       Mock.reset()
       Mock.qdbMeta.Version = v
       Mock.loadAddon(TOC)
@@ -141,15 +141,18 @@ return {
       end
     end
     t.ok(count > 50, "TOC lists its files")
-    -- builds et arbres de talents retirés pour le moment : absents du TOC
-    -- (Trainer et ClassSpells restent : l'alerte du maître de classe s'en sert)
-    for _, name in ipairs({ "Engine\\Talents.lua", "Engine\\TalentTree.lua", "Engine\\Builds.lua",
+    -- anciens builds de talents retirés : absents du TOC (Trainer et ClassSpells restent : l'alerte du
+    -- maître de classe s'en sert) ; Talents et TalentTree reviennent pour le guide de classe (onglet Classe)
+    for _, name in ipairs({ "Engine\\Builds.lua",
       "Engine\\TalentLearn.lua", "Engine\\BuildEditor.lua", "Engine\\BuildCodec.lua", "Engine\\SpellList.lua",
       "UI\\TalentPopup.lua", "UI\\TalentFrameHook.lua", "UI\\BuildWindow.lua", "UI\\BuildPane.lua",
       "UI\\SpellsPane.lua", "Data\\TalentBuilds.lua", "Data\\SpellQuests.lua", "Locales\\StringsTalents.lua" }) do
       t.ok(not a:find(name, 1, true), "TOC no longer lists " .. name)
     end
-    for _, name in ipairs({ "Engine\\Trainer.lua", "Data\\ClassTrainers.lua", "Data\\ClassSpells.lua" }) do
+    for _, name in ipairs({ "Engine\\Trainer.lua", "Data\\ClassTrainers.lua", "Data\\ClassSpells.lua",
+      "Engine\\Talents.lua", "Engine\\TalentTree.lua", "Engine\\ClassGuide.lua", "Engine\\ClassMacros.lua",
+      "Data\\ClassGuides.lua", "Data\\ClassMacros.lua", "Data\\ClassText_frFR.lua", "UI\\ClassPanel.lua",
+      "UI\\TalentAdvice.lua", "Locales\\StringsClass.lua" }) do
       t.ok(a:find(name, 1, true), "TOC still lists " .. name)
     end
     t.ok(not a:find("TalentPicker", 1, true), "old picker not listed")

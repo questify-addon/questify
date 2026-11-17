@@ -23,37 +23,64 @@ end
 
 local function row(state, key) return { state = state, chain = { key = key or state }, dungeon = { key = key or state } } end
 
--- Faux suivi d'objectifs de Blizzard (SetCollapsed du conteneur moderne).
+-- Faux suivi d'objectifs de Blizzard (SetCollapsed du conteneur moderne ; Update affiche le cadre
+-- comme le gestionnaire du jeu quand il a des quêtes à montrer).
 local function blizzardTracker()
   local otf = CreateFrame("Frame", "ObjectiveTrackerFrame", UIParent)
   otf.isCollapsed = false
   otf.calls = 0
+  otf.updates = 0
   function otf:SetCollapsed(c) self.isCollapsed = c; self.calls = self.calls + 1 end
   function otf:IsCollapsed() return self.isCollapsed end
+  function otf:Update() self.updates = self.updates + 1; self:Show() end
   return otf
+end
+
+-- Chargement avec tracker.hideBlizzard déjà coché dans le profil (comme après un /reload).
+local function loadHidden()
+  return load({ beforeLogin = function(Q) Q.Settings:Set("tracker.hideBlizzard", true) end })
 end
 
 return {
   four_buttons_right_of_the_title = function(t)
     local Q = load()
     local T, B = Q.UI.Tracker, Q.UI.TrackerButtons
-    t.eq(#B.ORDER, 4)
-    t.eq(B.ORDER, { "route", "dungeons", "class", "options" })
+    t.eq(#B.ORDER, 5)
+    t.eq(B.ORDER, { "ah", "route", "dungeons", "class", "options" })
     local x = {}
     for i, key in ipairs(B.ORDER) do
       local b = B.buttons[key]
       t.ok(b and b:IsShown(), key .. " shown")
       local p, rel, rp, bx, by = b:GetPoint(1)
       t.eq(p, "TOPRIGHT"); t.ok(rel == T.frame, key .. " anchored to the tracker"); t.eq(rp, "TOPRIGHT")
-      t.eq(by, -6)
+      t.eq(by, -5, "centred in the theme header (28 - 18) / 2")
       x[i] = bx
     end
-    t.eq(x[4], -8, "options at the right edge")
-    t.ok(x[1] < x[2] and x[2] < x[3] and x[3] < x[4], "left to right in ORDER")
-    -- le titre s'arrête avant les boutons ; les niveaux passent dans la barre
+    t.eq(x[5], -8, "options at the right edge")
+    t.ok(x[1] < x[2] and x[2] < x[3] and x[3] < x[4] and x[4] < x[5], "left to right in ORDER")
+    -- le titre s'arrête avant les boutons ; les niveaux passent sous la barre
     t.eq(T.title:GetWidth(), T.Width() - 16 - B:Width() - 6)
     t.ok(not T.levels:IsShown(), "levels no longer beside the title")
     t.ok(T.barText:GetText():find("lvl 1-6", 1, true), "levels in the progress bar")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Hôtel des ventes : le bouton brille tant qu'il reste des objets du chapitre à acheter, et ouvre la liste.
+  ah_button_glows_when_items_are_to_buy = function(t)
+    local Q = load()
+    local B = Q.UI.TrackerButtons
+    local wanted = {}
+    Q.AuctionItems.Wanted = function() return wanted end
+    B:UpdateGlows()
+    t.ok(not B.buttons.ah.glow:IsShown(), "nothing to buy: no glow")
+    wanted = { { item = 2589, need = 4, quests = {} }, { item = 2592, need = 2, quests = {} } }
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+    t.eq(B.ahCount, 2)
+    t.ok(B.buttons.ah.glow:IsShown(), "items to buy: glow")
+    local toggled = 0
+    Q.UI.AuctionPanel.ToggleList = function() toggled = toggled + 1 end
+    Mock.click(B.buttons.ah, "LeftButton")
+    t.eq(toggled, 1, "opens the shopping list")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -78,15 +105,16 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  class_button_switches_tab_before_closing = function(t)
+  class_button_opens_the_class_section_of_the_options = function(t)
     local Q = load()
-    local B, J = Q.UI.TrackerButtons, Q.UI.Journal
-    Mock.click(B.buttons.route)
+    local B, J, O = Q.UI.TrackerButtons, Q.UI.Journal, Q.UI.Options
     Mock.click(B.buttons.class)
-    t.ok(J:IsShown(), "still open")
-    t.eq(J.tab, "class")
+    t.ok(O:IsShown(), "options opened")
+    t.eq(O.section, "classguide")
+    t.eq(Q.UI.ClassPanel.tab, "talents")
+    t.ok(not J:IsShown(), "not the class quests of the journal")
     Mock.click(B.buttons.class)
-    t.ok(not J:IsShown(), "closed on the second click")
+    t.ok(not O:IsShown(), "closed on the second click")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -111,19 +139,24 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
-  class_glow_while_a_chain_is_available_and_none_followed = function(t)
+  class_glow_while_a_talent_point_of_the_guide_is_due = function(t)
     local Q = load()
-    local B = lists(Q, { row("available", "a"), row("upcoming", "b") })
+    local B = Q.UI.TrackerButtons
+    local advice = nil
+    Q.ClassGuide.Advice = function() return advice end
+    Q.Talents.Unspent = function() return 2 end
+    lists(Q, { row("available", "a") })
+    t.ok(not B.buttons.class.glow:IsShown(), "class quests alone: no glow")
+    advice = { spell = 12286, rank = 1, max = 3, level = 10, spec = Q.ClassGuide:Specs()[1] }
+    B:UpdateGlows()
     t.ok(B.buttons.class.glow:IsShown(), "glows")
     t.ok(B.buttons.class.pulse:IsPlaying(), "pulses")
-    t.eq(B.classCount, 1)
-    lists(Q, { row("available", "a"), row("added", "b") })
-    t.ok(not B.buttons.class.glow:IsShown(), "a chain added to the route: no glow")
-    lists(Q, { row("available", "a"), row("available", "c"), row("inprogress", "b") })
-    t.ok(not B.buttons.class.glow:IsShown(), "a chain in the quest log: no glow")
+    t.eq(B.classCount, 2)
+    B:Tooltip(B.buttons.class, "class")
+    advice = nil
+    Q:Fire("TALENTS_CHANGED")
+    t.ok(not B.buttons.class.glow:IsShown(), "point spent: no glow")
     t.ok(not B.buttons.class.pulse:IsPlaying(), "pulse stopped")
-    lists(Q, { row("ignored", "a"), row("done", "b"), row("inroute", "c") })
-    t.ok(not B.buttons.class.glow:IsShown(), "nothing available: no glow")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -230,6 +263,23 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  -- ForeverCore cache sa colonne (et le trajet de ShortestPath) avec le suivi replié
+  blizzard_tracker_left_open_under_forever_column = function(t)
+    local otf = blizzardTracker()
+    local attached = true
+    ForeverCore = { TrackerHost = { IsAttachedToQuestTracker = function() return attached end } }
+    load()
+    Mock.fire("PLAYER_ENTERING_WORLD", true, false)
+    Mock.advance(2)
+    t.ok(not otf.isCollapsed, "attached column: left open")
+    t.eq(otf.calls, 0)
+    attached = false
+    Mock.fire("PLAYER_ENTERING_WORLD", false, true)
+    Mock.advance(2)
+    t.ok(otf.isCollapsed, "detached column: folded")
+    t.eq(#Mock.errors, 0)
+  end,
+
   blizzard_tracker_already_folded_untouched = function(t)
     local otf = blizzardTracker()
     otf.isCollapsed = true
@@ -237,6 +287,115 @@ return {
     Mock.fire("PLAYER_ENTERING_WORLD", true, false)
     Mock.advance(2)
     t.eq(otf.calls, 0)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_shown_by_default = function(t)
+    local otf = blizzardTracker()
+    local Q = load()
+    t.eq(Q.Settings:Get("tracker.hideBlizzard"), false, "off by default")
+    t.ok(otf:IsShown(), "left alone")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    t.eq(otf.updates, 0, "nothing handed back when never hidden")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_hidden_at_login_and_kept_hidden = function(t)
+    local otf = blizzardTracker()
+    local Q = loadHidden()
+    t.ok(not otf:IsShown(), "hidden at login")
+    t.ok(Q.UI.BlizzardTracker:IsHidden())
+    otf:Show()   -- le jeu le réaffiche (nouvelle quête suivie, changement de zone)
+    t.ok(not otf:IsShown(), "hidden again each time the game shows it")
+    Mock.fire("PLAYER_ENTERING_WORLD", true, false)
+    Mock.advance(2)
+    t.eq(otf.calls, 0, "no fold while hidden")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_hidden_again_after_reload = function(t)
+    blizzardTracker()
+    local Q = load()
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(not ObjectiveTrackerFrame:IsShown(), "hidden as soon as ticked")
+    local otf2
+    local Q2 = Mock.reload({ skipGuides = true, extraFiles = { GUIDES },
+      beforeLogin = function() otf2 = blizzardTracker() end })
+    t.eq(Q2.Settings:Get("tracker.hideBlizzard"), true, "kept in the profile")
+    t.ok(not otf2:IsShown(), "hidden again after /reload")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_comes_back_when_option_off = function(t)
+    local otf = blizzardTracker()
+    local Q = loadHidden()
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    t.ok(otf:IsShown(), "back")
+    t.eq(otf.updates, 1, "handed back to the game's own Update")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    otf:Hide()
+    otf:Show()
+    t.ok(otf:IsShown(), "the OnShow hook no longer hides it")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_protected_waits_for_combat_end = function(t)
+    local otf = blizzardTracker()
+    function otf:IsProtected() return true end
+    local Q = load()
+    Mock.player.combat = true
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(otf:IsShown(), "not touched in combat")
+    Mock.player.combat = false
+    Mock.fire("PLAYER_REGEN_ENABLED")
+    t.ok(not otf:IsShown(), "hidden once combat ends")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_not_hidden_with_gamepad_interface = function(t)
+    local otf = blizzardTracker()
+    Enum = Enum or {}
+    Enum.InputDeviceInterfaceType = { KeyboardAndMouse = 0, Gamepad = 1 }
+    C_InputInterfaceStyle = { GetCurrentStyle = function() return 1 end }
+    local Q = loadHidden()
+    t.ok(otf:IsShown(), "gamepad HUD navigation starts at the tracker")
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    t.eq(#Mock.errors, 0)
+  end,
+
+  blizzard_tracker_without_frame_is_silent = function(t)
+    local Q = loadHidden()
+    t.ok(not Q.UI.BlizzardTracker:IsHidden())
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  questify_tracker_takes_the_place_of_the_hidden_one = function(t)
+    blizzardTracker()
+    local Q = load()
+    local f = Q.UI.Tracker.frame
+    local p, rel, rp, x = f:GetPoint(1)
+    t.eq({ p, rp, x }, { "TOPRIGHT", "TOPLEFT", -8 }, "beside it while shown")
+    t.ok(rel == ObjectiveTrackerFrame)
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    p, rel, rp, x = f:GetPoint(1)
+    t.eq({ p, rp, x }, { "TOPRIGHT", "TOPRIGHT", 0 }, "in its place while hidden")
+    t.ok(rel == ObjectiveTrackerFrame)
+    Q.Settings:Set("tracker.hideBlizzard", false)
+    p, rel, rp = f:GetPoint(1)
+    t.eq({ p, rp }, { "TOPRIGHT", "TOPLEFT" }, "beside it again")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  fold_option_greyed_while_hidden = function(t)
+    local Q = load()
+    local S = Q.OptionsSchema
+    local fold = S:Entry("tracker.foldBlizzard")
+    t.ok(S:Enabled(fold), "available by default")
+    Q.Settings:Set("tracker.hideBlizzard", true)
+    t.ok(not S:Enabled(fold), "greyed while the tracker is hidden")
+    t.ok(S:Entry("tracker.hideBlizzard"), "hide option in the schema")
+    t.eq(S:Entry("tracker.hideBlizzard").section, "tracker")
     t.eq(#Mock.errors, 0)
   end,
 }

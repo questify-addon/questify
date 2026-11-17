@@ -91,10 +91,32 @@ local function playerClass()
   return nil
 end
 
--- Profil bien formé : { settings = {} }.
+-- Routeur intégré : une fois par profil (marqueur nav.migrated = 1). L'ancien nav.routing = true
+-- (ShortestPath Forever) devient nav.router = "spf" ; false (posé par l'assistant chez les joueurs
+-- sans SPF) devient "questify", le défaut. L'ancien affichage par défaut, « Repère du jeu »
+-- (nav.display = "native"), devient la flèche Questify ; les autres affichages restent.
+local function migrateNav(settings)
+  local nav = settings.nav
+  if type(nav) ~= "table" then
+    nav = {}
+    settings.nav = nav
+  end
+  if nav.migrated == 1 then return end
+  if nav.routing == true then
+    nav.router = "spf"
+  elseif nav.routing == false then
+    nav.router = "questify"
+  end
+  nav.routing = nil
+  if nav.display == "native" then nav.display = "arrow" end
+  nav.migrated = 1
+end
+
+-- Profil bien formé : { settings = {} }, réglages de navigation migrés.
 local function normalizeProfile(p)
   if type(p) ~= "table" then p = {} end
   if type(p.settings) ~= "table" then p.settings = {} end
+  migrateNav(p.settings)
   return p
 end
 
@@ -183,6 +205,18 @@ function Profiles:Setup()
   migrateLegacyRoles()
 end
 
+-- Repère du jeu laissé par l'ancienne version (affichage « Repère du jeu », ancien défaut, passé à
+-- la flèche par migrateNav) : retiré une fois par personnage (Q.char.navPinCleared), à la connexion.
+-- La flèche ne pose rien dans le jeu ; un autre affichage garde son repère.
+local function clearOldNativePin()
+  local c = Q.char
+  if type(c) ~= "table" or c.navPinCleared then return end
+  c.navPinCleared = true
+  if Q.Settings:Get("nav.display") == "arrow" and Q.API and Q.API.ClearNativeWaypoint then
+    Q.API.ClearNativeWaypoint()
+  end
+end
+
 -- À la connexion : nom du personnage enfin connu, ou classe connue pour la migration.
 Q:On("LOGIN", function()
   if not db() or not db().profiles then return end
@@ -192,6 +226,7 @@ Q:On("LOGIN", function()
     if name ~= active then Profiles:SetActive(name) end
   end
   migrateLegacyRoles()
+  clearOldNativePin()
 end)
 
 ---------------------------------------------------------------------------
@@ -652,11 +687,21 @@ function Profiles:Decode(text)
       end
     end
   end
+  -- Chaîne d'avant le routeur intégré (sans nav.router) : migrée comme un profil enregistré, son
+  -- nav.routing compris ; une chaîne récente porte nav.router et ses choix restent tels quels.
+  local nav = type(settings.nav) == "table" and settings.nav or {}
+  if nav.router == nil and type(nav.routing) == "boolean" then
+    setPath(clean.settings, "nav.routing", nav.routing)
+    consumed, kept = consumed + 1, kept + 1
+  elseif nav.router ~= nil then
+    setPath(clean.settings, "nav.migrated", 1)
+  end
   dropped = dropped + math.max(0, countLeaves(settings) - consumed)
   for k in pairs(data) do
     if k ~= "v" and k ~= "settings" then dropped = dropped + 1 end
   end
   if kept == 0 then return nil, L.PROFILE_ERR_NOTHING end
+  normalizeProfile(clean)
   return clean, kept, dropped
 end
 

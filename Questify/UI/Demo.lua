@@ -3,8 +3,8 @@ local addonName, Q = ...
 -- Commande cachée /qf demo : montre les vraies fenêtres et alertes de l'addon avec des données
 -- d'exemple, pour prendre des captures en jeu. Absente de /qf help, des options et du menu de la
 -- minicarte ; /qf demo seul liste les scènes dans la discussion.
---   /qf demo <scène>   une scène : tracker, classquest, classlate, dungeon, upgrade, pair, route, supplies,
---                      cave, profession, questitem, theme (thème suivant à chaque appel), options
+--   /qf demo <scène>   une scène : tracker, zone, classquest, classlate, dungeon, upgrade, pair, route,
+--                      supplies, cave, profession, questitem, theme (thème suivant à chaque appel), options
 --   /qf demo all       enchaîne les scènes ; /qf demo next passe à la suivante
 --   /qf demo off       ferme tout et rétablit l'état d'avant (repère, lignes du suivi, alertes)
 -- Aucun effet de bord : rien n'est écrit dans Q.char ni dans Q.db, aucune quête n'est ajoutée, ignorée
@@ -15,7 +15,7 @@ local addonName, Q = ...
 -- Hors combat seulement : en combat un message le dit et rien ne s'ouvre ; un début de combat range tout.
 -- Données : les vraies (chaînes de la classe du joueur, donjon de sa faction, guides livrés, grottes) ;
 -- exemples fixes : la suite de Loch Modan est calculée pour un Nain de l'Alliance (quelle que soit la
--- position réelle), les objets viennent de Demo.ITEMS (le premier connu du client est pris).
+-- position réelle), les objets viennent de Demo:ItemSet() (le premier connu du client est pris).
 -- Une donnée ou une API absente : la scène le dit dans la discussion et ne lève jamais d'erreur.
 Q.UI = Q.UI or {}
 local Demo = {}
@@ -24,8 +24,8 @@ Q.UI.Demo = Demo
 local L = Q.L
 
 -- Ordre de /qf demo all.
-Demo.SCENES = { "tracker", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
-  "profession", "questitem", "theme", "options" }
+Demo.SCENES = { "tracker", "zone", "classquest", "classlate", "dungeon", "upgrade", "pair", "route", "supplies", "cave",
+  "profession", "questitem", "auction", "theme", "options" }
 
 -- Objets d'exemple (ID de WoW Classic) : par liste, le premier que le client connaît est pris.
 -- upgrade : annonce simple ; main + off : une arme à une main et un bouclier (annonce de paire).
@@ -34,6 +34,42 @@ Demo.ITEMS = {
   main = { 36, 37 },
   off = { 2362, 2129 },
   quest = 13892,   -- Kodo Kombobulator : objet de quête à utiliser, absent des sacs (le clic ne fait rien)
+}
+
+-- Jeux d'objets par niveau (récompenses de quête vérifiées dans QuestieDB, niveau d'objet entre
+-- parenthèses) : le comparatif de l'annonce montre un vrai gain face à l'équipement d'un personnage de ce
+-- niveau. Demo:ItemSet() prend le plus haut jeu dont le niveau ne dépasse pas celui du joueur + 4.
+Demo.ITEM_SETS = {
+  { level = 1, upgrade = Demo.ITEMS.upgrade, main = Demo.ITEMS.main, off = Demo.ITEMS.off },
+  { level = 28,
+    upgrade = { 6972, 7133 },       -- Fire Hardened Hauberk (30), Brutal Hauberk (30)
+    main = { 19292, 4978 },         -- Last Month's Mutton (34), Ryedol's Hammer (36)
+    off = { 9607, 16660 } },        -- Bastion of Stormwind (25), Driftmire Shield (27)
+  { level = 36,
+    upgrade = { 4508, 6773 },       -- Blood-tinged Armor (42), Gelkis Marauder Chain (42)
+    main = { 4511, 6804 },          -- Black Water Hammer (40), Windstorm Hammer (38)
+    off = { 4507, 9661 } },         -- Pit Fighter's Shield (42), Earthclasp Barrier (43)
+  { level = 50,
+    upgrade = { 12049, 9650 },      -- Splintsteel Armor (53), Honorguard Chestpiece (55)
+    main = { 11120, 9651 },         -- Belgrom's Hammer (55), Gryphon Rider's Stormhammer (53)
+    off = { 10686, 11915 } },       -- Aegis of Battle (55), Shizzle's Drizzle Blocker (55)
+}
+
+function Demo:ItemSet()
+  local level = tonumber(Q.Player and Q.Player.level) or 1
+  local best = self.ITEM_SETS[1]
+  for _, set in ipairs(self.ITEM_SETS) do
+    if set.level <= level + 4 then best = set end
+  end
+  return best
+end
+
+-- Liste d'achats d'exemple (Guides/AuctionItemData.lua) : objets de collecte à acheter à l'hôtel des ventes,
+-- chapitre en cours (Loch Modan, Marche de l'Ouest) puis chapitre suivant (Darkshore).
+Demo.AUCTION = {
+  { item = 814, quest = 103, count = 5, chapter = "current" },   -- Flask of Oil : Keeper of the Flame
+  { item = 723, quest = 22, count = 8, chapter = "current" },    -- Goretusk Liver : Goretusk Liver Pie
+  { item = 3712, quest = 555, count = 10, chapter = "next" },    -- Turtle Meat : Soothing Turtle Bisque
 }
 
 local ROUTE_FROM = "A_DwarfGnome_03"            -- Loch Modan : Marche de l'Ouest ou Sombrivage
@@ -51,7 +87,9 @@ local patches = {}         -- fonctions remplacées : { table, clé, original }
 local extraLines = {}      -- lignes ajoutées au suivi (zone des avertissements)
 local savedNav             -- { target = ... } : repère d'avant la scène
 local coverActive          -- étape « tuer » simulée : la route est recalculée à la fermeture
+local zoneActive           -- zone d'exemple : suivi, carte et minicarte redessinés à la fermeture
 local optionsOpened        -- fenêtre d'options ouverte par la scène « options »
+local auctionOpened        -- liste d'achats ouverte par la scène « auction »
 Demo.themeIndex = 0        -- dernier thème montré par la scène « theme » (le suivant au prochain appel)
 local seq                  -- { i = scène courante de /qf demo all }
 
@@ -274,7 +312,8 @@ function SCENE.dungeon()
   return true
 end
 
--- Annonce d'équipement : l'objet est demandé au client, puis la vraie annonce s'affiche, sans minuterie.
+-- Boîte « Équiper » sous le suivi : l'objet est demandé au client, puis la vraie boîte s'affiche, sans
+-- minuterie (survol : comparatif avant/après).
 local function announce(scene, lists, make)
   local P = Q.UI.UpgradePopup
   if not (P and P.ShowEntry and Q.API and Q.API.GetItemInfo) then return false, WHY_API end
@@ -291,15 +330,23 @@ local function announce(scene, lists, make)
   return true
 end
 
+-- Gain au score de classe de l'objet de démonstration (ligne du comparatif), rien s'il n'en a pas.
+local function demoGain(link)
+  local R = Q.Rewards
+  local ok, gain = pcall(function() return R:UpgradeGain(R:ReadItem(link), Q.Player) end)
+  return ok and type(gain) == "number" and gain > 0 and gain or nil
+end
+
 function SCENE.upgrade()
-  return announce("upgrade", { Demo.ITEMS.upgrade }, function(items)
-    return { link = items[1].link, name = items[1].name, gain = 0, demo = true }
+  return announce("upgrade", { Demo:ItemSet().upgrade }, function(items)
+    return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true }
   end)
 end
 
 function SCENE.pair()
-  return announce("pair", { Demo.ITEMS.main, Demo.ITEMS.off }, function(items)
-    return { link = items[1].link, name = items[1].name, gain = 0, demo = true,
+  local set = Demo:ItemSet()
+  return announce("pair", { set.main, set.off }, function(items)
+    return { link = items[1].link, name = items[1].name, gain = demoGain(items[1].link), demo = true,
       pair = { main = items[1].link, off = items[2].link } }
   end)
 end
@@ -312,7 +359,9 @@ function SCENE.route()
   if not (P and guide and Q.RouteChoice) then return false, WHY_DATA end
   local options = Q.Guides:Choices(guide, ROUTE_RACE, ROUTE_FACTION)
   if #options < 2 then return false, WHY_DATA end
-  local cards = Q.RouteChoice:Rank(options)
+  -- classées au niveau de fin du chapitre, pas au niveau réel : un personnage plus haut verrait toutes les
+  -- cartes en « quêtes faciles »
+  local cards = Q.RouteChoice:Rank(options, tonumber(guide.maxLevel))
   cards.demo = true
   P.resume = nil
   P.fromId, P.manual, P.cards = ROUTE_FROM, true, cards
@@ -435,6 +484,73 @@ function SCENE.tracker()
   return true
 end
 
+-- Zone d'exemple autour du joueur (mode zone, Engine/ZoneMode.lua) : un objet du monde, un nommé et
+-- deux sortes de monstres, dans le suivi (dedans : objectifs groupés et numérotés) et sur la carte
+-- du monde et la minicarte (UI/ZoneOverlay.lua). Positions : décalages fixes (en % de la carte) autour
+-- du joueur ; textes d'exemple (Q.L) ; le journal de quêtes n'est pas lu.
+Demo.ZONE_SAMPLE = {
+  { kind = "object", targetKind = "object", name = "UI_DEMO_ZONE_OBJECT", text = "UI_DEMO_ZONE_OBJECT_TEXT",
+    pts = { { -1.2, -1.0 }, { -0.9, -1.3 } } },
+  { kind = "named", targetKind = "npc", name = "UI_DEMO_ZONE_NAMED", text = "UI_DEMO_ZONE_NAMED_TEXT",
+    pts = { { 1.4, -1.6 } }, minLevel = 5, maxLevel = 5 },
+  { kind = "mob", targetKind = "npc", name = "UI_DEMO_ZONE_MOB_1", text = "UI_DEMO_ZONE_MOB_1_TEXT",
+    pts = { { -1.6, 0.8 }, { -0.6, 1.5 }, { 0.3, 1.1 }, { -2.0, -0.2 } }, minLevel = 1, maxLevel = 2 },
+  { kind = "mob", targetKind = "npc", name = "UI_DEMO_ZONE_MOB_2", text = "UI_DEMO_ZONE_MOB_2_TEXT",
+    pts = { { 1.2, 0.3 }, { 1.8, 1.0 }, { 2.2, -0.5 }, { 0.6, -0.4 } }, minLevel = 2, maxLevel = 2 },
+}
+local ZONE_PRIORITY = { object = 1, named = 2, mob = 3 }
+
+local function demoZone(entry)
+  local pm, px, py = Q.Maps:PlayerPos()
+  if not pm then return nil, WHY_API end
+  local cont = Q.Maps:WorldPos(pm, px, py)
+  if cont == nil then return nil, WHY_API end
+  local objectives, quests = {}, {}
+  local questId = entry.step.questId
+  for i, s in ipairs(Demo.ZONE_SAMPLE) do
+    local points = {}
+    for _, d in ipairs(s.pts) do
+      local x, y = px + d[1], py + d[2]
+      local c, wx, wy = Q.Maps:WorldPos(pm, x, y)
+      if c == cont then points[#points + 1] = { mapId = pm, x = x, y = y, wx = wx, wy = wy } end
+    end
+    objectives[#objectives + 1] = { kind = s.kind, targetKind = s.targetKind, id = -i, name = L[s.name],
+      questId = questId, objIndex = i, done = false, priority = ZONE_PRIORITY[s.kind], points = points,
+      entryKey = entry.key, minLevel = s.minLevel, maxLevel = s.maxLevel, demoText = L[s.text], seq = i }
+    quests[questId] = true
+  end
+  return {
+    ownerKey = entry.key, entries = { entry }, entryKeys = { [entry.key] = true },
+    center = { pm, px, py, mapId = pm, x = px, y = py }, radius = 120, continent = cont,
+    objectives = objectives, questCount = 3, inside = true, name = L.UI_DEMO_ZONE_NAME,
+  }
+end
+
+function SCENE.zone()
+  local ok, why = coverSetup()
+  if not ok then return false, why end
+  local entry = Q.Progress:Current()
+  local Z = Q.ZoneMode
+  if not (Z and Z.Current) then return false, WHY_API end
+  local z, why2 = demoZone(entry)
+  if not z then return false, why2 end
+  zoneActive = true
+  -- la navigation suit la zone d'exemple : le repère d'avant revient à la fermeture
+  local N = Q.Nav
+  if N and N.Status then savedNav = savedNav or { target = N:Status().target } end
+  patch(Z, "Current", function() return function() return z end end)
+  patch(Z, "IsOwner", function() return function(_, e) return type(e) == "table" and e.key == z.ownerKey end end)
+  patch(Z, "ProgressText", function(orig)
+    return function(self, o, ...)
+      if o and o.demoText then return o.demoText end
+      return orig(self, o, ...)
+    end
+  end)
+  Q:Fire("ZONEMODE_CHANGED", z)
+  refreshTracker()
+  return true
+end
+
 -- Bouton de l'objet de quête à gauche du suivi (objet d'exemple Demo.ITEMS.quest, icône en couleur).
 function SCENE.questitem()
   local B = Q.UI.QuestItemButton
@@ -453,8 +569,9 @@ function SCENE.questitem()
   return true
 end
 
--- Thèmes du suivi : chaque appel montre le suivant (parchemin, noir, transparent, dégradé), sur la
--- même étape que la couverture ; le réglage enregistré ne change pas.
+-- Thèmes (UI/Themes.lua) : chaque appel montre le suivant (Questify, Alliance, les races…), sur la
+-- même étape que la couverture, sur le suivi et les fenêtres décorées ; le réglage enregistré ne
+-- change pas. Le blason retenu (atlas ou fichier du client) est écrit dans la discussion.
 function SCENE.theme()
   local T = Q.Themes
   if not (T and T.List) then return false, WHY_API end
@@ -467,15 +584,52 @@ function SCENE.theme()
   patch(Q.Settings, "Get", function(orig)
     return function(self, path, ...)
       if path == "tracker.theme" then return theme.key end
+      if path == "theme.followRace" then return false end
       return orig(self, path, ...)
     end
   end)
   say(L.UI_DEMO_THEME, theme.label, Demo.themeIndex, #list)
+  if T.EmblemSource then
+    local src = T:EmblemSource(T:Get(theme.key))
+    say(L.UI_DEMO_THEME_EMBLEM, theme.label, tostring(src.atlas or src.file))
+  end
+  if T.RepaintAll then T:RepaintAll() end
+  Q:Fire("THEME_CHANGED", T:Get(theme.key))
   refreshTracker()
   return true
 end
 
 -- Fenêtre d'options sur la section Automatisation (bouton de la touche de ciblage).
+-- Liste des objets de quête à acheter (UI/AuctionPanel.lua) remplie avec Demo.AUCTION, prix réels de la
+-- source de prix (Auctionator) quand il y en a une. Chez un encanteur, la liste d'achats à côté de l'HV
+-- reprend les mêmes lignes.
+function SCENE.auction()
+  local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+  if not (AI and AI.Rows and P and P.ShowList and Q.API and Q.API.GetItemInfo) then return false, WHY_API end
+  local lists = {}
+  for i, e in ipairs(Demo.AUCTION) do lists[i] = { e.item } end
+  whenItems(token, "auction", lists, function()
+    patch(AI, "Rows", function()
+      return function(self)
+        local out = {}
+        for _, e in ipairs(Demo.AUCTION) do
+          local have = math.min(self:Count(e.item), e.count - 1)
+          local price, source = self:Price(e.item)
+          out[#out + 1] = { item = e.item, name = self:Name(e.item), total = e.count, have = have,
+            need = e.count - have, approx = false, quests = { e.quest }, chapter = e.chapter, state = "ok",
+            skipped = false, price = price, source = source }
+        end
+        return out
+      end
+    end)
+    auctionOpened = true
+    P:ShowList()
+    if AI.IsOpen and AI:IsOpen() and P.ShowShop then P:ShowShop() end
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+  end, 0)
+  return true
+end
+
 function SCENE.options()
   local O = Q.UI.Options
   if not (O and O.Open) then return false, WHY_API end
@@ -490,6 +644,7 @@ end
 -- Ferme toutes les scènes et rétablit l'état d'avant.
 function Demo:Reset()
   token = token + 1
+  Demo.showing = nil
   local cq, dg, up, rp = Q.UI.ClassQuestPopup, Q.UI.DungeonPopup, Q.UI.UpgradePopup, Q.UI.RouteChoicePopup
   if cq and cq.demo then cq.demo = nil; cq:Hide() end
   if dg and dg.demo then dg.demo = nil; dg:Hide() end
@@ -506,6 +661,16 @@ function Demo:Reset()
   end
   unpatch()
   extraLines = {}
+  if auctionOpened then
+    auctionOpened = nil
+    local ap = Q.UI.AuctionPanel
+    if ap and ap.list then ap.list:Hide() end
+    Q:Fire("AUCTION_ITEMS_CHANGED")
+  end
+  if zoneActive then
+    zoneActive = nil
+    Q:Fire("ZONEMODE_CHANGED", Q.ZoneMode and Q.ZoneMode:Current())
+  end
   if optionsOpened then
     optionsOpened = nil
     if Q.UI.Options and Q.UI.Options.Close then Q.UI.Options:Close() end
@@ -528,7 +693,10 @@ end
 local function runScene(name)
   Demo:Reset()
   local ok, res, why = pcall(SCENE[name])
-  if ok and res then return true end
+  if ok and res then
+    Demo.showing = true   -- scène affichée : Engine/Pace.lua ne mesure pas (route et étapes simulées)
+    return true
+  end
   Demo:Reset()
   say(L.UI_DEMO_MISSING, name, ok and L[why] or tostring(res))
   return false

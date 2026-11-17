@@ -80,12 +80,17 @@ return {
     local P = Q.UI.UpgradePopup
     t.ok(shown(Q), "popup in the middle of the screen")
     t.eq(P.icon:GetTexture(), 132624)
-    t.eq(P.text:GetText(), string.format(Q.L.UI_UPGRADE_TEXT, "item:3002"))
-    local p, rel = P.frame:GetPoint(1)
-    t.eq(p, "CENTER"); t.ok(rel == UIParent)
-    t.ok(P.pulse:IsPlaying(), "glow around the icon")
-    Mock.advance(8)
-    t.ok(not shown(Q), "fades after a few seconds")
+    t.eq(P.header:GetText(), Q.L.UI_UPGRADE_FOUND)
+    t.ok(P.name:GetText():find("[Ringmail Hauberk]", 1, true), "item name")
+    t.ok(P.gains:GetText():find("+3 Strength, +3 Stamina", 1, true), "what it improves (worn vest has 1 strength)")
+    t.ok(P.instead:GetText():find("[Worn Mail Vest]", 1, true), "item it replaces")
+    t.eq(P.counter:GetText(), "", "no counter for a single item")
+    t.eq(P.equipButton.label:GetText(), Q.L.UI_UPGRADE_EQUIP)
+    t.eq(P.noButton.label:GetText(), Q.L.UI_UPGRADE_NO)
+    Mock.advance(4.9)
+    t.ok(shown(Q), "still there before 5 seconds")
+    Mock.advance(0.2)
+    t.ok(not shown(Q), "closes by itself after 5 seconds")
     t.eq(#Mock.errors, 0)
   end,
 
@@ -135,11 +140,11 @@ return {
     Mock.fire("BAG_UPDATE_DELAYED")
     local P = Q.UI.UpgradePopup
     local first = P.current.link
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     t.eq(equipped, { first }, "left click equips")
     t.ok(shown(Q), "next upgrade in the queue")
     t.ok(P.current.link ~= first)
-    P.frame:GetScript("OnClick")(P.frame, "RightButton")
+    P.frame:GetScript("OnMouseUp")(P.frame, "RightButton")
     t.eq(#equipped, 1, "right click only closes")
     t.ok(not shown(Q))
   end,
@@ -227,12 +232,10 @@ return {
     local P = Q.UI.UpgradePopup
     t.ok(shown(Q), "mace + shield beat the axe")
     t.eq(P.current.link, shield)
-    t.eq(P.text:GetText(), string.format(Q.L.UI_UPGRADE_TEXT_PAIR, mace, shield), "both items named")
-    -- le texte s'arrête au-dessus du rappel « Clic : équiper »
-    local _, _, _, _, hintY = P.hint:GetPoint(1)
-    local textBottom = select(5, P.text:GetPoint(2))
-    t.ok(type(textBottom) == "number" and textBottom > hintY + 8, "text bounded above the hint")
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    t.ok(P.name:GetText():find("[Wooden Mace]", 1, true) and P.name:GetText():find("[Wooden Shield]", 1, true),
+      "both items named")
+    t.ok(P.instead:GetText():find("[Rusty Axe]", 1, true), "instead of the two-handed axe")
+    P.equipButton:Click()
     t.eq(equipped, { mace .. "@16" }, "main hand first")
     Mock.advance(1)
     t.eq(equipped, { mace .. "@16", shield .. "@17" }, "then the off-hand, once the main hand is in place")
@@ -244,7 +247,7 @@ return {
     local Q = announcePair()
     local P = Q.UI.UpgradePopup
     bags[0][1] = nil                                   -- la masse n'est plus là
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.advance(2)
     t.eq(equipped, {}, "nothing equipped")
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_MISSING, "item:3071")), 1)
@@ -254,7 +257,7 @@ return {
     local Q = announcePair()
     local P = Q.UI.UpgradePopup
     equipLands = false
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.advance(3)
     t.eq(equipped, { "item:3071@16" }, "the shield would remove the axe and leave the main hand empty")
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_FAILED, "item:3073")), 1)
@@ -263,7 +266,7 @@ return {
   pair_off_hand_not_equipped_if_combat_starts = function(t)
     local Q = announcePair()
     local P = Q.UI.UpgradePopup
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.player.combat = true
     Mock.advance(2)
     t.eq(equipped, { "item:3071@16" })
@@ -278,12 +281,12 @@ return {
       stats = { [STR] = 3 } }))
     local P = Q.UI.UpgradePopup
     Mock.player.combat = true                    -- combat sans PLAYER_REGEN_DISABLED encore reçu
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     t.eq(equipped, {}, "nothing equipped in combat")
     t.ok(shown(Q), "not dismissed")
     t.eq(P.current.link, "item:3062")
     Mock.player.combat = false
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     t.eq(equipped, { "item:3062" })
     t.ok(not shown(Q))
   end,
@@ -314,7 +317,7 @@ return {
     local P = Q.UI.UpgradePopup
     bags[0][1] = "item:3071:0:0:0:0:0:0:0:5"
     bags[0][3] = "item:3073:0:0:0:0:0:0:0:5"
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.advance(1)
     t.eq(equipped, { "item:3071:0:0:0:0:0:0:0:5@16", "item:3073:0:0:0:0:0:0:0:5@17" })
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_MISSING, "item:3071")), 0)
@@ -327,7 +330,7 @@ return {
     local Q = announcePair()
     local P = Q.UI.UpgradePopup
     equipLands = false
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     t.eq(equipped, { "item:3071@16" })
     Mock.inventory[16] = "item:3071"
     bags[0][1] = nil
@@ -351,7 +354,7 @@ return {
     local bindOpen = true
     StaticPopup_Visible = function(which) return bindOpen and which == "EQUIP_BIND" and {} or nil end
     equipLands = false
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.advance(20)
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_FAILED, "item:3073")), 0, "still waiting at 20 s")
     -- le joueur accepte : la main droite arrive un peu plus tard
@@ -371,12 +374,166 @@ return {
     local saved = StaticPopup_Visible
     StaticPopup_Visible = function(which) return which == "EQUIP_BIND" and {} or nil end
     equipLands = false
-    P.frame:GetScript("OnClick")(P.frame, "LeftButton")
+    P.equipButton:Click()
     Mock.advance(29)
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_FAILED, "item:3073")), 0)
     Mock.advance(5)
     t.eq(Mock.countPrinted(string.format(Q.L.UI_UPGRADE_PAIR_FAILED, "item:3073")), 1, "gives up after 30 s")
     t.eq(equipped, { "item:3071@16" })
     StaticPopup_Visible = saved
+  end,
+
+  -- Boîte collée sous le suivi, même largeur (deux points d'ancrage) et même échelle ; au-dessus
+  -- quand le suivi touche le bas de l'écran ; suivi caché : en haut de l'écran.
+  box_sits_under_the_tracker = function(t)
+    local Q = load()
+    local tracker = Q.UI.Tracker.frame
+    t.ok(tracker, "tracker frame")
+    tracker.GetBottom = function() return 500 end
+    tracker:SetScale(1.2)
+    receive(1, item(3080, { name = "Ringmail Gloves", equipLoc = "INVTYPE_HAND", classID = 4, subclassID = 3,
+      stats = { [STR] = 2 } }))
+    local P = Q.UI.UpgradePopup
+    t.eq(P.placement, "below")
+    local p1, rel1, r1 = P.frame:GetPoint(1)
+    local p2, rel2, r2 = P.frame:GetPoint(2)
+    t.eq({ p1, r1, p2, r2 }, { "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT", "BOTTOMRIGHT" })
+    t.ok(rel1 == tracker and rel2 == tracker, "anchored to the tracker frame")
+    t.eq(P.frame:GetScale(), 1.2, "same scale as the tracker")
+    P:Next()
+    tracker.GetBottom = function() return 20 end
+    receive(2, item(3081, { name = "Ringmail Boots", equipLoc = "INVTYPE_FEET", classID = 4, subclassID = 3,
+      stats = { [STR] = 2 } }))
+    t.eq(P.placement, "above", "no room below: above the tracker")
+    t.eq(select(3, P.frame:GetPoint(1)), "TOPLEFT")
+    P:Next()
+    tracker:Hide()
+    receive(3, item(3082, { name = "Ringmail Belt", equipLoc = "INVTYPE_WAIST", classID = 4, subclassID = 3,
+      stats = { [STR] = 2 } }))
+    t.eq(P.placement, "screen", "tracker hidden: top of the screen")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Souris sur la boîte : la barre s'arrête et le comparatif s'ouvre ; souris partie : la barre
+  -- reprend là où elle en était.
+  hover_pauses_the_timer_and_opens_the_comparison = function(t)
+    local Q = load()
+    receive(1, item(3083, { name = "Ringmail Hauberk", equipLoc = "INVTYPE_CHEST", classID = 4, subclassID = 3,
+      stats = { [STR] = 4 } }))
+    local P, C = Q.UI.UpgradePopup, Q.UI.UpgradeCompare
+    Mock.advance(2)
+    t.eq(P.bar:GetValue(), 3, "bar empties with time")
+    local over = true
+    P.frame.IsMouseOver = function() return over end
+    Mock.advance(0.1)
+    t.ok(C:IsShown(), "comparison opened")
+    Mock.advance(30)
+    t.ok(shown(Q), "paused while hovered")
+    t.eq(P.bar:GetValue(), 3)
+    over = false
+    Mock.advance(0.1)
+    t.ok(not C:IsShown(), "comparison closed")
+    t.ok(shown(Q))
+    Mock.advance(3)
+    t.ok(not shown(Q), "closes once the rest of the time is over")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Plusieurs objets : un à la fois, compteur « 1/2 » puis « 2/2 » ; « Non » passe au suivant sans
+  -- rien équiper ; un son discret à chaque objet.
+  queue_counter_no_button_and_sound = function(t)
+    local Q = load()
+    bags[0][1] = item(3084, { name = "Ringmail Gloves", equipLoc = "INVTYPE_HAND", classID = 4, subclassID = 3,
+      stats = { [STR] = 2 } })
+    bags[0][2] = item(3085, { name = "Ringmail Boots", equipLoc = "INVTYPE_FEET", classID = 4, subclassID = 3,
+      stats = { [STA] = 2 } })
+    Mock.fire("BAG_UPDATE_DELAYED")
+    local P = Q.UI.UpgradePopup
+    t.eq(P.counter:GetText(), "1/2")
+    t.eq(#Mock.callsTo("PlaySound"), 1)
+    t.eq(Mock.callsTo("PlaySound")[1][2][1], "IG_BACKPACK_OPEN", "discreet bag sound")
+    P.noButton:Click()
+    t.eq(equipped, {}, "No equips nothing")
+    t.ok(shown(Q), "next item")
+    t.eq(P.counter:GetText(), "2/2")
+    Mock.advance(5.1)
+    t.ok(not shown(Q))
+    t.eq(P.shownCount, 0, "counter reset once the queue is empty")
+    t.eq(#Mock.callsTo("PlaySound"), 2)
+  end,
+
+  -- Comparatif : stats avant / après / écart triées par poids de la classe, résumé des deux plus
+  -- forts gains, effets « Équipé : » perdus ou nouveaux (lus dans l'infobulle), gain au score.
+  comparison_lists_stats_effects_and_score = function(t)
+    local Q = load()
+    Mock.inventory[5] = item(3090, { name = "Old Breastplate", equipLoc = "INVTYPE_CHEST", classID = 4, subclassID = 3,
+      stats = { [STR] = 3, [STA] = 6, ["RESISTANCE0_NAME"] = 100, ["ITEM_MOD_SPIRIT_SHORT"] = 2 } })
+    local new = item(3091, { name = "Stromgarde Hauberk", equipLoc = "INVTYPE_CHEST", classID = 4, subclassID = 3,
+      quality = 3, stats = { [STR] = 8, [STA] = 5, ["RESISTANCE0_NAME"] = 140 } })
+    ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE = "Equip:", "Use:"
+    local lines = {
+      ["item:3090"] = { "Old Breastplate", "Equip: Increases your chance to hit by 1%." },
+      [new] = { "Stromgarde Hauberk", "|cff00ff00Equip: Improves your chance to get a critical strike by 1%.|r",
+        "Use: Increases run speed by 40% for 6 sec." },
+    }
+    C_TooltipInfo = { GetHyperlink = function(link)
+      local out = {}
+      for i, l in ipairs(lines[link] or {}) do out[i] = { leftText = l } end
+      return { lines = out }
+    end }
+    receive(1, new)
+    local P, C = Q.UI.UpgradePopup, Q.UI.UpgradeCompare
+    t.ok(shown(Q))
+    local d = P.current.compare
+    t.eq(d.before[1].name, "Old Breastplate")
+    t.eq(d.after[1].name, "Stromgarde Hauberk")
+    local rows = {}
+    for i, s in ipairs(d.stats) do rows[i] = { s.name, s.before, s.after, s.delta } end
+    t.eq(rows, {
+      { "Strength", 3, 8, 5 },          -- 5 x 1
+      { "Armor", 100, 140, 40 },        -- 40 x 0,02
+      { "Stamina", 6, 5, -1 },          -- 1 x 0,5
+      { "Spirit", 2, 0, -2 },           -- sans poids pour le guerrier
+    })
+    t.eq(d.summary, { "+5 Strength", "+40 Armor" })
+    t.eq(d.effects, {
+      { text = "Equip: Increases your chance to hit by 1%.", kind = "lost" },
+      { text = "Equip: Improves your chance to get a critical strike by 1%.", kind = "new" },
+      { text = "Use: Increases run speed by 40% for 6 sec.", kind = "new" },
+    })
+    t.ok(P.name:GetText():find("|cff%x%x%x%x%x%x%[Stromgarde Hauberk%]"), "rare: name in its quality colour")
+    P.frame.IsMouseOver = function() return true end
+    Mock.advance(0.1)
+    t.ok(C:IsShown())
+    t.eq(#C.statRows, 4)
+    t.ok(C.statRows[3].diff:GetText():find("−1", 1, true), "loss shown with a minus sign")
+    t.eq(#C.effectRows, 3)
+    t.ok(C.scoreText:GetText():find("+5.3|r (Warrior)", 1, true), "class score gain (5 + 0.8 - 0.5), automatic role: class only")
+    t.eq(C.side, "right", "box on the left half: comparison on the right")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Paire : avant = l'arme à deux mains, après = la masse (des sacs) et le bouclier.
+  pair_comparison_shows_both_halves = function(t)
+    local Q = announcePair()
+    local d = Q.UI.UpgradePopup.current.compare
+    t.eq(#d.before, 1)
+    t.eq(d.before[1].name, "Rusty Axe")
+    t.eq({ d.after[1].name, d.after[2].name }, { "Wooden Mace", "Wooden Shield" })
+    t.ok(d.fromBags[1] and not d.fromBags[2], "the mace comes from the bags")
+  end,
+
+  -- Thème du suivi : parchemin (défaut) ou sombre ; la boîte affichée suit un changement de thème.
+  box_follows_the_tracker_theme = function(t)
+    local Q = load()
+    receive(1, item(3086, { name = "Ringmail Gloves", equipLoc = "INVTYPE_HAND", classID = 4, subclassID = 3,
+      stats = { [STR] = 2 } }))
+    local P = Q.UI.UpgradePopup
+    -- thème en vigueur (celui du suivi : la race du personnage par défaut)
+    t.eq(P.frame.qvThemeKey, Q.Themes:CurrentKey())
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "horde")
+    t.eq(P.frame.qvThemeKey, "horde", "box repainted with the new theme")
+    t.eq(#Mock.errors, 0)
   end,
 }

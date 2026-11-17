@@ -20,6 +20,11 @@ local sim = {}
 -- Seuils (documentés dans tools/routebuilder/README.md)
 sim.CONST = {
   WALK = 7,               -- yards/s à pied
+  -- monture achetée par le personnage simulé : vitesse de marche multipliée à partir de ce niveau (60 % au
+  -- niveau 40, 100 % au niveau 60 ; temps d'achat et trajet jusqu'au maître de monte non comptés : quelques
+  -- secondes, écart assumé à la note de conception).
+  -- ROUTEBUILDER_NO_MOUNT=1 : toujours à pied (mesure avant / après)
+  MOUNT = { { level = 40, mult = 1.6 }, { level = 60, mult = 2.0 } },
   KILL_TIME = 20,         -- s par mob tué, repos compris
   DEFAULT_KILLS = 8,      -- mobs à tuer quand le texte ne donne pas de nombre
   DEFAULT_ITEMS = 6,      -- objets à looter quand le texte ne donne pas de nombre
@@ -43,6 +48,9 @@ sim.CONST = {
   HEARTH_BUNDLE = 250,    -- yards, tâches ramenées en paquet après un retour par la pierre (autour de l'auberge)
   HEARTH_BINDS = 2,       -- liaisons au plus par chapitre (deuxième liaison quand le hub change)
   HEARTH_CD = 3600,       -- s de recharge de la pierre de foyer
+  -- chapitres suivants du parcours vus par le choix des liaisons (sim.planHearth, opts.lookahead de build.lua) ;
+  -- ROUTEBUILDER_HEARTH_LOOKAHEAD=0 : liaisons choisies sur le seul chapitre (ancien calcul)
+  HEARTH_LOOKAHEAD = 2,
   HEARTH_CAST = 10,       -- s d'incantation
   FLY_RATIO = 0.7,        -- vol retenu s'il coûte moins de 70 % de la marche
   LEVEL_RANGE = 3,        -- niveaux de quête acceptés autour de la tranche du chapitre
@@ -135,11 +143,27 @@ local function regionOf(p)
 end
 sim.regionOf = regionOf
 
--- Temps de marche ; FAR_PENALTY entre deux régions (autre continent, montagnes, tronc de Teldrassil).
-local function walk(a, b)
+-- Vitesse de déplacement (yards/s) du personnage simulé : à pied (WALK), puis à monture selon son niveau
+-- (MOUNT). Toujours à pied avec ROUTEBUILDER_NO_MOUNT=1 (sim.noMount).
+do
+  local v = os.getenv("ROUTEBUILDER_NO_MOUNT")
+  sim.noMount = v ~= nil and v ~= "" and v ~= "0"
+end
+function sim.walkSpeed(state)
+  local mult = 1
+  if not sim.noMount then
+    local level = state and state.level or 1
+    for _, m in ipairs(C.MOUNT) do if level >= m.level then mult = m.mult end end
+  end
+  return C.WALK * mult
+end
+
+-- Temps de trajet à la vitesse `speed` (WALK par défaut) ; FAR_PENALTY entre deux régions (autre
+-- continent, montagnes, tronc de Teldrassil).
+local function walk(a, b, speed)
   local d = yards(a, b)
   if d == math.huge or regionOf(a) ~= regionOf(b) then return C.FAR_PENALTY end
-  return d / C.WALK
+  return d / (speed or C.WALK)
 end
 sim.walk = walk
 
@@ -185,6 +209,9 @@ end
 
 local function makeCtx(D, W, plan, state, opts)
   local ctx = { D = D, W = W, plan = plan, state = state, opts = opts or {} }
+  -- vitesse au début du chapitre (choix des quêtes, ordonnancement, liaisons) ; les trajets simulés
+  -- (sim.travel) suivent le niveau du moment
+  ctx.speed = sim.walkSpeed(state)
   ctx.faction = plan.faction
   ctx.letter = plan.faction == "Horde" and "H" or "A"
   ctx.races = plan.races or factionRaces(plan.faction)
@@ -878,6 +905,7 @@ local function analyse(ctx, q, classMode)
     local merged = false
     for _, g in ipairs(groups) do
       if yards(g.pos, s.pos) <= C.MERGE_SITES then
+        -- marche entre sites fusionnés (au plus MERGE_SITES yards) : à pied, sans monture (combats à pied)
         g.dur = g.dur + s.dur + yards(g.pos, s.pos) / C.WALK
         for _, k in ipairs(s.kills) do g.kills[#g.kills + 1] = k end
         for _, o in ipairs(s.objs) do g.objs[#g.objs + 1] = o end
@@ -1058,18 +1086,18 @@ function sim.weaveClassQuests(ctx, steps, report)
           local iA, dA = nearestStep(info.A, from)
           local cur, ok = iA, iA ~= nil
           if ok then
-            detour = detour + 2 * dA / C.WALK
+            detour = detour + 2 * dA / ctx.speed
             for k, site in ipairs(info.sites or {}) do
               local i, d = nearestStep(site.pos, cur)
               if not i then ok = false; break end
-              detour = detour + 2 * d / C.WALK + site.dur
+              detour = detour + 2 * d / ctx.speed + site.dur
               legs[#legs + 1] = { at = i, site = site, k = k }
               cur = i
             end
           end
           local iT, dT
           if ok then iT, dT = nearestStep(info.T, cur); ok = iT ~= nil end
-          if ok then detour = detour + 2 * dT / C.WALK end
+          if ok then detour = detour + 2 * dT / ctx.speed end
           local room = ok and logRoom(classes, iA, iT)
           if not ok or detour > C.CLASS_MAX_DETOUR or not room then
             report.classSkipped[#report.classSkipped + 1] = { id = q.id, name = q.name, classes = classes,
@@ -1186,22 +1214,22 @@ local function killXP(level, kills)
   return total
 end
 
-local function isolated(info, hubs)
+local function isolated(info, hubs, speed)
   local t = 0
   local hs = nearestHub(hubs, info.A)
   local pos = hs and hs.pos or info.A
-  t = t + walk(pos, info.A) + C.QUEST_ACTION
+  t = t + walk(pos, info.A, speed) + C.QUEST_ACTION
   if info.itemStart then t = t + sim.starterCost(info.itemStart) * C.KILL_TIME end
   pos = info.A
   for _, s in ipairs(info.sites or {}) do
-    t = t + walk(pos, s.pos) + s.dur
+    t = t + walk(pos, s.pos, speed) + s.dur
     pos = s.pos
   end
   if info.T then
-    t = t + walk(pos, info.T) + C.QUEST_ACTION
+    t = t + walk(pos, info.T, speed) + C.QUEST_ACTION
     if not info.exit then
       local ht = nearestHub(hubs, info.T)
-      if ht then t = t + walk(info.T, ht.pos) end
+      if ht then t = t + walk(info.T, ht.pos, speed) end
     end
   end
   return t
@@ -1467,7 +1495,7 @@ function sim.chapter(D, W, plan, state, opts)
     if info.itemStart then kills[#kills + 1] = { info.itemStart.level, info.itemStart.kills } end
     info.kills = kills
     info.value = xpm.questXP(D, q, state.level) + killXP(state.level, kills)
-    info.time = isolated(info, hubs)
+    info.time = isolated(info, hubs, ctx.speed)
     info.isolatedTime = info.time
     raw[#raw + 1] = info.value / math.max(info.time, 1)
   end
@@ -1515,7 +1543,7 @@ function sim.chapter(D, W, plan, state, opts)
           if d < best then best = d end
         end
       end
-      return best == math.huge and 0 or 2 * best / C.WALK
+      return best == math.huge and 0 or 2 * best / ctx.speed
     end
     local m = 2 * C.QUEST_ACTION
     if info.itemStart then m = m + sim.starterCost(info.itemStart) * C.KILL_TIME end
@@ -1530,7 +1558,7 @@ function sim.chapter(D, W, plan, state, opts)
   for _, info in ipairs(live) do
     local q = info.q
     local bonusSec = 0
-    if (q.breadcrumbFor or info.exit) and info.T then bonusSec = bonusSec + math.min(walk(info.A, info.T), C.BONUS_CAP) end
+    if (q.breadcrumbFor or info.exit) and info.T then bonusSec = bonusSec + math.min(walk(info.A, info.T, ctx.speed), C.BONUS_CAP) end
     if info.carry then bonusSec = bonusSec + C.CARRY_BONUS end
     -- mène près d'un maître de vol inconnu
     for _, fm in ipairs(fms) do
@@ -1755,8 +1783,8 @@ function sim.chapter(D, W, plan, state, opts)
     if info.timed and not info.dungeonOnly and not info.itemStart then
       -- prise, objectifs et rendu d'une traite : une seule tâche de A à T
       local dur, pos = 2 * C.QUEST_ACTION, info.A
-      for _, s in ipairs(info.sites or {}) do dur = dur + walk(pos, s.pos) + s.dur; pos = s.pos end
-      dur = dur + walk(pos, info.T)
+      for _, s in ipairs(info.sites or {}) do dur = dur + walk(pos, s.pos, ctx.speed) + s.dur; pos = s.pos end
+      dur = dur + walk(pos, info.T, ctx.speed)
       local c = addTask({ id = "C" .. q.id, kind = "C", q = q.id, pos = info.A, endPos = info.T, dur = dur,
         info = info, after = {}, final = info.exit or nil })
       taskOf["A" .. q.id], taskOf["T" .. q.id] = c, c
@@ -1938,11 +1966,12 @@ function sim.chapter(D, W, plan, state, opts)
       return sec
     end
   end
-  local ordered, orderIssues = orderm.build(tasks, cur, walk, { logCap = ctx.logCap, initialLog = initialLog, finish = finish,
+  local speed = ctx.speed
+  local ordered, orderIssues = orderm.build(tasks, cur, function(a, b) return walk(a, b, speed) end, { logCap = ctx.logCap, initialLog = initialLog, finish = finish,
     levelXP = xpm.LEVEL_XP, level = state.level, xp = state.xp, maxSegment = 6, grindCost = grindCost,
     -- ROUTEBUILDER_NO_SWEEP=1 : sans balayage (comparaison avant / après dans les rapports)
     sweep = not os.getenv("ROUTEBUILDER_NO_SWEEP")
-      and { hub = C.SWEEP_HUB / C.WALK, turnin = C.SWEEP_TURNIN / C.WALK, area = C.SWEEP_AREA / C.WALK } or nil,
+      and { hub = C.SWEEP_HUB / speed, turnin = C.SWEEP_TURNIN / speed, area = C.SWEEP_AREA / speed } or nil,
     anneal = ctx.opts.anneal ~= false, seed = sim.seedOf(plan.id), T0 = 200, annealIters = 100 * #tasks * #tasks, annealMax = 1500000 })
   for _, msg in ipairs(orderIssues or {}) do ctx.warnings[#ctx.warnings + 1] = "ordering: " .. msg end
   -- contraintes de l'ordonnancement, pour expliquer les éléments du contrôle qualité
@@ -1951,13 +1980,22 @@ function sim.chapter(D, W, plan, state, opts)
   local orderOpts = { logCap = ctx.logCap, initialLog = initialLog, ids = orderIds, levelXP = xpm.LEVEL_XP,
                       level = state.level, xp = state.xp }
 
+  -- séquence ordonnée avant les liaisons, gardée (allégée) pour l'anticipation des liaisons des chapitres
+  -- précédents au second passage de build.lua (opts.lookahead de sim.planHearth)
+  do
+    local slim, slimHubs = {}, {}
+    for i, t in ipairs(ordered) do slim[i] = { id = t.id, pos = t.pos, endPos = t.endPos, dur = t.dur } end
+    for i, h in ipairs(hubs) do slimHubs[i] = { pos = h.pos } end
+    report.hearthLook = { entry = cur and { cur.m, cur.x, cur.y }, hubs = slimHubs, tasks = slim, speed = ctx.speed }
+  end
   -- 7. Pierre de foyer : liaisons (au plus HEARTH_BINDS) choisies sur le coût réel du trajet avec la
-  -- pierre, puis retours en paquet (tâches de l'auberge ramenées après un retour par la pierre)
+  -- pierre, puis retours en paquet (tâches de l'auberge ramenées après un retour par la pierre) ; avec les
+  -- chapitres suivants en vue quand build.lua les donne (opts.lookahead)
   local hearthBinds
   ordered, hearthBinds = sim.planHearth(ctx, ordered, hubs, cur, finish, {
     logCap = ctx.logCap, initialLog = initialLog, ids = orderIds, levelXP = xpm.LEVEL_XP,
     level = state.level, xp = state.xp, grindCost = grindCost and function(l, x, target)
-      return math.floor(grindCost(l, x, target) * 100 + 0.5) end or nil })
+      return math.floor(grindCost(l, x, target) * 100 + 0.5) end or nil, lookahead = ctx.opts.lookahead })
   report.hearthPlan = hearthBinds.summary
 
   -- 8. Marche de la route : logistique + XP
@@ -2231,8 +2269,24 @@ function sim.chapter(D, W, plan, state, opts)
   end
   if finish then cur = sim.travel(ctx, steps, cur, finish, fms) end
 
-  -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif
-  if state.level < plan.maxLevel then
+  -- 9. Niveau manquant : tuer des mobs au dernier site d'objectif.
+  -- Chapitre qui finit à l'entrée d'un donjon (plan.grindCap, mode « Donjons ») : pas de farm quand le niveau
+  -- minimal du donjon est déjà atteint (plan.grindFloor) et qu'il faudrait plus de plan.grindCap mobs ; le
+  -- donjon et ses quêtes donnent cette XP (AD_09 demandait ~430 mobs avant la Cité de Dalaran).
+  local skipGrind = false
+  if plan.grindCap and state.level < plan.maxLevel and state.level >= (plan.grindFloor or plan.maxLevel) then
+    local probe, n = { level = state.level, xp = state.xp }, 0
+    while probe.level < plan.maxLevel and n <= plan.grindCap do
+      xpm.addXP(probe, math.max(xpm.mobXP(probe.level, probe.level), 1))
+      n = n + 1
+    end
+    if n > plan.grindCap then
+      skipGrind = true
+      report.grindSkipped = ("level %d reached for the dungeon, %d+ mobs to %d left to the instance")
+        :format(state.level, plan.grindCap, plan.maxLevel)
+    end
+  end
+  if state.level < plan.maxLevel and not skipGrind then
     local mobLevel = state.level
     if lastSite and lastSite.kills[1] then mobLevel = lastSite.kills[1][1] end
     local grind = sim.grindSite(ctx, cur, state.level)
@@ -2519,24 +2573,46 @@ end
 -- tâches faites près de l'auberge sont ramenées juste après un retour par la pierre quand le coût baisse,
 -- et le plan est choisi à nouveau. Renvoie la séquence et { [taskId] = auberge } (liaison après la tâche),
 -- avec `summary` (texte du rapport).
+--   fopts.lookahead = { { entry = { m, x, y }, hubs = { { pos }, ... }, tasks = séquence, speed }, ... } :
+--   chapitres suivants du parcours (au plus HEARTH_LOOKAHEAD), tels que simulés au premier passage de
+--   build.lua. Leurs hubs donnent aussi des auberges candidates (une auberge passée dans ce chapitre qui sert
+--   au suivant). Chaque plan coûte alors en plus, pour chaque chapitre suivant, order.hearthCost de sa
+--   séquence avec l'auberge liée en fin de ce chapitre (sans nouvelle liaison) et la recharge qui reste.
 function sim.planHearth(ctx, ordered, hubs, start, finish, fopts)
   local state = ctx.state
-  local function cs(a, b) return math.floor(walk(a, b) * 100 + 0.5) end
+  local speed = ctx.speed or sim.walkSpeed(state)
+  local function csAt(sp) return function(a, b) return math.floor(walk(a, b, sp) * 100 + 0.5) end end
+  local cs = csAt(speed)
   local bound = state.hearth and mkPos(ctx.W, state.hearth[1], state.hearth[2], state.hearth[3])
   local o = { start = start, finish = finish, dist = cs, inn = bound,
     ready = math.floor(((state.hearthReadyAt or 0) - (state.time or 0)) * 100 + 0.5),
     cd = C.HEARTH_CD * 100, use = (C.HEARTH_CAST + C.HEARTH_PENALTY) * 100,
     real = (C.HEARTH_CAST + C.HEARTH_LOAD) * 100, bindDur = C.QUEST_ACTION * 100,
     dur = function(t) return math.floor((t.dur or 0) * 100 + 0.5) end,
-    radius = math.floor(C.HEARTH_BUNDLE / C.WALK * 100 + 0.5) }
+    radius = math.floor(C.HEARTH_BUNDLE / speed * 100 + 0.5) }
+  -- chapitres suivants en vue (fopts.lookahead)
+  local look = {}
+  for _, L in ipairs(fopts and fopts.lookahead or {}) do
+    if #look >= C.HEARTH_LOOKAHEAD then break end
+    local entry = L.entry and mkPos(ctx.W, L.entry[1], L.entry[2], L.entry[3])
+    if not entry or not L.tasks then break end
+    look[#look + 1] = { entry = entry, tasks = L.tasks, hubs = L.hubs or {}, dist = csAt(L.speed or speed) }
+  end
+  local innHubs = hubs
+  if #look > 0 then
+    innHubs = {}
+    for _, h in ipairs(hubs) do innHubs[#innHubs + 1] = h end
+    for _, L in ipairs(look) do for _, h in ipairs(L.hubs) do innHubs[#innHubs + 1] = h end end
+  end
   local inns = {}
-  for _, p in ipairs(sim.hearthInns(ctx, hubs)) do
+  for _, p in ipairs(sim.hearthInns(ctx, innHubs)) do
     if not (bound and yards(bound, p) <= C.HEARTH_NEAR) then inns[#inns + 1] = p end
   end
   -- trajet vers le chapitre suivant (opts.nextEntry) depuis la fin du chapitre, avec la pierre liée et
   -- disponible ou non à ce moment : une liaison sert aussi au départ du chapitre suivant (sim.route)
   local nextPos = ctx.opts.nextEntry and mkPos(ctx.W, ctx.opts.nextEntry[1], ctx.opts.nextEntry[2], ctx.opts.nextEntry[3])
   local fms = sim.flightMasters(ctx)
+  -- Renvoie aussi, si la pierre sert à ce trajet, le temps du trajet après le retour (centièmes de seconde).
   local function endTravel(seq, fin)
     if not nextPos or not fin.pos then return 0 end
     if regionOf(fin.pos) == regionOf(nextPos) and yards(fin.pos, nextPos) <= 1500 then return 0 end
@@ -2549,9 +2625,27 @@ function sim.planHearth(ctx, ordered, hubs, start, finish, fopts)
     local legs = sim.route(ctx, fin.pos, nextPos, fms)
     state.hearth, state.hearthReadyAt, state.time, state.knownTaxi = saved[1], saved[2], saved[3], saved[4]
     if not legs then return C.TRANSIT * 100 end
-    local sec = 0
-    for _, l in ipairs(legs) do sec = sec + (l.time or 0) end
-    return math.floor(sec * 100 + 0.5)
+    local sec, after = 0, nil
+    for _, l in ipairs(legs) do
+      sec = sec + (l.time or 0)
+      if after then after = after + (l.time or 0) end
+      if l.kind == "hearth" then after = 0 end
+    end
+    return math.floor(sec * 100 + 0.5), after and math.floor(after * 100 + 0.5)
+  end
+  -- coût des chapitres suivants avec l'auberge liée en fin de chapitre (fin) et la recharge restante
+  local function lookCost(fin, travel, hearthAfter)
+    local total = 0
+    local ready = hearthAfter and math.max(0, o.cd - hearthAfter) or math.max(0, fin.ready - fin.time - travel)
+    for _, L in ipairs(look) do
+      local c, _, _, lf = orderm.hearthCost(L.tasks, { start = L.entry, dist = L.dist, inn = fin.inn, ready = ready,
+        cd = o.cd, use = o.use, real = o.real, bindDur = o.bindDur, dur = o.dur })
+      total = total + c
+      -- chapitre suivant de l'anticipation : le trajet entre les deux chapitres n'est pas compté
+      -- (approximation : la recharge écoulée est sous-estimée)
+      ready = math.max(0, lf.ready - lf.time)
+    end
+    return total
   end
   -- meilleur plan sur une séquence ; `keep` : plan déjà retenu (liaisons par tâche), comparé aussi
   local function best(seq, keep)
@@ -2575,7 +2669,9 @@ function sim.planHearth(ctx, ordered, hubs, start, finish, fopts)
     for _, pl in ipairs(plans) do
       o.binds = pl.binds
       local c, uses, _, fin = orderm.hearthCost(seq, o)
-      c = c + endTravel(seq, fin)
+      local travel, hearthAfter = endTravel(seq, fin)
+      c = c + travel
+      if #look > 0 then c = c + lookCost(fin, travel, hearthAfter) end
       if not pickCost or c < pickCost or (c == pickCost and pl.n < pick.n) then pick, pickCost, pickUses = pl, c, uses end
     end
     return pick, pickCost, pickUses
@@ -2601,8 +2697,9 @@ function sim.planHearth(ctx, ordered, hubs, start, finish, fopts)
       names[#names + 1] = ("%s after task %d"):format(n and n.name or "inn", k)
     end
   end
-  out.summary = ("%s; %d return(s) planned, %d bundle(s)"):format(
-    #names > 0 and ("bound to " .. table.concat(names, ", then ")) or "no new bind", uses or 0, bundles)
+  out.summary = ("%s; %d return(s) planned, %d bundle(s)%s"):format(
+    #names > 0 and ("bound to " .. table.concat(names, ", then ")) or "no new bind", uses or 0, bundles,
+    #look > 0 and ("; next %d chapter(s) in view"):format(#look) or "")
   return ordered, out
 end
 
@@ -2623,13 +2720,13 @@ local function walkLeg(ctx, steps, a, b, fms)
   local pos = a
   for _, p in ipairs(passing) do
     if not state.knownTaxi[p.fm.node] then
-      state.time = state.time + yards(pos, p.fm.pos) / C.WALK + C.QUEST_ACTION
+      state.time = state.time + yards(pos, p.fm.pos) / sim.walkSpeed(state) + C.QUEST_ACTION
       steps[#steps + 1] = { "fp", p.fm.pos.m, round2(p.fm.pos.x), round2(p.fm.pos.y) }
       state.knownTaxi[p.fm.node] = true
       pos = p.fm.pos
     end
   end
-  state.time = state.time + yards(pos, b) / C.WALK
+  state.time = state.time + yards(pos, b) / sim.walkSpeed(state)
   return b
 end
 
@@ -2666,6 +2763,7 @@ function sim.route(ctx, cur, dest, fms)
     local h = mkPos(W, state.hearth[1], state.hearth[2], state.hearth[3])
     if h then inn = { pos = h, kind = "inn" }; nodes[#nodes + 1] = inn end
   end
+  local speed = sim.walkSpeed(state)
   local dist, prev, done = {}, {}, {}
   dist[1] = 0
   while true do
@@ -2685,7 +2783,7 @@ function sim.route(ctx, cur, dest, fms)
         local nv = nodes[v]
         if regionOf(nu.pos) == regionOf(nv.pos) then
           local d = yards(nu.pos, nv.pos)
-          if d < math.huge then relax(v, d / C.WALK, { kind = "walk", time = d / C.WALK }) end
+          if d < math.huge then relax(v, d / speed, { kind = "walk", time = d / speed }) end
         end
         if nu.kind == "fm" and nv.kind == "fm" and nu.fm.node ~= nv.fm.node and nu.pos.c == nv.pos.c then
           local ft = W.flightTime(nu.fm.node, nv.fm.node, state.knownTaxi)
@@ -2716,7 +2814,7 @@ end
 function sim.travel(ctx, steps, cur, dest, fms)
   local state, W = ctx.state, ctx.W
   if not dest or not cur then return dest or cur end
-  if regionOf(cur) == regionOf(dest) and yards(cur, dest) / C.WALK <= C.ROUTE_MIN then
+  if regionOf(cur) == regionOf(dest) and yards(cur, dest) / sim.walkSpeed(state) <= C.ROUTE_MIN then
     return walkLeg(ctx, steps, cur, dest, fms)
   end
   local legs = sim.route(ctx, cur, dest, fms)

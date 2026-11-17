@@ -6,7 +6,8 @@ local addonName, Q = ...
 --   id, section, category ;
 --   type : "toggle" (case à cocher), "select" (choix), "slider" (curseur), "action" (bouton),
 --          "keybind" (raccourci du jeu, en lecture), "info" (texte), "hidden" (valeur de profil
---          sans contrôle, par exemple la position du suivi) ;
+--          sans contrôle, par exemple la position du suivi) ; position = true : valeur lue et
+--          contrôlée comme une position { point, point relatif, x, y } ;
 --   label, tip : clés de Q.L (texte du contrôle, infobulle de l'icône « i ») ;
 --   keywords : mots de recherche en plus (français et anglais, jamais traduits) ;
 --   path : chemin de Q.Settings (lu et écrit par Q.Settings:Get/Set, donc enregistré dans le
@@ -27,46 +28,51 @@ local Schema = {}
 Q.OptionsSchema = Schema
 
 ---------------------------------------------------------------------------
--- Sections (ordre de la barre latérale) et catégories (ordre dans la section)
+-- Sections (ordre de la barre latérale) et catégories (ordre dans la section). panel : nom d'un panneau
+-- de Q.UI affiché à la place de la liste (méthodes Attach(parent), Detach()) ; icon : icône devant le
+-- nom, texture de Interface\Icons, ou "class" pour l'icône de la classe du joueur.
 ---------------------------------------------------------------------------
 Schema.SECTIONS = {
-  { id = "route", label = "OPT_SEC_ROUTE", categories = {
+  { id = "route", label = "OPT_SEC_ROUTE", icon = "INV_Misc_Map_01", categories = {
     { id = "path", label = "OPT_CAT_ROUTE_PATH" },
     { id = "progress", label = "OPT_CAT_ROUTE_PROGRESS" } } },
-  { id = "navigation", label = "OPT_SEC_NAV", categories = {
+  { id = "navigation", label = "OPT_SEC_NAV", icon = "Ability_Tracking", categories = {
     { id = "routing", label = "OPT_CAT_NAV_ROUTING" },
     { id = "display", label = "OPT_CAT_NAV_DISPLAY" },
     { id = "flights", label = "OPT_CAT_NAV_FLIGHTS" } } },
-  { id = "automation", label = "OPT_SEC_AUTO", categories = {
+  { id = "automation", label = "OPT_SEC_AUTO", icon = "INV_Misc_Gear_01", categories = {
     { id = "quests", label = "OPT_CAT_AUTO_QUESTS" },
     { id = "merchants", label = "OPT_CAT_AUTO_MERCHANTS" },
     { id = "targeting", label = "OPT_CAT_AUTO_TARGETING" } } },
-  { id = "loot", label = "OPT_SEC_LOOT", categories = {
+  { id = "loot", label = "OPT_SEC_LOOT", icon = "INV_Misc_Bag_08", categories = {
     { id = "auto", label = "OPT_CAT_LOOT_AUTO" },
     { id = "profile", label = "OPT_CAT_LOOT_PROFILE" } } },
-  { id = "class", label = "OPT_SEC_CLASS", categories = {
+  -- Classe : panneau propre (UI/ClassPanel.lua, Talents et Macros) à la place de la liste des options.
+  { id = "classguide", label = "OPT_SEC_CLASSGUIDE", panel = "ClassPanel", icon = "class", categories = {} },
+  { id = "class", label = "OPT_SEC_CLASS", icon = "INV_Misc_Book_09", categories = {
     { id = "spells", label = "OPT_CAT_CLASS_SPELLS" },
     { id = "professions", label = "OPT_CAT_CLASS_PROFESSIONS" },
     { id = "dungeons", label = "OPT_CAT_CLASS_DUNGEONS" } } },
-  { id = "map", label = "OPT_SEC_MAP", categories = {
+  { id = "map", label = "OPT_SEC_MAP", icon = "INV_Misc_Spyglass_03", categories = {
     { id = "worldmap", label = "OPT_CAT_MAP_WORLD" },
     { id = "markers", label = "OPT_CAT_MAP_MARKERS" },
     { id = "minimap", label = "OPT_CAT_MAP_MINIMAP" } } },
-  { id = "tracker", label = "OPT_SEC_TRACKER", categories = {
+  { id = "tracker", label = "OPT_SEC_TRACKER", icon = "INV_Misc_Note_01", categories = {
     { id = "layout", label = "OPT_CAT_TRACKER_LAYOUT" },
     { id = "content", label = "OPT_CAT_TRACKER_CONTENT" } } },
-  { id = "theme", label = "OPT_SEC_THEME", categories = {
-    { id = "theme", label = "OPT_CAT_THEME_THEME" },
-    { id = "background", label = "OPT_CAT_THEME_BACKGROUND" } } },
-  { id = "comfort", label = "OPT_SEC_COMFORT", categories = {
+  { id = "theme", label = "OPT_SEC_THEME", icon = "INV_Misc_Gem_Variety_01", categories = {
+    { id = "theme", label = "OPT_CAT_THEME_COLORS" },
+    { id = "arrow", label = "OPT_CAT_THEME_ARROW" },
+    { id = "background", label = "OPT_CAT_THEME_LOOK" },
+    { id = "objectives", label = "OPT_CAT_THEME_OBJECTIVES" } } },
+  { id = "comfort", label = "OPT_SEC_COMFORT", icon = "INV_Misc_Rune_01", categories = {
     { id = "hearth", label = "OPT_CAT_COMFORT_HEARTH" },
     { id = "warnings", label = "OPT_CAT_COMFORT_WARNINGS" } } },
-  { id = "tools", label = "OPT_SEC_TOOLS", categories = {
-    { id = "wizards", label = "OPT_CAT_TOOLS_WIZARDS" },
+  { id = "tools", label = "OPT_SEC_TOOLS", icon = "INV_Misc_Wrench_01", categories = {
     { id = "measures", label = "OPT_CAT_TOOLS_MEASURES" },
     { id = "diagnostics", label = "OPT_CAT_TOOLS_DIAG" },
     { id = "versions", label = "OPT_CAT_TOOLS_VERSIONS" } } },
-  { id = "profiles", label = "OPT_SEC_PROFILES", categories = {
+  { id = "profiles", label = "OPT_SEC_PROFILES", icon = "INV_Scroll_03", categories = {
     { id = "active", label = "OPT_CAT_PROFILES_ACTIVE" },
     { id = "manage", label = "OPT_CAT_PROFILES_MANAGE" },
     { id = "share", label = "OPT_CAT_PROFILES_SHARE" } } },
@@ -77,10 +83,12 @@ Schema.SECTIONS = {
 -- de chemin de réglage, il n'est donc ni exporté ni changé par un changement de profil.
 Schema.CHAR_STATE = {
   guideId = true, manual = true, skipped = true, inserted = true, classQuests = true, telemetry = true,
+  pace = true,          -- Engine/Pace.lua
   wizardDone = true, specRoleAnswered = true,
   routeChoices = true, routeChoiceLast = true,
   detour = true,        -- Engine/Detour.lua
   dungeonMode = true,   -- Engine/DungeonMode.lua (le choix du mode a son entrée : route.dungeonMode)
+  auction = true,       -- Engine/AuctionItems.lua (cases décochées, alertes masquées, messages donnés)
 }
 
 -- Réglages de Settings.defaults dont le contrôle est ailleurs que dans les Options (sans entrée au schéma).
@@ -105,6 +113,18 @@ local function detected()
   if Q.Nav and Q.Nav.Detect then ok, d = pcall(Q.Nav.Detect, Q.Nav) end
   return ok and type(d) == "table" and d or { native = true }
 end
+
+-- Routeur et affichage effectifs (Q.Nav:Active) : style de trajet et ligne n'ont de sens qu'avec le
+-- routeur Questify, le verrou de la flèche que si elle s'affiche (ni SPF ni autre affichage).
+local function navActive()
+  local N = Q.Nav
+  if not (N and N.Active) then return nil, nil end
+  local ok, router, display = pcall(N.Active, N)
+  if not ok then return nil, nil end
+  return router, display
+end
+local function questifyRouter() return (navActive()) == "questify" end
+local function arrowShown() return select(2, navActive()) == "arrow" end
 
 ---------------------------------------------------------------------------
 -- Actions (appelées par la fenêtre ; chacune protégée par Q.SafeCall côté fenêtre)
@@ -192,24 +212,68 @@ add({ id = "routeClicks", section = "route", category = "progress", type = "info
   label = "OPT_INFO_ROUTE_CLICKS", keywords = "passer etape revenir skip back clic droit right click" })
 
 -- Navigation --------------------------------------------------------------
-add({ id = "nav.routing", section = "navigation", category = "routing", type = "toggle", path = "nav.routing",
-  label = "OPT_NAV_ROUTING", tip = "OPT_TIP_NAV_ROUTING",
-  keywords = "itineraire trajet shortestpath chemin vols bateaux portails route planning path",
-  enabled = function() return detected().shortestpath == true end,
-  disabledText = "OPT_NOT_INSTALLED" })
-add({ id = "nav.display", section = "navigation", category = "display", type = "select", path = "nav.display",
-  label = "OPT_NAV_DISPLAY", tip = "OPT_TIP_NAV_DISPLAY", style = "radio",
-  keywords = "repere marqueur fleche tomtom waypointui waypoint arrow marker fleche navigation",
-  values = { "native", "tomtom", "waypointui" },
+add({ id = "nav.router", section = "navigation", category = "routing", type = "select", path = "nav.router",
+  label = "OPT_NAV_ROUTER", tip = "OPT_TIP_NAV_ROUTER", style = "radio",
+  keywords = "routeur itineraire trajet calcul chemin vols bateaux portails shortestpath spf aucun "
+    .. "router route planning path planner flights boats portals none azerothgps gps",
+  values = { "questify", "spf", "azerothgps", "none" },
   choices = function()
     local d = detected()
     local Lx = L()
     return {
-      { value = "native", text = Lx.UI_NAV_NATIVE },
-      { value = "tomtom", text = Lx.UI_NAV_TOMTOM, disabled = not d.tomtom },
-      { value = "waypointui", text = Lx.UI_NAV_WAYPOINTUI, disabled = not d.waypointui },
+      { value = "questify", text = Lx.NAV_ROUTER_QUESTIFY, disabled = d.questify == false },
+      { value = "spf", text = Lx.NAV_ROUTER_SPF, disabled = not d.shortestpath },
+      { value = "azerothgps", text = Lx.NAV_ROUTER_AZEROTHGPS, disabled = not d.azerothgps },
+      { value = "none", text = Lx.NAV_ROUTER_NONE },
     }
   end })
+add({ id = "nav.routeStyle", section = "navigation", category = "routing", type = "select",
+  path = "nav.routeStyle", label = "OPT_NAV_ROUTE_STYLE", tip = "OPT_TIP_NAV_ROUTE_STYLE", style = "radio",
+  keywords = "style trajet sur securite rapide optimise routes chemins villes hostiles danger route style safe fastest optimized roads hostile",
+  values = { "fastest", "optimized", "safe" },
+  enabled = questifyRouter,
+  choices = function()
+    local Lx = L()
+    return {
+      { value = "fastest", text = Lx.NAV_STYLE_FASTEST },
+      { value = "optimized", text = Lx.NAV_STYLE_OPTIMIZED },
+      { value = "safe", text = Lx.NAV_STYLE_SAFE },
+    }
+  end })
+add({ id = "nav.display", section = "navigation", category = "display", type = "select", path = "nav.display",
+  label = "OPT_NAV_DISPLAY", tip = "OPT_TIP_NAV_DISPLAY", style = "radio",
+  keywords = "repere marqueur fleche tomtom waypointui waypoint arrow marker fleche navigation affichage display",
+  values = { "arrow", "waypointui", "tomtom", "native" },
+  choices = function()
+    local d = detected()
+    local Lx = L()
+    return {
+      { value = "arrow", text = Lx.UI_NAV_ARROW },
+      { value = "waypointui", text = Lx.UI_NAV_WAYPOINTUI, disabled = not d.waypointui },
+      { value = "tomtom", text = Lx.UI_NAV_TOMTOM, disabled = not d.tomtom },
+      { value = "native", text = Lx.UI_NAV_NATIVE },
+    }
+  end })
+add({ id = "nav.lineStyle", section = "navigation", category = "display", type = "select",
+  path = "nav.lineStyle", label = "OPT_NAV_LINE_STYLE", tip = "OPT_TIP_NAV_LINE_STYLE", style = "radio",
+  keywords = "ligne trajet points pointilles trait tirets carte minicarte line style dots solid dashes map minimap",
+  values = { "dots", "solid", "dashes" },
+  enabled = questifyRouter,
+  choices = function()
+    local Lx = L()
+    return {
+      { value = "dots", text = Lx.NAV_LINE_DOTS },
+      { value = "solid", text = Lx.NAV_LINE_SOLID },
+      { value = "dashes", text = Lx.NAV_LINE_DASHES },
+    }
+  end })
+add({ id = "nav.arrowLocked", section = "navigation", category = "display", type = "toggle",
+  path = "nav.arrowLocked", label = "OPT_NAV_ARROW_LOCKED", tip = "OPT_TIP_NAV_ARROW_LOCKED",
+  keywords = "fleche verrouiller bloquer deplacer arrow lock move position", enabled = arrowShown })
+-- Flèche : affichage et couleur dans la section Thème (plus bas) ; ici seulement le verrou.
+-- position de la flèche Questify (UI/Arrow.lua) : { point, point relatif, x, y }, comme celle du suivi
+add({ id = "nav.arrowPos", section = "navigation", category = "display", type = "hidden", path = "nav.arrowPos",
+  position = true })
 add({ id = "autoFly", section = "navigation", category = "flights", type = "toggle", path = "autoFly",
   label = "COMFORT_OPT_AUTOFLY", tip = "OPT_TIP_AUTOFLY",
   keywords = "vol vols maitre de vol taxi griffon flight flights flight master" })
@@ -221,17 +285,50 @@ add({ id = "autoQuest", section = "automation", category = "quests", type = "tog
 add({ id = "sellJunk", section = "automation", category = "merchants", type = "toggle", path = "sellJunk",
   label = "UI_OPT_SELLJUNK", tip = "OPT_TIP_SELLJUNK",
   keywords = "vendre camelote gris blanc equipement marchand sell junk grey gray white gear vendor merchant" })
+add({ id = "auctionItems", section = "automation", category = "merchants", type = "toggle", path = "auctionItems",
+  label = "AH_OPT", tip = "OPT_TIP_AH",
+  keywords = "hotel des ventes hv encanteur acheter objets quete collecte auction house ah auctioneer buy items" })
 add({ id = "tracker.autoTarget", section = "automation", category = "targeting", type = "toggle",
   path = "tracker.autoTarget", label = "UI_OPT_AUTOTARGET", tip = "OPT_TIP_AUTOTARGET",
   keywords = "cibler ciblage touche crane monstre target targeting key skull monster" })
 add({ id = "keyAutoTarget", section = "automation", category = "targeting", type = "keybind",
   binding = "CLICK QuestifyAutoTarget:LeftButton", label = "OPT_KEY_AUTOTARGET", tip = "OPT_TIP_KEY_AUTOTARGET",
   keywords = "raccourci touche clavier ciblage keybind binding key shortcut target" })
+local function raidMarksOn() return Q.Settings:Get("raidMarks.enabled") == true end
+add({ id = "raidMarks.enabled", section = "automation", category = "targeting", type = "toggle",
+  path = "raidMarks.enabled", label = "OPT_RAIDMARKS", tip = "OPT_TIP_RAIDMARKS",
+  keywords = "marquer marque marques icone icones raid crane croix losange barre de nom monstre objectif touche "
+    .. "mark marks raid icon icons skull cross diamond nameplate monster objective key" })
+add({ id = "keyRaidMarks", section = "automation", category = "targeting", type = "keybind",
+  binding = "CLICK QuestifyMarkObjectives:LeftButton", label = "OPT_KEY_RAIDMARKS", tip = "OPT_TIP_KEY_RAIDMARKS",
+  keywords = "raccourci touche clavier marquer marques raid keybind binding key shortcut mark marks",
+  enabled = raidMarksOn })
+add({ id = "raidMarksMacro", section = "automation", category = "targeting", type = "action",
+  label = "OPT_RAIDMARKS_MACRO", tip = "OPT_TIP_RAIDMARKS_MACRO",
+  keywords = "macro marquer marques raid barre action creer mark marks action bar create",
+  run = function()
+    local R = ui("RaidMarks")
+    if R then R:CreateMacroAndTell() end
+  end })
+add({ id = "raidMarks.inGroup", section = "automation", category = "targeting", type = "toggle",
+  path = "raidMarks.inGroup", label = "OPT_RAIDMARKS_GROUP", tip = "OPT_TIP_RAIDMARKS_GROUP",
+  keywords = "groupe instance raid marques group marks", enabled = raidMarksOn })
 
 -- Butin -------------------------------------------------------------------
 add({ id = "autoReward", section = "loot", category = "auto", type = "toggle", path = "autoReward",
   label = "UI_OPT_AUTOREWARD", tip = "OPT_TIP_AUTOREWARD",
   keywords = "butin loot recompense reward choisir choix automatique objet item" })
+add({ id = "rewardPick", section = "loot", category = "auto", type = "select", style = "radio", path = "rewardPick",
+  label = "OPT_REWARD_PICK", tip = "OPT_TIP_REWARD_PICK",
+  keywords = "butin loot recompense reward choix automatique amelioration puissance prix vente cher upgrade power value price vendor",
+  values = { "upgrade", "value" },
+  choices = function()
+    local Lx = L()
+    return { { value = "upgrade", text = Lx.OPT_REWARD_PICK_UPGRADE }, { value = "value", text = Lx.OPT_REWARD_PICK_VALUE } }
+  end })
+add({ id = "rewardMarks", section = "loot", category = "auto", type = "toggle", path = "rewardMarks",
+  label = "OPT_REWARD_MARKS", tip = "OPT_TIP_REWARD_MARKS",
+  keywords = "butin loot recompense reward fleche piece marque icone amelioration prix arrow coin mark icon upgrade value" })
 add({ id = "upgradePopup", section = "loot", category = "auto", type = "toggle", path = "upgradePopup",
   label = "UI_OPT_UPGRADE", tip = "OPT_TIP_UPGRADE",
   keywords = "butin loot amelioration equipement upgrade gear annonce popup" })
@@ -261,6 +358,38 @@ add({ id = "lootSingle", section = "loot", category = "profile", type = "info", 
 add({ id = "trainerAlert", section = "class", category = "spells", type = "toggle", path = "trainerAlert",
   label = "UI_OPT_TRAINER", tip = "OPT_TIP_TRAINER",
   keywords = "maitre de classe entraineur sorts trainer spells class" })
+add({ id = "trainerPanel", section = "class", category = "spells", type = "toggle", path = "trainerPanel",
+  label = "RANKS_OPT_PANEL", tip = "RANKS_OPT_TIP_PANEL",
+  keywords = "maitre de classe panneau sorts prix rang icone trainer panel spells cost rank icon" })
+add({ id = "oldRanks", section = "class", category = "spells", type = "toggle", path = "oldRanks",
+  label = "RANKS_OPT_OLD", tip = "RANKS_OPT_TIP_OLD",
+  keywords = "barres action rang ancien remplacer mettre a jour action bar rank old upgrade replace" })
+add({ id = "oldRanksForget", section = "class", category = "spells", type = "action",
+  label = "RANKS_OPT_FORGET", tip = "RANKS_OPT_TIP_FORGET",
+  keywords = "barres action rang ignore oublier reproposer action bar rank ignored forget",
+  run = function()
+    if Q.ActionRanks then
+      Q.ActionRanks:ForgetIgnored()
+      Q:Print(Q.L.RANKS_FORGOTTEN)
+    end
+  end })
+add({ id = "classGuide.levelUp", section = "class", category = "spells", type = "toggle", path = "classGuide.levelUp",
+  label = "OPT_CLASSGUIDE_LEVELUP", tip = "OPT_TIP_CLASSGUIDE_LEVELUP",
+  keywords = "talent conseil niveau encart guide point talent advice level up box guide point" })
+add({ id = "openClassTalents", section = "class", category = "spells", type = "action",
+  label = "OPT_OPEN_TALENTS", tip = "OPT_TIP_OPEN_TALENTS",
+  keywords = "talents arbre specialisation guide build classicwowforever talent tree spec guide build",
+  run = function()
+    local P = ui("ClassPanel")
+    if P then P:Open("talents") end
+  end })
+add({ id = "openClassMacros", section = "class", category = "spells", type = "action",
+  label = "OPT_OPEN_MACROS", tip = "OPT_TIP_OPEN_MACROS",
+  keywords = "macros macro creer touche classicwowforever macros macro create key",
+  run = function()
+    local P = ui("ClassPanel")
+    if P then P:Open("macros") end
+  end })
 add({ id = "professions", section = "class", category = "professions", type = "action",
   label = "UI_OPT_PROFESSIONS", tip = "OPT_TIP_PROFESSIONS",
   keywords = "metiers metier minage herboristerie depecage cuisine professions profession mining herbalism",
@@ -292,6 +421,9 @@ add({ id = "openClassQuests", section = "class", category = "dungeons", type = "
 add({ id = "mapPins", section = "map", category = "worldmap", type = "toggle", path = "mapPins",
   label = "MAP_OPT_PINS", tip = "OPT_TIP_MAPPINS",
   keywords = "carte monde minicarte reperes epingles map world minimap pins markers" })
+add({ id = "zoneOverlay", section = "map", category = "worldmap", type = "toggle", path = "zoneOverlay",
+  label = "ZONE_OPT_OVERLAY", tip = "OPT_TIP_ZONE_OVERLAY",
+  keywords = "zone enveloppe contour carte minicarte cercle hull area outline map minimap" })
 add({ id = "nameplates", section = "map", category = "markers", type = "toggle", path = "nameplates",
   label = "UI_OPT_NAMEPLATES", tip = "OPT_TIP_NAMEPLATES",
   keywords = "barres de nom icone monstre objectif nameplates icon monster objective" })
@@ -318,20 +450,47 @@ add({ id = "tracker.nextSteps", section = "tracker", category = "layout", type =
   min = 0, max = 10, step = 1, integer = true,
   format = function(v) return tostring(math.floor((tonumber(v) or 0) + 0.5)) end,
   keywords = "suivi etapes suivantes nombre lignes tracker next steps count lines" })
-add({ id = "tracker.point", section = "tracker", category = "layout", type = "hidden", path = "tracker.point" })
+add({ id = "tracker.point", section = "tracker", category = "layout", type = "hidden", path = "tracker.point",
+  position = true })
 add({ id = "trackerResetPosition", section = "tracker", category = "layout", type = "action",
   label = "OPT_TRACKER_RESET_POS", tip = "OPT_TIP_TRACKER_RESET_POS",
   keywords = "suivi position replacer origine deplacer tracker reset position move",
   run = function() Q.Settings:Set("tracker.point", nil) end })
-add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "toggle",
-  path = "tracker.showMobs", label = "UI_OPT_SHOWMOBS", tip = "OPT_TIP_SHOWMOBS",
-  keywords = "suivi monstres liste tuer tracker monsters mobs list kill" })
+-- Ancien réglage des monstres du suivi, remplacé par tracker.objDetail (gardé pour les profils).
+add({ id = "tracker.showMobs", section = "tracker", category = "content", type = "hidden", path = "tracker.showMobs" })
+-- Objectifs de l'étape (Engine/Objectives.lua) : aussi choisis dans l'assistant, avec un aperçu.
+local objLayout = add({ id = "tracker.objLayout", section = "tracker", category = "content", type = "select", style = "dropdown",
+  path = "tracker.objLayout", label = "OPT_OBJ_LAYOUT", tip = "OPT_TIP_OBJ_LAYOUT",
+  keywords = "suivi objectifs mise en page liste barres quete tracker objectives layout list bars quest",
+  values = { "list", "bars", "quest" },
+  choices = function()
+    local l = L()
+    return { { value = "list", text = l.OBJ_LAYOUT_LIST }, { value = "bars", text = l.OBJ_LAYOUT_BARS },
+      { value = "quest", text = l.OBJ_LAYOUT_QUEST } }
+  end })
+local objDetail = add({ id = "tracker.objDetail", section = "tracker", category = "content", type = "select", style = "dropdown",
+  path = "tracker.objDetail", label = "OPT_OBJ_DETAIL", tip = "OPT_TIP_OBJ_DETAIL",
+  keywords = "suivi objectifs detail monstres distance compteur tracker objectives detail monsters mobs distance count",
+  values = { "count", "mobs", "distance" },
+  choices = function()
+    local l = L()
+    return { { value = "count", text = l.OBJ_DETAIL_COUNT }, { value = "mobs", text = l.OBJ_DETAIL_MOBS },
+      { value = "distance", text = l.OBJ_DETAIL_DISTANCE } }
+  end })
+add({ id = "tracker.hideBlizzard", section = "tracker", category = "content", type = "toggle",
+  path = "tracker.hideBlizzard", label = "OPT_TRACKER_HIDE_BLIZZARD", tip = "OPT_TIP_TRACKER_HIDE_BLIZZARD",
+  keywords = "suivi blizzard jeu objectifs masquer cacher objective tracker blizzard game hide" })
+-- Grisé tant que le suivi de Blizzard est masqué : le replier n'aurait aucun effet.
 add({ id = "tracker.foldBlizzard", section = "tracker", category = "content", type = "toggle",
   path = "tracker.foldBlizzard", label = "OPT_TRACKER_FOLD_BLIZZARD", tip = "OPT_TIP_TRACKER_FOLD_BLIZZARD",
+  enabled = function() return Q.Settings:Get("tracker.hideBlizzard") ~= true end,
   keywords = "suivi blizzard objectifs replier masquer cacher objective tracker blizzard fold collapse hide" })
 add({ id = "showXPRate", section = "tracker", category = "content", type = "toggle", path = "showXPRate",
   label = "COMFORT_OPT_XPRATE", tip = "OPT_TIP_XPRATE",
   keywords = "suivi experience xp heure niveau tracker xp per hour level rate" })
+add({ id = "showPace", section = "tracker", category = "content", type = "toggle", path = "showPace",
+  label = "PACE_OPT", tip = "OPT_TIP_PACE",
+  keywords = "suivi rythme avance retard route simulation temps tracker pace ahead behind route simulated time" })
 add({ id = "questItemButton", section = "tracker", category = "content", type = "toggle",
   path = "questItemButton", label = "UI_OPT_QUESTITEM", tip = "OPT_TIP_QUESTITEM",
   keywords = "objet de quete bouton utiliser quest item button use" })
@@ -340,9 +499,13 @@ add({ id = "keyQuestItem", section = "tracker", category = "content", type = "ke
   keywords = "raccourci touche clavier objet de quete keybind binding key shortcut quest item" })
 
 -- Thème -------------------------------------------------------------------
+-- Section dessinée par UI/Options.lua avec l'aperçu en direct à droite (UI/ThemePreview.lua).
+add({ id = "theme.followRace", section = "theme", category = "theme", type = "toggle", path = "theme.followRace",
+  label = "OPT_THEME_FOLLOW_RACE", tip = "OPT_TIP_THEME_FOLLOW_RACE",
+  keywords = "theme race personnage automatique suivre faction follow race character automatic" })
 add({ id = "tracker.theme", section = "theme", category = "theme", type = "select", style = "themes",
   path = "tracker.theme", label = "OPT_THEME", tip = "OPT_TIP_THEME",
-  keywords = "theme apparence fond parchemin noir transparent fondu gris style look background parchment dark",
+  keywords = "theme apparence couleurs alliance horde humain nain elfe gnome orc troll tauren mort-vivant skyborne look colours colors human dwarf night elf undead",
   values = function()
     local out = {}
     for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do out[#out + 1] = th.key end
@@ -350,12 +513,49 @@ add({ id = "tracker.theme", section = "theme", category = "theme", type = "selec
   end,
   choices = function()
     local out = {}
-    for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do out[#out + 1] = { value = th.key, text = th.label } end
+    for _, th in ipairs(Q.Themes and Q.Themes:List() or {}) do
+      out[#out + 1] = { value = th.key, text = th.label, group = th.group }
+    end
     return out
   end })
+add({ id = "arrow.show", section = "theme", category = "arrow", type = "toggle", path = "arrow.show",
+  label = "OPT_ARROW_SHOW", tip = "OPT_TIP_ARROW_SHOW",
+  keywords = "fleche flottante direction distance navigation arrow floating direction distance" })
+add({ id = "arrow.color", section = "theme", category = "arrow", type = "select", style = "swatches",
+  path = "arrow.color", label = "OPT_ARROW_COLOR", tip = "OPT_TIP_ARROW_COLOR",
+  keywords = "fleche couleur cyan or vert blanc rose arrow colour color gold green white pink",
+  enabled = function() return Q.Settings:Get("arrow.show") ~= false end,
+  choices = {
+    { value = "cyan", label = "OPT_ARROW_CYAN" }, { value = "theme", label = "OPT_ARROW_THEME" },
+    { value = "gold", label = "OPT_ARROW_GOLD" }, { value = "green", label = "OPT_ARROW_GREEN" },
+    { value = "white", label = "OPT_ARROW_WHITE" }, { value = "pink", label = "OPT_ARROW_PINK" } } })
+add({ id = "theme.font", section = "theme", category = "background", type = "select", style = "segments",
+  path = "theme.font", label = "OPT_THEME_FONT", tip = "OPT_TIP_THEME_FONT",
+  keywords = "police texte lisible inter font text readable",
+  choices = { { value = "game", label = "OPT_THEME_FONT_GAME" }, { value = "clean", label = "OPT_THEME_FONT_CLEAN" } } })
+add({ id = "theme.icons", section = "theme", category = "background", type = "select", style = "segments",
+  path = "theme.icons", label = "OPT_THEME_ICONS", tip = "OPT_TIP_THEME_ICONS",
+  keywords = "icones etapes plates jeu icons steps flat game",
+  choices = { { value = "flat", label = "OPT_THEME_ICONS_FLAT" }, { value = "game", label = "OPT_THEME_ICONS_GAME" } } })
+add({ id = "tracker.style", section = "theme", category = "background", type = "select", style = "segments",
+  path = "tracker.style", label = "OPT_THEME_STYLE", tip = "OPT_TIP_THEME_STYLE",
+  keywords = "fond suivi plein fondu transparent sans fond background tracker full fade none transparent",
+  choices = { { value = "solid", label = "OPT_THEME_STYLE_SOLID" }, { value = "fade", label = "OPT_THEME_STYLE_FADE" },
+    { value = "none", label = "OPT_THEME_STYLE_NONE" } } })
+add({ id = "theme.fontScale", section = "theme", category = "background", type = "slider", path = "theme.fontScale",
+  label = "OPT_THEME_FONT_SCALE", tip = "OPT_TIP_THEME_FONT_SCALE", min = 0.8, max = 1.5, step = 0.05, format = percent,
+  keywords = "taille texte police grand petit lisibilite text size font large small readability" })
 add({ id = "tracker.opacity", section = "theme", category = "background", type = "slider", path = "tracker.opacity",
   label = "OPT_OPACITY", tip = "OPT_TIP_OPACITY", min = 0, max = 1, step = 0.05, format = percent,
   keywords = "theme fond transparence opacite alpha background opacity transparency" })
+-- Objectifs : les deux réglages du suivi repris ici, à côté de l'aperçu en direct (même chemin de réglage).
+for _, src in ipairs({ objLayout, objDetail }) do
+  local copy = {}
+  for k, v in pairs(src) do copy[k] = v end
+  copy.id = "theme." .. src.path:match("%.(.+)$")
+  copy.section, copy.category = "theme", "objectives"
+  add(copy)
+end
 
 -- Confort -----------------------------------------------------------------
 add({ id = "hearthHints", section = "comfort", category = "hearth", type = "toggle", path = "hearthHints",
@@ -364,18 +564,15 @@ add({ id = "hearthHints", section = "comfort", category = "hearth", type = "togg
 add({ id = "dangerAlert", section = "comfort", category = "warnings", type = "toggle", path = "dangerAlert",
   label = "COMFORT_OPT_DANGER", tip = "OPT_TIP_DANGER",
   keywords = "danger elite elites alerte monstres niveau warning elite level" })
+add({ id = "questValue", section = "comfort", category = "warnings", type = "toggle", path = "questValue",
+  label = "QV_OPT", tip = "OPT_TIP_QUESTVALUE",
+  keywords = "passer quete grise groupe elite trop haute bash rentable skip gray grey quest group elite high worth" })
 add({ id = "supplyReminders", section = "comfort", category = "warnings", type = "toggle", path = "supplyReminders",
   label = "COMFORT_OPT_SUPPLIES", tip = "OPT_TIP_SUPPLIES",
   keywords = "vendre reparer sacs ville avant-poste auberge nourriture boisson rappel sell repair bags town outpost inn food drink reminder" })
 
 -- Outils ------------------------------------------------------------------
-add({ id = "wizard", section = "tools", category = "wizards", type = "action",
-  label = "MINIMAP_MENU_WIZARD", tip = "OPT_TIP_WIZARD",
-  keywords = "assistant demarrage configuration wizard setup navigation",
-  run = function()
-    local W = ui("Wizard")
-    if W then W:Show() end
-  end })
+-- L'assistant de départ n'est plus dans les options : /qf wizard et le menu du bouton de la minicarte.
 add({ id = "telemetry", section = "tools", category = "measures", type = "toggle", path = "telemetry",
   label = "UI_OPT_TELEMETRY", tip = "OPT_TIP_TELEMETRY",
   keywords = "mesures temps telemetrie etape measures time telemetry step" })
@@ -452,7 +649,7 @@ end
 for i, e in ipairs(E) do
   e.order = i
   byId[e.id] = e
-  if e.path then byPath[e.path] = e end
+  if e.path and not byPath[e.path] then byPath[e.path] = e end   -- un réglage montré deux fois : la 1re entrée
 end
 
 function Schema:Entry(id) return byId[id] end
@@ -492,7 +689,7 @@ function Schema:Choices(e, player)
   local out = {}
   for _, c in ipairs(list or {}) do
     out[#out + 1] = { value = c.value, text = c.text or (c.label and L()[c.label]) or tostring(c.value),
-      disabled = c.disabled == true }
+      disabled = c.disabled == true, group = c.group }
   end
   return out
 end
@@ -569,7 +766,7 @@ local MAX_OFFSET = 10000
 
 -- Validate(entry, value) -> ok, valeur propre : contrôle d'une valeur importée.
 -- Case : booléen ; choix : une valeur de la liste ; curseur : nombre ramené entre min et max ;
--- position du suivi : { point, point relatif, x, y }.
+-- position (suivi, flèche : entrée `position`) : { point, point relatif, x, y }.
 function Schema:Validate(e, value)
   if e.type == "toggle" then
     if type(value) == "boolean" then return true, value end
@@ -584,7 +781,7 @@ function Schema:Validate(e, value)
     local v = self:ClampSlider(e, value)
     if v == nil then return false end
     return true, v
-  elseif e.path == "tracker.point" then
+  elseif e.position then
     if type(value) ~= "table" then return false end
     local p, rp, x, y = value[1], value[2], value[3], value[4]
     if not (ANCHORS[p] and ANCHORS[rp] and type(x) == "number" and type(y) == "number") then return false end

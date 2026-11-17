@@ -3,8 +3,8 @@
 ## Notes: Free leveling guide for World of Warcraft: Forever (1-60).
 ## Notes-frFR: Guide de leveling gratuit pour World of Warcraft: Forever (1-60).
 ## Author: Questify contributors
-## Version: 0.8.1
-## IconTexture: Interface\Icons\INV_Misc_Book_09
+## Version: 1.0.0
+## IconTexture: Interface\AddOns\Questify\Media\Icon
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -41,6 +41,13 @@ Locales\StringsZone.lua
 Locales\StringsVersion.lua
 Locales\StringsMinimap.lua
 Locales\StringsOptions.lua
+Locales\StringsTrainer.lua
+Locales\StringsAuction.lua
+Locales\StringsQuestValue.lua
+Locales\StringsPace.lua
+Locales\StringsClass.lua
+Locales\StringsThemes.lua
+Locales\StringsNews.lua
 
 Core\Init.lua
 Core\Util.lua
@@ -57,7 +64,15 @@ Data\Maps.lua
 Data\ClassTrainers.lua
 Data\ClassSpells.lua
 Data\Caves.lua
+Data\Travel.lua
 Data\ZoneArt.lua
+Data\ClassGuides.lua
+Data\ClassMacros.lua
+Data\ClassText_frFR.lua
+Data\ClassText_deDE.lua
+Data\ClassText_esES.lua
+Data\News.lua
+Data\Changelog.lua
 
 Engine\Guides.lua
 Engine\DungeonMode.lua
@@ -66,9 +81,11 @@ Engine\RouteChoice.lua
 Engine\Detour.lua
 Engine\Targets.lua
 Engine\ZoneMode.lua
+Engine\Objectives.lua
 Engine\Format.lua
 Engine\ClassQuests.lua
 Engine\Trainer.lua
+Engine\ActionRanks.lua
 Engine\Professions.lua
 Engine\ClassQuestOffer.lua
 Engine\BagQuests.lua
@@ -76,12 +93,31 @@ Engine\BagQuestOffer.lua
 Engine\StepGuard.lua
 Engine\Telemetry.lua
 Engine\XPRate.lua
+Engine\Pace.lua
 Engine\Hearth.lua
 Engine\Danger.lua
 Engine\Supplies.lua
+Engine\AuctionItems.lua
 Engine\Dungeons.lua
+Engine\QuestValue.lua
+Engine\Talents.lua
+Engine\TalentTree.lua
+Engine\ClassGuide.lua
+Engine\ClassMacros.lua
 
+# Routeur de marche (repris de Polestar_Nav, lui-même issu de Shortest Path Forever) et cartes de marche des
+# deux continents : chargés avec Questify (anciens addons Questify_Nav, _EK et _Kalimdor). Licences dans NavEngine.
+NavEngine\Maps\Nav.xml
+NavEngine\Maps\EK\EK.xml
+NavEngine\Maps\Kalimdor\Kalimdor.xml
+NavEngine\Routing\Costs.lua
+NavEngine\Routing\PathGrid.lua
+NavEngine\Routing\Path.lua
+NavEngine\Routing\PathJobs.lua
+NavEngine\API.lua
 Nav\Caves.lua
+Nav\Travel.lua
+Nav\Walk.lua
 Nav\Navigation.lua
 
 Automation\Rewards.lua
@@ -91,25 +127,42 @@ Automation\SellJunk.lua
 Automation\Taxi.lua
 
 UI\Themes.lua
+UI\ObjectiveRows.lua
+UI\ThemePreview.lua
 UI\Tracker.lua
 UI\TrackerButtons.lua
+UI\QuestValue.lua
 UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
+UI\RaidMarks.lua
 UI\ObjectGlow.lua
+UI\UpgradeCompare.lua
 UI\UpgradePopup.lua
+UI\RewardMarks.lua
 UI\ProfessionPicker.lua
 UI\ClassQuestPopup.lua
+UI\TrainerPanel.lua
+UI\RanksWizard.lua
 UI\DungeonPopup.lua
 UI\DungeonChainPopup.lua
 UI\DungeonModePanel.lua
+UI\PacePanel.lua
 UI\RouteChoicePopup.lua
 UI\MapPins.lua
+UI\ZoneOverlay.lua
+UI\Arrow.lua
+UI\RouteLine.lua
 UI\MinimapButton.lua
 UI\Journal.lua
 UI\Wizard.lua
+UI\News.lua
+UI\ChangelogPanel.lua
 UI\QuestItemButton.lua
 UI\Report.lua
+UI\AuctionPanel.lua
+UI\ClassPanel.lua
+UI\TalentAdvice.lua
 UI\Options.lua
 UI\Demo.lua
 UI\Slash.lua

@@ -67,6 +67,7 @@ other chapters from the XML.
 | `emit.lua` | Guide file writer (spec § 5.2 format, one step per line with a comment). |
 | `classquests.lua` | Class quest chains (level ≤ 60) for `ClassQuestData.lua`. |
 | `bagquests.lua` | Quests that reward a bag, with their prerequisite chain, for `BagQuestData.lua` (see "Bag quests"). |
+| `auctionitems.lua`, `build_auction_items.lua` | Collect items of the shipped routes that can be bought at the auction house, and the auctioneers, for `AuctionItemData.lua` (see "Auction house items"). |
 | `overrides.lua` | Hand fixes applied at build time. |
 | `build.lua` | CLI. |
 | `backfill.lua` | Adds `choices` / `sim` to already generated guides (no QuestieDB). |
@@ -168,7 +169,7 @@ All thresholds are in `sim.CONST` (`sim.lua`).
    within 150 yd merge into one task. Counts come from the objective text ("Kill 6 Rockjaw
    Troggs and 6 ..."); without a number: 1 for a unique mob (≤ 3 spawns or elite/rare), else 8
    kills, 6 items, 5 objects.
-3. **Time.** Walking 7 yd/s; 20 s per kill; `ceil(n / rate) × 20 s` for drops (rate 0.5 by
+3. **Time.** Walking 7 yd/s, faster on a mount from level 40 (see "Mount speed" below); 20 s per kill; `ceil(n / rate) × 20 s` for drops (rate 0.5 by
    default); 6 s per world object plus the spread of the spawn window; 10 s to talk or explore;
    5 s to accept or turn in.
 4. **Hubs.** Starters and finishers within 120 yd are grouped; a hub needs at least two quests.
@@ -452,6 +453,38 @@ at another inn after the first, when the hub of the chapter changes). Each plan 
 next one (`opts.nextEntry`, from `build.lua`), with the stone bound and ready or not: a bind also serves
 the start of the next chapter. The cheapest plan wins (ties: fewer binds).
 
+**Following chapters in view (2026-11-16).** `build.lua` simulates each faction twice. The first pass is the
+old calculation and keeps the ordered sequence of every chapter (`report.hearthLook`: start position, hubs,
+tasks). The second pass replays the whole faction; `sim.planHearth` then gets `opts.lookahead`, the
+sequences of the next `HEARTH_LOOKAHEAD` (2) chapters of the simulated race path from the first pass. Inns
+within `HEARTH_INN` of their hubs become candidates too (an inn passed in this chapter that serves the next
+one), and each plan also costs, for each following chapter, `order.hearthCost` of its sequence with the inn
+bound at the end of this chapter (no new bind there) and the cooldown left (after the stone is used for the
+trip to the next chapter: a full cooldown). The binds chosen this way are the `sethearth` steps written.
+`--only` on a race chapter stops the first pass at that chapter, so its lookahead is empty: compare A/B with
+full builds. `ROUTEBUILDER_HEARTH_LOOKAHEAD=0` restores the old calculation (one pass); the guide mode `Donjons`
+(`build_dungeon_guides.lua`) keeps one pass. A build takes about twice as long.
+
+Measured on QuestieDB v1.0.15 (2026-11-16, without `--jit`), sum of the chapter minutes along each race path:
+
+| Race path | Old binds | Lookahead | Gain | Old binds + mount | Lookahead + mount | Gain |
+|---|---|---|---|---|---|---|
+| Alliance Dwarf / Gnome | 5415 | 5415 | 0 | 5170 | 5160 | -10 |
+| Alliance Human | 5355 | 5355 | 0 | 5110 | 5100 | -10 |
+| Alliance Night Elf | 5329 | 5340 | +11 | 5084 | 5085 | +1 |
+| Alliance Skyborne | 5344 | 5344 | 0 | 5099 | 5089 | -10 |
+| Horde Orc / Troll | 5429 | 5413 | -16 | 5184 | 5161 | -23 |
+| Horde Tauren | 5518 | 5504 | -14 | 5273 | 5252 | -21 |
+| Horde Undead | 5469 | 5453 | -16 | 5224 | 5201 | -23 |
+| Horde Skyborne | 5518 | 5502 | -16 | 5273 | 5250 | -23 |
+
+The gain is small and uneven: a bind made for the following chapters changes where the chapter ends, so the
+next chapter is ordered from another start (or-opt and annealing find another local optimum). The Night Elf
+loss is that: `A_NightElf_02` now binds Auberdine at its end, `A_NightElf_03` starts elsewhere and its new order
+leaves room for one return by the stone instead of two (+11 min); the following chapters do not change. With
+the mount, `H_30` (-14 min), `A_26` and `A_30` (-11 min each) gain the most, `A_21` (+13 min) and `H_23` (+9 min)
+lose the most.
+
 ### Return bundles (`order.hearthBundles`)
 
 Then, for each end of task, the later tasks within `HEARTH_BUNDLE` (250 yd) of the inn bound at that time
@@ -468,6 +501,24 @@ ready are few (upper bound for all chapters together: about 106 min over 23 chap
 ended at an inn). A lower penalty (90 s: the same decision as walking 1.3 times longer than the straight
 line) was measured too and not kept: -1 min on the Horde paths, -13 min on the Alliance trunk paths but
 only through a different trunk (Redridge then grinds 116 mobs), +12 min in Darkshore for the Night Elf.
+
+## Mount speed (`sim.walkSpeed`, 2026-11-16)
+
+The simulated character buys a mount: walking speed is `WALK` (7 yd/s) times 1.6 from level 40 and 2.0 from
+level 60 (`MOUNT`). Neither the purchase time nor the trip to the riding trainer is counted: a few seconds
+against -245 min, so they are left out (a deviation from the design note, which asked for the purchase time). The speed at the start of the chapter drives the choice of quests (isolated and marginal times,
+transport bonus, timed quests), the ordering (walking costs and sweep radii, so the yards stay the same), the
+woven class quests and the bind plan; the simulated walk (`sim.travel`, `sim.route`, flight paths picked up
+on the way) follows the level of the moment. Two movements stay at walking speed (the fights are on foot):
+the spawn spread inside an objective site, and the walk between the sites of one quest merged into one task
+(`MERGE_SITES`, at most 150 yd). `travel.lua` (the times of `choices`) knows no level and stays at 7 yd/s.
+`ROUTEBUILDER_NO_MOUNT=1` walks at 7 yd/s throughout (comparison).
+
+Measured on QuestieDB v1.0.15 (2026-11-16, without `--jit`, old bind plan): -245 min on every race path of both
+factions (Alliance Dwarf / Gnome 5415 to 5170, Human 5355 to 5110, Night Elf 5329 to 5084, Skyborne 5344 to
+5099; Horde Orc / Troll 5429 to 5184, Tauren 5518 to 5273, Undead 5469 to 5224, Skyborne 5518 to 5273). The
+chapters from level 40 move faster and take more quests: some quests move to an earlier chapter (Tanaris:
+`A_18` takes four quests of `A_20`).
 
 ## Successor choices and simulated metrics (`choices`, `sim`)
 
@@ -884,3 +935,19 @@ objective instead.
   type, × 0.5 for dungeon quests, × 0.25 for the Forever book quests).
 - Trunk chapters are simulated for the primary race path only.
 - Only the default successor is simulated and validated; other `choices` are not replayed.
+
+## Auction house items (`auctionitems.lua`, 2026-11-16)
+
+`luajit tools/routebuilder/build_auction_items.lua` reads the guides listed by `Questify/Guides/Guides.xml` and writes
+`Questify/Guides/AuctionItemData.lua`. Run it after `build.lua` whenever the routes change (build.lua lists the file in
+`Guides.xml` but does not write it).
+
+- One entry per "item" objective of a quest the chapter progresses (`complete` or `turnin` step): item, quest,
+  objective rank in the client's journal (`obj`) and the count read from the objective text (`sim.parseCounts`,
+  absent when the text gives none).
+- Left out: quest items (class 12), items sold by a vendor, items given by the quest itself. QuestieDB has no bind
+  type: the game (`Engine/AuctionItems.lua`) reads it with `GetItemInfo` and drops bind-on-pickup and quest items.
+- Auctioneers: NPCs with the AUCTIONEER flag (4096) and at least one spawn, by friendly faction. Positions are read
+  again from the player's QuestieDB at run time.
+- `tools/validate_guides.lua` checks the file: known guides, quests with a `complete` or `turnin` step in that guide,
+  known items and auctioneers.

@@ -72,15 +72,18 @@ M.TRUNK = {
   { id = "AD_05", base = "A_03", title = "Redridge Mountains", min = 20, max = 24, alt = { "THANES", "DM", "WC" },
     set = { zones = { REDRIDGE }, endZones = { REDRIDGE } }, unset = { "optional" } },
   -- Bois de la Pénombre à partir de 24 (1er décile des niveaux de quête : 24), plus à 22
+  -- logCap : parcours Nain/Gnome, journal plein (20) à la prise de 245 (validateur, QuestieDB 1.1.2)
   { id = "AD_06", base = "A_03", title = "Duskwood", min = 24, max = 26, run = { "STOCKADE" },
-    set = { zones = { DUSKWOOD, STORMWIND }, endZones = { STORMWIND } } },
+    set = { zones = { DUSKWOOD, STORMWIND }, endZones = { STORMWIND }, logCap = 18 } },
   { id = "AD_07", base = "A_08", title = "Ashenvale", min = 25, max = 27, run = { "BFD" } },
   -- Paluns, avec Ironforge au passage : quêtes de Gnomeregan et de la Bibliothèque du Monastère
   { id = "AD_08", base = "A_04", title = "Wetlands", min = 26, max = 28, run = { "EXCAVATION" },
     set = { zones = { WETLANDS, LOCH_MODAN, IRONFORGE } } },
   { id = "AD_09", base = "A_06", title = "Hillsbrad Foothills and Alterac Mountains", min = 28, max = 30,
     run = { "DALARAN", "SFK", "SM_GY" }, set = { zones = { HILLSBRAD, ALTERAC } } },
-  { id = "AD_10", base = "A_07", title = "Duskwood", min = 29, max = 31, alt = { "STOCKADE", "BFD", "EXCAVATION" } },
+  -- logCap : sur QuestieDB 1.1.2, journal plein (20) à la prise de 81731, 81732 et 81738 (Incursion du cauchemar)
+  -- selon le validateur, parcours Nain/Gnome compris
+  { id = "AD_10", base = "A_07", title = "Duskwood", min = 29, max = 31, alt = { "STOCKADE", "BFD", "EXCAVATION" }, set = { logCap = 16 } },
   { id = "AD_11", zones = { IRONFORGE, DUN_MOROGH }, entryRung = "GNOMER", title = "Dun Morogh", min = 30, max = 31,
     noLevel = true, prepFor = "GNOMER", run = { "GNOMER" } },
   { id = "AD_12", base = "A_09", title = "Thousand Needles", min = 31, max = 33, run = { "RFK" } },
@@ -97,7 +100,7 @@ M.TRUNK = {
   { id = "AD_18", base = "A_15", title = "Dustwallow Marsh", min = 38, max = 40, run = { "RFD" } },
   -- Riverglades (Forever, 150 quêtes de niveau 38-44) : zone absente des guides habituels
   { id = "AD_19", zones = { RIVERGLADES }, entryHub = RIVERGLADES, title = "Riverglades", min = 39, max = 43,
-    alt = { "ULDAMAN", "RFD" }, set = { logCap = 17 } },
+    alt = { "ULDAMAN", "RFD" }, set = { logCap = 17, force = plansm.RIVERGLADES_FORCE } },
   -- Désolace : déjà faite en AD_15 ; restes et quêtes de Maraudon
   { id = "AD_20", base = "A_11", title = "Desolace", min = 42, max = 43, noLevel = true, prepFor = "MARAUDON",
     run = { "MARAUDON" } },
@@ -170,7 +173,7 @@ M.HORDE_TRUNK = {
   { id = "HD_15", base = "H_12", title = "Badlands", min = 39, max = 40, run = { "ULDAMAN" } },
   -- Riverglades (Forever, quêtes de niveau 38-44) : zone absente des guides habituels
   { id = "HD_16", zones = { RIVERGLADES }, entryHub = RIVERGLADES, title = "Riverglades", min = 39, max = 43,
-    alt = { "RFD", "ULDAMAN" }, set = { logCap = 17 } },
+    alt = { "RFD", "ULDAMAN" }, set = { logCap = 17, force = plansm.RIVERGLADES_FORCE_HORDE } },
   { id = "HD_17", base = "H_13", title = "Stranglethorn Vale", min = 40, max = 42,
     alt = { "GNOMER", "SM_ARM", "SM_CATH" } },
   -- Désolace : déjà faite en HD_11 ; restes et quêtes de Maraudon

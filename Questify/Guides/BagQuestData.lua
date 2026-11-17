@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/bagquests.lua (via build.lua). Ne pas modifier à la main.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
 -- Quêtes qui donnent un sac : chaîne à faire (prérequis puis quête), niveau requis, ID du sac et des récompenses.
 Q.BagQuestData = {
   { key = "BAG_91775_A", title = "Book Return", faction = "Alliance", races = 4294967373, level = 1, bag = 279936, quests = { 91741, 92124, 91743, 91745, 91752, 91758, 91772, 91775 }, rewards = { [91741] = { items = {  }, xp = 85 }, [92124] = { items = {  }, xp = 15 }, [91743] = { items = { 247840, 247841, 247846 }, xp = 170 }, [91745] = { items = {  }, xp = 25 }, [91752] = { items = {  }, xp = 315 }, [91758] = { items = {  }, xp = 35 }, [91772] = { items = {  }, xp = 355 }, [91775] = { items = { 279936 }, xp = 680 } } },
@@ -9,7 +9,7 @@ Q.BagQuestData = {
   { key = "BAG_86784_H", title = "Sticks and Bones", faction = "Horde", races = 50, level = 4, bag = 279939, quests = { 86784 }, rewards = { [86784] = { items = { 279939 }, xp = 630 } } },
   { key = "BAG_87288_A", title = "Soft Saber Pelts", faction = "Alliance", races = 4294967373, level = 4, bag = 280088, quests = { 87288 }, rewards = { [87288] = { items = { 280088 }, xp = 630 } } },
   { key = "BAG_92515_A", title = "The Problem With Prideclaws", faction = "Alliance", races = 4294967373, level = 4, bag = 256935, quests = { 93461, 92515 }, rewards = { [93461] = { items = {  }, xp = 135 }, [92515] = { items = { 256935 }, xp = 540 } } },
-  { key = "BAG_92515_H", title = "The Problem With Prideclaws", faction = "Horde", races = 8589934592, level = 4, bag = 256935, quests = { 92514, 92515 }, rewards = { [92514] = { items = {  }, xp = 135 }, [92515] = { items = { 256935 }, xp = 540 } } },
+  { key = "BAG_92515_H", title = "The Problem With Prideclaws", faction = "Horde", races = 8589934770, level = 4, bag = 256935, quests = { 92514, 92515 }, rewards = { [92514] = { items = {  }, xp = 135 }, [92515] = { items = { 256935 }, xp = 540 } } },
   { key = "BAG_97277_A", title = "Grund and Gozwin", faction = "Alliance", races = 4294967364, level = 4, bag = 277977, quests = { 97277 }, rewards = { [97277] = { items = { 277977 }, xp = 405 } } },
   { key = "BAG_1003_A", title = "Buzzbox 525", faction = "Alliance", races = 4294967373, level = 7, bag = 2082, quests = { 983, 1001, 1002, 1003 }, rewards = { [983] = { items = {  }, xp = 840 }, [1001] = { items = {  }, xp = 1150 }, [1002] = { items = {  }, xp = 980 }, [1003] = { items = { 2082, 11846 }, xp = 1150 } } },
   { key = "BAG_151_A", title = "Poor Old Blanchy", faction = "Alliance", races = 4294967373, level = 9, bag = 1537, quests = { 151 }, rewards = { [151] = { items = { 1537, 2165 }, xp = 1250 } } },

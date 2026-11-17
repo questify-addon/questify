@@ -50,6 +50,91 @@ local DESOLACE, FERALAS, DUSTWALLOW, TANARIS, AZSHARA, FELWOOD, UNGORO, SILITHUS
 
 local plans = {}
 
+-- Riverglades (A_31, AD_19) sur QuestieDB 1.1.x : les relations tracées (foreverQuestRelationTraces.lua) ferment une
+-- vingtaine de chaînes dont la première quête a pour objectif un objet sans aucune position dans QuestieDB (Foal Play
+-- 94615, Unsavory Plant Food 94842, Scraps of Knowledge 94879, Twilight Mementos 94983...). Moins d'XP tôt : le niveau 41
+-- n'est plus atteint par les quêtes et la simulation écarte en cascade les quêtes « trop dangereuses avant 41-42 » que
+-- la route 1.0.15 faisait (A_31 : 65 -> 18 quêtes, 264 -> 410 min, ~1009 monstres). Ces quêtes, toutes faites par la
+-- route 1.0.15 aux mêmes niveaux, sont gardées (mesures : docs/routes/A_31.md, audit 2026-11-17).
+-- Bats in the Belfry (95603, « trop dangereuse avant 53 ») n'est pas forcée : à vérifier en jeu.
+local RIVERGLADES_FORCE = {
+  [94614] = true,
+  [94881] = true,
+  [94884] = true,
+  [94885] = true,
+  [94887] = true,
+  [94892] = true,
+  [94925] = true,
+  [94927] = true,
+  [94928] = true,
+  [94961] = true,
+  [94963] = true,
+  [95064] = true,
+  [95120] = true,
+  [95562] = true,
+  [95643] = true,
+  [95912] = true,
+  [95991] = true,
+  [96125] = true,
+  [96126] = true,
+  [95122] = true,
+}
+plans.RIVERGLADES_FORCE = RIVERGLADES_FORCE
+
+-- Même cas côté Horde (H_31, HD_16) : sur QuestieDB 1.1.2, A Message in Blood (93786, écartée « far ») et Food for
+-- the Taking (93787, Feed Satchel 616740 sans position) ferment la chaîne Show Them How It's Done -> Bloodmaster's Ring
+-- (preQuestGroup tracés) ; la simulation écartait ensuite en cascade les quêtes « trop dangereuses avant 41-42 »
+-- (H_31 : 42 -> 8 quêtes, ~933 monstres). Quêtes que la route 1.0.15 faisait, gardées (audit Horde 2026-11-17).
+-- Food for the Taking reste écartée tant que l'objet n'a pas de position : à relever en jeu.
+local RIVERGLADES_FORCE_HORDE = {
+  [93786] = true,
+  [93976] = true,
+  [94480] = true,
+  [94483] = true,
+  [94532] = true,
+  [94535] = true,
+  [94556] = true,
+  [94668] = true,
+  [94669] = true,
+  [94670] = true,
+  [94672] = true,
+  [94680] = true,
+  [94727] = true,
+  [94733] = true,
+  [94737] = true,
+  [94739] = true,
+  [94744] = true,
+  [94961] = true,
+  [94962] = true,
+  [94963] = true,
+  [94964] = true,
+  [94965] = true,
+  [95063] = true,
+  [95118] = true,
+  [95163] = true,
+  [95165] = true,
+  [95183] = true,
+  [95278] = true,
+  [95293] = true,
+  [95294] = true,
+  [95327] = true,
+  [95417] = true,
+  [95418] = true,
+  [95420] = true,
+  [95424] = true,
+  [95425] = true,
+  [95427] = true,
+  [95428] = true,
+  [95431] = true,
+  [95432] = true,
+  [95601] = true,
+  [95602] = true,
+  [96067] = true,
+  [96105] = true,
+  [96109] = true,
+}
+plans.RIVERGLADES_FORCE_HORDE = RIVERGLADES_FORCE_HORDE
+
 plans.Alliance = {
   -- Nain / Gnome : Coldridge, Dun Morogh (pré-quêtes de Hall of Thanes), Loch Modan (avec les allers-retours
   -- à Ironforge des suites « Honor Students » et « Report to Ironforge »), puis Marche de l'Ouest par le tram.
@@ -192,10 +277,39 @@ plans.Alliance = {
     -- (Cozy Sleeping Bag) la faisait passer sous le seuil de 25 : 9 quêtes de niveau 30 perdues, A_04 +50 min.
     widen = true,
     flightPaths = { "Lakeshire, Redridge", "Darkshire, Duskwood" },
-    optional = { [253] = "Group quest: Eliza, level 31 elite" },
+    optional = { [253] = "Group quest: Eliza, level 31 elite",
+                 -- Stonewatch Keep / Render's Valley (QuestieDB 1.0.15-1.0.16) : élites 21-26 et Dro'zem (rare élite 23)
+                 [115] = "Group quest: Blackrock Shadowcasters, level 22-23 elites (Stonewatch Keep)",
+                 [19] = "Group quest: Tharil'zun, level 24 elite",
+                 [169] = "Group quest: Gath'Ilzogg, level 26 elite",
+                 [95999] = "Group quest: Incinerator Gar'im, level 23 elite" },
+    -- 2026-11-12 (retour en jeu, chaman 23 : « carmine et duskwood impossible ») : au 22, la route attaquait
+    -- Ira's Dagger (Black Ravagers 23-25 en meute), le Totem of Infliction (goules 24-30 ; Mor'Ladim, élite 35,
+    -- autour du cimetière de Raven Hill) et Mary's Looking Glass (Insane Ghoul 26). Niveaux de sécurité relevés.
+    safeLevel = { [96137] = 24, [101] = 25, [177] = 25, [133] = 26 },
     -- Worgen in the Woods (173) : écartée ici seulement (chaîne de Nightbane 27-31) ; faite en A_07 (30-34).
     -- Avant le lot H (2026-11-06), écartée dans overrides.lua pour toute la route.
-    drop = { [173] = "Worgen in the Woods chain: Nightbane mobs 27-31, above the 22-26 band" },
+    drop = { [173] = "Worgen in the Woods chain: Nightbane mobs 27-31, above the 22-26 band",
+             -- Duskwood Nightmare Incursion (Field Captain Palandar) : niveau 27, requis 23, monstres 26, boss à
+             -- niveau d'échelle (9999 dans QuestieDB), XP estimée ; trois « Rescue » sans objectif émis prise puis rendu.
+             [81730] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81731] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81732] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81733] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81734] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81735] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81736] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81737] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81738] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81739] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81740] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81741] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81742] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81743] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81744] = "Duskwood Nightmare Incursion: level 26 mobs and scaled bosses, estimated XP",
+             [81745] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB",
+             [81746] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB",
+             [81747] = "Duskwood Nightmare Incursion: rescue in the incursion, no objective in QuestieDB" },
     -- rendus au passage vers le port de Stormwind (A_04) : Stalvan 67 / 69, Seeking Wisdom 269, An Old History
     -- Book 337 (lot Alliance 2026-11-07 : avec A_02, 1-30 -53 min sur Humain, Nain/Gnome et Skyborne)
     endZones = { STORMWIND, ELWYNN, WESTFALL },
@@ -305,6 +419,7 @@ plans.Alliance = {
     id = "A_31", title = "Riverglades", faction = "Alliance", zones = { RIVERGLADES },
     minLevel = 40, maxLevel = 43, entry = { RIVERGLADES, 59.53, 63.97 }, next = "A_17", logCap = 17,
     flightPaths = { "Farholde Keep, Riverglades" },
+    force = RIVERGLADES_FORCE,
   },
   {
     -- A_15 et A_16 : hors du parcours depuis Riverglades (A_31), gardés comme modèles du mode « Donjons »
@@ -737,6 +852,7 @@ plans.Horde = {
     id = "H_31", title = "Riverglades", faction = "Horde", zones = { RIVERGLADES },
     minLevel = 37, maxLevel = 40, entry = { RIVERGLADES, 65.58, 21.45 }, next = "H_13", logCap = 17,
     flightPaths = { "Rog'mar, Riverglades", "Powderfuse Port, Riverglades" },
+    force = RIVERGLADES_FORCE_HORDE,
   },
   {
     id = "H_30", title = "Silithus", faction = "Horde", zones = { WINTERSPRING, SILITHUS },

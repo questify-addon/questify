@@ -126,6 +126,10 @@ local PROVIDERS = {
   { "Forever/traces/foreverNpcTraces.lua", "ForeverNpcTraces", "Npc", {"Load"} },
   { "Forever/traces/foreverItemTraces.lua", "ForeverItemTraces", "Item", {"Load"} },
   { "Forever/traces/foreverObjectTraces.lua", "ForeverObjectTraces", "Object", {"Load"} },
+  -- QuestieDB 1.1.0+ : relations de quêtes déduites des traces (exclusiveTo, preQuest*, nextQuestInChain,
+  -- breadcrumbs), priorité 1403 : après les traces d'entités, avant les corrections écrites à la main.
+  -- Absent avant 1.1.0 (champ 7 : fichier facultatif).
+  { "Forever/traces/foreverQuestRelationTraces.lua", "ForeverQuestRelationTraces", "Quest", {"Load"}, nil, nil, true },
   { "Forever/foreverQuestFixes.lua", "ForeverQuestFixes", "Quest", {"Load"}, {"LoadDynamic"} },
   { "Forever/foreverNPCFixes.lua", "ForeverNpcFixes", "Npc", {"Load"}, {"LoadDynamic"} },
   { "Forever/foreverItemFixes.lua", "ForeverItemFixes", "Item", {"Load"}, {"LoadDynamic"} },
@@ -338,11 +342,17 @@ function qdb.load(opts)
       UnitFactionGroup = function() return faction end,
       UnitClassBase = function() return opts.class end,
     }, "corrections")
-    for _, spec in ipairs(PROVIDERS) do qdb.runFile(P("src/corrections/" .. spec[1]), env) end
+    for _, spec in ipairs(PROVIDERS) do
+      local path = P("src/corrections/" .. spec[1])
+      local fh = spec[7] and io.open(path, "rb")
+      if fh then fh:close() end
+      if not spec[7] or fh then qdb.runFile(path, env) end
+    end
   end
 
   local function invoke(spec, fnName)
     local module = corrModules[spec[2]]
+    if not module then return nil end
     local fn = module[fnName]
     if not fn then return nil end
     for _, t in pairs(captured) do for id in pairs(t) do t[id] = nil end end

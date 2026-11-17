@@ -71,6 +71,7 @@ end
 local reading = false     -- lecture en cours : les TRAINER_UPDATE qu'elle causerait sont ignorés
 local open = false        -- fenêtre du maître ouverte (TRAINER_SHOW -> TRAINER_CLOSED)
 local pending = false     -- relecture déjà programmée (TRAINER_UPDATE regroupés)
+local shownClass = false  -- la fenêtre ouverte est celle d'un maître de classe du joueur (liste relevée)
 local UPDATE_DELAY = 0.2  -- secondes : plusieurs TRAINER_UPDATE rapprochés -> une seule lecture
 Trainer.UPDATE_DELAY = UPDATE_DELAY
 
@@ -96,7 +97,7 @@ local function spellIdIndex()
   return index
 end
 
--- Sorts listés par le maître : { name, rank, level, cost, spellID? } pour ceux qui ne sont pas encore appris.
+-- Sorts listés par le maître : { name, rank, level, cost, icon?, spellID? } pour ceux qui ne sont pas encore appris.
 -- Ordre Mainline de GetTrainerServiceInfo (Blizzard_TrainerUI/Mainline) : nom, type
 -- ("available", "unavailable", "used", "header"), icône, niveau requis, sous-texte (rang).
 local function readServices()
@@ -105,14 +106,15 @@ local function readServices()
   local index = spellIdIndex()
   local ok, err = pcall(function()
     for i = 1, (GetNumTrainerServices() or 0) do
-      local name, serviceType, _, reqLevel, subText = GetTrainerServiceInfo(i)
+      local name, serviceType, icon, reqLevel, subText = GetTrainerServiceInfo(i)
       if type(name) == "string" and name ~= "" and serviceType ~= "header" and serviceType ~= "used" then
         local level = tonumber(reqLevel)
         if serviceType == "available" and not level then level = 0 end
         local cost = type(GetTrainerServiceCost) == "function" and tonumber((GetTrainerServiceCost(i))) or 0
         local rank = type(subText) == "string" and subText ~= "" and subText or nil
         local spellID = index and index[name .. "\1" .. (rank or "")] or nil
-        list[#list + 1] = { name = name, rank = rank, level = level, cost = cost or 0, spellID = spellID }
+        if Q.Util.IsSecret(icon) or (type(icon) ~= "number" and type(icon) ~= "string") then icon = nil end
+        list[#list + 1] = { name = name, rank = rank, level = level, cost = cost or 0, icon = icon, spellID = spellID }
       end
     end
   end)
@@ -128,7 +130,7 @@ local function sameList(a, b)
   for i, s in ipairs(a) do
     local o = b[i]
     if type(o) ~= "table" or o.name ~= s.name or o.rank ~= s.rank or o.level ~= s.level or o.cost ~= s.cost
-        or o.spellID ~= s.spellID then
+        or o.spellID ~= s.spellID or o.icon ~= s.icon then
       return false
     end
   end
@@ -190,9 +192,10 @@ local function playerMoney()
 end
 Trainer.GUESS_COST = GUESS_COST
 
--- Learnable() -> { count, total, cost, missing, names, known, since } ou nil si rien d'apprenable
+-- Learnable() -> { count, total, cost, missing, names, spells, known, since } ou nil si rien d'apprenable
 -- et payable à ce niveau.
 --   count / cost / names : sorts que l'or du joueur permet de payer (les moins chers d'abord) ;
+--   spells : ces mêmes sorts, lignes du maître { name, rank, level, cost, icon, spellID } ;
 --   total : sorts disponibles à ce niveau ; missing : coût des sorts restants (or manquant).
 --   since : niveau où le dernier sort payable est devenu disponible (une annonce par vague).
 --   known = faux : pas encore de visite, supposition des niveaux pairs (coût estimé).
@@ -210,7 +213,7 @@ function Trainer:Learnable()
       if (a.cost or 0) ~= (b.cost or 0) then return (a.cost or 0) < (b.cost or 0) end
       return (a.level or 0) < (b.level or 0)
     end)
-    local out = { count = 0, total = #avail, cost = 0, missing = 0, names = {}, known = true, since = 0 }
+    local out = { count = 0, total = #avail, cost = 0, missing = 0, names = {}, spells = {}, known = true, since = 0 }
     for _, s in ipairs(avail) do
       local c = s.cost or 0
       if out.cost + c <= money then
@@ -218,6 +221,7 @@ function Trainer:Learnable()
         out.cost = out.cost + c
         out.since = math.max(out.since, s.level)
         out.names[#out.names + 1] = serviceLabel(s)
+        out.spells[#out.spells + 1] = s
       else
         out.missing = out.missing + c
       end
@@ -229,10 +233,76 @@ function Trainer:Learnable()
   if lastEven >= 2 and lastEven > (t.visitLevel or 1) then
     local need = GUESS_COST[lastEven] or 0
     if money < need then return nil end
-    return { count = 0, total = 0, cost = 0, missing = 0, names = {}, known = false, since = lastEven }
+    return { count = 0, total = 0, cost = 0, missing = 0, names = {}, spells = {}, known = false, since = lastEven }
   end
   return nil
 end
+
+-- Icône d'un sort du maître : celle de la fenêtre, sinon celle du sort (spellID retrouvé).
+function Trainer.ServiceIcon(s)
+  if type(s) ~= "table" then return nil end
+  if s.icon then return s.icon end
+  if s.spellID and C_Spell and C_Spell.GetSpellTexture then
+    local ok, tex = pcall(C_Spell.GetSpellTexture, s.spellID)
+    if ok and not Q.Util.IsSecret(tex) and tex then return tex end
+  end
+  return nil
+end
+
+local LATER_LEVELS = 2   -- panneau du maître : sorts des deux prochains niveaux qui en ont
+Trainer.LATER_LEVELS = LATER_LEVELS
+
+-- PanelData() -> données du panneau « Sorts du maître » (UI/TrainerPanel.lua), nil sans liste relevée :
+--   { level, money, now = { ligne }, cost, missing, later = { { level, spells = { ligne } } } }
+--   now : sorts disponibles à ce niveau, les moins chers d'abord ; ligne.affordable = faux pour ceux
+--   que l'or ne couvre plus (même calcul que Learnable) ; cost : total de now ; missing : or manquant.
+--   later : les LATER_LEVELS prochains niveaux qui ont des sorts, dans l'ordre.
+function Trainer:PanelData()
+  local t = state()
+  if not t or type(t.services) ~= "table" then return nil end
+  local lvl = playerLevel()
+  local money = playerMoney()
+  local now, byLevel, levels = {}, {}, {}
+  for _, s in ipairs(t.services) do
+    if type(s) == "table" and s.level then
+      local row = { name = s.name, rank = s.rank, level = s.level, cost = s.cost or 0, spellID = s.spellID,
+        icon = Trainer.ServiceIcon(s) }
+      if s.level <= lvl then
+        now[#now + 1] = row
+      else
+        if not byLevel[s.level] then
+          byLevel[s.level] = {}
+          levels[#levels + 1] = s.level
+        end
+        local l = byLevel[s.level]
+        l[#l + 1] = row
+      end
+    end
+  end
+  local function byCost(a, b)
+    if a.cost ~= b.cost then return a.cost < b.cost end
+    if a.level ~= b.level then return a.level < b.level end
+    return a.name < b.name
+  end
+  table.sort(now, byCost)
+  local out = { level = lvl, money = money ~= math.huge and money or nil, now = now, cost = 0, missing = 0, later = {} }
+  local spent = 0
+  for _, row in ipairs(now) do
+    out.cost = out.cost + row.cost
+    row.affordable = spent + row.cost <= money
+    if row.affordable then spent = spent + row.cost else out.missing = out.missing + row.cost end
+  end
+  table.sort(levels)
+  for i = 1, math.min(LATER_LEVELS, #levels) do
+    local l = byLevel[levels[i]]
+    table.sort(l, byCost)
+    out.later[i] = { level = levels[i], spells = l }
+  end
+  return out
+end
+
+-- Fenêtre d'un maître de classe du joueur ouverte, liste relevée.
+function Trainer:IsOpen() return open and shownClass == true end
 
 function Trainer:HasStep()
   local c = Q.char
@@ -308,16 +378,22 @@ end
 ---------------------------------------------------------------------------
 Q:RegisterEvent("TRAINER_SHOW", function()
   open = true
+  shownClass = Trainer:OnTrainer()
   -- la visite d'un maître de classe valide l'étape, même s'il reste des sorts trop chers
-  if Trainer:OnTrainer() and Trainer:HasStep() then
+  if shownClass and Trainer:HasStep() then
     local t = state()
     if t then t.forced = nil end
     Q.Progress:RemoveInserted(TAG)
     Q:Fire("TRAINER_CHANGED")
   end
+  Q:Fire("TRAINER_WINDOW", shownClass)
 end)
 Q:RegisterEvent("TRAINER_UPDATE", function() Trainer:OnUpdateEvent() end)
-Q:RegisterEvent("TRAINER_CLOSED", function() open = false end)
+Q:RegisterEvent("TRAINER_CLOSED", function()
+  open = false
+  shownClass = false
+  Q:Fire("TRAINER_WINDOW", false)
+end)
 -- l'or change : l'alerte apparaît ou disparaît
 Q:RegisterEvent("PLAYER_MONEY", function()
   Trainer:Sync()

@@ -17,7 +17,7 @@ local QUEST_FIELDS = {
   "nextQuestInChain", "breadcrumbForQuestId", "specialFlags", "requiredSkill",
   "sourceItemId", "requiredSourceItems", "triggerEnd",
 }
-local NPC_FIELDS = { "name", "minLevel", "maxLevel", "spawns", "subName", "npcFlags" }
+local NPC_FIELDS = { "name", "minLevel", "maxLevel", "spawns", "subName", "npcFlags", "rank" }
 local OBJECT_FIELDS = { "name", "spawns" }
 local ITEM_FIELDS = { "name", "npcDrops", "objectDrops" }
 
@@ -66,7 +66,7 @@ end
 -- Version de QuestieDB sur laquelle les routes livrées ont été générées (tools/routebuilder/build.lua).
 -- Avec une version plus ancienne, des quêtes des routes sont inconnues : étape sans flèche, à passer à la
 -- main. À relever à chaque régénération des routes sur une nouvelle version de QuestieDB.
-QDB.MIN_DATA_VERSION = "1.0.15"
+QDB.MIN_DATA_VERSION = "1.1.2"
 
 -- "1.0.15", "v1.0.15", "1.0.15-beta" -> { 1, 0, 15 } ; autre chose -> nil
 local function parseVersion(s)
@@ -254,6 +254,7 @@ function QDB:Npc(id)
     spawns = convertSpawns(v[4]),
     subName = v[5],
     npcFlags = type(v[6]) == "number" and v[6] or 0,
+    rank = type(v[7]) == "number" and v[7] or 0,   -- 0 normal, 1 élite, 2 rare élite, 3 boss, 4 rare
   }
   npcCache[id] = n
   return n

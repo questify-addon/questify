@@ -1,17 +1,16 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
--- Simulation : 78 étapes, niveau final 33.00, ~34588 xp/h, 95 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 84 étapes, niveau final 33.06, ~45744 xp/h, 76 min.
 Q:RegisterGuide({
   id = "A_07",
   title = "Duskwood",
   faction = "Alliance",
   minLevel = 32, maxLevel = 33,
   next = "A_09",
-  sim = { steps = 78, endLevel = 33.00, xpPerHour = 34588, minutes = 95 },
+  sim = { steps = 84, endLevel = 33.06, xpPerHour = 45744, minutes = 76 },
   steps = {
-    { "note", "Not running Excavation Site: Wetlands? Abandon Highland Hides", optional = true, dungeon = "Excavation Site: Wetlands" },
     { "hearth", 1437 }, -- pierre de foyer
     { "fp", 1455, 55.5, 47.74 }, -- point de vol
     { "boat", 1455, 78, 51.4, note = "Take the Deeprun Tram to Stormwind" }, -- bateau
@@ -19,43 +18,51 @@ Q:RegisterGuide({
     { "fly", 1431, node = 12, note = "Darkshire, Duskwood" }, -- vol
     { "accept", 181 }, -- Look To The Stars (lvl 30, ~2450 xp, sim lvl 32)
     { "accept", 173 }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
-    { "complete", 173, at = { 1431, 64.98, 68.93 } }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
-    { "accept", 58 }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
     { "sethearth", 1431, 73.87, 44.41 }, -- lier la pierre de foyer
+    { "complete", 173, at = { 1431, 64.98, 68.93 } }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
     { "turnin", 173, xp = 1150 }, -- Worgen in the Woods (lvl 28, ~1150 xp, sim lvl 32)
     { "accept", 221 }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
     { "complete", 221, at = { 1431, 64.06, 72.31 } }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
-    { "accept", 81741 }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81731 }, -- Duskwood Mission II: Defeat Ogres (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81736 }, -- Duskwood Mission VII: Recover Shadowscythe (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81732 }, -- Duskwood Mission III: Defeat Dragonkin (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81737 }, -- Duskwood Mission VIII: Recover Ogre Magi text (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81738 }, -- Duskwood Mission IX: Recover Dragon Egg (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81745 }, -- Duskwood Mission XVI: Rescue Kroll Mountainshade (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81745, xp = 2200 }, -- Duskwood Mission XVI: Rescue Kroll Mountainshade (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81746 }, -- Duskwood Mission XVII: Rescue Alara Grovemender (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81746, xp = 2200 }, -- Duskwood Mission XVII: Rescue Alara Grovemender (lvl 27, ~2200 xp, sim lvl 32)
+    { "accept", 81747 }, -- Duskwood Mission XVIII: Rescue Elenora Marshwalker (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81747, xp = 2200 }, -- Duskwood Mission XVIII: Rescue Elenora Marshwalker (lvl 27, ~2200 xp, sim lvl 32)
     { "accept", 134 }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
-    { "complete", 58, at = { 1431, 24.44, 33.35 } }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
-    { "accept", 225 }, -- The Weathered Grave (lvl 35, ~690 xp, sim lvl 32)
     { "accept", 68 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
     { "complete", 134, at = { 1431, 33.42, 76.35 } }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
+    { "complete", 81737, at = { 1431, 35.7, 80.1 } }, -- Duskwood Mission VIII: Recover Ogre Magi text (lvl 27, ~2200 xp, sim lvl 32)
+    { "complete", 81731, at = { 1431, 35.15, 75.21 } }, -- Duskwood Mission II: Defeat Ogres (lvl 27, ~2200 xp, sim lvl 32)
     { "complete", 181, at = { 1431, 38, 80 } }, -- Look To The Stars (lvl 30, ~2450 xp, sim lvl 32)
-    { "complete", 81741, at = { 1431, 48.37, 72.85 } }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
-    { "accept", 96138, at = { 1431, 43.37, 68.23 }, note = "Loot Merrick's Bow to start the quest" }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
-    { "complete", 96138, at = { 1431, 34.66, 75.98 } }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
     { "turnin", 134, xp = 1200 }, -- Ogre Thieves (lvl 30, ~1200 xp, sim lvl 32)
     { "accept", 160 }, -- Note to the Mayor (lvl 30, ~610 xp, sim lvl 32)
     { "turnin", 160, xp = 610 }, -- Note to the Mayor (lvl 30, ~610 xp, sim lvl 32)
     { "accept", 251 }, -- Translate Abercrombie's Note (lvl 30, ~245 xp, sim lvl 32)
     { "turnin", 251, xp = 245 }, -- Translate Abercrombie's Note (lvl 30, ~245 xp, sim lvl 32)
     { "accept", 401 }, -- Wait for Sirra to Finish (lvl 30, ~1850 xp, sim lvl 32)
-    { "turnin", 96138, xp = 2450 }, -- Merrick's Bow (lvl 30, ~2450 xp, sim lvl 32)
-    { "turnin", 225, xp = 690 }, -- The Weathered Grave (lvl 35, ~690 xp, sim lvl 32)
-    { "accept", 227 }, -- Morgan Ladimore (lvl 35, ~275 xp, sim lvl 32)
     { "turnin", 401, xp = 1850 }, -- Wait for Sirra to Finish (lvl 30, ~1850 xp, sim lvl 32)
     { "accept", 252 }, -- Translation to Ello (lvl 30, ~245 xp, sim lvl 32)
     { "turnin", 252, xp = 245 }, -- Translation to Ello (lvl 30, ~245 xp, sim lvl 32)
     { "accept", 253 }, -- Bride of the Embalmer (lvl 30, ~3650 xp, sim lvl 32)
     { "turnin", 68, xp = 1700 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
     { "accept", 69 }, -- The Legend of Stalvan (lvl 28, ~570 xp, sim lvl 32)
-    { "turnin", 227, xp = 275 }, -- Morgan Ladimore (lvl 35, ~275 xp, sim lvl 32)
-    { "turnin", 58, xp = 2450 }, -- The Night Watch (lvl 30, ~2450 xp, sim lvl 32)
     { "turnin", 221, xp = 1750 }, -- Worgen in the Woods (lvl 29, ~1750 xp, sim lvl 32)
     { "accept", 222 }, -- Worgen in the Woods (lvl 31, ~1900 xp, sim lvl 32)
     { "complete", 222, at = { 1431, 72.52, 71.17 } }, -- Worgen in the Woods (lvl 31, ~1900 xp, sim lvl 32)
-    { "turnin", 81741, xp = 2200 }, -- Duskwood Mission XII: Dream-Touched Dragonscale (lvl 27, ~2200 xp, sim lvl 32)
+    { "complete", 81736, at = { 1431, 65.7, 67.45 } }, -- Duskwood Mission VII: Recover Shadowscythe (lvl 27, ~2200 xp, sim lvl 32)
+    { "complete", 81738, at = { 1431, 49.22, 72.47 } }, -- Duskwood Mission IX: Recover Dragon Egg (lvl 27, ~2200 xp, sim lvl 32)
+    { "complete", 81732, at = { 1431, 49.44, 74.39 } }, -- Duskwood Mission III: Defeat Dragonkin (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81736, xp = 2200 }, -- Duskwood Mission VII: Recover Shadowscythe (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81732, xp = 2200 }, -- Duskwood Mission III: Defeat Dragonkin (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81738, xp = 2200 }, -- Duskwood Mission IX: Recover Dragon Egg (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81737, xp = 2200 }, -- Duskwood Mission VIII: Recover Ogre Magi text (lvl 27, ~2200 xp, sim lvl 32)
+    { "turnin", 81731, xp = 2200 }, -- Duskwood Mission II: Defeat Ogres (lvl 27, ~2200 xp, sim lvl 32)
     { "complete", 253, at = { 1431, 28.82, 30.91 } }, -- Bride of the Embalmer (lvl 30, ~3650 xp, sim lvl 32)
     { "turnin", 69, xp = 570 }, -- The Legend of Stalvan (lvl 28, ~570 xp, sim lvl 32)
     { "accept", 70 }, -- The Legend of Stalvan (lvl 28, ~1700 xp, sim lvl 32)
@@ -87,7 +94,6 @@ Q:RegisterGuide({
     { "turnin", 98, xp = 4100 }, -- The Legend of Stalvan (lvl 35, ~4100 xp, sim lvl 32)
     { "goto", 1431, 77.49, 44.29, note = "Flight master" }, -- déplacement
     { "fly", 1453, node = 2, note = "Stormwind, Elwynn" }, -- vol
-    { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 32)
-    { "level", 33, at = { 1431, 77.35, 36.19 }, note = "About 20 more mobs near the last objective" }, -- farm de niveau
+    { "turnin", 563, xp = 3200 }, -- Reassignment (lvl 32, ~3200 xp, sim lvl 33)
   },
 })

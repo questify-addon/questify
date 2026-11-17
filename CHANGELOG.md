@@ -1,5 +1,188 @@
 # Changelog
 
+## 1.0.0 (2026-11-17)
+
+### English
+
+**Routes checked against QuestieDB 1.1.2**
+- Both factions' routes, the usual ones and the automatic route with dungeons, are rebuilt on QuestieDB 1.1.2.
+  They follow the quest chains QuestieDB 1.1 traced from real players: no more steps asking for a quest the game
+  does not offer yet because its previous quest was skipped.
+- Alliance, levels 22-23: Redridge Mountains come before Duskwood, with their elites optional, and the Nightmare
+  Incursion missions move to the Duskwood chapter at level 30-33, where they are safe.
+- Riverglades keeps the quest chains that start with an item QuestieDB has no position for.
+- The Undead paladin's Fenris / Moonsilver class chain is now one chain.
+- QuestieDB 1.1.2 or newer is now required for every step to have its arrow; an older version shows a warning at
+  login.
+
+**What's new window**
+- After an update that brings news, a window shows them step by step, 3 seconds after you log in (never in
+  combat). Each step has a button that takes you where to set or use it: options, journal tab, wizard page.
+- Close it and it comes back at the next login; « Don't show again » hides it for this version on the whole
+  account. Type /qf news to see it again, or use the button on the wizard's summary page.
+- A new character goes through the start wizard instead.
+
+**Raid icons on objective monsters (key)**
+- New option in Options > Automation > Targeting, off by default: bind a key, then each press puts a free raid
+  icon (skull, cross, diamond…) on the quest objective monsters whose nameplate is shown, 8 at most.
+- The game no longer lets addons place raid icons by themselves: nothing happens until you press the key.
+- Monsters without a visible nameplate, monsters tagged by another player and monsters that already have an icon
+  are left alone. Nothing happens in combat.
+- In a group or an instance the key does nothing, unless you turn on « Also in a group or an instance ».
+- Prefer a button? The wizard has a new « Mark objective monsters » page, and the options a button, that create
+  the macro « QF Marks » (/click QuestifyMarkObjectives, raid marker icon). Open the macros (/macro) and drag it
+  onto your action bar. If your macros are full, Questify tells you to make room first.
+
+**Dungeon quests: pick-up route and Dungeons tab**
+- Adding a dungeon replaces the one already added: only one dungeon is followed at a time.
+- Pick-ups are ordered for your character: from where you are, each giver at its nearest spot (a quest giver
+  standing in several places is visited at the closest one), with flight and boat times when ShortestPathForever
+  is installed, and the route ends at the dungeon entrance without going back and forth.
+- Turn-ins after a dungeon now point at the quest giver by the entrance. City of Dalaran: the Image of Archmage
+  Modera by Lordamere Lake, no longer the one in Southshore nor a point 185 yd away in Alterac.
+- City of Dalaran: An Alarming Request (Alliance) and Blood in the Streets (Horde) are now required before the
+  Image of Archmage Modera's quests, as in the game. They were missing from QuestieDB.
+- Excavation Site: Wetlands (Alliance): Highland Hides needs Young Crocolisk Skins first, and Horrors in the
+  Highland the Tramping Paws, Fire Taboo and Blisters on The Land chain. The routes no longer send you to pick
+  them up before that, and the Dungeons tab shows the quests to do first.
+- Dungeon quests checked against the DungeonJournal addon's lists: 46 quests added to 17 dungeons (picked up in
+  another zone's town, or taken and turned in inside), and 15 missing links in quest chains. Each one checked
+  against QuestieDB first; the links QuestieDB contradicts were left out. Dire Maul, Scarlet Monastery and
+  Stratholme quests whose wing is unknown show in the Dungeons tab but stay off the automatic route.
+- Automatic route with dungeons: no more long grind before a dungeon once you reach its minimum level (the
+  Alterac chapter asked for about 430 mobs before the City of Dalaran).
+- Journal, Dungeons tab: a clearer layout with the pick-up route from where you are, quests grouped by stop, then
+  the ones in your quest log (with their progress), the locked ones and the turned-in ones. Each quest has two
+  buttons: "i" (also a click on its name) shows its objective, XP at your level and its rewards; the map button
+  marks the quest giver (or where to turn it in) on the world map and the minimap, points the navigation there and
+  opens the world map. A second click removes the marker.
+
+**Options**
+- A larger window with more room between the lines. At the bottom of the menu: the version, the changelog (shown
+  in the window) and the What's new window. The start wizard leaves Tools: /qf wizard and the minimap menu.
+- Class > Macros: a long macro no longer spills out of its box, and its keys and needs are spaced from it.
+- Class > Talents: « My points » follows the tree where you spent the most points, « My choice » the spec you
+  clicked (marked « YOUR CHOICE »). The tree tabs show each tree's icon and points, the name on hover.
+- Theme: the objectives layout (list, bars, by quest) and details are also set here, and the live preview
+  follows them. They are the same settings as in Tracker.
+- What's new: a step that leads to a wizard page opens that page alone, with Cancel and Save.
+
+**Route and navigation**
+- Change route: the current chapter and up to 4 chapters for your level (one level below their start, two above
+  their end), ranked like a fork. It no longer reopens an old fork (Westfall or Darkshore at level 30).
+- Auction house: a coin button in the tracker opens the shopping list and glows while items of the chapter are
+  left to buy; in the journal's Manual view, « To buy (N) » shows beside the steps' title.
+- Shaman: Astral Recall counts as a way home. On a hearthstone step, it is offered when the stone is on cooldown,
+  and the trip goes through the inn as soon as one of them is ready.
+- Route planner: AzerothGPS (1.3.6 or newer) follows each Questify step with its own route and arrow; Questify
+  then plans nothing and hides its arrow. The Questify arrow is now marked « (built-in) ».
+- The walking router and its maps are now part of Questify: Questify Nav, Eastern Kingdoms and Kalimdor no
+  longer show as separate addons. Delete those three folders from your AddOns folder if they are still there.
+
+**Living with the other addons**
+- Blizzard's objective tracker is no longer folded while the Forever addons' column (ShortestPath Forever's journey)
+  is attached to it: folding it hid that column too.
+- ShortestPath Forever's turns handed to WaypointUI are silent again and the same turn is not placed twice (since
+  ShortestPath 1.22.49 they no longer went through Questify's fix).
+- A journey you start in ShortestPath Forever keeps the waypoint: Questify no longer places its destination over the
+  journey's turns, no longer replaces it at the next step, and takes the waypoint back when the journey ends. /qf
+  check says so meanwhile.
+- Questify only clears its own WaypointUI navigation and game waypoint, never another addon's.
+- The gold ring around quest objects only shows when the game's waypoint is on the object.
+
+### Français
+
+**Routes vérifiées sur QuestieDB 1.1.2**
+- Les routes des deux factions, habituelles et automatique avec donjons, sont régénérées sur QuestieDB 1.1.2.
+  Elles suivent les chaînes de quêtes relevées chez les joueurs par QuestieDB 1.1 : plus d'étape qui demande une
+  quête que le jeu ne propose pas encore parce que sa quête précédente n'a pas été faite.
+- Alliance, niveaux 22-23 : les Carmines passent avant le Bois de la Pénombre, leurs élites sont facultatifs, et
+  les missions de l'Incursion du cauchemar passent au chapitre du Bois de la Pénombre de niveau 30-33, sans danger.
+- Riverglades garde les chaînes qui commencent par un objet sans position dans QuestieDB.
+- La chaîne de classe Fenris / Moonsilver du paladin mort-vivant est d'un seul tenant.
+- QuestieDB 1.1.2 ou plus récent est désormais requis pour que chaque étape ait sa flèche ; une version plus
+  ancienne affiche un avertissement à la connexion.
+
+**Fenêtre des nouveautés**
+- Après une mise à jour qui apporte des nouveautés, une fenêtre les présente étape par étape, 3 secondes après
+  la connexion (jamais en combat). Chaque étape a un bouton qui mène à l'endroit où la régler ou l'utiliser :
+  options, onglet du journal, page de l'assistant.
+- Ferme-la et elle revient à la connexion suivante ; « Ne plus afficher » la masque pour cette version sur tout
+  le compte. Tape /qf news pour la revoir, ou utilise le bouton de la page « Récapitulatif » de l'assistant.
+- Un nouveau personnage passe par l'assistant de départ à la place.
+
+**Icônes de raid sur les monstres d'objectif (touche)**
+- Nouvelle option dans Options > Automatisation > Ciblage, coupée par défaut : choisis une touche, puis chaque
+  appui pose une icône de raid libre (crâne, croix, losange…) sur les monstres d'objectif de quête dont la barre de
+  nom est affichée, 8 au plus.
+- Le jeu ne laisse plus les addons poser seuls les icônes de raid : rien ne se passe tant que tu n'appuies pas sur
+  la touche.
+- Les monstres sans barre de nom visible, ceux tagués par un autre joueur et ceux qui ont déjà une icône ne sont
+  pas touchés. Rien en combat.
+- En groupe ou en instance, la touche ne fait rien, sauf si tu coches « Aussi en groupe ou en instance ».
+- Tu préfères un bouton ? L'assistant a une nouvelle page « Marquer les monstres d'objectif », et les options un
+  bouton, qui créent la macro « QF Marques » (/click QuestifyMarkObjectives, icône de marqueur de raid). Ouvre les
+  macros (/macro) et glisse-la sur ta barre d'actions. Si tes macros sont pleines, Questify te dit d'en libérer une.
+
+**Quêtes de donjon : route de prise et onglet Donjons**
+- Ajouter un donjon remplace celui déjà ajouté : un seul donjon est suivi à la fois.
+- Les prises sont ordonnées pour ton personnage : depuis ta position, chaque donneur à son point le plus proche
+  (un donneur présent en plusieurs lieux est pris au plus près), avec les temps de vol et de bateau quand
+  ShortestPathForever est installé, et la route finit à l'entrée du donjon sans aller-retour.
+- Les rendus après un donjon visent le donneur devant l'entrée. Cité de Dalaran : l'image de l'archimage Modera au
+  bord du lac Lordamere, et non plus celle d'Austrebrune ni un point à 185 m dans Alterac.
+- Cité de Dalaran : Une requête alarmante (Alliance) et Du sang dans les rues (Horde) sont maintenant demandées
+  avant les quêtes de l'image de Modera, comme en jeu. Elles manquaient à QuestieDB.
+- Site de fouilles des Paluns (Alliance) : Highland Hides demande d'abord Young Crocolisk Skins, et Horrors in the
+  Highland la chaîne Tramping Paws, Fire Taboo et Blisters on The Land. Les routes ne font plus prendre ces quêtes
+  avant, et l'onglet Donjons montre les quêtes à faire d'abord.
+- Quêtes de donjon vérifiées avec les listes de l'addon DungeonJournal : 46 quêtes ajoutées à 17 donjons (prises
+  dans la ville d'une autre zone, ou prises et rendues dans l'instance), et 15 maillons de chaînes manquants. Chacun
+  vérifié d'abord dans QuestieDB ; ceux que QuestieDB contredit sont écartés. Les quêtes de Hache-Tripes, du
+  Monastère écarlate et de Stratholme dont l'aile n'est pas connue sont dans l'onglet Donjons, hors route
+  automatique.
+- Route automatique avec les donjons : plus de long farm avant un donjon dont tu as le niveau minimal (le chapitre
+  d'Alterac demandait environ 430 monstres avant la Cité de Dalaran).
+- Journal, onglet Donjons : présentation plus lisible avec l'itinéraire de prise depuis ta position, les quêtes par
+  arrêt, puis celles de ton journal (avec leur progression), les bloquées et les rendues. Chaque quête a deux
+  boutons : « i » (ou un clic sur son nom) montre son objectif, l'XP à ton niveau et ses récompenses ; le bouton
+  carte marque le donneur (ou le receveur) sur la carte du monde et la minicarte, y dirige la navigation et ouvre
+  la carte du monde. Un second clic retire le repère.
+
+**Options**
+- Une fenêtre plus grande, plus aérée. En bas du menu : la version, le journal des versions (dans la fenêtre) et
+  la fenêtre des nouveautés. L'assistant de départ quitte Outils : /qf wizard et le menu de la minicarte.
+- Classe > Macros : une longue macro ne déborde plus de sa boîte, et ses touches et prérequis en sont écartés.
+- Classe > Talents : « Mes points » suit l'arbre où tu as le plus de points, « Mon choix » la spé cliquée
+  (marquée « TON CHOIX »). Les onglets de l'arbre montrent l'icône et les points de chaque arbre, le nom au survol.
+- Thème : la disposition des objectifs (liste, barres, par quête) et leur détail se règlent aussi ici, et
+  l'aperçu en direct les suit. Ce sont les mêmes réglages que dans Suivi.
+- Nouveautés : une étape qui mène à une page de l'assistant ouvre cette page seule, avec Annuler et Enregistrer.
+
+**Route et navigation**
+- Changer de route : le chapitre en cours et jusqu'à 4 chapitres de ton niveau (un niveau sous leur début, deux
+  au-dessus de leur fin), classés comme un embranchement. Plus de retour à un vieil embranchement (Marche de
+  l'Ouest ou Sombrivage au niveau 30).
+- Hôtel des ventes : un bouton pièces d'or du suivi ouvre la liste d'achats et brille tant qu'il reste des objets
+  du chapitre à acheter ; dans le journal, vue Manuel, « À acheter (N) » s'affiche à côté du titre des étapes.
+- Chaman : le Rappel astral compte comme retour au foyer. Sur une étape de pierre de foyer, il est proposé quand
+  la pierre recharge, et le trajet passe par l'auberge dès que l'un des deux est prêt.
+- Planificateur : AzerothGPS (1.3.6 ou plus) suit chaque étape de Questify avec son trajet et sa flèche ; Questify
+  ne calcule alors rien et cache sa flèche. La flèche Questify est marquée « (intégrée) ».
+- Le routeur de marche et ses cartes font partie de Questify : Questify Nav, Eastern Kingdoms et Kalimdor
+  n'apparaissent plus comme addons séparés. Supprime ces trois dossiers de ton dossier AddOns s'ils y sont encore.
+
+**Cohabitation avec les autres addons**
+- Le suivi d'objectifs de Blizzard n'est plus replié tant que la colonne des addons Forever (le trajet de
+  ShortestPath Forever) lui est attachée : le replier cachait aussi cette colonne.
+- Les virages de ShortestPath Forever confiés à WaypointUI sont de nouveau silencieux, et un même virage n'est pas
+  reposé (depuis ShortestPath 1.22.49, ils échappaient au correctif de Questify).
+- Un trajet lancé dans ShortestPath Forever garde le repère : Questify ne pose plus sa destination par-dessus ses
+  virages, ne le remplace plus à l'étape suivante, et reprend le repère à la fin du trajet. /qf check le signale
+  entre-temps.
+- Questify n'efface plus que sa propre navigation WaypointUI et son propre repère du jeu, jamais ceux d'un autre addon.
+- L'anneau doré autour des objets de quête ne s'affiche que si le repère du jeu est sur l'objet.
+
 ## 0.8.1 (2026-11-16)
 
 ### English

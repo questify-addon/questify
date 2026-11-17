@@ -70,4 +70,5 @@
   <Script file="Horde\H_30.lua"/>
   <Script file="ClassQuestData.lua"/>
   <Script file="BagQuestData.lua"/>
+  <Script file="AuctionItemData.lua"/>
 </Ui>

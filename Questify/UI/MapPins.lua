@@ -10,7 +10,8 @@ local addonName, Q = ...
 -- grands. La minicarte ne montre que l'étape courante. Survol : texte de l'étape ; clic : cible
 -- de navigation (Q.Nav:SetManualTarget : prioritaire jusqu'à l'étape suivante).
 -- Mode zone (Engine/ZoneMode.lua) : un repère vert au centre de la zone, en plus des repères
--- numérotés (sur la minicarte seulement hors de la zone).
+-- numérotés (sur la minicarte seulement hors de la zone). Zone tracée sur la carte du monde
+-- (UI/ZoneOverlay.lua, option zoneOverlay) : pas de repère au centre sur la carte du monde.
 -- Rien ici n'est protégé, mais le calcul attend la fin du combat (rien d'utile à redessiner
 -- pendant). Option « mapPins ». Sans QuestieDB ou sans les bibliothèques : rien, en silence.
 -- Coordonnées : 0-100 dans l'addon, 0-1 chez HereBeDragons.
@@ -198,7 +199,8 @@ local function targetName(tg)
 end
 
 -- -> liste de points { mapId, x (0-100), y, name }, style (nil si l'étape n'a pas de repère).
-local function pointsFor(entry)
+-- from = { m, x, y } : point d'où la route arrive à l'étape (étapes à venir), ou nil (depuis le joueur).
+local function pointsFor(entry, from)
   local step = entry.step
   local style = STYLES[step.action]
   if not style then return {}, nil end
@@ -207,13 +209,13 @@ local function pointsFor(entry)
     if #pts > 0 then return pts, style end
     -- aucun point d'apparition connu : la cible de l'étape (zone d'objectif) seule
   end
-  local tg = Q.Targets:ForEntry(entry)
+  local tg = Q.Targets:ForEntry(entry, from)
   if not tg or type(tg.mapId) ~= "number" or not validCoord(tg.x) or not validCoord(tg.y) then
     return {}, style
   end
   return { { mapId = tg.mapId, x = tg.x, y = tg.y, name = targetName(tg) } }, style
 end
-MapPins.PointsFor = function(_, entry) return pointsFor(entry) end
+MapPins.PointsFor = function(_, entry, from) return pointsFor(entry, from) end
 
 ---------------------------------------------------------------------------
 -- Cadres des repères (une réserve pour la carte du monde, une pour la minicarte)
@@ -235,6 +237,12 @@ local function onEnter(self)
       return
     end
     GameTooltip:AddLine(d.name or d.title or "", 1, 0.82, 0)
+    if d.order == 0 then
+      GameTooltip:AddLine(d.title or "", 1, 1, 1, true)
+      GameTooltip:AddLine(L.MAP_PIN_MARKED, 0.7, 0.7, 0.7)
+      GameTooltip:Show()
+      return
+    end
     if d.order == 1 then
       GameTooltip:AddLine(L.MAP_PIN_CURRENT, 0.7, 0.7, 0.7)
     else
@@ -360,8 +368,9 @@ local function dress(f, style, action, order, onMinimap)
     end
   end
   f:SetSize(size, size)
-  f:SetAlpha(current and 1 or 0.85)
-  f.num:SetText(style == "zone" and "" or tostring(order))
+  f:SetAlpha((current or order == 0) and 1 or 0.85)
+  -- order 0 : repère posé depuis le journal (Mark), sans numéro d'étape
+  f.num:SetText((style == "zone" or order == 0) and "" or tostring(order))
 end
 
 ---------------------------------------------------------------------------
@@ -412,7 +421,9 @@ function MapPins:PlaceZone(lib)
   if type(c.mapId) ~= "number" or not validCoord(c.x) or not validCoord(c.y) then return end
   local title = Z:Title(z)
   local p = { mapId = c.mapId, x = c.x, y = c.y, name = title, zone = z }
-  place(lib, "world", cur, 1, "zone", p, title)
+  -- zone tracée sur la carte du monde (UI/ZoneOverlay.lua) : pas de repère au centre en plus
+  local ZO = Q.UI.ZoneOverlay
+  if not (ZO and ZO.DrawsWorld and ZO:DrawsWorld()) then place(lib, "world", cur, 1, "zone", p, title) end
   if not z.inside then place(lib, "mini", cur, 1, "zone", p, title, true) end
 end
 
@@ -426,8 +437,21 @@ function MapPins:Refresh()
   -- mode zone : repère vert au centre (minicarte : hors de la zone seulement, au bord)
   local okZ, err = pcall(MapPins.PlaceZone, MapPins, lib)
   if not okZ then Q:ReportError("MapPins: " .. tostring(err)) end
+  -- Étapes à venir : le donneur ou le receveur le plus proche de l'endroit où la route en sera (le dernier lieu
+  -- d'une prise, d'un rendu ou d'un déplacement avant elle), pas du joueur. Un rendu après un donjon vise
+  -- ainsi le PNJ devant l'entrée, même quand un autre point d'apparition est plus près du joueur.
+  local from
+  -- repère posé depuis le journal (onglet Donjons) : en plus des étapes, jusqu'à ce qu'il soit retiré
+  local m = MapPins.marked
+  if m then
+    local entry = { step = { action = m.style } }
+    local p = { mapId = m.mapId, x = m.x, y = m.y, name = m.name }
+    place(lib, "world", entry, 0, m.style, p, m.title)
+    place(lib, "mini", entry, 0, m.style, p, m.title, true)
+  end
   for order, entry in ipairs(window()) do
-    local pts, style = pointsFor(entry)
+    local pts, style = pointsFor(entry, order > 1 and from or nil)
+    if style and style ~= "objective" and pts[1] then from = { pts[1].mapId, pts[1].x, pts[1].y } end
     if style and #pts > 0 then
       local title = Q.Format:StepTitle(entry)
       for i, p in ipairs(pts) do
@@ -437,6 +461,28 @@ function MapPins:Refresh()
       end
     end
   end
+end
+
+-- Mark(t) : repère posé depuis le journal (bouton carte de l'onglet Donjons), en plus de ceux des étapes :
+-- t = { mapId, x, y (0-100), style = "accept" | "turnin" | "goto", name, title, key }, nil pour le retirer.
+-- La navigation le prend pour cible (Q.Nav:SetManualTarget) ; le retirer lui rend l'étape courante.
+-- -> vrai si un repère est posé.
+function MapPins:Mark(t)
+  if type(t) == "table" and type(t.mapId) == "number" and validCoord(t.x) and validCoord(t.y) then
+    self.marked = { mapId = t.mapId, x = t.x, y = t.y, style = t.style or "goto", name = t.name, title = t.title,
+      key = t.key }
+    if Q.Nav and Q.Nav.SetManualTarget then Q.Nav:SetManualTarget(t.mapId, t.x, t.y, t.name or t.title) end
+  else
+    local had = self.marked ~= nil
+    self.marked = nil
+    if had and Q.Nav and Q.Nav.ReleaseManual then Q.Nav:ReleaseManual() end
+  end
+  self:Update()
+  return self.marked ~= nil
+end
+
+function MapPins:MarkedKey()
+  return self.marked and self.marked.key or nil
 end
 
 -- Dessine maintenant, ou à la fin du combat.
@@ -473,6 +519,10 @@ end
 
 -- Option coupée : tout est retiré tout de suite (même en combat, c'est sans calcul).
 Q:On("SETTINGS_CHANGED", function(path)
+  if path == "zoneOverlay" then
+    if enabled() then schedule() end
+    return
+  end
   if path ~= "mapPins" then return end
   if enabled() then schedule() else MapPins:Clear() end
 end)

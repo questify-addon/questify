@@ -8,11 +8,13 @@ Q:RegisterStrings({
     MAP_PIN_CURRENT = "Current step",
     MAP_PIN_UPCOMING = "Upcoming step (#%d)",
     MAP_PIN_CLICK = "Click: navigate here",
+    MAP_PIN_MARKED = "Marked from the Questify journal",
   },
   frFR = {
     MAP_OPT_PINS = "Afficher les prochaines étapes sur la carte du monde et la minicarte",
     MAP_PIN_CURRENT = "Étape en cours",
     MAP_PIN_UPCOMING = "Étape à venir (n° %d)",
     MAP_PIN_CLICK = "Clic : y aller",
+    MAP_PIN_MARKED = "Repère posé depuis le journal de Questify",
   },
 })

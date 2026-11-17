@@ -160,7 +160,11 @@ function M.runBlock(D, ix, data, r, state, steps, zones)
     table.sort(ids, turninOrder)
     for _, id in ipairs(ids) do
       local q = D.quests[id]
-      local s = tag({ "turnin", id, xp = (data.rewards[id] or {}).xp }, q)
+      -- point du receveur noté dans DungeonData.lua (le plus proche de l'entrée) : cible du rendu tant que la
+      -- position du joueur est inconnue, dans l'instance (Engine/Targets.lua)
+      local e = ix.dq[id]
+      local at = e and e.endAt and { e.endAt[1], e.endAt[2], e.endAt[3] } or nil
+      local s = tag({ "turnin", id, xp = (data.rewards[id] or {}).xp, at = at }, q)
       s._endMap, s._far = endMap(id), not near(id)
       state.done[id] = true
       state.log[id] = nil
@@ -329,6 +333,9 @@ function M.writeXml(out)
   build.writeFile(out .. "/DungeonGuides.xml", table.concat(xml, "\n") .. "\n")
 end
 
+-- Mobs à farmer au plus en fin d'un chapitre qui finit à l'entrée d'un donjon dont le niveau minimal est atteint.
+local GRIND_CAP = 60
+
 -- Génère les routes d'une faction. -> 0, ou 1 sur une chaîne incohérente.
 function M.runFaction(o, faction, data, ov, W)
   local ladder = require("dungeon_ladder").forFaction(faction)
@@ -367,6 +374,9 @@ function M.runFaction(o, faction, data, ov, W)
           plan.minLevel, plan.maxLevel = math.min(lvl, 59), math.min(lvl + 1, 60)
         end
         plan._startLevel = state.level
+        -- chapitre qui finit à l'entrée d'un donjon : pas de long farm une fois le niveau minimal du donjon atteint
+        local first = plan.run and ix.byKey[plan.run[1]]
+        if first and first.minLevel then plan.grindCap, plan.grindFloor = GRIND_CAP, first.minLevel end
       end
       p.after = function(plan, state, steps)
         plan._endLevel = state.level

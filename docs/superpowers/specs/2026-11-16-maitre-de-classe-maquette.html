@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Questify — maître de classe et rangs des barres (maquette)</title>
+<style>
+  :root { --gold:#ffd100; --gold2:#c9a34a; --edge:#6d5a3a; --txt:#eadfc8; --dim:#8c8170; --ok:#58b85c; --bad:#e0584f; --qf:#33ccff; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--txt); font:14px/1.35 "Segoe UI", system-ui, sans-serif; padding:16px 16px 60px;
+    background:radial-gradient(ellipse at 30% 20%, #3c4a33 0%, #1c241a 45%, #0b0e0a 100%); min-height:100vh; }
+  .serif { font-family:"Friz Quadrata", Georgia, "Times New Roman", serif; }
+  h1 { font-size:17px; margin:0 0 4px; color:var(--gold2); }
+  h2 { font-size:15px; margin:34px 0 4px; color:var(--gold2); }
+  .note { color:#b6ab97; font-size:12.5px; margin:0 0 12px; max-width:980px; }
+  .variant { display:flex; gap:8px; align-items:center; margin:8px 0 18px; font-size:12.5px; color:#b6ab97; flex-wrap:wrap; }
+  .variant button { background:#241d16; color:var(--txt); border:1px solid var(--edge); border-radius:4px; padding:4px 10px; cursor:pointer; font:inherit; }
+  .variant button.on { border-color:var(--gold2); color:var(--gold); }
+  .row { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+
+  /* fenêtre du maître de Blizzard (repère, non modifiée) */
+  .blz { width:340px; height:470px; border:2px solid #4a4030; border-radius:5px; background:repeating-linear-gradient(135deg,#1a1712 0 10px,#16130f 10px 20px);
+    color:#6f6553; display:flex; align-items:center; justify-content:center; text-align:center; font-size:13px; }
+
+  /* ---- thème Questify (lu dans Q.Themes : parchemin par défaut, sombre en variante) ---- */
+  .qf { --bg:radial-gradient(ellipse at 30% 20%, #efe2c0 0%, #d9c393 60%, #c2a46c 100%); --bgc:#dcc79a; --ink:#2b1a08; --title:#4d2100; --dimq:#5c452a;
+    --sep:#a88b5a; --rowh:#e9d8ae66; --cost:#2b1a08; --costbad:#a31414; --btn:#7a1d0e; --border:#b88c40; --trainer:#14508c; --good:#1f6e1f; }
+  .qf.dark { --bg:none; --bgc:#0b0b0b; --ink:#ffffff; --title:#ffd100; --dimq:#8c8c8c; --sep:#3b3b3b; --rowh:#ffffff10;
+    --cost:#ffffff; --costbad:#ff5555; --btn:#7a1d0e; --border:#7f7f7f; --trainer:#80d9ff; --good:#40ff40; }
+
+  .panel { position:relative; width:310px; border:1px solid var(--border); border-radius:6px; padding:10px 12px 12px; color:var(--ink);
+    background:var(--bg), var(--bgc); box-shadow:0 6px 24px #000a; font-size:13px; }
+  .panel .close { position:absolute; right:6px; top:6px; width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #d23a2a, #4a0d08);
+    border:1px solid var(--gold2); color:#fff; font-size:10px; text-align:center; line-height:16px; }
+  .head { display:flex; gap:9px; align-items:center; margin-bottom:8px; }
+  .head .ring { width:38px; height:38px; border-radius:50%; border:2px solid #ff7d0a; background:#000 center/cover; flex:none; }
+  .head .kick { font-size:10.5px; letter-spacing:.08em; color:var(--dimq); text-transform:uppercase; }
+  .head .t { font-size:15px; color:var(--title); }
+  .sec { display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 3px; padding-bottom:2px; border-bottom:1px solid var(--sep);
+    font-size:11.5px; color:var(--dimq); text-transform:uppercase; letter-spacing:.05em; }
+  .sec b { color:var(--title); font-weight:600; text-transform:none; letter-spacing:0; font-size:12.5px; }
+  .sp { display:grid; grid-template-columns:30px 1fr auto; gap:0 8px; align-items:center; padding:3px 4px; border-radius:4px; }
+  .sp:hover { background:var(--rowh); }
+  .sp img { width:30px; height:30px; border-radius:4px; border:1px solid #000a; grid-row:span 2; }
+  .sp .n { font-size:13px; line-height:1.15; }
+  .sp .r { font-size:11.5px; color:var(--dimq); line-height:1.15; }
+  .sp .c { text-align:right; font-size:12.5px; grid-row:span 2; white-space:nowrap; color:var(--cost); }
+  .sp .c .lv { display:block; font-size:11px; color:var(--dimq); }
+  .sp.bad .c { color:var(--costbad); }
+  .sp.later { opacity:.62; }
+  .sp.later img { filter:grayscale(.85); }
+  .coin { display:inline-block; width:9px; height:9px; border-radius:50%; margin:0 2px 0 1px; vertical-align:0; }
+  .g { background:radial-gradient(circle at 35% 35%,#fff3a0,#d4a017); } .s { background:radial-gradient(circle at 35% 35%,#fff,#9aa0a6); } .k { background:radial-gradient(circle at 35% 35%,#ffcf9e,#b0602a); }
+  .foot { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:7px; border-top:1px solid var(--sep); font-size:12px; color:var(--dimq); }
+  .foot b { color:var(--ink); font-weight:600; }
+  .btn { display:inline-block; padding:4px 12px; border-radius:4px; border:1px solid #c9a34a; background:linear-gradient(#a52a14,#5a1206); color:#ffd100; font-size:12.5px; cursor:pointer; user-select:none; }
+  .btn.off { filter:grayscale(1) brightness(.7); cursor:default; }
+  .btn.plain { background:linear-gradient(#3a3a3a,#1c1c1c); }
+  .lvl { font-size:11px; color:var(--dimq); margin:6px 0 1px 4px; }
+
+  /* carte « anciens rangs » */
+  .card { width:350px; } .btn { white-space:nowrap; }
+  .icons { display:flex; gap:5px; margin:2px 0 7px; }
+  .icons img { width:26px; height:26px; border-radius:4px; border:1px solid #000a; }
+  .ln { font-size:12.5px; margin:1px 0; }
+  .ln i { font-style:normal; color:var(--dimq); }
+  .acts { display:flex; gap:8px; margin-top:9px; align-items:center; }
+  .acts .x { margin-left:auto; font-size:11.5px; color:var(--dimq); text-decoration:underline; cursor:pointer; }
+  .icons img { cursor:pointer; opacity:.55; }
+  .icons img.cur { opacity:1; outline:2px solid #ffd100; outline-offset:1px; }
+  .wsep { height:1px; background:var(--sep); margin:2px 0 8px; }
+  .step { display:grid; grid-template-columns:22px 40px 1fr 22px; gap:0 8px; align-items:center; }
+  .step img { width:40px; height:40px; border-radius:5px; border:1px solid #000a; }
+  .arrow { width:22px; height:22px; border-radius:50%; border:1px solid var(--border); text-align:center; line-height:20px; cursor:pointer; color:var(--title); user-select:none; }
+  .arrow.off { opacity:.3; cursor:default; }
+  .step .nm { font-size:14px; color:var(--title); } .step .rk { font-size:12.5px; } .step .sl { font-size:11.5px; color:var(--dimq); }
+  .pos { text-align:center; font-size:11px; color:var(--dimq); margin:4px 0 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+  .grid2 .btn { text-align:center; white-space:normal; line-height:1.2; padding:5px 6px; }
+  .done { font-size:13px; padding:8px 0 2px; color:var(--good); }
+
+  /* chat */
+  .chat { width:520px; background:#000a; border-radius:4px; padding:6px 9px; font:13px/1.45 "Arial", sans-serif; color:#fff; }
+  .chat .qn { color:#33ccff; }
+  .chat .sp2 { color:#71d5ff; }
+  .chat .dimc { color:#aaa; }
+
+  /* suivi + infobulle */
+  .tracker { width:280px; }
+  .alert { display:flex; gap:7px; align-items:center; padding:4px 6px; border-radius:4px; background:var(--rowh); color:var(--trainer); font-size:13px; }
+  .alert img { width:16px; height:16px; border-radius:3px; }
+  .tip { width:300px; background:#090c1ae8; border:1px solid #8a8a8a; border-radius:5px; padding:7px 9px; font-size:12.5px; color:#fff; }
+  .tip .tt { color:#ffd100; font-size:13.5px; margin-bottom:4px; }
+  .tip .sp { padding:1px 0; grid-template-columns:18px 1fr auto; }
+  .tip .sp img { width:18px; height:18px; grid-row:auto; border-radius:3px; }
+  .tip .sp .n { font-size:12.5px; } .tip .sp .n i { color:#aaa; font-style:normal; font-size:11.5px; }
+  .tip .sp .c { grid-row:auto; color:#fff; font-size:12px; }
+  .tip .grey { color:#aaa; } .tip .green { color:#40ff40; } .tip .gold { color:#ffd100; }
+  .lbl { font-size:11.5px; color:#b6ab97; margin:0 0 5px; }
+</style>
+</head>
+<body>
+<h1 class="serif">Questify — maître de classe et rangs des barres d'action (maquette)</h1>
+<p class="note">Exemple : druide niveau 24, 2 po 13 pa en poche. Couleurs lues dans les thèmes de Questify (parchemin par défaut, sombre en variante) ; icônes du jeu. La fenêtre du maître de Blizzard n'est pas touchée : Questify se place à côté. Inspiré des cartes « nouveaux sorts » et « anciens rangs » de Polestar (GPL-3.0).</p>
+<div class="variant">Thème :
+  <button class="on" data-theme="">Parchemin</button><button data-theme="dark">Sombre</button>
+  &nbsp; Combat :
+  <button class="on" data-combat="0">Hors combat</button><button data-combat="1">En combat</button>
+</div>
+
+<h2>A. Panneau « Sorts du maître », collé à droite de la fenêtre du maître de classe</h2>
+<p class="note">S'ouvre et se ferme avec la fenêtre du maître de classe (pas pour un maître de métier ou de familiers). Sorts apprenables : moins chers d'abord ; coût en rouge quand l'or manque. « Prochains niveaux » : les sorts des deux niveaux suivants (Data/ClassSpells.lua), grisés. Survol d'une ligne : infobulle du sort du jeu.</p>
+<div class="row">
+  <div class="blz">Fenêtre du maître<br>de Blizzard<br>(inchangée)</div>
+  <div class="panel qf" id="trainer">
+    <div class="close">✕</div>
+    <div class="head"><div class="ring" style="background-image:url(https://wow.zamimg.com/images/wow/icons/large/classicon_druid.jpg)"></div>
+      <div><div class="kick">Niveau 24 · Druide</div><div class="t serif">Sorts du maître</div></div></div>
+    <div class="sec">À apprendre maintenant <b id="sum"></b></div>
+    <div id="now"></div>
+    <div class="sec">Prochains niveaux</div>
+    <div id="later"></div>
+    <div class="foot"><span>Ton or : <b>2<span class="coin g"></span> 13<span class="coin s"></span></b></span><span>Reste à payer : <b style="color:var(--costbad)">45<span class="coin s"></span></b></span></div>
+  </div>
+</div>
+
+<h2>B. Assistant « Anciens rangs sur tes barres » (après l'achat de nouveaux rangs)</h2>
+<p class="note">Apparaît une seconde après le dernier sort appris, s'il reste des boutons en rang inférieur (tous les emplacements d'action, addons de barres compris). En haut : tous les sorts à traiter (clic sur une icône pour y aller). Puis un sort à la fois, avec les flèches ‹ › pour passer d'un sort à l'autre, et quatre choix. Un sort traité sort de l'assistant ; « Appliquer tous » et « Ignorer tous » ne portent que sur les sorts restants. Ignorer = garder ce rang : pas reproposé, sauf pour un rang encore plus haut appris plus tard. Ne touche que les emplacements qui portaient un rang plus bas du même sort ; macros et objets jamais touchés. Essaie : les boutons marchent.</p>
+<div class="row">
+  <div class="panel qf card" id="ranks">
+    <div class="close">✕</div>
+    <div class="head"><div class="ring" style="border-color:#c9a34a;background-image:url(https://wow.zamimg.com/images/wow/icons/large/spell_nature_rejuvenation.jpg)"></div>
+      <div><div class="kick">Barres d'action</div><div class="t serif">3 sorts en ancien rang</div></div></div>
+    <div class="icons" id="ricons"></div>
+    <div class="wsep"></div>
+    <div id="wiz"></div>
+    <div class="lvl" id="combatnote" style="display:none;margin:6px 0 0;color:var(--costbad)">En combat : tes choix sont appliqués à la fin du combat.</div>
+    <div class="lvl" style="margin:8px 0 0"><a href="#" id="reset" style="color:var(--dimq)">↺ recommencer la démo</a></div>
+  </div>
+  <div>
+    <div class="lbl">Message dans la discussion :</div>
+    <div class="chat" id="chat"></div>
+  </div>
+</div>
+
+<h2>C. Suivi : alerte et infobulle avec icônes, rangs et coûts</h2>
+<p class="note">Même alerte qu'aujourd'hui (clic : route vers le maître ; clic droit : masquer jusqu'au prochain niveau) ; l'infobulle passe d'une liste de noms à des lignes icône + nom + rang + coût.</p>
+<div class="row">
+  <div class="panel qf tracker"><div class="alert"><img src="https://wow.zamimg.com/images/wow/icons/large/classicon_druid.jpg">Nouveaux sorts : 3 chez ton maître de classe</div></div>
+  <div class="tip">
+    <div class="tt">Nouveaux sorts : 3 chez ton maître de classe</div>
+    <div id="tipl"></div>
+    <div style="margin-top:4px">Coût total : <span class="gold">1 po 68 pa</span></div>
+    <div class="grey">1 autre sort quand tu auras 45 pa de plus</div>
+    <div class="green" style="margin-top:4px">Clic : aller au maître de classe le plus proche</div>
+    <div class="green">Clic droit : masquer jusqu'au prochain niveau</div>
+  </div>
+</div>
+
+<script>
+const IB = "https://wow.zamimg.com/images/wow/icons/large/";
+const money = c => { const g = Math.floor(c/10000), s = Math.floor(c/100)%100, k = c%100; let o = "";
+  if (g) o += `${g}<span class="coin g"></span> `; if (s) o += `${s}<span class="coin s"></span> `; if (k || !o) o += `${k}<span class="coin k"></span>`; return o.trim(); };
+// [nom, rang, niveau, coût (cuivre), icône, payable]
+const NOW = [
+  ["Rétablissement", 3, 24, 4200, "spell_nature_resistnature", 1],
+  ["Épines", 4, 24, 4200, "spell_nature_thorns", 1],
+  ["Griffure", 1, 24, 4200, "ability_druid_disembowel", 1],
+  ["Récupération", 4, 22, 3600, "spell_nature_rejuvenation", 1],
+  ["Délivrance de la malédiction", null, 24, 4500, "spell_holy_removecurse", 0],
+];
+const LATER = [
+  [26, [["Toucher guérisseur", 5, "spell_nature_healingtouch", 5000], ["Rugissement démoralisant", 2, "ability_druid_demoralizingroar", 5000], ["Feu stellaire", 1, "spell_arcane_starfire", 5000]]],
+  [28, [["Écorce", 2, "spell_nature_stoneclawtotem", 6000], ["Lucioles", 2, "spell_nature_faeriefire", 6000]]],
+];
+const row = (n, r, lv, c, ic, cls) => `<div class="sp ${cls}"><img src="${IB}${ic}.jpg" onerror="this.style.background='#3a3026';this.removeAttribute('src')">
+  <div class="n">${n}</div><div class="c">${money(c)}<span class="lv">niv. ${lv}</span></div><div class="r">${r ? "Rang " + r : "&nbsp;"}</div></div>`;
+document.getElementById("now").innerHTML = NOW.map(s => row(s[0], s[1], s[2], s[3], s[4], s[5] ? "" : "bad")).join("");
+document.getElementById("sum").innerHTML = "5 · " + money(NOW.reduce((a, s) => a + s[3], 0));
+document.getElementById("later").innerHTML = LATER.map(([lv, l]) => `<div class="lvl">Niveau ${lv}</div>` + l.map(s => row(s[0], s[1], lv, s[3], s[2], "later")).join("")).join("");
+document.getElementById("tipl").innerHTML = NOW.slice(0, 3).reverse().map(s => `<div class="sp"><img src="${IB}${s[4]}.jpg"><div class="n">${s[0]} <i>rang ${s[1]}</i></div><div class="c">${money(s[3])}</div></div>`).join("");
+// Assistant des anciens rangs : [nom, ancien rang, nouveau rang, icône, emplacements]
+const OLD = [
+  ["Récupération", 3, 4, "spell_nature_rejuvenation", ["barre 1 (bouton 3)", "barre 3 (bouton 7)"]],
+  ["Épines", 3, 4, "spell_nature_thorns", ["barre 1 (bouton 8)"]],
+  ["Rétablissement", 2, 3, "spell_nature_resistnature", ["barre de droite (bouton 2)"]],
+];
+let left, cur, log, combat = 0;
+const reset = () => { left = OLD.map((_, i) => i); cur = 0; log = []; paint(); };
+const say = (ids, what) => ids.forEach(i => log.push([i, what]));
+const decide = (ids, what) => { say(ids, what); left = left.filter(i => !ids.includes(i)); cur = Math.min(cur, left.length - 1); paint(); };
+const btn = (label, fn, plain) => { const b = document.createElement("span"); b.className = "btn" + (plain ? " plain" : ""); b.innerHTML = label; b.onclick = fn; return b; };
+const chatLine = () => {
+  const ap = log.filter(l => l[1] === "ap"), ig = log.filter(l => l[1] === "ig");
+  if (!log.length) return `<span class="dimc">(rien encore)</span>`;
+  let o = "";
+  if (combat && ap.length) o += `<span class="qn">[Questify]</span> En combat : les barres d'action seront mises à jour à la fin du combat.<br><span class="dimc">… fin du combat …</span><br>`;
+  if (ap.length) { const n = ap.reduce((a, l) => a + OLD[l[0]][4].length, 0);
+    o += `<span class="qn">[Questify]</span> ${n} bouton${n > 1 ? "s" : ""} mis à jour :<br>` + ap.map(l => { const s = OLD[l[0]]; return `&nbsp; <span class="sp2">[${s[0]}]</span> rang ${s[1]} à ${s[2]} : ${s[4].join(", ")}`; }).join("<br>"); }
+  if (ig.length) o += (o ? "<br>" : "") + `<span class="qn">[Questify]</span> Gardé${ig.length > 1 ? "s" : ""} à leur rang : ` + ig.map(l => `<span class="sp2">[${OLD[l[0]][0]}]</span> rang ${OLD[l[0]][1]}`).join(", ");
+  return o;
+};
+const paint = () => {
+  const ic = document.getElementById("ricons"), w = document.getElementById("wiz");
+  document.querySelector("#ranks .t").textContent = left.length ? `${left.length} sort${left.length > 1 ? "s" : ""} en ancien rang` : "Barres à jour";
+  ic.innerHTML = ""; w.innerHTML = "";
+  left.forEach((i, k) => { const im = document.createElement("img"); im.src = IB + OLD[i][3] + ".jpg"; im.title = OLD[i][0]; if (k === cur) im.className = "cur"; im.onclick = () => { cur = k; paint(); }; ic.appendChild(im); });
+  if (!left.length) { w.innerHTML = `<div class="done">Plus rien à décider. La carte se ferme.</div>`; }
+  else {
+    const s = OLD[left[cur]];
+    document.querySelector("#ranks .ring").style.backgroundImage = `url(${IB}${s[3]}.jpg)`;
+    const st = document.createElement("div"); st.className = "step";
+    const prev = document.createElement("div"); prev.className = "arrow" + (cur === 0 ? " off" : ""); prev.textContent = "‹"; prev.onclick = () => { if (cur > 0) { cur--; paint(); } };
+    const next = document.createElement("div"); next.className = "arrow" + (cur === left.length - 1 ? " off" : ""); next.textContent = "›"; next.onclick = () => { if (cur < left.length - 1) { cur++; paint(); } };
+    const im = document.createElement("img"); im.src = IB + s[3] + ".jpg";
+    const tx = document.createElement("div"); tx.innerHTML = `<div class="nm">${s[0]}</div><div class="rk">Rang ${s[1]} sur tes barres, rang ${s[2]} appris</div><div class="sl">${s[4].length} bouton${s[4].length > 1 ? "s" : ""} : ${s[4].join(", ")}</div>`;
+    st.append(prev, im, tx, next); w.appendChild(st);
+    const pos = document.createElement("div"); pos.className = "pos"; pos.textContent = `${cur + 1} / ${left.length}`; w.appendChild(pos);
+    const g = document.createElement("div"); g.className = "grid2";
+    g.append(btn(`Modifier ${s[0]} rang ${s[1]}`, () => decide([left[cur]], "ap")), btn(`Ignorer ${s[0]} rang ${s[1]}`, () => decide([left[cur]], "ig"), true),
+      btn(`Appliquer tous (${left.length})`, () => decide(left.slice(), "ap")), btn(`Ignorer tous (${left.length})`, () => decide(left.slice(), "ig"), true));
+    w.appendChild(g);
+  }
+  document.getElementById("chat").innerHTML = chatLine();
+  document.getElementById("combatnote").style.display = combat && left.length ? "block" : "none";
+};
+document.getElementById("reset").onclick = e => { e.preventDefault(); reset(); };
+reset();
+document.querySelectorAll("[data-theme]").forEach(b => b.onclick = () => {
+  document.querySelectorAll("[data-theme]").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".qf").forEach(p => p.classList.toggle("dark", b.dataset.theme === "dark"));
+});
+document.querySelectorAll("[data-combat]").forEach(b => b.onclick = () => {
+  document.querySelectorAll("[data-combat]").forEach(x => x.classList.toggle("on", x === b));
+  combat = +b.dataset.combat; paint();
+});
+</script>
+</body>
+</html>

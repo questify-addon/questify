@@ -1,41 +1,65 @@
 local addonName, Q = ...
 
--- Annonce au milieu de l'écran quand un objet qui arrive dans les sacs (butin, récompense de quête,
--- achat) améliore l'équipement : icône de l'objet et « Équipez <objet> pour gagner en puissance ».
+-- Boîte « Amélioration trouvée » sous le suivi (UI/Tracker.lua) quand un objet qui arrive dans les
+-- sacs (butin, récompense de quête, achat) améliore l'équipement : icône, nom, ce qu'il apporte (les
+-- deux plus forts gains de stats pour la classe), l'objet qu'il remplace, boutons « Équiper » et
+-- « Non », barre qui se vide en 5 secondes. Au survol, la barre s'arrête et le comparatif avant →
+-- après s'ouvre à côté de la boîte (UI/UpgradeCompare.lua). Clic droit sur la boîte : « Non ».
+-- Plusieurs objets : une file, un objet à la fois, avec un compteur « 1/N ».
+-- Position : collée sous le cadre du suivi (même largeur, même échelle), au-dessus quand la place
+-- manque en bas de l'écran ; suivi caché : en haut au milieu de l'écran. Fond, bordure, texte et
+-- barre suivent le thème du suivi (Q.Themes, réglages tracker.theme et tracker.opacity).
 -- Détection : les sacs sont relus après chaque BAG_UPDATE_DELAYED et comparés au relevé précédent
 -- (pas de lecture du chat, dont le texte peut être secret en combat). Le gain vient des poids de
 -- stats par classe de Q.Rewards (le moins bon des emplacements comparés).
 -- Arme à deux mains portée : une arme à une main ou une main gauche qui ne la bat qu'avec l'autre
--- moitié prise dans les sacs est annoncée avec elle (« Équipez <masse> et <bouclier> »), et le clic
+-- moitié prise dans les sacs est proposée avec elle (« [masse] + [bouclier] »), et « Équiper »
 -- équipe les deux : la main droite, puis la main gauche une fois la main droite en place (vue par
 -- PLAYER_EQUIPMENT_CHANGED ou par un regard régulier ; plus long si le jeu demande de confirmer la
 -- liaison). Les deux objets sont cherchés dans les sacs par ID d'objet.
--- Clic : équiper l'objet (hors combat) ; clic droit : fermer. Option upgradePopup.
--- Les objets annoncés sont retenus un moment (Q.Rewards:Recommend) : la vente automatique les garde.
--- Jamais affichée en combat : l'annonce attend PLAYER_REGEN_ENABLED (celle à l'écran au début d'un
--- combat est remise en tête de file). Un clic gauche en combat ne la ferme pas (rien n'est équipé).
+-- Objet lié quand équipé : le jeu ouvre sa confirmation de liaison, rien n'est confirmé à la place
+-- du joueur. Option upgradePopup.
+-- Les objets proposés sont retenus un moment (Q.Rewards:Recommend) : la vente automatique les garde.
+-- Jamais affichée en combat : la boîte attend PLAYER_REGEN_ENABLED (celle à l'écran au début d'un
+-- combat est remise en tête de file, et repart avec 5 secondes pleines). « Équiper » ne fait rien
+-- en combat.
 Q.UI = Q.UI or {}
-local Popup = { queue = {}, snapshot = nil, pendingItems = {} }
+local Popup = { queue = {}, snapshot = nil, pendingItems = {}, shownCount = 0 }
 Q.UI.UpgradePopup = Popup
 
 local L = Q.L
 
-local SHOW_TIME = 8          -- secondes avant de disparaître
-local FADE_TIME = 0.4
+local SHOW_TIME = 5          -- secondes avant de disparaître (souris dessus : en pause)
 local RETRY_DELAY = 0.5      -- objet pas encore en cache : nouvel essai
 local MAX_RETRIES = 6
-local ICON_SIZE = 48
-local WIDTH = 420
-local PAIR_EXTRA = 24        -- hauteur en plus pour une annonce à deux objets (texte plus long)
-local TEXT_X = 14 + ICON_SIZE + 12   -- texte et rappel à droite de l'icône
-local HINT_Y = 14            -- bas du rappel « Clic : équiper »
-local HINT_ROOM = 12         -- hauteur réservée au rappel, sous le texte
+local WIDTH = 260            -- largeur sans suivi visible (sinon celle du suivi)
+local PAD = 8
+local GAP = 4                -- écart avec le suivi
+local ICON_SIZE = 36
+local BTN_H = 20
+local BAR_H = 4
+local SOUND = 862            -- SOUNDKIT.IG_BACKPACK_OPEN : son discret
 local EQUIP_CHECK = 0.2      -- paire : délai entre deux regards sur la main droite
 local EQUIP_TRIES = 15       -- paire : 3 s au plus pour voir la main droite en place (latence)
 local EQUIP_BIND_WAIT = 30   -- paire : secondes d'attente au plus tant que la confirmation de liaison est ouverte
 -- Confirmations que le jeu ouvre avant d'équiper un objet lié quand équipé (StaticPopup).
 local BIND_POPUPS = { "EQUIP_BIND", "EQUIP_BIND_TRADEABLE", "EQUIP_BIND_REFUNDABLE" }
 local BAGS = { 0, 1, 2, 3, 4 }
+Popup.SHOW_TIME = SHOW_TIME
+
+-- Boutons : « Équiper » plein, « Non » discret ; parchemin à l'encre brune, sinon doré sur sombre.
+local BUTTONS = {
+  parchment = {
+    primary = { bg = { 0.48, 0.24, 0, 1 }, border = { 0.30, 0.13, 0, 1 }, text = { 0.96, 0.90, 0.77 } },
+    secondary = { bg = { 0, 0, 0, 0 }, border = { 0.72, 0.55, 0.25, 1 }, text = { 0.17, 0.10, 0.03 } },
+  },
+  dark = {
+    primary = { bg = { 0.54, 0.42, 0, 1 }, border = { 1, 0.82, 0, 1 }, text = { 1, 1, 1 } },
+    secondary = { bg = { 0.13, 0.13, 0.13, 0.9 }, border = { 0.33, 0.33, 0.33, 1 }, text = { 0.87, 0.87, 0.87 } },
+  },
+}
+local WHITE = "Interface\\Buttons\\WHITE8x8"
+local BUTTON_BACKDROP = { bgFile = WHITE, edgeFile = WHITE, edgeSize = 1 }
 
 local function setting(path) return Q.Settings:Get(path) end
 local function inCombat() return InCombatLockdown and InCombatLockdown() end
@@ -87,12 +111,9 @@ end
 -- sacs (arme à deux mains portée).
 function Popup:Evaluate(link)
   local item = Q.Rewards:ReadItem(link)
-  if not item.equipLoc and not item.loaded then return "wait" end   -- objet encore inconnu du client
-  if not item.equipLoc or item.equipLoc == "" then return "no" end   -- pas un équipement
-  if not item.loaded then return "wait" end
-  local gain, pair = Q.Rewards:UpgradeGain(item, Q.Player)
-  if gain and gain > Q.Rewards.EPSILON then return "upgrade", gain, item, pair end
-  return "no"
+  local verdict, gain, pair = Q.Rewards:UpgradeVerdict(item, Q.Player)
+  if verdict == "upgrade" then return "upgrade", gain, item, pair end
+  return verdict
 end
 
 local function consider(link, tries)
@@ -125,77 +146,167 @@ end
 ---------------------------------------------------------------------------
 -- Cadre
 ---------------------------------------------------------------------------
+local function makeButton(parent, label)
+  local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
+  b:SetHeight(BTN_H)
+  if b.SetBackdrop then b:SetBackdrop(BUTTON_BACKDROP) end
+  local text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  text:SetPoint("CENTER", b, "CENTER", 0, 0)
+  text:SetText(label)
+  b.label = text
+  local hl = b:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetAllPoints(b)
+  hl:SetColorTexture(1, 1, 1, 0.12)
+  b:RegisterForClicks("LeftButtonUp")
+  return b
+end
+
+local function styleButton(b, s)
+  if b.SetBackdropColor then
+    b:SetBackdropColor(s.bg[1], s.bg[2], s.bg[3], s.bg[4] or 1)
+    b:SetBackdropBorderColor(s.border[1], s.border[2], s.border[3], s.border[4] or 1)
+  end
+  b.label:SetTextColor(s.text[1], s.text[2], s.text[3], 1)
+  b.qvStyle = s
+end
+
 function Popup:Create()
   if self.frame then return self.frame end
-  local f = CreateFrame("Button", "QuestifyUpgradePopup", UIParent, "BackdropTemplate")
-  f:SetSize(WIDTH, ICON_SIZE + 24)
-  f:SetPoint("CENTER", UIParent, "CENTER", 0, 180)
-  f:SetFrameStrata("HIGH")
-  f:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-  if f.SetBackdrop then
-    f:SetBackdrop({
-      bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-      edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-      tile = true, tileSize = 16, edgeSize = 14,
-      insets = { left = 4, right = 4, top = 4, bottom = 4 },
-    })
-    f:SetBackdropColor(0, 0, 0, 0.8)
-    f:SetBackdropBorderColor(1, 0.82, 0, 1)
-  end
+  local f = CreateFrame("Frame", "QuestifyUpgradePopup", UIParent, "BackdropTemplate")
+  f:SetSize(WIDTH, 100)
+  f:SetFrameStrata("MEDIUM")
+  f:EnableMouse(true)
+  if f.SetClampedToScreen then f:SetClampedToScreen(true) end
 
+  -- icône, et un filet de la couleur de la qualité derrière elle
+  local iconBorder = f:CreateTexture(nil, "BORDER")
+  iconBorder:SetSize(ICON_SIZE + 2, ICON_SIZE + 2)
+  iconBorder:SetPoint("TOPLEFT", f, "TOPLEFT", PAD - 1, -PAD + 1)
   local icon = f:CreateTexture(nil, "ARTWORK")
   icon:SetSize(ICON_SIZE, ICON_SIZE)
-  icon:SetPoint("LEFT", f, "LEFT", 14, 0)
-  -- lueur dorée qui pulse autour de l'icône
-  local glow = f:CreateTexture(nil, "OVERLAY")
-  glow:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
-  glow:SetBlendMode("ADD")
-  glow:SetVertexColor(1, 0.82, 0)
-  glow:SetPoint("CENTER", icon, "CENTER", 0, 0)
-  glow:SetSize(ICON_SIZE * 1.9, ICON_SIZE * 1.9)
-  local pulse = glow:CreateAnimationGroup()
-  pulse:SetLooping("BOUNCE")
-  local fade = pulse:CreateAnimation("Alpha")
-  fade:SetFromAlpha(0.3)
-  fade:SetToAlpha(1)
-  fade:SetDuration(0.6)
+  icon:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -PAD)
 
-  -- texte borné : du haut du cadre jusqu'au-dessus du rappel ; un texte trop long est tronqué par
-  -- le jeu au lieu de déborder sur le rappel (le cadre d'une paire est plus haut)
-  local text = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-  text:SetPoint("TOPLEFT", f, "TOPLEFT", TEXT_X, -12)
-  text:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, HINT_Y + HINT_ROOM)
-  text:SetJustifyH("LEFT")
-  text:SetJustifyV("MIDDLE")
-  text:SetWordWrap(true)
-  local hint = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-  -- en bas du cadre (même place que sous l'icône pour une annonce simple)
-  hint:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", TEXT_X, HINT_Y)
-  hint:SetText(L.UI_UPGRADE_HINT)
+  local textX = PAD + ICON_SIZE + 8
+  local header = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  header:SetJustifyH("LEFT")
+  header:SetText(L.UI_UPGRADE_FOUND)
+  local counter = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  counter:SetJustifyH("RIGHT")
+  counter:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -PAD + 2)
+  local name = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  local gains = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  local instead = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  for _, fs in ipairs({ name, gains, instead }) do
+    fs:SetJustifyH("LEFT")
+    if fs.SetWordWrap then fs:SetWordWrap(true) end
+  end
 
-  f:SetScript("OnClick", function(_, button)
-    Q.SafeCall(function()
-      if button == "LeftButton" then
-        -- en combat le jeu refuse d'équiper : l'annonce reste, rien n'est perdu
-        if inCombat() then return end
-        Popup:EquipCurrent()
-      end
-      Popup:Next()
-    end)
+  local equip = makeButton(f, L.UI_UPGRADE_EQUIP)
+  local no = makeButton(f, L.UI_UPGRADE_NO)
+  equip:SetScript("OnClick", function() Q.SafeCall(Popup.Accept, Popup) end)
+  no:SetScript("OnClick", function() Q.SafeCall(Popup.Decline, Popup) end)
+
+  local bar = CreateFrame("StatusBar", nil, f)
+  bar:SetHeight(BAR_H)
+  bar:SetStatusBarTexture(WHITE)
+  bar:SetMinMaxValues(0, SHOW_TIME)
+  bar:SetValue(SHOW_TIME)
+  local barBg = bar:CreateTexture(nil, "BACKGROUND")
+  barBg:SetAllPoints(bar)
+
+  f:SetScript("OnMouseUp", function(_, button)
+    if button == "RightButton" then Q.SafeCall(Popup.Decline, Popup) end
   end)
-  f:SetScript("OnEnter", function(self)
-    local cur = Popup.current
-    if cur and GameTooltip then
-      GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-      GameTooltip:SetHyperlink(cur.link)
-      GameTooltip:Show()
-    end
-  end)
-  f:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
-  f:SetAlpha(0)
+  f:SetScript("OnUpdate", function(_, elapsed) Q.SafeCall(Popup.Tick, Popup, elapsed) end)
   f:Hide()
-  self.frame, self.icon, self.text, self.hint, self.pulse = f, icon, text, hint, pulse
+  self.frame, self.icon, self.iconBorder = f, icon, iconBorder
+  self.header, self.counter, self.name, self.gains, self.instead = header, counter, name, gains, instead
+  self.equipButton, self.noButton, self.bar, self.barBg = equip, no, bar, barBg
+  self.textX = textX
   return f
+end
+
+-- Couleurs du thème du suivi : fond, bordure, textes, boutons, barre.
+function Popup:ApplyTheme()
+  local f = self.frame
+  local T = Q.Themes
+  if not (f and T) then return end
+  -- thème en vigueur (race du personnage ou tracker.theme), comme le suivi
+  local th = T:Apply(f, T.CurrentKey and T:CurrentKey() or setting("tracker.theme"), setting("tracker.opacity"))
+  self.theme = th
+  T:StyleText(self.header, "dim", th)
+  T:StyleText(self.counter, "dim", th)
+  T:StyleText(self.name, "body", th)
+  T:StyleText(self.gains, "body", th)
+  T:StyleText(self.instead, "dim", th)
+  local styles = BUTTONS[th.key] or BUTTONS.dark
+  styleButton(self.equipButton, styles.primary)
+  styleButton(self.noButton, styles.secondary)
+  local bar = th.bar or { fill = { 0.26, 0.56, 0.95 }, bg = { 0, 0, 0, 0.5 } }
+  self.bar:SetStatusBarColor(bar.fill[1], bar.fill[2], bar.fill[3])
+  self.barBg:SetColorTexture(bar.bg[1], bar.bg[2], bar.bg[3], bar.bg[4] or 1)
+end
+
+local function textHeight(fs)
+  local h = fs:GetText() and fs:GetText() ~= "" and tonumber(fs:GetStringHeight()) or 0
+  return h or 0
+end
+
+-- Place les lignes de texte à droite de l'icône, puis les boutons et la barre ; hauteur du cadre.
+function Popup:Layout()
+  local f, x = self.frame, self.textX
+  local y = PAD
+  local function line(fs, gapAfter)
+    fs:ClearAllPoints()
+    fs:SetPoint("TOPLEFT", f, "TOPLEFT", x, -y)
+    fs:SetPoint("RIGHT", f, "RIGHT", -PAD, 0)
+    y = y + textHeight(fs) + (gapAfter or 1)
+  end
+  line(self.header, 1)
+  self.header:SetPoint("RIGHT", f, "RIGHT", -PAD - 30, 0)   -- place pour le compteur
+  line(self.name, 1)
+  line(self.gains, 0)
+  line(self.instead, 0)
+  y = math.max(y, PAD + ICON_SIZE) + 6
+  local half = PAD / 2 - 1
+  self.equipButton:ClearAllPoints()
+  self.equipButton:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -y)
+  self.equipButton:SetPoint("TOPRIGHT", f, "TOP", -half, -y)
+  self.noButton:ClearAllPoints()
+  self.noButton:SetPoint("TOPLEFT", f, "TOP", half, -y)
+  self.noButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+  y = y + BTN_H + 6
+  self.bar:ClearAllPoints()
+  self.bar:SetPoint("TOPLEFT", f, "TOPLEFT", PAD, -y)
+  self.bar:SetPoint("TOPRIGHT", f, "TOPRIGHT", -PAD, -y)
+  f:SetHeight(y + BAR_H + PAD)
+end
+
+-- Sous le suivi (même largeur et même échelle), au-dessus s'il touche le bas de l'écran ; suivi caché
+-- ou absent : en haut au milieu de l'écran.
+function Popup:Anchor()
+  local f = self.frame
+  local tracker = Q.UI.Tracker and Q.UI.Tracker.frame
+  f:ClearAllPoints()
+  if tracker and tracker:IsShown() then
+    f:SetScale(tracker:GetScale() or 1)
+    local bottom = tonumber(tracker:GetBottom()) or 0
+    local need = (f:GetHeight() + GAP) * (f:GetScale() or 1)
+    if bottom * (tracker:GetScale() or 1) < need then
+      f:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, GAP)
+      f:SetPoint("BOTTOMRIGHT", tracker, "TOPRIGHT", 0, GAP)
+      self.placement = "above"
+    else
+      f:SetPoint("TOPLEFT", tracker, "BOTTOMLEFT", 0, -GAP)
+      f:SetPoint("TOPRIGHT", tracker, "BOTTOMRIGHT", 0, -GAP)
+      self.placement = "below"
+    end
+  else
+    f:SetScale(1)
+    f:SetWidth(WIDTH)
+    f:SetPoint("TOP", UIParent, "TOP", 0, -180)
+    self.placement = "screen"
+  end
 end
 
 -- Même paire (main droite et main gauche de mêmes ID d'objet) ?
@@ -218,37 +329,100 @@ function Popup:Push(entry)
   end
   if self.current and dup(self.current) then return end
   self.queue[#self.queue + 1] = entry
-  if not self.current then self:Next() end
+  if self.current then return self:UpdateCounter() end
+  self:Next()
 end
+
+-- « 2/3 » : rang de l'objet affiché parmi ceux de la série ; rien pour un objet seul.
+function Popup:UpdateCounter()
+  if not self.counter then return end
+  local total = self.shownCount + #self.queue
+  self.counter:SetText(total > 1 and (self.shownCount .. "/" .. total) or "")
+end
+
+local EMPTY = { before = {}, after = {}, fromBags = {}, stats = {}, summary = {}, effects = {} }
 
 function Popup:ShowEntry(entry)
   local f = self:Create()
+  local C = Q.UI.UpgradeCompare
   self.current = entry
-  self.icon:SetTexture(itemIcon(entry.link))
-  if entry.pair then
-    f:SetHeight(ICON_SIZE + 24 + PAIR_EXTRA)
-    self.text:SetText(string.format(L.UI_UPGRADE_TEXT_PAIR, entry.pair.main, entry.pair.off))
+  self.shownCount = self.shownCount + 1
+  local ok, data = pcall(C.Build, C, entry)
+  if not ok or type(data) ~= "table" then data = EMPTY end
+  entry.compare = data
+  self:ApplyTheme()
+  local th = self.theme
+
+  self.icon:SetTexture(itemIcon(entry.pair and entry.pair.main or entry.link))
+  local main = data.after[1] or Q.Rewards:ReadItem(entry.link)
+  local label = C:ItemLabel(main, th)
+  if entry.pair and data.after[2] then label = label .. " + " .. C:ItemLabel(data.after[2], th) end
+  self.name:SetText(label)
+  -- filet de l'icône : couleur de la qualité (celle du nom)
+  local rr, gg, bb = label:match("^|c%x%x(%x%x)(%x%x)(%x%x)")
+  if rr then
+    self.iconBorder:SetColorTexture(tonumber(rr, 16) / 255, tonumber(gg, 16) / 255, tonumber(bb, 16) / 255, 1)
   else
-    f:SetHeight(ICON_SIZE + 24)
-    self.text:SetText(string.format(L.UI_UPGRADE_TEXT, entry.link or entry.name or "?"))
+    self.iconBorder:SetColorTexture(0.6, 0.6, 0.6, 1)
   end
+
+  local gains = #data.summary > 0 and table.concat(data.summary, ", ") or L.UI_UPGRADE_BETTER
+  self.gains:SetText(Q.Themes and Q.Themes:Recolor(C.GAIN .. gains .. "|r", th) or gains)
+  if #data.before > 0 then
+    local names = {}
+    for i, it in ipairs(data.before) do names[i] = C:ItemLabel(it, th) end
+    self.instead:SetText(string.format(L.UI_UPGRADE_INSTEAD, table.concat(names, " + ")))
+  else
+    self.instead:SetText(L.UI_UPGRADE_EMPTY_SLOT)
+  end
+  self:UpdateCounter()
+  -- largeur d'abord (celle du suivi) pour couper les lignes, puis la place selon la hauteur finale
+  self:Anchor()
+  self:Layout()
+  self:Anchor()
+
+  self.remaining = SHOW_TIME
+  self.bar:SetValue(SHOW_TIME)
+  self.hovering = false
+  C:Hide()
   f:Show()
-  f:SetAlpha(1)
-  self.pulse:Play()
-  if PlaySound and SOUNDKIT and SOUNDKIT.UI_EPICLOOT_TOAST then pcall(PlaySound, SOUNDKIT.UI_EPICLOOT_TOAST) end
+  if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_BACKPACK_OPEN) or SOUND) end
   self.serial = (self.serial or 0) + 1
-  local mine = self.serial
-  Q:After(SHOW_TIME, function()
-    if mine == Popup.serial then Popup:Next() end
-  end)
+end
+
+-- Survol : comparatif ouvert et minuterie en pause ; sinon la barre se vide, puis l'objet suivant.
+-- Une boîte de démonstration (UI/Demo.lua) reste affichée.
+function Popup:Tick(elapsed)
+  local cur, f = self.current, self.frame
+  if not (cur and f and f:IsShown()) then return end
+  local over = f:IsMouseOver() and true or false
+  if over ~= self.hovering then
+    self.hovering = over
+    local C = Q.UI.UpgradeCompare
+    if over then C:Show(f, cur.compare or EMPTY) else C:Hide() end
+  end
+  if over or cur.demo then return end
+  self.remaining = (self.remaining or SHOW_TIME) - (tonumber(elapsed) or 0)
+  self.bar:SetValue(math.max(0, self.remaining))
+  if self.remaining <= 0 then self:Next() end
+end
+
+-- « Équiper » : rien en combat (la boîte reste) ; sinon l'objet (ou la paire), puis le suivant.
+function Popup:Accept()
+  if inCombat() then return end
+  self:EquipCurrent()
+  self:Next()
+end
+
+-- « Non » ou clic droit : l'objet suivant.
+function Popup:Decline()
+  self:Next()
 end
 
 local function hideFrame()
-  if Popup.frame then
-    Popup.pulse:Stop()
-    Popup.frame:SetAlpha(0)
-    Popup.frame:Hide()
-  end
+  if Popup.frame then Popup.frame:Hide() end
+  if Q.UI.UpgradeCompare then Q.UI.UpgradeCompare:Hide() end
+  Popup.hovering = false
 end
 
 -- Annonce suivante, ou fermeture. En combat : rien ne s'affiche, la file attend la fin du combat.
@@ -261,6 +435,7 @@ function Popup:Next()
   end
   if entry then return self:ShowEntry(entry) end
   self.current = nil
+  if #self.queue == 0 then self.shownCount = 0 end
   hideFrame()
 end
 
@@ -270,6 +445,7 @@ function Popup:Suspend()
   if not cur then return end
   self.serial = (self.serial or 0) + 1
   self.current = nil
+  self.shownCount = math.max(0, self.shownCount - 1)
   table.insert(self.queue, 1, cur)
   hideFrame()
 end
@@ -401,5 +577,11 @@ Q:On("SETTINGS_CHANGED", function(path)
   if path == "upgradePopup" and setting("upgradePopup") == false then
     Popup.queue = {}
     Popup:Next()
+  elseif (path == "tracker.theme" or path == "tracker.opacity") and Popup.current and Popup.frame then
+    -- nouveau thème du suivi : la boîte affichée le prend tout de suite (le comparatif à son ouverture)
+    Popup:ApplyTheme()
   end
+end)
+Q:On("THEME_CHANGED", function()
+  if Popup.current and Popup.frame then Q.SafeCall(Popup.ApplyTheme, Popup) end
 end)

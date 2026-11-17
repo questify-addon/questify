@@ -3,28 +3,32 @@ local addonName, Q = ...
 -- Boutons d'accès rapide dans l'en-tête du suivi, à droite du titre du chapitre (UI/Tracker.lua).
 -- Beaucoup de joueurs ne retrouvent plus le bouton de la minicarte parmi ceux de leurs addons, alors
 -- que le suivi reste à l'écran, à l'endroit qu'ils ont choisi.
+--   « ah »       : pièces d'or -> liste des objets du chapitre à acheter à l'hôtel des ventes
+--                  (UI/AuctionPanel.lua, comme /qf hv) ;
 --   « route »    : point d'exclamation de quête sur un chemin -> journal, onglet Route ;
 --   « dungeons » : portail de donjon (atlas du jeu « dungeon ») et point d'exclamation -> journal,
 --                  onglet Donjons ;
---   « class »    : icône de la classe du joueur -> journal, onglet Quêtes de classe ;
+--   « class »    : icône de la classe du joueur, sans « ! » -> Options › Classe (talents et macros,
+--                  UI/ClassPanel.lua) ; les quêtes de classe restent dans l'onglet du journal ;
 --   « options »  : engrenage -> fenêtre d'options.
 -- Un second clic sur le bouton de l'onglet ouvert ferme le journal (l'engrenage ferme les options).
 -- Lueurs pulsées :
---   Classe brille tant qu'une suite de quêtes de classe est disponible et qu'aucune n'est suivie
---   (ajoutée à la route ou en cours dans le journal de quêtes) ;
+--   Classe brille tant qu'un point de talent est à dépenser et que le guide de classe en prévoit un
+--   (Engine/ClassGuide.lua) ;
 --   Donjons brille tant qu'un donjon est conseillé (Dungeons:Suggested) et qu'aucun n'est ajouté à
---   la route.
+--   la route ;
+--   HV brille tant qu'il reste des objets du chapitre à acheter (AuctionItems:Wanted).
 -- Des boutons simples, jamais sécurisés : un enfant sécurisé rendrait le suivi protégé (impossible
 -- à redimensionner en combat).
 Q.UI = Q.UI or {}
-local Buttons = { buttons = {}, classCount = 0, dungeonCount = 0 }
+local Buttons = { buttons = {}, classCount = 0, dungeonCount = 0, ahCount = 0 }
 Q.UI.TrackerButtons = Buttons
 
 local L = Q.L
 
 local SIZE = 18
 local GAP = 3
-local ORDER = { "route", "dungeons", "class", "options" }
+local ORDER = { "ah", "route", "dungeons", "class", "options" }
 Buttons.ORDER, Buttons.SIZE, Buttons.GAP = ORDER, SIZE, GAP
 
 local QUEST_MARK = "Interface\\GossipFrame\\AvailableQuestIcon"
@@ -34,16 +38,17 @@ local DUNGEON_FALLBACK = "Interface\\Icons\\INV_Misc_Bone_HumanSkull_01"   -- at
 local CLASS_SHEET = "Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"
 local CLASS_FALLBACK = "Interface\\Icons\\INV_Misc_QuestionMark"
 local GEAR = "Interface\\Icons\\Trade_Engineering"
+local COINS = "Interface\\Icons\\INV_Misc_Coin_01"
 local HIGHLIGHT = "Interface\\Buttons\\ButtonHilight-Square"
 local ICON_CROP = { 0.08, 0.92, 0.08, 0.92 }   -- bord des icônes de sort et d'objet
 local BORDER_COLOR = { 0.72, 0.55, 0.25, 1 }
 local BACK_COLOR = { 0.07, 0.05, 0.02, 1 }
 local GLOW_COLOR = { 1, 0.78, 0.1, 1 }
 
-local TABS = { route = "route", dungeons = "dungeons", class = "class" }
+local TABS = { route = "route", dungeons = "dungeons" }
 local NAMES = {
   route = "UI_TRACKER_BTN_ROUTE", dungeons = "UI_TRACKER_BTN_DUNGEONS",
-  class = "UI_TRACKER_BTN_CLASS", options = "UI_TRACKER_BTN_OPTIONS",
+  class = "UI_TRACKER_BTN_CLASS", options = "UI_TRACKER_BTN_OPTIONS", ah = "UI_TRACKER_BTN_AH",
 }
 Buttons.TEXTURES = { questMark = QUEST_MARK, routePath = ROUTE_PATH, dungeonAtlas = DUNGEON_ATLAS,
   dungeonFallback = DUNGEON_FALLBACK, classSheet = CLASS_SHEET, classFallback = CLASS_FALLBACK, gear = GEAR }
@@ -56,24 +61,18 @@ end
 ---------------------------------------------------------------------------
 -- Lueurs
 ---------------------------------------------------------------------------
--- États d'une suite de quêtes de classe que le joueur suit (Engine/ClassQuests.lua).
-local FOLLOWED = { added = true, inprogress = true }
-
--- ClassGlow() -> nombre de suites disponibles quand aucune n'est suivie, sinon 0.
+-- ClassGlow() -> points de talent à dépenser quand le guide de classe prévoit le suivant, sinon 0.
 function Buttons.ClassGlow()
-  local cq = Q.ClassQuests
-  if not (cq and cq.List) then return 0 end
-  local ok, list = pcall(cq.List, cq)
+  local G = Q.ClassGuide
+  if not (G and G.Advice) then return 0 end
+  local ok, advice = pcall(G.Advice, G)
   if not ok then
-    Q:ReportError(list)
+    Q:ReportError(advice)
     return 0
   end
-  local available = 0
-  for _, row in ipairs(type(list) == "table" and list or {}) do
-    if FOLLOWED[row.state] then return 0 end
-    if row.state == "available" then available = available + 1 end
-  end
-  return available
+  if not advice then return 0 end
+  Buttons.classAdvice = advice
+  return math.max(1, Q.Talents and Q.Talents:Unspent() or 1)
 end
 
 -- DungeonGlow() -> nombre de donjons conseillés quand aucun n'est ajouté à la route, sinon 0.
@@ -96,6 +95,18 @@ function Buttons.DungeonGlow()
   return type(suggested) == "table" and #suggested or 0
 end
 
+-- AuctionGlow() -> nombre d'objets du chapitre encore à acheter à l'hôtel des ventes (option coupée : 0).
+function Buttons.AuctionGlow()
+  local AI = Q.AuctionItems
+  if not (AI and AI.Wanted) then return 0 end
+  local ok, list = pcall(AI.Wanted, AI)
+  if not ok then
+    Q:ReportError(list)
+    return 0
+  end
+  return type(list) == "table" and #list or 0
+end
+
 local function setGlow(b, on)
   if on then
     b.glow:Show()
@@ -110,7 +121,9 @@ function Buttons:UpdateGlows()
   if not self.frame then return end
   self.classCount = Buttons.ClassGlow()
   self.dungeonCount = Buttons.DungeonGlow()
+  self.ahCount = Buttons.AuctionGlow()
   setGlow(self.buttons.class, self.classCount > 0)
+  setGlow(self.buttons.ah, self.ahCount > 0)
   setGlow(self.buttons.dungeons, self.dungeonCount > 0)
 end
 
@@ -120,9 +133,27 @@ end
 -- Click(clé) : ouvre le journal sur l'onglet du bouton ; s'il y est déjà, le ferme. L'engrenage
 -- ouvre ou ferme la fenêtre d'options.
 function Buttons:Click(key)
+  if key == "ah" then
+    local AI, P = Q.AuctionItems, Q.UI.AuctionPanel
+    if AI and not AI:Enabled() then
+      Q:Print(L.AH_SLASH_OFF)
+    elseif P then
+      P:ToggleList()
+    end
+    return
+  end
   if key == "options" then
     local O = Q.UI.Options
     if O then O:Toggle() end
+    return
+  end
+  if key == "class" then
+    local O, P = Q.UI.Options, Q.UI.ClassPanel
+    if O and O:IsShown() and O.section == "classguide" and O.query == "" then
+      O:Close()
+    elseif P then
+      P:Open("talents")
+    end
     return
   end
   local J = Q.UI.Journal
@@ -139,13 +170,28 @@ function Buttons:Tooltip(owner, key)
   if not GameTooltip then return end
   GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
   GameTooltip:ClearLines()
+  if key == "class" then
+    GameTooltip:AddLine(L.CLASS_BTN_TIP, 1, 0.82, 0)
+    local a = self.classCount > 0 and Buttons.classAdvice
+    if a then
+      local unspent = self.classCount == 1 and L.CLASS_UNSPENT_ONE or string.format(L.CLASS_UNSPENT_MANY, self.classCount)
+      GameTooltip:AddLine(string.format(L.CLASS_BTN_UNSPENT, unspent, Q.ClassGuide:TalentName(a.spell, a.spec), a.rank,
+        a.max), 1, 1, 1, true)
+    end
+    GameTooltip:AddLine(L.CLASS_BTN_HINT, 0.7, 0.7, 0.7, true)
+    GameTooltip:Show()
+    return
+  end
   GameTooltip:AddLine(L[NAMES[key]], 1, 0.82, 0)
-  if key == "class" and self.classCount > 0 then
-    GameTooltip:AddLine(string.format(L.UI_TRACKER_BTN_CLASS_GLOW, self.classCount), 1, 1, 1, true)
-  elseif key == "dungeons" and self.dungeonCount > 0 then
+  if key == "dungeons" and self.dungeonCount > 0 then
     GameTooltip:AddLine(string.format(L.UI_TRACKER_BTN_DUNGEON_GLOW, self.dungeonCount), 1, 1, 1, true)
   end
-  GameTooltip:AddLine(L.UI_TRACKER_BTN_HINT, 0.7, 0.7, 0.7, true)
+  if key == "ah" then
+    GameTooltip:AddLine(self.ahCount > 0 and string.format(L.UI_TRACKER_BTN_AH_GLOW, self.ahCount)
+      or L.UI_TRACKER_BTN_AH_NONE, 1, 1, 1, true)
+  else
+    GameTooltip:AddLine(L.UI_TRACKER_BTN_HINT, 0.7, 0.7, 0.7, true)
+  end
   GameTooltip:Show()
 end
 
@@ -239,6 +285,7 @@ local function newButton(f, key)
   local back = b:CreateTexture(nil, "BACKGROUND", nil, 0)
   inset(back, b, 1)
   back:SetColorTexture(BACK_COLOR[1], BACK_COLOR[2], BACK_COLOR[3], BACK_COLOR[4])
+  back.qvBack = true
   local icon = b:CreateTexture(nil, "ARTWORK")
   inset(icon, b, 1)
   b:SetHighlightTexture(HIGHLIGHT, "ADD")
@@ -271,22 +318,49 @@ function Buttons:Create(f)
   -- Classe
   self.classIconSet = false
   self:SetClassIcon()
+  -- Hôtel des ventes
+  B.ah.icon:SetTexture(COINS)
+  B.ah.icon:SetTexCoord(ICON_CROP[1], ICON_CROP[2], ICON_CROP[3], ICON_CROP[4])
   -- Options
   B.options.icon:SetTexture(GEAR)
   B.options.icon:SetTexCoord(ICON_CROP[1], ICON_CROP[2], ICON_CROP[3], ICON_CROP[4])
 end
 
+-- Couleurs du thème (UI/Themes.lua) : liseré de métal, fond du panneau, lueur de l'accent.
+function Buttons:ApplyTheme(theme)
+  if not theme or not theme.colors then return end
+  local c = theme.colors
+  for _, b in pairs(self.buttons) do
+    b.border:SetColorTexture(c.metal[1], c.metal[2], c.metal[3], 1)
+    for _, r in ipairs({ b:GetRegions() }) do
+      if r.qvBack then r:SetColorTexture(c.panelAlt[1], c.panelAlt[2], c.panelAlt[3], 1) end
+    end
+    b.glow:SetColorTexture(c.accent[1], c.accent[2], c.accent[3], 1)
+  end
+end
+
 -- Layout(frame, pad) : boutons en haut à droite du suivi, de gauche à droite dans l'ordre ORDER,
 -- puis lueurs à jour.
-function Buttons:Layout(f, pad)
+-- top : décalage depuis le haut du suivi (centré dans le bandeau du thème), sinon pad - 2.
+function Buttons:Layout(f, pad, top)
   self:Create(f)
   if not self.classIconSet then self:SetClassIcon() end
   local n = #ORDER
   for i, key in ipairs(ORDER) do
     local b = self.buttons[key]
     b:ClearAllPoints()
-    b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -(pad + (n - i) * (SIZE + GAP)), -(pad - 2))
+    b:SetPoint("TOPRIGHT", f, "TOPRIGHT", -(pad + (n - i) * (SIZE + GAP)), -(top or (pad - 2)))
     b:Show()
   end
+  if Q.UI.Tracker and Q.UI.Tracker.theme then self:ApplyTheme(Q.UI.Tracker.theme) end
   self:UpdateGlows()
 end
+
+-- Objets à acheter changés (sacs, journal, chapitre, option) : lueur du bouton HV.
+Q:On("AUCTION_ITEMS_CHANGED", function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
+
+-- Points de talent gagnés ou dépensés : lueur du bouton Classe.
+Q:On("TALENTS_CHANGED", function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
+Q:RegisterEvent("PLAYER_LEVEL_UP", function()
+  Q:After(1, function() if Buttons.frame then Q.SafeCall(Buttons.UpdateGlows, Buttons) end end)
+end)

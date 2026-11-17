@@ -151,10 +151,27 @@ local function reqLevel(e)
   return (q and q.reqLevel) or tonumber(e.reqLevel) or 1
 end
 
+-- Préquêtes que QuestieDB ne connaît pas (Q.QuestPrereqFix, généré avec DungeonData.lua depuis
+-- tools/routebuilder/overrides.lua) : au moins une doit être rendue, en plus des règles de QuestieDB.
+local function prereqFix(id)
+  local fix = type(Q.QuestPrereqFix) == "table" and Q.QuestPrereqFix[id]
+  if type(fix) == "table" and #fix > 0 then return fix end
+  return nil
+end
+
 local function prereqLists(e)
   local q = Q.QDB:Quest(e.id)
-  if q then return q.preSingle, q.preGroup, q.exclusiveTo end
-  return type(e.pre) == "table" and e.pre or {}, type(e.preAll) == "table" and e.preAll or {}, {}
+  local fix = prereqFix(e.id)
+  if q then
+    local single = q.preSingle
+    if fix then
+      single = {}
+      for _, p in ipairs(q.preSingle or {}) do single[#single + 1] = p end
+      for _, p in ipairs(fix) do single[#single + 1] = p end
+    end
+    return single, q.preGroup, q.exclusiveTo
+  end
+  return type(e.pre) == "table" and e.pre or fix or {}, type(e.preAll) == "table" and e.preAll or {}, {}
 end
 
 -- Préquêtes faites : règle de QuestieDB, ou celle des données quand QuestieDB ne connaît pas la quête
@@ -163,6 +180,14 @@ end
 local function prereqsMet(e, planned)
   local done = isTurnedIn
   if planned then done = function(id) return planned[id] == true or isTurnedIn(id) end end
+  local fix = prereqFix(e.id)
+  if fix then
+    local any = false
+    for _, p in ipairs(fix) do
+      if done(p) then any = true; break end
+    end
+    if not any then return false end
+  end
   if Q.QDB:Quest(e.id) then return Q.QDB:PrereqsMet(e.id, done) end
   local single = type(e.pre) == "table" and e.pre or {}
   if #single > 0 then
@@ -352,7 +377,8 @@ local function missingChain(e, planned, d)
     local q, reason = chainQuest(id)
     if not q then return fail(reason, id) end
     seen[id] = true
-    if not Q.Progress:InLog(id) and not needs(q.preSingle, q.preGroup, depth + 1) then return false end
+    local single, group = prereqLists({ id = id })
+    if not Q.Progress:InLog(id) and not needs(single, group, depth + 1) then return false end
     order[#order + 1] = id
     return true
   end
@@ -484,6 +510,9 @@ local function plan(d, only)
       res.units[#res.units + 1] = { steps = chainSteps, start = start, finish = first.at, quest = first, chain = true }
     end
   end
+  -- quête prise par une unité (elle-même ou une préquête) -> l'unité : une autre quête qui attend la même
+  -- préquête rejoint cette unité au lieu de la reprendre (An Alarming Request avant les deux quêtes de Modera)
+  local unitOf = {}
   local function consider(e)
     if used[e.id] or not kept(e) or isTurnedIn(e.id) or not eligible(e) then return end
     if Q.Progress:InLog(e.id) then
@@ -496,7 +525,8 @@ local function plan(d, only)
       return
     end
     local steps = {}
-    local took = {}
+    local took = setmetatable({}, { __index = unitOf })
+    local dep
     if not prereqsMet(e) then
       local sub = unlockSteps(e, byId, 1, took)
       if not sub then
@@ -504,10 +534,20 @@ local function plan(d, only)
         return
       end
       steps = sub
+      local single, group = prereqLists(e)
+      for _, list in ipairs({ single, group }) do
+        for _, p in ipairs(list or {}) do dep = dep or unitOf[p] end
+      end
     end
     steps[#steps + 1] = { "accept", e.id }
     for id in pairs(took) do used[id] = true end
     used[e.id] = true
+    if dep then
+      for _, st in ipairs(steps) do dep.steps[#dep.steps + 1] = st end
+      unitOf[e.id] = dep
+      res.active[#res.active + 1] = e
+      return
+    end
     local first, start = byId[steps[1][2]], e.at
     if first and isPoint(first.at) then
       start = first.at
@@ -516,7 +556,10 @@ local function plan(d, only)
       local s = CQ and CQ.Starter and CQ:Starter(steps[1][2])
       if s and s.mapId then start = { s.mapId, s.x, s.y } end
     end
-    res.units[#res.units + 1] = { steps = steps, start = start, finish = e.at, quest = e }
+    local unit = { steps = steps, start = start, finish = e.at, quest = e }
+    res.units[#res.units + 1] = unit
+    for id in pairs(took) do unitOf[id] = unit end
+    unitOf[e.id] = unit
     res.active[#res.active + 1] = e
   end
   -- Les quêtes demandées par d'autres viennent après : elles peuvent être enchaînées avant celles-ci.
@@ -536,6 +579,20 @@ local function plan(d, only)
   return res
 end
 Dungeons.Plan = function(_, d) return plan(d) end
+
+-- Point d'apparition d'une liste QuestieDB (starters ou finishers) le plus proche de (m, x, y) : { m, x, y }, ou
+-- nil. Sans distance calculable (autre continent) : le premier point connu.
+local function spawnNear(list, m, x, y)
+  local best, bestD
+  local function try(rec)
+    if type(rec) ~= "table" or type(rec.spawns) ~= "table" then return end
+    local bm, bx, by, d = Q.Maps:Nearest(rec.spawns, m, x, y)
+    if bm and (not best or (d and (not bestD or d < bestD))) then best, bestD = { bm, bx, by }, d end
+  end
+  for _, id in ipairs(list and list.npcs or {}) do try(Q.QDB:Npc(id)) end
+  for _, id in ipairs(list and list.objects or {}) do try(Q.QDB:Object(id)) end
+  return best
+end
 
 ---------------------------------------------------------------------------
 -- Ordre : le plus proche d'abord, en finissant la carte (ville) en cours avant d'en changer
@@ -563,6 +620,126 @@ local function orderNearest(items, m, x, y)
   end
   return out
 end
+
+-- Ordre des prises optimisé pour le personnage : départ de sa position, fin à l'entrée du donjon. Chaque unité
+-- (une quête et les préquêtes qui y mènent) commence chez le donneur de sa première étape, au point d'apparition
+-- le plus proche de l'endroit où la route en est (un PNJ placé en plusieurs lieux est pris au plus près), et
+-- finit chez le donneur de la quête. Coût d'un trajet : le temps de ShortestPathForever (vols, bateaux, tram)
+-- quand il est là (Dungeons:Trip), sinon la distance à pied. Jusqu'à EXACT_UNITS unités : tous les ordres
+-- (le meilleur, sans aller-retour) ; au-delà : le plus proche d'abord.
+local EXACT_UNITS = 7
+local RUN_SPEED = 7          -- yards par seconde, à pied
+local FAR = 3600             -- secondes : trajet inconnu (autre continent sans ShortestPathForever)
+
+local function stepList(st)
+  local q = type(st) == "table" and Q.QDB:Quest(st[2])
+  if not q then return nil end
+  return st[1] == "accept" and q.starters or q.finishers
+end
+
+local function newCost()
+  local cache = {}
+  return function(a, b)
+    if not (isPoint(a) and isPoint(b)) then return FAR end
+    local key = table.concat({ a[1], a[2], a[3], b[1], b[2], b[3] }, ",")
+    local c = cache[key]
+    if c then return c end
+    local trip = Dungeons:Trip(a[1], a[2], a[3], b[1], b[2], b[3])
+    if trip then
+      c = trip.seconds
+    else
+      local d = Q.Maps:Distance(a[1], a[2], a[3], b[1], b[2], b[3])
+      c = d and d / RUN_SPEED or FAR
+    end
+    cache[key] = c
+    return c
+  end
+end
+
+-- Lieux d'une unité en arrivant de `from` : début, fin.
+local function unitPlaces(u, from)
+  local start = u.start
+  local list = stepList(u.steps and u.steps[1])
+  if list and isPoint(from) then start = spawnNear(list, from[1], from[2], from[3]) or start end
+  local finish = u.finish or start
+  local q = u.quest and Q.QDB:Quest(u.quest.id)
+  if q and isPoint(start) then finish = spawnNear(q.starters, start[1], start[2], start[3]) or finish end
+  return start, finish
+end
+
+-- orderUnits(units, from, to) -> units dans l'ordre ; from = position du joueur (ou nil), to = entrée du donjon.
+-- Chaque unité reçoit `at` (lieu de sa première étape sur ce trajet). Lieux et trajets mis en cache : un ordre
+-- complet ne coûte que des additions ; une branche plus chère que le meilleur ordre connu est abandonnée.
+local function orderUnits(units, from, to)
+  local n = #units
+  if n == 0 then return {} end
+  local cost = newCost()
+  if not isPoint(from) then from = nil end
+  local memo = {}
+  local function places(i, pos)
+    local key = i .. "|" .. (pos and (pos[1] .. "," .. pos[2] .. "," .. pos[3]) or "-")
+    local p = memo[key]
+    if not p then
+      local u = units[i]
+      local st, fin = unitPlaces(u, pos or u.start)
+      local inner = (isPoint(st) and isPoint(fin)) and cost(st, fin) or 0
+      p = { st, isPoint(fin) and fin or nil, inner }
+      memo[key] = p
+    end
+    return p[1], p[2], p[3]
+  end
+  local bestOrder, bestCost
+  if n <= EXACT_UNITS then
+    local used, cur = {}, {}
+    local function dfs(depth, pos, acc)
+      if bestCost and acc >= bestCost then return end
+      if depth > n then
+        local total = acc + ((pos and isPoint(to)) and cost(pos, to) or 0)
+        if not bestCost or total < bestCost then
+          bestCost = total
+          bestOrder = {}
+          for k = 1, n do bestOrder[k] = cur[k] end
+        end
+        return
+      end
+      for i = 1, n do
+        if not used[i] then
+          local st, fin, inner = places(i, pos)
+          used[i], cur[depth] = true, i
+          dfs(depth + 1, fin or pos, acc + ((pos and isPoint(st)) and cost(pos, st) or 0) + inner)
+          used[i], cur[depth] = false, nil
+        end
+      end
+    end
+    dfs(1, from, 0)
+  else
+    local used, pos = {}, from
+    bestOrder = {}
+    for _ = 1, n do
+      local bi, bc
+      for i = 1, n do
+        if not used[i] then
+          local st = places(i, pos)
+          local c = (pos and isPoint(st)) and cost(pos, st) or 0
+          if not bc or c < bc then bi, bc = i, c end
+        end
+      end
+      used[bi] = true
+      bestOrder[#bestOrder + 1] = bi
+      local _, fin = places(bi, pos)
+      pos = fin or pos
+    end
+  end
+  local out, pos = {}, from
+  for k, i in ipairs(bestOrder) do
+    local st, fin = places(i, pos)
+    units[i].at = st
+    out[k] = units[i]
+    pos = fin or pos
+  end
+  return out
+end
+Dungeons.OrderUnits = function(_, units, from, to) return orderUnits(units, from, to) end
 
 ---------------------------------------------------------------------------
 -- États
@@ -900,6 +1077,111 @@ function Dungeons:ChainInfo(key, id)
   return info
 end
 
+---------------------------------------------------------------------------
+-- Onglet Donjons du journal : itinéraire de prise et détail d'une quête
+---------------------------------------------------------------------------
+-- Trajet estimé de a à b : { seconds, flight, boat, tram } (ShortestPathForever) ou { seconds, walk = true }
+-- (distance à pied), nil si inconnu.
+local function leg(a, b)
+  if not (isPoint(a) and isPoint(b)) then return nil end
+  local t = Dungeons:Trip(a[1], a[2], a[3], b[1], b[2], b[3])
+  if t then return t end
+  local dist = Q.Maps:Distance(a[1], a[2], a[3], b[1], b[2], b[3])
+  if dist then return { seconds = dist / RUN_SPEED, walk = true } end
+  return nil
+end
+
+-- Route(d) -> {
+--   stops = { { mapId, at = {m,x,y}, quests = { questId, ... }, trip = leg|nil }, ... },  -- arrêts de prise,
+--                     -- dans l'ordre des étapes ajoutées (Add), unités voisines sur la même carte regroupées
+--   entrance = { at = {m,x,y}, trip = leg|nil },
+--   seconds = total|nil,                                                   -- nil si un trajet est inconnu
+-- } ; trip : depuis la position du joueur (ou l'arrêt précédent). Rien à prendre : stops vide.
+function Dungeons:Route(d)
+  if not (enabled() and validDungeon(d)) then return nil end
+  local p = plan(d)
+  local pm, px, py = Q.Maps:PlayerPos()
+  local from = pm and { pm, px, py } or nil
+  local stops, pos, total = {}, from, 0
+  for _, u in ipairs(orderUnits(p.units, from, d.entrance)) do
+    local at = isPoint(u.at) and u.at or u.start
+    local ids = {}
+    for _, st in ipairs(u.steps) do
+      if st[1] == "accept" then ids[#ids + 1] = st[2] end
+    end
+    local last = stops[#stops]
+    if last and isPoint(at) and isPoint(last.at) and at[1] == last.at[1] then
+      for _, id in ipairs(ids) do last.quests[#last.quests + 1] = id end
+    else
+      local t = leg(pos, at)
+      if total and t then total = total + t.seconds elseif pos then total = nil end
+      stops[#stops + 1] = { mapId = isPoint(at) and at[1] or nil, at = at, quests = ids, trip = t }
+    end
+    local _, fin = unitPlaces(u, at)
+    if isPoint(fin) then pos = fin elseif isPoint(at) then pos = at end
+  end
+  local t = leg(pos, d.entrance)
+  if total and t then total = total + t.seconds else total = nil end
+  return { stops = stops, entrance = { at = d.entrance, trip = t }, seconds = total }
+end
+
+-- Réputation donnée par une quête (API publique de QuestieDB, si elle la connaît) : { { factionId, valeur } }.
+local function reputationOf(id)
+  local db = QuestDB or (LibQuestieDB and LibQuestieDB.Quest)
+  if type(db) ~= "table" or type(db.Get) ~= "function" then return {} end
+  local ok, rep = pcall(db.Get, id, "reputationReward")
+  if not ok or type(rep) ~= "table" then return {} end
+  local out = {}
+  for _, r in ipairs(rep) do
+    if type(r) == "table" and type(r[1]) == "number" and type(r[2]) == "number" then out[#out + 1] = { r[1], r[2] } end
+  end
+  return out
+end
+
+-- QuestInfo(d, id) -> détail d'une quête du donjon pour le journal (« plus d'infos » et bouton carte) :
+--   { xp, est = bool, items = { itemId, ... }, reputation = { { factionId, valeur }, ... },
+--     inLog = bool, complete = bool, objectives = { { text, have, need, done }, ... },   -- quête au journal
+--     giver = { kind, id, at } | nil,     -- donneur le plus proche du joueur
+--     ender = { kind, id, at } | nil }    -- receveur le plus proche de l'entrée (rendu après le donjon)
+function Dungeons:QuestInfo(d, id)
+  if type(id) ~= "number" then return nil end
+  local info = { reputation = reputationOf(id), objectives = {} }
+  info.xp, info.items = rewardOf(id)
+  local data = type(Q.QuestRewardData) == "table" and Q.QuestRewardData[id]
+  info.est = type(data) == "table" and data.est == true
+  info.inLog = Q.Progress:InLog(id) == true
+  info.complete = info.inLog and Q.Progress:IsComplete(id) == true
+  if info.inLog and C_QuestLog and C_QuestLog.GetQuestObjectives then
+    local ok, objs = pcall(C_QuestLog.GetQuestObjectives, id)
+    for _, o in ipairs(ok and type(objs) == "table" and objs or {}) do
+      if type(o) == "table" and type(o.text) == "string" and not Q.Util.IsSecret(o.text) then
+        info.objectives[#info.objectives + 1] = { text = o.text, have = tonumber(o.numFulfilled) or 0,
+          need = tonumber(o.numRequired) or 0, done = o.finished == true }
+      end
+    end
+  end
+  local q = Q.QDB:Quest(id)
+  if q then
+    info.giver = placeOf(q.starters)
+    local ent = validDungeon(d) and d.entrance or nil
+    local at = ent and spawnNear(q.finishers, ent[1], ent[2], ent[3])
+    if at then
+      for _, nid in ipairs(q.finishers.npcs) do
+        local rec = Q.QDB:Npc(nid)
+        if rec and rec.spawns and rec.spawns[at[1]] then info.ender = { kind = "npc", id = nid, at = at }; break end
+      end
+      if not info.ender then
+        for _, oid in ipairs(q.finishers.objects) do
+          local rec = Q.QDB:Object(oid)
+          if rec and rec.spawns and rec.spawns[at[1]] then info.ender = { kind = "object", id = oid, at = at }; break end
+        end
+      end
+    end
+    info.ender = info.ender or placeOf(q.finishers)
+  end
+  return info
+end
+
 -- Point où reprendre la route après le donjon : la cible de l'étape courante (hors étapes de ce donjon),
 -- sinon la position du joueur. { mapId, x, y, titre|nil } ou nil.
 local function returnPoint(tag)
@@ -924,35 +1206,38 @@ local function blockSteps(d, p, rung)
     if rung then st.rung, st.phase = rung, phase end
     steps[#steps + 1] = st
   end
+  local ent = d.entrance
   local pm, px, py = Q.Maps:PlayerPos()
-  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+  for _, u in ipairs(orderUnits(p.units, pm and { pm, px, py } or nil, ent)) do
     for _, st in ipairs(u.steps) do add({ st[1], st[2], dungeon = name }, "prep") end
   end
-  local ent = d.entrance
   add({ "goto", ent[1], ent[2], ent[3], note = string.format(Q.L.DUNGEON_GOTO_NOTE, name) }, "run")
   for _, e in ipairs(p.active) do
     if not e.talk then add({ "complete", e.id, dungeon = name }, "run") end
   end
   -- Rendus : d'abord ceux qui se font dans le donjon (PNJ de fin sans position), puis du plus proche
-  -- de l'entrée au plus loin.
+  -- de l'entrée au plus loin. Chaque rendu porte le point du receveur le plus proche de l'entrée : la cible
+  -- tant que la position du joueur est inconnue (dans l'instance), au lieu du premier point connu du PNJ.
   local inside, outside = {}, {}
   for _, e in ipairs(p.active) do
-    if isPoint(e.endAt) then
-      outside[#outside + 1] = { start = e.endAt, quest = e }
+    local q = Q.QDB:Quest(e.id)
+    local at = q and spawnNear(q.finishers, ent[1], ent[2], ent[3]) or (isPoint(e.endAt) and e.endAt or nil)
+    if at then
+      outside[#outside + 1] = { start = at, quest = e }
     else
       inside[#inside + 1] = e
     end
   end
   for _, e in ipairs(inside) do add({ "turnin", e.id, dungeon = name }, "run") end
   for _, it in ipairs(orderNearest(outside, ent[1], ent[2], ent[3])) do
-    add({ "turnin", it.quest.id, dungeon = name }, "run")
+    add({ "turnin", it.quest.id, dungeon = name, at = { it.start[1], it.start[2], it.start[3] } }, "run")
   end
   return steps
 end
 
--- Add(key) : insère avant la route les quêtes à prendre et celles qui y mènent, l'entrée du donjon, « faire »
--- et « rendre » pour chaque quête (blockSteps), puis le retour au point où la route en était (étape « goto »
--- marquée du donjon).
+-- Add(key) : remplace le donjon déjà ajouté, s'il y en a un, puis insère avant la route les quêtes à prendre
+-- et celles qui y mènent, l'entrée du donjon, « faire » et « rendre » pour chaque quête (blockSteps), puis le
+-- retour au point où la route en était (étape « goto » marquée du donjon).
 function Dungeons:Add(key)
   local s = saved()
   if not s or not enabled() then return false end
@@ -964,6 +1249,14 @@ function Dungeons:Add(key)
     if not e.inside then hasQuest = true end
   end
   if not hasQuest then return false end
+  -- Un seul donjon suivi à la fois : celui déjà ajouté quitte la route (ses quêtes prises restent dans le
+  -- journal) et redevient proposable. Retiré avant returnPoint, qui ne doit pas viser ses étapes.
+  for other in pairs(s.added) do
+    if other ~= d.key then
+      s.added[other] = nil
+      Q.Progress:RemoveInserted(TAG_PREFIX .. other)
+    end
+  end
   local name = self:Name(d)
   local back = returnPoint(TAG_PREFIX .. d.key)
   local steps = blockSteps(d, p)
@@ -1039,13 +1332,13 @@ function Dungeons:Extras(key)
   if #p.units == 0 then return nil end
   local pm, px, py = Q.Maps:PlayerPos()
   local quests = {}
-  for _, u in ipairs(orderNearest(p.units, pm, px, py)) do
+  for _, u in ipairs(orderUnits(p.units, pm and { pm, px, py } or nil, d.entrance)) do
     local e = u.quest
     local pre = {}
     for _, st in ipairs(u.steps) do
       if st[1] == "accept" and st[2] ~= e.id then pre[#pre + 1] = st[2] end
     end
-    quests[#quests + 1] = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, start = u.start or e.at, pre = pre }
+    quests[#quests + 1] = { id = e.id, giver = e.giver, obj = e.obj, at = e.at, start = u.at or u.start or e.at, pre = pre }
   end
   return { rung = r, dungeon = d, quests = quests, plan = p }
 end
@@ -1225,10 +1518,48 @@ end)
 ---------------------------------------------------------------------------
 local QUEST_ACTIONS = { accept = true, complete = true, turnin = true }
 
+-- Les notes et le nom du donjon sont écrits dans les étapes au moment de l'ajout, dans la langue du client
+-- d'alors. Si le jeu a changé de langue depuis, ils sont réécrits dans la langue actuelle. La note de retour
+-- perd alors son détail (le titre de l'étape visée, qu'on ne sait pas retraduire).
+local function relocalize()
+  local L = Q.L
+  local backPrefix = L.DUNGEON_BACK_NOTE:match("^(.-)%%s") or L.DUNGEON_BACK_NOTE
+  local DM = Q.DungeonMode
+  for _, e in ipairs(Q.Progress:Entries()) do
+    local tag, step = e.tag, e.step
+    if e.source == "inserted" and type(tag) == "string" and tag:sub(1, #TAG_PREFIX) == TAG_PREFIX then
+      local key = tag:sub(#TAG_PREFIX + 1)
+      local r = DM and DM.Rung and DM:Rung(key)
+      local d = findDungeon(key) or (r and findDungeon(r.dungeon))
+      if d then
+        local name = Dungeons:Name(d)
+        if step.action == "goto" and type(step.note) == "string" then
+          if step.dungeon then
+            if step.note ~= L.DUNGEON_BACK_NOTE_PLAIN and step.note:sub(1, #backPrefix) ~= backPrefix then
+              step.note = L.DUNGEON_BACK_NOTE_PLAIN
+            end
+          else
+            step.note = string.format(L.DUNGEON_GOTO_NOTE, name)
+          end
+        end
+        if step.dungeon then step.dungeon = name end
+      end
+    end
+  end
+end
+Dungeons.Relocalize = relocalize
+
+local relocalized = false
+
 Q:On("PROGRESS_UPDATED", function()
   if not enabled() then return end
   local s = saved()
   if not s then return end
+  if not relocalized then
+    relocalized = true
+    local ok, err = pcall(relocalize)
+    if not ok then Q:ReportError(err) end
+  end
   local groups, order = {}, {}
   for _, e in ipairs(Q.Progress:Entries()) do
     local tag = e.tag

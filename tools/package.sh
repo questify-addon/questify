@@ -7,8 +7,8 @@
 # Le premier contrôle qui échoue arrête tout : aucun zip n'est produit.
 #
 # La version vient de « ## Version: » dans Questify/Questify.toc (0.1.0 si absente).
-# Le dossier Questify/ est à la racine du zip ; LICENSE y est copiée (GPL) ; .DS_Store et
-# les fichiers temporaires d'éditeur sont exclus. tests/, tools/ et docs/ n'y figurent jamais.
+# Un seul dossier à la racine du zip : Questify/ (routeur de marche et cartes compris, NavEngine/). LICENSE est copiée dans Questify/ (GPL) ; .DS_Store et les fichiers temporaires
+# d'éditeur sont exclus. tests/, tools/ et docs/ n'y figurent jamais.
 set -u
 set -o pipefail
 
@@ -18,6 +18,8 @@ ADDON_DIR="$ROOT/$ADDON"
 TOC="$ADDON_DIR/$ADDON.toc"
 TOC_FOREVER="$ADDON_DIR/${ADDON}_Camelot.toc"
 DEFAULT_VERSION="0.1.0"
+# Le routeur de marche et ses cartes sont dans Questify/NavEngine (anciens addons Questify_Nav, _EK, _Kalimdor).
+ROOTS=("$ADDON")
 
 LUAJIT="${LUAJIT:-luajit}"
 if ! command -v "$LUAJIT" >/dev/null 2>&1; then
@@ -108,19 +110,19 @@ stageAddon() {
   find "$dir" \( -name '.DS_Store' -o -name '._*' -o -name '*.swp' -o -name '*~' \) -delete
 }
 
-# zipAddon <saveur> : zippe $STAGE/<saveur>/Questify en dist/Questify-<version>-<saveur>.zip.
+# zipAddon <saveur> : zippe $STAGE/<saveur>/ (le dossier Questify) en dist/Questify-<version>-<saveur>.zip.
 zipAddon() {
   ZIP="$ROOT/dist/$ADDON-$VERSION-$1.zip"
   rm -f "$ZIP"
-  ( cd "$STAGE/$1" && zip -r -X -q "$ZIP" "$ADDON" ) || fail "zip $1 a échoué"
+  ( cd "$STAGE/$1" && zip -r -X -q "$ZIP" "${ROOTS[@]}" ) || fail "zip $1 a échoué"
 }
 
-# checkZip <entrée requise...> : tout sous Questify/, rien d'interdit, entrées requises présentes.
+# checkZip <entrée requise...> : tout sous le dossier Questify, rien d'interdit, entrées requises présentes.
 checkZip() {
-  local entries bad required
+  local entries bad required nav
   entries="$(unzip -Z1 "$ZIP")" || fail "zip illisible : $ZIP"
-  bad="$(printf '%s\n' "$entries" | grep -v "^$ADDON/" || true)"
-  [ -z "$bad" ] || fail "entrées hors de $ADDON/ dans $ZIP :
+  bad="$(printf '%s\n' "$entries" | grep -vE "^($(IFS='|'; echo "${ROOTS[*]}"))/" || true)"
+  [ -z "$bad" ] || fail "entrées hors de ${ROOTS[*]} dans $ZIP :
 $bad"
   bad="$(printf '%s\n' "$entries" | grep -E '(^|/)(\.DS_Store|tests|tools|docs|dist|\.cache|\.superpowers)(/|$)' || true)"
   [ -z "$bad" ] || fail "entrées interdites dans $ZIP :
@@ -134,5 +136,5 @@ $bad"
 # Forever : TOC de base + _Camelot (Interface 16001), routes Forever.
 stageAddon forever
 zipAddon forever
-checkZip "$ADDON.toc" "${ADDON}_Camelot.toc" "Guides/Guides.xml" "Guides/ClassQuestData.lua" "Guides/BagQuestData.lua" \
+checkZip "$ADDON.toc" "${ADDON}_Camelot.toc" "Guides/Guides.xml" "Guides/ClassQuestData.lua" "Guides/BagQuestData.lua" "Guides/AuctionItemData.lua" \
   "Guides/DungeonData.lua" "Guides/Alliance/A_DwarfGnome_01.lua"

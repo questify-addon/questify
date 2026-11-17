@@ -85,7 +85,7 @@ end
 -- non terminés passent d'abord ; l'ordre d'affichage (celui des objectifs) est conservé.
 function MobPanel:MobsFor(entry)
   if not (Q.QDB and Q.QDB:IsAvailable() and Q.Progress:IsEnabled()) then return {} end
-  if setting("tracker.showMobs") == false then return {} end
+  if Q.Objectives and Q.Objectives:Detail() == "count" then return {} end
   local all = {}
   for _, mob in ipairs(Q.Targets:MobsForEntry(entry)) do
     mob.name = cleanName(mob.name)

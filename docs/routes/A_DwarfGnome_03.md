@@ -1,19 +1,19 @@
 # A_DwarfGnome_03 — Loch Modan
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
+Generated on 2026-11-17 from QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb` by `tools/routebuilder/build.lua`. Simulated race: Dwarf.
 
 | Item | Value |
 |---|---|
 | Level band | 11-13 |
-| Simulated level | 12.00 -> 14.26 |
+| Simulated level | 12.00 -> 14.25 |
 | Time | 73 min |
-| XP gained | 23220 |
-| XP/h | 19003 |
-| Steps | 60 |
+| XP gained | 23229 |
+| XP/h | 19174 |
+| Steps | 59 |
 | Quests turned in | 19 |
 | Hubs | 9 |
 | Median ratio (XP/s) | 4.73 |
-| Hearthstone | bound to Innkeeper Hearthstove after task 1; 1 return(s) planned, 1 bundle(s) |
+| Hearthstone | no new bind; 1 return(s) planned, 1 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -30,7 +30,7 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 7 | 6388 | Gryth Thurden | 10 | 210 | 12 |
 | 8 | 416 | Rat Catching | 11 | 880 | 12 |
 | 9 | 6392 | Return to Brock | 10 | 1050 | 12 |
-| 10 | 302 | Powder to Ironband | 15 | 270 | 13 |
+| 10 | 302 | Powder to Ironband | 15 | 270 | 12 |
 | 11 | 224 | In Defense of the King's Lands | 12 | 910 | 13 |
 | 12 | 237 | In Defense of the King's Lands | 15 | 1050 | 13 |
 | 13 | 263 | In Defense of the King's Lands | 15 | 1050 | 13 |
@@ -346,9 +346,11 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 78148 | Runes of the Sorcerer-Kings | 20 | quest level 20 above the band |
 | 79091 | Archmage Antonidas: The Unabridged Autobiography | 20 | quest level 20 above the band |
 | 79093 | Rumi of Gnomeregan: The Collected Works | 20 | quest level 20 above the band |
+| 79358 | Storm, Earth, and Fire | 43 | class quest (ClassQuestData.lua) |
 | 79482 | Stolen Winter Veil Treats | 60 | Questie blacklist |
 | 79492 | Metzen the Reindeer | 60 | Questie blacklist |
 | 79975 | Eagle's Fist | 32 | quest level 32 above the band |
+| 84147 | An Earnest Proposition | 60 | class quest (ClassQuestData.lua) |
 | 84148 | An Earnest Proposition | 60 | quest level 60 above the band |
 | 84149 | An Earnest Proposition | 60 | quest level 60 above the band |
 | 84150 | An Earnest Proposition | 60 | class quest (ClassQuestData.lua) |
@@ -373,9 +375,12 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 | 95041 | Data Hoarders | 10 | objective item source not in zone |
 | 95924 | Panic at the Digsite | 60 | quest level 60 above the band |
 | 95925 | Mapping the Way Forward | 60 | quest level 60 above the band |
+| 96016 | The Tempest's Weapons | 40 | class quest (ClassQuestData.lua) |
 | 96045 | Camping 101: Alchemy | 6 | quest level 6 below the band |
 | 96059 | Camping 101: Enchanting | 6 | quest level 6 below the band |
+| 96135 | Heed My Call | 40 | class quest (ClassQuestData.lua) |
 | 96243 | Call of Earth | 4 | class quest (ClassQuestData.lua) |
+| 96264 | Elemental Aid | 33 | class quest (ClassQuestData.lua) |
 | 97263 | Your Package Has Arrived | 2 | quest level 2 below the band |
 | 98895 | Darkspear Islands Clash | 39 | quest level 39 above the band |
 | 98896 | Darkspear Islands Clash | 39 | quest level 39 above the band |
@@ -456,6 +461,8 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 9004 | Saving the Best for Last | 60 | ROGUE | quest level 60 above the band |
 | 9005 | Saving the Best for Last | 60 | WARLOCK | quest level 60 above the band |
 | 9006 | Saving the Best for Last | 60 | WARRIOR | quest level 60 above the band |
+| 79358 | Storm, Earth, and Fire | 43 | SHAMAN | quest level 43 above the band |
+| 84147 | An Earnest Proposition | 60 | DRUID | quest level 60 above the band |
 | 84150 | An Earnest Proposition | 60 | PALADIN | quest level 60 above the band |
 | 94473 | Fire Sapta | 13 | SHAMAN | repeatable |
 | 94494 | Call of Water | 20 | SHAMAN | quest level 20 above the band |
@@ -464,7 +471,10 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 94616 | Water Sapta | 20 | SHAMAN | quest level 20 above the band |
 | 94789 | Call of Air | 30 | SHAMAN | quest level 30 above the band |
 | 94818 | Contingency Plan | 20 | PRIEST | quest level 20 above the band |
+| 96016 | The Tempest's Weapons | 40 | SHAMAN | quest level 40 above the band |
+| 96135 | Heed My Call | 40 | SHAMAN | quest level 40 above the band |
 | 96243 | Call of Earth | 4 | SHAMAN | quest level 4 below the band |
+| 96264 | Elemental Aid | 33 | SHAMAN | quest level 33 above the band |
 | 94466 | Call of Fire | 14 | SHAMAN | detour 825 s |
 | 1682 | Grey Iron Weapons | 10 | WARRIOR | prerequisite or exclusive quest not done for the class |
 | 94817 | Confounding Flash | 10 | PRIEST | prerequisite or exclusive quest not done for the class |
@@ -495,9 +505,9 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 302 | Powder to Ironband | 15 | 270 | 0 | 283 | 23 | 2.34 | 12.14 | 0 |  |
 | 307 | Filthy Paws | 15 | 1350 | 0 | 146 | 146 | 9.23 | 9.23 | 1 |  |
 | 309 | Protecting the Shipment | 15 | 1050 | 0 | 75 | 26 | 13.97 | 39.28 | 1 |  |
-| 385 | Crocolisk Hunting | 15 | 3810 | 0 | 656 | 506 | 5.80 | 7.53 | 1 | level band reached |
+| 385 | Crocolisk Hunting | 15 | 3810 | 0 | 658 | 506 | 5.79 | 7.53 | 1 | level band reached |
 | 416 | Rat Catching | 11 | 3701 | 0 | 803 | 520 | 4.61 | 7.11 | 1 |  |
-| 418 | Thelsamar Blood Sausages | 11 | 3953 | 0 | 952 | 705 | 4.15 | 5.61 | 3 | level band reached |
+| 418 | Thelsamar Blood Sausages | 11 | 3953 | 0 | 952 | 707 | 4.15 | 5.59 | 3 | level band reached |
 | 454 | After the Ambush | 15 | 105 | 0 | 10 | 10 | 13.29 | 28.66 | 0 |  |
 | 1338 | Stormpike's Order | 14 | 5250 | 4270 | 1000010 | 10 | 0.01 | 525.01 | 0 |  |
 | 1339 | Mountaineer Stormpike's Task | 15 | 957 | 417 | 110 | 35 | 0.01 | 109.85 | 0 |  |
@@ -507,7 +517,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 6388 | Gryth Thurden | 10 | 210 | 0 | 45 | 45 | 3.72 | 14.16 | 0 |  |
 | 6391 | Ride to Ironforge | 10 | 420 | 0 | 311 | 57 | 2.21 | 10.35 | 0 |  |
 | 6392 | Return to Brock | 10 | 1050 | 0 | 297 | 29 | 3.53 | 35.08 | 0 |  |
-| 86758 | Twisting the Knife | 16 | 2590 | 0 | 416 | 266 | 6.22 | 9.73 | 1 |  |
+| 86758 | Twisting the Knife | 16 | 2590 | 0 | 417 | 266 | 6.20 | 9.73 | 1 |  |
 
 ## Itinerary
 
@@ -517,16 +527,16 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 
 | # | Task | Quest | Name | Map | x, y | Leg yd | Return |
 |---|---|---|---|---|---|---|---|
-| 1 | A | 416 | Rat Catching | 1432 | 32.6, 49.7 | 0 |  |
-| 2 | A | 1339 | Mountaineer Stormpike's Task | 1432 | 32.6, 49.7 | 83 |  |
-| 3 | A | 298 | Excavation Progress Report | 1432 | 65.9, 65.6 | 963 |  |
-| 4 | T | 298 | Excavation Progress Report | 1432 | 37.2, 47.4 | 859 | near #2 (went 859 yd away) |
-| 5 | A | 301 | Report to Ironforge | 1432 | 37.2, 47.4 | 0 | near #2 (went 859 yd away) |
-| 6 | A | 6387 | Honor Students | 1432 | 37.0, 47.8 | 9 |  |
-| 7 | T | 6387 | Honor Students | 1432 | 33.9, 51.0 | 102 |  |
-| 8 | A | 6391 | Ride to Ironforge | 1432 | 33.9, 51.0 | 0 |  |
-| 9 | T | 1339 | Mountaineer Stormpike's Task | 1432 | 24.8, 18.4 | 650 |  |
-| 10 | A | 307 | Filthy Paws | 1432 | 24.8, 18.4 | 0 |  |
+| 1 | A | 298 | Excavation Progress Report | 1432 | 65.9, 65.6 | 896 |  |
+| 2 | T | 298 | Excavation Progress Report | 1432 | 37.2, 47.4 | 859 |  |
+| 3 | A | 301 | Report to Ironforge | 1432 | 37.2, 47.4 | 0 |  |
+| 4 | A | 6387 | Honor Students | 1432 | 37.0, 47.8 | 9 |  |
+| 5 | T | 6387 | Honor Students | 1432 | 33.9, 51.0 | 102 |  |
+| 6 | A | 6391 | Ride to Ironforge | 1432 | 33.9, 51.0 | 0 |  |
+| 7 | A | 1339 | Mountaineer Stormpike's Task | 1432 | 32.6, 49.7 | 42 |  |
+| 8 | A | 416 | Rat Catching | 1432 | 32.6, 49.7 | 0 |  |
+| 9 | A | 307 | Filthy Paws | 1432 | 24.8, 18.4 | 616 |  |
+| 10 | T | 1339 | Mountaineer Stormpike's Task | 1432 | 24.8, 18.4 | 0 |  |
 | 11 | A | 1338 | Stormpike's Order | 1432 | 24.8, 18.4 | 0 |  |
 | 12 | O | 307 | Filthy Paws | 1432 | 35.5, 24.6 | 317 |  |
 | 13 | O | 416 | Rat Catching | 1432 | 36.8, 22.2 | 56 |  |
@@ -556,15 +566,15 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 37 | A | 454 | After the Ambush | 1432 | 52.2, 69.3 | 0 |  |
 | 38 | T | 454 | After the Ambush | 1432 | 52.2, 69.4 | 2 |  |
 | 39 | A | 309 | Protecting the Shipment | 1432 | 52.2, 69.4 | 0 |  |
-| 40 | O | 309 | Protecting the Shipment | 1432 | 65.1, 65.8 | 362 | near #3 (went 2846 yd away) |
-| 41 | T | 309 | Protecting the Shipment | 1432 | 65.9, 65.6 | 22 | near #3 (went 2866 yd away) |
+| 40 | O | 309 | Protecting the Shipment | 1432 | 65.1, 65.8 | 362 | near #1 (went 2846 yd away) |
+| 41 | T | 309 | Protecting the Shipment | 1432 | 65.9, 65.6 | 22 | near #1 (went 2866 yd away) |
 | 42 | A | 86758 | Twisting the Knife | 1432 | 81.8, 61.7 | 442 |  |
 | 43 | T | 2039 | Find Bingles | 1432 | 63.6, 47.9 | 562 |  |
-| 44 | O | 86758 | Twisting the Knife | 1432 | 63.9, 47.8 | 9 |  |
-| 45 | T | 86758 | Twisting the Knife | 1432 | 81.8, 61.7 | 554 |  |
+| 44 | O | 86758 | Twisting the Knife | 1432 | 63.7, 47.8 | 3 |  |
+| 45 | T | 86758 | Twisting the Knife | 1432 | 81.8, 61.7 | 559 |  |
 | 46 | T | 1338 | Stormpike's Order | 1453 | 64.6, 37.2 |  |  |
 
-Walking between tasks: 12773 yd (~30 min at 7 yd/s).
+Walking between tasks: 12629 yd (~30 min at 7 yd/s).
 
 ## Qualité
 
@@ -584,14 +594,13 @@ Reason: why the ordering kept it: `log cap`, `level` or `chain` (a constraint la
 
 ## Logistics
 
-- step 2: `sethearth 1432 35.53 48.4`
-- step 17: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
-- step 28: `goto 1455 55.5 47.74` — Flight master
-- step 29: `fly 1432` — Thelsamar, Loch Modan
-- step 54: `hearth 1432`
-- step 55: `goto 1432 33.94 50.95` — Flight master
-- step 56: `fly 1455` — Ironforge, Dun Morogh
-- step 57: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
+- step 16: `note The Hall of Thanes is under Ironforge (levels 13-18): run it on this visit, or abandon Old Ironforge Incursion`
+- step 27: `goto 1455 55.5 47.74` — Flight master
+- step 28: `fly 1432` — Thelsamar, Loch Modan
+- step 53: `hearth 1432`
+- step 54: `goto 1432 33.94 50.95` — Flight master
+- step 55: `fly 1455` — Ironforge, Dun Morogh
+- step 56: `boat 1455 78 51.4` — Take the Deeprun Tram to Stormwind
 
 ## Warnings
 

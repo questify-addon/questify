@@ -142,12 +142,19 @@ return {
     qf("demo upgrade")
     t.ok(shown(P.frame), "announcement shown")
     t.ok(P.current.demo)
-    t.ok(P.text:GetText():find("Exemple d'objet", 1, true), "item named")
+    t.ok(P.name:GetText():find("Exemple d'objet", 1, true), "item named")
+    Mock.advance(10)
+    t.ok(shown(P.frame), "the demo box stays without a countdown")
+    -- survol : le comparatif s'ouvre à côté
+    P.frame.IsMouseOver = function() return true end
+    Mock.advance(0.1)
+    t.ok(Q.UI.UpgradeCompare:IsShown(), "before/after comparison on hover")
+    P.frame.IsMouseOver = nil
     qf("demo pair")
     t.ok(shown(P.frame))
     t.ok(P.current.pair and P.current.demo, "pair announcement")
-    t.eq(P.text:GetText(), string.format(Q.L.UI_UPGRADE_TEXT_PAIR, Mock.items[Q.UI.Demo.ITEMS.main[1]].link,
-      Mock.items[Q.UI.Demo.ITEMS.off[1]].link))
+    t.ok(P.name:GetText():find(Mock.items[Q.UI.Demo.ITEMS.main[1]].name, 1, true)
+      and P.name:GetText():find(Mock.items[Q.UI.Demo.ITEMS.off[1]].name, 1, true), "both items named")
     noErrors(t)
   end,
 
@@ -182,6 +189,50 @@ return {
     for _, c in ipairs(P.cards) do if c.recommended then rec = rec + 1 end end
     t.eq(rec, 1, "one recommended card, ranked as in real life")
     t.eq(P.subtitle:GetText(), string.format(Q.L.UI_ROUTECHOICE_SUBTITLE, Q.Guides:DisplayTitle("A_DwarfGnome_03")))
+    noErrors(t)
+  end,
+
+  item_set_follows_the_player_level = function(t)
+    local Q = load()
+    local D = Q.UI.Demo
+    Q.Player.level = 1
+    t.eq(D:ItemSet().level, 1)
+    Q.Player.level = 32
+    t.eq(D:ItemSet().level, 36, "a set a little above the player")
+    Q.Player.level = 60
+    t.eq(D:ItemSet().level, 50)
+  end,
+
+  auction_scene_fills_the_shopping_list_and_off_restores = function(t)
+    local Q = load()
+    local D = Q.UI.Demo
+    for _, e in ipairs(D.AUCTION) do
+      Mock.items[e.item] = { id = e.item, name = "Item " .. e.item,
+        link = "|cffffffff|Hitem:" .. e.item .. "::::::::|h[Item " .. e.item .. "]|h|r", classID = 12 }
+    end
+    local before = #Q.AuctionItems:Rows()
+    qf("demo auction")
+    Mock.advance(1)
+    local P = Q.UI.AuctionPanel
+    t.ok(P.list and P.list:IsShown(), "list shown")
+    local rows = Q.AuctionItems:Rows()
+    t.eq(#rows, #D.AUCTION, "one row per example item")
+    t.eq(rows[1].chapter, "current")
+    t.eq(rows[#rows].chapter, "next")
+    for _, r in ipairs(rows) do t.ok(r.need > 0, r.item .. ": something to buy") end
+    qf("demo off")
+    t.ok(not P.list:IsShown(), "list closed")
+    t.eq(#Q.AuctionItems:Rows(), before, "real rows back")
+    noErrors(t)
+  end,
+
+  route_scene_ranks_at_the_chapter_end_level = function(t)
+    local Q = load()
+    Q.Player.level = 34
+    qf("demo route")
+    local P = Q.UI.RouteChoicePopup
+    t.ok(P:IsShown(), "window shown")
+    for _, c in ipairs(P.cards) do t.eq(c.over, 0, c.id .. ": not too low for the chapter's end level") end
     noErrors(t)
   end,
 
@@ -280,11 +331,11 @@ return {
 
     local up = Q.UI.UpgradePopup
     qf("demo upgrade")
-    Mock.click(up.frame, "LeftButton")
+    Mock.click(up.equipButton)
     t.eq(Mock.countCalls("C_Item.EquipItemByName"), 0, "nothing equipped")
     t.ok(not shown(up.frame), "announcement closed")
     qf("demo pair")
-    Mock.click(up.frame, "LeftButton")
+    Mock.click(up.equipButton)
     Mock.advance(2)
     t.eq(Mock.countCalls("C_Item.EquipItemByName"), 0, "pair: nothing equipped")
 
@@ -416,7 +467,7 @@ return {
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_THEME, list[2].label, 2, #list)))
     qf("demo off")
     t.eq(Q.Settings:Get("tracker.theme"), saved, "setting untouched")
-    t.eq(Q.UI.Tracker.themeKey, Q.Themes:Resolve(saved), "tracker back to its theme")
+    t.eq(Q.UI.Tracker.themeKey, Q.Themes:CurrentKey(), "tracker back to its theme")
     noErrors(t)
   end,
 
@@ -436,15 +487,18 @@ return {
     stubItems(Q)
     local D = Q.UI.Demo
     t.eq(D.SCENES[1], "tracker")
-    t.eq(D.SCENES[2], "classquest")
+    t.eq(D.SCENES[2], "zone")
+    t.eq(D.SCENES[3], "classquest")
     qf("demo all")
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[1], 1, #D.SCENES)), "first scene named")
     qf("demo next")
-    t.ok(shown(Q.UI.ClassQuestPopup.frame), "class quest scene shown")
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[2], 2, #D.SCENES)))
     qf("demo next")
+    t.ok(shown(Q.UI.ClassQuestPopup.frame), "class quest scene shown")
+    t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[3], 3, #D.SCENES)))
+    qf("demo next")
     t.ok(not shown(Q.UI.ClassQuestPopup.frame), "previous scene closed")
-    for _ = 4, #D.SCENES do qf("demo next") end
+    for _ = 5, #D.SCENES do qf("demo next") end
     t.ok(Mock.printed(string.format(Q.L.UI_DEMO_STEP, D.SCENES[#D.SCENES], #D.SCENES, #D.SCENES)))
     qf("demo next")
     t.ok(Mock.printed(Q.L.UI_DEMO_LAST), "end of the sequence")
@@ -494,5 +548,26 @@ return {
     local src = f:read("*a"); f:close()
     t.ok(not src:find("/Users/", 1, true))
     t.ok(not src:find("@", 1, true) or not src:find("%w@%w"), "no address")
+  end,
+
+  -- Zone d'exemple : suivi dedans (pastille, groupes, numéros), contour sur la carte, tout revient.
+  zone_scene_draws_tracker_and_map = function(t)
+    local Q = load()
+    Minimap:SetSize(140, 140)   -- taille de la minicarte du jeu (le mock part de 0)
+    qf("demo zone")
+    local T = Q.UI.Tracker
+    local text = T:CurrentText()
+    t.ok(text:find(Q.L.UI_DEMO_ZONE_NAME, 1, true), "zone pill: " .. text)
+    t.ok(text:find("OBJECTS", 1, true) and text:find("MONSTERS", 1, true), "groups")
+    t.eq(T.currentIcon:GetTexture(), T.ZONE_ICON)
+    t.ok(T.host.objRows[1].num:IsShown(), "numbered objectives")
+    Mock.advance(0.3)
+    t.ok(Q.UI.ZoneOverlay:DrawsWorld(), "outline on the world map")
+    t.ok((Q.UI.ZoneOverlay.active.mini.dots or 0) > 0, "dots on the minimap")
+    qf("demo off")
+    Mock.advance(0.3)
+    t.ok(not T:CurrentText():find(Q.L.UI_DEMO_ZONE_NAME, 1, true), "tracker back to the step")
+    t.ok(not Q.UI.ZoneOverlay:DrawsWorld(), "outline gone")
+    noErrors(t)
   end,
 }

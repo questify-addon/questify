@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Questify · onglet Classe (maquette)</title>
+<!-- Maquette de l'onglet Classe des options (Talents, Macros), de l'encart « point de talent » sous
+     le suivi et du bouton Classe du suivi. Thème « Questify » (neutre) de la refonte ui-themes :
+     mêmes jetons (bg, panel, panelAlt, sidebar, edge, line, text, textDim, textMuted, accent, metal).
+     1 px = 1 unité d'interface du jeu ; chaque fenêtre est agrandie par zoom. Données réelles du
+     guide Mage Givre de classicwowforever.com (CC BY 4.0), personnage niveau 23. -->
+<style>
+:root {
+  --game: "Optima", "Marcellus", "Palatino", serif;
+  --clean: "Inter", "Avenir Next", "Helvetica Neue", sans-serif;
+  --mono: "Menlo", "SF Mono", monospace;
+  --bg: #0c1724; --panel: #102030; --panelAlt: #15283b; --sidebar: #09121c; --footer: #0a141f;
+  --sky: #183a58; --edge: #2a4258; --line: rgba(130,200,235,.12); --line2: rgba(130,200,235,.18);
+  --text: #eef3f7; --textDim: #b9c7d3; --textMuted: #8fa0b0;
+  --accent: #3fd0e6; --onAccent: #04161d; --metal: #d4a94f; --sel: rgba(63,208,230,.12);
+  --quest: #ffd773; --success: #6bd99a; --warning: #fabf4d; --danger: #f57373; --item: #c7adff; --npc: #94caff;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: #0f1114; color: #e9ebef; font-family: var(--clean); -webkit-font-smoothing: antialiased; }
+.page { width: 1920px; padding: 32px 44px 44px; }
+.head-cap .brand { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #9fb2c8; }
+.head-cap h1 { margin: 6px 0 4px; font-size: 38px; font-weight: 600; color: #f1f3f6; }
+.head-cap .meta { font-size: 16px; color: #9aa2ae; line-height: 1.5; max-width: 1500px; }
+.head-cap .meta b { color: #e3e7ec; font-weight: 600; }
+.row { display: flex; gap: 36px; align-items: flex-start; margin-top: 26px; }
+.cap { font-size: 15px; color: #8f98a5; margin: 0 0 10px; }
+.cap b { color: #dfe3e8; font-weight: 600; }
+.z13 { zoom: 1.3; } .z15 { zoom: 1.5; } .z17 { zoom: 1.7; }
+
+.ui { font-family: var(--game); color: var(--text); }
+.ui * { font-family: inherit; }
+.td { color: var(--textDim); } .tm { color: var(--textMuted); } .ta { color: var(--accent); }
+.c-ok { color: var(--success); } .c-warn { color: var(--warning); } .c-q { color: var(--quest); }
+.s15 { font-size: 15px; line-height: 18px; font-weight: 600; } .s13 { font-size: 13px; line-height: 16px; }
+.s12 { font-size: 12px; line-height: 15px; } .s11 { font-size: 11px; line-height: 14px; } .s10 { font-size: 10px; line-height: 12px; }
+.semi { font-weight: 600; } .nw { white-space: nowrap; } .num { font-variant-numeric: tabular-nums; }
+
+/* fenêtre */
+.win { position: relative; background: var(--bg); border: 1px solid var(--edge); box-shadow: 0 8px 18px rgba(0,0,0,.45); }
+.win::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--metal); z-index: 3; }
+.hd { position: relative; height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px;
+  background: linear-gradient(180deg, var(--sky) 0%, var(--bg) 100%); border-bottom: 1px solid var(--line); }
+.hd .ttl { font-size: 15px; font-weight: 600; } .hd .sp { flex: 1; }
+.emb { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--metal); background: #0b1530; display: grid; place-items: center; color: var(--metal); font-size: 15px; }
+.field { height: 22px; width: 190px; display: flex; align-items: center; gap: 6px; padding: 0 8px; background: var(--panelAlt);
+  border: 1px solid var(--edge); font-size: 12px; color: var(--textMuted); }
+.x { color: var(--textMuted); font-family: var(--clean); font-size: 14px; padding: 0 4px; }
+.side { background: var(--sidebar); border-right: 1px solid var(--line); padding-top: 6px; }
+.side .it { display: flex; align-items: center; height: 24px; padding: 0 10px 0 12px; gap: 8px; font-size: 13px; color: var(--textDim); position: relative; }
+.side .it.on { background: var(--sel); color: var(--text); }
+.side .it.on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); }
+.side .it .new { margin-left: auto; font: 700 9px/13px var(--clean); padding: 0 4px; background: var(--metal); color: #0b0f14; }
+.side .it img { width: 14px; height: 14px; }
+.h2 { font-size: 18px; line-height: 22px; font-weight: 600; }
+.h3 { font-size: 11px; line-height: 14px; color: var(--textMuted); text-transform: uppercase; letter-spacing: .08em;
+  padding-bottom: 4px; border-bottom: 1px solid var(--line); margin: 12px 0 7px; display: flex; }
+.h3 .r { margin-left: auto; text-transform: none; letter-spacing: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 10px; font-size: 12px;
+  color: var(--text); background: var(--panelAlt); border: 1px solid var(--edge); white-space: nowrap; }
+.btn.pri { background: var(--accent); color: var(--onAccent); border-color: var(--accent); font-weight: 600; }
+.btn.ghost { background: transparent; } .btn.dis { color: var(--textMuted); background: transparent; }
+.seg { display: inline-flex; border: 1px solid var(--edge); }
+.seg span { white-space: nowrap; padding: 3px 10px; font-size: 12px; color: var(--textDim); background: var(--panelAlt); }
+.seg span + span { border-left: 1px solid var(--edge); }
+.seg span.on { background: var(--sel); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.seg span b { font-weight: 400; color: var(--textMuted); margin-left: 4px; font-family: var(--clean); font-size: 10px; }
+.seg.big span { padding: 5px 16px; font-size: 13px; }
+.rad { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--textDim); }
+.rad i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--edge); background: var(--panelAlt); display: grid; place-items: center; }
+.rad.on { color: var(--text); } .rad.on i { border-color: var(--accent); } .rad.on i::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ft { display: flex; gap: 8px; align-items: center; padding: 6px 12px; background: var(--footer); border-top: 1px solid var(--line); }
+.ico { display: block; box-shadow: 0 0 0 1px var(--edge); }
+.badge { display: inline-block; font: 700 9px/13px var(--clean); padding: 0 4px; letter-spacing: .04em; text-transform: uppercase; vertical-align: 1px; }
+.b-classic { color: var(--textDim); border: 1px solid var(--edge); }
+.b-adapted { color: #0b0f14; background: var(--warning); }
+.b-new { color: #0b0f14; background: var(--success); }
+.b-lvl { color: var(--textMuted); border: 1px solid var(--line2); }
+
+/* cartes de spé */
+.specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.spec { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--edge); background: var(--panelAlt); position: relative; }
+.spec img { width: 28px; height: 28px; }
+.spec .nm { font-size: 13px; font-weight: 600; } .spec .dk { font-size: 10px; line-height: 12px; color: var(--textMuted); }
+.spec.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--sel); }
+.spec .pts { margin-left: auto; font: 600 11px var(--clean); color: var(--textDim); }
+.spec .auto { position: absolute; right: 4px; top: -7px; font: 700 8px/11px var(--clean); padding: 0 3px; background: var(--metal); color: #0b0f14; }
+
+/* arbre de talents */
+.treebox { width: 214px; flex: none; }
+.ttabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.ttabs span { flex: 1; text-align: center; font-size: 11px; padding: 3px 0 4px; color: var(--textMuted); position: relative; }
+.ttabs span b { font: 600 10px var(--clean); margin-left: 3px; }
+.ttabs span.on { color: var(--text); } .ttabs span.on::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 2px; background: var(--accent); }
+.tree { position: relative; height: 268px; background:
+   linear-gradient(180deg, rgba(12,23,36,.55), rgba(12,23,36,.85)),
+   url("https://classicwowforever.com/talents/art/trees/mage-frost.jpg") center / cover, #0d1a28;
+   border: 1px solid var(--edge); }
+.tn { position: absolute; width: 32px; height: 32px; }
+.tn img { width: 32px; height: 32px; display: block; box-shadow: 0 0 0 1px #000; }
+.tn .rk { position: absolute; right: -6px; bottom: -6px; font: 700 9px/12px var(--clean); padding: 0 3px; background: #050a10; border: 1px solid var(--edge); color: var(--textDim); }
+.tn.done img { box-shadow: 0 0 0 1px var(--success); } .tn.done .rk { color: var(--success); border-color: var(--success); }
+.tn.plan img { filter: grayscale(.85) brightness(.55); }
+.tn.plan .lv { position: absolute; left: -5px; top: -6px; font: 700 9px/12px var(--clean); padding: 0 3px; background: #050a10; color: var(--textMuted); border: 1px solid var(--line2); }
+.tn.next img { box-shadow: 0 0 0 2px var(--accent), 0 0 10px var(--accent); }
+.tn.next .rk { color: var(--onAccent); background: var(--accent); border-color: var(--accent); }
+.tn.off img { filter: grayscale(1) brightness(.3); }
+.legend { display: flex; gap: 10px; margin-top: 6px; font-size: 10px; color: var(--textMuted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 9px; height: 9px; vertical-align: -1px; margin-right: 3px; }
+
+/* point suivant */
+.nextc { border: 1px solid var(--edge); background: var(--panel); padding: 9px 10px; display: flex; gap: 10px; position: relative; }
+.nextc::before { content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 2px; background: var(--accent); }
+.nextc img { width: 40px; height: 40px; box-shadow: 0 0 0 1px var(--accent); }
+.upl .l { display: flex; align-items: center; gap: 8px; height: 22px; font-size: 12px; border-bottom: 1px solid var(--line); }
+.upl .l img { width: 16px; height: 16px; }
+.upl .l .lv { width: 34px; color: var(--textMuted); font: 600 11px var(--clean); }
+.upl .l .r { margin-left: auto; color: var(--textMuted); font: 600 11px var(--clean); }
+.credit { font-size: 10px; line-height: 13px; color: var(--textMuted); }
+.credit a { color: var(--accent); text-decoration: none; }
+
+/* macros */
+.mac { display: flex; gap: 10px; padding: 9px 10px; border: 1px solid var(--edge); background: var(--panel); margin-bottom: 6px; }
+.mac img.mi { width: 32px; height: 32px; }
+.mac .bd { flex: 1; min-width: 0; }
+.mac .code { margin-top: 5px; padding: 5px 7px; background: #060d15; border: 1px solid var(--line2); font: 11px/15px var(--mono); color: #d8e6ef; white-space: pre; overflow: hidden; }
+.mac .code .sp { color: var(--quest); }
+.mac .mods { margin-top: 4px; font-size: 11px; color: var(--textDim); }
+.mac .mods b { font: 700 10px var(--clean); color: var(--text); border: 1px solid var(--edge); padding: 0 3px; margin-right: 3px; background: var(--panelAlt); }
+.mac .act { width: 104px; flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 4px; text-align: center; }
+.mac .st { font-size: 10px; line-height: 12px; }
+.slots { display: flex; gap: 10px; align-items: center; font-size: 11px; color: var(--textDim); }
+.bar { width: 50px; height: 4px; background: var(--line2); position: relative; display: inline-block; vertical-align: 2px; }
+.bar b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.warnline { font-size: 11px; color: var(--warning); display: flex; gap: 6px; align-items: center; }
+
+/* suivi */
+.world { position: relative; padding: 24px; background:
+  radial-gradient(ellipse 60% 40% at 30% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%),
+  linear-gradient(160deg, #c9d3dd 0%, #9fb0c0 40%, #6f8396 70%, #4b5b6b 100%); }
+.trk { position: relative; width: 276px; padding: 10px 12px; }
+.trk .bgl { position: absolute; inset: 0; background: var(--bg); opacity: .92; border: 1px solid var(--edge); }
+.trk .bgl::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--metal); }
+.trk .in { position: relative; }
+.prog { position: relative; height: 4px; background: var(--line2); margin: 6px 0 4px; } .prog b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.qb { display: flex; gap: 3px; }
+.qb span { width: 18px; height: 18px; border: 1px solid var(--metal); background: var(--panelAlt); display: grid; place-items: center; overflow: hidden; position: relative; }
+.qb span img { width: 16px; height: 16px; }
+.qb span.glow { box-shadow: 0 0 0 2px var(--accent); }
+.qb .mk { position: absolute; right: -2px; top: -3px; color: #ffd200; font: 900 11px var(--clean); text-shadow: 0 0 2px #000, 0 0 2px #000; }
+.tbox { position: relative; width: 276px; margin-top: 4px; padding: 8px; }
+.tbox .bgl { position: absolute; inset: 0; background: var(--bg); opacity: .94; border: 1px solid var(--edge); }
+.tbox .in { position: relative; display: flex; gap: 8px; }
+.tbox img { width: 36px; height: 36px; box-shadow: 0 0 0 1px var(--accent); }
+.timer { position: relative; height: 3px; background: var(--line2); margin-top: 7px; } .timer b { position: absolute; left: 0; top: 0; bottom: 0; width: 64%; background: var(--accent); }
+.note { font-size: 14px; color: #aab3bf; line-height: 1.45; max-width: 560px; }
+.note b { color: #e6eaee; }
+.note li { margin-bottom: 4px; }
+.tipbox { background: var(--panel); border: 1px solid var(--edge); padding: 7px 9px; width: 210px; box-shadow: 0 8px 18px rgba(0,0,0,.5); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head-cap">
+    <div class="brand">Questify · onglet Classe</div>
+    <h1>Talents et macros de ta classe</h1>
+    <div class="meta">Options › <b>Classe</b> (nouvelle section), sélecteur <b>Talents | Macros</b>. Seule la classe du personnage. Données
+      de <b>classicwowforever.com</b> (CC BY 4.0) dans la langue du jeu, extraites hors ligne. Couleurs lues dans le thème (ici « Questify »).
+      Exemple : Mage Givre, niveau 23, un point à dépenser.</div>
+  </div>
+
+  <!-- ================================================================ TALENTS -->
+  <div class="row">
+    <div>
+      <div class="cap"><b>1 · Options › Classe › Talents</b> · zoom 1,3</div>
+      <div class="z13">
+      <div class="win ui" style="width:760px;height:560px;display:flex;flex-direction:column">
+        <div class="hd"><span class="emb">✦</span><span class="ttl">Options de Questify</span><span class="sp"></span>
+          <span class="field">⌕ Chercher une option</span><span class="x">✕</span></div>
+        <div style="flex:1;display:flex;min-height:0">
+          <div class="side" style="width:150px">
+            <div class="it">Route</div><div class="it">Navigation</div><div class="it">Automatisation</div><div class="it">Butin</div>
+            <div class="it on"><img src="https://wow.zamimg.com/images/wow/icons/small/classicon_mage.jpg">Classe<span class="new">NEUF</span></div>
+            <div class="it">Maître et donjons</div><div class="it">Carte et repères</div><div class="it">Suivi</div><div class="it">Thème</div>
+            <div class="it">Confort</div><div class="it">Outils</div><div class="it">Profils</div>
+          </div>
+          <div style="flex:1;padding:10px 14px 0;min-width:0;display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div><div class="h2">Classe · Mage</div><div class="s11 tm">Guides de classicwowforever.com, adaptés pour Questify</div></div>
+              <span style="flex:1"></span>
+              <span class="seg big"><span class="on">Talents</span><span>Macros</span></span>
+            </div>
+            <div class="h3" style="margin-top:8px">Spécialisation<span class="r tm s10">ton choix, gardé pour ce personnage</span></div>
+            <div class="specs">
+              <div class="spec"><img class="ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_holy_magicalsentry.jpg"><div><div class="nm">Arcanes</div><div class="dk">Mana et burst des arcanes</div></div></div>
+              <div class="spec"><img class="ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_fire_firebolt02.jpg"><div><div class="nm">Feu</div><div class="dk">Dégâts directs et critiques</div></div></div>
+              <div class="spec on"><span class="auto">TES POINTS</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_frost_frostbolt02.jpg"><div><div class="nm">Givre</div><div class="dk">Kite, ralentis et contrôle</div></div><span class="pts">13</span></div>
+            </div>
+            <div style="display:flex;gap:14px;margin-top:10px;min-height:0">
+              <div class="treebox">
+                <div class="ttabs"><span>Arcanes<b>0</b></span><span>Feu<b>0</b></span><span class="on">Givre<b>13</b></span></div>
+                <div class="tree" id="tree"></div>
+                <div class="legend"><span><i style="background:var(--success)"></i>pris</span><span><i style="background:var(--accent)"></i>suivant</span><span><i style="background:#3a4652"></i>plus tard (niveau)</span></div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="h3" style="margin-top:0">Prochain point<span class="r c-q s11">1 point à dépenser</span></div>
+                <div class="nextc">
+                  <img class="ico" src="https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostarmor.jpg">
+                  <div style="min-width:0">
+                    <div class="s11 tm">Niveau 23 · arbre Givre, palier 2</div>
+                    <div class="s15 ta">Morsure de givre <span class="td" style="font-weight:400">3/3</span></div>
+                    <div class="s12 td" style="margin-top:3px">Tes effets de froid, y compris celui d'Éclair de givre, ont 15 % de chances de geler la cible pendant 5 s.
+                      Ça prépare Javelot de glace et, plus tard, Fracasser sans dépenser Nova de givre.</div>
+                  </div>
+                </div>
+                <div class="h3">À venir</div>
+                <div class="upl">
+                  <div class="l"><span class="lv">24</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/small/spell_frost_stun.jpg">Canalisation du givre<span class="r">1/3</span></div>
+                  <div class="l"><span class="lv">25</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/small/spell_frost_frost.jpg">Bloc de glace<span class="r">1/1</span></div>
+                  <div class="l"><span class="lv">26–28</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/small/spell_frost_frostshock.jpg">Fracasser<span class="r">3/3</span></div>
+                  <div class="l"><span class="lv">29</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/small/spell_shadow_darkritual.jpg">Allonge arctique<span class="r">1/2</span></div>
+                  <div class="l"><span class="lv">30</span><img class="ico" src="https://wow.zamimg.com/images/wow/icons/small/spell_frost_wizardmark.jpg">Morsure du froid<span class="r">1/1</span></div>
+                </div>
+                <div class="warnline" style="margin-top:8px">▲ <span>Tes talents s'écartent du guide : <b>Blizzard amélioré 1/3</b> (non prévu).</span></div>
+              </div>
+            </div>
+            <span style="flex:1"></span>
+            <div class="credit" style="padding:6px 0 8px;border-top:1px solid var(--line);margin-top:8px">
+              Guide Mage Givre par Garazon, <a>classicwowforever.com/class-guides/mage/frost</a> · licence <a>CC BY 4.0</a> · mis en forme et raccourci par Questify ·
+              build 1.60.1.70862, relevé le 16 nov. 2026 · parcours non testé en jeu selon le site.
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:28px">
+      <ul>
+        <li><b>Spécialisation</b> : choisie automatiquement d'après l'arbre où tu as le plus de points (pastille « tes points »), changeable d'un clic ; le choix est gardé pour le personnage.</li>
+        <li><b>Arbre</b> : un des trois arbres à la fois (onglets avec les points du guide à 60). Vert = pris, cyan = point suivant, gris = plus tard avec le niveau prévu. Survol : nom, rang, niveau et explication du guide.</li>
+        <li><b>Prochain point</b> : le talent du niveau, ou du premier point non dépensé ; « À venir » regroupe les rangs consécutifs (26–28).</li>
+        <li><b>Écart</b> : une ligne seulement si tes talents ne suivent pas le guide. Rien n'est appris à ta place, pas de popup, pas de surlignage dans la fenêtre de talents du jeu.</li>
+        <li><b>Attribution</b> en pied : auteur, lien, licence, mention de modification, date du relevé.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ MACROS -->
+  <div class="row">
+    <div>
+      <div class="cap"><b>2 · Options › Classe › Macros</b> · zoom 1,3</div>
+      <div class="z13">
+      <div class="win ui" style="width:760px;height:560px;display:flex;flex-direction:column">
+        <div class="hd"><span class="emb">✦</span><span class="ttl">Options de Questify</span><span class="sp"></span>
+          <span class="field">⌕ Chercher une option</span><span class="x">✕</span></div>
+        <div style="flex:1;display:flex;min-height:0">
+          <div class="side" style="width:150px">
+            <div class="it">Route</div><div class="it">Navigation</div><div class="it">Automatisation</div><div class="it">Butin</div>
+            <div class="it on"><img src="https://wow.zamimg.com/images/wow/icons/small/classicon_mage.jpg">Classe<span class="new">NEUF</span></div>
+            <div class="it">Maître et donjons</div><div class="it">Carte et repères</div><div class="it">Suivi</div><div class="it">Thème</div>
+            <div class="it">Confort</div><div class="it">Outils</div><div class="it">Profils</div>
+          </div>
+          <div style="flex:1;padding:10px 14px 0;min-width:0;display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div><div class="h2">Classe · Mage</div><div class="s11 tm">Macros de classicwowforever.com, noms des sorts traduits par le jeu</div></div>
+              <span style="flex:1"></span>
+              <span class="seg big"><span>Talents</span><span class="on">Macros</span></span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+              <span class="seg"><span class="on">PvE<b>41</b></span><span>PvP<b>35</b></span></span>
+              <span class="seg"><span>Toute la classe<b>14</b></span><span>Arcanes<b>10</b></span><span>Feu<b>9</b></span><span class="on">Givre<b>8</b></span></span>
+              <span class="seg"><span class="on">Toutes</span><span>Classic</span><span>Adaptées</span><span>Nouvelles</span></span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;margin:8px 0 6px">
+              <span class="s11 tm">Créer dans</span><span class="rad on"><i></i>Personnage</span><span class="rad"><i></i>Compte</span>
+              <span style="flex:1"></span>
+              <span class="slots">Perso <span class="bar"><b style="width:67%"></b></span> 12/18 · Compte <span class="bar"><b style="width:28%"></b></span> 34/120</span>
+            </div>
+            <div style="flex:1;min-height:0;overflow:hidden;position:relative;padding-right:8px">
+              <div class="mac">
+                <img class="mi ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_frost_frostnova.jpg">
+                <div class="bd">
+                  <div class="s13 semi">Nova de givre, puis Javelot de glace <span class="badge b-new">Nouveau dans Forever</span></div>
+                  <div class="s11 td" style="margin-top:2px">Le premier appui gèle les ennemis proches. Un second appui dans les 6 secondes lance Javelot de glace sur la cible gelée.</div>
+                  <div class="code">#showtooltip <span class="sp">Nova de givre</span>
+/stopcasting
+/castsequence reset=6/target <span class="sp">Nova de givre</span>, <span class="sp">Javelot de glace</span></div>
+                  <div class="mods"><span class="tm">Nécessite le talent Javelot de glace ; ça annule ton incantation en cours</span></div>
+                </div>
+                <div class="act"><span class="btn pri">Créer</span><span class="st tm">Hors combat</span></div>
+              </div>
+              <div class="mac">
+                <img class="mi ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_frost_frostbolt02.jpg">
+                <div class="bd">
+                  <div class="s13 semi">Ralentissement rapide ou Éclair de givre complet <span class="badge b-classic">Comme dans Classic</span></div>
+                  <div class="s11 td" style="margin-top:2px">Maintiens Shift pour lancer le rang 1, un ralentissement moins cher ; appuie normalement pour ton rang le plus élevé.</div>
+                  <div class="code">#showtooltip <span class="sp">Éclair de givre</span>
+/cast [mod:shift] <span class="sp">Éclair de givre</span>(Rang 1); <span class="sp">Éclair de givre</span></div>
+                  <div class="mods"><b>Appui</b> ton rang le plus élevé · <b>Shift</b> Éclair de givre rang 1</div>
+                </div>
+                <div class="act"><span class="btn" style="color:var(--success);border-color:var(--success)">✓ Créée</span><span class="btn">Mettre à jour</span><span class="st c-warn">Le site a changé cette macro</span></div>
+              </div>
+              <div class="mac">
+                <img class="mi ico" src="https://wow.zamimg.com/images/wow/icons/medium/spell_frost_frostblast.jpg">
+                <div class="bd">
+                  <div class="s13 semi">Javelot de glace, Trait de feu et Cône de froid sur une touche <span class="badge b-new">Nouveau dans Forever</span> <span class="badge b-lvl">niv. 26+</span></div>
+                  <div class="s11 td" style="margin-top:2px">Javelot de glace sur le bouton, ou Trait de feu avec Shift quand la cible n'est pas gelée. Ctrl lance Cône de froid pour ralentir.</div>
+                  <div class="code">#showtooltip <span class="sp">Javelot de glace</span>
+/stopcasting
+/cast [mod:shift] <span class="sp">Trait de feu</span>; [mod:ctrl] <span class="sp">Cône de froid</span>; <span class="sp">Javelot de glace</span></div>
+                  <div class="mods"><b>Appui</b> Javelot de glace · <b>Shift</b> Trait de feu · <b>Ctrl</b> Cône de froid</div>
+                </div>
+                <div class="act"><span class="btn pri">Créer</span><span class="st tm">Cône de froid au niveau 26</span></div>
+              </div>
+              <div style="position:absolute;right:0;top:0;width:4px;height:100%;background:var(--line2)"><div style="height:30%;background:var(--textMuted)"></div></div>
+            </div>
+            <div class="credit" style="padding:6px 0 8px;border-top:1px solid var(--line);margin-top:6px">
+              <span class="c-warn">Macros pas encore testées dans le client Forever selon le site.</span>
+              Macros Mage de <a>classicwowforever.com/macros/mage</a> · licence <a>CC BY 4.0</a> · noms des sorts remplacés par ceux du jeu · relevé le 16 nov. 2026.
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:28px">
+      <ul>
+        <li><b>Filtres</b> : PvE / PvP, spé (Toute la classe + les 3), origine (Classic, adaptée de Classic, nouvelle dans Forever). Compteurs à côté.</li>
+        <li><b>Texte de la macro</b> : les noms anglais du site sont remplacés par ceux de ton client (ID de sort relevé hors ligne, nom lu par le jeu). Les sorts en jaune.</li>
+        <li><b>Créer</b> : <code>CreateMacro</code>, hors combat seulement, dans le personnage (18 places) ou le compte (120) ; grisé avec la raison si c'est plein. Icône « ? » : le <code>#showtooltip</code> montre le sort.</li>
+        <li><b>Mettre à jour</b> : Questify retient les macros qu'il a créées (nom + texte). Si le site change la macro ou si tu l'as supprimée, le bouton le dit ; une macro que tu as modifiée à la main est signalée avant d'être écrasée.</li>
+        <li>Nom de la macro dans le jeu : 16 caractères au plus, préfixe « QF » (ex. « QF Nova recul »).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ SUIVI -->
+  <div class="row">
+    <div>
+      <div class="cap"><b>3 · Encart « point de talent »</b> sous le suivi, au passage de niveau · zoom 1,5</div>
+      <div class="z15">
+      <div class="world ui">
+        <div class="trk"><div class="bgl"></div><div class="in">
+          <div style="display:flex;align-items:center;gap:8px"><span class="s15">Les Carmines</span><span style="flex:1"></span>
+            <span class="qb"><span><img src="https://wow.zamimg.com/images/wow/icons/small/inv_misc_map_01.jpg"></span><span><img src="https://wow.zamimg.com/images/wow/icons/small/inv_misc_bone_humanskull_01.jpg"></span><span class="glow"><img src="https://wow.zamimg.com/images/wow/icons/small/classicon_mage.jpg"></span><span><img src="https://wow.zamimg.com/images/wow/icons/small/trade_engineering.jpg"></span></span></div>
+          <div class="s11 td">Lac Verlune · 8/31 étapes</div>
+          <div class="prog"><b style="width:30%"></b></div>
+          <div class="s12 td" style="margin-top:6px">Rendre <span class="c-q">Les mineurs gnolls</span></div>
+        </div></div>
+        <div class="tbox"><div class="bgl"></div><div class="in">
+          <img src="https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostarmor.jpg">
+          <div style="min-width:0;flex:1">
+            <div class="s11 tm">Niveau 23 · point de talent (Givre)</div>
+            <div class="s13 semi ta">Morsure de givre 3/3</div>
+            <div class="s11 td" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">15 % de chances de geler la cible pendant 5 s.</div>
+            <div style="display:flex;gap:4px;margin-top:6px"><span class="btn pri" style="height:20px">Voir le guide</span><span class="btn ghost" style="height:20px">OK</span></div>
+          </div>
+        </div><div class="timer" style="position:relative"><b></b></div></div>
+      </div>
+      </div>
+    </div>
+    <div>
+      <div class="cap"><b>4 · Bouton Classe du suivi</b> · zoom 1,7</div>
+      <div class="z17 ui" style="background:var(--bg);padding:10px 12px;border:1px solid var(--edge)">
+        
+        <span class="qb"><span><img src="https://wow.zamimg.com/images/wow/icons/small/inv_misc_map_01.jpg"><i class="mk">!</i></span><span><img src="https://wow.zamimg.com/images/wow/icons/small/inv_misc_bone_humanskull_01.jpg"><i class="mk">!</i></span><span class="glow"><img src="https://wow.zamimg.com/images/wow/icons/small/classicon_mage.jpg"></span><span><img src="https://wow.zamimg.com/images/wow/icons/small/trade_engineering.jpg"></span></span>
+        <div class="tipbox" style="margin-top:8px">
+          <div class="s12 c-q">Classe : talents et macros</div>
+          <div class="s11 td">1 point de talent à dépenser : Morsure de givre 3/3.</div>
+          <div class="s10 tm">Clic : ouvrir Options › Classe</div>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:28px">
+      <ul>
+        <li><b>Encart</b> : même boîte que « Amélioration trouvée » (sous le suivi, couleurs du thème, barre de 8 s qui s'arrête au survol, jamais en combat). « Voir le guide » ouvre Options › Classe › Talents. Option « Conseil de talent au passage de niveau » (activée).</li>
+        <li><b>Bouton Classe</b> : l'icône de la classe seule, sans « ! ». Clic : Options › Classe (Talents) au lieu des quêtes de classe (elles restent dans l'onglet du journal). Lueur tant qu'un point de talent n'est pas dépensé.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script>
+// Arbre Givre de Forever (relevé classicwowforever.com) : [ligne, colonne, rangs, icône, rang du personnage, niveau prévu du 1er point non pris]
+const N = [
+  [0,0,2,"spell_frost_frostward",0,47],[0,1,5,"spell_frost_frostbolt02",5],[0,2,3,"spell_ice_magicdamage",0,49],
+  [1,0,5,"spell_frost_iceshard",0,31],[1,1,3,"spell_frost_frostarmor",2,23],[1,2,2,"spell_frost_freezingbreath",2],[1,3,3,"spell_frost_wisp",3],
+  [2,0,3,"spell_frost_stun",0,24],[2,1,3,"spell_frost_icestorm",-1],[2,2,1,"spell_frost_frostblast",1],
+  [3,0,2,"spell_shadow_darkritual",0,29],[3,1,1,"spell_frost_frost",0,25],[3,3,3,"spell_frost_frostshock",0,26],
+  [4,0,3,"spell_frost_glacier",0,52],[4,1,1,"spell_frost_wizardmark",0,30],[4,2,2,"ability_mage_wintersgrasp",0,37],
+  [5,2,5,"spell_frost_chillingblast",0,39],[6,1,1,"spell_ice_lament",0,40]];
+const t = document.getElementById("tree");
+for (const [r,c,max,ic,rank,lv] of N) {
+  const d = document.createElement("div");
+  const next = lv === 23, off = rank === -1;
+  d.className = "tn " + (off ? "done" : next ? "next" : rank >= max ? "done" : rank > 0 ? "done" : "plan");
+  d.style.left = (14 + c * 49) + "px"; d.style.top = (8 + r * 36.5) + "px";
+  const rk = off ? "1/3" : next ? (rank + 1) + "/" + max : rank + "/" + max;
+  d.innerHTML = `<img src="https://wow.zamimg.com/images/wow/icons/medium/${ic}.jpg">` +
+    (rank > 0 || next || off ? `<span class="rk" ${off ? 'style="color:var(--warning);border-color:var(--warning)"' : ""}>${rk}</span>` : `<span class="lv">${lv}</span>`);
+  t.appendChild(d);
+}
+</script>
+</body>
+</html>

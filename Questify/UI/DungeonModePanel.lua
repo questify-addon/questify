@@ -5,8 +5,10 @@ local addonName, Q = ...
 -- liste défilante : le sous-menu repliable des donjons (une case et des étoiles par donjon ou par aile ; un
 -- donjon décoché est sauté) et l'aperçu des zones à explorer, dans l'ordre.
 -- Tout l'état est dans Engine/DungeonMode.lua ; la vue ne fait qu'afficher et transmettre.
+-- Couleurs du thème (UI/Themes.lua) : bouton de lancement en action principale, boutons et cases plats,
+-- textes en text / textDim / textMuted, zone en cours à l'accent ; repeintes à chaque changement de thème.
 Q.UI = Q.UI or {}
-local Panel = { rows = {}, zoneRows = {}, dungeonsOpen = false }
+local Panel = { rows = {}, zoneRows = {}, dungeonsOpen = false, buttons = {}, texts = {} }
 Q.UI.DungeonModePanel = Panel
 
 local L = Q.L
@@ -20,6 +22,21 @@ local seq = 0
 
 local function safe(fn)
   return function(...) return Q.SafeCall(fn, ...) end
+end
+
+-- Couleurs du thème ; sans module de thèmes, les couleurs d'avant la refonte (fallback).
+local TEXT_ROLES = { text = "body", textDim = "dim", textMuted = "muted" }
+local function paint(fs, role, fallback)
+  local T = Q.Themes
+  if T then T:StyleText(fs, TEXT_ROLES[role] or role)
+  elseif fallback then fs:SetTextColor(fallback[1], fallback[2], fallback[3]) end
+end
+
+-- Texte d'un rôle fixe, repeint au changement de thème.
+local function styled(fs, role)
+  paint(fs, role)
+  Panel.texts[#Panel.texts + 1] = { fs, role }
+  return fs
 end
 
 -- Nom affiché d'un échelon : nom du donjon dans la langue du client, suivi de l'aile.
@@ -69,8 +86,15 @@ local function showTip(owner, lines)
   if not GameTooltip then return end
   GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
   GameTooltip:ClearLines()
+  local T = Q.Themes
+  local hr, hg, hb = 1, 0.82, 0
+  local r, g, b = 1, 1, 1
+  if T then
+    hr, hg, hb = T:Color("quest")
+    r, g, b = T:Color("text")
+  end
   for i, line in ipairs(lines) do
-    if i == 1 then GameTooltip:AddLine(line, 1, 0.82, 0, true) else GameTooltip:AddLine(line, 1, 1, 1, true) end
+    if i == 1 then GameTooltip:AddLine(line, hr, hg, hb, true) else GameTooltip:AddLine(line, r, g, b, true) end
   end
   GameTooltip:Show()
 end
@@ -94,10 +118,13 @@ local function setStars(stars, count)
   end
 end
 
-local function button(parent, text, width, height)
+local function button(parent, text, width, height, kind)
   local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
   b:SetSize(width, height)
   b:SetText(text)
+  b.qvButtonKind = kind or "secondary"
+  Panel.buttons[#Panel.buttons + 1] = b
+  if Q.Themes then Q.Themes:SkinButton(b, b.qvButtonKind) end
   return b
 end
 
@@ -111,10 +138,11 @@ function Panel:Build(parent)
   help:SetWidth(WIDTH - 20)
   help:SetJustifyH("LEFT")
   help:SetWordWrap(true)
+  styled(help, "textDim")
   self.help = help
 
   -- lance ou arrête le mode : même style que « Tout cocher », plus gros et centré
-  local start = button(parent, L.DGMODE_START, 240, 30)
+  local start = button(parent, L.DGMODE_START, 240, 30, "primary")
   start:SetPoint("TOP", parent, "TOP", 0, -46)
   start:SetScript("OnClick", safe(function()
     Q.DungeonMode:SetOn(not Q.DungeonMode:IsOn())
@@ -125,6 +153,7 @@ function Panel:Build(parent)
   status:SetPoint("TOP", start, "BOTTOM", 0, -4)
   status:SetWidth(WIDTH - 20)
   status:SetJustifyH("CENTER")
+  styled(status, "textMuted")
   self.status = status
 
   local scroll = CreateFrame("ScrollFrame", NAME .. "Scroll", parent, "UIPanelScrollFrameTemplate")
@@ -138,10 +167,13 @@ function Panel:Build(parent)
   -- sous-menu des donjons : en-tête repliable, puis « Tout cocher » / « Tout décocher » et les lignes
   local fold = CreateFrame("Button", nil, child)
   fold:SetSize(LIST_W, 20)
-  fold:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+  local hl = fold:CreateTexture(nil, "HIGHLIGHT")
+  hl:SetAllPoints(fold)
+  hl:SetColorTexture(1, 1, 1, 0.05)
   local foldText = fold:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   foldText:SetPoint("LEFT", fold, "LEFT", 4, 0)
   foldText:SetJustifyH("LEFT")
+  styled(foldText, "text")
   fold.text = foldText
   fold:SetScript("OnClick", safe(function()
     Panel.dungeonsOpen = not Panel.dungeonsOpen
@@ -159,6 +191,7 @@ function Panel:Build(parent)
   local zones = child:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   zones:SetJustifyH("LEFT")
   zones:SetText(L.DGMODE_ZONES)
+  styled(zones, "textMuted")
   self.zonesHeader = zones
 end
 
@@ -174,6 +207,7 @@ local function row(i)
   local cb = CreateFrame("CheckButton", NAME .. "Check" .. seq, r, "UICheckButtonTemplate")
   cb:SetSize(20, 20)
   cb:SetPoint("LEFT", r, "LEFT", 12, 0)
+  if Q.Themes then Q.Themes:SkinCheck(cb) end
   cb:SetScript("OnClick", safe(function(btn)
     local key = btn:GetParent().key
     if key then Q.DungeonMode:SetChecked(key, btn:GetChecked() and true or false) end
@@ -197,11 +231,13 @@ local function row(i)
   level:SetPoint("LEFT", r, "LEFT", 330, 0)
   level:SetWidth(60)
   level:SetJustifyH("LEFT")
+  styled(level, "textMuted")
   r.level = level
   local quests = r:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   quests:SetPoint("LEFT", r, "LEFT", 396, 0)
   quests:SetWidth(60)
   quests:SetJustifyH("LEFT")
+  styled(quests, "textMuted")
   r.quests = quests
   Panel.rows[i] = r
   return r
@@ -216,6 +252,7 @@ local function zoneRow(i)
   level:SetPoint("LEFT", r, "LEFT", 12, 0)
   level:SetWidth(52)
   level:SetJustifyH("LEFT")
+  styled(level, "textMuted")
   r.level = level
   local name = r:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   name:SetPoint("LEFT", r, "LEFT", 66, 0)
@@ -228,6 +265,7 @@ local function zoneRow(i)
   detail:SetWidth(LIST_W - 250)
   detail:SetJustifyH("LEFT")
   detail:SetWordWrap(false)
+  styled(detail, "textMuted")
   r.detail = detail
   Panel.zoneRows[i] = r
   return r
@@ -275,7 +313,7 @@ function Panel:Refresh()
       r.check:SetChecked(it.state ~= "off")
       setStars(r.stars, it.stars)
       r.name:SetText(Panel.RungName(rung))
-      if it.state == "off" then r.name:SetTextColor(0.5, 0.5, 0.5) else r.name:SetTextColor(1, 1, 1) end
+      if it.state == "off" then paint(r.name, "textMuted", { 0.5, 0.5, 0.5 }) else paint(r.name, "text", { 1, 1, 1 }) end
       r.level:SetFormattedText(L.DGMODE_ROW_LEVEL, tonumber(rung.entry) or 1)
       if it.total > 0 then r.quests:SetFormattedText(L.DGMODE_ROW_QUESTS, it.done, it.total) else r.quests:SetText("") end
       place(r, 0, ROW_H)
@@ -299,16 +337,26 @@ function Panel:Refresh()
     r.name:SetText(name)
     r.detail:SetText(detail)
     if current and item.guide == current then
-      r.name:SetTextColor(1, 0.82, 0)
+      paint(r.name, "accent", { 1, 0.82, 0 })
     elseif item.alt then
-      r.name:SetTextColor(0.6, 0.6, 0.6)
+      paint(r.name, "textMuted", { 0.6, 0.6, 0.6 })
     else
-      r.name:SetTextColor(1, 1, 1)
+      paint(r.name, "text", { 1, 1, 1 })
     end
     place(r, 0, ROW_H)
   end
   for i = #chain + 1, #self.zoneRows do self.zoneRows[i]:Hide() end
   child:SetHeight(math.max(1, y + 8))
+end
+
+-- Couleurs du thème (appelé par Journal:ApplyTheme au changement de thème) ; les noms des lignes
+-- reprennent leur couleur au rafraîchissement.
+function Panel:ApplyTheme()
+  local T = Q.Themes
+  if not (T and self.parent) then return end
+  for _, it in ipairs(self.texts) do paint(it[1], it[2]) end
+  for _, b in ipairs(self.buttons) do T:SkinButton(b, b.qvButtonKind) end
+  for _, r in ipairs(self.rows) do T:SkinCheck(r.check) end
 end
 
 -- Ouvre le journal sur l'onglet Route, vue « Automatique » (/qf donjons, bouton des options).

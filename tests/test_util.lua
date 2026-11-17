@@ -24,7 +24,7 @@ return {
     t.eq(Q.Settings:Get("autoQuest"), true)
     t.eq(Q.Settings:Get("autoReward"), true)
     t.eq(Q.Settings:Get("dungeonQuests"), true)
-    t.eq(Q.Settings:Get("nav.routing"), false)
+    t.eq(Q.Settings:Get("nav.router"), "questify")
     t.eq(Q.Settings:Get("tracker.locked"), false)
     t.eq(Q.Settings:Get("tracker.scale"), 1)
     t.eq(Q.Settings:Get("tracker.nextSteps"), 3)

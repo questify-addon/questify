@@ -88,4 +88,16 @@ return {
     -- Les chaînes de données sont exécutées dans un environnement vide.
     t.fails(function() qdb.decodeData("return { [1] = os.exit(4) }", "evil") end)
   end,
+  -- QuestieDB 1.1.0+ : relations de quêtes déduites des traces (foreverQuestRelationTraces.lua), chargées après
+  -- les traces d'entités. Riverglades : Wheeler's Fleeing Steeds (94618) suit Foal Play (94615).
+  loader_quest_relation_traces = function(t)
+    local qdb = require("qdb")
+    local f = io.open(qdb.DEFAULT_DB .. "/src/corrections/Forever/traces/foreverQuestRelationTraces.lua", "rb")
+    if not f then return end -- QuestieDB antérieure à 1.1.0 : pas de relations tracées
+    f:close()
+    local q = H.D().quests[94618]
+    t.ok(q, "quest 94618")
+    t.eq(q.preSingle and q.preSingle[1], 94615, "preQuestSingle from the relation traces")
+    t.eq(H.D().quests[94615].next, 94617, "nextQuestInChain from the relation traces")
+  end,
 }

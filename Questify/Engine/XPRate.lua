@@ -208,6 +208,15 @@ function XPRate:Text()
   return fmt(L.COMFORT_XP_RATE, rateText)
 end
 
+-- "12.4k XP/h" seul (en-tête du suivi quand l'écart de rythme, Engine/Pace.lua, prend la place du temps
+-- avant le niveau), ou nil.
+function XPRate:RateText()
+  if not enabled() then return nil end
+  local rate = self:Rate()
+  if not rate then return nil end
+  return fmt(L.COMFORT_XP_RATE, Comfort.ShortNumber(rate))
+end
+
 -- Somme des XP estimées (step.xp) des rendus de quête encore à faire dans le chapitre.
 -- Un rendu dont la quête n'est pas encore dans le journal est « passé » (notinlog) jusqu'à son
 -- acceptation : il compte, sauf si l'étape « accept » de la même quête est elle-même passée.

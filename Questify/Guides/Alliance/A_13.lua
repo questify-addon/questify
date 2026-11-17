@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 57 étapes, niveau final 40.00, ~38851 xp/h, 132 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 49 étapes, niveau final 40.00, ~37621 xp/h, 135 min.
 Q:RegisterGuide({
   id = "A_13",
   title = "Arathi Highlands",
   faction = "Alliance",
   minLevel = 39, maxLevel = 40,
   next = "A_31",
-  sim = { steps = 57, endLevel = 40.00, xpPerHour = 38851, minutes = 132 },
+  sim = { steps = 49, endLevel = 40.00, xpPerHour = 37621, minutes = 135 },
   steps = {
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
@@ -18,11 +18,7 @@ Q:RegisterGuide({
     { "accept", 95315 }, -- The Riverglades Report (lvl 38, ~0 xp, sim lvl 39)
     { "accept", 681 }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
     { "complete", 681, at = { 1417, 33.4, 30.49 } }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
-    { "accept", 96783, classes = { "ROGUE" } }, -- A Way In (lvl 36, ~2800 xp, sim lvl 39)
-    { "turnin", 96783, xp = 2800, classes = { "ROGUE" } }, -- A Way In (lvl 36, ~2800 xp, sim lvl 39)
-    { "accept", 96784, classes = { "ROGUE" } }, -- Master of Disguise (lvl 36, ~2800 xp, sim lvl 39)
     { "turnin", 635, xp = 1350 }, -- Crystal in the Mountains (lvl 35, ~1350 xp, sim lvl 39)
-    { "accept", 96016, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~3900 xp, sim lvl 39)
     { "accept", 642 }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 39)
     { "complete", 642, at = { 1417, 84.83, 32.17 } }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 39)
     { "turnin", 642, xp = 2850 }, -- The Princess Trapped (lvl 37, ~2850 xp, sim lvl 39)
@@ -30,8 +26,6 @@ Q:RegisterGuide({
     { "accept", 79949 }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~0 xp, sim lvl 39)
     { "complete", 79949, at = { 1417, 73.6, 65.2 } }, -- A Web of Lies: Debunking Myths and Legends (lvl 35, ~0 xp, sim lvl 39)
     { "complete", 691, at = { 1417, 68.31, 80.15 } }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
-    { "accept", 79678 }, -- Taste Testing (lvl 40, ~3150 xp, sim lvl 39)
-    { "turnin", 79678, xp = 3150 }, -- Taste Testing (lvl 40, ~3150 xp, sim lvl 39)
     { "turnin", 691, xp = 3500 }, -- Worth Its Weight in Gold (lvl 36, ~3500 xp, sim lvl 39)
     { "accept", 693 }, -- Wand over Fist (lvl 39, ~3000 xp, sim lvl 39)
     { "turnin", 681, xp = 1000 }, -- Northfold Manor (lvl 31, ~1000 xp, sim lvl 39)
@@ -39,7 +33,6 @@ Q:RegisterGuide({
     { "accept", 92872 }, -- Dutiful Steps (lvl 38, ~2850 xp, sim lvl 39)
     { "turnin", 92872, xp = 2850 }, -- Dutiful Steps (lvl 38, ~2850 xp, sim lvl 39)
     { "complete", 682, at = { 1417, 27.25, 63.66 } }, -- Stromgarde Badges (lvl 37, ~3550 xp, sim lvl 39)
-    { "turnin", 96784, xp = 2800, classes = { "ROGUE" } }, -- Master of Disguise (lvl 36, ~2800 xp, sim lvl 39)
     { "accept", 663 }, -- Land Ho! (lvl 35, ~690 xp, sim lvl 39)
     { "turnin", 663, xp = 690 }, -- Land Ho! (lvl 35, ~690 xp, sim lvl 39)
     { "accept", 662 }, -- Deep Sea Salvage (lvl 40, ~3150 xp, sim lvl 39)
@@ -63,10 +56,9 @@ Q:RegisterGuide({
     { "goto", 1417, 45.73, 46.1, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "turnin", 602, xp = 1400 }, -- Magical Analysis (lvl 37, ~1400 xp, sim lvl 39)
-    { "turnin", 96016, xp = 3900, classes = { "SHAMAN" } }, -- The Tempest's Weapons (lvl 40, ~3900 xp, sim lvl 39)
     { "accept", 96770, optional = true, dungeon = "Zul'Farrak" }, -- The Witch Doctor's Head (lvl 46, ~0 xp, sim lvl 39)
     { "accept", 96773, optional = true, dungeon = "Razorfen Downs" }, -- The Coldbringer's Eye (lvl 41, ~0 xp, sim lvl 39)
     { "accept", 96800, optional = true, dungeon = "Scarlet Monastery" }, -- Past Due (lvl 38, ~0 xp, sim lvl 39)
-    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 71 more mobs near the last objective" }, -- farm de niveau
+    { "level", 40, at = { 1417, 54.75, 81.87 }, note = "About 79 more mobs near the last objective" }, -- farm de niveau
   },
 })

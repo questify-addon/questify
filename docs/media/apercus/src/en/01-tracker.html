@@ -5,9 +5,10 @@
 <title>Questify, capture 01: tracker</title>
 <link rel="stylesheet" href="../apercu.css">
 <style>
-  /* In-game capture (/qf demo tracker): captures/01-tracker.png. */
+  /* In-game capture (/qf demo tracker), cut out along the tracker frame: captures/01-tracker-cut.png. */
   :root { --sans: "Avenir Next", "Avenir", "Inter", "Helvetica Neue", sans-serif; }
-  .shot { position: absolute; display: block; border-radius: 10px;
+  .cut { position: absolute; display: block; filter: drop-shadow(0 18px 36px rgba(0,0,0,.7)); }
+  .map { position: absolute; display: block; border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 20px 56px rgba(0,0,0,.65); }
   .lbl { position: absolute; font-family: var(--sans); font-size: 17px; font-weight: 600; letter-spacing: .04em;
     color: #ead9a6; padding: 6px 12px; border-radius: 8px; background: rgba(0,0,0,.62); }
@@ -18,13 +19,13 @@
   <div class="cap" style="width:600px">
     <div class="brand">Questify</div>
     <h1>The tracker</h1>
-    <p>The chapter, its progress, its levels and the XP left, then your XP per hour. The current step in large type, with its distance and the monsters to kill under the objective, then the next steps.</p>
-    <p>Four buttons in the header open the journal on the route, the dungeons or the class quests, and the options. Drag the tracker anywhere on screen.</p>
-    <p>Dwarf shaman, level 19, Darkshore, with The Deadmines added to the route. Parchment theme (default).</p>
+    <p>The chapter, its progress, its levels, the XP left and your pace. The current stop with its distance, then its objectives grouped as objects, elites and monsters, each with its bar, then the next steps.</p>
+    <p>Buttons in the header open the auction list, the journal on the route, the dungeons or the class quests, and the options. Drag the tracker anywhere on screen.</p>
   </div>
-  <img class="shot" style="left:800px; top:250px; width:680px" src="captures/01-tracker.png" alt="">
-  <div class="lbl" style="left:1500px; top:250px">Route, dungeons, class quests, options</div>
-  <div class="lbl" style="left:1500px; top:380px">Monsters to kill under the objective</div>
+  <img class="cut" style="left:860px; top:150px; width:648px" src="captures/01-tracker-cut.png" alt="">
+  <div class="lbl" style="left:1530px; top:172px">Auction, route, dungeons, class, options</div>
+  <div class="lbl" style="left:1530px; top:420px">Objectives with their bars</div>
+  <div class="lbl" style="left:1530px; top:690px">The next steps</div>
   <div class="badge"><div class="t">In-game capture</div><div class="s">World of Warcraft: Forever</div></div>
 </div>
 </body>

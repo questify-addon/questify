@@ -70,7 +70,7 @@ return {
     t.eq(shownMobLines(T), 1)
     t.eq(plain(T.mobRows[1].name:GetText()), "Ragged Young Wolf")
     t.ok(plain(T.mobRows[1].level:GetText()):find("1", 1, true), "level range")
-    t.ok(plain(T.currentText:GetText()):find("Tough Wolf Meat: 3/8", 1, true), "objective right above")
+    t.ok(T:CurrentText():find("Tough Wolf Meat: 3/8", 1, true), "objective right above")
     t.eq(QuestifyMobPanel, nil, "no separate panel any more")
     t.eq(#Mock.errors, 0)
   end,
@@ -80,12 +80,12 @@ return {
     acceptWolves()
     switchToTroggs()
     local T = Q.UI.Tracker
-    local first = plain(T.currentText:GetText())
-    t.ok(first:find("Rockjaw Trogg slain: 0/6", 1, true), first)
-    t.ok(not first:find("Burly", 1, true), "second objective after the first mob line")
+    -- objectif, ses monstres, puis l'objectif suivant et les siens
+    local lines = {}
+    for line in (T:CurrentText() .. "\n"):gmatch("(.-)\n") do lines[#lines + 1] = line end
+    t.eq({ lines[2], lines[3], lines[4], lines[5] }, { "Rockjaw Trogg slain: 0/6", "Rockjaw Trogg",
+      "Burly Rockjaw Trogg slain: 0/6", "Burly Rockjaw Trogg" }, T:CurrentText())
     t.eq(plain(T.mobRows[1].name:GetText()), "Rockjaw Trogg")
-    t.ok(T.textChunks[2]:IsShown())
-    t.ok(plain(T.textChunks[2]:GetText()):find("Burly Rockjaw Trogg slain: 0/6", 1, true))
     t.eq(plain(T.mobRows[2].name:GetText()), "Burly Rockjaw Trogg")
     local P = Q.UI.MobPanel
     t.ok(P.rows[1]:GetAttribute("macrotext"):find("/targetexact Rockjaw Trogg\n", 1, true))
@@ -113,8 +113,9 @@ return {
     local row = Q.UI.MobPanel.rows[1]
     local p, rel, rp, x, y = row:GetPoint(1)
     t.eq(p, "TOPLEFT"); t.ok(rel == UIParent, "screen coordinates, never anchored to the tracker"); t.eq(rp, "BOTTOMLEFT")
-    -- en-tête (44) + titre et objectif (12) ; colonne d'icône (8 + 38 + 2) + retrait (10) - 2
-    t.eq(x, 356); t.eq(y, 444)
+    -- en-tête des thèmes et objectifs rendus par UI/ObjectiveRows.lua ; colonne d'icône (8 + 38 + 2)
+    -- + retrait (10) - 2. À vérifier en jeu : le bouton de ciblage couvre bien la ligne du monstre.
+    t.eq(x, 356); t.eq(y, 415)
     t.eq({ row:GetSize() }, { 204 - 10 + 2, 16 })
     t.eq(row:GetParent(), UIParent)
     t.eq(row:GetFrameStrata(), "MEDIUM")
@@ -177,7 +178,7 @@ return {
     Mock.quests.log[179].objectives[1].text = "Tough Wolf Meat: 5/8"
     Mock.fire("QUEST_LOG_UPDATE")
     Mock.advance(0.3)
-    t.ok(plain(Q.UI.Tracker.currentText:GetText()):find("5/8", 1, true), "progress text follows in combat")
+    t.ok(Q.UI.Tracker:CurrentText():find("5/8", 1, true), "progress text follows in combat")
     t.eq(P.pending, false, "same line, same mob: nothing to rebuild")
     t.eq(P.rows[1]:GetAttribute("macrotext"), "/cleartarget\n/targetexact Ragged Young Wolf\n/tm !8")
   end,
@@ -222,9 +223,11 @@ return {
     -- couleurs du thème courant (UI/Themes.lua : teintes foncées sur parchemin)
     t.ok(T.mobRows[1].name:GetText():find(Q.Themes:Recolor("|cff808080"), 1, true), "done mob greyed")
     t.ok(T.mobRows[2].name:GetText():find(Q.Themes:Recolor("|cffff6060"), 1, true), "remaining mob in red")
-    Q.Settings:Set("tracker.theme", "dark")
-    t.ok(T.mobRows[1].name:GetText():find("|cff808080", 1, true), "dark theme: original grey")
-    t.ok(T.mobRows[2].name:GetText():find("|cffff6060", 1, true), "dark theme: original red")
+    Q.Settings:Set("theme.followRace", false)
+    Q.Settings:Set("tracker.theme", "horde")
+    local horde = Q.Themes:Get("horde")
+    t.ok(T.mobRows[1].name:GetText():find(Q.Themes:Recolor("|cff808080", horde), 1, true), "horde theme: its grey")
+    t.ok(T.mobRows[2].name:GetText():find(Q.Themes:Recolor("|cffff6060", horde), 1, true), "horde theme: its red")
   end,
 
   hidden_when_off = function(t)

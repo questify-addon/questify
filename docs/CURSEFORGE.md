@@ -9,7 +9,7 @@ l'envoi automatique des versions.
 |---|---|
 | **Project name** | `Questify` |
 | **Logo** | [`docs/curseforge/logo-400.png`](curseforge/logo-400.png) (400 × 400). Grande version : [`logo-1024.png`](curseforge/logo-1024.png), source : [`logo.svg`](curseforge/logo.svg). Dessin original : un « Q » en boussole dont la queue mène à un repère ; ni logo du jeu, ni élément de Blizzard. |
-| **Summary** (anglais, une ligne, 256 caractères au plus) | `Free, open-source leveling guide for WoW: Forever. Levels 1 to 60, every race, both factions: step-by-step routes that follow your quest log, waypoints, class quests and dungeons.` |
+| **Summary** (anglais, une ligne, 256 caractères au plus) | `Free, open-source leveling guide for WoW: Forever. Levels 1 to 60, every race, both factions: optimised routes, built-in guidance with an arrow and map route, dungeons, class talents and macros.` |
 | **Class** | Addons |
 | **Main category** | Quests & Leveling |
 | **Additional categories** | Map & Minimap ; Class (si la catégorie est proposée) |
@@ -23,9 +23,8 @@ Après la création, dans les réglages du projet :
   `https://github.com/questify-addon/questify/issues`, `https://github.com/questify-addon/questify/wiki`.
 - **Description** : le texte de la section 3 ci-dessous (éditeur WYSIWYG : coller le rendu de
   [`curseforge/description.html`](curseforge/description.html)).
-- **Images** : les aperçus anglais de `docs/media/apercus/en/`, dans l'ordre et avec les légendes de la
-  section 4 (marqués « Interface preview » ; les captures en jeu de `docs/media/` les remplaceront).
-  Vidéos : liens YouTube.
+- **Images** : les captures v1 de `docs/media/apercus/en/`, dans l'ordre et avec les légendes de la
+  section 4 (plan des captures : `docs/media/CAPTURES-V1.md`). Vidéos : liens YouTube.
 
 ## 2. Envoi automatique des versions
 
@@ -62,55 +61,56 @@ coller. Chaque onglet de l'espace auteur s'enregistre à part : enregistrer « G
 # Questify — free 1-60 leveling guide for WoW: Forever
 
 A **free and open-source** leveling guide for World of Warcraft: Forever, **levels 1 to 60**, for every race
-(Skyborne included) and both factions. Questify plans your whole route, follows your quest log on its own and
-always shows you the next thing to do.
+(Skyborne included) and both factions. Questify plans your whole route, guides you to every step on its own,
+follows your quest log and always shows you the next thing to do.
 
 ## What Questify does
-- **Optimised 1-60 routes.** Every chapter is built from QuestieDB and measured with a route simulator: all of a
+- **Optimised 1-60 routes.** Every chapter is built from QuestieDB, checked against the quest chains it traced from real players, and measured with a route simulator: all of a
   hub's quests picked up at once, one pass per objective area, grouped turn-ins, smart hearthstone use, minimal
-  grinding, one continent at a time. About 93 to 96 hours of simulated play from 1 to 60, depending on your race.
-- **Follows your quest log.** Steps tick themselves; steps your character cannot do are skipped.
-  `/qf skip` and `/qf back` when you want to go your own way.
-- **Automatic route with dungeons (Alliance and Horde).** A second route from level 12 to 60 built around dungeon quests: it
-  goes through every 5-player dungeon (each wing included) and clears a zone between two of them. One checkbox per
-  dungeon; "Skip this dungeon" in the tracker when you have no group, with a reminder to come back while you are
-  still in its level range; "Alternative path" when a zone is too hard or overrun by the other faction. At a
-  dungeon's entrance, "+ Extra quests" offers the dungeon quests your route did not pick up, with the travel time
-  (with ShortestPath Forever) and the flight paths to learn on the way. Pick it in the first-run wizard or in the
-  journal's Route tab.
-- **Navigation your way.** Native 3D waypoint, or ShortestPath Forever, WaypointUI or TomTom; AzerothGPS follows
-  the guide too, with its "Questify Route" button. Flight paths, boats and zeppelins are part of the route, caves
-  are entered by their entrance, and the next steps are pinned on the world map and minimap.
-- **Zone mode and mob targeting.** When several quests share an area, their objectives are grouped into one
-  visit; the monsters to kill are listed under the objective, and one click (or a key) targets them and marks
-  them with a skull.
-- **Everything one click away.** Four buttons in the tracker open the journal on the route, the dungeons or the class
-  quests, and the options; the class and dungeon buttons glow when something is waiting for you. Blizzard's objective
-  tracker folds itself away.
-- **Class quests and dungeons.** Class quests up to level 60: the ones along your route are steps of the route, the
-  others are in the journal with a one-click "Add to route". Dungeon quests are picked up along the way; 22 dungeons
-  from Ragefire Chasm to Stratholme are suggested for your level and faction, and one click adds every quest to pick
-  up (with the quests that unlock them), the dungeon, the turn-ins and the way back to your route. The Dungeons tab
-  rates each dungeon by the quests left to do; when its quests need a chain of earlier quests off your route, a panel
-  docked to the journal shows the zones, the steps and the dungeon rewards before you add it.
-- **Comfort.** Optional auto accept, turn-in and reward choice (following a loot profile: Elemental, Healer,
-  Tank…), gear upgrades announced and equipped in one click, junk sold, quest item button (also for an item that
-  starts a quest, with an alert when you loot it), profession training reminders.
-- **Your style.** Four tracker themes, adjustable transparency, shareable option profiles, a first-run wizard,
-  English and French.
+  grinding. Steps tick themselves as you play; `/qf skip` and `/qf back` when you want to go your own way.
+- **Your route, your choice.** At the end of a chapter, one card per possible zone with levels, quests, simulated
+  time and XP per hour. "Change route" offers the chapters that fit your level at any time, and "Alternative
+  zone" moves you elsewhere when a zone is too hard or overrun by the other faction.
+- **Automatic route with dungeons.** A second route from level 12 to 60 built around the 5-player dungeons
+  (every wing included), clearing a zone between two of them. One checkbox per dungeon, "Skip this dungeon" when
+  you have no group, and the dungeon quests your route missed offered at the entrance.
+- **Built-in guidance.** Questify works out the path by itself: an arrow on screen, the route drawn on the map
+  and the minimap, flights, boats, zeppelins, trams, portals, hearthstone and Astral Recall, caves entered by
+  their entrance. Prefer another addon? ShortestPath Forever, WaypointUI, TomTom or the game's map pin, and
+  AzerothGPS follows every step with its own route.
+- **A tracker that reads well.** Each objective on its own line (list, progress bars or by quest), the monsters
+  to kill and their distance, zone mode for quests sharing an area, a quest item button, your XP per hour and
+  how far ahead or behind the route you are. A key or a macro puts raid icons on the objective monsters so you
+  see them from afar.
+- **Dungeons.** 22 dungeons from Ragefire Chasm to Stratholme, suggested for your level and faction. The Dungeons
+  tab gives the pick-up route from where you are, each quest with its objective, XP and rewards, the quests to
+  do first, and one click to mark its giver on the map or add everything to your route.
+- **Your class.** Class quests along your route or one click away; talent guides for the three specializations
+  with the next point and the gap with your tree ("My points" or "My choice"); class macros to create in game;
+  the spells to learn at your trainer, with an offer to replace the old ranks on your bars.
+- **Loot and gold.** Optional auto accept, turn-in and reward choice following a loot profile, a green arrow on
+  the reward that upgrades your gear, looted upgrades equipped in one click, junk sold, and the chapter's quest
+  items you can buy at the auction house, with Auctionator or TSM prices.
+- **Comfort.** Quests no longer worth it (grey, too high, elites without a group) flagged with the XP at stake,
+  reminders before you leave town (bags, repairs, food and drink), hearthstone timing, profession training.
+- **Your style.** 13 colour themes (your race, your faction, Questify, high contrast), text size, transparency,
+  shareable option profiles, a first-run wizard and a What's new window after each update. English and French.
 
 ## Requirements
-- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 or newer.
+- **Required:** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.1.2 or newer.
 - **Optional:** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
-  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps).
-
-The first-run wizard detects ShortestPath Forever, WaypointUI and TomTom and gives the link for the missing ones.
-AzerothGPS needs nothing in Questify: its "Questify Route" button makes each step the next stop on its map.
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), [Auctionator](https://www.curseforge.com/wow/addons/auctionator) or
+  [TradeSkillMaster](https://www.curseforge.com/wow/addons/tradeskill-master) (prices).
 
 ## Commands
-`/qf` journal · `/qf route` change route · `/qf class` class quests · `/qf options` options ·
-`/qf skip` / `/qf back` skip or reopen a step · `/qf bug` bug report · `/qf help` all commands
+`/qf` journal · `/qf route` change route · `/qf options` options · `/qf skip` / `/qf back` skip or reopen a
+step · `/qf hv` auction house list · `/qf news` what's new · `/qf bug` bug report · `/qf help` all commands
+
+## Credits
+Walking router: Polestar Nav, started from [Shortest Path Forever](https://github.com/cjber/shortest-path-forever)
+by Cillian Berragan (GPL-3.0). Talent guides and class macros:
+[classicwowforever.com](https://classicwowforever.com) (CC BY 4.0). Quest data: QuestieDB.
 
 Code, issues, wiki and install guide: <https://github.com/questify-addon/questify> — feedback welcome, in
 English or French.
@@ -120,59 +120,62 @@ English or French.
 # Questify — guide de leveling 1-60 gratuit pour WoW: Forever
 
 Guide de leveling **gratuit et open source** pour World of Warcraft: Forever, **niveaux 1 à 60**, toutes les races
-(Skyborne compris) et les deux factions. Questify prévoit toute ta route, suit ton journal de quêtes tout seul et
-t'indique toujours quoi faire ensuite.
+(Skyborne compris) et les deux factions. Questify prévoit toute ta route, te guide jusqu'à chaque étape tout seul,
+suit ton journal de quêtes et t'indique toujours quoi faire ensuite.
 
 ## Ce que fait Questify
-- **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB et mesuré au simulateur ; toutes
+- **Routes 1-60 optimisées** : chaque chapitre est construit à partir de QuestieDB, vérifié sur les chaînes de quêtes relevées chez les joueurs et mesuré au simulateur ; toutes
   les quêtes d'un avant-poste prises d'un coup, un seul passage par zone d'objectifs, rendus groupés, pierre de
-  foyer bien utilisée, farm minimal, un continent à la fois. Environ 93 à 96 h de jeu simulé de 1 à 60 selon la
-  race.
-- **Suit ton journal** : les étapes se cochent seules ; celles que ton personnage ne peut pas faire sont sautées.
-  `/qf skip` et `/qf back` quand tu veux faire à ta façon.
-- **Route automatique avec les donjons (Alliance et Horde)** : un second parcours du niveau 12 au 60, construit autour des
-  quêtes de donjon : il passe par tous les donjons à 5 joueurs (chaque aile comprise) et vide une zone entre deux.
-  Une case par donjon ; « Passer ce donjon » dans le suivi quand tu n'as pas de groupe, avec un rappel pour y
-  revenir tant que tu es dans sa tranche de niveau ; « Chemin alternatif » quand une zone est trop dure ou envahie
-  par l'autre faction. À l'entrée d'un donjon, « + Quêtes supplémentaires » propose les quêtes du donjon que ta
-  route n'a pas prises, avec le temps de trajet (avec ShortestPath Forever) et les points de vol à découvrir en
-  chemin. À choisir dans l'assistant de premier démarrage ou dans l'onglet Route du journal.
-- **Navigation au choix** : repère 3D du jeu, ou ShortestPath Forever, WaypointUI ou TomTom ; AzerothGPS suit aussi
-  le guide, avec son bouton « Itinéraire Questify ». Points de vol, bateaux et zeppelins font partie de la route,
-  les grottes se prennent par leur entrée, les étapes suivantes sont épinglées sur la carte du monde et la
-  minicarte.
-- **Mode zone et ciblage** : quand plusieurs quêtes partagent un endroit, leurs objectifs sont regroupés en une
-  visite ; les monstres à tuer sont listés sous l'objectif, un clic (ou une touche) les cible et pose le crâne.
-- **Tout à portée de clic** : quatre boutons dans le suivi ouvrent le journal sur la route, les donjons ou les quêtes
-  de classe, et les options ; ceux de classe et des donjons brillent quand quelque chose t'attend. Le suivi
-  d'objectifs de Blizzard se replie tout seul.
-- **Quêtes de classe et donjons** : quêtes de classe jusqu'au niveau 60 : celles sur ton chemin sont des étapes de la
-  route, les autres sont dans le journal avec « Ajouter à la route » en un clic. Les quêtes de donjon se prennent en
-  chemin ; 22 donjons, du Gouffre de Ragefeu à Stratholme, sont conseillés selon ton niveau et ta faction, et un clic
-  ajoute toutes les quêtes à prendre (avec celles qui les débloquent), le donjon, les rendus et le retour à ta route.
-  L'onglet Donjons note chaque donjon selon les quêtes à y faire ; quand ses quêtes demandent une suite de quêtes hors
-  de ta route, une annexe collée au journal montre les zones, les étapes et les récompenses du donjon avant que tu
-  l'ajoutes.
-- **Confort** : acceptation, rendu et choix de la récompense automatiques et désactivables (selon un profil de
-  butin : Élémentaire, Soigneur, Tank…), améliorations d'équipement annoncées et équipées en un clic, camelote
-  vendue, bouton d'objet de quête (aussi pour un objet qui lance une quête, avec une alerte quand tu le ramasses),
-  rappels de métiers.
-- **À ton goût** : quatre thèmes du suivi, transparence réglable, profils d'options partageables, assistant de
-  premier démarrage, anglais et français.
+  foyer bien utilisée, farm minimal. Les étapes se cochent seules ; `/qf skip` et `/qf back` quand tu veux faire à
+  ta façon.
+- **Ta route, ton choix** : en fin de chapitre, une carte par zone possible avec niveaux, quêtes, temps simulé et
+  XP par heure. « Changer de route » propose à tout moment les chapitres de ton niveau, et « Zone alternative »
+  t'envoie ailleurs quand une zone est trop dure ou envahie par l'autre faction.
+- **Route automatique avec les donjons** : un second parcours du niveau 12 au 60 construit autour des donjons à
+  5 joueurs (chaque aile comprise), qui vide une zone entre deux. Une case par donjon, « Passer ce donjon » quand
+  tu n'as pas de groupe, et les quêtes de donjon que ta route a manquées proposées à l'entrée.
+- **Guidage intégré** : Questify calcule le chemin tout seul : une flèche à l'écran, le trajet tracé sur la carte et
+  la minicarte, vols, bateaux, zeppelins, tram, portails, pierre de foyer et Rappel astral, grottes prises par
+  leur entrée. Tu préfères un autre addon ? ShortestPath Forever, WaypointUI, TomTom ou le repère du jeu, et
+  AzerothGPS suit chaque étape avec son propre trajet.
+- **Un suivi lisible** : chaque objectif sur sa ligne (liste, barres ou par quête), les monstres à tuer et leur
+  distance, le mode zone pour les quêtes d'un même endroit, un bouton d'objet de quête, ton XP par heure et ton
+  avance ou ton retard sur la route. Une touche ou une macro pose des icônes de raid sur les monstres d'objectif
+  pour les voir de loin.
+- **Donjons** : 22 donjons, du Gouffre de Ragefeu à Stratholme, conseillés selon ton niveau et ta faction. L'onglet
+  Donjons donne l'itinéraire de prise depuis ta position, chaque quête avec son objectif, son XP et ses
+  récompenses, les quêtes à faire d'abord, et un clic pour marquer le donneur sur la carte ou tout ajouter à ta
+  route.
+- **Ta classe** : quêtes de classe sur ta route ou à un clic ; guides de talents des trois spécialisations avec le
+  point suivant et l'écart avec ton arbre (« Mes points » ou « Mon choix ») ; macros de classe à créer en jeu ; les
+  sorts à apprendre chez ton entraîneur, avec l'offre de remplacer les anciens rangs sur tes barres.
+- **Butin et or** : acceptation, rendu et choix de la récompense automatiques et désactivables selon un profil de
+  butin, une flèche verte sur la récompense qui améliore ton équipement, améliorations ramassées équipées en un
+  clic, camelote vendue, et les objets de quête du chapitre achetables à l'hôtel des ventes, avec les prix
+  d'Auctionator ou de TSM.
+- **Confort** : les quêtes qui ne valent plus le coup (grises, trop hautes, élites sans groupe) signalées avec l'XP
+  en jeu, rappels avant de quitter la ville (sacs, réparations, nourriture et boisson), recharge de la pierre de
+  foyer, formations de métiers.
+- **À ton goût** : 13 thèmes de couleurs (ta race, ta faction, Questify, contraste élevé), taille du texte,
+  transparence, profils d'options partageables, assistant de premier démarrage et fenêtre des nouveautés après
+  chaque mise à jour. Anglais et français.
 
 ## Prérequis
-- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.0.15 ou plus récent.
+- **Requis :** [QuestieDB](https://www.curseforge.com/wow/addons/questiedb) 1.1.2 ou plus récent.
 - **Optionnels :** [ShortestPath Forever](https://www.curseforge.com/wow/addons/shortest-path-forever),
   [WaypointUI](https://www.curseforge.com/wow/addons/waypointui), [TomTom](https://www.curseforge.com/wow/addons/tomtom),
-  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps).
-
-L'assistant de premier démarrage détecte ShortestPath Forever, WaypointUI et TomTom et donne le lien de ceux qui
-manquent. AzerothGPS n'a besoin de rien dans Questify : son bouton « Itinéraire Questify » fait de chaque étape le
-prochain arrêt de sa carte.
+  [AzerothGPS](https://www.curseforge.com/wow/addons/azerothgps), [Auctionator](https://www.curseforge.com/wow/addons/auctionator) ou
+  [TradeSkillMaster](https://www.curseforge.com/wow/addons/tradeskill-master) (prix).
 
 ## Commandes
-`/qf` journal · `/qf route` changer de route · `/qf classe` quêtes de classe · `/qf options` options ·
-`/qf skip` / `/qf back` passer ou rouvrir une étape · `/qf bug` rapport de bug · `/qf help` toutes les commandes
+`/qf` journal · `/qf route` changer de route · `/qf options` options · `/qf skip` / `/qf back` passer ou rouvrir
+une étape · `/qf hv` liste de l'hôtel des ventes · `/qf news` nouveautés · `/qf bug` rapport de bug · `/qf help`
+toutes les commandes
+
+## Crédits
+Routeur de marche : Polestar Nav, issu de [Shortest Path Forever](https://github.com/cjber/shortest-path-forever)
+de Cillian Berragan (GPL-3.0). Guides de talents et macros de classe :
+[classicwowforever.com](https://classicwowforever.com) (CC BY 4.0). Données de quêtes : QuestieDB.
 
 Code, tickets, wiki et guide d'installation : <https://github.com/questify-addon/questify> — retours bienvenus,
 en français ou en anglais.
@@ -181,34 +184,23 @@ en français ou en anglais.
 
 ## 4. Images à téléverser
 
-Images en anglais, 1920 × 1080, dans l'ordre conseillé : la première sert de couverture. Deux sortes :
-- **aperçus** (maquettes tirées du code, marqués « Interface preview ») : sources
-  `docs/media/apercus/src/en/*.html` ;
-- **captures en jeu** (marquées « In-game capture ») : les mêmes pages HTML, avec les morceaux utiles
-  des captures d'écran découpés dans `docs/media/apercus/src/en/captures/`.
+Images en anglais, 1920 × 1080, dans l'ordre conseillé : la première sert de couverture. Captures en jeu
+découpées dans `docs/media/apercus/src/en/captures/` et posées dans les gabarits
+`docs/media/apercus/src/en/*.html` (plan des captures v1 : [`media/CAPTURES-V1.md`](media/CAPTURES-V1.md)).
+Rendu avec `sh docs/media/apercus/src/render.sh docs/media/apercus/src/en/*.html`. Colle la légende dans le
+champ « Description » de chaque image (le titre peut reprendre sa première partie).
 
-Rendu avec `sh docs/media/apercus/src/render.sh docs/media/apercus/src/en/*.html`. Colle la légende dans
-le champ « Description » de chaque image (le titre peut reprendre sa première partie).
+Pour la 1.0, on garde les huit images de l'essentiel. Les captures en jeu sont détourées au ras de l'interface ;
+l'onglet Donjons vient de sa maquette validée et l'annonce d'équipement est redessinée d'après les captures,
+avec un objet du niveau du personnage (badge « Interface preview »).
 
 | # | Fichier | Légende (anglais) |
 |---|---|---|
-| 1 (couverture) | [`en/01-tracker.png`](media/apercus/en/01-tracker.png) | The tracker: chapter progress, levels, XP left and XP per hour, the current step with its distance and the monsters to kill, then the next steps. Four buttons open the route, the dungeons, the class quests and the options. |
-| 2 | [`en/11-zone-mode.png`](media/apercus/en/11-zone-mode.png) | Zone mode: objectives of several quests in the same place are grouped into one visit, objects first, then elites and named, then monsters. |
-| 3 | [`en/16-route-choice.png`](media/apercus/en/16-route-choice.png) | Choose your next zone: at the end of a chapter, one card per zone with levels, quests, simulated time and XP per hour, travel and highlights. The recommended one glows. |
-| 4 | [`en/08-journal-route.png`](media/apercus/en/08-journal-route.png) | The journal (/qf): your faction's chapters grouped by level, a green check on finished ones, and every step of the route. Click a step to make it the current one. |
-| 5 | [`en/08c-journal-dungeons.png`](media/apercus/en/08c-journal-dungeons.png) | Dungeons tab: every dungeon of your faction, rated with one to three stars for the quests left to do, with the quests to pick up and one click to add it to your route. |
-| 6 | [`en/18-quest-chain.png`](media/apercus/en/18-quest-chain.png) | Quest chains off your route: when dungeon quests need earlier quests elsewhere, an annex docked to the journal shows the zones in order, every step with its giver and XP, what it unlocks and the dungeon rewards, and one click adds it all to your route. |
-| 7 | [`en/13-cave-entrance.png`](media/apercus/en/13-cave-entrance.png) | Caves: when the objective is inside a known cave, the waypoint leads to the entrance first, titled "Cave entrance — The Grizzled Den". |
-| 8 | [`en/10-quest-item.png`](media/apercus/en/10-quest-item.png) | Quest item button next to the tracker: click to use the item the current step needs, or bind it to a key. |
-| 9 | [`en/14-equip-pair.png`](media/apercus/en/14-equip-pair.png) | Gear upgrades announced in the middle of the screen and equipped in one click. With a two-hander equipped, a better one-hander and shield pair is offered too. |
-| 10 | [`en/17-outpost-alert.png`](media/apercus/en/17-outpost-alert.png) | Outpost alert: in town, Questify warns you before you head out when your bags are nearly full, you have no food or drink, or your gear needs repairs. |
-| 11 | [`en/06-class-quest.png`](media/apercus/en/06-class-quest.png) | Class quests: the class button of the tracker glows while a chain is available; the window shows where it starts, its objectives and rewards, and one click adds it to your route. |
-| 12 | [`en/07-dungeon.png`](media/apercus/en/07-dungeon.png) | Suggested dungeons for your level and faction: the dungeon button glows, and the window gives the entrance, the quests to pick up with their givers, and one click to add them to your route. |
-| 13 | [`en/02-wizard.png`](media/apercus/en/02-wizard.png) | First-run wizard: required and optional addons are detected, with a CurseForge link for the missing ones. |
-| 14 | [`en/08b-journal-options.png`](media/apercus/en/08b-journal-options.png) | The options window: eleven sections, search, an "i" help on every setting, keys set in one click, and profiles you can share. |
-| 15 | [`en/bonus-themes.png`](media/apercus/en/bonus-themes.png) | Four tracker themes: Parchment (default), Black, Transparent and Grey fade. |
-
-Captures en jeu faites : 01 (suivi), 06 (quêtes de classe), 07 (donjon), 08 (journal, onglet Route),
-08b (options), 08c (journal, onglet Donjons), 10 (objet de quête), 18 (suite de quêtes hors route), 14 (équipement), 16 (choix de suite),
-17 (alerte d'avant-poste) et les thèmes. Encore en maquettes : 02, 11 et 13 ; les remplacer au fur et à
-mesure (voir docs/media/CAPTURES-EN-JEU.md).
+| 1 (couverture) | `en/01-tracker.png` | The tracker: chapter progress, the current step with its objectives as progress bars, the monsters to kill and their distance, your XP per hour and pace, and five buttons for the auction house list, the route, the dungeons, your class and the options. |
+| 2 | `en/20-navigation.png` | Built-in guidance: an arrow on screen with the distance and the time left, the path drawn on the minimap around obstacles, and the whole trip on the world map. |
+| 3 | `en/16-route-choice.png` | Your route, your choice: at the end of a chapter, one card per zone with levels, quests, simulated time and XP per hour. The recommended one glows. |
+| 4 | `en/08c-journal-dungeons.png` | Dungeons tab: the pick-up route from where you are, each quest with its giver, objective, XP and rewards, the quests to do first, and one click to mark a giver on the map or add it all to your route. |
+| 5 | `en/21-class-talents.png` | Talent guides for the three specializations: follow your points or your choice, see the next point and the gap with your tree. |
+| 6 | `en/22-class-macros.png` | Class macros, filtered by spec and PvE or PvP, created in game in one click with your client's spell names. |
+| 7 | `en/14-equip-upgrade.png` | Gear upgrades: a better item is announced with its main gain and the item it replaces, compared stat by stat for your class, and equipped in one click. |
+| 8 | `en/10-quest-item.png` | The quest item button: use the item of the current step in one click, or with a key. |

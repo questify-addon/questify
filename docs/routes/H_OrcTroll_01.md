@@ -1,6 +1,6 @@
 # H_OrcTroll_01 — Valley of Trials
 
-Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: Orc.
+Generated on 2026-11-17 from QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb` by `tools/routebuilder/build.lua`. Simulated race: Orc.
 
 | Item | Value |
 |---|---|
@@ -8,12 +8,12 @@ Generated on 2026-11-12 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db30
 | Simulated level | 1.00 -> 6.14 |
 | Time | 37 min |
 | XP gained | 8104 |
-| XP/h | 13093 |
+| XP/h | 13095 |
 | Steps | 68 |
 | Quests turned in | 15 |
 | Hubs | 2 |
 | Median ratio (XP/s) | 2.79 |
-| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s) |
+| Hearthstone | no new bind; 0 return(s) planned, 0 bundle(s); next 2 chapter(s) in view |
 
 ## Kept quests (turn-in order)
 
@@ -94,7 +94,7 @@ Class quests whose giver, objectives and turn-in are in the chapter region becom
 | 1526 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
 | 1527 | Call of Fire | 13 | SHAMAN | quest level 13 above the band |
 | 1485 | Vile Familiars | 4 | WARLOCK | detour 2731 s |
-| 1516 | Call of Earth | 4 | SHAMAN | detour 1128 s |
+| 1516 | Call of Earth | 4 | SHAMAN | detour 1129 s |
 | 1517 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 | 1518 | Call of Earth | 4 | SHAMAN | prerequisite or exclusive quest not done for the class |
 
@@ -118,7 +118,7 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 5441 | Lazy Peons | 4 | 445 | 0 | 155 | 92 | 2.60 | 5.34 | 1 |  |
 | 6394 | Thazz'ril's Pick | 4 | 445 | 0 | 193 | 70 | 2.30 | 6.29 | 1 |  |
 | 96652 | The Adventurer | 6 | 767 | 362 | 143 | 16 | 5.36 | 47.07 | 0 |  |
-| 96876 | Ukor's Lost Pack | 8 | 1127 | 180 | 180 | 98 | 6.24 | 11.51 | 0 |  |
+| 96876 | Ukor's Lost Pack | 8 | 1126 | 179 | 180 | 98 | 6.24 | 11.43 | 0 |  |
 | 97279 | Wayward Weapons | 2 | 170 | 0 | 191 | 165 | 0.89 | 1.02 | 1 |  |
 | 99123 | Lost in the Shadows | 8 | 911 | 211 | 158 | 158 | 5.76 | 5.76 | 1 |  |
 
@@ -165,13 +165,13 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 33 | A | 96652 | The Adventurer | 1411 | 42.8, 69.1 | 2 |  |
 | 34 | A | 99123 | Lost in the Shadows | 1411 | 46.3, 78.6 | 382 |  |
 | 35 | O | 99123 | Lost in the Shadows | 1411 | 51.4, 79.3 | 271 |  |
-| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.0, 55.5 | 838 |  |
-| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 295 |  |
-| 38 | T | 96876 | Ukor's Lost Pack | 1411 | 52.1, 68.3 | 741 |  |
+| 36 | A | 96876 | Ukor's Lost Pack | 1411 | 51.0, 55.6 | 834 |  |
+| 37 | T | 96652 | The Adventurer | 1411 | 52.0, 47.3 | 298 |  |
+| 38 | T | 96876 | Ukor's Lost Pack | 1411 | 52.1, 68.3 | 740 |  |
 | 39 | T | 99123 | Lost in the Shadows | 1411 | 55.9, 74.4 | 296 |  |
 | 40 | T | 805 | Report to Sen'jin Village | 1411 | 56.0, 74.7 | 11 |  |
 
-Walking between tasks: 6678 yd (~16 min at 7 yd/s).
+Walking between tasks: 6675 yd (~16 min at 7 yd/s).
 
 ## Qualité
 
