@@ -11,6 +11,9 @@
 - Monsters without a visible nameplate, monsters tagged by another player and monsters that already have an icon
   are left alone. Nothing happens in combat.
 - In a group or an instance the key does nothing, unless you turn on « Also in a group or an instance ».
+- Prefer a button? The wizard has a new « Mark objective monsters » page, and the options a button, that create
+  the macro « QF Marks » (/click QuestifyMarkObjectives, raid marker icon). Open the macros (/macro) and drag it
+  onto your action bar. If your macros are full, Questify tells you to make room first.
 
 ### Français
 
@@ -23,6 +26,9 @@
 - Les monstres sans barre de nom visible, ceux tagués par un autre joueur et ceux qui ont déjà une icône ne sont
   pas touchés. Rien en combat.
 - En groupe ou en instance, la touche ne fait rien, sauf si tu coches « Aussi en groupe ou en instance ».
+- Tu préfères un bouton ? L'assistant a une nouvelle page « Marquer les monstres d'objectif », et les options un
+  bouton, qui créent la macro « QF Marques » (/click QuestifyMarkObjectives, icône de marqueur de raid). Ouvre les
+  macros (/macro) et glisse-la sur ta barre d'actions. Si tes macros sont pleines, Questify te dit d'en libérer une.
 
 ## 0.8.1 (2026-11-16)
 

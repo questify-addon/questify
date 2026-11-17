@@ -34,6 +34,37 @@ end
 
 local function macro() return QuestifyMarkObjectives:GetAttribute("macrotext") end
 
+-- Macros du jeu simulées (comme tests/test_classguide.lua) : macros.acc et macros.char.
+local macros
+local function installMacros(opts)
+  opts = opts or {}
+  macros = { acc = {}, char = {} }
+  local function all()
+    local out = {}
+    for _, m in ipairs(macros.acc) do out[#out + 1] = m end
+    for _, m in ipairs(macros.char) do out[#out + 1] = m end
+    return out
+  end
+  MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS = 120, 18
+  GetNumMacros = function() return opts.accUsed or #macros.acc, opts.charUsed or #macros.char end
+  GetMacroIndexByName = function(name)
+    for i, m in ipairs(all()) do if m.name == name then return i end end
+    return 0
+  end
+  GetMacroInfo = function(i)
+    local m = all()[i]
+    if m then return m.name, m.icon, m.body end
+  end
+  CreateMacro = function(name, icon, body, perChar)
+    Mock.record("CreateMacro", name, icon, body, perChar)
+    local list = perChar and macros.char or macros.acc
+    list[#list + 1] = { name = name, icon = icon, body = body }
+    return #list
+  end
+  ShowMacroFrame = function() Mock.record("ShowMacroFrame") end
+  GetFileIDFromPath = opts.files and function(path) return opts.files[path] end or nil
+end
+
 local function enable(Q, inGroup)
   Q.Settings:Set("raidMarks.enabled", true)
   if inGroup ~= nil then Q.Settings:Set("raidMarks.inGroup", inGroup) end
@@ -223,5 +254,60 @@ return {
     t.ok(#long <= 255, #long)
     t.ok(long:find("^/stopmacro %[combat%]\n/tm %[@nameplate1001,harm%] ~1"))
     t.eq(Q.UI.RaidMarks:BuildMacro({}), "")
+  end,
+
+  macro_created_with_marker_icon_and_message = function(t)
+    installMacros({ files = { ["Interface\\TargetingFrame\\UI-RaidTargetingIcon_8"] = 137008 } })
+    local Q = load()
+    local R = Q.UI.RaidMarks
+    t.eq(R:HasMacro(), false)
+    local state = R:CreateMacroAndTell()
+    t.eq(state, "created")
+    t.eq(macros.acc[1], { name = Q.L.UI_RAIDMARKS_MACRO_NAME, icon = 137008, body = "/click QuestifyMarkObjectives" },
+      "account macro, raid marker icon")
+    t.ok(#Q.L.UI_RAIDMARKS_MACRO_NAME <= 16, "macro name fits")
+    t.eq(Q.Settings:Get("raidMarks.enabled"), true, "the macro turns the option on")
+    t.eq(Mock.countPrinted("/macro"), 1, "tells where to get it")
+    t.eq(R:HasMacro(), true)
+    t.eq(R:CreateMacroAndTell(), "exists", "no duplicate")
+    t.eq(Mock.countCalls("CreateMacro"), 1)
+    t.eq(#Mock.errors, 0)
+  end,
+
+  macro_icon_fallbacks = function(t)
+    installMacros({ files = { ["Interface\\Icons\\INV_Misc_Spyglass_03"] = 134441 } })
+    local Q = load()
+    t.eq(Q.UI.RaidMarks:MacroIcon(), 134441, "spyglass when the marker texture is missing")
+    GetFileIDFromPath = nil
+    t.eq(Q.UI.RaidMarks:MacroIcon(), "INV_Misc_Spyglass_03", "icon name without the file API")
+  end,
+
+  macro_full_combat_and_character_slots = function(t)
+    installMacros({ accUsed = 120 })
+    local Q = load()
+    local R = Q.UI.RaidMarks
+    t.eq(R:CreateMacro(), "created", "character macros when the account ones are full")
+    t.eq(#macros.char, 1)
+    installMacros({ accUsed = 120, charUsed = 18 })
+    t.eq(R:CreateMacro(), "full")
+    t.ok(R:MacroMessage("full"):find("/macro", 1, true), "full: says to make room")
+    installMacros()
+    Mock.player.combat = true
+    t.eq(R:CreateMacro(), "combat")
+    t.eq(Mock.countCalls("CreateMacro"), 1, "only the character macro was created")
+    Mock.player.combat = false
+    CreateMacro = nil
+    t.eq(R:CreateMacro(), "noapi")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  options_button_creates_the_macro = function(t)
+    installMacros()
+    local Q = load()
+    local e = Q.OptionsSchema:Entry("raidMarksMacro")
+    t.eq(e.type, "action")
+    t.eq(e.category, "targeting")
+    e.run()
+    t.eq(macros.acc[1].body, "/click QuestifyMarkObjectives")
   end,
 }

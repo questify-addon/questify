@@ -72,6 +72,12 @@ Q:RegisterStrings({
     UI_MOB_PENDING = "Targeting will update after combat.",
     UI_AUTOTARGET_BINDING = "Target and mark the nearest objective monster",
     UI_RAIDMARKS_BINDING = "Put raid icons on the visible objective monsters",
+    UI_RAIDMARKS_MACRO_NAME = "QF Marks",
+    UI_RAIDMARKS_MACRO_CREATED = "Macro « %s » created. Open the macros (/macro) and drag it onto your action bar.",
+    UI_RAIDMARKS_MACRO_EXISTS = "The macro « %s » is ready: open the macros (/macro) and drag it onto your action bar.",
+    UI_RAIDMARKS_MACRO_COMBAT = "Not possible in combat: try again after the fight.",
+    UI_RAIDMARKS_MACRO_FULL = "No room left for a macro (account and character): delete one in /macro, then try again.",
+    UI_RAIDMARKS_MACRO_FAILED = "The game refused to create the macro.",
     UI_AUTOTARGET_NOKEY = "Auto targeting is on: bind a key in Esc > Key Bindings > Questify.",
 
     -- Fenêtre des quêtes de classe
@@ -402,6 +408,12 @@ Q:RegisterStrings({
     UI_MOB_PENDING = "Le ciblage se mettra à jour après le combat.",
     UI_AUTOTARGET_BINDING = "Cibler et marquer le monstre d'objectif le plus proche",
     UI_RAIDMARKS_BINDING = "Poser les icônes de raid sur les monstres d'objectif visibles",
+    UI_RAIDMARKS_MACRO_NAME = "QF Marques",
+    UI_RAIDMARKS_MACRO_CREATED = "Macro « %s » créée. Ouvre les macros (/macro) et glisse-la sur ta barre d'actions.",
+    UI_RAIDMARKS_MACRO_EXISTS = "La macro « %s » est prête : ouvre les macros (/macro) et glisse-la sur ta barre d'actions.",
+    UI_RAIDMARKS_MACRO_COMBAT = "Impossible en combat : réessaie après le combat.",
+    UI_RAIDMARKS_MACRO_FULL = "Plus de place pour une macro (compte et personnage) : supprimes-en une dans /macro, puis réessaie.",
+    UI_RAIDMARKS_MACRO_FAILED = "Le jeu a refusé de créer la macro.",
     UI_AUTOTARGET_NOKEY = "Ciblage auto activé : choisis une touche dans Échap > Raccourcis > Questify.",
 
     -- Fenêtre des quêtes de classe

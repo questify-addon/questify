@@ -242,16 +242,38 @@ function Macros:Status(m)
   return "edited"
 end
 
--- Peut-on créer ou mettre à jour ? -> true ou false, raison ("combat", "full", "long", "noapi").
-function Macros:CanWrite(m, perChar, update)
+-- Texte body écrivable ? -> true ou false, raison ("combat", "full", "long", "noapi").
+-- update : macro existante (pas de place à prendre).
+local function canWrite(body, perChar, update)
   if type(CreateMacro) ~= "function" or type(GetNumMacros) ~= "function" then return false, "noapi" end
   if inCombat() then return false, "combat" end
-  if #self:Body(m) > MAX_BODY then return false, "long" end
+  if #body > MAX_BODY then return false, "long" end
   if not update then
-    local acc, accMax, char, charMax = self:Slots()
+    local acc, accMax, char, charMax = Macros:Slots()
     if perChar and char >= charMax then return false, "full" end
     if not perChar and acc >= accMax then return false, "full" end
   end
+  return true
+end
+
+-- Peut-on créer ou mettre à jour ? -> true ou false, raison ("combat", "full", "long", "noapi").
+function Macros:CanWrite(m, perChar, update)
+  return canWrite(self:Body(m), perChar, update)
+end
+
+-- Index d'une macro du jeu par son nom (0 : absente).
+function Macros:Index(name) return macroIndex(name) end
+
+-- Macro hors données de classe (UI/RaidMarks.lua) : dans les macros du compte, sinon dans celles du
+-- personnage quand le compte est plein. icon : nom d'icône ou fileID.
+-- -> true ou false, raison ("combat", "full", "long", "noapi", "failed").
+function Macros:CreatePlain(name, icon, body)
+  local acc, accMax = self:Slots()
+  local perChar = acc >= accMax
+  local ok, why = canWrite(body, perChar, false)
+  if not ok then return false, why end
+  local done, index = pcall(CreateMacro, name, icon, body, perChar and true or nil)
+  if not done or not index or index == 0 then return false, "failed" end
   return true
 end
 

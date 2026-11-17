@@ -40,7 +40,7 @@ return {
     t.ok(f and f:IsShown(), "shown 3 s after login")
     t.eq(Q.char.wizardDone, nil, "not marked done while open")
     t.eq(W.page, 1)
-    t.eq(W.NUM_PAGES, 9)
+    t.eq(W.NUM_PAGES, 10)
     t.ok(not W.finishButton:IsShown(), "finish only on the last page")
     goToPage(W, 4)
     t.ok(W.radios.tomtom:IsEnabled(), "TomTom present")
@@ -669,6 +669,53 @@ return {
     t.eq(Q.Settings:Get("tracker.theme"), "horde")
     t.eq(Q.Settings:Get("theme.followRace"), false)
     t.eq(Q.UI.Tracker.themeKey, "horde")
+    t.eq(#Mock.errors, 0)
+  end,
+
+  -- Page « Marquage » : option des icônes de raid et macro du joueur (/click QuestifyMarkObjectives).
+  wizard_marks_page_creates_the_macro = function(t)
+    local Q = load()
+    local made = {}
+    MAX_ACCOUNT_MACROS, MAX_CHARACTER_MACROS = 120, 18
+    GetNumMacros = function() return #made, 0 end
+    GetMacroIndexByName = function(name)
+      for i, m in ipairs(made) do if m.name == name then return i end end
+      return 0
+    end
+    CreateMacro = function(name, icon, body)
+      made[#made + 1] = { name = name, icon = icon, body = body }
+      return #made
+    end
+    ShowMacroFrame = function() Mock.record("ShowMacroFrame") end
+    local W = Q.UI.Wizard
+    W:Show(W.PAGE_MARKS)
+    t.eq(W.PAGE_MARKS, W.NUM_PAGES - 1, "just before the summary")
+    t.ok(W.pages[W.PAGE_MARKS]:IsShown())
+    t.ok(not W.checks.raidMarks:GetChecked(), "off by default")
+    t.ok(W.marksOpenButton, "button to open the macros")
+    -- case seule : enregistrée à la fin
+    W.checks.raidMarks:SetChecked(true)
+    Mock.click(W.checks.raidMarks, "LeftButton")
+    t.eq(W.choice.raidMarks, true)
+    t.eq(Q.Settings:Get("raidMarks.enabled"), false, "nothing saved yet")
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.eq(#made, 1, "macro created")
+    t.eq(made[1].body, "/click QuestifyMarkObjectives")
+    t.ok(plain(W.marksResult:GetText()):find("/macro", 1, true), "says where to get it: " .. plain(W.marksResult:GetText()))
+    t.eq(Mock.countPrinted("/macro"), 1, "also in the chat")
+    Mock.click(W.marksOpenButton, "LeftButton")
+    t.eq(Mock.countCalls("ShowMacroFrame"), 1)
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.eq(#made, 1, "no duplicate")
+    -- macros pleines : message, pas d'erreur
+    made = {}
+    GetNumMacros = function() return 120, 18 end
+    Mock.click(W.marksCreateButton, "LeftButton")
+    t.ok(plain(W.marksResult:GetText()):find(plain(Q.L.UI_RAIDMARKS_MACRO_FULL), 1, true), "full")
+    goToPage(W, W.NUM_PAGES)
+    t.ok(plain(W.recap.raidMarks:GetText()):find(Q.L.UI_WIZ_ON, 1, true), "recap line")
+    Mock.click(W.finishButton, "LeftButton")
+    t.eq(Q.Settings:Get("raidMarks.enabled"), true)
     t.eq(#Mock.errors, 0)
   end,
 }

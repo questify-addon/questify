@@ -1,6 +1,6 @@
 local addonName, Q = ...
 
--- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en neuf pages :
+-- Assistant de premier démarrage (spec § 4 : un seul fournisseur actif), en dix pages :
 --   1. bienvenue et addons (QuestieDB, ShortestPath Forever, WaypointUI, TomTom) : état de chacun
 --      (chargé, désactivé, activé mais pas encore chargé, périmé, absent, QuestieDB trop ancien),
 --      lien CurseForge à copier pour les absents et pour QuestieDB trop ancien (le jeu n'ouvre pas
@@ -16,7 +16,10 @@ local addonName, Q = ...
 --      aperçu du suivi redessiné à chaque clic dans le thème courant (UI/ObjectiveRows.lua) ;
 --   8. thème (UI/Themes.lua) : « suivre la race » et une carte par thème ; la fenêtre prend le
 --      thème choisi tout de suite ;
---   9. récapitulatif et « Terminer ».
+--   9. marquage (UI/RaidMarks.lua) : icônes de raid sur les monstres d'objectif (raidMarks.enabled),
+--      bouton qui crée la macro du joueur (/click QuestifyMarkObjectives, tout de suite, sans attendre
+--      « Terminer ») et bouton qui ouvre les macros du jeu pour la glisser sur la barre ;
+--  10. récapitulatif et « Terminer ».
 -- Habillage du thème : bandeau illustré avec blason et titre, coins et liseré, boutons plats.
 -- Chaque page a « Précédent », « Ignorer » (remet les choix de la page à leur valeur actuelle et
 -- passe à la suivante) et « Suivant » ; la dernière a « Terminer ». « Recharger l'interface » est
@@ -41,12 +44,13 @@ local AUTO_DELAY = 3
 local ROW_H, ROW_LINK_H = 34, 60   -- ligne d'addon sans / avec le lien à copier
 
 local PAGE_ADDONS, PAGE_ROUTE, PAGE_ROUTING, PAGE_DISPLAY, PAGE_AUTO, PAGE_TRACKER, PAGE_OBJECTIVES, PAGE_THEME,
-  PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7, 8, 9
+  PAGE_MARKS, PAGE_RECAP = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 local HEADER_H = 40
 local CARD_W, CARD_H, CARD_GAP = 152, 40, 8
 local NUM_PAGES = PAGE_RECAP
 Wizard.NUM_PAGES = NUM_PAGES
 Wizard.PAGE_THEME = PAGE_THEME
+Wizard.PAGE_MARKS = PAGE_MARKS
 
 -- Addons de la page 1. folders : noms de dossier possibles, le premier est celui du TOC publié
 -- (QuestieDB.toc, ShortestPathForever.toc, WaypointUI.toc, TomTom.toc) ; les suivants couvrent
@@ -91,6 +95,7 @@ local PAGE_KEYS = {
   [PAGE_TRACKER] = { "hideBlizzard" },
   [PAGE_OBJECTIVES] = { "objLayout", "objDetail" },
   [PAGE_THEME] = { "theme", "followRace" },
+  [PAGE_MARKS] = { "raidMarks" },
 }
 Wizard.PAGE_OBJECTIVES = PAGE_OBJECTIVES
 
@@ -703,12 +708,63 @@ function Wizard:ApplyTheme(key)
   for _, g in ipairs(self.themeGroupLabels or {}) do T:StyleText(g, "muted", theme) end
 end
 
+-- Page « Marquage » : case raidMarks.enabled (enregistrée à la fin), puis la macro du joueur.
+function Wizard:BuildMarksPage(page)
+  local title = pageTitle(page, "UI_WIZ_MARKS_TITLE")
+  local text = paragraph(page, L.UI_WIZ_MARKS_TEXT, title, 10)
+  local cb = newButton("CheckButton", page, "UICheckButtonTemplate")
+  cb:SetSize(26, 26)
+  cb:SetPoint("TOPLEFT", text, "BOTTOMLEFT", -4, -12)
+  cb.label = labelFor(cb, L.UI_WIZ_MARKS_ENABLE)
+  cb:SetScript("OnClick", safe(function(self)
+    Wizard:SetChoice("raidMarks", self:GetChecked() and true or false)
+  end))
+  self.checks.raidMarks = cb
+  local howto = paragraph(page, L.UI_WIZ_MARKS_HOWTO, cb, 14)
+  howto:SetPoint("TOPLEFT", cb, "BOTTOMLEFT", 4, -14)
+  local create = newButton("Button", page, "UIPanelButtonTemplate")
+  create:SetSize(200, 22)
+  create:SetPoint("TOPLEFT", howto, "BOTTOMLEFT", 0, -10)
+  create:SetText(L.UI_WIZ_MARKS_CREATE)
+  create:SetScript("OnClick", safe(function() Wizard:CreateMarksMacro() end))
+  self.marksCreateButton = create
+  local open = newButton("Button", page, "UIPanelButtonTemplate")
+  open:SetSize(160, 22)
+  open:SetPoint("LEFT", create, "RIGHT", 8, 0)
+  open:SetText(L.UI_WIZ_MARKS_OPEN)
+  open:SetScript("OnClick", safe(function()
+    if Q.ClassMacros then Q.ClassMacros:OpenMacroFrame() end
+  end))
+  self.marksOpenButton = open
+  local result = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  result:SetPoint("TOPLEFT", create, "BOTTOMLEFT", 0, -10)
+  result:SetWidth(INNER)
+  result:SetJustifyH("LEFT")
+  result:SetWordWrap(true)
+  result:SetText("")
+  self.marksResult = result
+end
+
+-- « Créer la macro » : tout de suite (l'option est activée avec elle), message sur la page et dans
+-- la discussion.
+function Wizard:CreateMarksMacro()
+  local R = Q.UI.RaidMarks
+  if not R then return end
+  local state, msg = R:CreateMacroAndTell()
+  if state == "created" then
+    self:SetChoice("raidMarks", true)
+    self.checks.raidMarks:SetChecked(true)
+    playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  end
+  self.marksResult:SetText(msg)
+end
+
 function Wizard:BuildRecapPage(page)
   local title = pageTitle(page, "UI_WIZ_RECAP_TITLE")
   local anchor = paragraph(page, L.UI_WIZ_RECAP_TEXT, title, 10)
   local gap = 14
   for _, key in ipairs({ "route", "routing", "display", "autoQuest", "autoReward", "sellJunk", "hideBlizzard",
-                          "objectives", "theme" }) do
+                          "objectives", "theme", "raidMarks" }) do
     local line = paragraph(page, "", anchor, gap)
     self.recap[key] = line
     anchor = line
@@ -762,6 +818,7 @@ function Wizard:Create()
   self:BuildTrackerPage(self.pages[PAGE_TRACKER])
   self:BuildObjectivesPage(self.pages[PAGE_OBJECTIVES])
   self:BuildThemePage(self.pages[PAGE_THEME])
+  self:BuildMarksPage(self.pages[PAGE_MARKS])
   self:BuildRecapPage(self.pages[PAGE_RECAP])
 
   local step = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -887,6 +944,9 @@ function Wizard:Refresh()
   self:SelectDisplay(c.display)
   for _, def in ipairs(AUTOMATIONS) do self.checks[def[1]]:SetChecked(c[def[1]]) end
   self.checks.hideBlizzard:SetChecked(c.hideBlizzard)
+  self.checks.raidMarks:SetChecked(c.raidMarks)
+  local R = Q.UI.RaidMarks
+  if R and R:HasMacro() then self.marksResult:SetText(R:MacroMessage("exists")) end
   self:SelectObjectives()
   self:RenderPreview()
   self:RefreshTheme()
@@ -911,6 +971,7 @@ function Wizard:ReadWidgets()
     c[def[1]] = self.checks[def[1]]:GetChecked() and true or false
   end
   c.hideBlizzard = self.checks.hideBlizzard:GetChecked() and true or false
+  c.raidMarks = self.checks.raidMarks:GetChecked() and true or false
 end
 
 -- Lit la détection et les réglages actuels, reprend le brouillon, puis prépare chaque page.
@@ -939,6 +1000,7 @@ function Wizard:Load()
     objDetail = Q.Objectives and Q.Objectives:Detail() or "mobs",
     theme = Q.Themes and Q.Themes:CurrentKey() or "neutral",
     followRace = Q.Settings:Get("theme.followRace") ~= false,
+    raidMarks = Q.Settings:Get("raidMarks.enabled") == true,
   }
   self.initial = initial
   local choice = {}
@@ -987,6 +1049,7 @@ function Wizard:UpdateRecap()
   r.objectives:SetFormattedText(L.UI_WIZ_RECAP_OBJ, choiceText("objLayout"), choiceText("objDetail"))
   local T = Q.Themes
   r.theme:SetFormattedText(L.UI_WIZ_RECAP_THEME, T and L[T:Get(c.theme).label] or tostring(c.theme))
+  r.raidMarks:SetFormattedText(L.UI_WIZ_RECAP_MARKS, onOff(c.raidMarks))
 end
 
 -- Affiche la page n et la garde dans Q.char.wizardPage (reprise après /reload).
@@ -1086,6 +1149,7 @@ function Wizard:Finish()
   Q.Settings:Set("tracker.hideBlizzard", c.hideBlizzard)
   Q.Settings:Set("tracker.objLayout", c.objLayout)
   Q.Settings:Set("tracker.objDetail", c.objDetail)
+  Q.Settings:Set("raidMarks.enabled", c.raidMarks)
   -- thème : suivre la race, sinon le thème choisi
   if Q.Themes and c.theme then
     if c.followRace then

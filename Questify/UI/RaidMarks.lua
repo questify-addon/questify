@@ -12,6 +12,9 @@ local addonName, Q = ...
 -- une unité qui existe et qu'on peut attaquer ; « ~ » ne touche pas une unité déjà marquée. Les
 -- conditions « exists » et « nodead » sont omises pour tenir 8 lignes en 255 caractères : « harm »
 -- couvre « exists », et les morts sont écartés à l'écriture (leur barre disparaît aussi).
+-- Macro du joueur (page « Marquage » de l'assistant, bouton des options) : « /click
+-- QuestifyMarkObjectives », créée par Q.ClassMacros:CreatePlain avec l'icône d'un marqueur de raid,
+-- sinon une longue-vue ; le joueur la prend ensuite dans /macro pour sa barre d'actions.
 -- Monstres écartés à l'écriture : déjà marqués, tagués par un autre joueur, morts, amicaux, et toute
 -- valeur secrète (restrictions Midnight). Par défaut, rien en groupe ni en instance.
 Q.UI = Q.UI or {}
@@ -189,6 +192,64 @@ local function schedule()
   end)
 end
 RaidMarks.Schedule = function() schedule() end
+
+---------------------------------------------------------------------------
+-- Macro du joueur
+---------------------------------------------------------------------------
+local MACRO_BODY = "/click " .. BUTTON
+-- Icône : premier fichier présent dans le client (GetFileIDFromPath) ; sans cette API, le nom de la
+-- longue-vue, que CreateMacro accepte comme les icônes de la liste des macros.
+local MACRO_ICON_FILES = {
+  "Interface\\TargetingFrame\\UI-RaidTargetingIcon_8",   -- crâne des marqueurs de raid
+  "Interface\\Icons\\INV_Misc_Spyglass_03",              -- longue-vue
+  "Interface\\Icons\\Ability_Hunter_SniperShot",          -- viseur
+}
+local MACRO_ICON_NAME = "INV_Misc_Spyglass_03"
+
+function RaidMarks:MacroIcon()
+  if type(GetFileIDFromPath) == "function" then
+    for _, path in ipairs(MACRO_ICON_FILES) do
+      local ok, id = pcall(GetFileIDFromPath, path)
+      id = ok and not Q.Util.IsSecret(id) and tonumber(id) or nil
+      if id and id > 0 then return id end
+    end
+  end
+  return MACRO_ICON_NAME
+end
+
+function RaidMarks:MacroName() return L.UI_RAIDMARKS_MACRO_NAME end
+
+function RaidMarks:HasMacro()
+  return Q.ClassMacros ~= nil and Q.ClassMacros:Index(self:MacroName()) > 0
+end
+
+-- Crée la macro et active l'option (sans elle la macro ne fait rien).
+-- -> "created", "exists" ou la raison de l'échec ("combat", "full", "long", "noapi", "failed").
+function RaidMarks:CreateMacro()
+  if not Q.ClassMacros then return "noapi" end
+  if self:HasMacro() then return "exists" end
+  local ok, why = Q.ClassMacros:CreatePlain(self:MacroName(), self:MacroIcon(), MACRO_BODY)
+  if not ok then return why or "failed" end
+  if setting("raidMarks.enabled") ~= true then Q.Settings:Set("raidMarks.enabled", true) end
+  return "created"
+end
+
+-- Texte pour le joueur selon le résultat de CreateMacro.
+function RaidMarks:MacroMessage(state)
+  if state == "created" then return string.format(L.UI_RAIDMARKS_MACRO_CREATED, self:MacroName()) end
+  if state == "exists" then return string.format(L.UI_RAIDMARKS_MACRO_EXISTS, self:MacroName()) end
+  if state == "combat" then return L.UI_RAIDMARKS_MACRO_COMBAT end
+  if state == "full" then return L.UI_RAIDMARKS_MACRO_FULL end
+  return L.UI_RAIDMARKS_MACRO_FAILED
+end
+
+-- Crée la macro et dit dans la discussion où la récupérer. -> état, message
+function RaidMarks:CreateMacroAndTell()
+  local state = self:CreateMacro()
+  local msg = self:MacroMessage(state)
+  Q:Print(msg)
+  return state, msg
+end
 
 ---------------------------------------------------------------------------
 -- Évènements

@@ -302,6 +302,13 @@ add({ id = "keyRaidMarks", section = "automation", category = "targeting", type 
   binding = "CLICK QuestifyMarkObjectives:LeftButton", label = "OPT_KEY_RAIDMARKS", tip = "OPT_TIP_KEY_RAIDMARKS",
   keywords = "raccourci touche clavier marquer marques raid keybind binding key shortcut mark marks",
   enabled = raidMarksOn })
+add({ id = "raidMarksMacro", section = "automation", category = "targeting", type = "action",
+  label = "OPT_RAIDMARKS_MACRO", tip = "OPT_TIP_RAIDMARKS_MACRO",
+  keywords = "macro marquer marques raid barre action creer mark marks action bar create",
+  run = function()
+    local R = ui("RaidMarks")
+    if R then R:CreateMacroAndTell() end
+  end })
 add({ id = "raidMarks.inGroup", section = "automation", category = "targeting", type = "toggle",
   path = "raidMarks.inGroup", label = "OPT_RAIDMARKS_GROUP", tip = "OPT_TIP_RAIDMARKS_GROUP",
   keywords = "groupe instance raid marques group marks", enabled = raidMarksOn })
