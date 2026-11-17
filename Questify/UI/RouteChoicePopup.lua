@@ -684,6 +684,8 @@ function Popup:FillCard(c, data, w, h)
   if data.recommended then
     local a = col.accent
     setPill(c.badge, L.UI_ROUTECHOICE_RECOMMENDED, { a[1], a[2], a[3], 0.95 }, col.onAccent, ICONS.star)
+  elseif data.current then
+    setPill(c.badge, L.UI_ROUTECHOICE_CURRENT, { 0, 0, 0, 0.65 }, { 0.85, 0.85, 0.85 })
   elseif data.default then
     setPill(c.badge, L.UI_ROUTECHOICE_DEFAULT, { 0, 0, 0, 0.65 }, { 0.85, 0.85, 0.85 })
   else
@@ -848,8 +850,14 @@ function Popup:Fill(fromId, cards)
   local cw, ch, ww, wh = Popup.Layout(n)
   self.window:SetSize(ww, wh)
   self:ApplyTheme()
-  self.title:SetText(L.UI_ROUTECHOICE_TITLE)
-  self.subtitle:SetText(string.format(L.UI_ROUTECHOICE_SUBTITLE, Q.Guides:DisplayTitle(fromId)))
+  if self.levelMode then
+    self.title:SetText(L.UI_ROUTECHOICE_LEVEL_TITLE)
+    self.subtitle:SetText(string.format(L.UI_ROUTECHOICE_LEVEL_SUBTITLE,
+      math.floor(Q.RouteChoice:PlayerLevel()), Q.Guides:DisplayTitle(fromId)))
+  else
+    self.title:SetText(L.UI_ROUTECHOICE_TITLE)
+    self.subtitle:SetText(string.format(L.UI_ROUTECHOICE_SUBTITLE, Q.Guides:DisplayTitle(fromId)))
+  end
   self.focus = 1
   for i, data in ipairs(cards) do
     if data.recommended then self.focus = i end
@@ -945,7 +953,7 @@ function Popup:Open(fromId, manual)
     return false
   end
   self.resume = nil
-  self.fromId, self.manual = fromId, manual
+  self.fromId, self.manual, self.levelMode = fromId, manual, nil
   self.armed = false   -- aucune flèche depuis l'ouverture : Entrée et Tab passent au jeu
   self.cards = Q.RouteChoice:Rank(options)
   local f = self:Create()
@@ -1004,7 +1012,17 @@ function Popup:Choose(id)
   if self.cards and self.cards.demo then fromId = nil end   -- scène /qf demo : ferme sans choisir
   self.resume = nil
   self:Close()
-  if fromId and id then Q.Progress:ChooseRoute(fromId, id) end
+  if not (fromId and id) then return end
+  if self.levelMode then
+    -- chapitre du niveau : ouvert tout de suite ; une zone de secours en cours est abandonnée
+    if id ~= fromId then
+      if Q.char then Q.char.detour = nil end
+      Q.Progress:SetGuide(id, true)
+      Q:Fire("DETOUR_CHANGED")
+    end
+    return
+  end
+  Q.Progress:ChooseRoute(fromId, id)
 end
 
 -- « Garder la route prévue » : la suite par défaut (Guides:Next).
@@ -1031,18 +1049,49 @@ function Popup:Resume()
   local r = self.resume
   if not r or inCombat() then return end
   self.resume = nil
+  if r.level then return self:OpenForLevel() end
   if not r.manual and Q.Progress:PendingChoice() ~= r.fromId then return end
   self:Open(r.fromId, r.manual)
 end
 
 -- Choix demandé par le joueur : le chapitre en attente, sinon celui de Progress:ChoiceNode.
+-- Sans embranchement en attente ni au bout du chapitre en cours : les chapitres du niveau du personnage
+-- (OpenForLevel), jamais un ancien embranchement déjà passé.
 function Popup:OpenForPlayer()
-  local node = Q.Progress:PendingChoice() or Q.Progress:ChoiceNode()
+  local node = Q.Progress:PendingChoice()
   if not node then
+    local cur = Q.Progress:Guide()
+    if cur and #Q.Progress:RouteOptions(cur.id) >= 2 then node = cur.id end
+  end
+  if node then return self:Open(node, true) end
+  return self:OpenForLevel()
+end
+
+-- « Changer de route » : le chapitre en cours et jusqu'à 4 chapitres du niveau (Q.RouteChoice:LevelOptions),
+-- notés comme un embranchement. Choisir une carte ouvre ce chapitre tout de suite.
+function Popup:OpenForLevel()
+  local cur = Q.Progress:Guide()
+  local options = Q.RouteChoice:LevelOptions()
+  if not cur or #options < 2 then
     Q:Print(L.UI_ROUTECHOICE_NONE)
     return false
   end
-  return self:Open(node, true)
+  if inCombat() then
+    self.resume = { fromId = cur.id, manual = true, level = true }
+    Q:Print(L.UI_ROUTECHOICE_AFTER_COMBAT)
+    return false
+  end
+  self.resume = nil
+  self.fromId, self.manual, self.levelMode = cur.id, true, true
+  self.armed = false
+  self.cards = Q.RouteChoice:Rank(options)
+  local f = self:Create()
+  local was = f:IsShown()
+  self:Fill(cur.id, self.cards)
+  f:Show()
+  if not was and self.fadeIn then self.fadeIn:Play() end
+  self:SetKeyboard(true)
+  return true
 end
 
 ---------------------------------------------------------------------------

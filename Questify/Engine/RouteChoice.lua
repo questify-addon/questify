@@ -63,7 +63,7 @@ function RouteChoice:Card(option, level)
   local quests, xp = questsAndXP(g)
   local minLevel, maxLevel = num(g.minLevel) or 1, num(g.maxLevel) or 60
   return {
-    id = g.id, guide = g, entry = option.entry, default = option.default == true,
+    id = g.id, guide = g, entry = option.entry, default = option.default == true, current = option.current == true,
     title = Q.Guides:DisplayTitle(g), label = entry.label, mapId = Q.Guides:MainMap(g),
     minLevel = minLevel, maxLevel = maxLevel,
     quests = quests, xp = xp,
@@ -273,5 +273,51 @@ function RouteChoice:Highlights(g)
   if c then out[#out + 1] = c end
   local f = fpOf(g)
   if f then out[#out + 1] = f end
+  return out
+end
+
+---------------------------------------------------------------------------
+-- « Changer de route » : chapitres du niveau du personnage
+---------------------------------------------------------------------------
+-- Tranche acceptée : jusqu'à LEVEL_UNDER niveau sous le début d'un chapitre, LEVEL_OVER au-dessus de sa fin
+-- (comme la zone de secours, Engine/Detour.lua).
+local LEVEL_UNDER, LEVEL_OVER, LEVEL_MAX = 1, 2, 5
+RouteChoice.LEVEL_MAX = LEVEL_MAX
+
+-- LevelOptions(max) -> options pour RouteChoice:Rank : le chapitre en cours d'abord (current, default),
+-- puis au plus max - 1 autres chapitres de la faction, de la race et du parcours (habituel ou mode
+-- automatique) du personnage, pas finis, dans la tranche de son niveau (barre d'XP comprise), les mieux
+-- notés d'abord : XP/h simulée relative, moins 0,5 par niveau sous le chapitre et 0,35 au-dessus.
+function RouteChoice:LevelOptions(max)
+  max = math.max(2, math.floor(num(max) or LEVEL_MAX))
+  local out = {}
+  local Pr = Q.Progress
+  local cur = Pr and Pr:IsEnabled() and Pr:Guide()
+  if not cur then return out end
+  out[1] = { guide = cur, default = true, current = true }
+  local P = Q.Player or {}
+  local lvl = self:PlayerLevel()
+  local m = Q.DungeonMode and Q.DungeonMode:Mode() or nil
+  local list, best = {}, 0
+  for _, g in ipairs(Q.Guides:All()) do
+    if g ~= cur and g.faction == P.faction and (g.mode == nil or g.mode == m)
+      and (g.races == nil or Q.Util.Contains(g.races, P.raceKey)) and not Pr:ChapterDone(g) then
+      local under = math.max(0, (num(g.minLevel) or 1) - lvl)
+      local over = math.max(0, lvl - (num(g.maxLevel) or 60))
+      if under <= LEVEL_UNDER and over <= LEVEL_OVER then
+        local rate = type(g.sim) == "table" and num(g.sim.xpPerHour) or 0
+        if rate > best then best = rate end
+        list[#list + 1] = { guide = g, under = under, over = over, rate = rate }
+      end
+    end
+  end
+  for _, c in ipairs(list) do
+    c.score = (best > 0 and c.rate / best or 0.5) - 0.5 * c.under - 0.35 * c.over
+  end
+  table.sort(list, function(a, b)
+    if math.abs(a.score - b.score) > EPS then return a.score > b.score end
+    return a.guide.id < b.guide.id
+  end)
+  for i = 1, math.min(#list, max - 1) do out[#out + 1] = { guide = list[i].guide } end
   return out
 end

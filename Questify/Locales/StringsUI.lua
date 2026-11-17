@@ -114,6 +114,9 @@ Q:RegisterStrings({
     -- Choix de suite (UI/RouteChoicePopup.lua)
     UI_ROUTECHOICE_TITLE = "Choose what comes next on your route",
     UI_ROUTECHOICE_SUBTITLE = "End of chapter: %s",
+    UI_ROUTECHOICE_LEVEL_TITLE = "Change route: chapters for your level",
+    UI_ROUTECHOICE_LEVEL_SUBTITLE = "Level %d · current chapter: %s",
+    UI_ROUTECHOICE_CURRENT = "Current chapter",
     UI_ROUTECHOICE_LEVELS = "Lvl %d-%d",
     UI_ROUTECHOICE_QUESTS = "%d quests · %s XP",
     UI_ROUTECHOICE_QUESTS_ONE = "%d quest · %s XP",
@@ -450,6 +453,9 @@ Q:RegisterStrings({
     -- Choix de suite (UI/RouteChoicePopup.lua)
     UI_ROUTECHOICE_TITLE = "Choisis la suite de ta route",
     UI_ROUTECHOICE_SUBTITLE = "Fin du chapitre : %s",
+    UI_ROUTECHOICE_LEVEL_TITLE = "Changer de route : chapitres de ton niveau",
+    UI_ROUTECHOICE_LEVEL_SUBTITLE = "Niveau %d · chapitre en cours : %s",
+    UI_ROUTECHOICE_CURRENT = "Chapitre en cours",
     UI_ROUTECHOICE_LEVELS = "Niv. %d-%d",
     UI_ROUTECHOICE_QUESTS = "%d quêtes · %s XP",
     UI_ROUTECHOICE_QUESTS_ONE = "%d quête · %s XP",

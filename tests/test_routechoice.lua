@@ -295,11 +295,49 @@ return {
     t.eq(Q.Progress:Guide().id, "T_DARK", "the choice made ahead is used")
     t.ok(not P:IsShown(), "no question")
     SlashCmdList.QUESTIFY("route")
-    t.ok(P:IsShown(), "reopened from the next chapter")
-    t.eq(P.fromId, "T_FROM")
+    t.ok(P:IsShown(), "from the next chapter: chapters for the level, not the old fork")
+    t.eq(P.levelMode, true)
     P:Choose("T_WEST")
     t.eq(Q.Progress:Guide().id, "T_WEST")
-    t.eq(Q.char.routeChoices.T_FROM, "T_WEST")
+    t.eq(Q.char.routeChoices.T_FROM, "T_DARK", "the fork's choice is kept")
+    noErrors(t)
+  end,
+
+  -- « Changer de route » sans embranchement en attente : le chapitre en cours et jusqu'à 4 chapitres du
+  -- niveau du personnage (un niveau au-dessous de leur début, deux au-dessus de leur fin au plus).
+  change_route_offers_chapters_for_the_level = function(t)
+    local Q = load()
+    local function g(id, title, min, max, rate)
+      Q:RegisterGuide({ id = id, title = title, faction = "Alliance", minLevel = min, maxLevel = max,
+        sim = { steps = 2, endLevel = max, xpPerHour = rate, minutes = 60 },
+        steps = { { "accept", 9000 + min }, { "turnin", 9000 + min, xp = 100 } } })
+    end
+    g("L_WET", "Wetlands", 28, 30, 26000)
+    g("L_DUN", "Dun Morogh", 30, 32, 20000)
+    g("L_TN", "Thousand Needles", 31, 33, 30000)
+    g("L_STV", "Stranglethorn Vale", 32, 34, 28000)
+    g("L_ASH", "Ashenvale", 27, 29, 22000)
+    g("L_HILL", "Hillsbrad Foothills", 29, 31, 24000)
+    g("L_WEST", "Westfall", 12, 16, 50000)
+    g("L_DESO", "Desolace", 35, 38, 50000)
+    Mock.player.level = 29
+    Mock.fire("PLAYER_LEVEL_UP", 29)
+    Q.Progress:SetGuide("L_WET")
+    local opts = Q.RouteChoice:LevelOptions()
+    local ids = {}
+    for _, o in ipairs(opts) do ids[#ids + 1] = o.guide.id end
+    t.eq(ids[1], "L_WET", "current chapter first")
+    t.ok(opts[1].current and opts[1].default, "current chapter is the planned route")
+    t.ok(#opts >= 3 and #opts <= 5, "3 to 5 chapters: " .. table.concat(ids, ","))
+    for _, id in ipairs(ids) do
+      t.ok(id ~= "L_WEST" and id ~= "L_DESO", "out of level range: " .. id)
+    end
+    local P = popup(Q)
+    SlashCmdList.QUESTIFY("route")
+    t.ok(P:IsShown() and P.levelMode, "level choice shown")
+    t.eq(#P.cards, #opts)
+    P:Choose("L_HILL")
+    t.eq(Q.Progress:Guide().id, "L_HILL", "the chosen chapter starts now")
     noErrors(t)
   end,
 
