@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeons.lua. Ne pas modifier à la main.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
 -- Donjons de WoW: Forever : zone, niveaux conseillés, factions autorisées, entrée (uiMapID, x, y en 0-100,
 -- entranceSource = questiedb ou manual), quêtes par faction : IDs, PNJ (giver) ou objet (obj) de départ et
 -- position (at), PNJ de fin (ender, endAt), niveaux, masques de races et de classes, préquêtes (pre = au
@@ -157,12 +157,12 @@ Q.DungeonData = {
     quests = {
       Alliance = {
         { id = 92456, giver = 5502, at = { 1453, 31.5, 62.61 }, ender = 5502, endAt = { 1453, 31.5, 62.61 }, level = 33, reqLevel = 24, races = 4294967373 }, -- A Green Sample
-        { id = 92457, giver = 269127, at = { 1416, 14.3, 59.57 }, ender = 269127, endAt = { 1416, 14.3, 59.57 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Starving Arcane
-        { id = 92458, giver = 269127, at = { 1416, 14.3, 59.57 }, ender = 269127, endAt = { 1416, 14.3, 59.57 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Heart of Disruption
+        { id = 92457, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Starving Arcane
+        { id = 92458, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Heart of Disruption
         { id = 92489, giver = 5694, at = { 1453, 48.71, 87.62 }, ender = 5694, endAt = { 1453, 48.71, 87.62 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Power Overwhelming
       },
       Horde = {
-        { id = 96984, giver = 269127, at = { 1416, 14.3, 59.57 }, ender = 2410, endAt = { 1424, 61.6, 20.85 }, level = 33, reqLevel = 24, races = 8589934770 }, -- Heart of Disruption
+        { id = 96984, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 2410, endAt = { 1424, 61.6, 20.85 }, level = 33, reqLevel = 24, races = 8589934770 }, -- Heart of Disruption
         { id = 96986, giver = 2278, at = { 1424, 62.63, 20.65 }, ender = 2278, endAt = { 1424, 62.63, 20.65 }, level = 33, reqLevel = 24, races = 8589934770 }, -- The Grave Knight
         { id = 96988, giver = 11044, at = { 1458, 46.61, 74.09 }, ender = 11044, endAt = { 1458, 46.61, 74.09 }, level = 33, reqLevel = 24, races = 8589934770 }, -- Source of Power
       },
