@@ -31,6 +31,9 @@
   Modera by Lordamere Lake, no longer the one in Southshore nor a point 185 yd away in Alterac.
 - City of Dalaran: An Alarming Request (Alliance) and Blood in the Streets (Horde) are now required before the
   Image of Archmage Modera's quests, as in the game. They were missing from QuestieDB.
+- Excavation Site: Wetlands (Alliance): Highland Hides needs Young Crocolisk Skins first, and Horrors in the
+  Highland the Tramping Paws, Fire Taboo and Blisters on The Land chain. The routes no longer send you to pick
+  them up before that, and the Dungeons tab shows the quests to do first.
 - Automatic route with dungeons: no more long grind before a dungeon once you reach its minimum level (the
   Alterac chapter asked for about 430 mobs before the City of Dalaran).
 - Journal, Dungeons tab: a clearer layout with the pick-up route from where you are, quests grouped by stop, then
@@ -93,6 +96,9 @@
   bord du lac Lordamere, et non plus celle d'Austrebrune ni un point à 185 m dans Alterac.
 - Cité de Dalaran : Une requête alarmante (Alliance) et Du sang dans les rues (Horde) sont maintenant demandées
   avant les quêtes de l'image de Modera, comme en jeu. Elles manquaient à QuestieDB.
+- Site de fouilles des Paluns (Alliance) : Highland Hides demande d'abord Young Crocolisk Skins, et Horrors in the
+  Highland la chaîne Tramping Paws, Fire Taboo et Blisters on The Land. Les routes ne font plus prendre ces quêtes
+  avant, et l'onglet Donjons montre les quêtes à faire d'abord.
 - Route automatique avec les donjons : plus de long farm avant un donjon dont tu as le niveau minimal (le chapitre
   d'Alterac demandait environ 430 monstres avant la Cité de Dalaran).
 - Journal, onglet Donjons : présentation plus lisible avec l'itinéraire de prise depuis ta position, les quêtes par

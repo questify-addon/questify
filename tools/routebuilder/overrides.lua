@@ -54,6 +54,10 @@ return {
     [92458] = { 92432 }, -- Heart of Disruption après An Alarming Request (Alliance)
     [96984] = { 92434 }, -- Heart of Disruption après Blood in the Streets (Horde)
     [92434] = { 545 }, -- Blood in the Streets après Dalaran Patrols (Horde)
+    -- Site de fouilles des Paluns (Alliance) : préquêtes absentes de QuestieDB (c7ccd23), relevées dans DungeonJournal
+    -- 2.0.9 et vues en jeu (Highland Hides n'est proposée qu'après Young Crocolisk Skins, chez James Halloran).
+    [98815] = { 484 }, -- Highland Hides après Young Crocolisk Skins
+    [95646] = { 275 }, -- Horrors in the Highland après Blisters on The Land (Tramping Paws 276 -> Fire Taboo 277 -> 275)
   },
   notes = {
     -- QuestieDB fait partir Stepping Stones des quatre objets (Burned-Out Remains et Nailed Plank, Tarides et Marche

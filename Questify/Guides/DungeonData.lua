@@ -136,12 +136,12 @@ Q.DungeonData = {
     factions = { "Alliance", "Horde" }, entrance = { 1437, 47.79, 56.16 }, entranceSource = "questiedb",
     quests = {
       Alliance = {
-        { id = 95646, giver = 1244, at = { 1437, 56.37, 40.4 }, ender = 1244, endAt = { 1437, 56.37, 40.4 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Horrors in the Highland
+        { id = 95646, giver = 1244, at = { 1437, 56.37, 40.4 }, ender = 1244, endAt = { 1437, 56.37, 40.4 }, level = 31, reqLevel = 24, races = 4294967373, pre = { 275 } }, -- Horrors in the Highland
         { id = 95647, talk = true, giver = 1480, at = { 1437, 11.88, 58.82 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Lost in the Thicket Things
         { id = 95737, talk = true, giver = 3970, at = { 1440, 34.98, 48.46 }, ender = 1480, endAt = { 1437, 11.88, 58.82 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Seeking Caitlin
         { id = 95772, talk = true, giver = 956, at = { 1433, 25.79, 46.44 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Songblade Search
         { id = 95810, inside = true, item = 270865, ender = 1077, endAt = { 1437, 38.81, 52.39 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Lost Relic Carry
-        { id = 98815, giver = 2094, at = { 1437, 8.55, 55.74 }, ender = 2094, endAt = { 1437, 8.55, 55.74 }, level = 28, reqLevel = 24, races = 4294967373 }, -- Highland Hides
+        { id = 98815, giver = 2094, at = { 1437, 8.55, 55.74 }, ender = 2094, endAt = { 1437, 8.55, 55.74 }, level = 28, reqLevel = 24, races = 4294967373, pre = { 484 } }, -- Highland Hides
         { id = 98824, talk = true, giver = 1077, at = { 1437, 38.81, 52.39 }, ender = 5387, endAt = { 1455, 69.93, 18.55 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Prehistoric Prism
       },
       Horde = {
@@ -519,6 +519,9 @@ Q.QuestRewardData = {
   [168] = { xp = 675, items = { 2036, 2037, 270007 } },
   [214] = { xp = 625, items = { 2074, 2089, 6094, 270005 } },
   [261] = { xp = 3000, items = {  } },
+  [275] = { xp = 2650, items = { 1273, 2263, 3558 } },
+  [276] = { xp = 1250, items = {  } },
+  [277] = { xp = 1850, items = { 4606 } },
   [303] = { xp = 2450, items = {  } },
   [356] = { xp = 660, items = {  } },
   [373] = { xp = 870, items = {  } },
@@ -532,6 +535,7 @@ Q.QuestRewardData = {
   [447] = { xp = 910, items = { 3448 } },
   [450] = { xp = 1350, items = {  } },
   [451] = { xp = 2050, items = { 2458, 2459, 3451, 3582, 276723 } },
+  [484] = { xp = 1750, items = {  } },
   [544] = { xp = 3300, items = {  } },
   [545] = { xp = 2050, items = {  } },
   [704] = { xp = 1425, items = { 4980, 270059, 270060 } },
@@ -930,6 +934,8 @@ Q.QuestPrereqFix = {
   [92434] = { 545 },
   [92457] = { 92432 },
   [92458] = { 92432 },
+  [95646] = { 275 },
   [96984] = { 92434 },
+  [98815] = { 484 },
 }
 

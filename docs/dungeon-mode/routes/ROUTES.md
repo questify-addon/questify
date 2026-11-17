@@ -18,7 +18,7 @@ donc au-dessus de ces niveaux, et les chapitres d'alternative sont passés dès 
 | AD_05 | Redridge Mountains | 20-24 | 21.00 → 24.00 | 32 | 8 | 194 | alternative de THANES, DM, WC |  |
 | AD_06 | Duskwood | 24-26 | 24.00 → 27.10 | 121 | 40 | 180 | instance : STOCKADE |  |
 | AD_07 | Ashenvale | 27-28 | 27.00 → 28.22 | 63 | 18 | 136 | instance : BFD | band 25-27 moved to 27-28 (simulated level 27.00) |
-| AD_08 | Wetlands | 28-29 | 28.00 → 29.00 | 51 | 9 | 73 | instance : EXCAVATION | band 26-28 moved to 28-29 (simulated level 28.00) |
+| AD_08 | Wetlands | 28-29 | 28.00 → 29.00 | 45 | 9 | 72 | instance : EXCAVATION | band 26-28 moved to 28-29 (simulated level 28.00) |
 | AD_09 | Hillsbrad Foothills and Alterac Mountains | 28-30 | 29.00 → 29.64 | 26 | 7 | 57 | instance : DALARAN, SFK, SM_GY |  |
 | AD_10 | Duskwood | 29-31 | 29.00 → 31.00 | 74 | 28 | 108 | alternative de STOCKADE, BFD, EXCAVATION |  |
 | AD_11 | Dun Morogh | 30-32 | 31.00 → 31.00 | 20 | 0 | 21 | instance : GNOMER |  |
@@ -59,7 +59,7 @@ traversées, suite trop longue, niveau requis) : la fenêtre Donjons du journal 
 | Wailing Caverns | AD_04 | 21.0 | 19 | 4/5 | 1491 Smart Drinks |
 | The Stockade | AD_06 | 27.0 | 26 | 4/7 | 378 The Fury Runs Deep ; 389 Bazil Thredd ; 391 The Stockade Riots |
 | Blackfathom Deeps | AD_07 | 28.0 | 26 | 2/5 | 971 Knowledge in the Deeps ; 1198 In Search of Thaelrid ; 1199 Twilight Falls |
-| Excavation Site: Wetlands | AD_08 | 29.0 | 26 | 6/7 | 95772 Songblade Search |
+| Excavation Site: Wetlands | AD_08 | 29.0 | 26 | 4/7 | 95646 Horrors in the Highland ; 95772 Songblade Search ; 98815 Highland Hides |
 | Shadowfang Keep | AD_09 | 29.0 | 27 | 0/0 |  |
 | City of Dalaran | AD_09 | 29.0 | 30 | 2/5 | 92432 An Alarming Request ; 92457 Starving Arcane ; 92458 Heart of Disruption |
 | Scarlet Monastery: Graveyard | AD_09 | 29.0 | 30 | 0/0 |  |
