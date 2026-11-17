@@ -136,12 +136,53 @@ return {
     t.eq(#Q.UI.News.steps, #latest(Q).steps, "shows the latest version")
   end,
 
+  wizard_step_opens_its_page_alone_with_cancel_and_save = function(t)
+    local Q = load({ savedVariables = CONFIGURED })
+    local N, W = Q.UI.News, Q.UI.Wizard
+    Mock.advance(3)
+    local idx
+    for i, s in ipairs(N.steps) do if s.go and s.go.wizard == "PAGE_OBJECTIVES" then idx = i end end
+    t.ok(idx, "a news step leads to the objectives page")
+    local before = Q.Settings:Get("tracker.objLayout")
+    local other = before == "bars" and "list" or "bars"
+    local autoQuest = Q.Settings:Get("autoQuest")
+    local function open()
+      Mock.click(N.chips[idx], "LeftButton")
+      Mock.click(N.goButton, "LeftButton")
+      t.ok(W.frame:IsShown(), "wizard page shown")
+      t.eq(W.page, W.PAGE_OBJECTIVES)
+      t.ok(W.cancelButton:IsShown() and W.saveButton:IsShown(), "cancel and save")
+      for _, b in ipairs({ W.prevButton, W.nextButton, W.skipButton, W.finishButton }) do
+        t.ok(not b:IsShown(), "no wizard flow button")
+      end
+      W:SetChoice("objLayout", other)
+      W:SelectObjectives()
+    end
+    open()
+    Mock.click(W.cancelButton, "LeftButton")
+    t.ok(not W.frame:IsShown(), "cancel closes")
+    t.eq(Q.Settings:Get("tracker.objLayout"), before, "cancel keeps the setting")
+    t.eq(Q.char.wizardPage, nil, "the start wizard's resume point is untouched")
+    t.eq(Q.char.wizardDraft, nil, "no draft")
+    open()
+    Mock.click(W.saveButton, "LeftButton")
+    t.ok(not W.frame:IsShown(), "save closes")
+    t.eq(Q.Settings:Get("tracker.objLayout"), other, "save keeps the choice")
+    t.eq(Q.Settings:Get("autoQuest"), autoQuest, "only the page's settings are saved")
+    t.eq(Q.char.wizardDone, true)
+    t.ok(shown(N), "the news window is still there")
+    W:Show(2)
+    t.ok(W.nextButton:IsShown() and W.prevButton:IsShown(), "the full wizard keeps its flow")
+    t.ok(not W.cancelButton:IsShown() and not W.saveButton:IsShown())
+    t.eq(#Mock.errors, 0)
+  end,
+
   go_buttons_lead_to_each_place = function(t)
     local Q = load({ savedVariables = CONFIGURED })
     local N = Q.UI.News
     local got = {}
     rawset(Q.UI.Options, "Open", function(_, section) got[#got + 1] = "options:" .. tostring(section) end)
-    rawset(Q.UI.Wizard, "Show", function(_, page) got[#got + 1] = "wizard:" .. tostring(page) end)
+    rawset(Q.UI.Wizard, "ShowPage", function(_, page) got[#got + 1] = "wizard:" .. tostring(page) end)
     rawset(Q.UI.Journal, "ShowTab", function(_, tab) got[#got + 1] = "journal:" .. tostring(tab) end)
     local slash = SlashCmdList.QUESTIFY
     SlashCmdList.QUESTIFY = function(msg) got[#got + 1] = "slash:" .. tostring(msg) end

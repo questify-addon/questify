@@ -31,6 +31,9 @@ local addonName, Q = ...
 -- plus une fois par session. Fermer par la croix ne termine pas : /qf wizard reprend à la même page.
 -- Assistant terminé avant la page des objectifs : il se rouvre une seule fois sur cette page
 -- (Q.char.wizardObjectivesSeen), avec un message dans la discussion.
+-- Page seule (ShowPage, depuis la fenêtre des nouveautés, UI/News.lua) : « Annuler » et « Enregistrer »
+-- à la place du parcours ; seuls les réglages de la page sont enregistrés, et la reprise de l'assistant
+-- (wizardPage, wizardDraft) n'est pas touchée.
 Q.UI = Q.UI or {}
 local Wizard = { page = 1, pages = {}, radios = {}, checks = {}, addonRows = {}, recap = {}, enabledNames = {} }
 Q.UI.Wizard = Wizard
@@ -702,8 +705,12 @@ function Wizard:ApplyTheme(key)
   T:StyleText(self.titleText, "title", theme)
   T:SkinClose(f, theme)
   T:SkinTree(f, theme)
-  for _, b in ipairs({ self.prevButton, self.skipButton }) do if b then T:SkinButton(b, "secondary", theme) end end
-  for _, b in ipairs({ self.nextButton, self.finishButton }) do if b then T:SkinButton(b, "primary", theme) end end
+  for _, b in ipairs({ self.prevButton, self.skipButton, self.cancelButton }) do
+    if b then T:SkinButton(b, "secondary", theme) end
+  end
+  for _, b in ipairs({ self.nextButton, self.finishButton, self.saveButton }) do
+    if b then T:SkinButton(b, "primary", theme) end
+  end
   if self.stepText then T:StyleText(self.stepText, "muted", theme) end
   if self.newsText then T:StyleText(self.newsText, "muted", theme) end
   for _, g in ipairs(self.themeGroupLabels or {}) do T:StyleText(g, "muted", theme) end
@@ -867,6 +874,10 @@ function Wizard:Create()
   self.finishButton:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 4)
   self.skipButton = bottomButton(L.UI_WIZ_SKIP, 110, function() Wizard:Skip() end)
   self.skipButton:SetPoint("RIGHT", self.nextButton, "LEFT", -6, 0)
+  self.cancelButton = bottomButton(L.UI_WIZ_CANCEL, 110, function() Wizard:CancelPage() end)
+  self.cancelButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 8, 4)
+  self.saveButton = bottomButton(L.UI_WIZ_SAVE, 110, function() Wizard:SavePage() end)
+  self.saveButton:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -8, 4)
   self.reloadButton = bottomButton(L.UI_WIZ_RELOAD, 190, function() Wizard:Reload() end)
   self.reloadButton:SetPoint("BOTTOM", f, "BOTTOM", 0, 30)
   self:ApplyTheme()
@@ -878,6 +889,13 @@ function Wizard:Create()
   -- UI/ProfessionPicker.lua). Un parent caché (Alt+Z) ne compte pas.
   f:HookScript("OnHide", function(self)
     if self:IsShown() then return end
+    -- page seule : retour à la fenêtre des nouveautés, rien de l'accueil
+    if Wizard.single then
+      Wizard.single = nil
+      local N = Q.UI.News
+      if N and N.IsShown and N:IsShown() and N.frame.Raise then N.frame:Raise() end
+      return
+    end
     Wizard.dismissed = true
     if Q.UI.ProfessionPicker then Q:After(0.5, Q.UI.ProfessionPicker.AutoShow) end
   end)
@@ -914,7 +932,7 @@ end
 -- Choix fait par le joueur : gardé aussi dans le brouillon du personnage (reprise après /reload).
 function Wizard:SetChoice(key, value)
   self.choice[key] = value
-  if Q.char then
+  if Q.char and not self.single then
     if type(Q.char.wizardDraft) ~= "table" then Q.char.wizardDraft = {} end
     Q.char.wizardDraft[key] = value
   end
@@ -1032,7 +1050,7 @@ function Wizard:Load()
   local choice = {}
   for k, v in pairs(initial) do choice[k] = v end
   -- Choix faits avant un /reload : repris s'ils sont encore possibles (addon toujours chargé).
-  local draft = Q.char and Q.char.wizardDraft
+  local draft = not self.single and Q.char and Q.char.wizardDraft
   if type(draft) == "table" then
     for k, v in pairs(draft) do
       if initial[k] ~= nil and type(v) == type(initial[k]) then choice[k] = v end
@@ -1082,10 +1100,22 @@ end
 function Wizard:SetPage(n)
   n = math.max(1, math.min(NUM_PAGES, math.floor(tonumber(n) or 1)))
   self.page = n
-  if Q.char then Q.char.wizardPage = n end
+  if Q.char and not self.single then Q.char.wizardPage = n end
   for i, page in ipairs(self.pages) do
     if i == n then page:Show() else page:Hide() end
   end
+  if self.single then
+    for _, b in ipairs({ self.prevButton, self.nextButton, self.skipButton, self.finishButton }) do b:Hide() end
+    self.cancelButton:Show()
+    self.saveButton:Show()
+    self.stepText:Hide()
+  else
+    self.cancelButton:Hide()
+    self.saveButton:Hide()
+    self.stepText:Show()
+  end
+  if n == PAGE_ADDONS or self.pendingReload then self.reloadButton:Show() else self.reloadButton:Hide() end
+  if self.single then return end
   self.prevButton:Show()
   self.prevButton:SetEnabled(n > 1)
   if n < NUM_PAGES then
@@ -1097,7 +1127,6 @@ function Wizard:SetPage(n)
     self.skipButton:Hide()
     self.finishButton:Show()
   end
-  if n == PAGE_ADDONS or self.pendingReload then self.reloadButton:Show() else self.reloadButton:Hide() end
   if n == PAGE_RECAP then self:UpdateRecap() end
   self.stepText:SetFormattedText(L.UI_WIZ_STEP, n, NUM_PAGES)
 end
@@ -1146,6 +1175,7 @@ end
 -- Show() reprend à la page gardée (1 si aucune) ; Show(n) ouvre la page n.
 function Wizard:Show(page)
   self:Create()
+  self.single = nil
   self:Load()
   self:SetPage(page or (Q.char and Q.char.wizardPage) or 1)
   self.frame:Show()
@@ -1161,23 +1191,30 @@ function Wizard:ClosedThisSession()
   return self.dismissed == true
 end
 
-function Wizard:Finish()
-  self:ReadWidgets()
-  local c = self.choice
+-- Enregistre les choix c (Q.Settings:Set et réglages du personnage) pour les clés keys, ou toutes.
+local function applyChoices(c, keys)
+  local want
+  if keys then
+    want = {}
+    for _, k in ipairs(keys) do want[k] = true end
+  end
+  local function has(k) return want == nil or want[k] == true end
   -- case « ShortestPath » : SPF, sinon le routeur choisi ailleurs (Questify s'il était sur SPF)
-  local router = Q.Settings:Get("nav.router")
-  if c.routing then router = "spf" elseif router == "spf" then router = "questify" end
-  Q.Settings:Set("nav.router", router)
-  Q.Settings:Set("nav.display", c.display or "arrow")
-  Q.Settings:Set("autoQuest", c.autoQuest)
-  Q.Settings:Set("autoReward", c.autoReward)
-  Q.Settings:Set("sellJunk", c.sellJunk)
-  Q.Settings:Set("tracker.hideBlizzard", c.hideBlizzard)
-  Q.Settings:Set("tracker.objLayout", c.objLayout)
-  Q.Settings:Set("tracker.objDetail", c.objDetail)
-  Q.Settings:Set("raidMarks.enabled", c.raidMarks)
+  if has("routing") then
+    local router = Q.Settings:Get("nav.router")
+    if c.routing then router = "spf" elseif router == "spf" then router = "questify" end
+    Q.Settings:Set("nav.router", router)
+  end
+  if has("display") then Q.Settings:Set("nav.display", c.display or "arrow") end
+  for _, k in ipairs({ "autoQuest", "autoReward", "sellJunk" }) do
+    if has(k) then Q.Settings:Set(k, c[k]) end
+  end
+  if has("hideBlizzard") then Q.Settings:Set("tracker.hideBlizzard", c.hideBlizzard) end
+  if has("objLayout") then Q.Settings:Set("tracker.objLayout", c.objLayout) end
+  if has("objDetail") then Q.Settings:Set("tracker.objDetail", c.objDetail) end
+  if has("raidMarks") then Q.Settings:Set("raidMarks.enabled", c.raidMarks) end
   -- thème : suivre la race, sinon le thème choisi
-  if Q.Themes and c.theme then
+  if (has("theme") or has("followRace")) and Q.Themes and c.theme then
     if c.followRace then
       Q.Settings:Set("theme.followRace", true)
       if c.theme ~= Q.Themes:RaceKey() then Q.Settings:Set("tracker.theme", c.theme) end
@@ -1187,10 +1224,19 @@ function Wizard:Finish()
     end
   end
   -- profil de butin : propre au personnage (Q.char.rewardRole), hors profils d'options
-  if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
-  if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then Q.char.rewardRoleChosen = true end
+  if has("rewardRole") then
+    if Q.Rewards and c.rewardRole then Q.Rewards:SetRole(c.rewardRole) end
+    if Q.char and Q.Rewards and Q.Rewards:HasChoice(Q.Player and Q.Player.classFile) then
+      Q.char.rewardRoleChosen = true
+    end
+  end
   -- route : le mode automatique est par personnage (Q.char.dungeonMode) ; SetOn relance le choix du chapitre
-  if Q.DungeonMode and autoAvailable() then Q.DungeonMode:SetOn(c.route == "auto") end
+  if has("route") and Q.DungeonMode and autoAvailable() then Q.DungeonMode:SetOn(c.route == "auto") end
+end
+
+function Wizard:Finish()
+  self:ReadWidgets()
+  applyChoices(self.choice)
   if Q.char then
     Q.char.wizardDone = true
     Q.char.wizardObjectivesSeen = true
@@ -1202,6 +1248,30 @@ function Wizard:Finish()
   self.frame:Hide()   -- OnHide : étape suivante de l'accueil, le choix des métiers
   playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
   Q:Print(L.UI_WIZ_DONE)
+end
+
+-- ShowPage(n) : la page n seule, avec « Annuler » et « Enregistrer ».
+function Wizard:ShowPage(page)
+  self:Create()
+  self.single = math.max(1, math.min(NUM_PAGES, math.floor(tonumber(page) or 1)))
+  self:Load()
+  self:SetPage(self.single)
+  self.frame:Show()
+  self.frame:Raise()
+end
+
+-- « Annuler » : fermée sans rien enregistrer.
+function Wizard:CancelPage()
+  if self.frame then self.frame:Hide() end
+end
+
+-- « Enregistrer » : les réglages de la page seulement, puis fermée.
+function Wizard:SavePage()
+  local keys = PAGE_KEYS[self.single or self.page]
+  self:ReadWidgets()
+  if keys then applyChoices(self.choice, keys) end
+  playSound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+  if self.frame then self.frame:Hide() end
 end
 
 ---------------------------------------------------------------------------

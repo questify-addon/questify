@@ -432,7 +432,7 @@ function News:Run(step)
   if g.options and UI.Options then
     UI.Options:Open(g.options)
   elseif g.wizard and UI.Wizard then
-    UI.Wizard:Show(UI.Wizard[g.wizard])
+    UI.Wizard:ShowPage(UI.Wizard[g.wizard])   -- page seule : Annuler / Enregistrer
   elseif g.journal and UI.Journal then
     UI.Journal:ShowTab(g.journal)
   elseif g.slash and SlashCmdList and SlashCmdList.QUESTIFY then
