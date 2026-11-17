@@ -29,6 +29,9 @@ Settings.defaults = {
   -- Thème de toutes les fenêtres (UI/Themes.lua) : suivre la race, police, icônes des étapes
   theme = { followRace = true, font = "game", icons = "flat", fontScale = 1 },
   nameplates = true,
+  -- UI/RaidMarks.lua : touche qui pose les icônes de raid sur les monstres d'objectif visibles ;
+  -- inGroup : aussi en groupe et en instance (sinon rien ne s'y passe)
+  raidMarks = { enabled = false, inGroup = false },
   objectGlow = true,
   trainerAlert = true,
   classGuide = { levelUp = true },   -- UI/TalentAdvice.lua : encart « point de talent » au passage de niveau

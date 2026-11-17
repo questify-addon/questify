@@ -1073,7 +1073,7 @@ local function installApi()
   PanelTemplates_SetNumTabs, PanelTemplates_SetTab, PanelTemplates_TabResize, PanelTemplates_UpdateTabs =
     noop, noop, noop, noop
   SetPortraitToTexture, CloseDropDownMenus, GameTooltip_Hide = noop, noop, noop
-  IsInGroup = function() return false end
+  IsInGroup = function() return P().group == true end   -- Mock.player.group = true : en groupe
   GetNumGroupMembers = function() return 0 end
   Settings = {
     RegisterCanvasLayoutCategory = function(frame, name)
@@ -1144,6 +1144,9 @@ local function installApi()
   UnitIsDead = function(unit) local u = Mock.units[unit]; return u and u.dead or false end
   UnitOnTaxi = function(unit) return unit == "player" and P().onTaxi == true end
   UnitCanAttack = function(_, unit) local u = Mock.units[unit]; return u and u.hostile ~= false end
+  -- Mock.units[unit].tapDenied : tagué par un autre joueur ; .raidMark : icône de raid posée (1 à 8)
+  UnitIsTapDenied = function(unit) local u = Mock.units[unit]; return u and u.tapDenied or false end
+  GetRaidTargetIndex = function(unit) local u = Mock.units[unit]; return u and u.raidMark end
   UnitIsPlayer = function(unit) return unit == "player" end
   UnitAffectingCombat = function(unit) return unit == "player" and P().combat end
   InCombatLockdown = function() return P().combat == true end

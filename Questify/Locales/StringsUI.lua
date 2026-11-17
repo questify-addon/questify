@@ -71,6 +71,7 @@ Q:RegisterStrings({
     UI_MOB_HINT = "Click: target the nearest one and mark it with a skull",
     UI_MOB_PENDING = "Targeting will update after combat.",
     UI_AUTOTARGET_BINDING = "Target and mark the nearest objective monster",
+    UI_RAIDMARKS_BINDING = "Put raid icons on the visible objective monsters",
     UI_AUTOTARGET_NOKEY = "Auto targeting is on: bind a key in Esc > Key Bindings > Questify.",
 
     -- Fenêtre des quêtes de classe
@@ -400,6 +401,7 @@ Q:RegisterStrings({
     UI_MOB_HINT = "Clic : cibler le plus proche et le marquer d'un crâne",
     UI_MOB_PENDING = "Le ciblage se mettra à jour après le combat.",
     UI_AUTOTARGET_BINDING = "Cibler et marquer le monstre d'objectif le plus proche",
+    UI_RAIDMARKS_BINDING = "Poser les icônes de raid sur les monstres d'objectif visibles",
     UI_AUTOTARGET_NOKEY = "Ciblage auto activé : choisis une touche dans Échap > Raccourcis > Questify.",
 
     -- Fenêtre des quêtes de classe

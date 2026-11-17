@@ -122,6 +122,7 @@ UI\QuestValue.lua
 UI\BlizzardTracker.lua
 UI\MobPanel.lua
 UI\Nameplates.lua
+UI\RaidMarks.lua
 UI\ObjectGlow.lua
 UI\UpgradeCompare.lua
 UI\UpgradePopup.lua

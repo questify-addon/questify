@@ -293,6 +293,18 @@ add({ id = "tracker.autoTarget", section = "automation", category = "targeting",
 add({ id = "keyAutoTarget", section = "automation", category = "targeting", type = "keybind",
   binding = "CLICK QuestifyAutoTarget:LeftButton", label = "OPT_KEY_AUTOTARGET", tip = "OPT_TIP_KEY_AUTOTARGET",
   keywords = "raccourci touche clavier ciblage keybind binding key shortcut target" })
+local function raidMarksOn() return Q.Settings:Get("raidMarks.enabled") == true end
+add({ id = "raidMarks.enabled", section = "automation", category = "targeting", type = "toggle",
+  path = "raidMarks.enabled", label = "OPT_RAIDMARKS", tip = "OPT_TIP_RAIDMARKS",
+  keywords = "marquer marque marques icone icones raid crane croix losange barre de nom monstre objectif touche "
+    .. "mark marks raid icon icons skull cross diamond nameplate monster objective key" })
+add({ id = "keyRaidMarks", section = "automation", category = "targeting", type = "keybind",
+  binding = "CLICK QuestifyMarkObjectives:LeftButton", label = "OPT_KEY_RAIDMARKS", tip = "OPT_TIP_KEY_RAIDMARKS",
+  keywords = "raccourci touche clavier marquer marques raid keybind binding key shortcut mark marks",
+  enabled = raidMarksOn })
+add({ id = "raidMarks.inGroup", section = "automation", category = "targeting", type = "toggle",
+  path = "raidMarks.inGroup", label = "OPT_RAIDMARKS_GROUP", tip = "OPT_TIP_RAIDMARKS_GROUP",
+  keywords = "groupe instance raid marques group marks", enabled = raidMarksOn })
 
 -- Butin -------------------------------------------------------------------
 add({ id = "autoReward", section = "loot", category = "auto", type = "toggle", path = "autoReward",

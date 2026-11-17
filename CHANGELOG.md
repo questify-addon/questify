@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased
+
+### English
+
+**Raid icons on objective monsters (key)**
+- New option in Options > Automation > Targeting, off by default: bind a key, then each press puts a free raid
+  icon (skull, cross, diamond…) on the quest objective monsters whose nameplate is shown, 8 at most.
+- The game no longer lets addons place raid icons by themselves: nothing happens until you press the key.
+- Monsters without a visible nameplate, monsters tagged by another player and monsters that already have an icon
+  are left alone. Nothing happens in combat.
+- In a group or an instance the key does nothing, unless you turn on « Also in a group or an instance ».
+
+### Français
+
+**Icônes de raid sur les monstres d'objectif (touche)**
+- Nouvelle option dans Options > Automatisation > Ciblage, coupée par défaut : choisis une touche, puis chaque
+  appui pose une icône de raid libre (crâne, croix, losange…) sur les monstres d'objectif de quête dont la barre de
+  nom est affichée, 8 au plus.
+- Le jeu ne laisse plus les addons poser seuls les icônes de raid : rien ne se passe tant que tu n'appuies pas sur
+  la touche.
+- Les monstres sans barre de nom visible, ceux tagués par un autre joueur et ceux qui ont déjà une icône ne sont
+  pas touchés. Rien en combat.
+- En groupe ou en instance, la touche ne fait rien, sauf si tu coches « Aussi en groupe ou en instance ».
+
 ## 0.8.1 (2026-11-16)
 
 ### English
