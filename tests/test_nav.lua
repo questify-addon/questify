@@ -449,6 +449,32 @@ return {
     noNavErrors(t)
   end,
 
+  -- ShortestPath 1.22.49 et suivants envoient leurs virages en 0-100, toujours sans `suppressAudio` : ils
+  -- passent en silence et ne sont pas reposés de même (la condition 0-1 les laissait sonner).
+  shortestpath_percent_turns_are_silent_and_not_repeated = function(t)
+    Mock.addons.ShortestPathForever = true
+    Mock.addons.WaypointUI = true
+    load({ ["nav.routing"] = true })
+    local nav = WaypointUIAPI.Navigation
+    local current
+    nav.IsUserNavigationTracked = function() return current ~= nil end
+    nav.GetUserNavigation = function() return current end
+    local function turn(x, y)
+      return nav.NewUserNavigation({ name = "Trajet vers Rejold", mapID = 1426, x = x, y = y })
+    end
+    local before = Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation")
+    current = turn(30.19, 45.73)
+    local call = Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation").args[1]
+    t.eq(call.suppressAudio, true, "silent")
+    t.eq(call.x, 30.19, "0-100 left as is"); t.eq(call.y, 45.73)
+    local same = turn(30.19, 45.73)
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), before + 1, "same turn not re-placed")
+    t.eq(same, current, "current navigation returned")
+    turn(30.50, 46.00)
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), before + 2, "next turn placed")
+    noNavErrors(t)
+  end,
+
   -- WaypointUI suit déjà une navigation (un virage, ou le repère du jeu qu'il adopte) : à chaque nouvelle
   -- cible, Questify ne repose pas la sienne avant le calcul (le repère sautait cible -> virage).
   shortestpath_does_not_reseed_a_tracking_waypointui = function(t)
@@ -461,6 +487,67 @@ return {
     accept179()                                   -- nouvelle cible
     t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), navs + 1, "routed to the new target")
     t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), 1, "not re-seeded")
+    noNavErrors(t)
+  end,
+
+  -- Trajet ShortestPath lancé par le joueur, calcul d'itinéraire de Questify coupé : Questify ne pose
+  -- plus rien par-dessus ses virages, puis reprend la main à sa fin.
+  player_journey_keeps_the_waypoint = function(t)
+    Mock.addons.ShortestPathForever = true
+    Mock.addons.WaypointUI = true
+    local Q = load({ ["nav.display"] = "waypointui", ["nav.router"] = "none" })
+    t.eq(#Mock.spfSubscribers, 1, "subscribed to ShortestPath")
+    local posed = Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation")
+    t.eq(posed, 1, "our target, before the journey")
+    Mock.spfJourney = { owner = nil }            -- le joueur lance son trajet
+    Mock.spfSubscribers[1]({ active = true, started = true })
+    accept179()                                   -- nouvelle étape pendant le trajet
+    Q.Nav:SetTarget(1426, 40, 60, "Elsewhere")
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.NewUserNavigation"), posed, "nothing posed over the journey")
+    t.eq(Mock.countCalls("C_Map.SetUserWaypoint"), 0, "game waypoint left to the journey")
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), 0)
+    t.ok(Q.Nav:Status().yielded, "status says so")
+    Q.Nav:Clear()
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.ClearUserNavigation"), 0, "journey's turn not cleared")
+    Q.Nav:SetTarget(1426, 40, 60, "Elsewhere")
+    Mock.spfJourney = nil                         -- trajet fini
+    Mock.spfSubscribers[1]({ active = true, ended = true })
+    local last = Mock.lastCall("WaypointUIAPI.Navigation.NewUserNavigation").args[1]
+    t.eq(last.name, "Elsewhere", "our target back once it ends")
+    t.ok(not Q.Nav:Status().yielded)
+    noNavErrors(t)
+  end,
+
+  -- Calcul d'itinéraire de Questify actif : le trajet du joueur n'est pas remplacé au changement d'étape.
+  player_journey_not_replaced_by_routing = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = loadNative({ ["nav.router"] = "spf" })
+    local navs = Mock.countCalls("ShortestPathForever.API.Navigate")
+    Mock.spfJourney = { owner = nil }
+    accept179()
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), navs, "player's journey kept")
+    Mock.spfJourney = { owner = "Questify" }      -- notre propre trajet ne compte pas
+    Q.Nav:SetTarget(1426, 40, 60, "Elsewhere")
+    t.eq(Mock.countCalls("ShortestPathForever.API.Navigate"), navs + 1)
+    noNavErrors(t)
+  end,
+
+  -- Une navigation WaypointUI ou un repère du jeu qui ne sont plus les nôtres ne sont pas effacés.
+  clear_leaves_other_waypoints = function(t)
+    Mock.addons.WaypointUI = true
+    local Q = load({ ["nav.display"] = "waypointui", ["nav.router"] = "none" })
+    local current = { name = "Trajet vers Rejold" }
+    WaypointUIAPI.Navigation.GetUserNavigation = function() return current end
+    Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(1426, 0.40, 0.60)
+    Q.Nav:Clear()
+    t.eq(Mock.countCalls("WaypointUIAPI.Navigation.ClearUserNavigation"), 0, "someone else's navigation")
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 0, "someone else's game waypoint")
+
+    Mock.reset()
+    local Q2 = loadNative({ ["nav.router"] = "none" })
+    Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(1426, 0.40, 0.60)
+    Q2.Nav:Clear()
+    t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), 0, "moved by someone else: kept")
     noNavErrors(t)
   end,
 

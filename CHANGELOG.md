@@ -64,6 +64,17 @@
 - The walking router and its maps are now part of Questify: Questify Nav, Eastern Kingdoms and Kalimdor no
   longer show as separate addons. Delete those three folders from your AddOns folder if they are still there.
 
+**Living with the other addons**
+- Blizzard's objective tracker is no longer folded while the Forever addons' column (ShortestPath Forever's journey)
+  is attached to it: folding it hid that column too.
+- ShortestPath Forever's turns handed to WaypointUI are silent again and the same turn is not placed twice (since
+  ShortestPath 1.22.49 they no longer went through Questify's fix).
+- A journey you start in ShortestPath Forever keeps the waypoint: Questify no longer places its destination over the
+  journey's turns, no longer replaces it at the next step, and takes the waypoint back when the journey ends. /qf
+  check says so meanwhile.
+- Questify only clears its own WaypointUI navigation and game waypoint, never another addon's.
+- The gold ring around quest objects only shows when the game's waypoint is on the object.
+
 ### Français
 
 **Fenêtre des nouveautés**
@@ -129,6 +140,17 @@
   ne calcule alors rien et cache sa flèche. La flèche Questify est marquée « (intégrée) ».
 - Le routeur de marche et ses cartes font partie de Questify : Questify Nav, Eastern Kingdoms et Kalimdor
   n'apparaissent plus comme addons séparés. Supprime ces trois dossiers de ton dossier AddOns s'ils y sont encore.
+
+**Cohabitation avec les autres addons**
+- Le suivi d'objectifs de Blizzard n'est plus replié tant que la colonne des addons Forever (le trajet de
+  ShortestPath Forever) lui est attachée : le replier cachait aussi cette colonne.
+- Les virages de ShortestPath Forever confiés à WaypointUI sont de nouveau silencieux, et un même virage n'est pas
+  reposé (depuis ShortestPath 1.22.49, ils échappaient au correctif de Questify).
+- Un trajet lancé dans ShortestPath Forever garde le repère : Questify ne pose plus sa destination par-dessus ses
+  virages, ne le remplace plus à l'étape suivante, et reprend le repère à la fin du trajet. /qf check le signale
+  entre-temps.
+- Questify n'efface plus que sa propre navigation WaypointUI et son propre repère du jeu, jamais ceux d'un autre addon.
+- L'anneau doré autour des objets de quête ne s'affiche que si le repère du jeu est sur l'objet.
 
 ## 0.8.1 (2026-11-16)
 

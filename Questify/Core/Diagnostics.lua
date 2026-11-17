@@ -199,6 +199,7 @@ check("navigation", "DIAG_NAVIGATION", function()
   end
   local st = Q.Nav:Status()
   local using = routing and (providerLabel(routing) .. " > " .. providerLabel(display)) or providerLabel(display)
+  if st.yielded then return "info", string.format(L.DIAG_NAV_YIELDED, providerLabel("shortestpath")) end
   if st.target and not st.provider then
     return "warn", string.format(L.DIAG_NAV_NOT_PLACED, using)
   end

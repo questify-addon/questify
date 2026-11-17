@@ -19,6 +19,9 @@ local addonName, Q = ...
 -- BLIZZARD_TRACKER_HIDDEN).
 -- Polestar, Questie ou un autre addon peuvent masquer le même cadre : chacun garde son propre crochet,
 -- et décocher l'option ici ne force pas l'affichage contre eux (Update, pas Show, quand il existe).
+-- Sauf sous la colonne de ForeverCore (ShortestPath Forever et les autres addons Forever) : attachée
+-- au suivi de Blizzard (son réglage par défaut), elle se cache dès qu'il est replié
+-- (ForeverCore/UI/TrackerHost.lua 1.7.4, NativeCollapsed), et le trajet de ShortestPath avec elle.
 Q.UI = Q.UI or {}
 local Fold = { hidden = false }
 Q.UI.BlizzardTracker = Fold
@@ -52,6 +55,15 @@ function Fold:IsHidden()
   return self.hidden == true
 end
 
+-- La colonne de ForeverCore est-elle attachée au suivi de Blizzard ?
+local function foreverColumnAttached()
+  local core = ForeverCore
+  local host = type(core) == "table" and core.TrackerHost
+  if type(host) ~= "table" or type(host.IsAttachedToQuestTracker) ~= "function" then return false end
+  local ok, attached = pcall(host.IsAttachedToQuestTracker)
+  return ok and attached == true
+end
+
 -- Apply() -> vrai si le suivi de Blizzard vient d'être replié.
 function Fold:Apply()
   self.pending = nil
@@ -60,6 +72,7 @@ function Fold:Apply()
   local otf = frame()
   if not (otf and otf.SetCollapsed) then return false end
   if otf.IsCollapsed and otf:IsCollapsed() then return false end
+  if foreverColumnAttached() then return false end
   if inCombat() then
     self.pending = true
     return false

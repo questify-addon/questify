@@ -27,6 +27,7 @@ local tomtomUid     -- retour de TomTom:AddWaypoint, à retirer avant le point s
 local retryPending  -- ShortestPath a refusé (combat) : on retente à la fin du combat
 local refusedKey    -- clé de la cible refusée : on ne la renvoie pas avant la fin du combat
 local manual        -- cible choisie par le joueur (clic sur un repère de la carte) : prioritaire
+local yielded       -- un trajet ShortestPath d'un autre est guidé : rien n'est posé (voir foreignJourney)
 local ticker
 local caveTicker    -- suit l'avancée du joueur vers l'entrée d'une grotte (voir syncCaveTicker)
 local CAVE_CHECK_EVERY = 1          -- secondes
@@ -147,33 +148,87 @@ end
 -- -> true si WaypointUI a posé le repère (nil : carte refusée).
 local wuiPosed   -- une navigation WaypointUI a été posée par nous : à effacer au clear, quel que soit
                  -- le réglage d'affichage d'ici là (voir PROVIDERS.shortestpath.clear)
+local wuiOwn     -- nom de notre dernière navigation WaypointUI (false : posée sans nom), nil : aucune
 
 local function setViaWaypointUI(t)
   if not hasWaypointUI() then return false end
+  local name = t.title ~= "" and t.title or nil
   local ok, res = pcall(WaypointUIAPI.Navigation.NewUserNavigation, {
-    name = t.title ~= "" and t.title or nil, mapID = t.mapId, x = t.x, y = t.y, suppressAudio = true,
+    name = name, mapID = t.mapId, x = t.x, y = t.y, suppressAudio = true,
   })
   if not ok then Q:Debug("WaypointUI NewUserNavigation", res) end
-  if ok and res ~= nil then wuiPosed = true end
+  if ok and res ~= nil then wuiPosed, wuiOwn = true, name or false end
   return ok and res ~= nil
+end
+
+-- La navigation que WaypointUI suit est-elle la nôtre ? Un trajet ShortestPath lancé par le joueur lui
+-- confie ses virages : retirer notre cible ne doit pas les effacer. Reconnue à son nom, que WaypointUI
+-- garde. Sans GetUserNavigation (WaypointUI ancien), ou posée sans nom, on ne peut pas savoir : oui,
+-- comme avant.
+local function waypointUIIsOurs()
+  if wuiOwn == nil then return false end
+  if wuiOwn == false then return true end
+  local nav = WaypointUIAPI.Navigation
+  if type(nav.GetUserNavigation) ~= "function" then return true end
+  local ok, cur = pcall(nav.GetUserNavigation)
+  if not ok then return true end
+  return type(cur) == "table" and cur.name == wuiOwn
 end
 
 local function clearWaypointUI()
   wuiPosed = false
-  if hasWaypointUI() and type(WaypointUIAPI.Navigation.ClearUserNavigation) == "function" then
+  if hasWaypointUI() and type(WaypointUIAPI.Navigation.ClearUserNavigation) == "function" and waypointUIIsOurs() then
     pcall(WaypointUIAPI.Navigation.ClearUserNavigation)
   end
+  wuiOwn = nil
+end
+
+-- Le repère du jeu est-il à moins de OWN_YARDS de ce point (0-100) ? Sans C_Map.GetUserWaypoint, on ne
+-- peut pas le lire : oui, comme avant.
+local OWN_YARDS = 5
+local function nativeWaypointAt(mapId, x, y)
+  if not (C_Map and C_Map.GetUserWaypoint) then return true end
+  local ok, wp = pcall(C_Map.GetUserWaypoint)
+  local pos = ok and type(wp) == "table" and wp.position
+  if not pos then return not ok end
+  local px, py = pos.x, pos.y
+  if pos.GetXY then px, py = pos:GetXY() end
+  if type(wp.uiMapID) ~= "number" or type(px) ~= "number" or type(py) ~= "number" then return false end
+  local d = Q.Maps:Distance(wp.uiMapID, px * 100, py * 100, mapId, x, y)
+  return d ~= nil and d <= OWN_YARDS
+end
+
+local nativePosed   -- { mapId, x, y } (0-100) : le repère du jeu que nous avons posé nous-mêmes
+
+-- Trajet ShortestPath guidé qui n'est pas le nôtre : lancé par le joueur, sa course vers son corps, ou
+-- celui d'un autre addon. Il prend le repère du jeu et la navigation de WaypointUI pour ses virages ;
+-- poser notre cible par-dessus les faisait alterner (un « complete » toutes les 3 s), et la poser sur le
+-- repère du jeu arrêtait son guidage (ShortestPath croit que le joueur l'a remplacé). On lui cède donc la
+-- place jusqu'à sa fin (ShortestPath l'annonce : watchShortestPath). ShortestPath demande lui-même de
+-- regarder Active() avant de remplacer un trajet (Core/API.lua, 1.33.1).
+local function foreignJourney()
+  if not hasShortestPath() then return false end
+  local api = ShortestPathForever.API
+  if type(api.Active) ~= "function" or type(api.Journey) ~= "function" then return false end
+  local okA, active = pcall(api.Active)
+  if not okA or active ~= true then return false end
+  local okJ, journey = pcall(api.Journey)
+  if not okJ or type(journey) ~= "table" then return false end
+  return journey.owner ~= OWNER
 end
 
 -- Compatibilité ShortestPath -> WaypointUI. Quand WaypointUI suit une navigation (la nôtre, ou le
--- repère du jeu qu'il adopte de lui-même et garde après un /reload), ShortestPath (1.22.32) lui confie
--- chaque virage en coordonnées 0-1, alors que WaypointUIAPI.Navigation.NewUserNavigation attend du
--- 0-100 : le virage tombe dans le coin nord-ouest de la carte (« Trajet vers … 2129 yds » pour un PNJ à
--- 65 yd, à Brewnall Village). On enveloppe donc NewUserNavigation : x et y tous deux dans [0, 1] sont
--- lus en 0-1 et convertis. Un point du parcours n'est jamais dans ce coin (moins de 1 % de la carte sur
--- chaque axe), et nos propres appels sont en 0-100. Ces virages arrivent aussi sans `suppressAudio` :
--- WaypointUI sonnait à chaque virage (« ding ding »). Ils passent donc en silence, et un virage
--- identique au précédent, que WaypointUI suit encore, n'est pas reposé (le repère ne « saute » pas).
+-- repère du jeu qu'il adopte de lui-même et garde après un /reload), ShortestPath lui confie chaque
+-- virage par WaypointUIAPI.Navigation.NewUserNavigation, sans `suppressAudio` : WaypointUI sonnait à
+-- chaque virage (« ding ding »). On enveloppe donc NewUserNavigation : tout appel y passe en silence, et
+-- un point identique au précédent, que WaypointUI suit encore, n'est pas reposé (le repère ne « saute »
+-- pas, son animation ne rejoue pas). WaypointUI n'appelle pas lui-même cette fonction : seuls les addons
+-- qui lui confient un point sont concernés.
+-- Jusqu'à sa 1.22.48, ShortestPath envoyait ses virages en 0-1, alors que la fonction attend du 0-100 :
+-- le virage tombait dans le coin nord-ouest de la carte (« Trajet vers … 2129 yds » pour un PNJ à 65 yd,
+-- à Brewnall Village). x et y tous deux dans [0, 1] sont donc encore lus en 0-1 et convertis. Un point
+-- du parcours n'est jamais dans ce coin (moins de 1 % de la carte sur chaque axe). Depuis la 1.22.49,
+-- ShortestPath envoie du 0-100 (JourneyGuide.lua, HandOverToWaypointUI), comme nos propres appels.
 -- Posé une fois, reposé si WaypointUI remplace sa fonction ; seulement quand les deux addons sont chargés.
 local wuiScaled     -- notre enveloppe de NewUserNavigation, si elle est en place
 local wuiLast       -- dernier point transmis à WaypointUI par l'enveloppe : { mapID, x, y (0-100), name }
@@ -207,10 +262,10 @@ local function scaleWaypointUIInput()
   wuiScaled = function(options, ...)
     if type(options) == "table" then
       local x, y = options.x, options.y
-      if type(x) == "number" and type(y) == "number" and x >= 0 and x <= 1 and y >= 0 and y <= 1 then
+      if type(x) == "number" and type(y) == "number" then
         local copy = {}
         for k, v in pairs(options) do copy[k] = v end
-        copy.x, copy.y = x * 100, y * 100
+        if x >= 0 and x <= 1 and y >= 0 and y <= 1 then copy.x, copy.y = x * 100, y * 100 end
         copy.suppressAudio = true
         options = copy
         if sameAsTracked(options) then
@@ -218,8 +273,6 @@ local function scaleWaypointUIInput()
           local ok, current = pcall(nav.GetUserNavigation)
           return ok and current or nil
         end
-      end
-      if type(options.x) == "number" and type(options.y) == "number" then
         wuiLast = { mapID = options.mapID, x = options.x, y = options.y, name = options.name }
       end
     end
@@ -275,7 +328,15 @@ PROVIDERS.shortestpath = {
   end,
   clear = function()
     if hasShortestPath() and ShortestPathForever.API.Cancel then ShortestPathForever.API.Cancel(OWNER) end
-    if wuiPosed or waypointUIWithRouting() then clearWaypointUI() end
+    -- notre trajet annulé, un trajet encore guidé est celui d'un autre : ses virages restent
+    if foreignJourney() then
+      wuiPosed, wuiOwn = false, nil
+      return
+    end
+    if wuiPosed or waypointUIWithRouting() then
+      if not wuiOwn then wuiOwn = false end   -- virages de notre trajet : sous le nom que ShortestPath leur donne
+      clearWaypointUI()
+    end
   end,
 }
 
@@ -283,12 +344,14 @@ PROVIDERS.waypointui = {
   set = function(t)
     WaypointUIAPI.Navigation.NewUserNavigation({ name = t.title, mapID = t.mapId, x = t.x, y = t.y,
       suppressAudio = true })
+    wuiOwn = t.title ~= "" and t.title or false
     return true
   end,
   clear = function()
-    if hasWaypointUI() and WaypointUIAPI.Navigation.ClearUserNavigation then
+    if hasWaypointUI() and WaypointUIAPI.Navigation.ClearUserNavigation and waypointUIIsOurs() then
       WaypointUIAPI.Navigation.ClearUserNavigation()
     end
+    wuiOwn = nil
   end,
 }
 
@@ -308,17 +371,27 @@ PROVIDERS.tomtom = {
 
 PROVIDERS.native = {
   set = function(t)
-    if setViaWaypointUI(t) then return true end
+    nativePosed = nil
+    if setViaWaypointUI(t) then
+      nativePosed = { mapId = t.mapId, x = t.x, y = t.y }   -- WaypointUI pose aussi le repère du jeu
+      return true
+    end
     -- WaypointUI a refusé : son ancien repère nommé ne doit pas rester affiché
     clearWaypointUI()
     -- Q.API.SetNativeWaypoint : sur une carte refusée, l'ancien point trompeur est retiré ;
     -- API du repère absente : rien à poser, le suivi reste seul guide.
-    Q.API.SetNativeWaypoint(t.mapId, t.x / 100, t.y / 100, t.title)
+    if Q.API.SetNativeWaypoint(t.mapId, t.x / 100, t.y / 100, t.title) then
+      nativePosed = { mapId = t.mapId, x = t.x, y = t.y }
+    end
     return true
   end,
+  -- seulement ce qui est encore à nous : un trajet ShortestPath du joueur a pu reprendre l'un et l'autre
+  -- (posé par WaypointUI, le repère du jeu part avec sa navigation)
   clear = function()
     clearWaypointUI()
-    Q.API.ClearNativeWaypoint()
+    local p = nativePosed
+    nativePosed = nil
+    if p and nativeWaypointAt(p.mapId, p.x, p.y) then Q.API.ClearNativeWaypoint() end
   end,
 }
 
@@ -478,6 +551,15 @@ post = function(retry)
   local plan = c and c.target == t and c.plan or nil
   local provider = currentProvider()
   if plan and plan.direct and provider == "shortestpath" then provider = displayProvider() end
+  -- un trajet ShortestPath d'un autre est guidé : rien n'est posé, et ce que nous avions posé, qu'il a
+  -- remplacé, est oublié sans être retiré (TomTom, que ShortestPath ne touche pas, reste servi)
+  if provider ~= "tomtom" and foreignJourney() then
+    yielded = true
+    applied, nativePosed, wuiPosed, wuiOwn = nil, nil, false, nil
+    retryPending, refusedKey = false, nil
+    return
+  end
+  yielded = nil
   local via
   if plan and #plan.stops > 0 then
     via = {}
@@ -578,7 +660,8 @@ end
 -- Status() -> copie de l'état pour /qf check et /qf bug :
 -- { target = { mapId, x, y, title } ou nil, provider = fournisseur posé ou nil,
 --   wanted = fournisseur qui serait utilisé, retryPending = bool,
---   manual = bool (cible choisie sur la carte), cave = bool (grotte en jeu, voir Nav/Caves.lua) }
+--   manual = bool (cible choisie sur la carte), cave = bool (grotte en jeu, voir Nav/Caves.lua),
+--   yielded = bool (un trajet ShortestPath d'un autre est guidé : rien n'est posé) }
 function Nav:Status()
   local t = target and { mapId = target.mapId, x = target.x, y = target.y, title = target.title } or nil
   return {
@@ -588,6 +671,7 @@ function Nav:Status()
     retryPending = retryPending == true,
     manual = manual == true,
     cave = caveWatch == true,
+    yielded = yielded == true,
   }
 end
 
@@ -600,10 +684,19 @@ function Nav:CavePlan()
   return nil
 end
 
+-- Le repère du jeu (celui que montrent C_Navigation et l'anneau doré, UI/ObjectGlow.lua) est-il sur
+-- notre cible ? Un virage de ShortestPath ou le repère d'un autre addon ne l'est pas.
+function Nav:WaypointOnTarget()
+  local t = target
+  if not t or yielded then return false end
+  return nativeWaypointAt(t.mapId, t.x, t.y)
+end
+
 function Nav:Clear()
   target = nil
   announce(nil)
   manual = nil
+  yielded = nil
   retryPending, refusedKey = false, nil
   caveWatch = nil
   syncCaveTicker()
@@ -733,9 +826,24 @@ end)
 
 -- Au cas où l'étape courante est déjà connue quand nous démarrons : la déduplication évite
 -- tout appel en double.
+-- Un trajet ShortestPath commence ou finit (le joueur, sa course vers son corps, un autre addon) : la
+-- cible est reposée, ou cède la place (voir foreignJourney). ShortestPath prévient l'image d'après.
+local spfWatched
+local function watchShortestPath()
+  if spfWatched or not hasShortestPath() then return end
+  local api = ShortestPathForever.API
+  if type(api.Subscribe) ~= "function" then return end
+  local ok, res = pcall(api.Subscribe, function(changes)
+    if type(changes) ~= "table" or not (changes.active or changes.started or changes.ended) then return end
+    if target then Q.SafeCall(apply) end
+  end)
+  if ok then spfWatched = true else Q:Debug("ShortestPath Subscribe", res) end
+end
+
 Q:On("LOGIN", function()
   -- aussi pour les trajets que le joueur lance lui-même avec ShortestPath
   Q.SafeCall(scaleWaypointUIInput)
+  Q.SafeCall(watchShortestPath)
   if Q.Progress:IsEnabled() then Nav:Refresh() end
   syncTicker()
 end)

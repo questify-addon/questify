@@ -100,6 +100,17 @@ return {
     t.ok(r.navigation.detail:find("Questify Nav", 1, true))
   end,
 
+  check_navigation_yielded_to_a_journey = function(t)
+    Mock.addons.ShortestPathForever = true
+    local Q = load()
+    Mock.spfJourney = { owner = nil }             -- trajet lancé par le joueur
+    Q.Nav:SetTarget(1426, 40, 60, "Elsewhere")
+    local r = run(Q)
+    t.eq(r.navigation.status, "info")
+    t.ok(r.navigation.detail:find("ShortestPath", 1, true))
+    t.eq(#Mock.errors, 0)
+  end,
+
   check_navigation_with_tomtom = function(t)
     Mock.addons.TomTom = true
     local Q = load()

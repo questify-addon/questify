@@ -218,6 +218,21 @@ return {
     t.eq(Mock.countCalls("C_Map.ClearUserWaypoint"), clears)
   end,
 
+  -- Le repère du jeu ailleurs (virage de ShortestPath, repère d'un autre addon) : le marqueur 3D le
+  -- suit, l'anneau ne doit pas entourer ce point-là
+  no_glow_when_the_game_waypoint_is_not_ours = function(t)
+    local Q = load()
+    t.ok(glowing(Q), "our waypoint")
+    Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(1426, 0.40, 0.60)
+    Mock.advance(0.2)
+    t.ok(not glowing(Q), "someone else's waypoint: no glow")
+    local tg = Q.UI.Tracker.target
+    Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(tg.mapId, tg.x / 100, tg.y / 100)
+    Mock.advance(0.2)
+    t.ok(glowing(Q), "back on the object")
+    t.eq(#Mock.errors, 0)
+  end,
+
   nothing_without_navigation_api = function(t)
     Ext.install()
     C_Navigation = nil

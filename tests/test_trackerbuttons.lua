@@ -263,6 +263,23 @@ return {
     t.eq(#Mock.errors, 0)
   end,
 
+  -- ForeverCore cache sa colonne (et le trajet de ShortestPath) avec le suivi replié
+  blizzard_tracker_left_open_under_forever_column = function(t)
+    local otf = blizzardTracker()
+    local attached = true
+    ForeverCore = { TrackerHost = { IsAttachedToQuestTracker = function() return attached end } }
+    load()
+    Mock.fire("PLAYER_ENTERING_WORLD", true, false)
+    Mock.advance(2)
+    t.ok(not otf.isCollapsed, "attached column: left open")
+    t.eq(otf.calls, 0)
+    attached = false
+    Mock.fire("PLAYER_ENTERING_WORLD", false, true)
+    Mock.advance(2)
+    t.ok(otf.isCollapsed, "detached column: folded")
+    t.eq(#Mock.errors, 0)
+  end,
+
   blizzard_tracker_already_folded_untouched = function(t)
     local otf = blizzardTracker()
     otf.isCollapsed = true

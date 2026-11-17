@@ -716,6 +716,8 @@ local function installNavAddons()
         NewUserNavigation = function(t)
           record("WaypointUIAPI.Navigation.NewUserNavigation", t)
           if Mock.maps[t.mapID] == nil then return nil end
+          -- comme WaypointUI (syncNativeWaypoint) : le repère du jeu suit, sans passer par notre C_Map
+          Mock.userWaypoint = UiMapPoint.CreateFromCoordinates(t.mapID, t.x / 100, t.y / 100)
           return { name = t.name, mapID = t.mapID, x = t.x / 100, y = t.y / 100 }
         end,
         ClearUserNavigation = function() record("WaypointUIAPI.Navigation.ClearUserNavigation") end,
@@ -734,6 +736,16 @@ local function installNavAddons()
           return Mock.navigateResult
         end,
         Cancel = function(owner) record("ShortestPathForever.API.Cancel", owner) end,
+        -- trajet guidé (Mock.spfJourney : { owner = nil pour celui du joueur }), et ses abonnés
+        Active = function() return Mock.spfJourney ~= nil end,
+        Journey = function()
+          local j = Mock.spfJourney
+          return j and { owner = j.owner, guided = true } or nil
+        end,
+        Subscribe = function(callback)
+          Mock.spfSubscribers[#Mock.spfSubscribers + 1] = callback
+          return function() end
+        end,
       },
     }
   end
@@ -1430,6 +1442,8 @@ function Mock.reset()
   Mock.calls = {}
   Mock.addons = { QuestieDB = true, TomTom = false, WaypointUI = false, ShortestPathForever = false,
     Questify_Nav = true, Questify_Nav_EK = "demand", Questify_Nav_Kalimdor = "demand" }
+  Mock.spfJourney = nil                          -- trajet ShortestPath guidé (voir installNavAddons)
+  Mock.spfSubscribers = {}
   Mock.loadedAddOns = {}                         -- addons chargés par C_AddOns.LoadAddOn
   Mock.onLoadAddOn = { Questify_Nav = defaultNavLoad }
   Mock.navEngine = nil                           -- routeur factice (Mock.newNavEngine), créé au chargement

@@ -178,6 +178,9 @@ local function wanted()
     return nil
   end
   if not tg then return nil end
+  -- « Repère du jeu » : le marqueur suit le repère du jeu ; seulement s'il est sur l'objet (un virage de
+  -- ShortestPath ou le repère d'un autre addon l'emmène ailleurs, et l'anneau entourait ce point-là)
+  if display == "native" and Q.Nav and Q.Nav.WaypointOnTarget and not Q.Nav:WaypointOnTarget() then return nil end
   local nav = C_Navigation.GetFrame()
   if not nav then return nil end
   if C_Navigation.WasClampedToScreen and C_Navigation.WasClampedToScreen() then return nil end
