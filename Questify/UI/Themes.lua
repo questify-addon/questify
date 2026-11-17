@@ -805,7 +805,9 @@ function Themes:Decorate(frame, opts)
     h:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -1, -1)
     h:SetHeight(opts.header)
     if h.SetClipsChildren then h:SetClipsChildren(true) end
-    if h.SetFrameLevel then h:SetFrameLevel(level) end
+    -- au-dessus du cadre : au même niveau, son fond (backdrop) peut se dessiner par-dessus le bandeau, et le
+    -- bandeau découpant ses enfants, titre et onglets du journal disparaissaient avec lui (retour en jeu)
+    if h.SetFrameLevel then h:SetFrameLevel(level + 2) end
     local sky = h:CreateTexture(nil, "BACKGROUND", nil, -6)
     sky:SetAllPoints(h)
     local line = h:CreateTexture(nil, "BORDER")

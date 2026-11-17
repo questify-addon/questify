@@ -418,6 +418,7 @@ return {
     t.ok(f.qvDecor and f.qvDecor.header and not f.qvDecor.emblem, "decorated: plain header, no crest")
     t.eq(J.titleText:GetParent(), f.qvDecor.header, "title in the banner")
     t.eq(J.tabs[1]:GetParent(), f.qvDecor.header, "tabs in the banner")
+    t.ok(f.qvDecor.header:GetFrameLevel() > f:GetFrameLevel(), "banner above the window's background")
     t.ok(J.tabs[1].underline:IsShown(), "open tab underlined")
     t.ok(not J.tabs[2].underline:IsShown() and not J.tabs[3].underline:IsShown())
     local function rgb(role, theme) local r, g, b = T:Color(role, theme); return { r, g, b, 1 } end
