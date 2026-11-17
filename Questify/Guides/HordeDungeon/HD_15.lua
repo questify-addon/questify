@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 34 étapes, niveau final 40.11, ~40569 xp/h, 120 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 35 étapes, niveau final 40.05, ~40206 xp/h, 121 min.
 Q:RegisterGuide({
   id = "HD_15",
   title = "Badlands",
@@ -11,12 +11,13 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 39, maxLevel = 40,
   next = "HD_16",
-  sim = { steps = 34, endLevel = 40.11, xpPerHour = 40569, minutes = 120 },
+  sim = { steps = 35, endLevel = 40.05, xpPerHour = 40206, minutes = 121 },
   steps = {
+    { "hearth", 1417 }, -- pierre de foyer
     { "fp", 1418, 3.99, 44.78 }, -- point de vol
+    { "accept", 2258 }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
     { "accept", 97663 }, -- Supplies and Studies (lvl 40, ~3150 xp, sim lvl 39)
     { "turnin", 97663, xp = 3150 }, -- Supplies and Studies (lvl 40, ~3150 xp, sim lvl 39)
-    { "accept", 2258 }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
     { "accept", 1419 }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 39)
     { "complete", 2258, obj = 3, at = { 1418, 21.13, 45.46 } }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
     { "accept", 710 }, -- Study of the Elements: Rock (lvl 37, ~2850 xp, sim lvl 39)
@@ -26,12 +27,12 @@ Q:RegisterGuide({
     { "accept", 2418, optional = true, dungeon = "Uldaman", phase = "prep", rung = "ULDAMAN" }, -- Power Stones (lvl 36, ~0 xp, sim lvl 39)
     { "accept", 709, optional = true, dungeon = "Uldaman", phase = "prep", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~0 xp, sim lvl 39)
     { "complete", 711, at = { 1418, 42.98, 80.83 } }, -- Study of the Elements: Rock (lvl 39, ~3000 xp, sim lvl 39)
-    { "complete", 1419, at = { 1418, 35.5, 62.56 } }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 39)
     { "complete", 2258, obj = 2, at = { 1418, 35.5, 62.56 } }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
+    { "complete", 1419, at = { 1418, 35.5, 62.56 } }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 39)
     { "complete", 2258, at = { 1418, 15.71, 60.94 } }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
-    { "turnin", 2258, xp = 3000 }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 40)
-    { "accept", 2202, optional = true, dungeon = "Uldaman", phase = "prep", rung = "ULDAMAN" }, -- Uldaman Reagent Run (lvl 42, ~0 xp, sim lvl 40)
-    { "turnin", 1419, xp = 3150 }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 40)
+    { "turnin", 2258, xp = 3000 }, -- Badlands Reagent Run (lvl 39, ~3000 xp, sim lvl 39)
+    { "accept", 2202, optional = true, dungeon = "Uldaman", phase = "prep", rung = "ULDAMAN" }, -- Uldaman Reagent Run (lvl 42, ~0 xp, sim lvl 39)
+    { "turnin", 1419, xp = 3150 }, -- Coyote Thieves (lvl 40, ~3150 xp, sim lvl 39)
     { "turnin", 711, xp = 3000 }, -- Study of the Elements: Rock (lvl 39, ~3000 xp, sim lvl 40)
     { "goto", 1418, 44.6, 12.1, optional = true, dungeon = "Uldaman", note = "Dungeon: Uldaman (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "ULDAMAN" }, -- déplacement
     { "complete", 709, optional = true, dungeon = "Uldaman", phase = "run", rung = "ULDAMAN" }, -- Solution to Doom (lvl 40, ~1575 xp, sim lvl 40)

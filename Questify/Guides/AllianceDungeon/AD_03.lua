@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 19 étapes, niveau final 19.66, ~4081 xp/h, 29 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 19 étapes, niveau final 19.67, ~4081 xp/h, 29 min.
 Q:RegisterGuide({
   id = "AD_03",
   title = "Westfall",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 18, maxLevel = 20,
   next = "AD_04",
-  sim = { steps = 19, endLevel = 19.66, xpPerHour = 4081, minutes = 29 },
+  sim = { steps = 19, endLevel = 19.67, xpPerHour = 4081, minutes = 29 },
   steps = {
     { "boat", 1439, 32.7, 41.8, note = "Take the boat to Stormwind Harbor" }, -- bateau
     { "fp", 1436, 56.55, 52.64 }, -- point de vol

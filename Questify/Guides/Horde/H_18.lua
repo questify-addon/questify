@@ -1,17 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 63 étapes, niveau final 49.00, ~47205 xp/h, 336 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 64 étapes, niveau final 49.00, ~46997 xp/h, 337 min.
 Q:RegisterGuide({
   id = "H_18",
   title = "Stranglethorn Vale",
   faction = "Horde",
   minLevel = 47, maxLevel = 49,
   next = "H_21",
-  sim = { steps = 63, endLevel = 49.00, xpPerHour = 47205, minutes = 336 },
+  sim = { steps = 64, endLevel = 49.00, xpPerHour = 46997, minutes = 337 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
+    { "fly", 1434, node = 18, note = "Booty Bay, Stranglethorn" }, -- vol
     { "accept", 608 }, -- The Bloodsail Buccaneers (lvl 45, ~4850 xp, sim lvl 47)
     { "accept", 613 }, -- Cracking Maury's Foot (lvl 44, ~4650 xp, sim lvl 47)
     { "accept", 348 }, -- Stranglethorn Fever (lvl 45, ~5850 xp, sim lvl 47)
@@ -21,7 +23,6 @@ Q:RegisterGuide({
     { "goto", 1434, 26.87, 77.1, note = "Flight master" }, -- déplacement
     { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
     { "accept", 572 }, -- Mok'thardin's Enchantment (lvl 41, ~1960 xp, sim lvl 47)
-    { "sethearth", 1434, 31.49, 29.75 }, -- lier la pierre de foyer
     { "accept", 97386 }, -- The Offense of Grom'gol (lvl 44, ~4650 xp, sim lvl 47)
     { "accept", 598 }, -- Split Bone Necklace (lvl 42, ~3450 xp, sim lvl 47)
     { "accept", 586 }, -- Speaking with Gan'zulah (lvl 46, ~4050 xp, sim lvl 47)
@@ -73,6 +74,6 @@ Q:RegisterGuide({
     { "hearth", 1434 }, -- pierre de foyer
     { "turnin", 592, xp = 5050 }, -- Saving Yenniku (lvl 46, ~5050 xp, sim lvl 47)
     { "turnin", 208, xp = 5350 }, -- Big Game Hunter (lvl 43, ~5350 xp, sim lvl 47)
-    { "level", 49, at = { 1434, 29.32, 88.29 }, note = "About 560 more mobs near the last objective" }, -- farm de niveau
+    { "level", 49, at = { 1434, 29.32, 88.29 }, note = "About 561 more mobs near the last objective" }, -- farm de niveau
   },
 })

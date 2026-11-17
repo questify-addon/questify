@@ -1,14 +1,14 @@
 # A_NightElf_01 — Shadowglen
 
-Generated on 2026-11-16 from QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
+Generated on 2026-11-17 from QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb` by `tools/routebuilder/build.lua`. Simulated race: NightElf.
 
 | Item | Value |
 |---|---|
 | Level band | 1-6 |
 | Simulated level | 1.00 -> 6.59 |
-| Time | 55 min |
-| XP gained | 9720 |
-| XP/h | 10518 |
+| Time | 56 min |
+| XP gained | 9709 |
+| XP/h | 10437 |
 | Steps | 56 |
 | Quests turned in | 17 |
 | Hubs | 2 |
@@ -21,20 +21,20 @@ XP marked `est.` is an estimate (no QuestXP value: new Forever quest).
 
 | # | Quest | Name | Lvl | XP | Sim lvl |
 |---|---|---|---|---|---|
-| 1 | 456 | The Balance of Nature | 2 | 170 | 2 |
-| 2 | 458 | The Woodland Protector | 1 | 40 | 2 |
+| 1 | 458 | The Woodland Protector | 1 | 40 | 2 |
+| 2 | 456 | The Balance of Nature | 2 | 170 | 2 |
 | 3 | 4495 | A Good Friend | 4 | 270 | 3 |
 | 4 | 3519 | A Friend in Need | 4 | 90 | 4 |
-| 5 | 916 | Webwood Venom | 4 | 355 | 4 |
-| 6 | 97236 | Fang of Githyiss | 5 | 450 | 5 |
-| 7 | 917 | Webwood Egg | 5 | 560 | 5 |
-| 8 | 459 | The Woodland Protector | 3 | 250 | 5 |
-| 9 | 97977 | Nature's Call | 3 | 250 | 5 |
-| 10 | 457 | The Balance of Nature | 3 | 250 | 6 |
-| 11 | 3521 | Iverron's Antidote | 4 | 355 | 6 |
-| 12 | 920 | Tenaron's Summons | 5 | 45 | 6 |
-| 13 | 3522 | Iverron's Antidote | 4 | 445 | 6 |
-| 14 | 921 | Crown of the Earth | 5 | 335 | 6 |
+| 5 | 97977 | Nature's Call | 3 | 250 | 4 |
+| 6 | 459 | The Woodland Protector | 3 | 250 | 4 |
+| 7 | 916 | Webwood Venom | 4 | 355 | 5 |
+| 8 | 97236 | Fang of Githyiss | 5 | 450 | 5 |
+| 9 | 3521 | Iverron's Antidote | 4 | 355 | 5 |
+| 10 | 917 | Webwood Egg | 5 | 560 | 6 |
+| 11 | 920 | Tenaron's Summons | 5 | 45 | 6 |
+| 12 | 3522 | Iverron's Antidote | 4 | 445 | 6 |
+| 13 | 921 | Crown of the Earth | 5 | 335 | 6 |
+| 14 | 457 | The Balance of Nature | 3 | 250 | 6 |
 | 15 | 96630 | The Adventurer | 6 | 405 | 6 |
 | 16 | 2159 | Dolanaar Delivery | 5 | 110 | 6 |
 | 17 | 928 | Crown of the Earth | 5 | 225 | 6 |
@@ -79,16 +79,16 @@ below 0.35 × the median ratio, or when an objective is more than 900 yd from ev
 | 458 | The Woodland Protector | 1 | 40 | 0 | 53 | 31 | 2.11 | 2.41 | 0 |  |
 | 459 | The Woodland Protector | 3 | 926 | 0 | 337 | 337 | 2.75 | 2.75 | 1 |  |
 | 916 | Webwood Venom | 4 | 1950 | 0 | 744 | 611 | 2.71 | 3.67 | 1 |  |
-| 917 | Webwood Egg | 5 | 560 | 0 | 214 | 83 | 2.97 | 5.85 | 1 |  |
+| 917 | Webwood Egg | 5 | 560 | 0 | 214 | 83 | 2.97 | 5.84 | 1 |  |
 | 920 | Tenaron's Summons | 5 | 45 | 0 | 46 | 46 | 3.43 | 5.21 | 0 |  |
-| 921 | Crown of the Earth | 5 | 335 | 0 | 106 | 106 | 4.02 | 6.98 | 1 |  |
-| 928 | Crown of the Earth | 5 | 490 | 265 | 132 | 36 | 3.69 | 13.42 | 0 |  |
+| 921 | Crown of the Earth | 5 | 335 | 0 | 106 | 106 | 4.01 | 6.96 | 1 |  |
+| 928 | Crown of the Earth | 5 | 491 | 266 | 133 | 37 | 3.68 | 13.13 | 0 |  |
 | 2159 | Dolanaar Delivery | 5 | 282 | 172 | 112 | 26 | 2.52 | 10.76 | 0 |  |
 | 3519 | A Friend in Need | 4 | 90 | 0 | 87 | 10 | 2.39 | 3.15 | 0 |  |
 | 3521 | Iverron's Antidote | 4 | 2681 | 0 | 1118 | 971 | 2.54 | 3.06 | 3 |  |
 | 3522 | Iverron's Antidote | 4 | 445 | 0 | 87 | 10 | 5.06 | 44.50 | 0 |  |
 | 4495 | A Good Friend | 4 | 270 | 0 | 87 | 10 | 2.47 | 3.63 | 0 |  |
-| 96630 | The Adventurer | 6 | 607 | 202 | 106 | 36 | 5.69 | 16.63 | 0 |  |
+| 96630 | The Adventurer | 6 | 607 | 202 | 106 | 36 | 5.69 | 16.64 | 0 |  |
 | 97236 | Fang of Githyiss | 5 | 510 | 0 | 148 | 46 | 3.42 | 10.90 | 0 |  |
 | 97977 | Nature's Call | 3 | 250 | 0 | 169 | 129 | 1.48 | 1.92 | 1 |  |
 | 97979 | The Goddess Provides | 1 | 40 | 0 | 88 | 88 | 0.45 | 0.45 | 1 | low ratio |
@@ -105,48 +105,48 @@ yards from the previous task (blank after a flight, boat or zone change). Return
 | 2 | O | 456 | The Balance of Nature | 1438 | 61.7, 43.8 | 154 |  |
 | 3 | A | 4495 | A Good Friend | 1438 | 60.9, 42.0 | 74 |  |
 | 4 | A | 458 | The Woodland Protector | 1438 | 59.9, 42.5 | 52 |  |
-| 5 | T | 456 | The Balance of Nature | 1438 | 58.7, 44.3 | 87 |  |
-| 6 | A | 457 | The Balance of Nature | 1438 | 58.7, 44.3 | 0 |  |
-| 7 | T | 458 | The Woodland Protector | 1438 | 57.8, 45.2 | 54 |  |
-| 8 | A | 97977 | Nature's Call | 1438 | 57.8, 45.2 | 0 |  |
-| 9 | A | 459 | The Woodland Protector | 1438 | 57.8, 45.2 | 0 |  |
-| 10 | O | 459 | The Woodland Protector | 1438 | 55.4, 45.1 | 121 |  |
+| 5 | T | 458 | The Woodland Protector | 1438 | 57.8, 45.2 | 141 |  |
+| 6 | A | 459 | The Woodland Protector | 1438 | 57.8, 45.2 | 0 |  |
+| 7 | A | 97977 | Nature's Call | 1438 | 57.8, 45.2 | 0 |  |
+| 8 | T | 456 | The Balance of Nature | 1438 | 58.7, 44.3 | 54 |  |
+| 9 | A | 457 | The Balance of Nature | 1438 | 58.7, 44.3 | 0 |  |
+| 10 | O | 459 | The Woodland Protector | 1438 | 55.4, 45.1 | 167 |  |
 | 11 | A | 916 | Webwood Venom | 1438 | 57.8, 41.6 | 168 |  |
 | 12 | O | 97977 | Nature's Call | 1438 | 54.9, 38.8 | 177 |  |
 | 13 | T | 4495 | A Good Friend | 1438 | 54.6, 33.0 | 199 |  |
 | 14 | A | 3519 | A Friend in Need | 1438 | 54.6, 33.0 | 0 |  |
 | 15 | O | 916 | Webwood Venom | 1438 | 56.6, 27.5 | 212 |  |
 | 16 | A | 97236 | Fang of Githyiss | 1438 | 56.6, 26.3 | 42 |  |
-| 17 | O | 457 | The Balance of Nature | 1438 | 62.2, 37.2 | 464 |  |
-| 18 | T | 3519 | A Friend in Need | 1438 | 60.9, 42.0 | 176 |  |
-| 19 | A | 3521 | Iverron's Antidote | 1438 | 60.9, 42.0 | 0 |  |
-| 20 | T | 916 | Webwood Venom | 1438 | 57.8, 41.6 | 157 |  |
-| 21 | A | 917 | Webwood Egg | 1438 | 57.8, 41.6 | 0 |  |
-| 22 | T | 97236 | Fang of Githyiss | 1438 | 57.8, 41.6 | 0 |  |
-| 23 | O | 3521 | Iverron's Antidote | 1438 | 57.6, 38.3 | 113 |  |
-| 24 | O | 917 | Webwood Egg | 1438 | 56.8, 26.5 | 403 |  |
-| 25 | O | 3521 | Iverron's Antidote | 1438 | 56.9, 31.1 | 156 |  |
-| 26 | T | 917 | Webwood Egg | 1438 | 57.8, 41.6 | 360 |  |
-| 27 | A | 920 | Tenaron's Summons | 1438 | 57.8, 41.6 | 0 |  |
-| 28 | O | 3521 | Iverron's Antidote | 1438 | 55.5, 44.6 | 153 | near #10 (went 623 yd away) |
-| 29 | T | 459 | The Woodland Protector | 1438 | 57.8, 45.2 | 119 |  |
-| 30 | T | 97977 | Nature's Call | 1438 | 57.8, 45.2 | 0 |  |
-| 31 | T | 457 | The Balance of Nature | 1438 | 58.7, 44.3 | 54 |  |
-| 32 | T | 3521 | Iverron's Antidote | 1438 | 60.9, 42.0 | 137 |  |
-| 33 | A | 3522 | Iverron's Antidote | 1438 | 60.9, 42.0 | 0 |  |
-| 34 | T | 920 | Tenaron's Summons | 1438 | 59.1, 39.5 | 126 |  |
-| 35 | A | 921 | Crown of the Earth | 1438 | 59.1, 39.5 | 0 |  |
-| 36 | O | 921 | Crown of the Earth | 1438 | 60.0, 33.0 | 221 |  |
-| 37 | T | 3522 | Iverron's Antidote | 1438 | 54.6, 33.0 | 272 |  |
-| 38 | T | 921 | Crown of the Earth | 1438 | 59.1, 39.5 | 316 |  |
-| 39 | A | 928 | Crown of the Earth | 1438 | 59.1, 39.5 | 3 |  |
-| 40 | A | 96630 | The Adventurer | 1438 | 59.1, 39.5 | 0 |  |
-| 41 | A | 2159 | Dolanaar Delivery | 1438 | 61.2, 47.6 | 294 | near #2 (went 759 yd away) |
+| 17 | T | 3519 | A Friend in Need | 1438 | 60.9, 42.0 | 573 |  |
+| 18 | A | 3521 | Iverron's Antidote | 1438 | 60.9, 42.0 | 0 |  |
+| 19 | T | 97977 | Nature's Call | 1438 | 57.8, 45.2 | 191 | near #11 (went 644 yd away) |
+| 20 | T | 459 | The Woodland Protector | 1438 | 57.8, 45.2 | 0 | near #11 (went 644 yd away) |
+| 21 | O | 3521 | Iverron's Antidote | 1438 | 55.5, 44.6 | 119 |  |
+| 22 | T | 916 | Webwood Venom | 1438 | 57.8, 41.6 | 153 |  |
+| 23 | A | 917 | Webwood Egg | 1438 | 57.8, 41.6 | 0 |  |
+| 24 | T | 97236 | Fang of Githyiss | 1438 | 57.8, 41.6 | 0 |  |
+| 25 | O | 3521 | Iverron's Antidote | 1438 | 57.6, 38.3 | 113 |  |
+| 26 | O | 3521 | Iverron's Antidote | 1438 | 56.9, 31.1 | 247 |  |
+| 27 | O | 917 | Webwood Egg | 1438 | 56.8, 26.5 | 156 | near #16 (went 637 yd away) |
+| 28 | O | 457 | The Balance of Nature | 1438 | 62.2, 37.2 | 454 |  |
+| 29 | T | 3521 | Iverron's Antidote | 1438 | 60.9, 42.0 | 176 |  |
+| 30 | A | 3522 | Iverron's Antidote | 1438 | 60.9, 42.0 | 0 |  |
+| 31 | T | 917 | Webwood Egg | 1438 | 57.8, 41.6 | 157 |  |
+| 32 | A | 920 | Tenaron's Summons | 1438 | 57.8, 41.6 | 0 |  |
+| 33 | T | 920 | Tenaron's Summons | 1438 | 59.1, 39.5 | 98 |  |
+| 34 | A | 921 | Crown of the Earth | 1438 | 59.1, 39.5 | 0 |  |
+| 35 | O | 921 | Crown of the Earth | 1438 | 60.0, 33.0 | 221 |  |
+| 36 | T | 3522 | Iverron's Antidote | 1438 | 54.6, 33.0 | 272 |  |
+| 37 | T | 921 | Crown of the Earth | 1438 | 59.1, 39.5 | 316 |  |
+| 38 | A | 928 | Crown of the Earth | 1438 | 59.1, 39.5 | 0 |  |
+| 39 | A | 96630 | The Adventurer | 1438 | 59.1, 39.5 | 3 |  |
+| 40 | T | 457 | The Balance of Nature | 1438 | 58.7, 44.3 | 161 |  |
+| 41 | A | 2159 | Dolanaar Delivery | 1438 | 61.2, 47.6 | 169 | near #2 (went 759 yd away) |
 | 42 | T | 96630 | The Adventurer | 1438 | 57.6, 56.6 | 355 |  |
 | 43 | T | 2159 | Dolanaar Delivery | 1438 | 55.6, 59.8 | 146 |  |
 | 44 | T | 928 | Crown of the Earth | 1438 | 56.1, 61.7 | 70 |  |
 
-Walking between tasks: 5449 yd (~13 min at 7 yd/s).
+Walking between tasks: 5604 yd (~13 min at 7 yd/s).
 
 ## Qualité
 

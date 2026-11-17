@@ -2,19 +2,17 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 36 étapes, niveau final 60.00, ~69372 xp/h, 271 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 34 étapes, niveau final 60.00, ~69891 xp/h, 274 min.
 Q:RegisterGuide({
   id = "AD_34",
   title = "Silithus",
   faction = "Alliance",
   mode = "dungeon",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 36, endLevel = 60.00, xpPerHour = 69372, minutes = 271 },
+  sim = { steps = 34, endLevel = 60.00, xpPerHour = 69891, minutes = 274 },
   steps = {
-    { "hearth", 1445, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- pierre de foyer
-    { "goto", 1445, 67.48, 51.3, note = "Flight master", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- déplacement
-    { "fly", 1444, node = 31, note = "Thalanaar, Feralas", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- vol
+    { "hearth", 1444, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- pierre de foyer
     { "fp", 1451, 50.58, 34.45, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- point de vol
     { "accept", 9415, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Report to Marshal Bluewall (lvl 60, ~6600 xp, sim lvl 58)
     { "accept", 8284, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- The Twilight Mystery (lvl 58, ~6200 xp, sim lvl 58)
@@ -47,6 +45,6 @@ Q:RegisterGuide({
     { "turnin", 8281, xp = 6000, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Stepping Up Security (lvl 57, ~6000 xp, sim lvl 59)
     { "turnin", 8287, xp = 6600, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- A Terrible Purpose (lvl 60, ~6600 xp, sim lvl 59)
     { "turnin", 8304, xp = 6600, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Dearest Natalia (lvl 60, ~6600 xp, sim lvl 59)
-    { "level", 60, at = { 1451, 51.08, 28.78 }, note = "About 379 more mobs here (Silithid Darter, level 60)", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- farm de niveau
+    { "level", 60, at = { 1451, 51.08, 28.78 }, note = "About 394 more mobs here (Silithid Darter, level 60)", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- farm de niveau
   },
 })

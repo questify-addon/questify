@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeon_route.lua. Ne pas modifier à la main :
 -- corriger tools/routebuilder/dungeon_ladder.lua, puis relancer le script.
--- Source : Questify/Guides/DungeonData.lua (QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce), généré le 2026-11-17.
+-- Source : Questify/Guides/DungeonData.lua (QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb), généré le 2026-11-17.
 -- Échelles du mode « Donjons », par faction : un échelon par donjon 5 joueurs ou par aile, dans l'ordre joué.
 -- entry = niveau d'entrée conseillé ; quests = quêtes de l'échelon pour la faction ; xp = somme de leur XP de
 -- base (est = au moins une valeur estimée) ; pct = part du niveau d'entrée ; stars = 0 à 3 (0 : aucune quête).
@@ -11,7 +11,7 @@ Q.DungeonRouteData = {
   Alliance = {
     rungs = {
       { key = "THANES", dungeon = "THANES", name = "The Hall of Thanes", areaId = 16919, minLevel = 13, maxLevel = 18, entry = 15,
-        quests = { 96393, 96394, 96403, 98423 }, xp = 2205, est = true, pct = 0.153, stars = 2 },
+        quests = { 96393, 96394, 96395, 96403, 98423 }, xp = 2730, est = true, pct = 0.190, stars = 2 },
       { key = "DM", dungeon = "DM", name = "The Deadmines", areaId = 1581, minLevel = 17, maxLevel = 26, entry = 19,
         quests = { 166, 167, 168, 214, 373, 2040, 92750, 92751, 92752, 92753 }, xp = 6505, est = true, pct = 0.305, stars = 3 },
       { key = "WC", dungeon = "WC", name = "Wailing Caverns", areaId = 718, minLevel = 17, maxLevel = 24, entry = 19,
@@ -103,7 +103,7 @@ Q.DungeonRouteData = {
       { key = "ST", dungeon = "ST", name = "The Temple of Atal'Hakkar", areaId = 1477, minLevel = 50, maxLevel = 60, entry = 52,
         quests = { 1429, 1444, 1445, 1446, 3380, 3446, 3447, 3528, 4146, 4147 }, xp = 32650, pct = 0.204, stars = 2 },
       { key = "BRD", dungeon = "BRD", name = "Blackrock Depths", areaId = 1584, minLevel = 52, maxLevel = 60, entry = 54,
-        quests = { 3801, 3802, 3907, 3981, 4001, 4002, 4003, 4004, 4024, 4062, 4063, 4081, 4082, 4083, 4121, 4122, 4123, 4132, 4133, 4134, 4136, 4201, 4324, 7201, 7604, 7848, 97197 }, xp = 67010, est = true, pct = 0.385, stars = 3 },
+        quests = { 3801, 3802, 3907, 3981, 4001, 4002, 4003, 4004, 4024, 4062, 4063, 4081, 4082, 4083, 4121, 4122, 4123, 4132, 4133, 4134, 4136, 4201, 4324, 7201, 7604, 7848, 97197 }, xp = 65230, est = true, pct = 0.375, stars = 3 },
       { key = "DM_EAST", dungeon = "DIREMAUL", wing = "East", name = "Dire Maul", areaId = 2557, minLevel = 55, maxLevel = 60, entry = 57,
         quests = { 7441, 7489, 7492 }, xp = 8400, pct = 0.043, stars = 1 },
       { key = "SCHOLO", dungeon = "SCHOLO", name = "Scholomance", areaId = 2057, minLevel = 55, maxLevel = 60, entry = 57,

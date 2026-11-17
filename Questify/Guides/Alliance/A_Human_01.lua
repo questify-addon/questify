@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 72 étapes, niveau final 6.19, ~11249 xp/h, 44 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 71 étapes, niveau final 6.19, ~11271 xp/h, 44 min.
 Q:RegisterGuide({
   id = "A_Human_01",
   title = "Northshire",
@@ -10,7 +10,7 @@ Q:RegisterGuide({
   races = { "Human" },
   minLevel = 1, maxLevel = 6,
   next = "A_Human_02",
-  sim = { steps = 72, endLevel = 6.19, xpPerHour = 11249, minutes = 44 },
+  sim = { steps = 71, endLevel = 6.19, xpPerHour = 11271, minutes = 44 },
   steps = {
     { "accept", 783 }, -- A Threat Within (lvl 1, ~40 xp, sim lvl 1)
     { "turnin", 783, xp = 40 }, -- A Threat Within (lvl 1, ~40 xp, sim lvl 1)
@@ -81,7 +81,6 @@ Q:RegisterGuide({
     { "turnin", 96627, xp = 405 }, -- The Adventurer (lvl 6, ~405 xp, sim lvl 5)
     { "turnin", 2158, xp = 110 }, -- Rest and Relaxation (lvl 5, ~110 xp, sim lvl 5)
     { "turnin", 5623, xp = 90, classes = { "PRIEST" } }, -- In Favor of the Light (lvl 4, ~90 xp, sim lvl 5)
-    { "sethearth", 1429, 43.77, 65.8 }, -- lier la pierre de foyer
     { "turnin", 54, xp = 225 }, -- Report to Goldshire (lvl 5, ~225 xp, sim lvl 6)
     { "turnin", 91772, xp = 355 }, -- Shhh! We're Hunting Kobolds (lvl 4, ~355 xp, sim lvl 6)
   },

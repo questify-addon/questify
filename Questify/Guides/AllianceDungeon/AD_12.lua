@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 32 étapes, niveau final 31.41, ~16156 xp/h, 77 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 32 étapes, niveau final 31.43, ~16156 xp/h, 77 min.
 Q:RegisterGuide({
   id = "AD_12",
   title = "Thousand Needles",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 31, maxLevel = 33,
   next = "AD_13",
-  sim = { steps = 32, endLevel = 31.41, xpPerHour = 16156, minutes = 77 },
+  sim = { steps = 32, endLevel = 31.43, xpPerHour = 16156, minutes = 77 },
   steps = {
     { "hearth", 1431 }, -- pierre de foyer
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau

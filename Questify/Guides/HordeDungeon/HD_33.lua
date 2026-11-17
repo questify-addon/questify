@@ -2,15 +2,15 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 41 étapes, niveau final 60.00, ~60387 xp/h, 402 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 41 étapes, niveau final 60.00, ~60365 xp/h, 404 min.
 Q:RegisterGuide({
   id = "HD_33",
   title = "Silithus",
   faction = "Horde",
   mode = "dungeon",
   minLevel = 59, maxLevel = 60,
-  sim = { steps = 41, endLevel = 60.00, xpPerHour = 60387, minutes = 402 },
+  sim = { steps = 41, endLevel = 60.00, xpPerHour = 60365, minutes = 404 },
   steps = {
     { "boat", 1420, 60.7, 58.9, note = "Take the zeppelin to Orgrimmar (Durotar)", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- bateau
     { "goto", 1454, 45.12, 63.89, note = "Flight master", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- déplacement
@@ -52,6 +52,6 @@ Q:RegisterGuide({
     { "accept", 5055, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 58)
     { "complete", 5055, at = { 1452, 62.54, 57.9 }, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 58)
     { "turnin", 5055, xp = 6200, alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- Brumeran of the Chillwind (lvl 58, ~6200 xp, sim lvl 58)
-    { "level", 60, at = { 1452, 66.97, 37.93 }, note = "About 686 more mobs here (Winterfall Ursa, level 57)", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- farm de niveau
+    { "level", 60, at = { 1452, 66.97, 37.93 }, note = "About 692 more mobs here (Winterfall Ursa, level 57)", alt = { "STRAT_LIVE", "STRAT_UD" }, below = 60 }, -- farm de niveau
   },
 })

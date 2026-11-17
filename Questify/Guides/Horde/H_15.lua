@@ -1,17 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 72 étapes, niveau final 44.03, ~41766 xp/h, 158 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 74 étapes, niveau final 44.03, ~41312 xp/h, 160 min.
 Q:RegisterGuide({
   id = "H_15",
   title = "Dustwallow Marsh",
   faction = "Horde",
   minLevel = 43, maxLevel = 44,
   next = "H_16",
-  sim = { steps = 72, endLevel = 44.03, xpPerHour = 41766, minutes = 158 },
+  sim = { steps = 74, endLevel = 44.03, xpPerHour = 41312, minutes = 160 },
   steps = {
     { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
+    { "fly", 1434, node = 18, note = "Booty Bay, Stranglethorn" }, -- vol
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)" }, -- bateau
     { "fp", 1445, 35.56, 31.88 }, -- point de vol
     { "accept", 1201 }, -- Theramore Spies (lvl 35, ~1100 xp, sim lvl 43)

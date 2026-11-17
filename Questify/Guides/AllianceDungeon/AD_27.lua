@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 44 étapes, niveau final 54.00, ~54014 xp/h, 535 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 44 étapes, niveau final 54.00, ~54019 xp/h, 535 min.
 Q:RegisterGuide({
   id = "AD_27",
   title = "Un'Goro Crater",
@@ -11,10 +11,10 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 51, maxLevel = 54,
   next = "AD_28",
-  sim = { steps = 44, endLevel = 54.00, xpPerHour = 54014, minutes = 535 },
+  sim = { steps = 44, endLevel = 54.00, xpPerHour = 54019, minutes = 535 },
   steps = {
-    { "hearth", 1445, alt = "ST", below = 54 }, -- pierre de foyer
-    { "goto", 1445, 67.48, 51.3, note = "Flight master", alt = "ST", below = 54 }, -- déplacement
+    { "hearth", 1444, alt = "ST", below = 54 }, -- pierre de foyer
+    { "goto", 1444, 30.24, 43.25, note = "Flight master", alt = "ST", below = 54 }, -- déplacement
     { "fly", 1444, node = 31, note = "Thalanaar, Feralas", alt = "ST", below = 54 }, -- vol
     { "fp", 1449, 45.23, 5.83, alt = "ST", below = 54 }, -- point de vol
     { "accept", 4284, alt = "ST", below = 54 }, -- Crystals of Power (lvl 53, ~5250 xp, sim lvl 51)

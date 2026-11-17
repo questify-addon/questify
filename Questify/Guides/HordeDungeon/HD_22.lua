@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 38 étapes, niveau final 51.00, ~53978 xp/h, 321 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 37 étapes, niveau final 51.00, ~55293 xp/h, 313 min.
 Q:RegisterGuide({
   id = "HD_22",
   title = "The Hinterlands",
@@ -11,10 +11,9 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 49, maxLevel = 51,
   next = "HD_23",
-  sim = { steps = 38, endLevel = 51.00, xpPerHour = 53978, minutes = 321 },
+  sim = { steps = 37, endLevel = 51.00, xpPerHour = 55293, minutes = 313 },
   steps = {
-    { "goto", 1434, 32.54, 29.35, note = "Flight master" }, -- déplacement
-    { "fly", 1417, node = 17, note = "Hammerfall, Arathi" }, -- vol
+    { "hearth", 1417 }, -- pierre de foyer
     { "fp", 1425, 81.7, 81.76 }, -- point de vol
     { "accept", 7816 }, -- Gammerita, Mon! (lvl 48, ~4400 xp, sim lvl 49)
     { "accept", 7815 }, -- Snapjaws, Mon! (lvl 50, ~4700 xp, sim lvl 49)

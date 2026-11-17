@@ -1,7 +1,7 @@
 # Mode « Donjons » Alliance : échelle 1-60
 
 Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
-`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
+`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 
 ## Départs par race (1-15)
@@ -22,7 +22,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 
 | # | Entrée | Échelon | Plage | Quêtes | XP de quêtes | % niveau | Étoiles | Zones avant l'échelon | Alternative en extérieur |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 15 | The Hall of Thanes | 13-18 | 4 | ~2205 | 15 % | ★★ | Ironforge (15, accès) | Loch Modan (14-17) |
+| 1 | 15 | The Hall of Thanes | 13-18 | 5 | ~2730 | 19 % | ★★ | Ironforge (15, accès) | Loch Modan (14-17) |
 | 2 | 19 | The Deadmines | 17-26 | 10 | ~6505 | 31 % | ★★★ | Stormwind City (15-16, accès) ; Westfall (15-19) | Redridge Mountains (17-20) |
 | 3 | 19 | Wailing Caverns | 17-24 | 5 | 4500 | 21 % | ★★ | Darkshore (19-21) ; The Barrens (19-21, accès) | Redridge Mountains (19-22) |
 | 4 | 26 | The Stockade | 24-32 | 7 | 7985 | 22 % | ★★ | Redridge Mountains (21-24) ; Duskwood (24-26) ; Stormwind City (26, accès) | Duskwood (26-28) |
@@ -55,6 +55,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 
 - 96393 Old Ironforge Incursion : ~575 XP
 - 96394 The Restless Dead : ~525 XP
+- 96395 An Ancient Grudge : ~525 XP
 - 96403 Important Heirlooms : ~525 XP
 - 98423 The Treaty of Understanding : ~580 XP
 

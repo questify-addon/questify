@@ -1,7 +1,7 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-12.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
 -- Simulation : 42 étapes, niveau final 6.92, ~10234 xp/h, 64 min.
 Q:RegisterGuide({
   id = "H_Tauren_01",
@@ -51,8 +51,8 @@ Q:RegisterGuide({
     { "accept", 98430 }, -- The Longwalkers (lvl 8, ~0 xp, sim lvl 6)
     { "complete", 98430, at = { 1412, 37.19, 64.62 } }, -- The Longwalkers (lvl 8, ~0 xp, sim lvl 6)
     { "complete", 745, at = { 1412, 35.97, 65.02 } }, -- Sharing the Land (lvl 8, ~700 xp, sim lvl 6)
-    { "turnin", 745, xp = 700 }, -- Sharing the Land (lvl 8, ~700 xp, sim lvl 6)
     { "turnin", 763, xp = 335 }, -- Rites of the Earthmother (lvl 5, ~335 xp, sim lvl 6)
+    { "turnin", 745, xp = 700 }, -- Sharing the Land (lvl 8, ~700 xp, sim lvl 6)
     { "turnin", 749, xp = 530 }, -- The Ravaged Caravan (lvl 8, ~530 xp, sim lvl 6)
   },
 })

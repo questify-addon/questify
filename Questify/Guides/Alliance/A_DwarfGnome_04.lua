@@ -1,8 +1,8 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 60 étapes, niveau final 16.97, ~17530 xp/h, 135 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 61 étapes, niveau final 16.97, ~17486 xp/h, 136 min.
 Q:RegisterGuide({
   id = "A_DwarfGnome_04",
   title = "Westfall",
@@ -10,35 +10,34 @@ Q:RegisterGuide({
   races = { "Dwarf", "Gnome" },
   minLevel = 13, maxLevel = 16,
   next = "A_01",
-  sim = { steps = 60, endLevel = 16.97, xpPerHour = 17530, minutes = 135 },
+  sim = { steps = 61, endLevel = 16.97, xpPerHour = 17486, minutes = 136 },
   steps = {
     { "fp", 1453, 71.29, 72.23 }, -- point de vol
     { "accept", 64 }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 14)
-    { "accept", 151 }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 14)
     { "accept", 36 }, -- Westfall Stew (lvl 10, ~420 xp, sim lvl 14)
+    { "accept", 151 }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 14)
     { "fp", 1436, 56.55, 52.64 }, -- point de vol
     { "accept", 12 }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
     { "accept", 102 }, -- Patrolling Westfall (lvl 14, ~980 xp, sim lvl 14)
     { "accept", 92742 }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
-    { "complete", 92742, obj = 2, at = { 1436, 46.08, 38.14 } }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
-    { "accept", 92909 }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 14)
-    { "complete", 92909, at = { 1436, 53.08, 23.98 } }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 14)
-    { "complete", 92742, at = { 1436, 56.62, 18.69 } }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
-    { "complete", 151, at = { 1436, 57.27, 18.31 } }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 14)
-    { "accept", 22 }, -- Goretusk Liver Pie (lvl 12, ~910 xp, sim lvl 14)
-    { "turnin", 36, xp = 420 }, -- Westfall Stew (lvl 10, ~420 xp, sim lvl 14)
+    { "sethearth", 1436, 52.86, 53.71 }, -- lier la pierre de foyer
     { "accept", 9 }, -- The Killing Fields (lvl 15, ~1050 xp, sim lvl 14)
     { "accept", 109 }, -- Report to Gryan Stoutmantle (lvl 10, ~630 xp, sim lvl 14)
-    { "complete", 22, at = { 1436, 53.7, 42.94 } }, -- Goretusk Liver Pie (lvl 12, ~910 xp, sim lvl 14)
+    { "accept", 22 }, -- Goretusk Liver Pie (lvl 12, ~910 xp, sim lvl 14)
+    { "turnin", 36, xp = 420 }, -- Westfall Stew (lvl 10, ~420 xp, sim lvl 14)
+    { "complete", 151, at = { 1436, 57.27, 18.31 } }, -- Poor Old Blanchy (lvl 14, ~1250 xp, sim lvl 14)
+    { "complete", 92742, obj = 1, at = { 1436, 56.62, 18.69 } }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
+    { "accept", 92909 }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 14)
+    { "complete", 92742, at = { 1436, 46.08, 38.14 } }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
     { "turnin", 92742, xp = 455 }, -- Testing the Wells (lvl 12, ~455 xp, sim lvl 14)
     { "accept", 92744 }, -- Murloc Gills (lvl 12, ~455 xp, sim lvl 14)
     { "complete", 9, at = { 1436, 38.78, 51.51 } }, -- The Killing Fields (lvl 15, ~1050 xp, sim lvl 14)
     { "accept", 79008 }, -- ... and that note you found (lvl 22, ~0 xp, sim lvl 14)
     { "complete", 12, obj = 1, at = { 1436, 31.61, 33.78 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
-    { "complete", 92744, at = { 1436, 34.53, 17 } }, -- Murloc Gills (lvl 12, ~455 xp, sim lvl 15)
-    { "complete", 12, at = { 1436, 44.8, 25.95 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 15)
-    { "turnin", 92909, xp = 800 }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 15)
-    { "turnin", 12, xp = 910 }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 15)
+    { "complete", 92744, at = { 1436, 34.53, 17 } }, -- Murloc Gills (lvl 12, ~455 xp, sim lvl 14)
+    { "complete", 12, at = { 1436, 44.8, 25.95 } }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
+    { "complete", 22, at = { 1436, 53.7, 42.94 } }, -- Goretusk Liver Pie (lvl 12, ~910 xp, sim lvl 14)
+    { "turnin", 12, xp = 910 }, -- The People's Militia (lvl 12, ~910 xp, sim lvl 14)
     { "accept", 13 }, -- The People's Militia (lvl 14, ~980 xp, sim lvl 15)
     { "turnin", 109, xp = 630 }, -- Report to Gryan Stoutmantle (lvl 10, ~630 xp, sim lvl 15)
     { "accept", 153 }, -- Red Leather Bandanas (lvl 15, ~1050 xp, sim lvl 15)
@@ -52,12 +51,14 @@ Q:RegisterGuide({
     { "complete", 92745, at = { 1436, 45.29, 20.05 } }, -- The State of the Mines (lvl 14, ~490 xp, sim lvl 15)
     { "complete", 64, at = { 1436, 49.33, 19.28 } }, -- The Forgotten Heirloom (lvl 12, ~910 xp, sim lvl 15)
     { "complete", 103, at = { 1436, 52.84, 23.8 } }, -- Keeper of the Flame (lvl 16, ~1150 xp, sim lvl 15)
+    { "complete", 92909, at = { 1436, 53.08, 23.98 } }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 15)
+    { "turnin", 92909, xp = 800 }, -- Harvesting the Harvesters (lvl 15, ~800 xp, sim lvl 15)
     { "turnin", 13, xp = 980 }, -- The People's Militia (lvl 14, ~980 xp, sim lvl 16)
     { "accept", 14 }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
     { "turnin", 102, xp = 980 }, -- Patrolling Westfall (lvl 14, ~980 xp, sim lvl 16)
-    { "turnin", 153, xp = 1050 }, -- Red Leather Bandanas (lvl 15, ~1050 xp, sim lvl 16)
     { "turnin", 92745, xp = 490 }, -- The State of the Mines (lvl 14, ~490 xp, sim lvl 16)
     { "accept", 92747 }, -- Moonbrook Espionage (lvl 15, ~800 xp, sim lvl 16)
+    { "turnin", 153, xp = 1050 }, -- Red Leather Bandanas (lvl 15, ~1050 xp, sim lvl 16)
     { "complete", 14, at = { 1436, 52.07, 76.61 } }, -- The People's Militia (lvl 17, ~1600 xp, sim lvl 16)
     { "turnin", 103, xp = 1150 }, -- Keeper of the Flame (lvl 16, ~1150 xp, sim lvl 16)
     { "complete", 92747, at = { 1436, 43.11, 68.85 } }, -- Moonbrook Espionage (lvl 15, ~800 xp, sim lvl 16)

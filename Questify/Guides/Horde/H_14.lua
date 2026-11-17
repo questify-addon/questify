@@ -1,18 +1,17 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 43 étapes, niveau final 43.00, ~53063 xp/h, 114 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 42 étapes, niveau final 43.00, ~53602 xp/h, 113 min.
 Q:RegisterGuide({
   id = "H_14",
   title = "Swamp of Sorrows",
   faction = "Horde",
   minLevel = 42, maxLevel = 43,
   next = "H_15",
-  sim = { steps = 43, endLevel = 43.00, xpPerHour = 53063, minutes = 114 },
+  sim = { steps = 42, endLevel = 43.00, xpPerHour = 53602, minutes = 113 },
   steps = {
-    { "goto", 1434, 26.87, 77.1, note = "Flight master" }, -- déplacement
-    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
+    { "hearth", 1434 }, -- pierre de foyer
     { "turnin", 624, xp = 3600 }, -- Cortello's Riddle (lvl 43, ~3600 xp, sim lvl 42)
     { "accept", 625 }, -- Cortello's Riddle (lvl 43, ~0 xp, sim lvl 42)
     { "accept", 93429 }, -- Blood of My Blood (lvl 35, ~1650 xp, sim lvl 42)
@@ -53,6 +52,6 @@ Q:RegisterGuide({
     { "turnin", 1389, xp = 1650 }, -- Draenethyst Crystals (lvl 35, ~1650 xp, sim lvl 42)
     { "turnin", 1392, xp = 2250 }, -- Noboru the Cudgel (lvl 39, ~2250 xp, sim lvl 42)
     { "turnin", 93430, xp = 1230 }, -- Taking the Bait Back (lvl 35, ~1230 xp, sim lvl 42)
-    { "level", 43, at = { 1435, 54.49, 30.2 }, note = "About 93 more mobs near the last objective" }, -- farm de niveau
+    { "level", 43, at = { 1435, 54.49, 30.2 }, note = "About 95 more mobs near the last objective" }, -- farm de niveau
   },
 })

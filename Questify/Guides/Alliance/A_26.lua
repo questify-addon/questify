@@ -1,20 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 80 étapes, niveau final 56.00, ~62956 xp/h, 338 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 79 étapes, niveau final 56.00, ~61082 xp/h, 348 min.
 Q:RegisterGuide({
   id = "A_26",
   title = "Un'Goro Crater",
   faction = "Alliance",
   minLevel = 54, maxLevel = 56,
   next = "A_27",
-  sim = { steps = 80, endLevel = 56.00, xpPerHour = 62956, minutes = 338 },
+  sim = { steps = 79, endLevel = 56.00, xpPerHour = 61082, minutes = 348 },
   steps = {
     { "note", "Not running Zul'Farrak? Abandon Gahz'rilla", optional = true, dungeon = "Zul'Farrak" },
-    { "hearth", 1446 }, -- pierre de foyer
-    { "goto", 1446, 51.01, 29.34, note = "Flight master" }, -- déplacement
-    { "fly", 1449, node = 79, note = "Marshal's Refuge, Un'Goro Crater" }, -- vol
+    { "goto", 1440, 34.41, 47.99, note = "Flight master" }, -- déplacement
+    { "fly", 1444, node = 31, note = "Thalanaar, Feralas" }, -- vol
     { "accept", 4284 }, -- Crystals of Power (lvl 53, ~5250 xp, sim lvl 54)
     { "accept", 3881 }, -- Expedition Salvation (lvl 53, ~5250 xp, sim lvl 54)
     { "accept", 3883 }, -- Alien Ecology (lvl 52, ~5100 xp, sim lvl 54)
@@ -90,6 +89,6 @@ Q:RegisterGuide({
     { "turnin", 5249, xp = 580 }, -- To Winterspring! (lvl 56, ~580 xp, sim lvl 54)
     { "fp", 1452, 62.33, 36.61 }, -- point de vol
     { "turnin", 4808, xp = 2700 }, -- Felnok Steelspring (lvl 54, ~2700 xp, sim lvl 54)
-    { "level", 56, at = { 1452, 66.83, 42.67 }, note = "About 629 more mobs here (Ice Thistle Yeti, level 55)" }, -- farm de niveau
+    { "level", 56, at = { 1452, 66.83, 42.67 }, note = "About 628 more mobs here (Ice Thistle Yeti, level 55)" }, -- farm de niveau
   },
 })

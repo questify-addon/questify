@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 22 étapes, niveau final 43.00, ~0 xp/h, 10 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 25 étapes, niveau final 43.00, ~0 xp/h, 18 min.
 Q:RegisterGuide({
   id = "AD_20",
   title = "Desolace",
@@ -11,10 +11,13 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 42, maxLevel = 44,
   next = "AD_21",
-  sim = { steps = 22, endLevel = 43.00, xpPerHour = 0, minutes = 10 },
+  sim = { steps = 25, endLevel = 43.00, xpPerHour = 0, minutes = 18 },
   steps = {
-    { "hearth", 1445, phase = "prep", rung = "MARAUDON" }, -- pierre de foyer
-    { "goto", 1445, 67.48, 51.3, note = "Flight master", phase = "prep", rung = "MARAUDON" }, -- déplacement
+    { "hearth", 1431, phase = "prep", rung = "MARAUDON" }, -- pierre de foyer
+    { "goto", 1431, 77.49, 44.29, note = "Flight master", phase = "prep", rung = "MARAUDON" }, -- déplacement
+    { "fly", 1453, node = 2, note = "Stormwind, Elwynn", phase = "prep", rung = "MARAUDON" }, -- vol
+    { "boat", 1453, 24.1, 55.4, note = "Take the boat to Auberdine (Stormwind Harbor)", phase = "prep", rung = "MARAUDON" }, -- bateau
+    { "goto", 1439, 36.34, 45.58, note = "Flight master", phase = "prep", rung = "MARAUDON" }, -- déplacement
     { "fly", 1443, node = 37, note = "Nijel's Point, Desolace", phase = "prep", rung = "MARAUDON" }, -- vol
     { "accept", 7041, optional = true, dungeon = "Maraudon", phase = "prep", rung = "MARAUDON" }, -- Vyletongue Corruption (lvl 47, ~0 xp, sim lvl 43)
     { "accept", 7028, optional = true, dungeon = "Maraudon", phase = "prep", rung = "MARAUDON" }, -- Twisted Evils (lvl 47, ~0 xp, sim lvl 43)

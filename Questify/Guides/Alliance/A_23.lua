@@ -1,19 +1,19 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 61 étapes, niveau final 58.00, ~61834 xp/h, 189 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 61 étapes, niveau final 58.00, ~63128 xp/h, 186 min.
 Q:RegisterGuide({
   id = "A_23",
   title = "Western Plaguelands",
   faction = "Alliance",
   minLevel = 57, maxLevel = 58,
   next = "A_29",
-  sim = { steps = 61, endLevel = 58.00, xpPerHour = 61834, minutes = 189 },
+  sim = { steps = 61, endLevel = 58.00, xpPerHour = 63128, minutes = 186 },
   steps = {
     { "note", "Not running Blackrock Depths? Abandon Ribbly Screwspigot", optional = true, dungeon = "Blackrock Depths" },
-    { "boat", 1439, 32.4, 43.8, note = "Take the boat to Menethil Harbor" }, -- bateau
-    { "goto", 1437, 9.49, 59.69, note = "Flight master" }, -- déplacement
+    { "hearth", 1434 }, -- pierre de foyer
+    { "goto", 1434, 27.53, 77.79, note = "Flight master" }, -- déplacement
     { "fly", 1424, node = 14, note = "Southshore, Hillsbrad" }, -- vol
     { "fp", 1422, 42.92, 85.06 }, -- point de vol
     { "accept", 5092 }, -- Clear the Way (lvl 52, ~5100 xp, sim lvl 57)
@@ -49,8 +49,8 @@ Q:RegisterGuide({
     { "complete", 5219, at = { 1422, 46.11, 52.61 } }, -- Target: Dalson's Tears (lvl 55, ~5650 xp, sim lvl 57)
     { "turnin", 5219, xp = 5650 }, -- Target: Dalson's Tears (lvl 55, ~5650 xp, sim lvl 57)
     { "accept", 5220 }, -- Return to Chillwind Camp (lvl 55, ~2800 xp, sim lvl 57)
-    { "accept", 5058 }, -- Mrs. Dalson's Diary (lvl 55, ~1400 xp, sim lvl 57)
-    { "turnin", 5058, xp = 1400 }, -- Mrs. Dalson's Diary (lvl 55, ~1400 xp, sim lvl 57)
+    { "accept", 5058 }, -- Mrs. Dalson's Diary (lvl 55, ~560 xp, sim lvl 57)
+    { "turnin", 5058, xp = 560 }, -- Mrs. Dalson's Diary (lvl 55, ~560 xp, sim lvl 57)
     { "accept", 5060 }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 57)
     { "complete", 5060, at = { 1422, 48.23, 49.67 } }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 57)
     { "turnin", 5060, xp = 7050 }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 57)
@@ -71,6 +71,6 @@ Q:RegisterGuide({
     { "turnin", 84402, xp = 1650 }, -- Necromancy 101 (lvl 60, ~1650 xp, sim lvl 57)
     { "goto", 1453, 71.29, 72.23, note = "Flight master" }, -- déplacement
     { "fly", 1422, node = 66, note = "Chillwind Camp, Western Plaguelands" }, -- vol
-    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 341 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
+    { "level", 58, at = { 1422, 63.62, 58.32 }, note = "About 344 more mobs here (Hungering Wraith, level 57)" }, -- farm de niveau
   },
 })

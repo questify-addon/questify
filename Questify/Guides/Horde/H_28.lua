@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 49 étapes, niveau final 57.00, ~56860 xp/h, 198 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 47 étapes, niveau final 57.00, ~55272 xp/h, 204 min.
 Q:RegisterGuide({
   id = "H_28",
   title = "Felwood and Winterspring",
   faction = "Horde",
   minLevel = 56, maxLevel = 57,
   next = "H_29",
-  sim = { steps = 49, endLevel = 57.00, xpPerHour = 56860, minutes = 198 },
+  sim = { steps = 47, endLevel = 57.00, xpPerHour = 55272, minutes = 204 },
   steps = {
     { "goto", 1441, 45.14, 49.11, note = "Flight master" }, -- déplacement
     { "fly", 1440, node = 61, note = "Splintertree Post, Ashenvale" }, -- vol
@@ -19,8 +19,6 @@ Q:RegisterGuide({
     { "fp", 1452, 60.47, 36.3 }, -- point de vol
     { "accept", 6603 }, -- Trouble in Winterspring! (lvl 56, ~580 xp, sim lvl 56)
     { "accept", 3783 }, -- Are We There, Yeti? (lvl 56, ~4350 xp, sim lvl 56)
-    { "accept", 92859 },
-    { "turnin", 92859, xp = 6600 },
     { "accept", 5054 }, -- Ursius of the Shardtooth (lvl 56, ~5800 xp, sim lvl 56)
     { "complete", 3783, at = { 1452, 66.83, 42.67 } }, -- Are We There, Yeti? (lvl 56, ~4350 xp, sim lvl 56)
     { "accept", 6029 }, -- The Everlook Report (lvl 52, ~0 xp, sim lvl 56)
@@ -59,6 +57,6 @@ Q:RegisterGuide({
     { "turnin", 5082, xp = 5800 }, -- Threat of the Winterfall (lvl 56, ~5800 xp, sim lvl 56)
     { "turnin", 4721, xp = 6400 }, -- Wild Guardians (lvl 59, ~6400 xp, sim lvl 56)
     { "turnin", 4882, xp = 3200 }, -- Guarding Secrets (lvl 59, ~3200 xp, sim lvl 56)
-    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 235 more mobs near the last objective" }, -- farm de niveau
+    { "level", 57, at = { 1452, 41.52, 43.15 }, note = "About 256 more mobs near the last objective" }, -- farm de niveau
   },
 })

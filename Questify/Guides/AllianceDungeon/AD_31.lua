@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 55 étapes, niveau final 57.05, ~71265 xp/h, 63 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 55 étapes, niveau final 57.02, ~70596 xp/h, 63 min.
 Q:RegisterGuide({
   id = "AD_31",
   title = "Western Plaguelands",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 56, maxLevel = 58,
   next = "AD_32",
-  sim = { steps = 55, endLevel = 57.05, xpPerHour = 71265, minutes = 63 },
+  sim = { steps = 55, endLevel = 57.02, xpPerHour = 70596, minutes = 63 },
   steps = {
     { "goto", 1444, 30.24, 43.25, note = "Flight master" }, -- déplacement
     { "fly", 1439, node = 26, note = "Auberdine, Darkshore" }, -- vol
@@ -47,8 +47,8 @@ Q:RegisterGuide({
     { "complete", 5219, at = { 1422, 46.11, 52.61 } }, -- Target: Dalson's Tears (lvl 55, ~5650 xp, sim lvl 56)
     { "turnin", 5219, xp = 5650 }, -- Target: Dalson's Tears (lvl 55, ~5650 xp, sim lvl 56)
     { "accept", 5220 }, -- Return to Chillwind Camp (lvl 55, ~2800 xp, sim lvl 56)
-    { "accept", 5058 }, -- Mrs. Dalson's Diary (lvl 55, ~1400 xp, sim lvl 56)
-    { "turnin", 5058, xp = 1400 }, -- Mrs. Dalson's Diary (lvl 55, ~1400 xp, sim lvl 56)
+    { "accept", 5058 }, -- Mrs. Dalson's Diary (lvl 55, ~560 xp, sim lvl 56)
+    { "turnin", 5058, xp = 560 }, -- Mrs. Dalson's Diary (lvl 55, ~560 xp, sim lvl 56)
     { "accept", 5060 }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 56)
     { "complete", 5060, at = { 1422, 48.23, 49.67 } }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 56)
     { "turnin", 5060, xp = 7050 }, -- Locked Away (lvl 55, ~7050 xp, sim lvl 56)
@@ -58,8 +58,8 @@ Q:RegisterGuide({
     { "complete", 6023, obj = 2, at = { 1422, 55.15, 23.62 } }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 56)
     { "complete", 6023, at = { 1422, 57.83, 36.1 } }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 56)
     { "turnin", 6023, xp = 6000 }, -- Unfinished Business (lvl 57, ~6000 xp, sim lvl 56)
-    { "complete", 4985, at = { 1422, 64.84, 47.98 } }, -- The Wildlife Suffers Too (lvl 56, ~4350 xp, sim lvl 57)
-    { "turnin", 4985, xp = 4350 }, -- The Wildlife Suffers Too (lvl 56, ~4350 xp, sim lvl 57)
+    { "complete", 4985, at = { 1422, 64.84, 47.98 } }, -- The Wildlife Suffers Too (lvl 56, ~4350 xp, sim lvl 56)
+    { "turnin", 4985, xp = 4350 }, -- The Wildlife Suffers Too (lvl 56, ~4350 xp, sim lvl 56)
     { "turnin", 5220, xp = 2800 }, -- Return to Chillwind Camp (lvl 55, ~2800 xp, sim lvl 57)
     { "accept", 5142 }, -- Little Pamela (lvl 55, ~0 xp, sim lvl 57)
     { "accept", 5382, optional = true, dungeon = "Scholomance", phase = "prep", rung = "SCHOLO" }, -- Doctor Theolen Krastinov, the Butcher (lvl 60, ~0 xp, sim lvl 57)

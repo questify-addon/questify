@@ -1,15 +1,15 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans.lua ou overrides.lua, puis relancer tools/routebuilder/build.lua.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-16.
--- Simulation : 62 étapes, niveau final 46.00, ~61827 xp/h, 103 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 62 étapes, niveau final 46.00, ~61654 xp/h, 105 min.
 Q:RegisterGuide({
   id = "A_19",
   title = "Feralas",
   faction = "Alliance",
   minLevel = 45, maxLevel = 46,
   next = "A_20",
-  sim = { steps = 62, endLevel = 46.00, xpPerHour = 61827, minutes = 103 },
+  sim = { steps = 62, endLevel = 46.00, xpPerHour = 61654, minutes = 105 },
   steps = {
     { "note", "Not running Razorfen Downs? Abandon The Coldbringer's Eye", optional = true, dungeon = "Razorfen Downs" },
     { "fp", 1449, 45.23, 5.83 }, -- point de vol
@@ -58,7 +58,7 @@ Q:RegisterGuide({
     { "accept", 4265 }, -- Freed from the Hive (lvl 46, ~4050 xp, sim lvl 45)
     { "complete", 4265, at = { 1444, 72.13, 63.84 } }, -- Freed from the Hive (lvl 46, ~4050 xp, sim lvl 45)
     { "turnin", 4281, xp = 2800 }, -- Thalanaar Delivery (lvl 44, ~2800 xp, sim lvl 45)
-    { "complete", 92858, at = { 1444, 74.98, 25.35 } }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
+    { "complete", 92858, at = { 1444, 74.84, 26.94 } }, -- WANTED: Ohk'zi (lvl 43, ~4450 xp, sim lvl 45)
     { "complete", 2970, at = { 1444, 69.3, 39.27 } }, -- Doling Justice (lvl 47, ~3150 xp, sim lvl 45)
     { "turnin", 2970, xp = 3150 }, -- Doling Justice (lvl 47, ~3150 xp, sim lvl 45)
     { "complete", 7733, at = { 1444, 54.73, 32.76 } }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
@@ -72,6 +72,6 @@ Q:RegisterGuide({
     { "turnin", 4266, xp = 6050 }, -- A Hero's Welcome (lvl 46, ~6050 xp, sim lvl 45)
     { "turnin", 2871, xp = 3900 }, -- Delivering the Relic (lvl 45, ~3900 xp, sim lvl 45)
     { "turnin", 7733, xp = 4400 }, -- Improved Quality (lvl 48, ~4400 xp, sim lvl 45)
-    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 32 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
+    { "level", 46, at = { 1444, 36.59, 49.3 }, note = "About 37 more mobs here (Coast Crawl Snapclaw, level 44)" }, -- farm de niveau
   },
 })

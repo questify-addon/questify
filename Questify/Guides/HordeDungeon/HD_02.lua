@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 12 étapes, niveau final 16.22, ~3432 xp/h, 12 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 12 étapes, niveau final 16.34, ~3432 xp/h, 12 min.
 Q:RegisterGuide({
   id = "HD_02",
   title = "Orgrimmar",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 15, maxLevel = 17,
   next = "HD_03",
-  sim = { steps = 12, endLevel = 16.22, xpPerHour = 3432, minutes = 12 },
+  sim = { steps = 12, endLevel = 16.34, xpPerHour = 3432, minutes = 12 },
   steps = {
     { "fly", 1413, node = 25, note = "Crossroads, The Barrens", phase = "prep", rung = "RFC" }, -- vol
     { "fp", 1454, 45.12, 63.89, phase = "prep", rung = "RFC" }, -- point de vol

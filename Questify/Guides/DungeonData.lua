@@ -1,6 +1,6 @@
 local addonName, Q = ...
 -- Généré par tools/routebuilder/build_dungeons.lua. Ne pas modifier à la main.
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
 -- Donjons de WoW: Forever : zone, niveaux conseillés, factions autorisées, entrée (uiMapID, x, y en 0-100,
 -- entranceSource = questiedb ou manual), quêtes par faction : IDs, PNJ (giver) ou objet (obj) de départ et
 -- position (at), PNJ de fin (ender, endAt), niveaux, masques de races et de classes, préquêtes (pre = au
@@ -26,7 +26,8 @@ Q.DungeonData = {
     quests = {
       Alliance = {
         { id = 96393, giver = 264936, at = { 1426, 64.87, 58.47 }, ender = 2784, endAt = { 1455, 39.09, 56.2 }, level = 16, reqLevel = 9, races = 4294967373, pre = { 96391 } }, -- Old Ironforge Incursion
-        { id = 96394, giver = 264943, at = { 1455, 33.23, 48.01 }, ender = 264943, endAt = { 1455, 33.23, 48.01 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
+        { id = 96394, giver = 264943, at = { 1455, 33.22, 48 }, ender = 264943, endAt = { 1455, 33.22, 48 }, level = 15, reqLevel = 10, races = 4294967373 }, -- The Restless Dead
+        { id = 96395, inside = true, level = 15, reqLevel = 10 }, -- An Ancient Grudge
         { id = 96403, giver = 265003, at = { 1455, 32.18, 44.5 }, ender = 265003, endAt = { 1455, 32.18, 44.5 }, level = 15, reqLevel = 10, races = 4294967373 }, -- Important Heirlooms
         { id = 98423, inside = true, item = 281030, ender = 2784, endAt = { 1455, 39.09, 56.2 }, level = 16, reqLevel = 9, races = 4294967373 }, -- The Treaty of Understanding
       },
@@ -145,13 +146,13 @@ Q.DungeonData = {
         { id = 95772, talk = true, giver = 956, at = { 1433, 25.79, 46.44 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Songblade Search
         { id = 95810, inside = true, item = 270865, ender = 1077, endAt = { 1437, 38.81, 52.39 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Lost Relic Carry
         { id = 98815, giver = 2094, at = { 1437, 8.55, 55.74 }, ender = 2094, endAt = { 1437, 8.55, 55.74 }, level = 28, reqLevel = 24, races = 4294967373, pre = { 484 } }, -- Highland Hides
-        { id = 98824, talk = true, giver = 1077, at = { 1437, 38.81, 52.39 }, ender = 5387, endAt = { 1455, 69.93, 18.55 }, level = 31, reqLevel = 24, races = 4294967373 }, -- Prehistoric Prism
+        { id = 98824, talk = true, giver = 1077, at = { 1437, 38.81, 52.39 }, ender = 5387, endAt = { 1455, 69.93, 18.55 }, level = 31, reqLevel = 24, races = 4294967373, pre = { 95810 } }, -- Prehistoric Prism
       },
       Horde = {
         { id = 95663, talk = true, giver = 2787, at = { 1417, 74.54, 35.64 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Dragonmaw Rumors
         { id = 95664, inside = true, item = 270866, ender = 9087, endAt = { 1456, 71.06, 34.19 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Elder Knowledge
         { id = 95697, giver = 3368, at = { 1454, 57.2, 53.32 }, ender = 3368, endAt = { 1454, 57.2, 53.32 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Changing Tastes
-        { id = 98823, talk = true, giver = 9087, at = { 1456, 71.06, 34.19 }, ender = 259118, endAt = { 1412, 33.42, 22.59 }, level = 31, reqLevel = 24, races = 8589934770 }, -- Earthen Echo
+        { id = 98823, talk = true, giver = 9087, at = { 1456, 71.06, 34.19 }, ender = 259118, endAt = { 1412, 33.41, 22.59 }, level = 31, reqLevel = 24, races = 8589934770, pre = { 95664 } }, -- Earthen Echo
       },
     },
   },
@@ -163,7 +164,7 @@ Q.DungeonData = {
         { id = 92457, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373, pre = { 92432 } }, -- Starving Arcane
         { id = 92458, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 24, races = 4294967373, pre = { 92432 } }, -- Heart of Disruption
         { id = 92489, giver = 5694, at = { 1453, 48.71, 87.62 }, ender = 5694, endAt = { 1453, 48.71, 87.62 }, level = 33, reqLevel = 24, races = 4294967373 }, -- Power Overwhelming
-        { id = 92432, bc = true, giver = 247264, at = { 1424, 48.34, 60.03 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 30, races = 4294967373 }, -- An Alarming Request
+        { id = 92432, bc = true, giver = 247264, at = { 1424, 48.33, 60.03 }, ender = 269127, endAt = { 1421, 68.62, 45.13 }, level = 33, reqLevel = 30, races = 4294967373 }, -- An Alarming Request
       },
       Horde = {
         { id = 96984, giver = 269127, at = { 1421, 68.62, 45.13 }, ender = 2410, endAt = { 1424, 61.6, 20.85 }, level = 33, reqLevel = 24, races = 8589934770, pre = { 92434 } }, -- Heart of Disruption
@@ -315,7 +316,7 @@ Q.DungeonData = {
         { id = 7067, giver = 13717, at = { 1443, 50.42, 86.65 }, ender = 13717, endAt = { 1443, 50.42, 86.65 }, level = 48, reqLevel = 39 }, -- The Pariah's Instructions
         { id = 7070, giver = 4967, at = { 1445, 66.42, 49.26 }, ender = 4967, endAt = { 1445, 66.42, 49.26 }, level = 42, reqLevel = 39, races = 4294967373 }, -- Shadowshard Fragments
         { id = 93404, giver = 254674, at = { 2652, 69.66, 71.78 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 49, reqLevel = 0, pre = { 93594 } }, -- Rot and Regret
-        { id = 93594, bc = true, giver = 254578, at = { 2652, 53.32, 76.02 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 43, reqLevel = 0 }, -- Word of the Woods
+        { id = 93594, bc = true, giver = 254578, at = { 2652, 53.32, 76.02 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 43, reqLevel = 0, pre = { 93341 } }, -- Word of the Woods
       },
       Horde = {
         { id = 7028, giver = 13656, at = { 1443, 62.2, 39.63 }, ender = 13656, endAt = { 1443, 62.2, 39.63 }, level = 47, reqLevel = 41 }, -- Twisted Evils
@@ -328,7 +329,7 @@ Q.DungeonData = {
         { id = 7068, giver = 7311, at = { 1454, 39.16, 86.27 }, ender = 7311, endAt = { 1454, 39.16, 86.27 }, level = 42, reqLevel = 39, races = 8589934770 }, -- Shadowshard Fragments
         { id = 93404, giver = 254674, at = { 2652, 69.66, 71.78 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 49, reqLevel = 0, pre = { 93594 } }, -- Rot and Regret
         { id = 96776, giver = 268557, at = { 1412, 32.63, 24.2 }, ender = 268557, endAt = { 1412, 32.63, 24.2 }, level = 51, reqLevel = 43, races = 8589934770 }, -- An'she's Radiance
-        { id = 93594, bc = true, giver = 254578, at = { 2652, 53.32, 76.02 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 43, reqLevel = 0 }, -- Word of the Woods
+        { id = 93594, bc = true, giver = 254578, at = { 2652, 53.32, 76.02 }, ender = 254674, endAt = { 2652, 69.66, 71.78 }, level = 43, reqLevel = 0, pre = { 93341 } }, -- Word of the Woods
       },
     },
   },
@@ -425,7 +426,7 @@ Q.DungeonData = {
         { id = 3802, giver = 8888, at = { 1428, 28.96, 28.93 }, level = 52, reqLevel = 48, pre = { 3801 } }, -- Dark Iron Legacy
         { id = 3907, giver = 9084, at = { 1418, 3.33, 48.26 }, ender = 9084, endAt = { 1418, 3.33, 48.26 }, level = 56, reqLevel = 48, races = 8589934770, pre = { 3906 } }, -- Disharmony of Fire
         { id = 3981, talk = true, giver = 9081, at = { 1418, 5.96, 47.73 }, level = 52, reqLevel = 48, races = 8589934770, pre = { 3906 } }, -- Commander Gor'shak
-        { id = 4001, inside = true, ender = 4949, endAt = { 1454, 31.73, 37.82 }, level = 54, reqLevel = 48, races = 8589934770, pre = { 3982 } }, -- What Is Going On?
+        { id = 4001, inside = true, ender = 4949, endAt = { 1454, 31.73, 37.82 }, level = 54, reqLevel = 48, races = 8589934770, pre = { 3981, 3982 } }, -- What Is Going On?
         { id = 4002, talk = true, giver = 4949, at = { 1454, 31.73, 37.82 }, ender = 4949, endAt = { 1454, 31.73, 37.82 }, level = 54, reqLevel = 48, races = 8589934770, pre = { 4001 } }, -- The Eastern Kingdom
         { id = 4003, giver = 4949, at = { 1454, 31.73, 37.82 }, level = 59, reqLevel = 48, races = 8589934770, pre = { 4002 } }, -- The Royal Rescue
         { id = 4004, inside = true, ender = 4949, endAt = { 1454, 31.73, 37.82 }, level = 60, reqLevel = 48, races = 8589934770, pre = { 4003 } }, -- The Princess Saved?
@@ -447,7 +448,7 @@ Q.DungeonData = {
         { id = 7604, inside = true, item = 18628, level = 60, reqLevel = 60 }, -- A Binding Contract
         { id = 7848, giver = 14387, at = { 1427, 32.13, 94.7 }, ender = 14387, endAt = { 1427, 32.13, 94.7 }, level = 60, reqLevel = 55 }, -- Attunement to the Core
         { id = 9015, inside = true, ender = 16016, endAt = { 1423, 26.11, 11.3 }, level = 60, reqLevel = 58, pre = { 8950 } }, -- The Challenge
-        { id = 97197, giver = 259119, at = { 1412, 33.38, 22.51 }, level = 55, reqLevel = 46, races = 8589934770 }, -- Fragment of the Firelands
+        { id = 97197, giver = 259119, at = { 1412, 33.37, 22.57 }, ender = 259119, endAt = { 1412, 33.37, 22.57 }, level = 55, reqLevel = 46, races = 8589934770 }, -- Fragment of the Firelands
         { id = 4062, bc = true, giver = 9079, at = { 1418, 3.02, 47.81 }, ender = 2921, endAt = { 1418, 25.95, 44.87 }, level = 54, reqLevel = 52, races = 8589934770, pre = { 4061 } }, -- The Rise of the Machines
       },
     },
@@ -464,7 +465,7 @@ Q.DungeonData = {
         { id = 7441, giver = 14355, at = { 1444, 76.91, 37.35 }, ender = 14355, endAt = { 1444, 76.91, 37.35 }, level = 58, reqLevel = 54 }, -- Pusillin and the Elder Azj'Tordin
         { id = 7461, inside = true, level = 60, reqLevel = 56 }, -- The Madness Within
         { id = 7482, giver = 14374, at = { 1444, 31.65, 43.45 }, ender = 14374, endAt = { 1444, 31.65, 43.45 }, level = 60, reqLevel = 54, races = 4294967373 }, -- Elven Legends
-        { id = 7488, giver = 7877, at = { 1444, 30.38, 46.17 }, ender = 7877, endAt = { 1444, 30.38, 46.17 }, level = 57, reqLevel = 54, races = 4294967373 }, -- Lethtendris's Web
+        { id = 7488, giver = 7877, at = { 1444, 30.38, 46.17 }, ender = 7877, endAt = { 1444, 30.38, 46.17 }, level = 57, reqLevel = 54, races = 4294967373, pre = { 7494 } }, -- Lethtendris's Web
         { id = 7494, talk = true, giver = 2198, at = { 1453, 56.39, 74.09 }, ender = 7877, endAt = { 1444, 30.38, 46.17 }, level = 57, reqLevel = 54, races = 4294967373 }, -- Feathermoon Stronghold
         { id = 7703, inside = true, level = 60, reqLevel = 56 }, -- Unfinished Gordok Business
         { id = 8948, talk = true, giver = 16016, at = { 1423, 26.11, 11.3 }, level = 60, reqLevel = 58, pre = { 8947 } }, -- Anthion's Old Friend
@@ -749,7 +750,7 @@ Q.QuestRewardData = {
   [3981] = { xp = 2550, items = {  } },
   [3982] = { xp = 2050, items = {  } },
   [4001] = { xp = 270, items = {  } },
-  [4002] = { xp = 2050, est = true, items = {  } },
+  [4002] = { xp = 270, items = {  } },
   [4003] = { xp = 4025, items = {  } },
   [4004] = { xp = 4975, items = { 12544, 12545 } },
   [4022] = { xp = 5450, items = {  } },
@@ -814,6 +815,7 @@ Q.QuestRewardData = {
   [5245] = { xp = 5800, items = {  } },
   [5246] = { xp = 5800, items = {  } },
   [5247] = { xp = 6000, items = {  } },
+  [5249] = { xp = 580, items = {  } },
   [5250] = { xp = 580, items = {  } },
   [5251] = { xp = 4150, items = {  } },
   [5262] = { xp = 4150, items = {  } },
@@ -974,8 +976,13 @@ Q.QuestRewardData = {
   [92751] = { xp = 115, items = {  } },
   [92752] = { xp = 580, items = {  } },
   [92753] = { xp = 675, est = true, items = {  } },
+  [92914] = { xp = 3600, items = {  } },
+  [93016] = { xp = 360, items = {  } },
+  [93341] = { xp = 1800, items = {  } },
+  [93394] = { xp = 360, items = {  } },
   [93404] = { xp = 4550, est = true, items = {  } },
   [93594] = { xp = 360, items = {  } },
+  [93680] = { xp = 2650, est = true, items = {  } },
   [95204] = { xp = 325, est = true, items = { 280567 } },
   [95216] = { xp = 875, est = true, items = { 279876, 279877 } },
   [95646] = { xp = 1250, est = true, items = { 271664 } },
@@ -986,9 +993,12 @@ Q.QuestRewardData = {
   [95737] = { xp = 625, items = {  } },
   [95772] = { xp = 625, est = true, items = {  } },
   [95810] = { xp = 625, items = {  } },
+  [96010] = { xp = 2450, items = {  } },
+  [96018] = { xp = 3600, items = {  } },
   [96391] = { xp = 1050, items = {  } },
   [96393] = { xp = 575, est = true, items = { 279894, 279895, 279896 } },
   [96394] = { xp = 525, est = true, items = { 279897, 280095 } },
+  [96395] = { xp = 525, est = true, items = {  } },
   [96403] = { xp = 525, est = true, items = { 279898, 280096 } },
   [96770] = { xp = 2525, est = true, items = {  } },
   [96773] = { xp = 1650, est = true, items = {  } },

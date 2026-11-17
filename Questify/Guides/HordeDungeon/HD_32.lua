@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 24 étapes, niveau final 58.04, ~17189 xp/h, 26 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 21 étapes, niveau final 58.03, ~20343 xp/h, 17 min.
 Q:RegisterGuide({
   id = "HD_32",
   title = "Eastern Plaguelands",
@@ -11,14 +11,11 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 58, maxLevel = 59,
   next = "HD_33",
-  sim = { steps = 24, endLevel = 58.04, xpPerHour = 17189, minutes = 26 },
+  sim = { steps = 21, endLevel = 58.03, xpPerHour = 20343, minutes = 17 },
   steps = {
-    { "hearth", 1434 }, -- pierre de foyer
-    { "fly", 1434, node = 20, note = "Grom'gol, Stranglethorn" }, -- vol
-    { "boat", 1434, 31.54, 29.36, note = "Take the zeppelin to Undercity (Tirisfal Glades)" }, -- bateau
+    { "hearth", 1458 }, -- pierre de foyer
     { "turnin", 6029, xp = 2040 }, -- The Everlook Report (lvl 52, ~2040 xp, sim lvl 58)
     { "turnin", 84397, xp = 1650 }, -- Northern Kalimdor - A Comprehensive Guide (lvl 60, ~1650 xp, sim lvl 58)
-    { "turnin", 84399, xp = 1650 }, -- Ka-Boom! (lvl 60, ~1650 xp, sim lvl 58)
     { "accept", 5515, optional = true, dungeon = "Scholomance", phase = "prep", rung = "SCHOLO" }, -- Krastinov's Bag of Horrors (lvl 60, ~0 xp, sim lvl 58)
     { "turnin", 6030, xp = 2040 }, -- Duke Nicholas Zverenhoff (lvl 52, ~2040 xp, sim lvl 58)
     { "goto", 1423, 26.52, 10.36, optional = true, dungeon = "Stratholme", note = "Dungeon: Stratholme: Live (5 players). No group? Untick it in /qf dungeons", phase = "run", rung = "STRAT_LIVE" }, -- déplacement

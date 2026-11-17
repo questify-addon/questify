@@ -2,8 +2,8 @@ local addonName, Q = ...
 -- Généré par tools/routebuilder (générateur de routes de Questify). Ne pas modifier à la main :
 -- corriger tools/routebuilder/plans_dungeon.lua ou dungeon_ladder.lua, puis relancer
 -- tools/routebuilder/build_dungeon_guides.lua. Chapitre du mode « Donjons » (docs/dungeon-mode/README.md).
--- Source : QuestieDB commit c7ccd23e17a222e083c4215144ef9db301db27ce, généré le 2026-11-17.
--- Simulation : 21 étapes, niveau final 44.13, ~0 xp/h, 20 min.
+-- Source : QuestieDB commit e1652ce62113c152da682baf2d6fb85f1396bcfb, généré le 2026-11-17.
+-- Simulation : 21 étapes, niveau final 44.01, ~0 xp/h, 20 min.
 Q:RegisterGuide({
   id = "HD_18",
   title = "Desolace",
@@ -11,7 +11,7 @@ Q:RegisterGuide({
   mode = "dungeon",
   minLevel = 42, maxLevel = 45,
   next = "HD_19",
-  sim = { steps = 21, endLevel = 44.13, xpPerHour = 0, minutes = 20 },
+  sim = { steps = 21, endLevel = 44.01, xpPerHour = 0, minutes = 20 },
   steps = {
     { "boat", 1434, 26.08, 73.35, note = "Take the boat to Ratchet (The Barrens)", phase = "prep", rung = "MARAUDON" }, -- bateau
     { "goto", 1413, 63.08, 37.16, note = "Flight master", phase = "prep", rung = "MARAUDON" }, -- déplacement

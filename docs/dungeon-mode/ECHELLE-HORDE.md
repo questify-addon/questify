@@ -1,7 +1,7 @@
 # Mode « Donjons » Horde : échelle 1-60
 
 Généré par `tools/routebuilder/build_dungeon_route.lua` le 2026-11-17 à partir de
-`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `c7ccd23e17a222e083c4215144ef9db301db27ce`).
+`tools/routebuilder/dungeon_ladder.lua` et de `Questify/Guides/DungeonData.lua` (QuestieDB commit `e1652ce62113c152da682baf2d6fb85f1396bcfb`).
 Ne pas modifier à la main. Méthode et limites : [README.md](README.md).
 
 ## Départs par race (1-12)
@@ -41,7 +41,7 @@ XP de quêtes : XP de base de QuestieDB, « ~ » quand une valeur est estimée ;
 | 16 | 44 | Maraudon | 42-52 | 11 | ~27710 | 25 % | ★★ | Riverglades (39-43) ; Desolace (42-44, accès) | Feralas (45-47) |
 | 17 | 46 | Zul'Farrak | 44-54 | 11 | ~24495 | 20 % | ★★ | Tanaris (44-46) | Feralas (45-47) |
 | 18 | 52 | The Temple of Atal'Hakkar | 50-60 | 10 | 32650 | 20 % | ★★ | Stranglethorn Vale (47-49) ; The Hinterlands (49-51) ; Swamp of Sorrows (50-52, accès) | Blasted Lands (51-53) |
-| 19 | 54 | Blackrock Depths | 52-60 | 27 | ~67010 | 39 % | ★★★ | Searing Gorge (52-54) ; Burning Steppes (53-54, accès) | Azshara (53-55) |
+| 19 | 54 | Blackrock Depths | 52-60 | 27 | ~65230 | 38 % | ★★★ | Searing Gorge (52-54) ; Burning Steppes (53-54, accès) | Azshara (53-55) |
 | 20 | 57 | Dire Maul : East | 55-60 | 3 | 8400 | 4 % | ★ | Felwood (54-56) ; Un'Goro Crater (55-56) ; Feralas (56-57, accès) | Winterspring (57-58) |
 | 21 | 57 | Scholomance | 55-60 | 10 | 37825 | 19 % | ★★ | Western Plaguelands (57-58) | Winterspring (57-58) |
 | 22 | 58 | Dire Maul : West | 56-60 | 1 | 4150 | 2 % | ★ | Feralas (56-57, accès) | Winterspring (57-58) |
@@ -266,7 +266,7 @@ Niveau d'entrée imposé : accès Horde par le transpondeur de Booty Bay, au pas
 - 3907 Disharmony of Fire : 3650 XP
 - 3981 Commander Gor'shak : 2550 XP
 - 4001 What Is Going On? : 270 XP
-- 4002 The Eastern Kingdom : ~2050 XP
+- 4002 The Eastern Kingdom : 270 XP
 - 4003 The Royal Rescue : 4025 XP
 - 4004 The Princess Saved? : 4975 XP
 - 4024 A Taste of Flame : 3100 XP
