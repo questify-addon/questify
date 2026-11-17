@@ -470,9 +470,8 @@ return {
     Q.Telemetry = nil
     Mock.click(ex.button, "LeftButton")
     t.eq(ex.box:GetText(), Q.L.UI_TELEMETRY_UNAVAILABLE)
-    -- assistant
-    Mock.click(O:Widget("wizard").button, "LeftButton")
-    t.ok(QuestifyWizard and QuestifyWizard:IsShown(), "wizard opened")
+    -- l'assistant de départ n'est plus dans Outils
+    t.eq(Q.OptionsSchema:Entry("wizard"), nil)
     -- position du suivi remise à sa place
     O:Open("tracker")
     Q.Settings:Set("tracker.point", { "TOPLEFT", "BOTTOMLEFT", 100, 200 })

@@ -69,7 +69,6 @@ Schema.SECTIONS = {
     { id = "hearth", label = "OPT_CAT_COMFORT_HEARTH" },
     { id = "warnings", label = "OPT_CAT_COMFORT_WARNINGS" } } },
   { id = "tools", label = "OPT_SEC_TOOLS", icon = "INV_Misc_Wrench_01", categories = {
-    { id = "wizards", label = "OPT_CAT_TOOLS_WIZARDS" },
     { id = "measures", label = "OPT_CAT_TOOLS_MEASURES" },
     { id = "diagnostics", label = "OPT_CAT_TOOLS_DIAG" },
     { id = "versions", label = "OPT_CAT_TOOLS_VERSIONS" } } },
@@ -572,13 +571,7 @@ add({ id = "supplyReminders", section = "comfort", category = "warnings", type =
   keywords = "vendre reparer sacs ville avant-poste auberge nourriture boisson rappel sell repair bags town outpost inn food drink reminder" })
 
 -- Outils ------------------------------------------------------------------
-add({ id = "wizard", section = "tools", category = "wizards", type = "action",
-  label = "MINIMAP_MENU_WIZARD", tip = "OPT_TIP_WIZARD",
-  keywords = "assistant demarrage configuration wizard setup navigation",
-  run = function()
-    local W = ui("Wizard")
-    if W then W:Show() end
-  end })
+-- L'assistant de départ n'est plus dans les options : /qf wizard et le menu du bouton de la minicarte.
 add({ id = "telemetry", section = "tools", category = "measures", type = "toggle", path = "telemetry",
   label = "UI_OPT_TELEMETRY", tip = "OPT_TIP_TELEMETRY",
   keywords = "mesures temps telemetrie etape measures time telemetry step" })
